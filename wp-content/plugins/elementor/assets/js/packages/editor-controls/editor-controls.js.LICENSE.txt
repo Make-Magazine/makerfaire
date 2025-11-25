@@ -14,33 +14,33 @@
 
 /*! ../../../components/control-label */
 
+/*! ../../../components/control-repeater */
+
+/*! ../../../components/control-repeater/actions/disable-item-action */
+
+/*! ../../../components/control-repeater/actions/duplicate-item-action */
+
+/*! ../../../components/control-repeater/actions/remove-item-action */
+
+/*! ../../../components/control-repeater/context/repeater-context */
+
+/*! ../../../components/control-repeater/items/edit-item-popover */
+
+/*! ../../../components/control-repeater/items/item */
+
 /*! ../../../components/popover-content */
 
 /*! ../../../components/popover-grid-container */
 
-/*! ../../../components/unstable-repeater */
-
-/*! ../../../components/unstable-repeater/actions/disable-item-action */
-
-/*! ../../../components/unstable-repeater/actions/duplicate-item-action */
-
-/*! ../../../components/unstable-repeater/actions/remove-item-action */
-
-/*! ../../../components/unstable-repeater/context/repeater-context */
-
-/*! ../../../components/unstable-repeater/items/edit-item-popover */
-
-/*! ../../../components/unstable-repeater/items/item */
-
 /*! ../../../control-adornments/control-adornments */
-
-/*! ../../../control-replacements */
 
 /*! ../../../create-control */
 
 /*! ../../../env */
 
 /*! ../../../hooks/use-sync-external-state */
+
+/*! ../../../services/event-bus */
 
 /*! ../../../size-control */
 
@@ -56,31 +56,27 @@
 
 /*! ../../components/control-label */
 
+/*! ../../components/control-repeater */
+
+/*! ../../components/control-repeater/actions/disable-item-action */
+
+/*! ../../components/control-repeater/actions/duplicate-item-action */
+
+/*! ../../components/control-repeater/actions/remove-item-action */
+
+/*! ../../components/control-repeater/context/repeater-context */
+
+/*! ../../components/control-repeater/items/edit-item-popover */
+
 /*! ../../components/item-selector */
 
 /*! ../../components/popover-content */
 
 /*! ../../components/popover-grid-container */
 
-/*! ../../components/unstable-repeater */
-
-/*! ../../components/unstable-repeater/actions/disable-item-action */
-
-/*! ../../components/unstable-repeater/actions/duplicate-item-action */
-
-/*! ../../components/unstable-repeater/actions/remove-item-action */
-
-/*! ../../components/unstable-repeater/context/repeater-context */
-
-/*! ../../components/unstable-repeater/items/edit-item-popover */
-
-/*! ../../components/unstable-repeater/locations */
-
 /*! ../../control-actions/control-actions */
 
 /*! ../../control-adornments/control-adornments */
-
-/*! ../../control-replacements */
 
 /*! ../../create-control */
 
@@ -88,21 +84,13 @@
 
 /*! ../../number-control */
 
+/*! ../../services/event-bus */
+
 /*! ../../size-control */
 
 /*! ../../sortable */
 
 /*! ../../utils/size-control */
-
-/*! ../_virtual/_rollupPluginBabelHelpers.js */
-
-/*! ../actions/disable-item-action */
-
-/*! ../actions/duplicate-item-action */
-
-/*! ../actions/remove-item-action */
-
-/*! ../actions/tooltip-add-item-action */
 
 /*! ../api */
 
@@ -116,9 +104,25 @@
 
 /*! ../components/autocomplete */
 
+/*! ../components/conditional-control-infotip */
+
 /*! ../components/control-form-label */
 
 /*! ../components/control-label */
+
+/*! ../components/control-repeater */
+
+/*! ../components/control-repeater/actions/disable-item-action */
+
+/*! ../components/control-repeater/actions/duplicate-item-action */
+
+/*! ../components/control-repeater/actions/remove-item-action */
+
+/*! ../components/control-repeater/context/repeater-context */
+
+/*! ../components/control-repeater/items/edit-item-popover */
+
+/*! ../components/control-repeater/items/items-container */
 
 /*! ../components/control-toggle-button-group */
 
@@ -140,23 +144,9 @@
 
 /*! ../components/text-field-popover */
 
-/*! ../components/unstable-repeater */
-
-/*! ../components/unstable-repeater/actions/disable-item-action */
-
-/*! ../components/unstable-repeater/actions/duplicate-item-action */
-
-/*! ../components/unstable-repeater/actions/remove-item-action */
-
-/*! ../components/unstable-repeater/context/repeater-context */
-
-/*! ../components/unstable-repeater/items/edit-item-popover */
-
-/*! ../components/unstable-repeater/items/items-container */
-
-/*! ../config/index.js */
-
 /*! ../context/filter-config-context */
+
+/*! ../context/item-context */
 
 /*! ../context/repeater-context */
 
@@ -190,23 +180,17 @@
 
 /*! ../selection-size-control */
 
+/*! ../size-control */
+
 /*! ../size-control/text-field-inner-selection */
 
 /*! ../utils */
 
-/*! ../utils/compose.js */
+/*! ../utils/convert-toggle-options-to-atomic */
 
-/*! ../utils/curry.js */
-
-/*! ../utils/deepMerge.js */
-
-/*! ../utils/isObject.js */
-
-/*! ../utils/makeCancelable.js */
+/*! ../utils/escape-html-attr */
 
 /*! ../utils/size-control */
-
-/*! ../validators/index.js */
 
 /*! ./actions/tooltip-add-item-action */
 
@@ -228,17 +212,19 @@
 
 /*! ./components/control-form-label */
 
+/*! ./components/control-repeater/locations */
+
 /*! ./components/control-toggle-button-group */
 
-/*! ./components/css-code-editor/css-editor */
-
 /*! ./components/floating-bar */
+
+/*! ./components/icon-buttons/clear-icon-button */
 
 /*! ./components/item-selector */
 
 /*! ./components/popover-content */
 
-/*! ./components/unstable-repeater/locations */
+/*! ./components/repeater */
 
 /*! ./conditional-tooltip */
 
@@ -260,6 +246,10 @@
 
 /*! ./control-form-label */
 
+/*! ./control-repeater */
+
+/*! ./control-repeater/locations */
+
 /*! ./control-replacements */
 
 /*! ./controls/aspect-ratio-control */
@@ -280,6 +270,8 @@
 
 /*! ./controls/gap-control */
 
+/*! ./controls/html-tag-control */
+
 /*! ./controls/image-control */
 
 /*! ./controls/key-value-control */
@@ -292,9 +284,13 @@
 
 /*! ./controls/position-control */
 
+/*! ./controls/query-control */
+
 /*! ./controls/repeatable-control */
 
 /*! ./controls/select-control */
+
+/*! ./controls/select-control-wrapper */
 
 /*! ./controls/size-control */
 
@@ -310,9 +306,9 @@
 
 /*! ./controls/toggle-control */
 
-/*! ./controls/transform-control/transform-base-control */
-
 /*! ./controls/transform-control/transform-repeater-control */
+
+/*! ./controls/transform-control/transform-settings-control */
 
 /*! ./controls/transition-control/data */
 
@@ -321,10 +317,6 @@
 /*! ./controls/url-control */
 
 /*! ./create-control */
-
-/*! ./css-editor.styles */
-
-/*! ./css-validation */
 
 /*! ./data */
 
@@ -358,21 +350,21 @@
 
 /*! ./initial-values */
 
-/*! ./items/edit-item-popover */
+/*! ./item-context */
 
 /*! ./items/item */
 
 /*! ./items/items-container */
 
-/*! ./loader/index.js */
-
 /*! ./prop-context */
 
 /*! ./prop-key-context */
 
-/*! ./resize-handle */
+/*! ./query-control */
 
 /*! ./scale-axis-row */
+
+/*! ./section-content */
 
 /*! ./select-control */
 
@@ -382,11 +374,13 @@
 
 /*! ./size-control */
 
+/*! ./sortable */
+
 /*! ./switch-control */
 
 /*! ./text-control */
 
-/*! ./transform-base-control */
+/*! ./trainsition-events */
 
 /*! ./transform-base-controls/children-perspective-control */
 
@@ -398,9 +392,9 @@
 
 /*! ./transform-label */
 
-/*! ./transition-selector */
+/*! ./transform-settings-control */
 
-/*! ./unstable-repeater */
+/*! ./transition-selector */
 
 /*! ./use-background-tabs-history */
 
@@ -426,6 +420,8 @@
 
 /*! @elementor/locations */
 
+/*! @elementor/mixpanel */
+
 /*! @elementor/query */
 
 /*! @elementor/session */
@@ -436,15 +432,9 @@
 
 /*! @elementor/wp-media */
 
-/*! @monaco-editor/loader */
-
-/*! @monaco-editor/react */
-
 /*! @wordpress/i18n */
 
 /*! react */
-
-/*! state-local */
 
 /*!**************************!*\
   !*** external ["React"] ***!
@@ -486,6 +476,10 @@
   !*** external ["elementorV2","editorUi"] ***!
   \*******************************************/
 
+/*!*******************************************!*\
+  !*** external ["elementorV2","mixpanel"] ***!
+  \*******************************************/
+
 /*!********************************************!*\
   !*** external ["elementorV2","locations"] ***!
   \********************************************/
@@ -522,45 +516,25 @@
   !*** ./packages/packages/libs/editor-controls/src/index.ts ***!
   \*************************************************************/
 
-/*!*****************************************************************!*\
-  !*** ./packages/node_modules/state-local/lib/es/state-local.js ***!
-  \*****************************************************************/
-
-/*!*******************************************************************!*\
-  !*** ./packages/node_modules/@monaco-editor/react/dist/index.mjs ***!
-  \*******************************************************************/
-
-/*!*********************************************************************!*\
-  !*** ./packages/node_modules/@monaco-editor/loader/lib/es/index.js ***!
-  \*********************************************************************/
-
 /*!***********************************************************************!*\
   !*** ./packages/packages/libs/editor-controls/src/create-control.tsx ***!
   \***********************************************************************/
 
 /*!**************************************************************************!*\
+  !*** ./packages/packages/libs/editor-controls/src/services/event-bus.ts ***!
+  \**************************************************************************/
+
+/*!**************************************************************************!*\
   !*** ./packages/packages/libs/editor-controls/src/utils/size-control.ts ***!
   \**************************************************************************/
 
-/*!***************************************************************************!*\
-  !*** ./packages/node_modules/@monaco-editor/loader/lib/es/utils/curry.js ***!
-  \***************************************************************************/
-
 /*!****************************************************************************!*\
-  !*** ./packages/node_modules/@monaco-editor/loader/lib/es/config/index.js ***!
-  \****************************************************************************/
-
-/*!****************************************************************************!*\
-  !*** ./packages/node_modules/@monaco-editor/loader/lib/es/loader/index.js ***!
+  !*** ./packages/packages/libs/editor-controls/src/components/repeater.tsx ***!
   \****************************************************************************/
 
 /*!****************************************************************************!*\
   !*** ./packages/packages/libs/editor-controls/src/components/sortable.tsx ***!
   \****************************************************************************/
-
-/*!*****************************************************************************!*\
-  !*** ./packages/node_modules/@monaco-editor/loader/lib/es/utils/compose.js ***!
-  \*****************************************************************************/
 
 /*!*****************************************************************************!*\
   !*** ./packages/packages/libs/editor-controls/src/control-replacements.tsx ***!
@@ -575,10 +549,6 @@
   \*****************************************************************************/
 
 /*!******************************************************************************!*\
-  !*** ./packages/node_modules/@monaco-editor/loader/lib/es/utils/isObject.js ***!
-  \******************************************************************************/
-
-/*!******************************************************************************!*\
   !*** ./packages/packages/libs/editor-controls/src/controls/link-control.tsx ***!
   \******************************************************************************/
 
@@ -590,9 +560,9 @@
   !*** ./packages/packages/libs/editor-controls/src/controls/text-control.tsx ***!
   \******************************************************************************/
 
-/*!*******************************************************************************!*\
-  !*** ./packages/node_modules/@monaco-editor/loader/lib/es/utils/deepMerge.js ***!
-  \*******************************************************************************/
+/*!******************************************************************************!*\
+  !*** ./packages/packages/libs/editor-controls/src/utils/escape-html-attr.ts ***!
+  \******************************************************************************/
 
 /*!*******************************************************************************!*\
   !*** ./packages/packages/libs/editor-controls/src/controls/color-control.tsx ***!
@@ -602,9 +572,9 @@
   !*** ./packages/packages/libs/editor-controls/src/controls/image-control.tsx ***!
   \*******************************************************************************/
 
-/*!********************************************************************************!*\
-  !*** ./packages/node_modules/@monaco-editor/loader/lib/es/validators/index.js ***!
-  \********************************************************************************/
+/*!*******************************************************************************!*\
+  !*** ./packages/packages/libs/editor-controls/src/controls/query-control.tsx ***!
+  \*******************************************************************************/
 
 /*!********************************************************************************!*\
   !*** ./packages/packages/libs/editor-controls/src/bound-prop-context/index.ts ***!
@@ -655,6 +625,10 @@
   \*********************************************************************************/
 
 /*!**********************************************************************************!*\
+  !*** ./packages/packages/libs/editor-controls/src/controls/html-tag-control.tsx ***!
+  \**********************************************************************************/
+
+/*!**********************************************************************************!*\
   !*** ./packages/packages/libs/editor-controls/src/controls/position-control.tsx ***!
   \**********************************************************************************/
 
@@ -677,10 +651,6 @@
 /*!***********************************************************************************!*\
   !*** ./packages/packages/libs/editor-controls/src/controls/text-area-control.tsx ***!
   \***********************************************************************************/
-
-/*!************************************************************************************!*\
-  !*** ./packages/node_modules/@monaco-editor/loader/lib/es/utils/makeCancelable.js ***!
-  \************************************************************************************/
 
 /*!************************************************************************************!*\
   !*** ./packages/packages/libs/editor-controls/src/controls/repeatable-control.tsx ***!
@@ -735,6 +705,10 @@
   \****************************************************************************************/
 
 /*!****************************************************************************************!*\
+  !*** ./packages/packages/libs/editor-controls/src/controls/select-control-wrapper.tsx ***!
+  \****************************************************************************************/
+
+/*!****************************************************************************************!*\
   !*** ./packages/packages/libs/editor-controls/src/controls/selection-size-control.tsx ***!
   \****************************************************************************************/
 
@@ -747,15 +721,15 @@
   \*****************************************************************************************/
 
 /*!*****************************************************************************************!*\
+  !*** ./packages/packages/libs/editor-controls/src/components/control-repeater/index.ts ***!
+  \*****************************************************************************************/
+
+/*!*****************************************************************************************!*\
   !*** ./packages/packages/libs/editor-controls/src/hooks/use-unfiltered-files-upload.ts ***!
   \*****************************************************************************************/
 
 /*!******************************************************************************************!*\
   !*** ./packages/packages/libs/editor-controls/src/components/popover-grid-container.tsx ***!
-  \******************************************************************************************/
-
-/*!******************************************************************************************!*\
-  !*** ./packages/packages/libs/editor-controls/src/components/unstable-repeater/index.ts ***!
   \******************************************************************************************/
 
 /*!*******************************************************************************************!*\
@@ -787,6 +761,10 @@
   \********************************************************************************************/
 
 /*!*********************************************************************************************!*\
+  !*** ./packages/packages/libs/editor-controls/src/components/control-repeater/locations.ts ***!
+  \*********************************************************************************************/
+
+/*!*********************************************************************************************!*\
   !*** ./packages/packages/libs/editor-controls/src/controls/box-shadow-repeater-control.tsx ***!
   \*********************************************************************************************/
 
@@ -799,16 +777,16 @@
   \*********************************************************************************************/
 
 /*!**********************************************************************************************!*\
-  !*** ./packages/packages/libs/editor-controls/src/components/css-code-editor/css-editor.tsx ***!
-  \**********************************************************************************************/
-
-/*!**********************************************************************************************!*\
-  !*** ./packages/packages/libs/editor-controls/src/components/unstable-repeater/locations.ts ***!
-  \**********************************************************************************************/
-
-/*!**********************************************************************************************!*\
   !*** ./packages/packages/libs/editor-controls/src/control-adornments/control-adornments.tsx ***!
   \**********************************************************************************************/
+
+/*!***********************************************************************************************!*\
+  !*** ./packages/packages/libs/editor-controls/src/components/conditional-control-infotip.tsx ***!
+  \***********************************************************************************************/
+
+/*!***********************************************************************************************!*\
+  !*** ./packages/packages/libs/editor-controls/src/components/control-repeater/items/item.tsx ***!
+  \***********************************************************************************************/
 
 /*!***********************************************************************************************!*\
   !*** ./packages/packages/libs/editor-controls/src/components/control-toggle-button-group.tsx ***!
@@ -818,28 +796,24 @@
   !*** ./packages/packages/libs/editor-controls/src/controls/filter-control/filter-content.tsx ***!
   \***********************************************************************************************/
 
-/*!************************************************************************************************!*\
-  !*** ./packages/packages/libs/editor-controls/src/components/unstable-repeater/items/item.tsx ***!
-  \************************************************************************************************/
+/*!***********************************************************************************************!*\
+  !*** ./packages/packages/libs/editor-controls/src/utils/convert-toggle-options-to-atomic.tsx ***!
+  \***********************************************************************************************/
 
 /*!************************************************************************************************!*\
   !*** ./packages/packages/libs/editor-controls/src/control-actions/control-actions-context.tsx ***!
   \************************************************************************************************/
 
 /*!*************************************************************************************************!*\
-  !*** ./packages/packages/libs/editor-controls/src/components/css-code-editor/css-validation.ts ***!
-  \*************************************************************************************************/
-
-/*!*************************************************************************************************!*\
-  !*** ./packages/packages/libs/editor-controls/src/components/css-code-editor/resize-handle.tsx ***!
-  \*************************************************************************************************/
-
-/*!*************************************************************************************************!*\
   !*** ./packages/packages/libs/editor-controls/src/controls/transform-control/initial-values.ts ***!
   \*************************************************************************************************/
 
 /*!**************************************************************************************************!*\
-  !*** ./packages/node_modules/@monaco-editor/loader/lib/es/_virtual/_rollupPluginBabelHelpers.js ***!
+  !*** ./packages/packages/libs/editor-controls/src/components/control-repeater/header/header.tsx ***!
+  \**************************************************************************************************/
+
+/*!**************************************************************************************************!*\
+  !*** ./packages/packages/libs/editor-controls/src/components/icon-buttons/clear-icon-button.tsx ***!
   \**************************************************************************************************/
 
 /*!**************************************************************************************************!*\
@@ -859,10 +833,6 @@
   \**************************************************************************************************/
 
 /*!***************************************************************************************************!*\
-  !*** ./packages/packages/libs/editor-controls/src/components/unstable-repeater/header/header.tsx ***!
-  \***************************************************************************************************/
-
-/*!***************************************************************************************************!*\
   !*** ./packages/packages/libs/editor-controls/src/controls/transform-control/functions/scale.tsx ***!
   \***************************************************************************************************/
 
@@ -871,12 +841,12 @@
   \***************************************************************************************************/
 
 /*!****************************************************************************************************!*\
-  !*** ./packages/packages/libs/editor-controls/src/components/css-code-editor/css-editor.styles.ts ***!
-  \****************************************************************************************************/
-
-/*!****************************************************************************************************!*\
   !*** ./packages/packages/libs/editor-controls/src/controls/transform-control/functions/rotate.tsx ***!
   \****************************************************************************************************/
+
+/*!*****************************************************************************************************!*\
+  !*** ./packages/packages/libs/editor-controls/src/components/control-repeater/control-repeater.tsx ***!
+  \*****************************************************************************************************/
 
 /*!*****************************************************************************************************!*\
   !*** ./packages/packages/libs/editor-controls/src/controls/transform-control/transform-content.tsx ***!
@@ -890,9 +860,9 @@
   !*** ./packages/packages/libs/editor-controls/src/controls/transform-control/functions/axis-row.tsx ***!
   \******************************************************************************************************/
 
-/*!*******************************************************************************************************!*\
-  !*** ./packages/packages/libs/editor-controls/src/components/unstable-repeater/unstable-repeater.tsx ***!
-  \*******************************************************************************************************/
+/*!******************************************************************************************************!*\
+  !*** ./packages/packages/libs/editor-controls/src/controls/transition-control/trainsition-events.ts ***!
+  \******************************************************************************************************/
 
 /*!*******************************************************************************************************!*\
   !*** ./packages/packages/libs/editor-controls/src/controls/background-control/background-control.tsx ***!
@@ -907,32 +877,32 @@
   \********************************************************************************************************/
 
 /*!*********************************************************************************************************!*\
+  !*** ./packages/packages/libs/editor-controls/src/components/control-repeater/context/item-context.tsx ***!
+  \*********************************************************************************************************/
+
+/*!*********************************************************************************************************!*\
   !*** ./packages/packages/libs/editor-controls/src/controls/font-family-control/font-family-control.tsx ***!
   \*********************************************************************************************************/
 
 /*!**********************************************************************************************************!*\
-  !*** ./packages/packages/libs/editor-controls/src/controls/transform-control/transform-base-control.tsx ***!
+  !*** ./packages/packages/libs/editor-controls/src/components/control-repeater/items/items-container.tsx ***!
   \**********************************************************************************************************/
 
 /*!***********************************************************************************************************!*\
   !*** ./packages/packages/libs/editor-controls/src/components/size-control/text-field-inner-selection.tsx ***!
   \***********************************************************************************************************/
 
-/*!***********************************************************************************************************!*\
-  !*** ./packages/packages/libs/editor-controls/src/components/unstable-repeater/items/items-container.tsx ***!
-  \***********************************************************************************************************/
+/*!************************************************************************************************************!*\
+  !*** ./packages/packages/libs/editor-controls/src/components/control-repeater/items/edit-item-popover.tsx ***!
+  \************************************************************************************************************/
 
 /*!************************************************************************************************************!*\
   !*** ./packages/packages/libs/editor-controls/src/controls/transform-control/functions/scale-axis-row.tsx ***!
   \************************************************************************************************************/
 
 /*!*************************************************************************************************************!*\
-  !*** ./packages/packages/libs/editor-controls/src/components/unstable-repeater/items/edit-item-popover.tsx ***!
+  !*** ./packages/packages/libs/editor-controls/src/components/control-repeater/context/repeater-context.tsx ***!
   \*************************************************************************************************************/
-
-/*!**************************************************************************************************************!*\
-  !*** ./packages/packages/libs/editor-controls/src/components/unstable-repeater/context/repeater-context.tsx ***!
-  \**************************************************************************************************************/
 
 /*!**************************************************************************************************************!*\
   !*** ./packages/packages/libs/editor-controls/src/controls/filter-control/context/filter-config-context.tsx ***!
@@ -943,24 +913,28 @@
   \**************************************************************************************************************/
 
 /*!**************************************************************************************************************!*\
+  !*** ./packages/packages/libs/editor-controls/src/controls/transform-control/transform-settings-control.tsx ***!
+  \**************************************************************************************************************/
+
+/*!**************************************************************************************************************!*\
   !*** ./packages/packages/libs/editor-controls/src/controls/transform-control/use-transform-tabs-history.tsx ***!
   \**************************************************************************************************************/
 
+/*!***************************************************************************************************************!*\
+  !*** ./packages/packages/libs/editor-controls/src/components/control-repeater/actions/remove-item-action.tsx ***!
+  \***************************************************************************************************************/
+
 /*!****************************************************************************************************************!*\
-  !*** ./packages/packages/libs/editor-controls/src/components/unstable-repeater/actions/remove-item-action.tsx ***!
+  !*** ./packages/packages/libs/editor-controls/src/components/control-repeater/actions/disable-item-action.tsx ***!
   \****************************************************************************************************************/
 
 /*!****************************************************************************************************************!*\
   !*** ./packages/packages/libs/editor-controls/src/controls/transition-control/transition-repeater-control.tsx ***!
   \****************************************************************************************************************/
 
-/*!*****************************************************************************************************************!*\
-  !*** ./packages/packages/libs/editor-controls/src/components/unstable-repeater/actions/disable-item-action.tsx ***!
-  \*****************************************************************************************************************/
-
-/*!*******************************************************************************************************************!*\
-  !*** ./packages/packages/libs/editor-controls/src/components/unstable-repeater/actions/duplicate-item-action.tsx ***!
-  \*******************************************************************************************************************/
+/*!******************************************************************************************************************!*\
+  !*** ./packages/packages/libs/editor-controls/src/components/control-repeater/actions/duplicate-item-action.tsx ***!
+  \******************************************************************************************************************/
 
 /*!*******************************************************************************************************************!*\
   !*** ./packages/packages/libs/editor-controls/src/controls/filter-control/drop-shadow/drop-shadow-item-label.tsx ***!
@@ -970,9 +944,9 @@
   !*** ./packages/packages/libs/editor-controls/src/controls/filter-control/single-size/single-size-item-label.tsx ***!
   \*******************************************************************************************************************/
 
-/*!*********************************************************************************************************************!*\
-  !*** ./packages/packages/libs/editor-controls/src/components/unstable-repeater/actions/tooltip-add-item-action.tsx ***!
-  \*********************************************************************************************************************/
+/*!********************************************************************************************************************!*\
+  !*** ./packages/packages/libs/editor-controls/src/components/control-repeater/actions/tooltip-add-item-action.tsx ***!
+  \********************************************************************************************************************/
 
 /*!*********************************************************************************************************************!*\
   !*** ./packages/packages/libs/editor-controls/src/controls/filter-control/drop-shadow/drop-shadow-item-content.tsx ***!

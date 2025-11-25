@@ -4,7 +4,6 @@
  * @var $router NinjaTables\Framework\Http\Router\Router
  */
 
-use NinjaTables\App\Http\Controllers\ExportTableController;
 use NinjaTables\App\Http\Controllers\FluentFormsController;
 use NinjaTables\App\Http\Controllers\ImportController;
 use NinjaTables\App\Http\Controllers\PluginInstallerController;

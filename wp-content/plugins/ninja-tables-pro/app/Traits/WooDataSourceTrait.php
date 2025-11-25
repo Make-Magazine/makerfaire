@@ -3,6 +3,7 @@
 namespace NinjaTablesPro\App\Traits;
 
 use NinjaTables\Framework\Support\Arr;
+use NinjaTablesPro\App\Application;
 
 trait WooDataSourceTrait
 {
@@ -12,12 +13,12 @@ trait WooDataSourceTrait
 
     public function buildWPQuery($data)
     {
-        $columns      = isset($data['formatted_columns']) ? $data['formatted_columns'] : [];
-        $tableId      = $data['tableId'];
-        $whereClauses = isset($data['where']) ? $data['where'] : [];
-        $postTypes    = isset($data['post_types']) ? $data['post_types'] : [];
-        $perPage      = $this->get($data, 'per_page', -1);
-        $offset       = $this->get($data, 'offset', 0);
+        $columns      = Arr::get($data, 'formatted_columns', []);
+        $tableId      = Arr::get($data, 'tableId');
+        $whereClauses = Arr::get($data, 'where', []);
+        $postTypes    = Arr::get($data, 'post_types', []);
+        $perPage      = (int)Arr::get($data, 'per_page', -1);
+        $offset       = (int)Arr::get($data, 'offset', 0);
 
         $args = [
             'post_type'      => $postTypes,
@@ -26,17 +27,18 @@ trait WooDataSourceTrait
             'post_status'    => 'publish',
         ];
 
-        if ($data['order_query']) {
-            $args = wp_parse_args($args, $data['order_query']);
+        $orderQuery = Arr::get($data, 'order_query', []);
+        if ($orderQuery) {
+            $args = wp_parse_args($args, $orderQuery);
         }
 
         $args = $this->buildQueryArgsForPostFields($args, $whereClauses);
 
         $args = $this->buildQueryArgsForTaxonomies($args, $whereClauses);
 
-        $args  = apply_filters('ninja_table_post_table_args', $args, $data);
-        $args  = apply_filters('ninja_table_post_table_args_' . $tableId, $args, $data);
-        
+        $args = apply_filters('ninja_table_post_table_args', $args, $data);
+        $args = apply_filters('ninja_table_post_table_args_' . $tableId, $args, $data);
+
         $query = (new \WP_Query($args));
         $posts = $query->posts;
 
@@ -48,22 +50,22 @@ trait WooDataSourceTrait
         foreach ($posts as $post_index => $post) {
             $data = [];
             foreach ($columns as $column_key => $column) {
-                if ($column['type'] == 'post_data') {
+                if (Arr::get($column, 'type') == 'post_data') {
                     $data[$column_key] = $this->getPostData($post, $column);
-                } elseif ($column['type'] == 'tax_data') {
+                } elseif (Arr::get($column, 'type') == 'tax_data') {
                     $data[$column_key] = $this->getTaxData($post, $column);
-                } elseif ($column['type'] == 'custom') {
+                } elseif (Arr::get($column, 'type') == 'custom') {
                     $data[$column_key] = $this->getCustomData($post, $column);
-                } elseif ($column['type'] == 'author_data') {
+                } elseif (Arr::get($column, 'type') == 'author_data') {
                     $data[$column_key] = $this->getAuthorData($post, $column);
-                } elseif ($column['type'] == 'product_data') {
-                    if ( ! isset($cachedProducts[$post->ID])) {
+                } elseif (Arr::get($column, 'type') == 'product_data') {
+                    if (!isset($cachedProducts[$post->ID])) {
                         $cachedProducts[$post->ID] = wc_get_product($post->ID);
                     }
                     $product           = $cachedProducts[$post->ID];
                     $data[$column_key] = $this->getProductData($product, $column);
-                } elseif ($column['type'] == 'shortcode') {
-                    $value = $this->get($column['column_settings'], 'wp_post_custom_data_value');
+                } elseif (Arr::get($column, 'type') == 'shortcode') {
+                    $value = Arr::get($column, 'column_settings.wp_post_custom_data_value');
                     $codes = $this->getShortCodes($value, $post);
                     if ($codes) {
                         $value = str_replace(array_keys($codes), array_values($codes), $value);
@@ -82,15 +84,17 @@ trait WooDataSourceTrait
 
     private function getTaxData($post, $column)
     {
-        $tax = $this->get($column['column_settings'], 'wp_post_custom_data_key');
-
-        $separator = $this->get($column['column_settings'], 'taxonomy_separator', ', ');
+        $tax       = Arr::get($column, 'column_settings.wp_post_custom_data_key');
+        $separator = Arr::get($column, 'column_settings.taxonomy_separator', ', ');
 
         $atts = '';
-        if ($column['permalinked'] == 'yes') {
-            if ($column['filter_permalinked'] == 'yes') {
-                $atts = ' data-target_column=' . $column['key'] . ' class="ninja_table_permalink ninja_table_do_column_filter" ';
-            } elseif ($column['permalink_target'] == '_blank') {
+        if (Arr::get($column, 'permalinked') == 'yes') {
+            if (Arr::get($column, 'filter_permalinked') == 'yes') {
+                $atts = ' data-target_column=' . Arr::get(
+                        $column,
+                        'key'
+                    ) . ' class="ninja_table_permalink ninja_table_do_column_filter" ';
+            } elseif (Arr::get($column, 'permalink_target') == '_blank') {
                 $atts = ' class="ninja_table_tax_permalink" target="_blank" ';
             } else {
                 $atts = ' class="ninja_table_tax_permalink" ';
@@ -101,7 +105,7 @@ trait WooDataSourceTrait
             if ($atts) {
                 $link = get_term_link($term);
 
-                return "<a " . $atts . " href='{$link}'>{$term->name}</a>";
+                return "<a " . $atts . " href='" . esc_url($link) . "'>" . esc_html($term->name) . "</a>";
             }
 
             return $term->name;
@@ -122,12 +126,12 @@ trait WooDataSourceTrait
             }
         }
 
-        $original_name = $this->get($column['column_settings'], 'wp_post_custom_data_key');
+        $original_name = Arr::get($column, 'column_settings.wp_post_custom_data_key');
         $value         = '';
         if (property_exists($post, $original_name)) {
             $value = $post->{$original_name};
         }
-        if ( ! $value) {
+        if (!$value) {
             return '';
         }
 
@@ -139,69 +143,105 @@ trait WooDataSourceTrait
         }
 
         // Check if linkable
-        if ($column['permalinked'] == 'yes') {
+        if (Arr::get($column, 'permalinked') == 'yes') {
             $atts = '';
-            if ($column['permalink_target'] == '_blank') {
+            if (Arr::get($column, 'permalink_target') == '_blank') {
                 $atts = 'target="_blank"';
             }
 
-            return '<a ' . $atts . ' title="' . $post->post_title . '" class="ninja_table_permalink" href="' . get_the_permalink($post) . '">' . $value . '</a>';
+            return '<a ' . esc_attr($atts) . ' title="' . esc_attr($post->post_title) . '" class="ninja_table_permalink" 
+                    href="' . esc_url(get_the_permalink($post)) . '">' . esc_html($value) . '</a>';
         }
 
-        return $value;
+        return esc_html($value);
     }
 
     private function getProductData($product, $column)
     {
-        $type  = $this->get($column['column_settings'], 'wp_post_custom_data_key');
-        $value = $this->get($column['column_settings'], 'wp_post_custom_data_value');
+        $type = Arr::get($column, 'column_settings.wp_post_custom_data_key');
         if ($type == 'product_price') {
             return $product->get_price_html();
+        } elseif ($type == 'product_average_rating') {
+            $average_rating = (float)$product->get_average_rating();
+
+            if ($average_rating <= 0) {
+                return esc_html(Arr::get($column, 'column_settings.empty_review_text', 'No rating'));
+            }
+
+            $max_rating      = 5;
+            $filled_stars    = floor($average_rating);
+            $filledStarColor = Arr::get($column, 'column_settings.filled_star_color') ?: '#ffd700';;
+            $emptyStarColor = Arr::get($column, 'column_settings.empty_star_color') ?: '#e0e0e0';
+            $showText       = Arr::get($column, 'column_settings.show_rating_text', 'yes');
+
+            $html = '<div style="display:inline-flex;align-items:center;gap:2px">';
+
+            $html .= str_repeat(
+                '<span style="color:' . esc_attr($filledStarColor) . '">★</span>',
+                $filled_stars
+            );
+
+            $html .= str_repeat(
+                '<span style="color:' . esc_attr($emptyStarColor) . '">★</span>',
+                $max_rating - $filled_stars
+            );
+
+            if (strtolower($showText) === 'yes') {
+                $html .= '<span style="margin-left:8px;color:#666">'
+                         . esc_html(number_format($average_rating, 1)) . '/' . esc_html($max_rating)
+                         . '</span>';
+            }
+
+            $html .= '</div>';
+
+            return $html;
         } elseif ($type == 'buy_now_button') {
-            if ( ! $product->is_in_stock() && apply_filters('ninjatable_hide_out_stock_cart_btn', true, $product)) {
+            if (!$product->is_in_stock() && apply_filters('ninjatable_hide_out_stock_cart_btn', true, $product)) {
                 return 'Out of stock';
             }
             $productType = $product->get_type();
             $html        = '';
-            $value       = Arr::get($column['column_settings'], 'buy_now_button_text');
-            if ( ! $value) {
+            $value       = Arr::get($column, 'column_settings.buy_now_button_text');
+            if (!$value) {
                 $value = $product->add_to_cart_text();
             }
             if ($productType == 'simple') {
-                $html = sprintf('<a href="%s" data-product_id="%d" data-quantity="%s" class="%s">%s</a>',
+                $html = sprintf(
+                    '<a href="%s" data-product_id="%d" data-quantity="%s" class="%s">%s</a>',
                     esc_url($product->add_to_cart_url()),
                     $product->get_id(),
                     '1',
-                    'nt_add_to_cart_' . $product->get_id() . ' nt_button nt_button_woo single_add_to_cart_button button alt wc_product_' . $productType,
+                    'nt_add_to_cart_' . $product->get_id(
+                    ) . ' nt_button nt_button_woo single_add_to_cart_button button alt wc_product_' . $productType,
                     $value
                 );
             } elseif ($productType == 'external') {
-                $html = sprintf('<a target="_blank" rel="noopener" href="%s" class="%s">%s</a>',
+                $html = sprintf(
+                    '<a target="_blank" rel="noopener" href="%s" class="%s">%s</a>',
                     esc_url($product->add_to_cart_url()),
                     'nt_button nt_button_woo nt_button_woo wc_product_' . $productType,
                     esc_html($product->add_to_cart_text())
                 );
             } elseif ($productType == 'variable') {
-                ob_start();
-                $this->variableProduct($product, $value);
-
-                return ob_get_clean();
+                $html = $this->variableProduct($product, $value);
             } else {
-                $html = sprintf('<a target="_blank" rel="noopener" href="%s" class="%s">%s</a>',
+                $html = sprintf(
+                    '<a target="_blank" rel="noopener" href="%s" class="%s">%s</a>',
                     esc_url($product->add_to_cart_url()),
                     'nt_button nt_button_woo nt_button_woo wc_product_' . $productType,
-                    esc_html($product->add_to_cart_text()));
+                    esc_html($product->add_to_cart_text())
+                );
             }
 
-            return '<div class="nt_add_cart_wrapper">' . $html . '</div>';
+            $contentTextAlign = Arr::get($column, 'column_settings.contentAlign', '');
 
+            return '<div class="nt_add_cart_wrapper ' . esc_attr($contentTextAlign) . '">' . $html . '</div>';
         } elseif ($type == 'product_quantity') {
             ob_start();
             $this->getQunatityInput($product);
 
             return ob_get_clean();
         } elseif ($type == 'product_stock_status') {
-
             if ($product->get_stock_status() === 'outofstock') {
                 return 'Out of Stock';
             } elseif ($product->get_stock_status() === 'onbackorder') {
@@ -211,7 +251,6 @@ trait WooDataSourceTrait
             }
 
             return ucwords($product->get_stock_status());
-
         } elseif ($type == 'product_sku') {
             return $product->get_sku();
         }
@@ -228,6 +267,11 @@ trait WooDataSourceTrait
                 'slug'       => $values,
             ]);
             $values = array_column($terms, 'slug');
+
+            if (empty($values) || empty($default_variation)) {
+                return [];
+            }
+
             $keys   = array_values(array_intersect($values, $default_variation));
             $terms  = get_terms([
                 'taxonomy'   => $key,
@@ -237,6 +281,10 @@ trait WooDataSourceTrait
             $values = array_column($terms, 'name');
             $values = array_combine($keys, $values);
         } else {
+            if (empty($values) || empty($default_variation)) {
+                return [];
+            }
+
             $values = array_values(array_intersect($default_variation, $values));
             $values = array_combine($values, $values);
         }
@@ -251,7 +299,7 @@ trait WooDataSourceTrait
 
         $variations_attributes = [];
         foreach ($variations as $variation) {
-            $variation_attributes = $variation['attributes'];
+            $variation_attributes = Arr::get($variation, 'attributes');
             foreach ($variation_attributes as $key => $variation_attribute) {
                 $variations_attributes[$key][] = $variation_attribute;
             }
@@ -286,92 +334,60 @@ trait WooDataSourceTrait
         return $key;
     }
 
-    public function variableProduct($product, $value)
+    public function variableProduct($prod, $value)
     {
-        ?>
-        <div class="nt_add_cart_wrapper">
-            <a href="<?php echo $product->add_to_cart_url(); ?>"
-               data-product_id="<?php echo $product->get_id(); ?>"
-               data-product_type="<?php echo $product->get_type(); ?>"
-               id="ntb_woo_product_variation"
-               data-product_variations="<?php echo htmlentities(json_encode($product->get_available_variations())); ?>"
-               data-quantity="1"
-               class="nt_add_to_cart_<?php echo $product->get_id(); ?> nt_button nt_button_woo single_add_to_cart_button button alt wc_product_<?php echo $product->get_type(); ?>"
-            >
-                <?php echo $value !== 'Select options' ? $value : __('Add to cart', 'ninja-tables-pro'); ?>
-            </a><br>
-            <?php
+        global $product;
+        $product = $prod;
 
-            $variations = $this->getAllEnabledVariations($product);
+        $get_variations       = count($product->get_children()) <= apply_filters(
+                'woocommerce_ajax_variation_threshold',
+                30,
+                $product
+            );
+        $available_variations = $get_variations ? $product->get_available_variations() : false;
+        $attributes           = $product->get_variation_attributes();
+        $selected_attributes  = $product->get_default_attributes();
 
-            foreach ($variations as $key => $variation) {
-                $key                         = $this->makeKey($key);
-                $taxonomy_label              = wc_attribute_label($key, $product);
-                $default_selected_attributes = $product->get_default_attributes();
-                $default_selected_value      = $product->get_variation_default_attribute($key);
+        ob_start();
+        include NINJAPROPLUGIN_PATH . 'app/Views/woocommerce/variation.php';
 
-                ?>
-                <select
-                        data-product_id="<?php echo $product->get_id(); ?>"
-                        id="<?php echo 'attribute_' . $key . '_' . $product->get_id(); ?>"
-                        class="nt_woo_attribute ntb_attribute_select_<?php echo $product->get_id(); ?>"
-                        data-attribute_name="<?php echo 'attribute_' . $key ?>"
-                        data-attribute_label="<?php echo $taxonomy_label ?>"
-                        name="<?php echo 'attribute_' . $key; ?>"
-                        data-default_options="<?php echo htmlentities(json_encode($variation)); ?>"
-                        data-default_attributes="<?php echo htmlentities(json_encode($default_selected_attributes)); ?>"
-                        data-id="<?php echo $key ?>">
-                    <?php
-
-                    if (empty($default_selected_value)) {
-                        echo '<option value="">' . $taxonomy_label . '</option>';
-                    }
-
-                    foreach ($variation as $optionKey => $optionValue) {
-                        $selected = $default_selected_value == $optionKey ? 'selected' : '';
-                        echo '<option value="' . $optionKey . '" ' . $selected . '>' . $optionValue . '</option>';
-                    }
-                    ?>
-                </select>
-                <?php
-            } ?>
-            <span class="selected_price_<?php echo $product->get_id(); ?>"></span>
-        </div>
-        <?php
+        return ob_get_clean();
     }
 
     public function buildQueryArgsForPostFields($args, $whereClauses)
     {
         $this->__queryable_postColumns__ = array_filter($whereClauses, function ($item) {
-            return strpos($item['field'], '.') === false;
+            return strpos(Arr::get($item, 'field'), '.') === false;
         });
 
         foreach ($this->__queryable_postColumns__ as $postColumn) {
-            if ($postColumn['field'] == 'post_status') {
-                if ($postColumn['operator'] == 'NOT IN') {
+            $postColumnField = Arr::get($postColumn, 'field');
+            if ($postColumnField == 'post_status') {
+                if (Arr::get($postColumn, 'operator') == 'NOT IN') {
                     $postStatuses        = array_map(function ($status) {
-                        return $status['key'];
+                        return Arr::get($status, 'key');
                     }, ninjaTablesGetPostStatuses());
                     $postColumn['value'] = array_diff(
-                        $postStatuses, $postColumn['value']
+                        $postStatuses,
+                        Arr::get($postColumn, 'value')
                     );
                 }
-                $args['post_status'] = $postColumn['value'];
-            } elseif ($postColumn['field'] == 'post_author') {
-                $operator = $postColumn['operator'];
+                $args['post_status'] = Arr::get($postColumn, 'value');
+            } elseif ($postColumnField == 'post_author') {
+                $operator = Arr::get($postColumn, 'operator');
                 if ($operator == 'IN') {
                     $operator = 'author__in';
                 } elseif ($operator == 'NOT IN') {
                     $operator = 'author__not_in';
                 }
-                $args[$operator] = $postColumn['value'];
-            } elseif ($postColumn['field'] == 'ID') {
+                $args[$operator] = Arr::get($postColumn, 'value');
+            } elseif ($postColumnField == 'ID') {
                 add_filter('posts_where', [$this, 'WPNinjaTablesPostWhereIDFilter']);
-            } elseif ($postColumn['field'] == 'post_date') {
+            } elseif ($postColumnField == 'post_date') {
                 add_filter('posts_where', [$this, 'WPNinjaTablesPostWherePostDateFilter']);
-            } elseif ($postColumn['field'] == 'post_modified') {
+            } elseif ($postColumnField == 'post_modified') {
                 add_filter('posts_where', [$this, 'WPNinjaTablesPostWherePostModifiedFilter']);
-            } elseif ($postColumn['field'] == 'comment_count') {
+            } elseif ($postColumnField == 'comment_count') {
                 add_filter('posts_where', [$this, 'WPNinjaTablesPostWhereCommentCountFilter']);
             }
         }
@@ -386,8 +402,10 @@ trait WooDataSourceTrait
         remove_filter(current_filter(), [$this, __FUNCTION__]);
 
         foreach ($this->__queryable_postColumns__ as $column) {
-            if ($column['field'] == 'ID') {
-                $where .= " AND {$wpdb->posts}.ID {$column['operator']} {$column['value']}";
+            if (Arr::get($column, 'field') == 'ID') {
+                $operator = Arr::get($column, 'operator');
+                $value    = Arr::get($column, 'value');
+                $where    .= " AND {$wpdb->posts}.ID {$operator} {$value}";
             }
         }
 
@@ -401,8 +419,10 @@ trait WooDataSourceTrait
         remove_filter(current_filter(), [$this, __FUNCTION__]);
 
         foreach ($this->__queryable_postColumns__ as $column) {
-            if ($column['field'] == 'post_date') {
-                $where .= " AND {$wpdb->posts}.post_date {$column['operator']} '{$column['value']}'";
+            if (Arr::get($column, 'field') == 'post_date') {
+                $operator = Arr::get($column, 'operator');
+                $value    = Arr::get($column, 'value');
+                $where    .= " AND {$wpdb->posts}.post_date {$operator} '{$value}'";
             }
         }
 
@@ -416,8 +436,10 @@ trait WooDataSourceTrait
         remove_filter(current_filter(), [$this, __FUNCTION__]);
 
         foreach ($this->__queryable_postColumns__ as $column) {
-            if ($column['field'] == 'post_modified') {
-                $where .= " AND {$wpdb->posts}.post_modified {$column['operator']} '{$column['value']}'";
+            if (Arr::get($column, 'field') == 'post_modified') {
+                $operator = Arr::get($column, 'operator');
+                $value    = Arr::get($column, 'value');
+                $where    .= " AND {$wpdb->posts}.post_modified {$operator} '{$value}'";
             }
         }
 
@@ -431,8 +453,10 @@ trait WooDataSourceTrait
         remove_filter(current_filter(), [$this, __FUNCTION__]);
 
         foreach ($this->__queryable_postColumns__ as $column) {
-            if ($column['field'] == 'comment_count') {
-                $where .= " AND {$wpdb->posts}.comment_count {$column['operator']} {$column['value']}";
+            if (Arr::get($column, 'field') == 'comment_count') {
+                $operator = Arr::get($column, 'operator');
+                $value    = Arr::get($column, 'value');
+                $where    .= " AND {$wpdb->posts}.comment_count {$operator} {$value}";
             }
         }
 
@@ -442,7 +466,7 @@ trait WooDataSourceTrait
     public function buildQueryArgsForTaxonomies($args, $whereClauses)
     {
         $taxonomies = array_filter($whereClauses, function ($item) {
-            return strpos($item['field'], '.') !== false;
+            return strpos(Arr::get($item, 'field'), '.') !== false;
         });
 
         global $ninja_table_current_rendering_table;
@@ -458,16 +482,14 @@ trait WooDataSourceTrait
             }
         }
 
-        if ( ! $taxonomies && ! $manualTaxonomies) {
+        if (!$taxonomies && !$manualTaxonomies) {
             return $args;
         }
 
         $taxQueryItems = [];
         foreach ($taxonomies as $taxQuery) {
-            $taxonomy = substr(
-                $taxQuery['field'],
-                strpos($taxQuery['field'], '.') + 1
-            );
+            $field    = Arr::get($taxQuery, 'field');
+            $taxonomy = substr($field, strpos($field, '.') + 1);
 
             if ($manualTaxonomies && $manualTaxonomies[$taxonomy]) {
                 continue;
@@ -476,8 +498,8 @@ trait WooDataSourceTrait
             $taxQueryItems[] = [
                 'field'    => 'slug',
                 'taxonomy' => $taxonomy,
-                'terms'    => $taxQuery['value'],
-                'operator' => $taxQuery['operator']
+                'terms'    => Arr::get($taxQuery, 'value'),
+                'operator' => Arr::get($taxQuery, 'operator')
             ];
         }
 
@@ -566,10 +588,10 @@ trait WooDataSourceTrait
 
     private function getCustomData($post, $column)
     {
-        $type = $column['wp_post_custom_data_source_type'];
+        $type = Arr::get($column, 'wp_post_custom_data_source_type');
 
-        $value = $column['wp_post_custom_data_key'];
-        if ( ! $value) {
+        $value = Arr::get($column, 'wp_post_custom_data_key');
+        if (!$value) {
             return '';
         }
         if ($type == 'acf_field') {
@@ -595,7 +617,6 @@ trait WooDataSourceTrait
         } elseif ($type == 'featured_image') {
             $value = $this->getFeaturedImage($post, $column);
         } else {
-
         }
 
         return $value;
@@ -644,12 +665,11 @@ trait WooDataSourceTrait
 
     private function getAuthorData($post, $column)
     {
-
         $atts = '';
-        if ($column['permalinked'] == 'yes') {
-            if ($column['filter_permalinked'] == 'yes') {
+        if (Arr::get($column, 'permalinked') == 'yes') {
+            if (Arr::get($column, 'filter_permalinked') == 'yes') {
                 $atts = ' class="ninja_table_author_permalink ninja_table_do_column_filter" ';
-            } elseif ($column['permalink_target'] == '_blank') {
+            } elseif (Arr::get($column, 'permalink_target') == '_blank') {
                 $atts .= ' class="ninja_table_author_permalink" target="_blank" ';
             } else {
                 $atts .= ' class="ninja_table_author_permalink" ';
@@ -661,7 +681,10 @@ trait WooDataSourceTrait
         if ($atts && $authorName) {
             $authlink = get_author_posts_url($post->post_author);
 
-            return '<a data-target_column=' . $column['key'] . ' href="' . $authlink . '" ' . $atts . '>' . $authorName . '</a>';
+            return '<a data-target_column=' . Arr::get(
+                    $column,
+                    'key'
+                ) . ' href="' . $authlink . '" ' . $atts . '>' . $authorName . '</a>';
         }
 
         return $authorName;
@@ -669,9 +692,11 @@ trait WooDataSourceTrait
 
     private function getFeaturedImage($post, $column)
     {
-        $featuredImageUrl = get_the_post_thumbnail_url($post,
-            $this->get($column, 'wp_post_custom_data_key', 'thumbnail'));
-        if ( ! $featuredImageUrl) {
+        $featuredImageUrl = get_the_post_thumbnail_url(
+            $post,
+            Arr::get($column, 'wp_post_custom_data_key', 'thumbnail')
+        );
+        if (!$featuredImageUrl) {
             return '';
         }
 
@@ -683,7 +708,7 @@ trait WooDataSourceTrait
         if ($linkType == 'linked') {
             $permalink = get_the_permalink($post);
             $atts      = '';
-            if ($column['permalink_target'] == '_blank') {
+            if (Arr::get($column, 'permalink_target') == '_blank') {
                 $atts = 'target="_blank"';
             }
 
@@ -700,7 +725,7 @@ trait WooDataSourceTrait
     protected function getQueryExtra($tableId)
     {
         $queryExtra = get_post_meta($tableId, '_ninja_wp_posts_query_extra', true);
-        if ( ! $queryExtra || $queryExtra == 'false') {
+        if (!$queryExtra || $queryExtra == 'false') {
             $queryExtra = [
                 'query_limit'     => 6000,
                 'order_by_column' => 'ID',
@@ -708,7 +733,7 @@ trait WooDataSourceTrait
             ];
         }
 
-        if (empty($queryExtra['query_limit'])) {
+        if (empty(Arr::get($queryExtra, 'query_limit'))) {
             $queryExtra['query_limit'] = 7000;
         }
 
@@ -754,11 +779,12 @@ trait WooDataSourceTrait
     public function getWooProductAtrributes()
     {
         $attributes = [
-            'product_price'        => 'Product Price',
-            'product_stock_status' => 'Product Stock Status',
-            'product_quantity'     => 'Product Quantity input field',
-            'buy_now_button'       => 'Buy Now Button',
-            'product_sku'          => 'Product SKU',
+            'product_price'          => 'Product Price',
+            'product_stock_status'   => 'Product Stock Status',
+            'product_quantity'       => 'Product Quantity input field',
+            'buy_now_button'         => 'Buy Now Button',
+            'product_sku'            => 'Product SKU',
+            'product_average_rating' => 'Product Average Rating',
         ];
 
         return [
@@ -871,12 +897,11 @@ trait WooDataSourceTrait
             "placeholder" => 'Select Data Attribute',
             "options"     => $attributes
         ];
-
     }
 
     protected function get($array, $key, $default = false)
     {
-        if ( ! is_array($array)) {
+        if (!is_array($array)) {
             return $default;
         }
         if (isset($array[$key])) {
@@ -891,7 +916,7 @@ trait WooDataSourceTrait
         if ($product->get_type() === 'external' || $product->get_type() === 'grouped') {
             return;
         }
-        if ( ! $product->is_in_stock() && apply_filters('ninjatable_hide_out_stock_cart_btn', true, $product)) {
+        if (!$product->is_in_stock() && apply_filters('ninjatable_hide_out_stock_cart_btn', true, $product)) {
             return '';
         }
 
@@ -899,15 +924,25 @@ trait WooDataSourceTrait
             'input_id'     => uniqid('quantity_'),
             'input_name'   => 'quantity',
             'input_value'  => '1',
-            'max_value'    => apply_filters('woocommerce_quantity_input_max', $product->get_max_purchase_quantity(),
-                $product),
-            'min_value'    => apply_filters('woocommerce_quantity_input_min', $product->get_min_purchase_quantity(),
-                $product),
+            'max_value'    => apply_filters(
+                'woocommerce_quantity_input_max',
+                $product->get_max_purchase_quantity(),
+                $product
+            ),
+            'min_value'    => apply_filters(
+                'woocommerce_quantity_input_min',
+                $product->get_min_purchase_quantity(),
+                $product
+            ),
             'step'         => apply_filters('woocommerce_quantity_input_step', 1, $product),
-            'pattern'      => apply_filters('woocommerce_quantity_input_pattern',
-                has_filter('woocommerce_stock_amount', 'intval') ? '[0-9]*' : ''),
-            'inputmode'    => apply_filters('woocommerce_quantity_input_inputmode',
-                has_filter('woocommerce_stock_amount', 'intval') ? 'numeric' : ''),
+            'pattern'      => apply_filters(
+                'woocommerce_quantity_input_pattern',
+                has_filter('woocommerce_stock_amount', 'intval') ? '[0-9]*' : ''
+            ),
+            'inputmode'    => apply_filters(
+                'woocommerce_quantity_input_inputmode',
+                has_filter('woocommerce_stock_amount', 'intval') ? 'numeric' : ''
+            ),
             'product_name' => $product ? $product->get_title() : '',
         ], $product);
 
@@ -927,50 +962,74 @@ trait WooDataSourceTrait
         }
         ?>
         <div
-                class="quantity nt-quantity-wrapper nt-noselect nt-display-type-<?php echo $display_type ?>">
-            <?php if ($display_type === 'input'): ?>
+                class="quantity nt-quantity-wrapper nt-noselect nt-display-type-<?php
+                echo $display_type ?>">
+            <?php
+            if ($display_type === 'input'): ?>
                 <span class="nt-minus nt-qty-controller nt-noselect"></span
                 ><input
                         type="number"
-                        data-product_id="<?php echo esc_attr($product->get_id()); ?>"
-                        id="nt_product_qty_<?php echo esc_attr($product->get_id()); ?>"
+                        data-product_id="<?php
+                        echo esc_attr($product->get_id()); ?>"
+                        id="nt_product_qty_<?php
+                        echo esc_attr($product->get_id()); ?>"
                         class="input-text qty text nt_woo_quantity"
-                    <?php if ($product->get_sold_individually()) {
+                    <?php
+                    if ($product->get_sold_individually()) {
                         echo 'disabled';
                     } ?>
-                        step="<?php echo esc_attr($step); ?>"
-                        min="<?php echo esc_attr($min_value); ?>"
-                        max="<?php echo esc_attr(0 < $max_value ? $max_value : ''); ?>"
-                        name="<?php echo esc_attr($input_name); ?>"
-                        value="<?php echo esc_attr($input_value); ?>"
-                        title="<?php echo esc_attr_x('Quantity', 'Product quantity input tooltip', 'woocommerce') ?>"
+                        step="<?php
+                        echo esc_attr($step); ?>"
+                        min="<?php
+                        echo esc_attr($min_value); ?>"
+                        max="<?php
+                        echo esc_attr(0 < $max_value ? $max_value : ''); ?>"
+                        name="<?php
+                        echo esc_attr($input_name); ?>"
+                        value="<?php
+                        echo esc_attr($input_value); ?>"
+                        title="<?php
+                        echo esc_attr_x('Quantity', 'Product quantity input tooltip', 'ninja-tables-pro'); ?>"
                         size="4"
-                        pattern="<?php echo esc_attr($pattern); ?>"
-                        inputmode="<?php echo esc_attr($inputmode); ?>"
-                        aria-labelledby="<?php echo ! empty($args['product_name']) ? sprintf(esc_attr__('%s quantity',
-                            'woocommerce'), $args['product_name']) : ''; ?>"
+                        pattern="<?php
+                        echo esc_attr($pattern); ?>"
+                        inputmode="<?php
+                        echo esc_attr($inputmode); ?>"
+                        aria-labelledby="<?php
+                        // translators: %s is the product name
+                        echo !empty(Arr::get($args, 'product_name')) ? sprintf(
+                            esc_attr__('%s quantity', 'ninja-tables-pro'),
+                            Arr::get($args, 'product_name')
+                        ) : ''; ?>"
                         autocomplete="off"
                 /><span class="nt-plus nt-qty-controller nt-noselect"></span>
-            <?php else: ?>
+            <?php
+            else: ?>
                 <select
                         class="nt-qty-select"
-                        data-nt-qty-label="<?php echo esc_attr($qty_label); ?>"
-                        data-nt-max-qty="<?php echo $max_qty; ?>"
-                        min="<?php echo $min_value; ?>"
+                        data-nt-qty-label="<?php
+                        echo esc_attr($qty_label); ?>"
+                        data-nt-max-qty="<?php
+                        echo $max_qty; ?>"
+                        min="<?php
+                        echo $min_value; ?>"
                 >
-                    <option value="<?php echo $min_value; ?>"><?php echo WooDataSourceTrait . phpesc_html($qty_label); ?></option>
+                    <option value="<?php
+                    echo $min_value; ?>"><?php
+                        echo WooDataSourceTrait . phpesc_html($qty_label); ?></option>
                     <?php
                     $val = $min_value;
-                    if ( ! empty($max_value)) {
+                    if (!empty($max_value)) {
                         $max_qty = $max_value;
                     }
                     while ($val < $max_qty) {
                         $val += $step;
-                        echo '<option value="' . $val . '">' . $val . '</option>';
+                        echo '<option value="' . esc_attr($val) . '">' . esc_html($val) . '</option>';
                     }
                     ?>
                 </select>
-            <?php endif; ?>
+            <?php
+            endif; ?>
         </div>
         <?php
     }

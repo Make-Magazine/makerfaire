@@ -78,7 +78,7 @@ class RawSqlProvider
         // Validate Title
         $messages = array();
         if (empty(Arr::get($_REQUEST, 'post_title'))) {
-            $messages[] = __('The title field is required.', 'ninja-tables');
+            $messages[] = __('The title field is required.', 'ninja-tables-pro');
             wp_send_json_error(array('message' => $messages), 422);
             wp_die();
         }

@@ -35,7 +35,7 @@ const SizeField = ({
 }) => {
   const defaultUnit = (0,_utils_settings__WEBPACK_IMPORTED_MODULE_1__.getDefaultUnit)(propType);
   const units = (0,_utils_settings__WEBPACK_IMPORTED_MODULE_1__.getAvailableUnits)(propType);
-  const parsedValue = (0,_utils_transform_utils__WEBPACK_IMPORTED_MODULE_2__.parseSizeValue)(value, defaultUnit ?? _utils_settings__WEBPACK_IMPORTED_MODULE_1__.DEFAULT_UNIT);
+  const parsedValue = (0,_utils_transform_utils__WEBPACK_IMPORTED_MODULE_2__.parseSizeValue)(value, defaultUnit ?? _utils_settings__WEBPACK_IMPORTED_MODULE_1__.DEFAULT_UNIT, units);
   const [currentValue, setCurrentValue] = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(parsedValue);
   (0,react__WEBPACK_IMPORTED_MODULE_0__.useEffect)(() => {
     const {
@@ -259,6 +259,7 @@ function init() {
     propTypeUtil: _prop_types_size_variable_prop_type__WEBPACK_IMPORTED_MODULE_4__.sizeVariablePropTypeUtil,
     fallbackPropTypeUtil: _elementor_editor_props__WEBPACK_IMPORTED_MODULE_0__.sizePropTypeUtil,
     variableType: 'size',
+    defaultValue: '0px',
     selectionFilter: (variables, propType) => {
       const availableUnits = (0,_utils_settings__WEBPACK_IMPORTED_MODULE_6__.getAvailableUnits)(propType);
       return variables.filter(variable => {
@@ -398,7 +399,7 @@ __webpack_require__.r(__webpack_exports__);
 
 
 // TODO: To be removed when we go for the Prop type structure
-const parseSizeValue = (value, defaultUnit) => {
+const parseSizeValue = (value, defaultUnit, unitsLookup) => {
   if ('string' !== typeof value) {
     if (value?.unit === 'custom') {
       return {
@@ -414,27 +415,32 @@ const parseSizeValue = (value, defaultUnit) => {
     }
     return value;
   }
+  const EMPTY_VALUE = {
+    size: null,
+    unit: defaultUnit ?? _settings__WEBPACK_IMPORTED_MODULE_1__.DEFAULT_UNIT
+  };
+  const unitsToCheck = unitsLookup ?? (0,_sync_get_supported_units__WEBPACK_IMPORTED_MODULE_0__.getSupportedUnits)();
   if (value === 'auto') {
-    return {
-      size: '',
-      unit: value
-    };
+    if (unitsToCheck.includes(value)) {
+      return {
+        size: '',
+        unit: value
+      };
+    }
+    return EMPTY_VALUE;
   }
   const match = value.match(/^(-?\d*\.?\d+)([a-z%]+)$/i);
   if (match) {
     const size = parseFloat(match[1]);
     const unit = match[2];
-    if ((0,_sync_get_supported_units__WEBPACK_IMPORTED_MODULE_0__.getSupportedUnits)().includes(unit)) {
+    if (unitsToCheck.includes(unit)) {
       return {
         size,
         unit
       };
     }
   }
-  return {
-    size: null,
-    unit: defaultUnit ?? _settings__WEBPACK_IMPORTED_MODULE_1__.DEFAULT_UNIT
-  };
+  return EMPTY_VALUE;
 };
 const formatSizeValue = ({
   size,

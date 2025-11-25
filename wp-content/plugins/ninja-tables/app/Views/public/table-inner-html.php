@@ -1,97 +1,97 @@
 <?php
-$table_columns = array_reverse($table_columns);
-$header_row = '';
-$counter = 1;
-$hasImageFunction = function_exists('nt_parse_image_column');
+$ninja_tables_table_columns = array_reverse($table_columns);
+$ninja_tables_header_row = '';
+$ninja_tables_counter = 1;
+$ninja_tables_hasImageFunction = function_exists('nt_parse_image_column');
 ?>
 <thead>
 <tr class="footable-header">
-    <?php foreach ($table_columns as $index => $table_column) : ?>
+    <?php foreach ($ninja_tables_table_columns as $ninja_tables_index => $ninja_tables_table_column) : ?>
         <?php
-        if (strip_tags($table_column['title']) == '#colspan#') {
-            $header_row = '<td class="ninja_temp_cell"></td>' . $header_row;
-            $counter++;
+        if (wp_strip_all_tags($ninja_tables_table_column['title']) == '#colspan#') {
+            $ninja_tables_header_row = '<td class="ninja_temp_cell"></td>' . $ninja_tables_header_row;
+            $ninja_tables_counter++;
             continue;
         }
-        $colspan = '';
-        if ($counter > 1) {
-            $colspan = 'colspan="' . $counter . '"';
+        $ninja_tables_colspan = '';
+        if ($ninja_tables_counter > 1) {
+            $ninja_tables_colspan = 'colspan="' . $ninja_tables_counter . '"';
         }
-        $header_row = '<th scope="col" ' . $colspan . ' class="' . implode(' ', (array)$table_column['classes']) . ' ' . $table_column['breakpoints'] . '">' . do_shortcode($table_column['title']) . '</th>' . $header_row;
+        $ninja_tables_header_row = '<th scope="col" ' . $ninja_tables_colspan . ' class="' . implode(' ', (array)$ninja_tables_table_column['classes']) . ' ' . $ninja_tables_table_column['breakpoints'] . '">' . do_shortcode($ninja_tables_table_column['title']) . '</th>' . $ninja_tables_header_row;
         ?>
-        <?php $counter = 1; endforeach; ?>
-    <?php ninjaTablesPrintSafeVar($header_row); // the $header_row html attributes from admins are already escaped and sanitized ?>
+        <?php $ninja_tables_counter = 1; endforeach; ?>
+    <?php ninjaTablesPrintSafeVar($ninja_tables_header_row); // the $header_row html attributes from admins are already escaped and sanitized ?>
 </tr>
 </thead>
 <tbody>
 
 <?php
-if ($table_rows && count($table_columns)):
-    $columnLength = count($table_columns) - 1;
-    foreach ($table_rows as $row_index => $table_row) :
-        $row = '';
-        $rowId = '';
-        if (isset($table_row['___id___'])) {
-            $rowId = $table_row['___id___'];
+if ($table_rows && count($ninja_tables_table_columns)):
+    $ninja_tables_columnLength = count($ninja_tables_table_columns) - 1;
+    foreach ($table_rows as $ninja_tables_row_index => $ninja_tables_table_row) :
+        $ninja_tables_row = '';
+        $ninja_tables_rowId = '';
+        if (isset($ninja_tables_table_row['___id___'])) {
+            $ninja_tables_rowId = $ninja_tables_table_row['___id___'];
         } else {
-            $rowId = $row_index;
+            $ninja_tables_rowId = $ninja_tables_row_index;
         }
 
-        $row_class = 'ninja_table_row_' . $row_index;
-        $row_class .= ' nt_row_id_' . $rowId;
+        $ninja_tables_row_class = 'ninja_table_row_' . $ninja_tables_row_index;
+        $ninja_tables_row_class .= ' nt_row_id_' . $ninja_tables_rowId;
         ?>
-        <tr data-row_id="<?php echo esc_attr($rowId); ?>" class="<?php echo esc_attr($row_class); ?>">
+        <tr data-row_id="<?php echo esc_attr($ninja_tables_rowId); ?>" class="<?php echo esc_attr($ninja_tables_row_class); ?>">
             <?php
-            $colSpanCounter = 1; // Make the colspan counter 1 at first
-            foreach ($table_columns as $index => $table_column) {
-                $column_value = (isset($table_row[$table_column['name']]) ? $table_row[$table_column['name']] : null);
-                $columnValueDataAtts = '';
-                $columnType = (isset($table_column['original']['data_type']) ? $table_column['original']['data_type'] : null);
-                if (is_array($column_value)) {
-                    if ($columnType == 'image') {
-                        $columnValueDataAtts = json_encode($column_value);
-                        if ($hasImageFunction) {
-                            $column_value = nt_parse_image_column($column_value, $table_column);
+            $ninja_tables_colSpanCounter = 1; // Make the colspan counter 1 at first
+            foreach ($ninja_tables_table_columns as $ninja_tables_index => $ninja_tables_table_column) {
+                $ninja_tables_column_value = (isset($ninja_tables_table_row[$ninja_tables_table_column['name']]) ? $ninja_tables_table_row[$ninja_tables_table_column['name']] : null);
+                $ninja_tables_columnValueDataAtts = '';
+                $ninja_tables_columnType = (isset($ninja_tables_table_column['original']['data_type']) ? $ninja_tables_table_column['original']['data_type'] : null);
+                if (is_array($ninja_tables_column_value)) {
+                    if ($ninja_tables_columnType == 'image') {
+                        $ninja_tables_columnValueDataAtts = json_encode($ninja_tables_column_value);
+                        if ($ninja_tables_hasImageFunction) {
+                            $ninja_tables_column_value = nt_parse_image_column($ninja_tables_column_value, $ninja_tables_table_column);
                         } else {
-                            $column_value = '';
+                            $ninja_tables_column_value = '';
                         }
                     } else {
-                        $columnValueDataAtts = json_encode($column_value);
-                        $column_value = implode(', ', $column_value);
-                        $column_value = do_shortcode($column_value);
+                        $ninja_tables_columnValueDataAtts = json_encode($ninja_tables_column_value);
+                        $ninja_tables_column_value = implode(', ', $ninja_tables_column_value);
+                        $ninja_tables_column_value = do_shortcode($ninja_tables_column_value);
                     }
-                } else if ($columnType == 'button') {
-                    if ($hasImageFunction) {
-                        $column_value = nt_parse_button_column($column_value, $table_column);
+                } else if ($ninja_tables_columnType == 'button') {
+                    if ($ninja_tables_hasImageFunction) {
+                        $ninja_tables_column_value = nt_parse_button_column($ninja_tables_column_value, $ninja_tables_table_column);
                     }
-                } else if(is_string($column_value)) {
-                    $column_value = do_shortcode($column_value);
+                } else if(is_string($ninja_tables_column_value)) {
+                    $ninja_tables_column_value = do_shortcode($ninja_tables_column_value);
                 }
-                $colspan = false;
-                if ($index != $columnLength) {
-                    if ($column_value && strip_tags($column_value) == '#colspan#') {
-                        $row = '<td class="ninja_temp_cell" data-colspan="#colspan#"></td>' . $row;
-                        $colSpanCounter = $colSpanCounter + 1;
+                $ninja_tables_colspan = false;
+                if ($ninja_tables_index != $ninja_tables_columnLength) {
+                    if ($ninja_tables_column_value && wp_strip_all_tags($ninja_tables_column_value) == '#colspan#') {
+                        $ninja_tables_row = '<td class="ninja_temp_cell" data-colspan="#colspan#"></td>' . $ninja_tables_row;
+                        $ninja_tables_colSpanCounter = $ninja_tables_colSpanCounter + 1;
                         // if we get #colspan# value then we are increasing colspan counter by 1 and adding a temp column
                         continue;
                     }
                 }
 
-                if ($colSpanCounter > 1) {
-                    $colspan = ' colspan="' . $colSpanCounter . '"';
+                if ($ninja_tables_colSpanCounter > 1) {
+                    $ninja_tables_colspan = ' colspan="' . $ninja_tables_colSpanCounter . '"';
                     // if colspan counter is greater than 1 then we are adding the colspan into the dom
                 }
 
-                if ($columnValueDataAtts) {
-                    $row = '<td' . $colspan . ' data-json_values=' . $columnValueDataAtts . '>' . $column_value . '</td>' . $row;
+                if ($ninja_tables_columnValueDataAtts) {
+                    $ninja_tables_row = '<td' . $ninja_tables_colspan . ' data-json_values=' . $ninja_tables_columnValueDataAtts . '>' . $ninja_tables_column_value . '</td>' . $ninja_tables_row;
                 } else {
-                    $row = '<td' . $colspan . '>' . $column_value . '</td>' . $row;
+                    $ninja_tables_row = '<td' . $ninja_tables_colspan . '>' . $ninja_tables_column_value . '</td>' . $ninja_tables_row;
                 }
 
-                $colSpanCounter = 1;
+                $ninja_tables_colSpanCounter = 1;
                 // we are reseting the colspan counter value here because the colspan is done for this iteration
             }
-            ninjaTablesPrintSafeVar($row); //the $row html attributes from admins are already escaped and sanitized
+            ninjaTablesPrintSafeVar($ninja_tables_row); //the $row html attributes from admins are already escaped and sanitized
             ?>
         </tr>
     <?php endforeach; ?>

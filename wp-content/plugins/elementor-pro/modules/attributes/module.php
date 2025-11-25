@@ -17,7 +17,7 @@ class Module extends Module_Base {
 	}
 
 	private function is_attributes_active() {
-		return API::is_licence_has_feature( 'atomic-custom-attributes', API::BC_VALIDATION_CALLBACK );
+		return API::is_licence_has_feature( 'atomic-custom-attributes' );
 	}
 
 	public function __construct() {

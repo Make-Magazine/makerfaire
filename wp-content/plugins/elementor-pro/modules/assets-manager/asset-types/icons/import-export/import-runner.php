@@ -34,7 +34,8 @@ class Import_Runner extends Import_Runner_Base {
 
 		$result = [];
 
-		$icon_sets_data = $imported_data['files']['custom-icons']['data'] ?? [];
+		$custom_icons_file_path = $data['extracted_directory_path'] . Import_Export::FILE_NAME;
+		$icon_sets_data = ImportExportUtils::read_json_file( $custom_icons_file_path );
 
 		if ( empty( $icon_sets_data ) ) {
 			return $result;

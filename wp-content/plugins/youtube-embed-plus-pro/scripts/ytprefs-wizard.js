@@ -55,7 +55,7 @@ window._EPYTWIZ_ = window._EPYTWIZ_ || {};
 
     window._EPYTWIZ_.loadmovieplain = window._EPYTWIZ_.loadmovieplain || function (vid)
     {
-        var codetemplate = '<iframe width="600" height="368" src="//www.youtube.com/embed/~ytid?autoplay=1" frameborder="0" allowfullscreen ></iframe>';
+        var codetemplate = '<iframe allow="fullscreen; accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" width="600" height="368" src="//www.youtube.com/embed/~ytid?autoplay=1" frameborder="0" allowfullscreen ></iframe>';
         codetemplate = codetemplate.replace(/~ytid/g, vid);
         $("#watch" + vid).html(codetemplate);
         $('#closeme' + vid).css('display', 'inline');

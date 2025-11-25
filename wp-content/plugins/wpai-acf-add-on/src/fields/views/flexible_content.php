@@ -131,7 +131,7 @@
                                         <td <?php if( $layout['display'] != 'row' ){ pmai_join_attr( $attributes ); } ?>>
                                             <div class="inner">
                                                 <?php
-                                                \wpai_acf_add_on\fields\FieldFactory::create($sub_field, $post, $field_name . "[" . $field['key'] . "][layouts][ROWNUMBER]")->view();
+                                                \pmai_acf_add_on\fields\FieldFactory::create($sub_field, $post, $field_name . "[" . $field['key'] . "][layouts][ROWNUMBER]")->view();
                                                 ?>
                                             </div>
                                         </td>
@@ -298,7 +298,7 @@
                                         <td <?php if( empty($field['layouts'][$key - 1]['display']) or $field['layouts'][$key - 1]['display'] != 'row' ){ pmai_join_attr( $attributes ); } ?>>
                                             <div class="inner">
                                                 <?php
-                                                \wpai_acf_add_on\fields\FieldFactory::create($sub_field, $post, $field_name . "[" . $field['key'] . "][layouts][".$key."]")->view();
+                                                \pmai_acf_add_on\fields\FieldFactory::create($sub_field, $post, $field_name . "[" . $field['key'] . "][layouts][".$key."]")->view();
                                                 ?>
                                             </div>
                                         </td>

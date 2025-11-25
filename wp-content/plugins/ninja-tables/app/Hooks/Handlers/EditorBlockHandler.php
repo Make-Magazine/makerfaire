@@ -47,10 +47,10 @@ class EditorBlockHandler
         ?>
         <script type="text/javascript">
             window.ninja_tables_tiny_mce = {
-                label: '<?php _e('Select a Table to insert', 'ninja-tables') ?>',
-                title: '<?php _e('Insert Ninja Tables Shortcode', 'ninja-tables') ?>',
-                select_error: '<?php _e('Please select a table'); ?>',
-                insert_text: '<?php _e('Insert Shortcode', 'ninja-tables'); ?>',
+                label: '<?php esc_html_e('Select a Table to insert', 'ninja-tables'); ?>',
+                title: '<?php esc_html_e('Insert Ninja Tables Shortcode', 'ninja-tables'); ?>',
+                select_error: '<?php esc_html_e('Please select a table', 'ninja-tables'); ?>',
+                insert_text: '<?php esc_html_e('Insert Shortcode', 'ninja-tables'); ?>',
                 tables: <?php echo json_encode($tables); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped $tables is already escaped before being passed in. ?>,
                 logo: '<?php echo esc_url(NINJA_TABLES_DIR_URL . 'assets/img/ninja-table-editor-button-2x.png'); ?>'
             }
@@ -73,7 +73,7 @@ class EditorBlockHandler
 
         $title = __('Select a Table', 'ninja-tables');
         if ( ! $tables) {
-            $title = __('No Tables found. Please add a table first');
+            __('No Tables found. Please add a table first', 'ninja-tables');
         }
         $formatted[] = array(
             'text'  => $title,
@@ -101,7 +101,7 @@ class EditorBlockHandler
             $app->addAction('wp_head', function () use ($custom_css, $styleId) {
                 ?>
                 <style id="<?php echo esc_attr($styleId); ?>" type='text/css'>
-                    <?php echo ninjaTablesEscCss($custom_css); ?>
+                    <?php echo ninjaTablesEscCss($custom_css); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
                 </style>
                 <?php
             });

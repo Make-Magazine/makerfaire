@@ -1,5 +1,9 @@
 <?php
 
+if (!defined('ABSPATH')) {
+    die(__FILE__);
+}
+
 /**
  * All registered filter's handlers should be in app\Hooks\Handlers,
  * addFilter is similar to add_filter and addCustomFlter is just a

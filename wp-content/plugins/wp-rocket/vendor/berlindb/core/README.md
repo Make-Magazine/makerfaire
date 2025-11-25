@@ -22,7 +22,7 @@ The code in this repository represents the cumulative effort of dozens of indivi
 * WordPress Multisite (<a href="https://make.wordpress.org/core/components/networks-sites/">inspired by</a>)
 * BuddyPress (<a href="https://buddypress.org">inspired by</a>)
 
-These projects all require custom database tables to acheive their goals (and to meet the expecations that their users have in them) to perform and scale flawlessly in a highly available WordPress based web application.
+These projects all require custom database tables to achieve their goals (and to meet the expectations that their users have in them) to perform and scale flawlessly in a highly available WordPress based web application.
 
 Each of these projects originally implemented their own bespoke approaches to database management, resulting in a massive amount of code duplication, rework, and eventual fragmentation of approaches and ideas.
 
@@ -30,4 +30,4 @@ This project helps avoid those issues by (somewhat magically) limiting how much 
 
 ----
 
-This organization was created by (and is managed by) <a href="https://sandhillsdev.com">Sandhills Development, LLC</a>, where we aim to craft superior experiences through ingenuity, with <a href="https://sandhillsdev.com/commitments/">deep commitment</a> to (and appreciation for) the human element.
+This organization was created by <a href="https://github.com/JJJ">John James Jacoby</a> while working at <a href="https://sandhillsdev.com">Sandhills Development, LLC</a>.

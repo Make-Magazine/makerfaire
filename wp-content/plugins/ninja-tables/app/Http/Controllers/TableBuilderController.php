@@ -4,7 +4,7 @@ namespace NinjaTables\App\Http\Controllers;
 
 use NinjaTables\App\Modules\DragAndDrop\InitConfig;
 use NinjaTables\App\Traits\WpPostTrait;
-use NinjaTables\Framework\Request\Request;
+use NinjaTables\Framework\Http\Request\Request;
 use NinjaTables\Framework\Http\Controller;
 use NinjaTables\Framework\Support\Arr;
 use NinjaTables\Framework\Support\Sanitizer;

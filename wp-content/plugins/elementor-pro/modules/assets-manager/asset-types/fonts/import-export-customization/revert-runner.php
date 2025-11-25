@@ -1,8 +1,8 @@
 <?php
 
-namespace ElementorPro\Modules\AssetsManager\AssetTypes\Fonts\ImportExport;
+namespace ElementorPro\Modules\AssetsManager\AssetTypes\Fonts\ImportExportCustomization;
 
-use Elementor\App\Modules\ImportExport\Runners\Revert\Revert_Runner_Base;
+use Elementor\App\Modules\ImportExportCustomization\Runners\Revert\Revert_Runner_Base;
 use ElementorPro\Modules\AssetsManager\AssetTypes\Fonts_Manager;
 use ElementorPro\Modules\AssetsManager\AssetTypes\Fonts\Custom_Fonts;
 

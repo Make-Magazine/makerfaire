@@ -7,15 +7,15 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/berlindb/core.git",
-                "reference": "6a9383ab2dad726bf2d6dbda6687da848eda22ea"
+                "reference": "cff87fafedda560dd4ad768d4dd1afb68a36b8c0"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/berlindb/core/zipball/6a9383ab2dad726bf2d6dbda6687da848eda22ea",
-                "reference": "6a9383ab2dad726bf2d6dbda6687da848eda22ea",
+                "url": "https://api.github.com/repos/berlindb/core/zipball/cff87fafedda560dd4ad768d4dd1afb68a36b8c0",
+                "reference": "cff87fafedda560dd4ad768d4dd1afb68a36b8c0",
                 "shasum": ""
             },
-            "time": "2025-10-23T20:00:35+00:00",
+            "time": "2025-10-31T03:22:40+00:00",
             "default-branch": true,
             "type": "library",
             "installation-source": "dist",
@@ -425,17 +425,17 @@
         },
         {
             "name": "wp-media/wp-mixpanel",
-            "version": "v1.3.0",
-            "version_normalized": "1.3.0.0",
+            "version": "v1.4.0",
+            "version_normalized": "1.4.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/wp-media/wp-mixpanel.git",
-                "reference": "402d47230c2118c0cd40e64b0aa8d936b30d4e4f"
+                "reference": "dfedab2014e816a1040c57d544a6180f1d446624"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/wp-media/wp-mixpanel/zipball/402d47230c2118c0cd40e64b0aa8d936b30d4e4f",
-                "reference": "402d47230c2118c0cd40e64b0aa8d936b30d4e4f",
+                "url": "https://api.github.com/repos/wp-media/wp-mixpanel/zipball/dfedab2014e816a1040c57d544a6180f1d446624",
+                "reference": "dfedab2014e816a1040c57d544a6180f1d446624",
                 "shasum": ""
             },
             "require": {
@@ -452,7 +452,7 @@
                 "wp-coding-standards/wpcs": "^3",
                 "wp-media/phpunit": "^3"
             },
-            "time": "2025-10-06T10:12:28+00:00",
+            "time": "2025-11-12T09:51:35+00:00",
             "type": "library",
             "installation-source": "dist",
             "autoload": {
@@ -477,7 +477,7 @@
             "description": "WordPress Mixpanel Integration",
             "support": {
                 "issues": "https://github.com/wp-media/wp-mixpanel/issues",
-                "source": "https://github.com/wp-media/wp-mixpanel/tree/v1.3.0"
+                "source": "https://github.com/wp-media/wp-mixpanel/tree/v1.4.0"
             },
             "install-path": "../wp-media/wp-mixpanel"
         }

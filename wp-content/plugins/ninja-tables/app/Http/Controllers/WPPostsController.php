@@ -2,7 +2,7 @@
 
 namespace NinjaTables\App\Http\Controllers;
 
-use NinjaTables\Framework\Request\Request;
+use NinjaTables\Framework\Http\Request\Request;
 use NinjaTables\Framework\Support\Arr;
 
 class WPPostsController extends Controller
@@ -12,7 +12,7 @@ class WPPostsController extends Controller
         global $wpdb;
 
         $postStatuses = ninjaTablesGetPostStatuses();
-        $post_fields  = $wpdb->get_col("DESC {$wpdb->prefix}posts");
+        $post_fields  = $wpdb->get_col("DESC {$wpdb->prefix}posts"); // phpcs:ignore WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.DirectDatabaseQuery.DirectQuery
 
         $publicPostTypes = get_post_types(array(
             'public' => true
@@ -77,7 +77,7 @@ class WPPostsController extends Controller
             if ($postTypes) {
                 global $wpdb;
                 $postTypes = implode("','", $postTypes);
-                $authors   = $wpdb->get_results("SELECT {$wpdb->prefix}users.ID, {$wpdb->prefix}users.display_name FROM {$wpdb->prefix}posts INNER JOIN {$wpdb->prefix}users ON {$wpdb->prefix}users.ID = {$wpdb->prefix}posts.post_author WHERE {$wpdb->prefix}posts.post_type IN ('" . $postTypes . "') GROUP BY {$wpdb->prefix}posts.post_author");
+                $authors   = $wpdb->get_results("SELECT {$wpdb->prefix}users.ID, {$wpdb->prefix}users.display_name FROM {$wpdb->prefix}posts INNER JOIN {$wpdb->prefix}users ON {$wpdb->prefix}users.ID = {$wpdb->prefix}posts.post_author WHERE {$wpdb->prefix}posts.post_type IN ('" . $postTypes . "') GROUP BY {$wpdb->prefix}posts.post_author"); // phpcs:ignore WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.PreparedSQL.NotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter
             }
         }
 

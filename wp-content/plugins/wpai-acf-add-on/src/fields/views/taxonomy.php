@@ -9,7 +9,7 @@
             <div class="input">
                 <?php
 
-                if (\wpai_acf_add_on\ACFService::isACFNewerThan('5.0.0')){
+                if (\pmai_acf_add_on\ACFService::isACFNewerThan('5.0.0')){
 
                     $field_class = 'acf_field_' . $field['type'];
 

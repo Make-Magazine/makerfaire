@@ -38,7 +38,7 @@ class Export_Runner extends Export_Runner_Base {
 		foreach ( $code_snippets as $snippet ) {
 			$data = $this->prepare_snippet_data( $snippet );
 			$snippets_data[] = $data;
-			$manifest[ $snippet['custom-code'] ][ $snippet->ID ] = $data;
+			$manifest['custom-code'][ $snippet->ID ] = $data;
 		}
 
 		return [

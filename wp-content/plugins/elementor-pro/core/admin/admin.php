@@ -39,11 +39,9 @@ class Admin extends App {
 	public function enqueue_styles() {
 		$suffix = Utils::is_script_debug() ? '' : '.min';
 
-		$direction_suffix = is_rtl() ? '-rtl' : '';
-
 		wp_register_style(
 			'elementor-pro-admin',
-			ELEMENTOR_PRO_ASSETS_URL . 'css/admin' . $direction_suffix . $suffix . '.css',
+			ELEMENTOR_PRO_URL . 'assets/css/admin' . $suffix . '.css',
 			[],
 			ELEMENTOR_PRO_VERSION
 		);

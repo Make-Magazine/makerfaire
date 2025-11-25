@@ -10,6 +10,8 @@
 
 /*! @elementor/editor-current-user */
 
+/*! @elementor/editor-ui */
+
 /*! @elementor/editor-v1-adapters */
 
 /*! @elementor/locations */
@@ -45,6 +47,10 @@
 /*!****************************************!*\
   !*** external ["elementorV2","store"] ***!
   \****************************************/
+
+/*!*******************************************!*\
+  !*** external ["elementorV2","editorUi"] ***!
+  \*******************************************/
 
 /*!********************************************!*\
   !*** external ["elementorV2","locations"] ***!

@@ -1,4 +1,3 @@
-/*! elementor - v3.32.0 - 21-10-2025 */
 /******/ (() => { // webpackBootstrap
 /******/ 	var __webpack_modules__ = ({
 
@@ -10462,10 +10461,10 @@ var TemplateLibrarySaveTemplateView = Marionette.ItemView.extend({
     setTimeout(function () {
       return _this2.ui.templateNameInput.trigger('focus');
     });
+    var context = this.getOption('context');
     elementor.templates.eventManager.sendPageViewEvent({
       location: elementorCommon.eventsManager.config.secondaryLocations.templateLibrary["".concat(context, "Modal")]
     });
-    var context = this.getOption('context');
     if (_constants.SAVE_CONTEXTS.SAVE === context) {
       this.handleSaveAction();
     }
@@ -10556,7 +10555,6 @@ var TemplateLibrarySaveTemplateView = Marionette.ItemView.extend({
   onFormSubmit: function onFormSubmit(event) {
     var _this$templateHelpers3;
     event.preventDefault();
-    elementor.templates.eventManager.sendNewSaveTemplateClickedEvent();
     var formData = this.ui.form.elementorSerializeObject(),
       JSONParams = {
         remove: ['default']
@@ -11740,7 +11738,23 @@ TemplateLibraryTemplateCloudView = TemplateLibraryTemplateLocalView.extend({
     }
   },
   updatePreviewImgStyle: function updatePreviewImgStyle() {
-    this.ui.previewImg.css('object-fit', 'contain');
+    var _this = this;
+    var img = this.ui.previewImg[0];
+    if (!img) {
+      return;
+    }
+    var applyObjectFit = function applyObjectFit() {
+      var objectFit = img.naturalHeight > 2000 ? 'cover' : 'contain';
+      if ('cover' === objectFit) {
+        _this.ui.previewImg.css('object-fit', 'cover');
+        _this.ui.previewImg.css('object-position', 'top');
+      }
+    };
+    if (img.complete && img.naturalHeight > 0) {
+      applyObjectFit();
+    } else {
+      img.onload = applyObjectFit;
+    }
   },
   shouldGeneratePreview: function shouldGeneratePreview() {
     var view = elementor.templates.getViewSelection();
@@ -15843,6 +15857,21 @@ ControlNumberItemView = ControlBaseDataView.extend({
       }));
     }
   }
+}, {
+  getStyleValue: function getStyleValue(placeholder, controlValue, controlData) {
+    if ('DEFAULT' === placeholder) {
+      return controlData.default;
+    }
+    if (null === controlValue || undefined === controlValue || '' === controlValue) {
+      return controlValue;
+    }
+    var numValue = Number(controlValue);
+    if (!isFinite(numValue) || isNaN(numValue)) {
+      var _controlData$default;
+      return (_controlData$default = controlData.default) !== null && _controlData$default !== void 0 ? _controlData$default : '';
+    }
+    return numValue;
+  }
 });
 module.exports = ControlNumberItemView;
 
@@ -18898,7 +18927,7 @@ var Create = exports.Create = /*#__PURE__*/function (_$e$modules$editor$do) {
          * Acknowledge history of each created item, because we cannot pass the elements when they do not exist
          * in getHistory().
          */
-        if (_this.isHistoryActive()) {
+        if (_this.isHistoryActive() && _this.history) {
           $e.internal('document/history/log-sub-item', {
             container: container,
             type: 'sub-add',
@@ -18995,7 +19024,7 @@ var Delete = exports.Delete = /*#__PURE__*/function (_$e$modules$editor$do) {
         containers = _args$containers2 === void 0 ? [args.container] : _args$containers2;
       containers.forEach(function (container) {
         container = container.lookup();
-        if (_this.isHistoryActive()) {
+        if (_this.isHistoryActive() && _this.history) {
           $e.internal('document/history/log-sub-item', {
             container: container,
             type: 'sub-remove',
@@ -31543,6 +31572,7 @@ BaseElementView = BaseContainer.extend({
     return data;
   },
   save: function save() {
+    elementor.templates.eventManager.sendNewSaveTemplateClickedEvent();
     $e.route('library/save-template', {
       model: this.model
     });
@@ -31656,7 +31686,7 @@ BaseElementView = BaseContainer.extend({
     var _this$model;
     var anchor = event.target.closest('a');
     var hash = (anchor === null || anchor === void 0 ? void 0 : anchor.getAttribute('href')) || ((_this$model = this.model) === null || _this$model === void 0 || (_this$model = _this$model.get('settings')) === null || _this$model === void 0 || (_this$model = _this$model.get('link')) === null || _this$model === void 0 ? void 0 : _this$model.url) || '';
-    if (hash && hash.startsWith('#')) {
+    if (hash && hash.startsWith('#') && !hash.includes('elementor-action')) {
       var _event$target;
       var scrollTargetElem = (_event$target = event.target) === null || _event$target === void 0 ? void 0 : _event$target.ownerDocument.querySelector(hash);
       if (scrollTargetElem) {
@@ -33534,6 +33564,7 @@ var ContainerView = BaseElementView.extend({
    * @return {void}
    */
   saveAsTemplate: function saveAsTemplate() {
+    elementor.templates.eventManager.sendNewSaveTemplateClickedEvent();
     $e.route('library/save-template', {
       model: this.model
     });
@@ -35293,6 +35324,21 @@ var _default = exports["default"] = /*#__PURE__*/function (_Marionette$Composite
       this.collection = this.model.get('elements');
       this.childViewContainer = '.elementor-navigator__elements';
       this.listenTo(this.model, 'change', this.onModelChange).listenTo(this.model.get('settings'), 'change', this.onModelSettingsChange);
+      this.listenTo(this.model, 'change:editor_settings', this.onModelEditorSettingsChange);
+    }
+  }, {
+    key: "onModelEditorSettingsChange",
+    value: function onModelEditorSettingsChange(elementModel, editorSettings) {
+      var _elementModel$changed;
+      if (undefined !== ((_elementModel$changed = elementModel.changed) === null || _elementModel$changed === void 0 || (_elementModel$changed = _elementModel$changed.editor_settings) === null || _elementModel$changed === void 0 ? void 0 : _elementModel$changed.title)) {
+        this.ui.title.text(editorSettings.title);
+      }
+      window.dispatchEvent(new CustomEvent('elementor/element/update_editor_settings', {
+        detail: {
+          element: elementModel,
+          editorSettings: editorSettings
+        }
+      }));
     }
   }, {
     key: "getIndent",
@@ -37883,6 +37929,9 @@ PanelElementsLayoutView = Marionette.LayoutView.extend({
       });
     });
     if (elementor.config.integrationWidgets) {
+      var injectionPoint = elementsCollection.findIndex({
+        widgetType: 'image-carousel'
+      }) + 1;
       jQuery.each(elementor.config.integrationWidgets, function (index, widget) {
         elementsCollection.add({
           name: widget.name,
@@ -37893,10 +37942,7 @@ PanelElementsLayoutView = Marionette.LayoutView.extend({
           integration: true,
           keywords: widget.keywords || []
         }, {
-          // Inject after the image-carousel widget.
-          at: elementsCollection.findIndex({
-            widgetType: 'image-carousel'
-          }) + 1
+          at: injectionPoint
         });
       });
     }
@@ -38003,7 +38049,7 @@ PanelElementsLayoutView = Marionette.LayoutView.extend({
     if (!elementor.userCan('design') || !this.search /* Default panel is not elements */ || !this.search.currentView /* On global elements empty */) {
       return;
     }
-    this.search.currentView.ui.input.focus();
+    this.search.currentView.ui.input.trigger('focus');
   },
   onChildviewChildrenRender: function onChildviewChildrenRender() {
     elementor.getPanelView().updateScrollbar();
@@ -38282,7 +38328,7 @@ module.exports = Marionette.ItemView.extend({
     });
   },
   addToPage: function addToPage() {
-    var _this$model$attribute, _this$model$attribute2;
+    var _this$model$attribute, _this$model$attribute2, _elementorCommon;
     var selectedElements = this.getSelectedElements();
     var isMultiSelect = selectedElements.length > 1;
 
@@ -38360,13 +38406,26 @@ module.exports = Marionette.ItemView.extend({
     if ((_this$model$attribute = (_this$model$attribute2 = this.model.attributes) === null || _this$model$attribute2 === void 0 || (_this$model$attribute2 = _this$model$attribute2.custom) === null || _this$model$attribute2 === void 0 ? void 0 : _this$model$attribute2.isPreset) !== null && _this$model$attribute !== void 0 ? _this$model$attribute : false) {
       this.model.set('settings', this.model.get('custom').preset_settings);
     }
+    var modelData = this.model.toJSON();
     $e.run('preview/drop', {
       container: container,
       options: _objectSpread(_objectSpread({}, options), {}, {
         scrollIntoView: true
       }),
-      model: this.model.toJSON()
+      model: modelData
     });
+    if ((_elementorCommon = elementorCommon) !== null && _elementorCommon !== void 0 && (_elementorCommon = _elementorCommon.eventsManager) !== null && _elementorCommon !== void 0 && _elementorCommon.dispatchEvent) {
+      var _modelData$elType, _modelData$widgetType;
+      var elType = (_modelData$elType = modelData === null || modelData === void 0 ? void 0 : modelData.elType) !== null && _modelData$elType !== void 0 ? _modelData$elType : '';
+      var widgetType = (_modelData$widgetType = modelData === null || modelData === void 0 ? void 0 : modelData.widgetType) !== null && _modelData$widgetType !== void 0 ? _modelData$widgetType : '';
+      var elementName = 'widget' === elType ? widgetType : elType;
+      elementorCommon.eventsManager.dispatchEvent('add_element', {
+        location: 'editor_panel',
+        element_name: elementName,
+        element_type: elType,
+        widget_type: widgetType
+      });
+    }
   },
   getSelectedElements: function getSelectedElements() {
     return elementor.selection.getElements().filter(function (_ref2) {
@@ -43120,10 +43179,15 @@ module.exports = Marionette.CompositeView.extend({
     if ((_model$isPreset = (_model = model) === null || _model === void 0 ? void 0 : _model.isPreset) !== null && _model$isPreset !== void 0 ? _model$isPreset : false) {
       model.settings = model.preset_settings;
     }
-    var historyId = $e.internal('document/history/start-log', {
-      type: this.getHistoryType(options.event),
-      title: elementor.helpers.getModelLabel(model)
-    });
+    var _options$useHistory = options.useHistory,
+      useHistory = _options$useHistory === void 0 ? true : _options$useHistory;
+    var historyId;
+    if (useHistory) {
+      historyId = $e.internal('document/history/start-log', {
+        type: this.getHistoryType(options.event),
+        title: elementor.helpers.getModelLabel(model)
+      });
+    }
     var container = this.getContainer();
     if (options.shouldWrap) {
       var containerExperiment = elementorCommon.config.experimentalFeatures.container;
@@ -43135,7 +43199,8 @@ module.exports = Marionette.CompositeView.extend({
         columns: Number(!containerExperiment),
         options: {
           at: options.at,
-          scrollIntoView: options.scrollIntoView
+          scrollIntoView: options.scrollIntoView,
+          useHistory: useHistory
         }
       });
 
@@ -43151,13 +43216,15 @@ module.exports = Marionette.CompositeView.extend({
       model: model,
       options: options
     });
-    $e.internal('document/history/end-log', {
-      id: historyId
-    });
+    if (useHistory) {
+      $e.internal('document/history/end-log', {
+        id: historyId
+      });
+    }
     return widget;
   },
   onDrop: function onDrop(event, options) {
-    var _elementor$channels$p;
+    var _elementor$channels$p, _elementorCommon;
     var input = event.originalEvent.dataTransfer.files;
     if (input.length) {
       $e.run('editor/browser-import/import', {
@@ -43178,11 +43245,23 @@ module.exports = Marionette.CompositeView.extend({
     .filter(function (_ref) {
       var _ref2 = (0, _slicedToArray2.default)(_ref, 1),
         key = _ref2[0];
-      return ['elType', 'widgetType', 'custom'].includes(key);
+      return ['elType', 'widgetType', 'custom', 'editor_settings'].includes(key);
     }));
     args.container = this.getContainer();
     args.options = options;
     $e.run('preview/drop', args);
+    if ((_elementorCommon = elementorCommon) !== null && _elementorCommon !== void 0 && (_elementorCommon = _elementorCommon.eventsManager) !== null && _elementorCommon !== void 0 && _elementorCommon.dispatchEvent && args !== null && args !== void 0 && args.model) {
+      var _args$model$elType, _args$model, _args$model$widgetTyp, _args$model2;
+      var elType = (_args$model$elType = (_args$model = args.model) === null || _args$model === void 0 ? void 0 : _args$model.elType) !== null && _args$model$elType !== void 0 ? _args$model$elType : '';
+      var widgetType = (_args$model$widgetTyp = (_args$model2 = args.model) === null || _args$model2 === void 0 ? void 0 : _args$model2.widgetType) !== null && _args$model$widgetTyp !== void 0 ? _args$model$widgetTyp : '';
+      var elementName = 'widget' === elType ? widgetType : elType;
+      elementorCommon.eventsManager.dispatchEvent('add_element', {
+        location: 'editor_panel',
+        element_name: elementName,
+        element_type: elType,
+        widget_type: widgetType
+      });
+    }
   },
   getHistoryType: function getHistoryType(event) {
     if (event) {
@@ -62744,7 +62823,7 @@ module.exports = ReactDOM;
 /******/ 		// This function allow to reference async chunks
 /******/ 		__webpack_require__.u = (chunkId) => {
 /******/ 			// return url for filenames not based on template
-/******/ 			if (chunkId === "app_modules_onboarding_assets_js_utils_modules_post-onboarding-tracker_js") return "cb72c088a03a8e0c21b1.bundle.js";
+/******/ 			if (chunkId === "app_modules_onboarding_assets_js_utils_modules_post-onboarding-tracker_js") return "476658b095f7fe3d4745.bundle.js";
 /******/ 			if (chunkId === "assets_dev_js_editor_utils_post-onboarding-tracking_js") return "ef3edd287b253495c7d6.bundle.js";
 /******/ 			// return url for filenames based on template
 /******/ 			return undefined;

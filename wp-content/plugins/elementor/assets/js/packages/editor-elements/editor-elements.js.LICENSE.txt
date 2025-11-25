@@ -2,7 +2,11 @@
 
 /*! ../sync/get-container */
 
+/*! ../sync/get-element-editor-settings */
+
 /*! ../sync/get-element-setting */
+
+/*! ../sync/get-element-type */
 
 /*! ../sync/get-selected-elements */
 
@@ -22,17 +26,23 @@
 
 /*! ./get-current-document-container */
 
+/*! ./get-selected-elements */
+
+/*! ./get-widgets-cache */
+
 /*! ./hooks/use-element-children */
 
-/*! ./hooks/use-element-setting */
+/*! ./hooks/use-element-editor-settings */
 
-/*! ./hooks/use-element-type */
+/*! ./hooks/use-element-setting */
 
 /*! ./hooks/use-parent-element */
 
 /*! ./hooks/use-selected-element */
 
 /*! ./link-restriction */
+
+/*! ./move-element */
 
 /*! ./mutate-element-styles */
 
@@ -50,6 +60,8 @@
 
 /*! ./sync/delete-element */
 
+/*! ./sync/drop-element */
+
 /*! ./sync/duplicate-element */
 
 /*! ./sync/duplicate-elements */
@@ -58,7 +70,11 @@
 
 /*! ./sync/get-container */
 
+/*! ./sync/get-current-document-container */
+
 /*! ./sync/get-current-document-id */
+
+/*! ./sync/get-element-editor-settings */
 
 /*! ./sync/get-element-label */
 
@@ -66,21 +82,27 @@
 
 /*! ./sync/get-element-styles */
 
+/*! ./sync/get-element-type */
+
 /*! ./sync/get-elements */
 
 /*! ./sync/get-selected-elements */
 
 /*! ./sync/get-widgets-cache */
 
+/*! ./sync/move-element */
+
+/*! ./sync/move-elements */
+
 /*! ./sync/remove-elements */
 
 /*! ./sync/replace-element */
 
+/*! ./sync/update-element-editor-settings */
+
 /*! ./sync/update-element-settings */
 
 /*! ./types */
-
-/*! ./use-element-type */
 
 /*! @elementor/editor-props */
 
@@ -133,11 +155,23 @@
   \************************************************************************/
 
 /*!*************************************************************************!*\
+  !*** ./packages/packages/libs/editor-elements/src/sync/drop-element.ts ***!
+  \*************************************************************************/
+
+/*!*************************************************************************!*\
   !*** ./packages/packages/libs/editor-elements/src/sync/get-elements.ts ***!
+  \*************************************************************************/
+
+/*!*************************************************************************!*\
+  !*** ./packages/packages/libs/editor-elements/src/sync/move-element.ts ***!
   \*************************************************************************/
 
 /*!**************************************************************************!*\
   !*** ./packages/packages/libs/editor-elements/src/sync/get-container.ts ***!
+  \**************************************************************************/
+
+/*!**************************************************************************!*\
+  !*** ./packages/packages/libs/editor-elements/src/sync/move-elements.ts ***!
   \**************************************************************************/
 
 /*!***************************************************************************!*\
@@ -160,9 +194,9 @@
   !*** ./packages/packages/libs/editor-elements/src/sync/replace-element.ts ***!
   \****************************************************************************/
 
-/*!******************************************************************************!*\
-  !*** ./packages/packages/libs/editor-elements/src/hooks/use-element-type.ts ***!
-  \******************************************************************************/
+/*!*****************************************************************************!*\
+  !*** ./packages/packages/libs/editor-elements/src/sync/get-element-type.ts ***!
+  \*****************************************************************************/
 
 /*!******************************************************************************!*\
   !*** ./packages/packages/libs/editor-elements/src/sync/duplicate-element.ts ***!
@@ -236,6 +270,18 @@
   !*** ./packages/packages/libs/editor-elements/src/sync/update-element-settings.ts ***!
   \************************************************************************************/
 
+/*!****************************************************************************************!*\
+  !*** ./packages/packages/libs/editor-elements/src/sync/get-element-editor-settings.ts ***!
+  \****************************************************************************************/
+
+/*!*****************************************************************************************!*\
+  !*** ./packages/packages/libs/editor-elements/src/hooks/use-element-editor-settings.ts ***!
+  \*****************************************************************************************/
+
 /*!*******************************************************************************************!*\
   !*** ./packages/packages/libs/editor-elements/src/sync/get-current-document-container.ts ***!
+  \*******************************************************************************************/
+
+/*!*******************************************************************************************!*\
+  !*** ./packages/packages/libs/editor-elements/src/sync/update-element-editor-settings.ts ***!
   \*******************************************************************************************/

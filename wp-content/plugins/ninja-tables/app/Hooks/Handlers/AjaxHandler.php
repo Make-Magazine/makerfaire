@@ -12,7 +12,7 @@ class AjaxHandler
             'get-all-data' => 'getAllData',
         );
 
-        $requestedRoute = sanitize_key(Arr::get($_REQUEST, 'target_action'));
+        $requestedRoute = sanitize_key(Arr::get($_REQUEST, 'target_action')); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 
         if (isset($validRoutes[$requestedRoute])) {
             $this->{$validRoutes[$requestedRoute]}();
@@ -32,9 +32,9 @@ class AjaxHandler
             }
         }
 
-        $tableId = intval(Arr::get($_REQUEST, 'table_id'));
+        $tableId = intval(Arr::get($_REQUEST, 'table_id')); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
         do_action('ninja_table_doing_ajax_table_data', $tableId);
-        $defaultSorting = sanitize_text_field(Arr::get($_REQUEST, 'default_sorting'));
+        $defaultSorting = sanitize_text_field(Arr::get($_REQUEST, 'default_sorting')); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
         $tableSettings  = ninja_table_get_table_settings($tableId, 'public');
         $is_ajax_table  = true;
 
@@ -48,11 +48,11 @@ class AjaxHandler
             wp_send_json_success([], 200);
         }
 
-        $skip  = intval(Arr::get($_REQUEST, 'skip_rows', 0));
-        $limit = intval(Arr::get($_REQUEST, 'limit_rows', 0));
+        $skip  = intval(Arr::get($_REQUEST, 'skip_rows', 0)); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+        $limit = intval(Arr::get($_REQUEST, 'limit_rows', 0)); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 
-        if (!$limit && !$skip && isset($_REQUEST['chunk_number'])) {
-            $chunkNumber = intval(Arr::get($_REQUEST, 'chunk_number', 0));
+        if (!$limit && !$skip && isset($_REQUEST['chunk_number'])) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+            $chunkNumber = intval(Arr::get($_REQUEST, 'chunk_number', 0)); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
             $perChunk    = ninjaTablePerChunk($tableId);
             $skip        = $chunkNumber * $perChunk;
             $limit       = $perChunk;
@@ -60,7 +60,7 @@ class AjaxHandler
 
         $ownOnly = false;
 
-        if (isset($_REQUEST['own_only']) && sanitize_text_field($_REQUEST['own_only']) == 'yes') {
+        if (isset($_REQUEST['own_only']) && sanitize_text_field(wp_unslash($_REQUEST['own_only'])) == 'yes') { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
             $ownOnly = true;
         }
 

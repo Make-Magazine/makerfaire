@@ -11,8 +11,8 @@ class PreviewHandler
     {
         $tableId = null;
 
-        if (isset($_GET['ninjatable_preview'])) {
-            $tableId = intval($_GET['ninjatable_preview']);
+        if (isset($_GET['ninjatable_preview'])) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+            $tableId = intval($_GET['ninjatable_preview']); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
         }
 
         if ($tableId) {
@@ -38,9 +38,9 @@ class PreviewHandler
 
     public function dragAndDropTable()
     {
-        if (isset($_GET['ninjatable_builder_preview']) && $_GET['ninjatable_builder_preview']) {
+        if (isset($_GET['ninjatable_builder_preview']) && intval(wp_unslash($_GET['ninjatable_builder_preview']))) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
             if (ninja_table_admin_role()) {
-                $tableId = intval($_GET['ninjatable_builder_preview']);
+                $tableId = intval(wp_unslash($_GET['ninjatable_builder_preview'])); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 
                 do_action('ninja_tables_will_render_table', $tableId);
 

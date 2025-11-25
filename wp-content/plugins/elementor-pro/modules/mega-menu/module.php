@@ -62,7 +62,6 @@ class Module extends Module_Base {
 			],
 			'dependencies' => [
 				'container',
-				'nested-elements',
 			],
 		];
 

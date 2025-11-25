@@ -2,6 +2,7 @@
 
 namespace NinjaTablesPro\App\Modules\DataProviders;
 
+use NinjaTables\Framework\Foundation\App;
 use NinjaTablesPro\App\Traits\WooDataSourceTrait;
 use NinjaTables\Framework\Support\Arr;
 
@@ -11,7 +12,7 @@ class WoocommercePostsProvider
 
     public function boot()
     {
-        if ( ! defined('WC_PLUGIN_FILE')) {
+        if (!defined('WC_PLUGIN_FILE')) {
             return;
         }
 
@@ -41,7 +42,7 @@ class WoocommercePostsProvider
 
     public function getWooSettings()
     {
-        if ( ! current_user_can(ninja_table_admin_role())) {
+        if (!current_user_can(ninja_table_admin_role())) {
             return;
         }
 
@@ -55,7 +56,7 @@ class WoocommercePostsProvider
 
     public function saveQuerySettings()
     {
-        if ( ! current_user_can(ninja_table_admin_role())) {
+        if (!current_user_can(ninja_table_admin_role())) {
             return;
         }
         ninjaTablesValidateNonce();
@@ -116,14 +117,14 @@ class WoocommercePostsProvider
 
     public function createTable()
     {
-        if ( ! current_user_can(ninja_table_admin_role())) {
+        if (!current_user_can(ninja_table_admin_role())) {
             return;
         }
         ninjaTablesValidateNonce();
         $messages   = array();
-        $inputs     = $_REQUEST;
-        $post_title = sanitize_text_field(Arr::get($inputs, 'post_title', ''));
-        if ($post_title === '') {
+        $inputs     = App::getInstance('request')->all();
+        $post_title = sanitize_text_field(Arr::get($inputs, 'post_title'));
+        if (!$post_title) {
             $messages['title'] = __('The title field is required.', 'ninja-tables-pro');
         }
 
@@ -244,7 +245,7 @@ class WoocommercePostsProvider
             'show_cart_after_table'  => 'yes',
             'show_cart_button'       => 'yes',
             'show_checkout_button'   => 'yes',
-            'show_bulk_actions'      => 'yes',
+            'show_bulk_actions'      => 'no',
         ];
 
         update_post_meta($tableId, '_ninja_table_woo_appearance_settings', $appearanceSettings);
@@ -258,7 +259,7 @@ class WoocommercePostsProvider
     public function getCustomFieldOptions()
     {
         $tableId = intval($_REQUEST['table_id']);
-        if ( ! current_user_can(ninja_table_admin_role())) {
+        if (!current_user_can(ninja_table_admin_role())) {
             return;
         }
         ninjaTablesValidateNonce();
@@ -289,17 +290,17 @@ class WoocommercePostsProvider
 
         $querySelections = get_post_meta($table->ID, '_ninja_table_woo_query_selections', true);
 
-        if ( ! $querySelections) {
+        if (!$querySelections) {
             $querySelections = (object)[];
         }
 
         $queryConditions = get_post_meta($table->ID, '_ninja_table_woo_query_conditions', true);
-        if ( ! $queryConditions) {
+        if (!$queryConditions) {
             $queryConditions = (object)[];
         }
 
         $appearanceSettings = get_post_meta($table->ID, '_ninja_table_woo_appearance_settings', true);
-        if ( ! $appearanceSettings) {
+        if (!$appearanceSettings) {
             $appearanceSettings = (object)[];
         }
 
@@ -314,7 +315,7 @@ class WoocommercePostsProvider
     {
         if ($perPage == -1) {
             $queryExtra = $this->getQueryExtra($tableId);
-            if (isset($queryExtra['query_limit']) && $queryExtra['query_limit']) {
+            if (Arr::get($queryExtra, 'query_limit')) {
                 $perPage = intval($queryExtra['query_limit']);
             }
         }
@@ -355,18 +356,18 @@ class WoocommercePostsProvider
 
         $formatted_columns = array();
         foreach ($columns as $column) {
-            $type      = $this->get($column, 'source_type');
-            $columnKey = $this->get($column, 'key');
-            $dataType  = $this->get($column, 'wp_post_custom_data_source_type');
-            $dataValue = $this->get($column, 'wp_post_custom_data_key');
+            $type      = Arr::get($column, 'source_type');
+            $columnKey = Arr::get($column, 'key');
+            $dataType  = Arr::get($column, 'wp_post_custom_data_source_type');
+            $dataValue = Arr::get($column, 'wp_post_custom_data_key');
 
             $formatted_columns[$columnKey] = array(
                 'type'                            => $type,
                 'key'                             => $columnKey,
-                'permalinked'                     => $this->get($column, 'permalinked'),
-                'permalink_target'                => $this->get($column, 'permalink_target'),
-                'filter_permalinked'              => $this->get($column, 'filter_permalinked'),
-                'taxonomy_separator'              => $this->get($column, 'taxonomy_separator'),
+                'permalinked'                     => Arr::get($column, 'permalinked'),
+                'permalink_target'                => Arr::get($column, 'permalink_target'),
+                'filter_permalinked'              => Arr::get($column, 'filter_permalinked'),
+                'taxonomy_separator'              => Arr::get($column, 'taxonomy_separator'),
                 'wp_post_custom_data_source_type' => $dataType,
                 'wp_post_custom_data_key'         => $dataValue,
                 'column_settings'                 => $column
@@ -391,7 +392,7 @@ class WoocommercePostsProvider
 
 
         $productContions = get_post_meta($tableId, '_ninja_table_woo_query_conditions', true);
-        if ($this->get($productContions, 'hide_out_of_stock') == 'yes') {
+        if (Arr::get($productContions, 'hide_out_of_stock') == 'yes') {
             $where[] = array(
                 'field'    => 'product.product_visibility',
                 'value'    => array('outofstock'),
@@ -410,13 +411,14 @@ class WoocommercePostsProvider
 
     protected function saveTable($postId = null)
     {
+        $request    = App::getInstance('request');
         $attributes = array(
-            'post_title'  => sanitize_text_field($this->get($_REQUEST, 'post_title')),
+            'post_title'  => sanitize_text_field(Arr::get($request->all(), 'post_title')),
             'post_type'   => 'ninja-table',
             'post_status' => 'publish'
         );
 
-        if ( ! $postId) {
+        if (!$postId) {
             $postId = wp_insert_post($attributes);
         } else {
             $attributes['ID'] = $postId;
@@ -439,7 +441,7 @@ class WoocommercePostsProvider
                     "learn_more_text" => 'Learn more about ACF Field integration',
                     "value_type"      => 'text',
                     "placeholder"     => 'Type ACF field selector',
-                    "disabled"        => ! function_exists('get_field')
+                    "disabled"        => !function_exists('get_field')
                 ),
                 array(
                     "key"             => 'post_meta',
@@ -475,8 +477,9 @@ class WoocommercePostsProvider
     private function getOrderBy($productContions, $tableId)
     {
         $order_query = [];
-        if ($orderBy = $this->get($productContions, 'order_by')) {
-            $order      = $this->get($productContions, 'order_by_type', 'ASC');
+        $orderBy     = Arr::get($productContions, 'order_by');
+        if ($orderBy) {
+            $order      = Arr::get($productContions, 'order_by_type', 'ASC');
             $metaOrders = [
                 'price'          => [
                     'orderby'  => 'meta_value_num',
@@ -491,10 +494,10 @@ class WoocommercePostsProvider
                     'meta_key' => 'total_sales'
                 ]
             ];
-            if (isset($metaOrders[$orderBy])) {
+            if (Arr::get($metaOrders, $orderBy)) {
                 $order_query = [
-                    'orderby'  => $metaOrders[$orderBy]['orderby'],
-                    'meta_key' => $metaOrders[$orderBy]['meta_key'],
+                    'orderby'  => Arr::get($metaOrders, "$orderBy.orderby"),
+                    'meta_key' => Arr::get($metaOrders, "$orderBy.meta_key"),
                     'order'    => $order
                 ];
             } elseif ($orderBy == 'random') {
@@ -515,10 +518,15 @@ class WoocommercePostsProvider
 
     public function addFrontendAsset($tableArray)
     {
-        wp_enqueue_script('ninjatable_woo_script', NINJAPROPLUGIN_URL . 'assets/js/woo_table_frontend.js', array('jquery'),
-            NINJAPROPLUGIN_VERSION, true);
-        wp_enqueue_script('ninjatable_comparison_script', NINJAPROPLUGIN_URL . 'assets/js/ninja_table_comparison.js', array('jquery'),
-            NINJAPROPLUGIN_VERSION, true);
+        wp_enqueue_script(
+            'ninjatable_woo_script',
+            NINJAPROPLUGIN_URL . 'assets/js/woo_table_frontend.js',
+            array('jquery'),
+            NINJAPROPLUGIN_VERSION,
+            true
+        );
+
+        wp_enqueue_script('wc-add-to-cart-variation');
 
         $appreanceSettings = get_post_meta($tableArray['table_id'], '_ninja_table_woo_appearance_settings', true);
 
@@ -532,39 +540,43 @@ class WoocommercePostsProvider
 
     public function maybeAddCartDom($table, $tableArray)
     {
-        if ($tableArray['provider'] != 'wp_woo') {
+        if (Arr::get($tableArray, 'provider') != 'wp_woo') {
             return '';
         }
+        // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
         echo $this->getCartFragmentHtml($tableArray['table_id']);
     }
 
     private function getCartFragmentHtml($tableId)
     {
-        if ( ! defined('WC_PLUGIN_FILE')) {
+        if (!defined('WC_PLUGIN_FILE')) {
             return;
         }
 
         $appreanceSettings = get_post_meta($tableId, '_ninja_table_woo_appearance_settings', true);
 
-        if ( ! is_array($appreanceSettings)) {
+        if (!is_array($appreanceSettings)) {
             return;
         }
 
-        $showCheckoutBtn = $this->get($appreanceSettings, 'show_checkout_button') == 'yes';
-        $showCartBtn     = $this->get($appreanceSettings, 'show_cart_button') == 'yes';
+        $showCheckoutBtn = Arr::get($appreanceSettings, 'show_checkout_button') == 'yes';
+        $showCartBtn     = Arr::get($appreanceSettings, 'show_cart_button') == 'yes';
 
-
-        if ( ! function_exists('WC') || ! WC()->cart || ! method_exists(WC()->cart,
-                'get_cart_contents_count') || ! method_exists(WC()->cart, 'get_cart_total')) {
+        if (!function_exists('WC') || !WC()->cart || !method_exists(
+                WC()->cart,
+                'get_cart_contents_count'
+            ) || !method_exists(WC()->cart, 'get_cart_total')) {
             return '';
         }
 
         $itemCount   = WC()->cart->get_cart_contents_count();
         $totalAmount = WC()->cart->get_cart_total();
 
+        $class = 'nt-cart-visible';
         $style = '';
-        if ( ! $itemCount) {
+        if (!$itemCount) {
             $style = 'display: none;';
+            $class = '';
         }
 
         if ($itemCount > 1) {
@@ -575,33 +587,47 @@ class WoocommercePostsProvider
         $cartUrl    = wc_get_cart_url();
         $chekoutUrl = wc_get_checkout_url();
 
-        $checkoutText = __($this->get($appreanceSettings, 'checkoutBtnText', 'Checkout'), 'ninja-tables-pro');
+        $defaultCheckoutText = __('Checkout', 'ninja-tables-pro');
+        $checkoutText        = Arr::get($appreanceSettings, 'checkoutBtnText', $defaultCheckoutText);
 
-        $cartUrl  = apply_filters('ninja_table_woo_cart_url', $cartUrl);
-        $cartText = __($this->get($appreanceSettings, 'cartBtnText', 'View cart'), 'ninja-tables-pro');
+        $cartUrl         = apply_filters('ninja_table_woo_cart_url', $cartUrl);
+        $defaultCartText = __('View cart', 'ninja-tables-pro');
+        $cartText        = Arr::get($appreanceSettings, 'cartBtnText', $defaultCartText);
+
         $cartText = apply_filters('ninja_table_woo_cart_text', $cartText);
 
         ob_start();
         ?>
-        <div style="<?php echo $style; ?>" class="ninjatable_cart_wrapper woocommerce widget_shopping_cart">
+        <div style="<?php
+        echo esc_attr($style); ?>" class="<?php echo esc_attr($class);?> ninjatable_cart_wrapper woocommerce widget_shopping_cart">
             <div class="cart_details">
                 <div class="nt_woo_items">
-                    <span class="nt_woo_item_count"><?php echo $itemCount . ' ' . $itemText; ?> </span> <span
+                    <span class="nt_woo_item_count"><?php
+                        echo esc_html($itemCount . ' ' . $itemText); ?> </span> <span
                             class="nt_woo_separator">|</span> <span
-                            class="nt_woo_amount"><?php echo $totalAmount; ?></span>
+                            class="nt_woo_amount"><?php
+                        echo wp_kses_post($totalAmount); ?></span>
                 </div>
                 <div class="nt_woo_cart_checkout_bttons">
-                    <?php if ($showCartBtn): ?>
-                        <a class="button wc-forward" href="<?php echo $cartUrl; ?>">
-                            <span class="nt_woo_view_cart"><i class="fooicon fooicon-bag"></i> <?php echo $cartText; ?></span>
+                    <?php
+                    if ($showCartBtn): ?>
+                        <a class="button wc-forward" href="<?php
+                        echo esc_url($cartUrl); ?>">
+                            <span class="nt_woo_view_cart"><i class="fooicon fooicon-bag"></i> <?php
+                                echo esc_html($cartText); ?></span>
                         </a>
-                    <?php endif; ?>
-                    <?php if ($showCheckoutBtn): ?>
-                        <a class="button checkout wc-forward" href="<?php echo $chekoutUrl; ?>">
-                            <span class="nt_woo_view_cart"><i
-                                        class="fooicon fooicon-basket"></i> <?php echo $checkoutText; ?></span>
+                    <?php
+                    endif; ?>
+                    <?php
+                    if ($showCheckoutBtn): ?>
+                        <a class="button checkout wc-forward" href="<?php
+                        echo esc_url($chekoutUrl); ?>">
+                        <span class="nt_woo_view_cart"><i
+                                    class="fooicon fooicon-basket"></i> <?php
+                            echo esc_html($checkoutText); ?></span>
                         </a>
-                    <?php endif; ?>
+                    <?php
+                    endif; ?>
                 </div>
             </div>
         </div>
@@ -614,7 +640,9 @@ class WoocommercePostsProvider
 
     public function pushCartFragment($fragments)
     {
-        if ( ! isset($_REQUEST['ninja_table']) || apply_filters('nt_woo_always_cart_fragment', false)) {
+        $request = App::getInstance('request');
+        $tableId = $request->get('ninja_table');
+        if (!$tableId || apply_filters('nt_woo_always_cart_fragment', false)) {
             return $fragments;
         }
         $content                                  = $this->getCartFragmentHtml($_REQUEST['ninja_table']);
@@ -623,289 +651,63 @@ class WoocommercePostsProvider
         return $fragments;
     }
 
-
     public function addToCartAjax()
     {
-        // Validate and sanitize input
-        $products = ninja_tables_sanitize_array(Arr::get($_POST, 'products', []));
-        $products = $this->validateProductsInput($products);
-        if (empty($products)) {
-            wp_send_json_error(['message' => 'No valid products provided'], 400);
-            return;
-        }
-    
-        $results = [
-            'success' => [],
-            'errors' => []
-        ];
-    
-        // Process each product
-        foreach ($products as $product) {
-            $result = $this->addToCart($product);
-            
-            if ($result['success']) {
-                $results['success'][] = Arr::get($product, 'product_id', 0);
-            } else {
-                $results['errors'][] = [
-                    'product_id' => Arr::get($product, 'product_id', 0),
-                    'message' => Arr::get($result, 'message', '')
-                ];
+        check_ajax_referer('ninja_table_public_nonce', 'nonce');
+
+        if (isset($_REQUEST['products']) && is_array($_REQUEST['products'])) {
+            foreach ($_REQUEST['products'] as $product) {
+               $added =  $this->addToCart($product);
             }
         }
-    
-        // Return response based on overall success
-        if (empty(Arr::get($results, 'errors'))) {
-            wp_send_json_success([
-                'message' => 'All products added successfully',
+
+        if (isset($added)) {
+            wp_send_json([
+                'message'   => __('Product added to cart.', 'ninja-tables-pro'),
                 'fragments' => $this->customCartRefreshFragment(),
-                'cart_items' => WC()->cart->get_cart(),
-                'added_products' => Arr::get($results, 'success', [])
-            ], 200);
+                'success'   => true
+            ]);
         } else {
-            $status_code = empty(Arr::get($results, 'success')) ? 400 : 207; // 207 for partial success
-            wp_send_json_error([
-                'message' => 'Some products could not be added',
-                'errors' => Arr::get($results, 'errors', []),
-                'success' => Arr::get($results, 'success', [])
-            ], $status_code);
+            wp_send_json([
+                'message' => __('Failed to add product to cart.', 'ninja-tables-pro')
+            ], 400);
         }
+
+        wp_die();
     }
-    
+
     public function addToCart($product)
     {
-        try {
-            // Validate product data
-            $validation_result = $this->validateProductData($product);
-            if (!Arr::get($validation_result, 'valid')) {
-                return [
-                    'success' => false,
-                    'message' => Arr::get($validation_result, 'message', '')
-                ];
+        $product_id   = isset($product['product_id']) ? absint($product['product_id']) : 0;
+        $quantity     = isset($product['quantity']) ? absint($product['quantity']) : 1;
+        $variation_id = isset($product['variation_id']) ? absint($product['variation_id']) : 0;
+        $variation    = isset($product['variation']) ? array_map('sanitize_text_field', $product['variation']) : array();
+
+        if ($product_id) {
+            if ($variation_id) {
+                $added = WC()->cart->add_to_cart($product_id, $quantity, $variation_id, $variation);
+            } else {
+                $added = WC()->cart->add_to_cart($product_id, $quantity);
             }
-    
-            $product_id = absint(Arr::get($product, 'product_id', 0));
-            $wc_product = wc_get_product($product_id);
-            
-            if (!$wc_product || !$wc_product->is_purchasable()) {
-                return [
-                    'success' => false,
-                    'message' => __('Product is not available for purchase', 'ninja-tables-pro')
-                ];
-            }
-    
-            // Handle different product types
-            switch ($wc_product->get_type()) {
-                case 'simple':
-                    return $this->addSimpleProductToCart($product, $wc_product);
-                
-                case 'variable':
-                    return $this->addVariableProductToCart($product, $wc_product);
-                
-                default:
-                    return [
-                        'success' => false,
-                        'message' => __('Product type not supported', 'ninja-tables-pro')
-                    ];
-            }
-    
-        } catch (Exception $e) {
-            error_log('Add to cart error: ' . $e->getMessage());
-            return [
-                'success' => false,
-                'message' => __('An error occurred while adding the product to cart', 'ninja-tables-pro')
-            ];
+
+            return $added;
         }
     }
-    
-    private function validateProductsInput($products)
-    {
-        if (!is_array($products)) {
-            return [];
-        }
-    
-        $validated_products = [];
-        foreach ($products as $product) {
-            if (Arr::get($product, 'product_id') && is_numeric(Arr::get($product, 'product_id'))) {
-                $validated_products[] = array_map('sanitize_text_field', $product);
-            }
-        }
-    
-        return $validated_products;
-    }
-    
-    private function validateProductData($product)
-    {
-        // Check required fields
-        if (empty(Arr::get($product, 'product_id')) || !is_numeric(Arr::get($product, 'product_id'))) {
-            return [
-                'valid' => false,
-                'message' => __('Invalid product ID', 'ninja-tables-pro')
-            ];
-        }
-    
-        // Validate quantity
-        $quantity = Arr::get($product, 'quantity', 1);
-        if ($quantity <= 0) {
-            return [
-                'valid' => false,
-                'message' => __('Invalid quantity', 'ninja-tables-pro')
-            ];
-        }
-    
-        return ['valid' => true];
-    }
-    
-    private function addSimpleProductToCart($product, $wc_product)
-    {
-        $product_id = absint(Arr::get($product, 'product_id', 0));
-        $quantity = Arr::get($product, 'quantity', 1);
-        
-        // Apply filters for validation
-        $passed_validation = apply_filters(
-            'woocommerce_add_to_cart_validation', 
-            true, 
-            $product_id, 
-            $quantity
-        );
-    
-        if (!$passed_validation) {
-            return [
-                'success' => false,
-                'message' => __('Product validation failed', 'ninja-tables-pro')
-            ];
-        }
-    
-        // Check stock
-        if (!$wc_product->has_enough_stock($quantity)) {
-            return [
-                'success' => false,
-                'message' => __('Insufficient stock', 'ninja-tables-pro')
-            ];
-        }
-    
-        $cart_item_key = WC()->cart->add_to_cart($product_id, $quantity);
-        
-        if ($cart_item_key) {
-            do_action('woocommerce_ajax_added_to_cart', $product_id);
-            $this->updateCartCookies();
-            
-            return [
-                'success' => true,
-                'message' => __('Product added successfully', 'ninja-tables-pro'),
-                'cart_item_key' => $cart_item_key
-            ];
-        }
-    
-        return [
-            'success' => false,
-            'message' => __('Failed to add product to cart', 'ninja-tables-pro')
-        ];
-    }
-    
-    private function addVariableProductToCart($product, $wc_product)
-    {
-        $product_id = absint(Arr::get($product, 'product_id', 0));
-        $quantity = Arr::get($product, 'quantity', 1);
-        $variation_id = Arr::get($product, 'variation_id', 0);
-        $variation_data = Arr::get($product, 'attributes', []);
-    
-        // Validate variation
-        if (!$variation_id) {
-            return [
-                'success' => false,
-                'message' => __('Variation ID is required for variable products', 'ninja-tables-pro')
-            ];
-        }
-    
-        $variation = wc_get_product($variation_id);
-        if (!$variation || !$variation->is_purchasable()) {
-            return [
-                'success' => false,
-                'message' => __('Selected variation is not available', 'ninja-tables-pro')
-            ];
-        }
-    
-        // Apply filters for validation
-        $passed_validation = apply_filters(
-            'woocommerce_add_to_cart_validation', 
-            true, 
-            $product_id, 
-            $quantity, 
-            $variation_id, 
-            $variation_data
-        );
-    
-        if (!$passed_validation) {
-            return [
-                'success' => false,
-                'message' => __('Product validation failed', 'ninja-tables-pro')
-            ];
-        }
-    
-        // Check stock
-        if (!$variation->has_enough_stock($quantity)) {
-            return [
-                'success' => false,
-                'message' => __('Insufficient stock for selected variation', 'ninja-tables-pro')
-            ];
-        }
-    
-        // Prepare cart item data
-        $cart_item_data = array_diff_key($product, array_flip(['product_id', 'quantity', 'variation_id', 'attributes']));
-    
-        $cart_item_key = WC()->cart->add_to_cart(
-            $product_id, 
-            $quantity, 
-            $variation_id, 
-            $variation_data, 
-            $cart_item_data
-        );
-    
-        if ($cart_item_key) {
-            do_action('woocommerce_ajax_added_to_cart', $product_id);
-            $this->updateCartCookies();
-            
-            return [
-                'success' => true,
-                'message' => __('Variable product added successfully', 'ninja-tables-pro'),
-                'cart_item_key' => $cart_item_key
-            ];
-        }
-    
-        return [
-            'success' => false,
-            'message' => __('Failed to add variable product to cart', 'ninja-tables-pro')
-        ];
-    }
-    
-    private function updateCartCookies()
-    {
-        if (get_option('woocommerce_cart_redirect_after_add') === 'yes') {
-            wc_add_to_cart_message(array_keys(WC()->cart->get_cart()));
-        }
-    
-        $cart_items = WC()->cart->get_cart();
-        wc_setcookie('woocommerce_items_in_cart', count($cart_items));
-        wc_setcookie('woocommerce_cart_hash', WC()->cart->get_cart_hash());
-        
-        do_action('woocommerce_set_cart_cookies', true);
-    }
+
     public function customCartRefreshFragment()
     {
         ob_start();
         woocommerce_mini_cart();
         $mini_cart = ob_get_clean();
 
-        $data = array(
+        return [
             'fragments' => apply_filters(
                 'woocommerce_add_to_cart_fragments',
-                array(
+                [
                     'div.widget_shopping_cart_content' => '<div class="widget_shopping_cart_content">' . $mini_cart . '</div>',
-                )
+                ]
             ),
             'cart_hash' => WC()->cart->get_cart_hash(),
-        );
-
-        return $data;
+        ];
     }
 }

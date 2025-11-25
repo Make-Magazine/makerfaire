@@ -1,6 +1,6 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import * as PropTypes from 'prop-types';
-import { Stack, CircularProgress, Box } from '@elementor/ui';
+import { Stack, CircularProgress, Box, Radio, RadioGroup, FormControlLabel, FormControl, Typography, Alert, SvgIcon } from '@elementor/ui';
 import { __ } from '@wordpress/i18n';
 import { KitCustomizationDialog } from './kit-customization-dialog';
 import { ListSettingSection } from './customization-list-setting-section';
@@ -13,6 +13,24 @@ import { useKitCustomizationCustomPostTypes } from '../hooks/use-kit-customizati
 import { isHighTier } from '../hooks/use-tier';
 import { UpgradeVersionBanner } from './upgrade-version-banner';
 import { transformValueForAnalytics } from '../utils/analytics-transformer';
+
+const MEDIA_FORMAT_OPTIONS = {
+	LINK: 'link',
+	CLOUD: 'cloud',
+};
+
+const MEDIA_FORMAT_CONFIG = [
+	{
+		value: MEDIA_FORMAT_OPTIONS.LINK,
+		title: __( 'Link to media', 'elementor-pro' ),
+		description: __( 'Stores only the URLs. The export stays light, but files load only while the original site is online.', 'elementor-pro' ),
+	},
+	{
+		value: MEDIA_FORMAT_OPTIONS.CLOUD,
+		title: __( 'Save media to the cloud', 'elementor-pro' ),
+		description: __( 'All images and files are stored with the template. Keeps everything intact, but the file is larger.', 'elementor-pro' ),
+	},
+];
 
 const transformAnalyticsData = ( payload, pageOptions, taxonomyOptions, customPostTypes ) => {
 	const optionsArray = [
@@ -38,11 +56,16 @@ export function KitContentCustomizationDialog( {
 	isImport,
 	isOldExport,
 	isOldElementorVersion,
+	isCloudKitsEligible = false,
+	showMediaFormatValidation = false,
 } ) {
 	const initialState = data.includes.includes( 'content' );
 	const { isLoading: isPagesLoading, pageOptions, isLoaded: isPagesLoaded } = useKitCustomizationPages( { open, data } );
 	const { isLoading: isTaxonomiesLoading, taxonomyOptions, isLoaded: isTaxonomiesLoaded } = useKitCustomizationTaxonomies( { open, data } );
 	const { customPostTypes } = useKitCustomizationCustomPostTypes( { data } );
+
+	const alertRef = useRef( null );
+	const mediaFormatSectionRef = useRef( null );
 
 	const [ settings, setSettings ] = useState( () => {
 		if ( data.customization.content ) {
@@ -54,6 +77,7 @@ export function KitContentCustomizationDialog( {
 			menus: initialState,
 			taxonomies: [],
 			customPostTypes: [],
+			mediaFormat: MEDIA_FORMAT_OPTIONS.LINK,
 		};
 	} );
 
@@ -67,6 +91,7 @@ export function KitContentCustomizationDialog( {
 			menus: false,
 			taxonomies: [],
 			customPostTypes: [],
+			mediaFormat: MEDIA_FORMAT_OPTIONS.LINK,
 		} );
 	}, [ open, data.includes ] );
 
@@ -148,10 +173,36 @@ export function KitContentCustomizationDialog( {
 	] );
 
 	useEffect( () => {
+		if ( ! open || ! data.includes.includes( 'content' ) ) {
+			return;
+		}
+
+		setSettings( ( prevSettings ) => ( {
+			...prevSettings,
+			mediaFormat: data.customization.content?.mediaFormat || MEDIA_FORMAT_OPTIONS.LINK,
+		} ) );
+	}, [
+		open,
+		data.includes,
+		data.customization.content?.mediaFormat,
+	] );
+
+	useEffect( () => {
 		if ( open ) {
 			window.elementorModules?.appsEventTracking?.AppsEventTracking?.sendPageViewsWebsiteTemplates( elementorCommon.eventsManager.config.secondaryLocations.kitLibrary.kitExportCustomizationEdit );
 		}
 	}, [ open ] );
+
+	useEffect( () => {
+		if ( showMediaFormatValidation ) {
+			setTimeout( () => {
+				const targetElement = alertRef.current || mediaFormatSectionRef.current;
+				if ( targetElement ) {
+					targetElement.scrollIntoView( { behavior: 'smooth', block: 'center' } );
+				}
+			} );
+		}
+	}, [ showMediaFormatValidation ] );
 
 	const handleSettingsChange = ( settingKey, payload ) => {
 		setSettings( ( prev ) => ( {
@@ -189,14 +240,14 @@ export function KitContentCustomizationDialog( {
 
 		return isImport && ! isPagesExported() ? (
 			<SettingSection
-				title={ __( 'Site pages', 'elementor' ) }
+				title={ __( 'Site pages', 'elementor-pro' ) }
 				settingKey="pages"
 				notExported
 			/>
 		) : (
 			<ListSettingSection
 				settingKey="pages"
-				title={ __( 'Site pages', 'elementor' ) }
+				title={ __( 'Site pages', 'elementor-pro' ) }
 				onSettingChange={ ( selectedPages ) => {
 					handleSettingsChange( 'pages', selectedPages );
 				} }
@@ -218,7 +269,7 @@ export function KitContentCustomizationDialog( {
 			<SettingSection
 				checked={ settings.menus }
 				disabled={ ( isImport && ! isMenusExported() ) || ! isHighTier() }
-				title={ __( 'Menus', 'elementor' ) }
+				title={ __( 'Menus', 'elementor-pro' ) }
 				settingKey="menus"
 				tooltip={ ! isHighTier() }
 				onSettingChange={ ( key, isChecked ) => {
@@ -227,6 +278,119 @@ export function KitContentCustomizationDialog( {
 			/>
 		);
 	};
+
+	const renderMediaFormatSection = () => {
+		if ( isImport ) {
+			return (
+				<SettingSection
+					title={ __( 'Media format', 'elementor-pro' ) }
+					settingKey="mediaFormat"
+					hasToggle={ false }
+				>
+					<Alert
+						icon={
+							<SvgIcon color="info" viewBox="0 0 24 24">
+								<path d="M11.8623 14.7549C12.3665 14.8061 12.7598 15.2322 12.7598 15.75C12.7598 16.2678 12.3665 16.6939 11.8623 16.7451L11.7598 16.75H11.75C11.1977 16.75 10.75 16.3023 10.75 15.75C10.75 15.1977 11.1977 14.75 11.75 14.75H11.7598L11.8623 14.7549Z" fill="currentColor" />
+								<path d="M11.75 7C12.1642 7 12.5 7.33579 12.5 7.75V12.75C12.5 13.1642 12.1642 13.5 11.75 13.5C11.3358 13.5 11 13.1642 11 12.75V7.75C11 7.33579 11.3358 7 11.75 7Z" fill="currentColor" />
+								<path fillRule="evenodd" clipRule="evenodd" d="M11.75 2C17.1348 2 21.5 6.36522 21.5 11.75C21.5 17.1348 17.1348 21.5 11.75 21.5C6.36522 21.5 2 17.1348 2 11.75C2 6.36522 6.36522 2 11.75 2ZM11.75 3.5C7.19365 3.5 3.5 7.19365 3.5 11.75C3.5 16.3063 7.19365 20 11.75 20C16.3063 20 20 16.3063 20 11.75C20 7.19365 16.3063 3.5 11.75 3.5Z" fill="currentColor" />
+							</SvgIcon>
+						}
+						sx={ {
+							backgroundColor: 'transparent',
+							p: 0,
+						} }
+					>
+						<Typography variant="body2" color="text.primary">
+							<strong>{ __( 'Note:', 'elementor-pro' ) }</strong> { __( 'The media will be uploaded automatically, just as it was saved during export', 'elementor-pro' ) }
+						</Typography>
+					</Alert>
+				</SettingSection>
+			);
+		}
+
+		if ( ! isImport && ! isCloudKitsEligible ) {
+			return null;
+		}
+
+		return (
+			<SettingSection
+				ref={ mediaFormatSectionRef }
+				description={ __( 'Select how do you want to save & export the media files.', 'elementor-pro' ) }
+				title={ __( 'Media format', 'elementor-pro' ) }
+				settingKey="mediaFormat"
+				hasToggle={ false }
+				disabled={ ! isHighTier() }
+				tooltip={ ! isHighTier() }
+			>
+				<Box sx={ { pt: 2.5 } }>
+					<FormControl component="fieldset" disabled={ ! isHighTier() } sx={ { width: '100%' } }>
+						<RadioGroup
+							value={ settings.mediaFormat }
+							onChange={ ( event ) => {
+								handleSettingsChange( 'mediaFormat', event.target.value );
+							} }
+							sx={ { width: '100%' } }
+						>
+							{ MEDIA_FORMAT_CONFIG.map( ( option, index ) => (
+								<Box
+									key={ option.value }
+									sx={ {
+										border: 1,
+										borderColor: settings.mediaFormat === option.value ? 'info.light' : 'divider',
+										borderRadius: 2,
+										p: 1,
+										mb: index < MEDIA_FORMAT_CONFIG.length - 1 ? 1.5 : 0,
+										width: '100%',
+									} }
+								>
+									<FormControlLabel
+										value={ option.value }
+										control={
+											<Radio color="info" data-testid={ `media-format-${ option.value }` } />
+										}
+										label={
+											<Box>
+												<Typography variant="body2" sx={ { mb: 0.25 } }>
+													{ option.title }
+												</Typography>
+												<Typography variant="body2" color="text.secondary">
+													{ option.description }
+												</Typography>
+											</Box>
+										}
+										sx={ { alignItems: 'flex-start', m: 0, width: '100%' } }
+									/>
+								</Box>
+							) ) }
+						</RadioGroup>
+					</FormControl>
+					{ showMediaFormatValidation && (
+						<Alert
+							ref={ alertRef }
+							icon={
+								<SvgIcon color="error" viewBox="0 0 24 24">
+									<path d="M11.8623 14.7549C12.3665 14.8061 12.7598 15.2322 12.7598 15.75C12.7598 16.2678 12.3665 16.6939 11.8623 16.7451L11.7598 16.75H11.75C11.1977 16.75 10.75 16.3023 10.75 15.75C10.75 15.1977 11.1977 14.75 11.75 14.75H11.7598L11.8623 14.7549Z" fill="currentColor" />
+									<path d="M11.75 7C12.1642 7 12.5 7.33579 12.5 7.75V12.75C12.5 13.1642 12.1642 13.5 11.75 13.5C11.3358 13.5 11 13.1642 11 12.75V7.75C11 7.33579 11.3358 7 11.75 7Z" fill="currentColor" />
+									<path fillRule="evenodd" clipRule="evenodd" d="M11.75 2C17.1348 2 21.5 6.36522 21.5 11.75C21.5 17.1348 17.1348 21.5 11.75 21.5C6.36522 21.5 2 17.1348 2 11.75C2 6.36522 6.36522 2 11.75 2ZM11.75 3.5C7.19365 3.5 3.5 7.19365 3.5 11.75C3.5 16.3063 7.19365 20 11.75 20C16.3063 20 20 16.3063 20 11.75C20 7.19365 16.3063 3.5 11.75 3.5Z" fill="currentColor" />
+								</SvgIcon>
+							}
+							sx={ {
+								mt: 2,
+								ml: 1,
+								backgroundColor: 'transparent',
+								p: 0,
+							} }
+						>
+							<Typography variant="body2" color="text.primary">
+								<strong>{ __( 'Note:', 'elementor-pro' ) }</strong> { __( 'To export a ZIP, go to Edit Content, choose \'Link to Media\', then Export as ZIP.', 'elementor-pro' ) }<br></br>{ __( 'Or, save this template to the cloud instead.', 'elementor-pro' ) }
+							</Typography>
+						</Alert>
+					) }
+				</Box>
+			</SettingSection>
+		);
+	};
+
 	const renderTaxonomiesSection = () => {
 		if ( isImport && isOldExport ) {
 			return null;
@@ -234,8 +398,8 @@ export function KitContentCustomizationDialog( {
 
 		return (
 			<SettingSection
-				description={ __( 'Group your content by type, topic, or any structure you choose.', 'elementor' ) }
-				title={ __( 'Taxonomies', 'elementor' ) }
+				description={ __( 'Group your content by type, topic, or any structure you choose.', 'elementor-pro' ) }
+				title={ __( 'Taxonomies', 'elementor-pro' ) }
 				settingKey="taxonomies"
 				notExported={ isImport && ! isTaxonomiesExported() }
 				hasToggle={ false }
@@ -276,10 +440,10 @@ export function KitContentCustomizationDialog( {
 	return (
 		<KitCustomizationDialog
 			open={ open }
-			title={ __( 'Edit content', 'elementor' ) }
+			title={ __( 'Edit content', 'elementor-pro' ) }
 			handleClose={ handleClose }
 			handleSaveChanges={ () => {
-				const hasEnabledCustomization = settings.pages.length > 0 || settings.menus || settings.customPostTypes.length > 0 || settings.taxonomies.length > 0;
+				const hasEnabledCustomization = settings.pages.length > 0 || settings.menus || settings.customPostTypes.length > 0 || settings.taxonomies.length > 0 || settings.mediaFormat !== MEDIA_FORMAT_OPTIONS.LINK;
 				const transformedAnalytics = transformAnalyticsData( settings, pageOptions, taxonomyOptions, customPostTypes );
 				handleSaveChanges( 'content', settings, hasEnabledCustomization, transformedAnalytics );
 			} }
@@ -290,18 +454,17 @@ export function KitContentCustomizationDialog( {
 				) }
 				<Stack>
 					{ renderPagesSection() }
-					{ renderMenusSection() }
 					{
 						isImport && ! isCustomPostTypesExported() ? (
 							<SettingSection
-								title={ __( 'Custom post types', 'elementor' ) }
+								title={ __( 'Custom post types', 'elementor-pro' ) }
 								settingKey="customPostTypes"
 								notExported
 							/>
 						) : (
 							<ListSettingSection
 								settingKey="customPostTypes"
-								title={ __( 'Custom post types', 'elementor' ) }
+								title={ __( 'Custom post types', 'elementor-pro' ) }
 								onSettingChange={ ( selectedCustomPostTypes ) => {
 									handleSettingsChange( 'customPostTypes', selectedCustomPostTypes );
 								} }
@@ -312,6 +475,8 @@ export function KitContentCustomizationDialog( {
 							/>
 						)
 					}
+					{ renderMediaFormatSection() }
+					{ renderMenusSection() }
 					{ renderTaxonomiesSection() }
 				</Stack>
 				<UpgradeNoticeBanner />
@@ -328,4 +493,6 @@ KitContentCustomizationDialog.propTypes = {
 	handleClose: PropTypes.func.isRequired,
 	handleSaveChanges: PropTypes.func.isRequired,
 	data: PropTypes.object.isRequired,
+	isCloudKitsEligible: PropTypes.bool,
+	showMediaFormatValidation: PropTypes.bool,
 };

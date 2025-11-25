@@ -29,4 +29,7 @@ add_action('init', function () {
     (new CustomJsHandler())->register();
     (new CustomFilterHandler())->register();
     (new PositionHandler())->register();
+
+    // Todo:: need to run conditionality base on show_bulk_actions
+    (new \NinjaTablesPro\App\Features\ProductComparison())->register();
 });

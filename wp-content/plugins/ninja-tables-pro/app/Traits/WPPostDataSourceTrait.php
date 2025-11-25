@@ -120,6 +120,21 @@ trait WPPostDataSourceTrait
         return $where;
     }
 
+    private function operatorInArray($key)
+    {
+        $operatorMap = [
+            ">"  => ">",
+            "<"  => "<",
+            ">=" => ">=",
+            "<=" => "<=",
+            "="  => "=",
+            "!=" => "!="
+        ];
+
+        $decodedKey = html_entity_decode($key, ENT_QUOTES, 'UTF-8');
+
+        return array_key_exists($decodedKey, $operatorMap) ? $operatorMap[$decodedKey] : '=';
+    }
     public function WPNinjaTablesPostWherePostDateFilter($where)
     {
         global $wpdb;
@@ -128,7 +143,9 @@ trait WPPostDataSourceTrait
 
         foreach ($this->__queryable_postColumns__ as $column) {
             if ($column['field'] == 'post_date') {
-                $where .= " AND {$wpdb->posts}.post_date {$column['operator']} '{$column['value']}'";
+                $operator = $this->operatorInArray(Arr::get($column, 'operator'));
+                $value    = esc_sql(Arr::get($column, 'value'));
+                $where    .= " AND {$wpdb->posts}.post_date {$operator} '{$value}'";
             }
         }
 
@@ -143,7 +160,9 @@ trait WPPostDataSourceTrait
 
         foreach ($this->__queryable_postColumns__ as $column) {
             if ($column['field'] == 'post_modified') {
-                $where .= " AND {$wpdb->posts}.post_modified {$column['operator']} '{$column['value']}'";
+                $operator = $this->operatorInArray(Arr::get($column, 'operator'));
+                $value    = esc_sql(Arr::get($column, 'value'));
+                $where    .= " AND {$wpdb->posts}.post_modified {$operator} '{$value}'";
             }
         }
 

@@ -1,9 +1,9 @@
 <div id="footable_parent_<?php echo esc_attr($table_id); ?>"
     <?php
-    $loader = \NinjaTables\Framework\Support\Arr::get($settings, 'frontend_loader', 'yes');
-    $loader_class = $loader === 'no' ? 'ninja-footable-loader' : '';
+    $ninja_tables_loader = \NinjaTables\Framework\Support\Arr::get($settings, 'frontend_loader', 'yes');
+    $ninja_tables_loader_class = $ninja_tables_loader === 'no' ? 'ninja-footable-loader' : '';
     ?>
-     class="<?php echo esc_attr($loader_class);?> footable_parent ninja_table_wrapper loading_ninja_table wp_table_data_press_parent <?php echo esc_attr($settings['css_lib']); ?> <?php echo esc_attr($tableHasColor); ?>">
+     class="<?php echo esc_attr($ninja_tables_loader_class);?> footable_parent ninja_table_wrapper loading_ninja_table wp_table_data_press_parent <?php echo esc_attr($settings['css_lib']); ?> <?php echo esc_attr($tableHasColor); ?>">
     <?php if (isset($settings['show_title']) && $settings['show_title']) : ?>
         <?php do_action('ninja_tables_before_table_title', $table); ?>
         <h3 class="table_title footable_title"><?php echo esc_attr($table->post_title); ?></h3>
@@ -25,8 +25,8 @@
             <caption><?php echo esc_attr($tableCaption); ?></caption>
         <?php endif; ?>
         <colgroup>
-            <?php foreach ($formatted_columns as $index => $column) : ?>
-                <col class="ninja_column_<?php echo esc_attr($index . ' ' . $column['breakpoints']); ?>">
+            <?php foreach ($formatted_columns as $ninja_tables_index => $ninja_tables_column) : ?>
+                <col class="ninja_column_<?php echo esc_attr($ninja_tables_index . ' ' . $ninja_tables_column['breakpoints']); ?>">
             <?php endforeach; ?>
         </colgroup>
         <?php do_action('ninja_tables_inside_table_render', $table, $table_vars); ?>

@@ -20,7 +20,7 @@ class Preview extends App {
 	public function enqueue_styles() {
 		wp_enqueue_style(
 			'pro-editor-preview',
-			$this->get_css_assets_url( 'preview', null, 'default', true ),
+			$this->get_css_assets_url( 'preview' ),
 			[],
 			ELEMENTOR_PRO_VERSION
 		);

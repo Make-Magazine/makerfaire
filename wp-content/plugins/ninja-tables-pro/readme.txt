@@ -4,7 +4,7 @@ Tags: Table, table builder, datatable, tables, spreadsheet
 Requires at least: 6.0
 Requires PHP: 7.4
 Tested up to: 6.8
-Stable tag: 5.2.3
+Stable tag: 5.2.4
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -405,6 +405,20 @@ Ninja Tables [customer support](https://wpmanageninja.com/support-tickets/#/) te
 
 == Changelog ==
 We released several updates for Ninja Tables in the years of development. These include improvements to the existing features and some wonderful additions to help you design tables more effectively.
+
+= 5.2.4 (Date: November 10, 2025) =
+* Added: WooCommerce Reviews table integration
+* Added: WooCommerce average rating in products table
+* Added: Vietnamese translation support
+* Fixes: WooCommerce multiple attributes variations duplicate issue
+* Fixes: WooCommerce products comparison in stackable table
+* Fixes: WooCommerce table theme conflict
+* Fixes: WooCommerce dynamic column post meta display issue
+* Fixes: Post table conditions date filter issue
+* Improve: Excel formula support
+* Improve: Single cart button action from table
+* Improve: Pagination style in WooCommerce table
+* Improve: WooCommerce bulk operations
 
 = 5.2.3 (Date: August 01, 2025) =
  * Fixes: Google Sheets data fetching issue

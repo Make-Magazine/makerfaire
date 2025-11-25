@@ -13,7 +13,7 @@
         'berlindb/core' => array(
             'pretty_version' => 'dev-master',
             'version' => 'dev-master',
-            'reference' => '6a9383ab2dad726bf2d6dbda6687da848eda22ea',
+            'reference' => 'cff87fafedda560dd4ad768d4dd1afb68a36b8c0',
             'type' => 'library',
             'install_path' => __DIR__ . '/../berlindb/core',
             'aliases' => array(
@@ -76,9 +76,9 @@
             'dev_requirement' => false,
         ),
         'wp-media/wp-mixpanel' => array(
-            'pretty_version' => 'v1.3.0',
-            'version' => '1.3.0.0',
-            'reference' => '402d47230c2118c0cd40e64b0aa8d936b30d4e4f',
+            'pretty_version' => 'v1.4.0',
+            'version' => '1.4.0.0',
+            'reference' => 'dfedab2014e816a1040c57d544a6180f1d446624',
             'type' => 'library',
             'install_path' => __DIR__ . '/../wp-media/wp-mixpanel',
             'aliases' => array(),

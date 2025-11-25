@@ -1,4 +1,4 @@
-<div class="ninja-deactivation-feedback <?php echo esc_attr($slug); ?>_modal no-confirmation-message">
+<div class="ninja-deactivation-feedback <?php echo esc_attr($ninja_tables_slug); ?>_modal no-confirmation-message">
     <div class="ninja-modal-dialog">
         <div class="ninja-modal-header">
             <h3 class="nt-deactivation-title">Quick feedback</h3>
@@ -8,21 +8,21 @@
             <div class="ninja-modal-panel active" data-panel-id="reasons">
                 <h3><strong>If you have a moment, please let us know why you are deactivating:</strong></h3>
                 <ul id="reasons-list">
-                    <?php foreach ($reasons as $reason_key => $reason): ?>
+                    <?php foreach ($ninja_tables_reasons as $ninja_tables_reason_key => $ninja_tables_reason): ?>
                         <li class="reason">
                             <label>
                             <span>
-                                <input class="<?php echo $reason['has_custom'] ? 'has_custom nt-radio' : 'nt-radio'; ?>" type="radio"
-                                       name="selected-reason" value="<?php echo esc_attr($reason_key); ?>">
+                                <input class="<?php echo $ninja_tables_reason['has_custom'] ? 'has_custom nt-radio' : 'nt-radio'; ?>" type="radio"
+                                       name="selected-reason" value="<?php echo esc_attr($ninja_tables_reason_key); ?>">
                             </span>
-                                <span><?php echo esc_attr($reason['label']); ?></span>
+                                <span><?php echo esc_attr($ninja_tables_reason['label']); ?></span>
                             </label>
-                            <?php if ($reason['has_custom']): ?>
+                            <?php if ($ninja_tables_reason['has_custom']): ?>
                                 <div class="ninja_custom_feedback">
                                     <label>
-                                        <span><?php echo esc_attr($reason['custom_label']); ?></span>
-                                        <input type="text" name="<?php echo esc_attr($reason_key); ?>_custom"
-                                               placeholder="<?php echo esc_attr($reason['custom_placeholder']); ?>"/>
+                                        <span><?php echo esc_attr($ninja_tables_reason['custom_label']); ?></span>
+                                        <input type="text" name="<?php echo esc_attr($ninja_tables_reason_key); ?>_custom"
+                                               placeholder="<?php echo esc_attr($ninja_tables_reason['custom_placeholder']); ?>"/>
                                     </label>
                                 </div>
                             <?php endif; ?>
@@ -41,10 +41,10 @@
 <script type="text/javascript">
     jQuery(document).ready(function ($) {
 
-        jQuery('tr[data-slug="<?php echo esc_attr($slug);?>"]').on('click', '.deactivate a', function (e) {
+        jQuery('tr[data-slug="<?php echo esc_attr($ninja_tables_slug);?>"]').on('click', '.deactivate a', function (e) {
             e.preventDefault();
-            $('.<?php echo esc_attr($slug); ?>_modal').addClass('active');
-            $('.<?php echo esc_attr($slug); ?>_modal a.ninja_action_deactivate').attr('href', $(this).attr('href'));
+            $('.<?php echo esc_attr($ninja_tables_slug); ?>_modal').addClass('active');
+            $('.<?php echo esc_attr($ninja_tables_slug); ?>_modal a.ninja_action_deactivate').attr('href', $(this).attr('href'));
         });
 
         $('.ninja_action_close').on('click', function (e) {
@@ -52,14 +52,14 @@
             $('.ninja-deactivation-feedback').removeClass('active');
         });
 
-        $('.<?php echo esc_attr($slug); ?>_modal input[name="selected-reason"').on('change', function (e) {
+        $('.<?php echo esc_attr($ninja_tables_slug); ?>_modal input[name="selected-reason"').on('change', function (e) {
             e.preventDefault();
             $('a.ninja_action_deactivate').text('Submit & Deactive').addClass('has_feedback');
             $('.ninja_custom_feedback').removeClass('active');
             $(this).closest('.reason').find('.ninja_custom_feedback').addClass('active');
         });
 
-        $('.<?php echo esc_attr($slug); ?>_modal .ninja-modal-footer').on('click', 'a.ninja_action_deactivate.has_feedback', function (e) {
+        $('.<?php echo esc_attr($ninja_tables_slug); ?>_modal .ninja-modal-footer').on('click', 'a.ninja_action_deactivate.has_feedback', function (e) {
             e.preventDefault();
             var redirectLink = $(this).attr('href');
 
@@ -67,7 +67,7 @@
             var custom_message = $('input[name="' + reason + '_custom"]').val();
             $(this).text('Deactivating...').attr('disabled', true);
             jQuery.post(ajaxurl, {
-                action: '<?php echo esc_attr($slug); ?>_deactivate_feedback',
+                action: '<?php echo esc_attr($ninja_tables_slug); ?>_deactivate_feedback',
                 reason: reason,
                 custom_message: custom_message
             })

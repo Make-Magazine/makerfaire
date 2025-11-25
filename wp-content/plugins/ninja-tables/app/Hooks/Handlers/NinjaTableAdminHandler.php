@@ -40,8 +40,8 @@ class NinjaTableAdminHandler
      */
     public function saveNinjaTableFlagOnShortCode($post_id)
     {
-        if (isset($_POST['post_content'])) {
-            $post_content = wp_kses_post($_POST['post_content']);
+        if (isset($_POST['post_content'])) { // phpcs:ignore WordPress.Security.NonceVerification.Missing
+            $post_content = wp_kses_post(wp_unslash($_POST['post_content'])); // phpcs:ignore WordPress.Security.NonceVerification.Missing
         } else {
             $post         = get_post($post_id);
             $post_content = $post->post_content;
@@ -58,8 +58,8 @@ class NinjaTableAdminHandler
 
     public function remindMeLater()
     {
-        $key = Sanitizer::sanitizeTextField(Arr::get($_GET, 'key', 'admin_notice'));
-        $action = Sanitizer::sanitizeTextField(Arr::get($_GET, 'action', ''));
+        $key = Sanitizer::sanitizeTextField(Arr::get($_GET, 'key', 'admin_notice')); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+        $action = Sanitizer::sanitizeTextField(Arr::get($_GET, 'action', '')); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
         $prefix = 'ninja_tables_';
 
         if ($key && $action === 'remindMeLater') {
@@ -69,7 +69,7 @@ class NinjaTableAdminHandler
                 NINJA_TABLES_VERSION,
                 time() + (60 * 60 * 24 * 30)
             );
-            wp_redirect(admin_url('admin.php?page=ninja_tables#home'));
+            wp_safe_redirect(admin_url('admin.php?page=ninja_tables#home'));
         }
     }
 }

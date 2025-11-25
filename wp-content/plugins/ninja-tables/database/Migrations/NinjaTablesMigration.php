@@ -54,7 +54,7 @@ abstract class NinjaTablesMigration
                 'created_at' => $time,
                 'updated_at' => $time
             );
-            $wpdb->insert($table_name, $data, false);
+            $wpdb->insert($table_name, $data, false); // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery
         }
     }
 
@@ -94,7 +94,7 @@ abstract class NinjaTablesMigration
         $data           = array();
         $column_counter = 1;
         foreach ($header as $item) {
-            $item = trim(strip_tags($item));
+            $item = trim(wp_strip_all_tags($item));
 
             // We'll slugify only if item is printable characters.
             // Otherwise we'll generate custom key for the item.

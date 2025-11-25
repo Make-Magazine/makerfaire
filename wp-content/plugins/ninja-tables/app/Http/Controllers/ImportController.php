@@ -6,7 +6,7 @@ use NinjaTables\App\App;
 use NinjaTables\App\Traits\ImportTrait;
 use NinjaTables\Database\Migrations\NinjaTablesSupsysticTableMigration;
 use NinjaTables\Database\Migrations\NinjaTablesTablePressMigration;
-use NinjaTables\Framework\Request\Request;
+use NinjaTables\Framework\Http\Request\Request;
 use NinjaTables\Framework\Support\Arr;
 use NinjaTables\Framework\Support\Sanitizer;
 use NinjaTables\App\Library\Csv\Reader;
@@ -33,14 +33,14 @@ class ImportController extends Controller
         if ($format == 'dragAndDrop') {
             return $this->extracted($request->all());
         } else {
-            if ( ! isset($_FILES['file'])) {
+            if ( ! isset($_FILES['file'])) { // phpcs:ignore WordPress.Security.NonceVerification.Missing
                 return $this->sendError([
                     'errors'  => array(),
                     'message' => __('Please upload a file.', 'ninja-tables')
                 ], 423);
             }
 
-            $fileName  = Sanitizer::sanitizeTextField(Arr::get($_FILES, 'file.name'));
+            $fileName  = Sanitizer::sanitizeTextField(Arr::get($_FILES, 'file.name')); // phpcs:ignore WordPress.Security.NonceVerification.Missing
 
             $fileExtension = strtolower(pathinfo($fileName, PATHINFO_EXTENSION));
 
@@ -73,7 +73,8 @@ class ImportController extends Controller
             'application/txt'
         );
 
-        if ( ! in_array(Sanitizer::sanitizeTextField($_FILES['file']['type']), $mimes)) {
+        $fileType = Sanitizer::sanitizeTextField(Arr::get($_FILES, 'file.type')); // phpcs:ignore WordPress.Security.NonceVerification.Missing
+        if (!in_array($fileType, $mimes)) {
             return $this->sendError([
                 'data' => [
                     'errors'  => array(),
@@ -82,8 +83,8 @@ class ImportController extends Controller
             ], 423);
         }
 
-        $tmpName  = Sanitizer::sanitizeTextField($_FILES['file']['tmp_name']);
-        $fileName = Sanitizer::sanitizeTextField($_FILES['file']['name']);
+        $tmpName  = Sanitizer::sanitizeTextField(Arr::get($_FILES, 'file.tmp_name')); // phpcs:ignore WordPress.Security.NonceVerification.Missing
+        $fileName = Sanitizer::sanitizeTextField(Arr::get($_FILES, 'file.name')); // phpcs:ignore WordPress.Security.NonceVerification.Missing
 
         $data = file_get_contents($tmpName);
 
@@ -160,8 +161,7 @@ class ImportController extends Controller
     private function uploadTableJson()
     {
         $tableId = $this->createTable();
-
-        $tmpName = Sanitizer::sanitizeTextField($_FILES['file']['tmp_name']);
+        $tmpName  = Sanitizer::sanitizeTextField(Arr::get($_FILES, 'file.tmp_name')); // phpcs:ignore WordPress.Security.NonceVerification.Missing
 
         $content = json_decode(file_get_contents($tmpName), true);
 
@@ -185,7 +185,7 @@ class ImportController extends Controller
 
     private function uploadTableNinjaJson()
     {
-        $tmpName = Sanitizer::sanitizeTextField($_FILES['file']['tmp_name']);
+        $tmpName  = Sanitizer::sanitizeTextField(Arr::get($_FILES, 'file.tmp_name')); // phpcs:ignore WordPress.Security.NonceVerification.Missing
 
         $parsedContent = file_get_contents($tmpName);
 
@@ -246,7 +246,7 @@ class ImportController extends Controller
                 $row['value']    = json_encode($row['value'], JSON_UNESCAPED_UNICODE);
                 $tableName       = $wpdb->prefix . static::$tableName;
 //                $this->reset();
-                $wpdb->insert($tableName, $row, false);
+                $wpdb->insert($tableName, $row, false); // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery
             }
         }
 
@@ -314,7 +314,7 @@ class ImportController extends Controller
     {
         global $wpdb;
         $tableId = intval(Arr::get($request->all(), 'table_id'));
-        $tmpName = $_FILES['file']['tmp_name'];
+        $tmpName  = Sanitizer::sanitizeTextField(Arr::get($_FILES, 'file.tmp_name')); // phpcs:ignore WordPress.Security.NonceVerification.Missing
 
         $data = file_get_contents($tmpName);
 
@@ -372,11 +372,11 @@ class ImportController extends Controller
                     'attribute'  => 'value',
                     'owner_id'   => $userId,
                     'value'      => json_encode($itemTemp, JSON_UNESCAPED_UNICODE),
-                    'created_at' => date('Y-m-d H:i:s', $timeStamp),
-                    'updated_at' => date('Y-m-d H:i:s')
+                    'created_at' => gmdate('Y-m-d H:i:s', $timeStamp),
+                    'updated_at' => gmdate('Y-m-d H:i:s')
                 );
             } else {
-                error_log('Invalid data format in this row' . json_encode($item));
+                error_log('Invalid data format in this row' . json_encode($item)); // phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log
                 continue;
             }
 
@@ -396,7 +396,7 @@ class ImportController extends Controller
         // memory issue or MYSQL max_allowed_packet issue for large data set.
         $tableName = $wpdb->prefix . static::$tableName;
         foreach (array_chunk($data, 3000) as $chunk) {
-            ninjtaTableBatchInsert($tableName, $chunk);
+            ninjaTablesBatchInsert($tableName, $chunk);
         }
 
         ninjaTablesClearTableDataCache($tableId);
@@ -415,7 +415,7 @@ class ImportController extends Controller
      */
     public function extracted($data)
     {
-        $fileName = 'Ninja-tables' . date('d-m-Y');
+        $fileName = 'Ninja-tables' . gmdate('d-m-Y');
         $url      = sanitize_url(Arr::get($data, 'url', ''));
 
         if ( ! empty($url)) {

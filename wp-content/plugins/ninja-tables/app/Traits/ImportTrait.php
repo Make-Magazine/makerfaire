@@ -74,7 +74,7 @@ trait ImportTrait
     public static function getData()
     {
         $mimes    = static::$mimeTypes;
-        $fileType = Sanitizer::sanitizeTextField(Arr::get($_FILES, 'file.type'));
+        $fileType = Sanitizer::sanitizeTextField(Arr::get($_FILES, 'file.type')); // phpcs:ignore WordPress.Security.NonceVerification.Missing
 
         if ( ! in_array($fileType, $mimes)) {
             wp_send_json_error(array(
@@ -92,7 +92,7 @@ trait ImportTrait
 
     private static function importCSV()
     {
-        $tmpName = Sanitizer::sanitizeTextField(Arr::get($_FILES, 'file.tmp_name'));
+        $tmpName = Sanitizer::sanitizeTextField(Arr::get($_FILES, 'file.tmp_name')); // phpcs:ignore WordPress.Security.NonceVerification.Missing
 
         try {
             $reader = Reader::createFromPath($tmpName, 'r');
@@ -117,7 +117,7 @@ trait ImportTrait
                 'table_html'       => $content['table_html']
             ];
         } else {
-            $tmpName = Sanitizer::sanitizeTextField(Arr::get($_FILES, 'file.tmp_name'));
+            $tmpName = Sanitizer::sanitizeTextField(Arr::get($_FILES, 'file.tmp_name')); // phpcs:ignore WordPress.Security.NonceVerification.Missing
             $content = json_decode(file_get_contents($tmpName), true);
 
             return $content;

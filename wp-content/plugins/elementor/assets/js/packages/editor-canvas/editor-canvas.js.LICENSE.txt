@@ -75,6 +75,8 @@
 
 /*! ./style-transformers-registry */
 
+/*! ./sync/drag-element-from-panel */
+
 /*! ./transformers/create-transformer */
 
 /*! ./transformers/create-transformers-registry */
@@ -84,6 +86,8 @@
 /*! ./transformers/settings/classes-transformer */
 
 /*! ./transformers/settings/link-transformer */
+
+/*! ./transformers/settings/query-transformer */
 
 /*! ./transformers/shared/image-src-transformer */
 
@@ -379,6 +383,10 @@
   !*** ./packages/packages/core/editor-canvas/src/style-transformers-registry.ts ***!
   \*********************************************************************************/
 
+/*!**********************************************************************************!*\
+  !*** ./packages/packages/core/editor-canvas/src/sync/drag-element-from-panel.ts ***!
+  \**********************************************************************************/
+
 /*!***********************************************************************************!*\
   !*** ./packages/node_modules/@floating-ui/react/dist/floating-ui.react.utils.mjs ***!
   \***********************************************************************************/
@@ -474,6 +482,10 @@
 /*!********************************************************************************************!*\
   !*** ./packages/packages/core/editor-canvas/src/transformers/styles/stroke-transformer.ts ***!
   \********************************************************************************************/
+
+/*!*********************************************************************************************!*\
+  !*** ./packages/packages/core/editor-canvas/src/transformers/settings/query-transformer.ts ***!
+  \*********************************************************************************************/
 
 /*!**********************************************************************************************!*\
   !*** ./packages/packages/core/editor-canvas/src/transformers/styles/position-transformer.ts ***!

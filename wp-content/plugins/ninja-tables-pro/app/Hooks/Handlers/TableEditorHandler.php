@@ -140,13 +140,13 @@ class TableEditorHandler
         $settings = get_post_meta($tableId, '_ninja_table_frontedit_settings', true);
 
         if (!$userId && $operation == 'update') {
-            $this->errorResponse(__('Sorry! You do not have permission to edit this data', 'ninja-table-pro'));
+            $this->errorResponse(__('Sorry! You do not have permission to edit this data', 'ninja-tables-pro'));
 
             return;
         }
 
         if (!$this->hasEditingPermission($tableId, $userId, $settings)) {
-            $this->errorResponse(__('Sorry! You do not have permission to edit this data', 'ninja-table-pro'));
+            $this->errorResponse(__('Sorry! You do not have permission to edit this data', 'ninja-tables-pro'));
 
             return;
         }
@@ -163,7 +163,7 @@ class TableEditorHandler
         if ($preRow && $preRow->owner_id == $userId) {
             return true;
         }
-        $this->errorResponse(__('Sorry! You do not have permission to perform this action', 'ninja-table-pro'));
+        $this->errorResponse(__('Sorry! You do not have permission to perform this action', 'ninja-tables-pro'));
 
         return;
     }
@@ -411,7 +411,7 @@ class TableEditorHandler
         $settings = get_post_meta($tableId, '_ninja_table_frontedit_settings', true);
 
         if (!$this->hasDeletePermission($tableId, $userId, $settings)) {
-            $this->errorResponse(__('Sorry! You do not have permission to edit this data', 'ninja-table-pro'));
+            $this->errorResponse(__('Sorry! You do not have permission to edit this data', 'ninja-tables-pro'));
 
             return;
         }
@@ -427,7 +427,7 @@ class TableEditorHandler
         if ($preRow && $preRow->owner_id == $userId) {
             return true;
         }
-        $this->errorResponse(__('Sorry! You do not have permission to perform this action', 'ninja-table-pro'));
+        $this->errorResponse(__('Sorry! You do not have permission to perform this action', 'ninja-tables-pro'));
 
         return;
     }

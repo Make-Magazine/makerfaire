@@ -1,4 +1,3 @@
-/*! elementor - v3.32.0 - 21-10-2025 */
 (self["webpackChunkelementor"] = self["webpackChunkelementor"] || []).push([["vendors-node_modules_prop-types_index_js-node_modules_babel_runtime_helpers_slicedToArray_js"],{
 
 /***/ "../node_modules/@babel/runtime/helpers/arrayLikeToArray.js":

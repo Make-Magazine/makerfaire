@@ -4,7 +4,7 @@ namespace NinjaTables\App\Http\Controllers;
 
 use NinjaTables\App\Models\Post;
 use NinjaTables\Database\Migrations\NinjaTableItemsMigrator;
-use NinjaTables\Framework\Request\Request;
+use NinjaTables\Framework\Http\Request\Request;
 use NinjaTables\Framework\Support\Arr;
 use NinjaTables\Framework\Support\Sanitizer;
 
@@ -19,7 +19,7 @@ class SettingsController extends Controller
 
         if ( ! $table || $table->post_type != $this->cptName) {
             $this->sendError(array(
-                'message' => __('No Table Found'),
+                'message' => __('No Table Found', 'ninja-tables'),
                 'route'   => 'home'
             ), 423);
         }
@@ -48,8 +48,10 @@ class SettingsController extends Controller
         $tablePreference = '';
 
         if (Arr::get($request->all(), 'columns', [])) {
-            $rawColumns = $this->app->applyFilters('ninja_tables_before_update_settings',
-                ninja_tables_sanitize_array($request->columns), $tableId);
+            $rawColumns = $this->app->applyFilters(
+                'ninja_tables_before_update_settings',
+                $this->sanitizeColumnData($request->columns, $id)
+            );
         }
 
         if (Arr::get($request->all(), 'table_settings', [])) {
@@ -59,6 +61,61 @@ class SettingsController extends Controller
         $data = Post::updatedSettings($tableId, $rawColumns, $tablePreference);
 
         $this->json($data, 200);
+    }
+
+    private function sanitizeColumnData($array, $tableId)
+    {
+        $tableSettings     = get_post_meta($tableId, '_ninja_table_settings', true);
+        foreach ($array as $key => $value) {
+            if (is_array($value)) {
+                $array[$key] = $this->sanitizeColumnData($value, $tableId);
+            } else {
+                if ($key === 'transformed_value') {
+                    $hasFormulaSupport = Arr::get($tableSettings, 'formula_support', 'no') === 'yes';
+                    $array[$key] = $this->sanitize_transform_value($value, $hasFormulaSupport);
+                } else {
+                    $array[$key] = wp_kses((string)$value, ninja_tables_allowed_html_tags());
+                }
+            }
+        }
+
+        return $array;
+    }
+
+    private function sanitize_transform_value($input, $allowFormulas = false)
+    {
+        if ( ! is_string($input) || empty($input)) {
+            return '';
+        }
+
+        $input = wp_unslash($input);
+        $input = html_entity_decode($input, ENT_QUOTES, 'UTF-8');
+
+        $isFormula = ($input[0] ?? '') === '=';
+
+        if ($isFormula && $allowFormulas) {
+            return $this->sanitize_excel_formula($input);
+        }
+
+        return wp_kses($input, ninja_tables_allowed_html_tags());
+    }
+
+    private function sanitize_excel_formula($input)
+    {
+        $dangerous = [
+            'javascript:', 'vbscript:', 'data:', 'file:', 'ftp:',
+            '<script', '<iframe', '<object', '<embed', '<form',
+            'onclick', 'onload', 'onerror', 'onmouseover', 'onfocus', 'onblur',
+            'eval(', 'alert(', 'setTimeout', 'setInterval', 'Function(',
+            'document.', 'window.', 'location.', 'navigator.',
+            'exec(', 'system(', 'shell_exec', 'passthru(',
+            '<?php', '<?=', 'constructor', 'prototype'
+        ];
+
+        $input = str_ireplace($dangerous, '', $input);
+        $input = preg_replace('/[\x00-\x1F\x7F]/', '', $input);
+
+        return trim(substr($input, 0, 2000));
     }
 
     public function getButtonSettings(Request $request, $id)
@@ -103,7 +160,7 @@ class SettingsController extends Controller
     {
         ninja_tables_allowed_css_properties();
         $tableId        = absint($id);
-        $buttonSettings = wp_unslash(ninja_tables_sanitize_array(Arr::get($request->all(), 'button_settings')));
+        $buttonSettings = ninja_tables_sanitize_array(wp_unslash(Arr::get($request->all(), 'button_settings', [])));
         update_post_meta($tableId, '_ninja_custom_table_buttons', $buttonSettings);
 
         return $this->sendSuccess(array(
@@ -116,7 +173,7 @@ class SettingsController extends Controller
     public function saveCustomCSSJS(Request $request, $id)
     {
         $tableId = intval($id);
-        $css     = isset($_REQUEST['custom_css']) ? sanitize_textarea_field($_REQUEST['custom_css']) : '';
+        $css     = isset($_REQUEST['custom_css']) ? sanitize_textarea_field(wp_unslash($_REQUEST['custom_css'])) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
         $css     = wp_strip_all_tags($css);
         update_post_meta($tableId, '_ninja_tables_custom_css', $css);
 

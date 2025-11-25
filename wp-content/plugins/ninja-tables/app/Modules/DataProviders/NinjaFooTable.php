@@ -3,6 +3,7 @@
 namespace NinjaTables\App\Modules\DataProviders;
 
 use NinjaTables\App\App;
+use NinjaTables\App\Helper\Helper;
 use NinjaTables\App\Models\NinjaTableItem;
 use NinjaTables\Framework\Support\Arr;
 use NinjaTablesPro\App\Modules\DataProviders\CsvProvider;
@@ -27,7 +28,7 @@ class NinjaFooTable
         $tableInstance            = 'ninja_table_instance_' . count(static::$tableInstances);
         static::$tableInstances[] = $tableInstance;
 
-        $tableArray['uniqueID'] = 'ninja_table_unique_id_' . rand() . '_' . $tableArray['table_id'];
+        $tableArray['uniqueID'] = 'ninja_table_unique_id_' . wp_rand() . '_' . $tableArray['table_id'];
 
         $ninja_table_current_rendering_table = $tableArray;
 
@@ -140,9 +141,8 @@ class NinjaFooTable
             $tableId = $tableArray['table_id'];
             add_action('wp_footer', function () use ($css, $tableId) {
                 ?>
-                <style type="text/css" id='ninja_table_custom_css_<?php
-                echo esc_attr($tableId); ?>'>
-                    <?php echo ninjaTablesEscCss($css); ?>
+                <style type="text/css" id='ninja_table_custom_css_<?php echo esc_attr($tableId); ?>'>
+                    <?php echo ninjaTablesEscCss($css); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
                 </style>
                 <?php
             });
@@ -306,13 +306,7 @@ class NinjaFooTable
             }
 
             if ($columnType == 'date') {
-                wp_enqueue_script(
-                    'moment',
-                    NINJA_TABLES_DIR_URL . "assets/libs/moment/moment.min.js",
-                    [],
-                    '2.29.4',
-                    true
-                );
+                wp_enqueue_script('moment');
                 $formatted_column['formatString']   = $column['dateFormat'] ?: 'MM/DD/YYYY';
                 $formatted_column['showTime']       = isset($column['showTime']) && $column['showTime'] === 'yes';
                 $formatted_column['firstDayOfWeek'] = isset($column['firstDayOfWeek']) && $column['firstDayOfWeek'] ? $column['firstDayOfWeek'] : 0;
@@ -343,7 +337,7 @@ class NinjaFooTable
                 }
             }
 
-            if ($tableArray['provider'] == 'wp_woo' && Arr::get($column, 'image_permalink_type') == 'lightbox') {
+            if ((Helper::isProviderActiveAndMatches($tableArray, 'wp_woo') || Helper::isProviderActiveAndMatches($tableArray, 'wp_fct')) && Arr::get($column, 'image_permalink_type') == 'lightbox') {
                 $settings['load_lightbox'] = true;
             };
 
@@ -491,15 +485,17 @@ class NinjaFooTable
 
         $tableCaption = get_post_meta($table_id, '_ninja_table_caption', true);
 
-        $appearanceSettings = get_post_meta($table_id, '_ninja_table_woo_appearance_settings', false);
-           
-        if ($appearanceSettings) {
-            // Convert indexed array to associative if needed
-            $configSettings['appearance_settings'] = is_array($appearanceSettings) && array_keys($appearanceSettings) === range(0, count($appearanceSettings) - 1)
-                ? array_values($appearanceSettings)[0]
-                : $appearanceSettings;
+
+        if(Helper::isProviderActiveAndMatches($tableArray, 'wp_fct')) {
+            $appearanceSettings = get_post_meta($table_id, '_ninja_table_fct_appearance_settings', false);
+        } elseif (Helper::isProviderActiveAndMatches($tableArray, 'wp_woo')) {
+            $appearanceSettings = get_post_meta($table_id, '_ninja_table_woo_appearance_settings', false);
         }
-        
+
+        if (isset($appearanceSettings)) {
+            $configSettings['appearance_settings'] = Arr::get($appearanceSettings, 0, []);
+        }
+
 
         $table_vars = array(
             'table_id'         => $table_id,
@@ -518,7 +514,7 @@ class NinjaFooTable
 
         $table_vars = apply_filters('ninja_table_rendering_table_vars', $table_vars, $table_id, $tableArray);
 
-        if ($tableArray['provider'] == 'wp_woo') {
+        if (Helper::isProviderActiveAndMatches($tableArray, 'wp_woo')) {
             $table_vars['wc_ajax_url'] = add_query_arg(array(
                 'wc-ajax'     => 'add_to_cart',
                 'ninja_table' => $tableArray['table_id']
@@ -536,7 +532,7 @@ class NinjaFooTable
 
         if ($renderType == 'ajax_table') {
 
-            if ($tableArray['provider'] === 'fluent-form') {
+            if (Helper::isProviderActiveAndMatches($tableArray, 'fluent-form')) {
                 $ff        = new FluentFormProvider;
                 $rows      = $ff->data([], $table_id, false);
                 $totalSize = count($rows);
@@ -544,7 +540,7 @@ class NinjaFooTable
                 $gc        = new CsvProvider;
                 $rows      = $gc->data([], $table_id, false);
                 $totalSize = count($rows);
-            } elseif ($tableArray['provider'] == 'wp_woo') {
+            } elseif (Helper::isProviderActiveAndMatches($tableArray, 'wp_woo')) {
                 $woo       = new WoocommercePostsProvider;
                 $rows      = $woo->data([], $table_id, false);
                 $totalSize = count($rows);
@@ -859,13 +855,8 @@ class NinjaFooTable
             'column'      => $column
         );
         if ($columnType == 'date') {
-            wp_enqueue_script(
-                'moment',
-                NINJA_TABLES_DIR_URL . "assets/libs/moment/moment.min.js",
-                [],
-                '2.29.4',
-                true
-            );
+            wp_enqueue_script('moment');
+
             $formatted_column['formatString'] = $column['dateFormat'] ?: 'MM/DD/YYYY';
         }
         if ($sortingType == 'by_column' && $column['key'] == $settings['sorting_column']) {

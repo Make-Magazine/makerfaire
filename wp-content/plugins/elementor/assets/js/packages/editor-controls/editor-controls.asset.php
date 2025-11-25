@@ -17,6 +17,7 @@ return [
 		'elementor-v2-http-client',
 		'elementor-v2-icons',
 		'elementor-v2-locations',
+		'elementor-v2-mixpanel',
 		'elementor-v2-query',
 		'elementor-v2-session',
 		'elementor-v2-ui',

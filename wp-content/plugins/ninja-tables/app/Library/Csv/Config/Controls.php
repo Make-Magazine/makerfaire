@@ -139,7 +139,7 @@ trait Controls
     protected function validateInteger($int, $minValue, $errorMessage)
     {
         if (false === ($int = filter_var($int, FILTER_VALIDATE_INT, ['options' => ['min_range' => $minValue]]))) {
-            throw new InvalidArgumentException($errorMessage);
+            throw new InvalidArgumentException($errorMessage); // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped
         }
         return $int;
     }

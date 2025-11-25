@@ -1,8 +1,16 @@
+/*! ../../../batch-operations */
+
 /*! ../../../context/variable-type-context */
 
 /*! ../../../hooks/use-permissions */
 
 /*! ../../../hooks/use-prop-variables */
+
+/*! ../../../hooks/use-variable-bound-prop */
+
+/*! ../../../service */
+
+/*! ../../../utils/filter-by-search */
 
 /*! ../../../utils/unlink-variable */
 
@@ -11,8 +19,6 @@
 /*! ../../context/variable-selection-popover.context */
 
 /*! ../../hooks/use-permissions */
-
-/*! ../../hooks/use-prop-variables */
 
 /*! ../../utils/validations */
 
@@ -48,6 +54,8 @@
 
 /*! ../hooks/use-prop-variables */
 
+/*! ../hooks/use-variable-bound-prop */
+
 /*! ../mismatch-variable-alert */
 
 /*! ../missing-variable-alert */
@@ -68,6 +76,14 @@
 
 /*! ../transformers/variable-transformer */
 
+/*! ../ui/delete-confirmation-dialog */
+
+/*! ../ui/empty-state */
+
+/*! ../ui/no-search-results */
+
+/*! ../utils/filter-by-search */
+
 /*! ../utils/tracking */
 
 /*! ../utils/validations */
@@ -75,6 +91,8 @@
 /*! ../variables-registry/variable-type-registry */
 
 /*! ./api */
+
+/*! ./batch-operations */
 
 /*! ./components/fields/color-field */
 
@@ -90,13 +108,27 @@
 
 /*! ./create-style-variables-repository */
 
+/*! ./create-variable-tool */
+
 /*! ./create-variable-type-registry */
+
+/*! ./delete-variable-tool */
 
 /*! ./fields/label-field */
 
+/*! ./hooks/use-auto-edit */
+
+/*! ./hooks/use-error-navigation */
+
 /*! ./hooks/use-prop-variable-action */
 
+/*! ./hooks/use-variables-manager-state */
+
 /*! ./init */
+
+/*! ./list-variables-tool */
+
+/*! ./mcp */
 
 /*! ./prop-types/color-variable-prop-type */
 
@@ -122,15 +154,21 @@
 
 /*! ./ui/edit-confirmation-dialog */
 
+/*! ./ui/empty-state */
+
 /*! ./ui/form-field */
 
 /*! ./ui/menu-item-content */
 
 /*! ./ui/no-search-results */
 
-/*! ./ui/no-variables */
-
 /*! ./ui/styled-menu-list */
+
+/*! ./ui/variable-edit-menu */
+
+/*! ./ui/variable-table-cell */
+
+/*! ./update-variable-tool */
 
 /*! ./use-prop-variables */
 
@@ -140,11 +178,9 @@
 
 /*! ./variable-edit */
 
-/*! ./variable-edit-menu */
-
 /*! ./variable-editable-cell */
 
-/*! ./variable-table-cell */
+/*! ./variables-manager-create-menu */
 
 /*! ./variables-manager-table */
 
@@ -164,6 +200,8 @@
 
 /*! @elementor/editor-editing-panel */
 
+/*! @elementor/editor-mcp */
+
 /*! @elementor/editor-panels */
 
 /*! @elementor/editor-props */
@@ -175,6 +213,8 @@
 /*! @elementor/http-client */
 
 /*! @elementor/icons */
+
+/*! @elementor/mixpanel */
 
 /*! @elementor/schema */
 
@@ -211,6 +251,14 @@
 /*!*******************************************!*\
   !*** external ["elementorV2","editorUi"] ***!
   \*******************************************/
+
+/*!*******************************************!*\
+  !*** external ["elementorV2","mixpanel"] ***!
+  \*******************************************/
+
+/*!********************************************!*\
+  !*** external ["elementorV2","editorMcp"] ***!
+  \********************************************/
 
 /*!*********************************************!*\
   !*** external ["elementorV2","httpClient"] ***!
@@ -264,9 +312,17 @@
   !*** ./packages/packages/core/editor-variables/src/storage.ts ***!
   \****************************************************************/
 
+/*!******************************************************************!*\
+  !*** ./packages/packages/core/editor-variables/src/mcp/index.ts ***!
+  \******************************************************************/
+
 /*!***********************************************************************!*\
   !*** ./packages/packages/core/editor-variables/src/utils/tracking.ts ***!
   \***********************************************************************/
+
+/*!*************************************************************************!*\
+  !*** ./packages/packages/core/editor-variables/src/batch-operations.ts ***!
+  \*************************************************************************/
 
 /*!**************************************************************************!*\
   !*** ./packages/packages/core/editor-variables/src/sync/enqueue-font.ts ***!
@@ -288,12 +344,32 @@
   !*** ./packages/packages/core/editor-variables/src/utils/unlink-variable.ts ***!
   \******************************************************************************/
 
+/*!*******************************************************************************!*\
+  !*** ./packages/packages/core/editor-variables/src/utils/filter-by-search.ts ***!
+  \*******************************************************************************/
+
 /*!********************************************************************************!*\
   !*** ./packages/packages/core/editor-variables/src/hooks/use-initial-value.ts ***!
   \********************************************************************************/
 
+/*!********************************************************************************!*\
+  !*** ./packages/packages/core/editor-variables/src/mcp/list-variables-tool.ts ***!
+  \********************************************************************************/
+
 /*!*********************************************************************************!*\
   !*** ./packages/packages/core/editor-variables/src/hooks/use-prop-variables.ts ***!
+  \*********************************************************************************/
+
+/*!*********************************************************************************!*\
+  !*** ./packages/packages/core/editor-variables/src/mcp/create-variable-tool.ts ***!
+  \*********************************************************************************/
+
+/*!*********************************************************************************!*\
+  !*** ./packages/packages/core/editor-variables/src/mcp/delete-variable-tool.ts ***!
+  \*********************************************************************************/
+
+/*!*********************************************************************************!*\
+  !*** ./packages/packages/core/editor-variables/src/mcp/update-variable-tool.ts ***!
   \*********************************************************************************/
 
 /*!*********************************************************************************!*\
@@ -309,16 +385,16 @@
   \**********************************************************************************/
 
 /*!***********************************************************************************!*\
+  !*** ./packages/packages/core/editor-variables/src/components/ui/empty-state.tsx ***!
+  \***********************************************************************************/
+
+/*!***********************************************************************************!*\
   !*** ./packages/packages/core/editor-variables/src/controls/variable-control.tsx ***!
   \***********************************************************************************/
 
 /*!***********************************************************************************!*\
   !*** ./packages/packages/core/editor-variables/src/style-variables-repository.ts ***!
   \***********************************************************************************/
-
-/*!************************************************************************************!*\
-  !*** ./packages/packages/core/editor-variables/src/components/ui/no-variables.tsx ***!
-  \************************************************************************************/
 
 /*!*************************************************************************************!*\
   !*** ./packages/packages/core/editor-variables/src/components/variable-restore.tsx ***!
@@ -330,6 +406,10 @@
 
 /*!**************************************************************************************!*\
   !*** ./packages/packages/core/editor-variables/src/components/variable-creation.tsx ***!
+  \**************************************************************************************/
+
+/*!**************************************************************************************!*\
+  !*** ./packages/packages/core/editor-variables/src/hooks/use-variable-bound-prop.ts ***!
   \**************************************************************************************/
 
 /*!***************************************************************************************!*\
@@ -461,16 +541,20 @@
   \****************************************************************************************************/
 
 /*!*********************************************************************************************************!*\
-  !*** ./packages/packages/core/editor-variables/src/components/variables-manager/variable-edit-menu.tsx ***!
+  !*** ./packages/packages/core/editor-variables/src/components/variables-manager/hooks/use-auto-edit.ts ***!
   \*********************************************************************************************************/
 
 /*!*********************************************************************************************************!*\
   !*** ./packages/packages/core/editor-variables/src/variables-registry/create-variable-type-registry.ts ***!
   \*********************************************************************************************************/
 
-/*!**********************************************************************************************************!*\
-  !*** ./packages/packages/core/editor-variables/src/components/variables-manager/variable-table-cell.tsx ***!
-  \**********************************************************************************************************/
+/*!************************************************************************************************************!*\
+  !*** ./packages/packages/core/editor-variables/src/components/variables-manager/ui/variable-edit-menu.tsx ***!
+  \************************************************************************************************************/
+
+/*!*************************************************************************************************************!*\
+  !*** ./packages/packages/core/editor-variables/src/components/variables-manager/ui/variable-table-cell.tsx ***!
+  \*************************************************************************************************************/
 
 /*!*************************************************************************************************************!*\
   !*** ./packages/packages/core/editor-variables/src/components/variables-manager/variable-editable-cell.tsx ***!
@@ -483,3 +567,15 @@
 /*!**************************************************************************************************************!*\
   !*** ./packages/packages/core/editor-variables/src/components/variables-manager/variables-manager-table.tsx ***!
   \**************************************************************************************************************/
+
+/*!****************************************************************************************************************!*\
+  !*** ./packages/packages/core/editor-variables/src/components/variables-manager/hooks/use-error-navigation.ts ***!
+  \****************************************************************************************************************/
+
+/*!********************************************************************************************************************!*\
+  !*** ./packages/packages/core/editor-variables/src/components/variables-manager/variables-manager-create-menu.tsx ***!
+  \********************************************************************************************************************/
+
+/*!***********************************************************************************************************************!*\
+  !*** ./packages/packages/core/editor-variables/src/components/variables-manager/hooks/use-variables-manager-state.ts ***!
+  \***********************************************************************************************************************/

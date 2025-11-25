@@ -2,7 +2,7 @@
 
 namespace NinjaTables\App\Http\Policies;
 
-use NinjaTables\Framework\Request\Request;
+use NinjaTables\Framework\Http\Request\Request;
 use NinjaTables\Framework\Foundation\Policy;
 
 class UserPolicy extends Policy
@@ -10,7 +10,7 @@ class UserPolicy extends Policy
     /**
      * Check user permission for any method
      *
-     * @param NinjaTables\Framework\Request\Request $request
+     * @param NinjaTables\Framework\Http\Request\Request $request
      *
      * @return Boolean
      */

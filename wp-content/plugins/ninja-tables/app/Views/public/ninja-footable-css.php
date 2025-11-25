@@ -157,22 +157,22 @@
     }
 <?php endif; ?>
 <?php if($cellStyles): ?>
-    <?php foreach ($cellStyles as $cellStyle): ?>
+    <?php foreach ($cellStyles as $ninja_tables_cellStyle): ?>
         <?php
-        $cell = maybe_unserialize($cellStyle->settings);
-        $cellPrefix = $css_prefix.'.ninja_footable.ninja_table_pro tbody tr.nt_row_id_'.$cellStyle->id;
+        $ninja_tables_cell = maybe_unserialize($ninja_tables_cellStyle->settings);
+        $ninja_tables_cellPrefix = $css_prefix.'.ninja_footable.ninja_table_pro tbody tr.nt_row_id_'.$ninja_tables_cellStyle->id;
         ?>
-        <?php echo esc_attr($cellPrefix)?> {
-        <?php if(isset($cell['row_bg'])): ?>background: <?php echo esc_attr($cell['row_bg'].'!important;'); endif; ?>
-        <?php if(isset($cell['text_color'])): ?>color: <?php echo esc_attr($cell['text_color'].'!important;'); endif; ?>}
-        <?php if($cell && isset($cell['cell']) && is_array($cell['cell'])) : foreach ($cell['cell'] as $cell_key => $values): ?>
-            <?php $specCellPrefix = $cellPrefix.' .ninja_clmn_nm_'.$cell_key; ?>
-            <?php echo esc_attr($specCellPrefix) ?> {
-            <?php foreach ($values as $value_key => $value){ ?>
-                <?php if($value): echo esc_attr($value_key); ?> : <?php echo esc_attr($value.';'); endif; ?>
+        <?php echo esc_attr($ninja_tables_cellPrefix)?> {
+        <?php if(isset($ninja_tables_cell['row_bg'])): ?>background: <?php echo esc_attr($ninja_tables_cell['row_bg'].'!important;'); endif; ?>
+        <?php if(isset($ninja_tables_cell['text_color'])): ?>color: <?php echo esc_attr($ninja_tables_cell['text_color'].'!important;'); endif; ?>}
+        <?php if($ninja_tables_cell && isset($ninja_tables_cell['cell']) && is_array($ninja_tables_cell['cell'])) : foreach ($ninja_tables_cell['cell'] as $ninja_tables_cell_key => $ninja_tables_values): ?>
+            <?php $ninja_tables_specCellPrefix = $ninja_tables_cellPrefix.' .ninja_clmn_nm_'.$ninja_tables_cell_key; ?>
+            <?php echo esc_attr($ninja_tables_specCellPrefix) ?> {
+            <?php foreach ($ninja_tables_values as $ninja_tables_value_key => $ninja_tables_value){ ?>
+                <?php if($ninja_tables_value): echo esc_attr($ninja_tables_value_key); ?> : <?php echo esc_attr($ninja_tables_value.';'); endif; ?>
             <?php } ?>
             }
-            <?php echo esc_attr($specCellPrefix) ?> > * { color: inherit }
+            <?php echo esc_attr($ninja_tables_specCellPrefix) ?> > * { color: inherit }
         <?php endforeach; endif; // end of if(is_array($cell['cell'])) ?>
     <?php endforeach; ?>
 <?php endif; ?>
@@ -235,4 +235,4 @@
         }
     <?php endif; ?>
 <?php endif; ?>
-<?php  echo ninjaTablesEscCss($custom_css); ?>
+<?php echo ninjaTablesEscCss($custom_css); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>

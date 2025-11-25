@@ -1,4 +1,4 @@
-/*! elementor-pro - v3.32.0 - 29-09-2025 */
+/*! elementor-pro - v3.33.0 - 11-11-2025 */
 /******/ (() => { // webpackBootstrap
 /******/ 	var __webpack_modules__ = ({
 
@@ -75,8 +75,7 @@ module.exports = elementorModules.editor.utils.Module.extend({
    *
    * @return {void}
    */
-  addControlError(controlName, error) {
-    let location = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : '.elementor-control-content';
+  addControlError(controlName, error, location = '.elementor-control-content') {
     const $el = this.getEditorControlView(controlName).$el;
 
     // Remove any existing error in order to override it.
@@ -204,7 +203,6 @@ Object.defineProperty(exports, "__esModule", ({
 exports.SAVE_CONTEXT = exports.EDIT_CONTEXT = void 0;
 exports.createElement = createElement;
 exports["default"] = addDocumentHandle;
-__webpack_require__(/*! core-js/modules/es.array.includes.js */ "../node_modules/core-js/modules/es.array.includes.js");
 __webpack_require__(/*! core-js/modules/es.array.push.js */ "../node_modules/core-js/modules/es.array.push.js");
 const EDIT_HANDLE_CLASS_NAME = 'elementor-document-handle';
 const EDIT_MODE_CLASS_NAME = 'elementor-edit-mode';
@@ -221,15 +219,11 @@ const SAVE_CONTEXT = exports.SAVE_CONTEXT = 'save';
  * @param {Function|null} onCloseDocument      - Callback to run when outgoing document is closed.
  * @param {string}        selector
  */
-function addDocumentHandle(_ref) {
-  let {
-    element,
-    id,
-    title = __('Template', 'elementor-pro')
-  } = _ref;
-  let context = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : EDIT_CONTEXT;
-  let onCloseDocument = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : null;
-  let selector = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : null;
+function addDocumentHandle({
+  element,
+  id,
+  title = __('Template', 'elementor-pro')
+}, context = EDIT_CONTEXT, onCloseDocument = null, selector = null) {
   if (EDIT_CONTEXT === context) {
     if (!id || !element) {
       throw Error('`id` and `element` are required.');
@@ -275,12 +269,10 @@ function hasHandle(element) {
  *
  * @return {HTMLElement} The newly generated Handle element
  */
-function createHandleElement(_ref2, context) {
-  let {
-    title,
-    onClick
-  } = _ref2;
-  let element = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : null;
+function createHandleElement({
+  title,
+  onClick
+}, context, element = null) {
   const handleTitle = ['header', 'footer'].includes(element?.dataset.elementorType) ? '%s' : __('Edit %s', 'elementor-pro');
   const innerElement = createElement({
     tag: 'div',
@@ -324,12 +316,11 @@ function getHandleIcon(context) {
  *
  * @return {HTMLElement} Generated Element
  */
-function createElement(_ref3) {
-  let {
-    tag,
-    classNames = [],
-    children = []
-  } = _ref3;
+function createElement({
+  tag,
+  classNames = [],
+  children = []
+}) {
   const element = document.createElement(tag);
   element.classList.add(...classNames);
   children.forEach(child => element.appendChild(child));
@@ -343,9 +334,7 @@ function createElement(_ref3) {
  * @param {string}        selector
  * @return {Promise<void>}
  */
-async function onDocumentClick(id, context) {
-  let onCloseDocument = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : null;
-  let selector = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : null;
+async function onDocumentClick(id, context, onCloseDocument = null, selector = null) {
   if (EDIT_CONTEXT === context) {
     window.top.$e.internal('panel/state-loading');
     await window.top.$e.run('editor/documents/switch', {
@@ -837,8 +826,8 @@ module.exports = class extends elementor.modules.controls.Repeater {
   getChildView() {
     return _fieldsRepeaterRow.default;
   }
-  initialize() {
-    super.initialize(...arguments);
+  initialize(...args) {
+    super.initialize(...args);
     const formFields = this.container.settings.get('form_fields');
     this.listenTo(formFields, 'change', model => this.onFormFieldChange(model)).listenTo(formFields, 'remove', model => this.onFormFieldRemove(model));
   }
@@ -1110,7 +1099,6 @@ module.exports = elementorModules.editor.utils.Module.extend({
 "use strict";
 
 
-__webpack_require__(/*! core-js/modules/es.array.includes.js */ "../node_modules/core-js/modules/es.array.includes.js");
 __webpack_require__(/*! core-js/modules/es.array.push.js */ "../node_modules/core-js/modules/es.array.push.js");
 module.exports = elementorModules.editor.utils.Module.extend({
   eventName: 'site_mailer_forms_email_notice',
@@ -1211,7 +1199,6 @@ module.exports = elementorModules.editor.utils.Module.extend({
 "use strict";
 
 
-__webpack_require__(/*! core-js/modules/es.array.includes.js */ "../node_modules/core-js/modules/es.array.includes.js");
 __webpack_require__(/*! core-js/modules/es.array.push.js */ "../node_modules/core-js/modules/es.array.push.js");
 module.exports = elementorModules.editor.utils.Module.extend({
   eventName: 'send_app_forms_actions_notice',
@@ -1809,8 +1796,7 @@ module.exports = ElementEditorModule.extend({
       data: args
     });
   },
-  fetchCache(type, cacheKey, requestArgs) {
-    let immediately = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : false;
+  fetchCache(type, cacheKey, requestArgs, immediately = false) {
     return elementorPro.ajax.addRequest('forms_panel_action_data', {
       unique_id: 'integrations_' + this.getName(),
       data: requestArgs,
@@ -2179,8 +2165,7 @@ module.exports = BaseIntegrationModule.extend({
       self.getEditorControlView('mailchimp_fields_map').updateMap(data.fields);
     });
   },
-  getMailchimpCache(type, action, cacheKey, requestArgs) {
-    let immediately = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : false;
+  getMailchimpCache(type, action, cacheKey, requestArgs, immediately = false) {
     if (_.has(this.cache[type], cacheKey)) {
       var data = {};
       data[type] = this.cache[type][cacheKey];
@@ -2575,13 +2560,10 @@ class Templates extends $e.modules.CommandData {
   static getEndpointFormat() {
     return 'global-widget/templates';
   }
-  onAfterApply() {
-    let args = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
-    let result = arguments.length > 1 ? arguments[1] : undefined;
+  onAfterApply(args = {}, result) {
     // TODO: Remove - Manually handling of cache - This behavior should be automatically handled by passed `options` to $e.data.
     $e.data.deleteCache(this.component, 'document/global/global-widget/templates', args.query);
-    Object.entries(result.data).forEach(_ref => {
-      let [templateID, data] = _ref;
+    Object.entries(result.data).forEach(([templateID, data]) => {
       $e.data.setCache(this.component, `document/global/global-widget/templates/${templateID}`, {}, data);
     });
   }
@@ -2676,8 +2658,7 @@ class SaveTemplates extends $e.modules.CommandInternalBase {
   }
   getCurrentTemplatesModels(changedContainersId) {
     const templatesData = [];
-    Object.entries(changedContainersId).forEach(_ref => {
-      let [templateID, containerId] = _ref;
+    Object.entries(changedContainersId).forEach(([templateID, containerId]) => {
       const templateData = $e.data.getCache(this.component, `document/global/global-widget/templates/${templateID}`);
       if (!templateData) {
         if ($e.devTools) {
@@ -2977,8 +2958,7 @@ class Component extends $e.modules.ComponentBase {
           const model = targetContainer[modelName];
           if (model instanceof Backbone.Model) {
             const accordingTo = 'settings' === modelName ? targetContainer.settings.attributes : model.changed;
-            Object.entries(accordingTo).forEach(_ref => {
-              let [key, setting] = _ref;
+            Object.entries(accordingTo).forEach(([key, setting]) => {
               container[modelName].set(key, setting);
             });
           }
@@ -3258,8 +3238,7 @@ class GlobalWidgetLoadTemplates extends $e.modules.hookData.After {
   }
   apply() {
     GlobalWidgetLoadTemplates.calledOnce = true;
-    Object.entries(elementorPro.config.widget_templates).forEach(_ref => {
-      let [id, data] = _ref;
+    Object.entries(elementorPro.config.widget_templates).forEach(([id, data]) => {
       elementorPro.modules.globalWidget.addGlobalWidget(id, data);
       this.addTemplateToCache(id);
     });
@@ -3464,7 +3443,7 @@ Object.defineProperty(exports, "__esModule", ({
 exports["default"] = void 0;
 var _component = _interopRequireDefault(__webpack_require__(/*! ./component */ "../modules/global-widget/assets/js/editor/component.js"));
 class Module extends elementorModules.editor.utils.Module {
-  panelWidgets = (() => new Backbone.Collection())();
+  panelWidgets = new Backbone.Collection();
   addGlobalWidget(templateId, templateData) {
     return this.panelWidgets.add(this.createGlobalModel(templateId, templateData));
   }
@@ -4125,7 +4104,6 @@ var _default = exports["default"] = LoopBuilderAddLibraryTab;
 
 
 var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault */ "../node_modules/@babel/runtime/helpers/interopRequireDefault.js");
-__webpack_require__(/*! core-js/modules/es.array.includes.js */ "../node_modules/core-js/modules/es.array.includes.js");
 var _documentHandle = _interopRequireWildcard(__webpack_require__(/*! elementor-pro/preview/utils/document-handle */ "../assets/dev/js/preview/utils/document-handle.js"));
 var _component = _interopRequireDefault(__webpack_require__(/*! ./component */ "../modules/loop-builder/assets/js/editor/component.js"));
 var _behavior = _interopRequireDefault(__webpack_require__(/*! ./behavior */ "../modules/loop-builder/assets/js/editor/behavior.js"));
@@ -4141,23 +4119,18 @@ class loopBuilderModule extends elementorModules.editor.utils.Module {
     this.createDocumentSaveHandles();
     elementor.on('document:loaded', this.createDocumentSaveHandles.bind(this));
   }
-  registerControlBehavior = (() => {
-    var _this = this;
-    return function () {
-      let behaviors = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
-      let view = arguments.length > 1 ? arguments[1] : undefined;
-      const taxonomyQueryOptions = ['post_taxonomy_query_post_type', 'product_taxonomy_query_post_type'];
-      if (!taxonomyQueryOptions.includes(view.options.model.get('name'))) {
-        return behaviors;
-      }
-      behaviors.loopBuilder = {
-        behaviorClass: _behavior.default,
-        getSourceControlValue: _this.getSourceControlValue,
-        updateTaxonomyTabsIdControls: _this.updateTaxonomyTabsIdControls
-      };
+  registerControlBehavior = (behaviors = {}, view) => {
+    const taxonomyQueryOptions = ['post_taxonomy_query_post_type', 'product_taxonomy_query_post_type'];
+    if (!taxonomyQueryOptions.includes(view.options.model.get('name'))) {
       return behaviors;
+    }
+    behaviors.loopBuilder = {
+      behaviorClass: _behavior.default,
+      getSourceControlValue: this.getSourceControlValue,
+      updateTaxonomyTabsIdControls: this.updateTaxonomyTabsIdControls
     };
-  })();
+    return behaviors;
+  };
   createTemplate() {
     setTimeout(() => {
       elementor.getPanelView().getCurrentPageView().activateSection('section_layout')._renderChildren();
@@ -4165,8 +4138,7 @@ class loopBuilderModule extends elementorModules.editor.utils.Module {
     });
   }
   createDocumentSaveHandles() {
-    Object.entries(elementorFrontend.config?.elements?.data).forEach(_ref => {
-      let [cid, element] = _ref;
+    Object.entries(elementorFrontend.config?.elements?.data).forEach(([cid, element]) => {
       const elementData = elementor.getElementData(element);
       if (!elementData?.is_loop) {
         return;
@@ -4260,39 +4232,34 @@ class loopBuilderModule extends elementorModules.editor.utils.Module {
     };
     return defaultSourceTypes[skinType];
   };
-  updateTaxonomyTabsIdControls = (() => {
-    var _this2 = this;
-    return function (postType) {
-      let shouldResetControlValues = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
-      const skinType = _this2.getSkinType();
-      if (!_this2.taxonomyQueryOptions.includes(skinType)) {
-        return;
-      }
-      const querySectionView = elementorPro.modules.loopBuilder.getEditorControlView('section_query'),
-        includeIds = querySectionView.model.collection.findWhere({
-          name: `${skinType}_posts_ids`
-        }),
-        excludeIds = querySectionView.model.collection.findWhere({
-          name: `${skinType}_exclude_ids`
-        });
-      [includeIds, excludeIds].forEach(control => {
-        const controlView = elementor.getPanelView()?.getCurrentPageView()?.children?.findByModel(control);
-        _this2.updateControlQuery({
-          control,
-          controlView,
-          postType,
-          shouldResetControlValues
-        });
+  updateTaxonomyTabsIdControls = (postType, shouldResetControlValues = false) => {
+    const skinType = this.getSkinType();
+    if (!this.taxonomyQueryOptions.includes(skinType)) {
+      return;
+    }
+    const querySectionView = elementorPro.modules.loopBuilder.getEditorControlView('section_query'),
+      includeIds = querySectionView.model.collection.findWhere({
+        name: `${skinType}_posts_ids`
+      }),
+      excludeIds = querySectionView.model.collection.findWhere({
+        name: `${skinType}_exclude_ids`
       });
-    };
-  })();
-  updateControlQuery = _ref2 => {
-    let {
-      control,
-      controlView,
-      postType,
-      shouldResetControlValues
-    } = _ref2;
+    [includeIds, excludeIds].forEach(control => {
+      const controlView = elementor.getPanelView()?.getCurrentPageView()?.children?.findByModel(control);
+      this.updateControlQuery({
+        control,
+        controlView,
+        postType,
+        shouldResetControlValues
+      });
+    });
+  };
+  updateControlQuery = ({
+    control,
+    controlView,
+    postType,
+    shouldResetControlValues
+  }) => {
     control.set({
       autocomplete: {
         object: 'tax',
@@ -4550,7 +4517,7 @@ exports["default"] = Component;
 /*!******************************************************************************************!*\
   !*** ../modules/page-transitions/assets/js/editor/hooks/data/animate-page-transition.js ***!
   \******************************************************************************************/
-/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+/***/ ((__unused_webpack_module, exports) => {
 
 "use strict";
 
@@ -4559,7 +4526,6 @@ Object.defineProperty(exports, "__esModule", ({
   value: true
 }));
 exports["default"] = exports.AnimatePageTransition = void 0;
-__webpack_require__(/*! core-js/modules/es.array.includes.js */ "../node_modules/core-js/modules/es.array.includes.js");
 /**
  * Data hook that animates the Page Transition component when entrance / exit animations are changed.
  */
@@ -4636,7 +4602,6 @@ Object.defineProperty(exports, "__esModule", ({
   value: true
 }));
 exports["default"] = exports.ReRenderPageTransition = void 0;
-__webpack_require__(/*! core-js/modules/es.array.includes.js */ "../node_modules/core-js/modules/es.array.includes.js");
 var _utils = __webpack_require__(/*! ../utils */ "../modules/page-transitions/assets/js/editor/hooks/utils.js");
 /**
  * Data hook that passes the new settings from the panel as attributes to the Page Transition component, in order to re-render it.
@@ -4743,8 +4708,7 @@ class PageTransitionPreview {
    *
    * @return {void}
    */
-  togglePageTransitionPreview() {
-    let on = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : true;
+  togglePageTransitionPreview(on = true) {
     const className = 'e-page-transition--preview',
       pageTransition = elementor.$previewContents[0].body.querySelector('e-page-transition');
     if (!pageTransition) {
@@ -4783,13 +4747,11 @@ const prefix = 'settings_page_transitions_';
 function getPageTransitionSettings(container) {
   // Filter only the Page Transitions controls which doesn't change CSS values.
   // (since they shouldn't affect the render)
-  const controls = Object.entries(container.settings.getActiveControls()).filter(_ref => {
-    let [key, control] = _ref;
+  const controls = Object.entries(container.settings.getActiveControls()).filter(([key, control]) => {
     return key.startsWith(prefix) && !control.selectors;
   });
   const settings = {};
-  controls.forEach(_ref2 => {
-    let [control] = _ref2;
+  controls.forEach(([control]) => {
     settings[control] = container.settings.get(control);
   });
   return settings;
@@ -4820,8 +4782,7 @@ function renderPageTransition(container) {
   const settings = getPageTransitionSettings(container);
 
   // Iterate over the settings and set them as attributes.
-  Object.entries(settings).forEach(_ref3 => {
-    let [key, value] = _ref3;
+  Object.entries(settings).forEach(([key, value]) => {
     key = key.replace(prefix, '');
     key = key.replaceAll('_', '-');
     if (!value) {
@@ -4834,8 +4795,7 @@ function renderPageTransition(container) {
     }
 
     // For object values (e.g. image control).
-    Object.entries(value).forEach(_ref4 => {
-      let [subKey, subValue] = _ref4;
+    Object.entries(value).forEach(([subKey, subValue]) => {
       let newKey = key;
 
       // Append the sub key only if it's not `value` (e.g. `url`), in order to avoid weird
@@ -5008,8 +4968,8 @@ Object.defineProperty(exports, "__esModule", ({
 }));
 exports["default"] = void 0;
 class _default extends elementorModules.editor.views.ControlsStack {
-  constructor() {
-    super(...arguments);
+  constructor(...args) {
+    super(...args);
     this.template = _.noop;
     this.activeTab = 'content';
     this.listenTo(this.model, 'change', this.onModelChange);
@@ -5436,8 +5396,8 @@ var _removeTriggers = __webpack_require__(/*! ./editor/documents/close/remove-tr
 var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault */ "../node_modules/@babel/runtime/helpers/interopRequireDefault.js");
 var _component = _interopRequireDefault(__webpack_require__(/*! ./component */ "../modules/popup/assets/js/editor/component.js"));
 class PopupModule extends elementorModules.editor.utils.Module {
-  constructor() {
-    super(...arguments);
+  constructor(...args) {
+    super(...args);
     this.displaySettingsTypes = {
       triggers: {
         icon: 'eicon-click',
@@ -5473,12 +5433,9 @@ module.exports = PopupModule;
 module.exports = elementorModules.editor.utils.Module.extend({
   onElementorPreviewLoaded() {
     elementor.addControlView('Query', __webpack_require__(/*! ./editor/query-control */ "../modules/query-control/assets/js/editor/query-control.js"));
-    __webpack_require__.e(/*! import() */ "modules_query-control_assets_js_editor_template-query-control_js").then(__webpack_require__.bind(__webpack_require__, /*! ./editor/template-query-control */ "../modules/query-control/assets/js/editor/template-query-control.js")).then(_ref => {
-      let {
-        default: TemplateQueryControl
-      } = _ref;
-      return elementor.addControlView('template_query', TemplateQueryControl);
-    });
+    __webpack_require__.e(/*! import() */ "modules_query-control_assets_js_editor_template-query-control_js").then(__webpack_require__.bind(__webpack_require__, /*! ./editor/template-query-control */ "../modules/query-control/assets/js/editor/template-query-control.js")).then(({
+      default: TemplateQueryControl
+    }) => elementor.addControlView('template_query', TemplateQueryControl));
   }
 });
 
@@ -6757,11 +6714,10 @@ Object.defineProperty(exports, "__esModule", ({
   value: true
 }));
 exports["default"] = void 0;
-__webpack_require__(/*! core-js/modules/es.array.includes.js */ "../node_modules/core-js/modules/es.array.includes.js");
 var _component = _interopRequireDefault(__webpack_require__(/*! ./publish/component */ "../modules/theme-builder/assets/js/editor/publish/component.js"));
 class ThemeBuilderModule extends elementorModules.editor.utils.Module {
-  __construct() {
-    super.__construct(...arguments);
+  __construct(...args) {
+    super.__construct(...args);
     Object.defineProperty(elementorPro.config, 'theme_builder', {
       get() {
         elementorDevTools.deprecation.deprecated('theme_builder', '2.9.0', 'elementor.config.document.theme_builder');
@@ -7268,7 +7224,6 @@ exports["default"] = Component;
 "use strict";
 
 
-__webpack_require__(/*! core-js/modules/es.array.includes.js */ "../node_modules/core-js/modules/es.array.includes.js");
 __webpack_require__(/*! core-js/modules/es.array.push.js */ "../node_modules/core-js/modules/es.array.push.js");
 module.exports = elementorModules.editor.utils.Module.extend({
   eventName: 'send_app_wc_widgets_notice',
@@ -7582,8 +7537,8 @@ __webpack_require__(/*! core-js/modules/es.array.push.js */ "../node_modules/cor
 var _component = _interopRequireDefault(__webpack_require__(/*! ./component */ "../modules/woocommerce/assets/js/editor/component.js"));
 var _storeTracking = _interopRequireDefault(__webpack_require__(/*! ./hints/store-tracking */ "../modules/woocommerce/assets/js/editor/hints/store-tracking.js"));
 class WoocommerceModule extends elementorModules.editor.utils.Module {
-  constructor() {
-    super(...arguments);
+  constructor(...args) {
+    super(...args);
     this.pageSettingsWidgets = {
       'woocommerce-checkout-page': {
         headerMessage: __('Want to save this as your checkout page?', 'elementor-pro'),
@@ -7648,8 +7603,7 @@ class WoocommerceModule extends elementorModules.editor.utils.Module {
       });
     }
   }
-  didManuallyTriggerAddToCartEvent() {
-    let data = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : null;
+  didManuallyTriggerAddToCartEvent(data = null) {
     return data?.e_manually_triggered;
   }
   onElementorLoaded() {
@@ -7795,9 +7749,7 @@ class WoocommerceModule extends elementorModules.editor.utils.Module {
   }
 
   // TODO: Add this as a reusable core function - to be able to open any settings tab.
-  openSiteSettingsTab() {
-    let tabId = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : '';
-    let sectionId = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : '';
+  openSiteSettingsTab(tabId = '', sectionId = '') {
     const isWPPreviewMode = elementorCommon.elements.$body.hasClass('elementor-editor-preview');
     if (isWPPreviewMode) {
       elementor.exitPreviewMode();
@@ -7884,38 +7836,6 @@ var $TypeError = TypeError;
 module.exports = function (argument) {
   if (isCallable(argument)) return argument;
   throw new $TypeError(tryToString(argument) + ' is not a function');
-};
-
-
-/***/ }),
-
-/***/ "../node_modules/core-js/internals/add-to-unscopables.js":
-/*!***************************************************************!*\
-  !*** ../node_modules/core-js/internals/add-to-unscopables.js ***!
-  \***************************************************************/
-/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
-
-"use strict";
-
-var wellKnownSymbol = __webpack_require__(/*! ../internals/well-known-symbol */ "../node_modules/core-js/internals/well-known-symbol.js");
-var create = __webpack_require__(/*! ../internals/object-create */ "../node_modules/core-js/internals/object-create.js");
-var defineProperty = (__webpack_require__(/*! ../internals/object-define-property */ "../node_modules/core-js/internals/object-define-property.js").f);
-
-var UNSCOPABLES = wellKnownSymbol('unscopables');
-var ArrayPrototype = Array.prototype;
-
-// Array.prototype[@@unscopables]
-// https://tc39.es/ecma262/#sec-array.prototype-@@unscopables
-if (ArrayPrototype[UNSCOPABLES] === undefined) {
-  defineProperty(ArrayPrototype, UNSCOPABLES, {
-    configurable: true,
-    value: create(null)
-  });
-}
-
-// add a key to Array.prototype[@@unscopables]
-module.exports = function (key) {
-  ArrayPrototype[UNSCOPABLES][key] = true;
 };
 
 
@@ -8600,21 +8520,6 @@ module.exports = {};
 
 /***/ }),
 
-/***/ "../node_modules/core-js/internals/html.js":
-/*!*************************************************!*\
-  !*** ../node_modules/core-js/internals/html.js ***!
-  \*************************************************/
-/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
-
-"use strict";
-
-var getBuiltIn = __webpack_require__(/*! ../internals/get-built-in */ "../node_modules/core-js/internals/get-built-in.js");
-
-module.exports = getBuiltIn('document', 'documentElement');
-
-
-/***/ }),
-
 /***/ "../node_modules/core-js/internals/ie8-dom-define.js":
 /*!***********************************************************!*\
   !*** ../node_modules/core-js/internals/ie8-dom-define.js ***!
@@ -9029,134 +8934,6 @@ module.exports = Math.trunc || function trunc(x) {
 
 /***/ }),
 
-/***/ "../node_modules/core-js/internals/object-create.js":
-/*!**********************************************************!*\
-  !*** ../node_modules/core-js/internals/object-create.js ***!
-  \**********************************************************/
-/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
-
-"use strict";
-
-/* global ActiveXObject -- old IE, WSH */
-var anObject = __webpack_require__(/*! ../internals/an-object */ "../node_modules/core-js/internals/an-object.js");
-var definePropertiesModule = __webpack_require__(/*! ../internals/object-define-properties */ "../node_modules/core-js/internals/object-define-properties.js");
-var enumBugKeys = __webpack_require__(/*! ../internals/enum-bug-keys */ "../node_modules/core-js/internals/enum-bug-keys.js");
-var hiddenKeys = __webpack_require__(/*! ../internals/hidden-keys */ "../node_modules/core-js/internals/hidden-keys.js");
-var html = __webpack_require__(/*! ../internals/html */ "../node_modules/core-js/internals/html.js");
-var documentCreateElement = __webpack_require__(/*! ../internals/document-create-element */ "../node_modules/core-js/internals/document-create-element.js");
-var sharedKey = __webpack_require__(/*! ../internals/shared-key */ "../node_modules/core-js/internals/shared-key.js");
-
-var GT = '>';
-var LT = '<';
-var PROTOTYPE = 'prototype';
-var SCRIPT = 'script';
-var IE_PROTO = sharedKey('IE_PROTO');
-
-var EmptyConstructor = function () { /* empty */ };
-
-var scriptTag = function (content) {
-  return LT + SCRIPT + GT + content + LT + '/' + SCRIPT + GT;
-};
-
-// Create object with fake `null` prototype: use ActiveX Object with cleared prototype
-var NullProtoObjectViaActiveX = function (activeXDocument) {
-  activeXDocument.write(scriptTag(''));
-  activeXDocument.close();
-  var temp = activeXDocument.parentWindow.Object;
-  // eslint-disable-next-line no-useless-assignment -- avoid memory leak
-  activeXDocument = null;
-  return temp;
-};
-
-// Create object with fake `null` prototype: use iframe Object with cleared prototype
-var NullProtoObjectViaIFrame = function () {
-  // Thrash, waste and sodomy: IE GC bug
-  var iframe = documentCreateElement('iframe');
-  var JS = 'java' + SCRIPT + ':';
-  var iframeDocument;
-  iframe.style.display = 'none';
-  html.appendChild(iframe);
-  // https://github.com/zloirock/core-js/issues/475
-  iframe.src = String(JS);
-  iframeDocument = iframe.contentWindow.document;
-  iframeDocument.open();
-  iframeDocument.write(scriptTag('document.F=Object'));
-  iframeDocument.close();
-  return iframeDocument.F;
-};
-
-// Check for document.domain and active x support
-// No need to use active x approach when document.domain is not set
-// see https://github.com/es-shims/es5-shim/issues/150
-// variation of https://github.com/kitcambridge/es5-shim/commit/4f738ac066346
-// avoid IE GC bug
-var activeXDocument;
-var NullProtoObject = function () {
-  try {
-    activeXDocument = new ActiveXObject('htmlfile');
-  } catch (error) { /* ignore */ }
-  NullProtoObject = typeof document != 'undefined'
-    ? document.domain && activeXDocument
-      ? NullProtoObjectViaActiveX(activeXDocument) // old IE
-      : NullProtoObjectViaIFrame()
-    : NullProtoObjectViaActiveX(activeXDocument); // WSH
-  var length = enumBugKeys.length;
-  while (length--) delete NullProtoObject[PROTOTYPE][enumBugKeys[length]];
-  return NullProtoObject();
-};
-
-hiddenKeys[IE_PROTO] = true;
-
-// `Object.create` method
-// https://tc39.es/ecma262/#sec-object.create
-// eslint-disable-next-line es/no-object-create -- safe
-module.exports = Object.create || function create(O, Properties) {
-  var result;
-  if (O !== null) {
-    EmptyConstructor[PROTOTYPE] = anObject(O);
-    result = new EmptyConstructor();
-    EmptyConstructor[PROTOTYPE] = null;
-    // add "__proto__" for Object.getPrototypeOf polyfill
-    result[IE_PROTO] = O;
-  } else result = NullProtoObject();
-  return Properties === undefined ? result : definePropertiesModule.f(result, Properties);
-};
-
-
-/***/ }),
-
-/***/ "../node_modules/core-js/internals/object-define-properties.js":
-/*!*********************************************************************!*\
-  !*** ../node_modules/core-js/internals/object-define-properties.js ***!
-  \*********************************************************************/
-/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
-
-"use strict";
-
-var DESCRIPTORS = __webpack_require__(/*! ../internals/descriptors */ "../node_modules/core-js/internals/descriptors.js");
-var V8_PROTOTYPE_DEFINE_BUG = __webpack_require__(/*! ../internals/v8-prototype-define-bug */ "../node_modules/core-js/internals/v8-prototype-define-bug.js");
-var definePropertyModule = __webpack_require__(/*! ../internals/object-define-property */ "../node_modules/core-js/internals/object-define-property.js");
-var anObject = __webpack_require__(/*! ../internals/an-object */ "../node_modules/core-js/internals/an-object.js");
-var toIndexedObject = __webpack_require__(/*! ../internals/to-indexed-object */ "../node_modules/core-js/internals/to-indexed-object.js");
-var objectKeys = __webpack_require__(/*! ../internals/object-keys */ "../node_modules/core-js/internals/object-keys.js");
-
-// `Object.defineProperties` method
-// https://tc39.es/ecma262/#sec-object.defineproperties
-// eslint-disable-next-line es/no-object-defineproperties -- safe
-exports.f = DESCRIPTORS && !V8_PROTOTYPE_DEFINE_BUG ? Object.defineProperties : function defineProperties(O, Properties) {
-  anObject(O);
-  var props = toIndexedObject(Properties);
-  var keys = objectKeys(Properties);
-  var length = keys.length;
-  var index = 0;
-  var key;
-  while (length > index) definePropertyModule.f(O, key = keys[index++], props[key]);
-  return O;
-};
-
-
-/***/ }),
-
 /***/ "../node_modules/core-js/internals/object-define-property.js":
 /*!*******************************************************************!*\
   !*** ../node_modules/core-js/internals/object-define-property.js ***!
@@ -9325,27 +9102,6 @@ module.exports = function (object, names) {
     ~indexOf(result, key) || push(result, key);
   }
   return result;
-};
-
-
-/***/ }),
-
-/***/ "../node_modules/core-js/internals/object-keys.js":
-/*!********************************************************!*\
-  !*** ../node_modules/core-js/internals/object-keys.js ***!
-  \********************************************************/
-/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
-
-"use strict";
-
-var internalObjectKeys = __webpack_require__(/*! ../internals/object-keys-internal */ "../node_modules/core-js/internals/object-keys-internal.js");
-var enumBugKeys = __webpack_require__(/*! ../internals/enum-bug-keys */ "../node_modules/core-js/internals/enum-bug-keys.js");
-
-// `Object.keys` method
-// https://tc39.es/ecma262/#sec-object.keys
-// eslint-disable-next-line es/no-object-keys -- safe
-module.exports = Object.keys || function keys(O) {
-  return internalObjectKeys(O, enumBugKeys);
 };
 
 
@@ -9841,39 +9597,6 @@ module.exports = function (name) {
 
 /***/ }),
 
-/***/ "../node_modules/core-js/modules/es.array.includes.js":
-/*!************************************************************!*\
-  !*** ../node_modules/core-js/modules/es.array.includes.js ***!
-  \************************************************************/
-/***/ ((__unused_webpack_module, __unused_webpack_exports, __webpack_require__) => {
-
-"use strict";
-
-var $ = __webpack_require__(/*! ../internals/export */ "../node_modules/core-js/internals/export.js");
-var $includes = (__webpack_require__(/*! ../internals/array-includes */ "../node_modules/core-js/internals/array-includes.js").includes);
-var fails = __webpack_require__(/*! ../internals/fails */ "../node_modules/core-js/internals/fails.js");
-var addToUnscopables = __webpack_require__(/*! ../internals/add-to-unscopables */ "../node_modules/core-js/internals/add-to-unscopables.js");
-
-// FF99+ bug
-var BROKEN_ON_SPARSE = fails(function () {
-  // eslint-disable-next-line es/no-array-prototype-includes -- detection
-  return !Array(1).includes();
-});
-
-// `Array.prototype.includes` method
-// https://tc39.es/ecma262/#sec-array.prototype.includes
-$({ target: 'Array', proto: true, forced: BROKEN_ON_SPARSE }, {
-  includes: function includes(el /* , fromIndex = 0 */) {
-    return $includes(this, el, arguments.length > 1 ? arguments[1] : undefined);
-  }
-});
-
-// https://tc39.es/ecma262/#sec-array.prototype-@@unscopables
-addToUnscopables('includes');
-
-
-/***/ }),
-
 /***/ "../node_modules/core-js/modules/es.array.push.js":
 /*!********************************************************!*\
   !*** ../node_modules/core-js/modules/es.array.push.js ***!
@@ -9975,11 +9698,11 @@ $({ target: 'Array', proto: true, arity: 1, forced: FORCED }, {
 /******/ 		// This function allow to reference async chunks
 /******/ 		__webpack_require__.u = (chunkId) => {
 /******/ 			// return url for filenames not based on template
-/******/ 			if (chunkId === "mega-menu-editor") return "" + chunkId + ".e043cd3d7fd180995eb9.bundle.js";
+/******/ 			if (chunkId === "mega-menu-editor") return "" + chunkId + ".be91c0f96af4174d83d0.bundle.js";
 /******/ 			if (chunkId === "nested-carousel-editor") return "" + chunkId + ".0df35e0e1a284d4bd18b.bundle.js";
 /******/ 			if (chunkId === "loop-filter-editor") return "" + chunkId + ".46a4c013b80a381a50c9.bundle.js";
-/******/ 			if (chunkId === "off-canvas-editor") return "" + chunkId + ".d20b8e528d36b21a024c.bundle.js";
-/******/ 			if (chunkId === "modules_query-control_assets_js_editor_template-query-control_js") return "1644e3d37816d939acca.bundle.js";
+/******/ 			if (chunkId === "off-canvas-editor") return "" + chunkId + ".d30e3b4fb19101e5ff36.bundle.js";
+/******/ 			if (chunkId === "modules_query-control_assets_js_editor_template-query-control_js") return "36c2990924ec9596ffad.bundle.js";
 /******/ 			// return url for filenames based on template
 /******/ 			return undefined;
 /******/ 		};
@@ -10234,10 +9957,9 @@ var ElementorPro = Marionette.Application.extend({
         this.modules.nestedCarousel = new (await __webpack_require__.e(/*! import() | nested-carousel-editor */ "nested-carousel-editor").then(__webpack_require__.bind(__webpack_require__, /*! modules/nested-carousel/assets/js/editor/module */ "../modules/nested-carousel/assets/js/editor/module.js"))).default();
       });
     }
-    __webpack_require__.e(/*! import() | loop-filter-editor */ "loop-filter-editor").then(__webpack_require__.bind(__webpack_require__, /*! modules/loop-filter/assets/js/editor/module */ "../modules/loop-filter/assets/js/editor/module.js")).then(_ref => {
-      let {
-        default: LoopFilter
-      } = _ref;
+    __webpack_require__.e(/*! import() | loop-filter-editor */ "loop-filter-editor").then(__webpack_require__.bind(__webpack_require__, /*! modules/loop-filter/assets/js/editor/module */ "../modules/loop-filter/assets/js/editor/module.js")).then(({
+      default: LoopFilter
+    }) => {
       this.modules.loopFilter = new LoopFilter();
     });
     if (elementorCommon.config.experimentalFeatures['nested-elements']) {

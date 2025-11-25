@@ -47,7 +47,7 @@ class Export_Runner extends Export_Runner_Base {
 
 		return [
 			'files' => [
-				'path' => Import_Export::FILE_NAME,
+				'path' => Import_Export_Customization::FILE_NAME,
 				'data' => $icon_sets_data,
 			],
 			'manifest' => [
@@ -78,11 +78,14 @@ class Export_Runner extends Export_Runner_Base {
 		$attachments_data = [];
 
 		foreach ( $attachments as $attachment ) {
+			$url = wp_get_attachment_url( $attachment->ID );
 			$attachments_data[] = [
 				'id' => $attachment->ID,
 				'title' => $attachment->post_title,
-				'url' => wp_get_attachment_url( $attachment->ID ),
+				'url' => $url,
 			];
+
+			do_action( 'elementor/templates/collect_media_url', $url, (array) $attachment );
 		}
 
 		return [

@@ -26,7 +26,7 @@ class Repository {
 	}
 
 	/**
-	 * @throws VariablesLimitReached
+	 * @throws VariablesLimitReached If database connection fails or query execution errors occur.
 	 */
 	private function assert_if_variables_limit_reached( array $db_record ) {
 		$variables_in_use = 0;
@@ -45,7 +45,7 @@ class Repository {
 	}
 
 	/**
-	 * @throws DuplicatedLabel
+	 * @throws DuplicatedLabel If variable creation fails or validation errors occur.
 	 */
 	private function assert_if_variable_label_is_duplicated( array $db_record, array $variable = [] ) {
 		foreach ( $db_record['data'] as $id => $existing_variable ) {
@@ -84,7 +84,7 @@ class Repository {
 	}
 
 	/**
-	 * @throws FatalError
+	 * @throws FatalError If variable update fails or validation errors occur.
 	 */
 	public function create( array $variable ) {
 		$db_record = $this->load();
@@ -96,7 +96,12 @@ class Repository {
 			'type',
 			'label',
 			'value',
+			'order',
 		] );
+
+		if ( ! isset( $new_variable['order'] ) ) {
+			$new_variable['order'] = $this->get_next_order( $list_of_variables );
+		}
 
 		$this->assert_if_variable_label_is_duplicated( $db_record, $new_variable );
 
@@ -118,8 +123,8 @@ class Repository {
 	}
 
 	/**
-	 * @throws RecordNotFound
-	 * @throws FatalError
+	 * @throws RecordNotFound If variable deletion fails or database errors occur.
+	 * @throws FatalError If variable deletion fails or database errors occur.
 	 */
 	public function update( string $id, array $variable ) {
 		$db_record = $this->load();
@@ -133,6 +138,7 @@ class Repository {
 		$updated_variable = array_merge( $list_of_variables[ $id ], $this->extract_from( $variable, [
 			'label',
 			'value',
+			'order',
 		] ) );
 
 		$this->assert_if_variable_label_is_duplicated( $db_record, array_merge( $updated_variable, [ 'id' => $id ] ) );
@@ -153,8 +159,8 @@ class Repository {
 	}
 
 	/**
-	 * @throws RecordNotFound
-	 * @throws FatalError
+	 * @throws RecordNotFound If bulk operation fails or validation errors occur.
+	 * @throws FatalError If bulk operation fails or validation errors occur.
 	 */
 	public function delete( string $id ) {
 		$db_record = $this->load();
@@ -183,8 +189,8 @@ class Repository {
 	}
 
 	/**
-	 * @throws RecordNotFound
-	 * @throws FatalError
+	 * @throws RecordNotFound If export operation fails or data serialization errors occur.
+	 * @throws FatalError If export operation fails or data serialization errors occur.
 	 */
 	public function restore( string $id, $overrides = [] ) {
 		$db_record = $this->load();
@@ -199,6 +205,7 @@ class Repository {
 			'label',
 			'value',
 			'type',
+			'order',
 		] );
 
 		if ( array_key_exists( 'label', $overrides ) ) {
@@ -231,8 +238,8 @@ class Repository {
 	/**
 	 * Process multiple operations atomically
 	 *
-	 * @throws BatchOperationFailed
-	 * @throws FatalError
+	 * @throws BatchOperationFailed If batch operation fails or validation errors occur.
+	 * @throws FatalError If batch operation fails or validation errors occur.
 	 */
 	public function process_atomic_batch( array $operations, int $expected_watermark ): array {
 		$db_record = $this->load();
@@ -247,6 +254,7 @@ class Repository {
 				$operation_id = $this->get_operation_identifier( $operation, $index );
 				$errors[ $operation_id ] = [
 					'status' => $this->get_error_status_code( $e ),
+					'code' => $this->get_error_code( $e ),
 					'message' => $e->getMessage(),
 				];
 			}
@@ -258,6 +266,7 @@ class Repository {
 			foreach ( $errors as $operation_id => $error ) {
 				$error_details[ esc_html( $operation_id ) ] = [
 					'status' => (int) $error['status'],
+					'code' => $error['code'],
 					'message' => esc_html( $error['message'] ),
 				];
 			}
@@ -302,7 +311,11 @@ class Repository {
 		$variable_data = $operation['variable'];
 
 		$temp_id = $variable_data['id'] ?? null;
-		$new_variable = $this->extract_from( $variable_data, [ 'type', 'label', 'value' ] );
+		$new_variable = $this->extract_from( $variable_data, [ 'type', 'label', 'value', 'order' ] );
+
+		if ( ! isset( $new_variable['order'] ) ) {
+			$new_variable['order'] = $this->get_next_order( $db_record['data'] );
+		}
 
 		$this->assert_if_variable_label_is_duplicated( $db_record, $new_variable );
 
@@ -318,6 +331,7 @@ class Repository {
 
 		return [
 			'id' => $id,
+			'type' => 'create',
 			'variable' => array_merge( [ 'id' => $id ], $new_variable ),
 			'temp_id' => $temp_id,
 		];
@@ -331,7 +345,7 @@ class Repository {
 			throw new \Elementor\Modules\Variables\Storage\Exceptions\RecordNotFound( 'Variable not found' );
 		}
 
-		$updated_fields = $this->extract_from( $variable_data, [ 'label', 'value' ] );
+		$updated_fields = $this->extract_from( $variable_data, [ 'label', 'value', 'order' ] );
 		$updated_variable = array_merge( $db_record['data'][ $id ], $updated_fields );
 		$updated_variable['updated_at'] = $this->now();
 
@@ -341,6 +355,7 @@ class Repository {
 
 		return [
 			'id' => $id,
+			'type' => 'update',
 			'variable' => array_merge( [ 'id' => $id ], $updated_variable ),
 		];
 	}
@@ -357,6 +372,7 @@ class Repository {
 
 		return [
 			'id' => $id,
+			'type' => 'delete',
 			'deleted' => true,
 		];
 	}
@@ -390,6 +406,7 @@ class Repository {
 
 		return [
 			'id' => $id,
+			'type' => 'restore',
 			'variable' => array_merge( [ 'id' => $id ], $restored_variable ),
 		];
 	}
@@ -411,12 +428,27 @@ class Repository {
 			return 404;
 		}
 
-		if ( $e instanceof DuplicatedLabel ||
-			 $e instanceof VariablesLimitReached ) {
+		if ( $e instanceof DuplicatedLabel || $e instanceof VariablesLimitReached ) {
 			return 400;
 		}
 
 		return 500;
+	}
+
+	private function get_error_code( Exception $e ): string {
+		if ( $e instanceof VariablesLimitReached ) {
+			return 'invalid_variable_limit_reached';
+		}
+
+		if ( $e instanceof DuplicatedLabel ) {
+			return 'duplicated_label';
+		}
+
+		if ( $e instanceof RecordNotFound ) {
+			return 'variable_not_found';
+		}
+
+		return 'unexpected_server_error';
 	}
 
 	private function save( array $db_record ) {
@@ -451,5 +483,21 @@ class Repository {
 			'watermark' => 0,
 			'version' => self::FORMAT_VERSION_V1,
 		];
+	}
+
+	private function get_next_order( array $list_of_variables ): int {
+		$highest_order = 0;
+
+		foreach ( $list_of_variables as $variable ) {
+			if ( isset( $variable['deleted'] ) && $variable['deleted'] ) {
+				continue;
+			}
+
+			if ( isset( $variable['order'] ) && $variable['order'] > $highest_order ) {
+				$highest_order = $variable['order'];
+			}
+		}
+
+		return $highest_order + 1;
 	}
 }

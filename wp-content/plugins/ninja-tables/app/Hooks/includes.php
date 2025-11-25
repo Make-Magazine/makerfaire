@@ -1,5 +1,9 @@
 <?php
 
+if (!defined('ABSPATH')) {
+    die(__FILE__);
+}
+
 /*
  * Require any extra files here. For example::
  * require_once "shortcodes.php";

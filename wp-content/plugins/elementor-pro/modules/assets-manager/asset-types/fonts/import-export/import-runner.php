@@ -3,6 +3,7 @@
 namespace ElementorPro\Modules\AssetsManager\AssetTypes\Fonts\ImportExport;
 
 use Elementor\App\Modules\ImportExport\Runners\Import\Import_Runner_Base;
+use Elementor\App\Modules\ImportExport\Utils as ImportExportUtils;
 use ElementorPro\Modules\AssetsManager\AssetTypes\Fonts_Manager;
 use ElementorPro\Modules\AssetsManager\AssetTypes\Fonts\Custom_Fonts;
 use ElementorPro\Modules\AssetsManager\AssetTypes\ImportExport\Traits\External_Attachment_Trait;
@@ -36,7 +37,8 @@ class Import_Runner extends Import_Runner_Base {
 
 		$result = [];
 
-		$fonts_data = $imported_data['files']['custom-fonts']['data'] ?? [];
+		$custom_fonts_file_path = $data['extracted_directory_path'] . Import_Export::FILE_NAME;
+		$fonts_data = ImportExportUtils::read_json_file( $custom_fonts_file_path );
 
 		if ( empty( $fonts_data ) ) {
 			return $result;

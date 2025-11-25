@@ -2,12 +2,34 @@
 
 namespace ElementorPro\Modules\AssetsManager\AssetTypes\ImportExport\Traits;
 
+use Elementor\Plugin;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
 trait External_Attachment_Trait {
 	private function create_attachment_from_url( $parent_id, $attachment_data ) {
+		$local_file_path = \Elementor\TemplateLibrary\Classes\Media_Mapper::get_local_file_path( $attachment_data['url'] );
+		$imported_attachment = false;
+
+		if ( $local_file_path !== $attachment_data['url'] && file_exists( $local_file_path ) ) {
+			$imported_attachment = Plugin::$instance->templates_manager->get_import_images_instance()->import_local_file( $local_file_path, $parent_id );
+		}
+
+		if ( $imported_attachment ) {
+			wp_update_post( [
+				'ID'           => $imported_attachment['id'],
+				'post_title'   => $attachment_data['title'],
+				'post_content' => '',
+				'post_status'  => 'inherit',
+				'post_parent'  => $parent_id,
+				'post_mime_type' => 'application/octet-stream',
+			] );
+
+			return $imported_attachment['id'];
+		}
+
 		$attachment_id = wp_insert_attachment( [
 			'post_title' => $attachment_data['title'],
 			'post_content' => '',

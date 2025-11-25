@@ -79,7 +79,7 @@ class Post extends Model
             wp_update_post($attributes);
         }
         update_post_meta($postId, '_last_edited_by', get_current_user_id());
-        update_post_meta($postId, '_last_edited_time', date('Y-m-d H:i:s'));
+        update_post_meta($postId, '_last_edited_time', gmdate('Y-m-d H:i:s'));
 
         return $postId;
     }
@@ -116,7 +116,7 @@ class Post extends Model
         $sql .= " SELECT `position`, $newPostId, `owner_id`, `settings`, `attribute`, `value`, `created_at`, `updated_at` FROM $itemsTable";
         $sql .= " WHERE `table_id` = $oldPostId";
 
-        $wpdb->query($sql);
+        $wpdb->query($sql); // phpcs:ignore WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.PreparedSQL.NotPrepared
     }
 
     public static function updatedSettings($tableId, $rawColumns, $tablePreference)
@@ -167,7 +167,7 @@ class Post extends Model
         ninjaTablesClearTableDataCache($tableId);
 
         update_post_meta($tableId, '_last_edited_by', get_current_user_id());
-        update_post_meta($tableId, '_last_edited_time', date('Y-m-d H:i:s'));
+        update_post_meta($tableId, '_last_edited_time', gmdate('Y-m-d H:i:s'));
 
         return [
             'message'  => __('Successfully updated configuration.', 'ninja-tables'),

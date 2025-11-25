@@ -1,4 +1,3 @@
-/*! elementor - v3.32.0 - 21-10-2025 */
 /******/ (() => { // webpackBootstrap
 /******/ 	var __webpack_modules__ = ({
 
@@ -1980,6 +1979,7 @@ var _default = exports["default"] = /*#__PURE__*/function (_elementorModules$Mod
     key: "dispatchEvent",
     value: function dispatchEvent(name, data) {
       var _elementorCommon$conf5, _elementorCommon$conf6, _elementorCommon$conf7, _elementorCommon$conf8, _elementorCommon$conf9, _elementorCommon$conf0, _elementorCommon$conf1, _elementorCommon$conf10, _elementorCommon$conf11;
+      var options = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
       if (!((_elementorCommon$conf5 = elementorCommon.config.editor_events) !== null && _elementorCommon$conf5 !== void 0 && _elementorCommon$conf5.can_send_events)) {
         return;
       }
@@ -1996,7 +1996,7 @@ var _default = exports["default"] = /*#__PURE__*/function (_elementorModules$Mod
         app_version: (_elementorCommon$conf10 = elementorCommon.config.editor_events) === null || _elementorCommon$conf10 === void 0 ? void 0 : _elementorCommon$conf10.elementor_version,
         site_language: (_elementorCommon$conf11 = elementorCommon.config.editor_events) === null || _elementorCommon$conf11 === void 0 ? void 0 : _elementorCommon$conf11.site_language
       }, data);
-      _mixpanelBrowser.default.track(name, _objectSpread({}, eventData));
+      _mixpanelBrowser.default.track(name, eventData, options);
     }
   }]);
 }(elementorModules.Module);

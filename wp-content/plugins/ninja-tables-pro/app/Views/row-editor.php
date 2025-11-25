@@ -2,21 +2,20 @@
 $columns = isset($table_vars['original_columns']) ? $table_vars['original_columns'] : null;
 $editing = isset($table_vars['editing']) ? $table_vars['editing'] : null;
 ?>
-<div class="nt_editor_modal has_nt_modal" id="nt_editor_modal_<?php echo $table_id; ?>">
+<div class="nt_editor_modal has_nt_modal" id="nt_editor_modal_<?php echo esc_attr($table_id); ?>">
     <div class="nt_modal_wrapper">
         <div class="nt_form_loader">
             <i class="fooicon fooicon-loader"></i>
         </div>
-        <form id="nt_editor_form_<?php echo $table_id; ?>">
+        <form id="nt_editor_form_<?php echo esc_attr($table_id); ?>">
             <div class="nt_modal_header">
                 <h3 class="nt_add_data_header">
-                    <?php _e($editing['addModalLabel'] ? $editing['addModalLabel'] : 'Add Data', 'ninja-tables-pro'); ?>
+                    <?php !empty($editing['addModalLabel']) ? esc_html($editing['addModalLabel']) : __('Add Data', 'ninja-tables-pro'); ?>
                 </h3>
                 <h3 class="nt_edit_data_header">
-                    <?php _e($editing['editModalLabel'] ? $editing['editModalLabel'] : 'Edit Data',
-                        'ninja-tables-pro'); ?>
+                    <?php !empty($editing['editModalLabel']) ? esc_html($editing['editModalLabel']) : __('Edit Data', 'ninja-tables-pro'); ?>
                 </h3>
-                <h3 class="nt_delete_data_header"><?php _e('Are you sure?', 'ninja-tables-pro'); ?></h3>
+                <h3 class="nt_delete_data_header"><?php esc_html_e('Are you sure?', 'ninja-tables-pro'); ?></h3>
                 <span class="nt_editor_close nt_close_modal">x</span>
             </div>
             <div class="nt_modal_body nt_edit_add_modal_body">
@@ -32,18 +31,18 @@ $editing = isset($table_vars['editing']) ? $table_vars['editing'] : null;
                     if (in_array($column['key'], $editableFields)) :
                         ?>
                         <div class="nt_form_group">
-                            <label><?php echo $column['name']; ?><?php if ($isRequired): ?> <span
+                            <label><?php echo esc_attr($column['name']); ?><?php if ($isRequired): ?> <span
                                         class="nt_is_required">*</span><?php endif; ?></label>
                             <div class="nt_form_control">
                                 <?php if ($column['data_type'] == 'text') { ?>
-                                    <input name="<?php echo $column['key']; ?>"
-                                           class="nt_form_input nt_data_item nt_input_<?php echo $column['key']; ?>"
+                                    <input name="<?php echo esc_attr($column['key']); ?>"
+                                           class="nt_form_input nt_data_item nt_input_<?php echo esc_attr($column['key']); ?>"
                                            type="text"/>
                                 <?php } elseif ($column['data_type'] == 'number') { ?>
-                                    <input name="<?php echo $column['key']; ?>"
+                                    <input name="<?php echo esc_attr($column['key']); ?>"
                                            data-number="yes"
-                                           id="<?php echo $column['key']; ?>"
-                                           class="nt_form_input nt_data_item nt_input_<?php echo $column['key']; ?>"
+                                           id="<?php echo esc_attr($column['key']); ?>"
+                                           class="nt_form_input nt_data_item nt_input_<?php echo esc_attr($column['key']); ?>"
                                            title="please input proper number"
                                            type="text"/>
                                     <?php
@@ -60,8 +59,8 @@ $editing = isset($table_vars['editing']) ? $table_vars['editing'] : null;
                                     ?>
 
                                 <?php } elseif ($column['data_type'] == 'textarea') { ?>
-                                    <textarea data-type="textarea" name="<?php echo $column['key']; ?>"
-                                              class="nt_form_textarea nt_data_item nt_input_<?php echo $column['key']; ?>"></textarea>
+                                    <textarea data-type="textarea" name="<?php echo esc_attr($column['key']); ?>"
+                                              class="nt_form_textarea nt_data_item nt_input_<?php echo esc_attr($column['key']); ?>"></textarea>
                                 <?php } elseif ($column['data_type'] == 'html') { ?>
                                     <?php
                                     if (function_exists('wp_enqueue_editor')) {
@@ -73,11 +72,11 @@ $editing = isset($table_vars['editing']) ? $table_vars['editing'] : null;
                                         $mediaStatus = 'yes';
                                     }
                                     ?>
-                                    <textarea data-media_status="<?php echo $mediaStatus; ?>"
-                                              id="ninja_html_editor_<?php echo $table_id . '_' . $column['key']; ?>_"
-                                              name="<?php echo $column['key']; ?>"
+                                    <textarea data-media_status="<?php echo esc_attr($mediaStatus); ?>"
+                                              id="ninja_html_editor_<?php echo esc_attr($table_id) . '_' . esc_attr($column['key']); ?>_"
+                                              name="<?php echo esc_attr($column['key']); ?>"
                                               data-type="html"
-                                              class="nt_form_html nt_data_item nt_input_<?php echo $column['key']; ?>"></textarea>
+                                              class="nt_form_html nt_data_item nt_input_<?php echo esc_attr($column['key']); ?>"></textarea>
                                 <?php } elseif ($column['data_type'] == 'date') { ?>
                                     <?php
                                     wp_enqueue_script('pikaday',
@@ -92,11 +91,11 @@ $editing = isset($table_vars['editing']) ? $table_vars['editing'] : null;
                                     $dateTimeFormat = ( ! isset($column['showTime']) || $column['showTime'] === 'false') ? $column['dateFormat'] : $column['dateFormat'] . ' ' . $column['timeFormat'];
 
 	                                ?>
-                                    <input name="<?php echo $column['key']; ?>"
-                                           data-date_format="<?php echo $dateTimeFormat; ?>"
-                                           data-show_time="<?php echo @$column['showTime']; ?>"
-                                           data-first_day_of_week="<?php echo @$column['firstDayOfWeek']; ?>"
-                                           class="nt_form_input nt_form_date nt_data_item nt_input_<?php echo $column['key']; ?>"
+                                    <input name="<?php echo esc_attr($column['key']); ?>"
+                                           data-date_format="<?php echo esc_attr($dateTimeFormat); ?>"
+                                           data-show_time="<?php echo esc_attr($column['showTime']); ?>"
+                                           data-first_day_of_week="<?php echo esc_attr($column['firstDayOfWeek']); ?>"
+                                           class="nt_form_input nt_form_date nt_data_item nt_input_<?php echo esc_attr($column['key']); ?>"
                                            type="text"/>
                                 <?php } elseif ($column['data_type'] == 'selection') { ?>
                                     <?php
@@ -113,20 +112,23 @@ $editing = isset($table_vars['editing']) ? $table_vars['editing'] : null;
                                     ?>
                                     <select <?php if ($isMultple == 'yes') {
                                         echo 'multiple';
-                                    } ?> data-is_multi_select="<?php echo $isMultple; ?>"
-                                         name="<?php echo $column['key']; ?>"
-                                         class="nt_form_input nt_data_item nt_input_<?php echo $column['key']; ?>">
-                                        <option
-                                                value=""><?php echo apply_filters('ninja_edit_select_placeholder',
-                                                __($selectionPlaceholder, 'ninja-tables-pro'), $column,
-                                                $table_id); ?></option>
+                                    } ?> data-is_multi_select="<?php echo esc_attr($isMultple); ?>"
+                                         name="<?php echo esc_attr($column['key']); ?>"
+                                         class="nt_form_input nt_data_item nt_input_<?php echo esc_attr($column['key']); ?>">
+                                        <option value="">
+                                            <?php apply_filters('ninja_edit_select_placeholder',
+                                                $selectionPlaceholder ? esc_html($selectionPlaceholder) : __('Select an option', 'ninja-tables-pro'),
+                                                $column,
+                                                $table_id);
+                                            ?>
+                                        </option>
                                         <?php foreach ($selects as $select): ?>
-                                            <option value="<?php echo $select; ?>"><?php echo $select; ?></option>
+                                            <option value="<?php echo esc_attr($select); ?>"><?php echo esc_attr($select); ?></option>
                                         <?php endforeach; ?>
                                     </select>
                                 <?php } elseif ($column['data_type'] == 'number') { ?>
-                                    <input name="<?php echo $column['key']; ?>"
-                                           class="nt_form_input nt_data_item nt_input_<?php echo $column['key']; ?>"
+                                    <input name="<?php echo esc_attr($column['key']); ?>"
+                                           class="nt_form_input nt_data_item nt_input_<?php echo esc_attr($column['key']); ?>"
                                            type="number"/>
                                 <?php } elseif ($column['data_type'] == 'image') {
                                     $linkType    = $column['link_type'];
@@ -138,31 +140,29 @@ $editing = isset($table_vars['editing']) ? $table_vars['editing'] : null;
                                     ?>
                                     <?php if ($mediaStatus == 'yes'): ?>
                                         <div data-type="image" data-link_type="image_light_box"
-                                             class="nt_image_lightbox_wrapper nt_image_uploader_wrapper nt_input_<?php echo $column['key']; ?>">
+                                             class="nt_image_lightbox_wrapper nt_image_uploader_wrapper nt_input_<?php echo esc_attr($column['key']); ?>">
                                             <?php if ($linkType == 'image_light_box' || $linkType == 'none' || $linkType == 'iframe_ligtbox' || $linkType == 'hyperlinked'):
                                                 ?>
                                                 <input class="nt_hidden_image_input"
-                                                       data-key="<?php echo $column['key']; ?>"
+                                                       data-key="<?php echo esc_attr($column['key']); ?>"
                                                        data-value_name="image_thumb" type="hidden"
-                                                       name="<?php echo $column['key'] ?>[image_thumb]"/>
+                                                       name="<?php echo esc_attr($column['key']) ?>[image_thumb]"/>
                                                 <input class="nt_hidden_image_input"
-                                                       data-key="<?php echo $column['key']; ?>"
+                                                       data-key="<?php echo esc_attr($column['key']); ?>"
                                                        data-value_name="image_full" type="hidden"
-                                                       name="<?php echo $column['key'] ?>[image_full]"/>
+                                                       name="<?php echo esc_attr($column['key']) ?>[image_full]"/>
                                                 <input class="nt_hidden_image_input"
-                                                       data-key="<?php echo $column['key']; ?>"
+                                                       data-key="<?php echo esc_attr($column['key']); ?>"
                                                        data-value_name="alt_text" type="hidden"
-                                                       name="<?php echo $column['key'] ?>[alt_text]"/>
+                                                       name="<?php echo esc_attr($column['key']) ?>[alt_text]"/>
                                                 <div class="nt_image_preview">
                                                     <img src=""/>
                                                 </div>
                                                 <div class="nt_image_change">
-                                                    <button class="nt_btn_upload"><?php _e('Upload',
-                                                            'ninja-tables-pro'); ?></button>
+                                                    <button class="nt_btn_upload"><?php esc_html_e('Upload', 'ninja-tables-pro'); ?></button>
                                                 </div>
                                                 <div class="nt_image_remove">
-                                                    <button class="nt_btn_remove"><?php _e('Remove',
-                                                            'ninja-tables-pro'); ?></button>
+                                                    <button class="nt_btn_remove"><?php esc_html_e('Remove', 'ninja-tables-pro'); ?></button>
                                                 </div>
                                             <?php endif; ?>
                                             <?php if ($linkType == 'iframe_ligtbox' || $linkType == 'hyperlinked'): ?>
@@ -174,9 +174,9 @@ $editing = isset($table_vars['editing']) ? $table_vars['editing'] : null;
                                                         Target URL
                                                     <?php endif; ?>
                                                     <input class="nt_hidden_image_input nt_form_input"
-                                                           data-key="<?php echo $column['key']; ?>"
+                                                           data-key="<?php echo esc_attr($column['key']); ?>"
                                                            data-value_name="permalink" type="url"
-                                                           name="<?php echo $column['key'] ?>[permalink]"/>
+                                                           name="<?php echo esc_attr($column['key']) ?>[permalink]"/>
                                                 </label>
                                             <?php endif; ?>
                                         </div>
@@ -185,12 +185,12 @@ $editing = isset($table_vars['editing']) ? $table_vars['editing'] : null;
                                     <?php endif; ?>
 
                                 <?php } elseif ($column['data_type'] == 'button') { ?>
-                                    <input placeholder="Provide Button URL" name="<?php echo $column['key']; ?>"
-                                           class="nt_form_input nt_data_item nt_input_<?php echo $column['key']; ?>"
+                                    <input placeholder="Provide Button URL" name="<?php echo esc_attr($column['key']); ?>"
+                                           class="nt_form_input nt_data_item nt_input_<?php echo esc_attr($column['key']); ?>"
                                            type="url"/>
                                 <?php } else { ?>
-                                    <input name="<?php echo $column['key']; ?>"
-                                           class="nt_form_input nt_data_item nt_input_<?php echo $column['key']; ?>"
+                                    <input name="<?php echo esc_attr($column['key']); ?>"
+                                           class="nt_form_input nt_data_item nt_input_<?php echo esc_attr($column['key']); ?>"
                                            type="text"/>
                                 <?php } ?>
                             </div>
@@ -199,24 +199,26 @@ $editing = isset($table_vars['editing']) ? $table_vars['editing'] : null;
                 <?php endforeach; ?>
             </div>
             <div class="nt_modal_body nt_delete_modal_body">
-                <p><?php _e('Please confirm deletion. There is no undo!', 'ninja-tables-pro'); ?></p>
+                <p><?php esc_html_e('Please confirm deletion. There is no undo!', 'ninja-tables-pro'); ?></p>
             </div>
             <div class="nt_modal_footer">
-                <div
-                        class="nt_editor_action nt_editor_cancel nt_close_modal"><?php _e('Cancel',
-                        'ninja-tables-pro'); ?></div>
-                <div data-action="keep_new"
-                     class="nt_editor_action nt_editor_submit nt_editor_apply"><?php _e('Apply and Add New',
-                        'ninja-tables-pro'); ?></div>
+                <div class="nt_editor_action nt_editor_cancel nt_close_modal">
+                    <?php esc_html_e('Cancel', 'ninja-tables-pro'); ?>
+                </div>
+                <div data-action="keep_new" class="nt_editor_action nt_editor_submit nt_editor_apply">
+                    <?php esc_html_e('Apply and Add New', 'ninja-tables-pro'); ?>
+                </div>
+                <div data-action="close" class="nt_editor_action nt_editor_submit nt_editor_update">
+                    <?php esc_html_e('Update', 'ninja-tables-pro'); ?>
+                </div>
                 <div data-action="close"
-                     class="nt_editor_action nt_editor_submit nt_editor_update"><?php _e('Update',
-                        'ninja-tables-pro'); ?></div>
-                <div data-action="close"
-                     class="nt_editor_action nt_editor_submit nt_editor_add"><?php _e('Add',
-                        'ninja-tables-pro'); ?></div>
-                <div data-action="close" class="nt_editor_action nt_editor_delete"><span
-                            style="vertical-align: middle;"
-                            class="fooicon fooicon-delete"></span> <?php _e('Delete', 'ninja-tables-pro'); ?></div>
+                     class="nt_editor_action nt_editor_submit nt_editor_add">
+                    <?php esc_html_e('Add', 'ninja-tables-pro'); ?>
+                </div>
+                <div data-action="close" class="nt_editor_action nt_editor_delete">
+                    <span style="vertical-align: middle;" class="fooicon fooicon-delete"></span>
+                    <?php esc_html_e('Delete', 'ninja-tables-pro'); ?>
+                </div>
             </div>
         </form>
     </div>

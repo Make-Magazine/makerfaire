@@ -6,6 +6,7 @@ use Elementor\Settings;
 use Elementor\Utils;
 use ElementorPro\Core\Utils as Pro_Utils;
 use ElementorPro\Core\Connect\Apps\Activate;
+use ElementorPro\License\Data\Controller;
 use ElementorPro\License\Notices\Trial_Expired_Notice;
 use ElementorPro\License\Notices\Trial_Period_Notice;
 use ElementorPro\Plugin;
@@ -27,6 +28,10 @@ class Admin {
 	 * @deprecated 3.6.0 Use `Plugin::instance()->updater` instead.
 	 */
 	public static $updater = null;
+
+	public function __construct() {
+		$this->register_rest_controller();
+	}
 
 	public static function get_errors_details() {
 		$license_page_link = self::get_url();
@@ -787,5 +792,9 @@ class Admin {
 		$nonce = Utils::get_super_global_value( $_REQUEST, '_wpnonce' );
 
 		return wp_verify_nonce( $nonce, 'opt_out' );
+	}
+
+	private function register_rest_controller() {
+		new Controller();
 	}
 }

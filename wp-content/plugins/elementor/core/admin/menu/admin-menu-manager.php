@@ -11,6 +11,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Admin_Menu_Manager {
+
 	/**
 	 * @var Admin_Menu_Item[]
 	 */

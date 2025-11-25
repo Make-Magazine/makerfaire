@@ -100,6 +100,11 @@ class Rest_Api {
 					'validate_callback' => [ $this, 'is_valid_variable_value' ],
 					'sanitize_callback' => [ $this, 'trim_and_sanitize_text_field' ],
 				],
+				'order' => [
+					'required' => false,
+					'type' => 'integer',
+					'validate_callback' => [ $this, 'is_valid_order' ],
+				],
 			],
 		] );
 
@@ -214,6 +219,17 @@ class Rest_Api {
 		return true;
 	}
 
+	public function is_valid_order( $order ) {
+		if ( ! is_numeric( $order ) || $order < 0 ) {
+			return new WP_Error(
+				'invalid_order',
+				__( 'Order must be a non-negative integer', 'elementor' )
+			);
+		}
+
+		return true;
+	}
+
 	public function is_valid_variable_value( $value ) {
 		$value = trim( $value );
 
@@ -278,11 +294,18 @@ class Rest_Api {
 		$id = $request->get_param( 'id' );
 		$label = $request->get_param( 'label' );
 		$value = $request->get_param( 'value' );
+		$order = $request->get_param( 'order' );
 
-		$result = $this->variables_repository->update( $id, [
+		$update_data = [
 			'label' => $label,
 			'value' => $value,
-		] );
+		];
+
+		if ( null !== $order ) {
+			$update_data['order'] = $order;
+		}
+
+		$result = $this->variables_repository->update( $id, $update_data );
 
 		$this->clear_cache();
 
@@ -360,7 +383,7 @@ class Rest_Api {
 		$db_record = $this->variables_repository->load();
 
 		return $this->success_response( [
-			'variables' => $db_record['data'],
+			'variables' => $db_record['data'] ?? [],
 			'total' => count( $db_record['data'] ),
 			'watermark' => $db_record['watermark'],
 		] );
@@ -426,6 +449,7 @@ class Rest_Api {
 		return true;
 	}
 
+
 	public function is_valid_operations_array( $operations ) {
 		if ( ! is_array( $operations ) || empty( $operations ) ) {
 			return new WP_Error(
@@ -446,7 +470,7 @@ class Rest_Api {
 				);
 			}
 
-			$allowed_types = [ 'create', 'update', 'delete', 'restore' ];
+			$allowed_types = [ 'create', 'update', 'delete', 'restore', 'reorder' ];
 
 			if ( ! in_array( $operation['type'], $allowed_types, true ) ) {
 				return new WP_Error(
@@ -482,16 +506,78 @@ class Rest_Api {
 		return $this->success_response( $result );
 	}
 
+
 	private function batch_error_response( Exception $e ) {
 		if ( $e instanceof BatchOperationFailed ) {
+			$error_details = $e->getErrorDetails();
+			$batch_error_context = $this->determine_batch_error_context( $error_details );
+
 			return new WP_REST_Response( [
 				'success' => false,
-				'code' => 'atomic_operation_failed',
-				'message' => __( 'Batch operation failed', 'elementor' ),
-				'data' => $e->getErrorDetails(),
+				'code' => $batch_error_context['code'],
+				'message' => $batch_error_context['message'],
+				'data' => $batch_error_context['filtered_errors'],
 			], self::HTTP_BAD_REQUEST );
 		}
 
 		return $this->error_response( $e );
+	}
+
+	private function determine_batch_error_context( array $error_details ) {
+		$error_config = [
+			'invalid_variable_limit_reached' => [
+				'batch_code' => 'batch_variables_limit_reached',
+				'batch_message' => __( 'Batch operation failed: Reached the maximum number of variables', 'elementor' ),
+				'status' => self::HTTP_BAD_REQUEST,
+				'message' => __( 'Reached the maximum number of variables', 'elementor' ),
+			],
+			'duplicated_label' => [
+				'batch_code' => 'batch_duplicated_label',
+				'batch_message' => __( 'Batch operation failed: Variable labels already exist', 'elementor' ),
+				'status' => self::HTTP_BAD_REQUEST,
+				'message' => __( 'Variable label already exists', 'elementor' ),
+			],
+			'variable_not_found' => [
+				'batch_code' => 'batch_variables_not_found',
+				'batch_message' => __( 'Batch operation failed: Variables not found', 'elementor' ),
+				'status' => self::HTTP_NOT_FOUND,
+				'message' => __( 'Variable not found', 'elementor' ),
+			],
+		];
+
+		$grouped_errors = [];
+
+		foreach ( $error_details as $id => $error_detail ) {
+			$error_code = $error_detail['code'] ?? '';
+
+			if ( isset( $error_config[ $error_code ] ) ) {
+				$config = $error_config[ $error_code ];
+				$grouped_errors[ $error_code ][ $id ] = [
+					'status' => $config['status'],
+					'message' => $config['message'],
+				];
+			} else {
+				$grouped_errors['unknown'][ $id ] = [
+					'status' => self::HTTP_SERVER_ERROR,
+					'message' => $error_detail['message'] ?? __( 'Unexpected error', 'elementor' ),
+				];
+			}
+		}
+
+		foreach ( $error_config as $error_code => $config ) {
+			if ( ! empty( $grouped_errors[ $error_code ] ) ) {
+				return [
+					'code' => $config['batch_code'],
+					'message' => $config['batch_message'],
+					'filtered_errors' => $grouped_errors[ $error_code ],
+				];
+			}
+		}
+
+		return [
+			'code' => 'batch_operation_failed',
+			'message' => __( 'Batch operation failed', 'elementor' ),
+			'filtered_errors' => $grouped_errors['unknown'] ?? [],
+		];
 	}
 }

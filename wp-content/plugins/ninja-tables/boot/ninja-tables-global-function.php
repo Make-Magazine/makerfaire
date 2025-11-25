@@ -1,6 +1,8 @@
 <?php
 
-use NinjaTables\App\App;
+if (!defined('ABSPATH')) {
+    die(__FILE__);
+}
 
 /**
  * Globally-accessible functions
@@ -32,7 +34,7 @@ if ( ! function_exists('ninja_table_get_table_settings')) {
     function ninja_table_get_table_settings($tableId, $scope = 'public')
     {
         $tableSettings        = get_post_meta($tableId, '_ninja_table_settings', true);
-        $defaultTableSettings = getDefaultNinjaTableSettings();
+        $defaultTableSettings = ninjaTablesGetDefaultSettings();
         if ( ! $tableSettings) {
             $tableSettings = $defaultTableSettings;
         } else {
@@ -54,8 +56,8 @@ if ( ! function_exists('ninja_table_get_table_settings')) {
 }
 
 
-if ( ! function_exists('getDefaultNinjaTableSettings')) {
-    function getDefaultNinjaTableSettings()
+if ( ! function_exists('ninjaTablesGetDefaultSettings')) {
+    function ninjaTablesGetDefaultSettings()
     {
         $renderType = defined('NINJATABLESPRO') ? 'legacy_table' : 'ajax_table';
         $settings   = get_option('_ninja_table_default_appearance_settings');
@@ -93,7 +95,7 @@ if ( ! function_exists('getDefaultNinjaTableSettings')) {
         }
         $settings = wp_parse_args($settings, $defaults);
 
-        return apply_filters('get_default_ninja_table_settings', $settings);
+        return apply_filters('ninja_tables/get_default_ninja_table_settings', $settings);
     }
 }
 
@@ -418,12 +420,12 @@ function ninjaTableSetExternalCacheData($tableId, $data)
     update_post_meta($tableId, '_external_cached_data', $data);
 }
 
-if ( ! function_exists('getNinjaFluentFormMenuIcon')) {
-    function getNinjaFluentFormMenuIcon()
+if ( ! function_exists('ninjaTablesGetFluentFormMenuIcon')) {
+    function ninjaTablesGetFluentFormMenuIcon()
     {
         $icon = 'data:image/svg+xml;base64,' . base64_encode('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><defs><style>.cls-1{fill:#fff;}</style></defs><title>dashboard_icon</title><g id="Layer_2" data-name="Layer 2"><g id="Layer_1-2" data-name="Layer 1"><path class="cls-1" d="M15.57,0H4.43A4.43,4.43,0,0,0,0,4.43V15.57A4.43,4.43,0,0,0,4.43,20H15.57A4.43,4.43,0,0,0,20,15.57V4.43A4.43,4.43,0,0,0,15.57,0ZM12.82,14a2.36,2.36,0,0,1-1.66.68H6.5A2.31,2.31,0,0,1,7.18,13a2.36,2.36,0,0,1,1.66-.68l4.66,0A2.34,2.34,0,0,1,12.82,14Zm3.3-3.46a2.36,2.36,0,0,1-1.66.68H3.21a2.25,2.25,0,0,1,.68-1.64,2.36,2.36,0,0,1,1.66-.68H16.79A2.25,2.25,0,0,1,16.12,10.53Zm0-3.73a2.36,2.36,0,0,1-1.66.68H3.21a2.25,2.25,0,0,1,.68-1.64,2.36,2.36,0,0,1,1.66-.68H16.79A2.25,2.25,0,0,1,16.12,6.81Z"/></g></g></svg>');
 
-        return apply_filters('fluent_form_menu_icon', $icon);
+        return apply_filters('ninja_tables/fluent_form_menu_icon', $icon);
     }
 }
 
@@ -503,7 +505,7 @@ if ( ! function_exists('ninja_table_format_header')) {
         $data           = array();
         $column_counter = 1;
         foreach ($header as $item) {
-            $string = trim(strip_tags($item));
+            $string = trim(wp_strip_all_tags($item));
             $string = strtolower($string);
             $chars  = str_split($string);
             $key    = '';
@@ -894,7 +896,7 @@ function ninjaTableInsertDataToTable($tableId, $values, $header)
             'attribute'  => 'value',
             'owner_id'   => $userId,
             'value'      => json_encode($itemTemp, JSON_UNESCAPED_UNICODE),
-            'created_at' => date('Y-m-d H:i:s', $timeStamp + $index),
+            'created_at' => gmdate('Y-m-d H:i:s', $timeStamp + $index),
             'updated_at' => $time
         );
 
@@ -910,7 +912,7 @@ function ninjaTableInsertDataToTable($tableId, $values, $header)
     global $wpdb;
     $tableName = $wpdb->prefix . ninja_tables_db_table_name();
     foreach (array_chunk($datas, 3000) as $chunk) {
-        ninjtaTableBatchInsert($tableName, $chunk);
+        ninjaTablesBatchInsert($tableName, $chunk);
     }
 }
 
@@ -946,7 +948,7 @@ function ninja_table_clear_all_cache($posts = array())
  *
  * @return bool|int
  */
-function ninjtaTableBatchInsert($table, $rows)
+function ninjaTablesBatchInsert($table, $rows)
 {
     global $wpdb;
 
@@ -972,7 +974,7 @@ function ninjtaTableBatchInsert($table, $rows)
     $sql .= implode(",\n", $placeholders);
 
     // Run the query.  Returns number of affected rows.
-    return $wpdb->query($wpdb->prepare($sql, $data));
+    return $wpdb->query($wpdb->prepare($sql, $data)); // phpcs:ignore WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, PluginCheck.Security.DirectDB.UnescapedDBParameter
 }
 
 /**
@@ -1051,7 +1053,7 @@ function ninjaTablesGetShortCodeIds($content)
  */
 function ninjaTablesValidateNonce($key = 'ninja_table_admin_nonce')
 {
-    $nonce = sanitize_text_field(\NinjaTables\Framework\Support\Arr::get($_REQUEST, $key));
+    $nonce = sanitize_text_field(\NinjaTables\Framework\Support\Arr::get($_REQUEST, $key)); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 
     if ( ! wp_verify_nonce($nonce, $key)) {
         $errors = apply_filters('ninja_tables_nonce_error', [
@@ -1068,7 +1070,7 @@ if ( ! function_exists('ninjaTablesPrintSafeVar')) {
     function ninjaTablesPrintSafeVar($content, $esc_func = false)
     {
         if ($esc_func) {
-            echo call_user_func($esc_func, $content);
+            echo call_user_func($esc_func, $content); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
         }
         // PHPCS - This content var is hardcoded variable or already escaped the contents by esc_* functions.
         echo $content; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
@@ -1147,7 +1149,7 @@ function ninjaTablesIsNotice($key = 'admin_notice')
     $prefix = 'ninja_tables_';
 
     if (isset($_COOKIE[$prefix . $key])) {
-        $plugin_version = sanitize_text_field($_COOKIE[$prefix . $key]);
+        $plugin_version = sanitize_text_field(wp_unslash($_COOKIE[$prefix . $key]));
 
         if ($plugin_version == NINJA_TABLES_VERSION) {
             return false;
@@ -1168,12 +1170,12 @@ function ninjaTablesExternalClearPageCaches()
 {
     // clear wp lightspeed caches
     if (defined('LSCWP_V')) {
-        do_action('litespeed_purge', 'ninja_tables_light_speed_clear_cache');
+        do_action('litespeed_purge', 'ninja_tables_light_speed_clear_cache'); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
     }
 
     // clear wp redis caches
     if (defined('NGINX_HELPER_BASEURL')) {
-        do_action('rt_nginx_helper_purge_all');
+        do_action('rt_nginx_helper_purge_all'); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
     }
 
     // clear wp rocket caches

@@ -58,7 +58,7 @@ class CustomFilterController extends Controller
         }
 
         wp_send_json_success(array(
-            'message' => __('Filters successfully updated', 'ninja_table_pro')
+            'message' => __('Filters successfully updated', 'ninja-tables-pro')
         ));
     }
 

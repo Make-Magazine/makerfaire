@@ -1,5 +1,32 @@
 # Elementor Pro - by Elementor.com
 
+#### 3.33.1 - 2025-11-11
+
+* Fix: Styles not loading correctly in Custom Fonts and Custom Icons admin screens ([#33396](https://github.com/elementor/elementor/issues/33396))
+
+#### 3.33.0 - 2025-11-10
+
+* New: Introducing Custom CSS for element-level styling with full isolation and responsive control - Editor V4
+* New: Introducing media save to cloud in Website Templates, enabling users to store media assets directly in the cloud for easier access and management.
+* Tweak: Added support for Post Excerpt dynamic tag - Editor V4
+* Tweak: Added support for Internal URL dynamic tag - Editor V4
+* Tweak: Added support for Post Terms dynamic tag - Editor V4
+* Tweak: Added support for Shortcode dynamic tag - Editor V4
+* Tweak: Added support for Popup dynamic tag - Editor V4
+* Tweak: Added support for Off-Canvas dynamic tag - Editor V4
+* Tweak: Added support for Lightbox dynamic tag - Editor V4
+* Tweak: Added support for Add To Cart dynamic tag - Editor V4
+* Tweak: Added support for ACF URL dynamic tag - Editor V4
+* Tweak: Added support for Archive Title dynamic tag - Editor V4
+* Tweak: Added support for the Email Contact URL dynamic tag - Editor V4
+* Tweak: Added support for reduced-motion preferences in Flip Box widget
+* Tweak: Updated minimum supported versions for Chrome, Firefox, and Safari
+* Tweak: Updated Notes button location in the Editor Top Bar
+
+#### 3.32.3 - 2025-10-21
+
+* Fix: Website Template fails to apply when Custom Code or Custom Icons are included
+
 #### 3.32.2 - 2025-09-29
 
 * Fix: Exported taxonomies are not displayed correctly on the summary page in Website Templates export

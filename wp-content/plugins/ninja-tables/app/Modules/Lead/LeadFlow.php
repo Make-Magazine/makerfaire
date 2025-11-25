@@ -57,7 +57,7 @@ class LeadFlow
     public function reviewOptinAction()
     {
         ninjaTablesValidateNonce();
-        $status       = sanitize_text_field($_REQUEST['status']);
+        $status       = isset($_REQUEST['status']) ? sanitize_text_field(wp_unslash($_REQUEST['status'])) : 'no'; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
         $reviewOption = new ReviewOptIn($this->options);
         $reviewOption->doConsent($status);
         wp_send_json_success(array(
@@ -95,7 +95,7 @@ class LeadFlow
 
     public function addNotice($message, $type = 'success', $id = '', $hasDismiss = true)
     {
-        if (isset($_GET['page']) && sanitize_text_field($_GET['page']) == 'ninja_tables') {
+        if (isset($_GET['page']) && sanitize_text_field(wp_unslash($_GET['page'])) == 'ninja_tables') { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
             return;
         }
         $this->notices[$id] = array(
@@ -207,9 +207,11 @@ class LeadFlow
     public function leadOptinAction()
     {
         ninjaTablesValidateNonce();
-        $status                             = sanitize_text_field($_REQUEST['status']);
+        $status = isset($_REQUEST['status']) ? sanitize_text_field(wp_unslash($_REQUEST['status'])) : 'no'; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+
         $this->options['lead_optin_status'] = $status;
         $this->options['lead_optin_time']   = time();
+
         update_option('_ninja_table_lead_options', $this->options);
         do_action('ninja_table_lead_optin_' . $status, $this->options);
 

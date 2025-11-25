@@ -19,6 +19,9 @@ trait Site_Settings_Helpers {
 			'themeStyleSettings',
 			'generalSettings',
 			'experiments',
+			'customCode',
+			'customIcons',
+			'customFonts',
 		];
 	}
 

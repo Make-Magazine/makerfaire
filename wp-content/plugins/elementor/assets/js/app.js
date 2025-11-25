@@ -1,4 +1,3 @@
-/*! elementor - v3.32.0 - 21-10-2025 */
 /******/ (() => { // webpackBootstrap
 /******/ 	var __webpack_modules__ = ({
 
@@ -233,9 +232,10 @@ var AppsEventTracking = exports.AppsEventTracking = /*#__PURE__*/function () {
     key: "sendKitImportStatus",
     value: function sendKitImportStatus() {
       var error = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : null;
+      var isError = !!error;
       return this.dispatchEvent(EVENTS_MAP.KIT_IMPORT_STATUS, _objectSpread({
-        kit_import_status: !error
-      }, error && {
+        kit_import_status: !isError
+      }, isError && {
         kit_import_error: error.message
       }));
     }
@@ -2650,7 +2650,8 @@ function CardImage(props) {
     src: props.src,
     alt: props.alt,
     className: "eps-card__image",
-    loading: "lazy"
+    loading: "lazy",
+    onError: props.onError
   });
   return /*#__PURE__*/_react.default.createElement("figure", {
     className: "eps-card__figure ".concat(props.className)
@@ -2660,10 +2661,12 @@ CardImage.propTypes = {
   className: PropTypes.string,
   src: PropTypes.string.isRequired,
   alt: PropTypes.string.isRequired,
-  children: PropTypes.any
+  children: PropTypes.any,
+  onError: PropTypes.func
 };
 CardImage.defaultProps = {
-  className: ''
+  className: '',
+  onError: function onError() {}
 };
 
 /***/ }),
@@ -4641,6 +4644,7 @@ Object.defineProperty(exports, "__esModule", ({
   value: true
 }));
 exports.fetchCloudKitsEligibility = fetchCloudKitsEligibility;
+exports.fetchCloudKitsQuota = fetchCloudKitsQuota;
 var _regenerator = _interopRequireDefault(__webpack_require__(/*! @babel/runtime/regenerator */ "../node_modules/@babel/runtime/regenerator/index.js"));
 var _asyncToGenerator2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime/helpers/asyncToGenerator */ "../node_modules/@babel/runtime/helpers/asyncToGenerator.js"));
 /**
@@ -4651,6 +4655,11 @@ var _asyncToGenerator2 = _interopRequireDefault(__webpack_require__(/*! @babel/r
 function fetchCloudKitsEligibility() {
   return _fetchCloudKitsEligibility.apply(this, arguments);
 }
+/**
+ * Fetch cloud kits quota from WordPress backend
+ *
+ * @return {Promise<Object>} Quota data including storage information
+ */
 function _fetchCloudKitsEligibility() {
   _fetchCloudKitsEligibility = (0, _asyncToGenerator2.default)(/*#__PURE__*/_regenerator.default.mark(function _callee() {
     var response;
@@ -4671,6 +4680,30 @@ function _fetchCloudKitsEligibility() {
     }, _callee);
   }));
   return _fetchCloudKitsEligibility.apply(this, arguments);
+}
+function fetchCloudKitsQuota() {
+  return _fetchCloudKitsQuota.apply(this, arguments);
+}
+function _fetchCloudKitsQuota() {
+  _fetchCloudKitsQuota = (0, _asyncToGenerator2.default)(/*#__PURE__*/_regenerator.default.mark(function _callee2() {
+    var response;
+    return _regenerator.default.wrap(function (_context2) {
+      while (1) switch (_context2.prev = _context2.next) {
+        case 0:
+          _context2.next = 1;
+          return $e.data.get('cloud-kits/quota', {}, {
+            refresh: true
+          });
+        case 1:
+          response = _context2.sent;
+          return _context2.abrupt("return", response === null || response === void 0 ? void 0 : response.data);
+        case 2:
+        case "end":
+          return _context2.stop();
+      }
+    }, _callee2);
+  }));
+  return _fetchCloudKitsQuota.apply(this, arguments);
 }
 
 /***/ }),
@@ -4734,80 +4767,6 @@ var arrayToObjectByKey = exports.arrayToObjectByKey = function arrayToObjectByKe
 var htmlDecodeTextContent = exports.htmlDecodeTextContent = function htmlDecodeTextContent(input) {
   var doc = new DOMParser().parseFromString(input, 'text/html');
   return doc.documentElement.textContent;
-};
-
-/***/ }),
-
-/***/ "../app/modules/import-export-customization/assets/js/export/components/export-error.js":
-/*!**********************************************************************************************!*\
-  !*** ../app/modules/import-export-customization/assets/js/export/components/export-error.js ***!
-  \**********************************************************************************************/
-/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
-
-"use strict";
-/* provided dependency */ var __ = __webpack_require__(/*! @wordpress/i18n */ "@wordpress/i18n")["__"];
-
-
-var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault */ "../node_modules/@babel/runtime/helpers/interopRequireDefault.js");
-Object.defineProperty(exports, "__esModule", ({
-  value: true
-}));
-exports["default"] = ExportError;
-var _react = _interopRequireDefault(__webpack_require__(/*! react */ "react"));
-var _ui = __webpack_require__(/*! @elementor/ui */ "@elementor/ui");
-var _propTypes = _interopRequireDefault(__webpack_require__(/*! prop-types */ "../node_modules/prop-types/index.js"));
-var _icons = __webpack_require__(/*! ../../shared/components/icons */ "../app/modules/import-export-customization/assets/js/shared/components/icons/index.js");
-var _exportContext = __webpack_require__(/*! ../context/export-context */ "../app/modules/import-export-customization/assets/js/export/context/export-context.js");
-var HELP_URL = 'https://go.elementor.com/app-import-download-failed';
-function ExportError(_ref) {
-  var statusText = _ref.statusText;
-  var _useExportContext = (0, _exportContext.useExportContext)(),
-    dispatch = _useExportContext.dispatch;
-  var handleTryAgain = function handleTryAgain() {
-    dispatch({
-      type: 'RESET_STATE'
-    });
-    window.location.href = elementorAppConfig.base_url + '#/export-customization/';
-  };
-  var handleLearnMore = function handleLearnMore() {
-    window.open(HELP_URL, '_blank');
-  };
-  return /*#__PURE__*/_react.default.createElement(_react.default.Fragment, null, /*#__PURE__*/_react.default.createElement(_ui.Box, {
-    sx: {
-      width: 60,
-      height: 60,
-      borderRadius: '50%',
-      backgroundColor: 'error.main',
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-      color: 'white'
-    }
-  }, /*#__PURE__*/_react.default.createElement(_icons.XIcon, {
-    sx: {
-      fontSize: '24px'
-    }
-  })), /*#__PURE__*/_react.default.createElement(_ui.Typography, {
-    variant: "h5",
-    component: "h2"
-  }, statusText), /*#__PURE__*/_react.default.createElement(_ui.Typography, {
-    variant: "body1",
-    color: "text.secondary"
-  }, __('We couldn\'t complete the export. Please try again, and if the problem persists, check our help guide for troubleshooting steps.', 'elementor')), /*#__PURE__*/_react.default.createElement(_ui.Stack, {
-    direction: "row",
-    spacing: 2
-  }, /*#__PURE__*/_react.default.createElement(_ui.Button, {
-    variant: "contained",
-    onClick: handleTryAgain,
-    "data-testid": "export-error-try-again-button"
-  }, __('Try Again', 'elementor')), /*#__PURE__*/_react.default.createElement(_ui.Button, {
-    variant: "outlined",
-    onClick: handleLearnMore,
-    "data-testid": "export-error-learn-more-button"
-  }, __('Learn More', 'elementor'))));
-}
-ExportError.propTypes = {
-  statusText: _propTypes.default.string.isRequired
 };
 
 /***/ }),
@@ -4886,8 +4845,9 @@ function ExportKitFooter() {
     handleConnectSuccess = _useConnectState.handleConnectSuccess,
     handleConnectError = _useConnectState.handleConnectError;
   var _useExportContext = (0, _exportContext.useExportContext)(),
+    data = _useExportContext.data,
     dispatch = _useExportContext.dispatch,
-    isTemplateNameValid = _useExportContext.isTemplateNameValid,
+    hasValidationErrors = _useExportContext.hasValidationErrors,
     isExporting = _useExportContext.isExporting;
   var _useCloudKitsEligibil = (0, _useCloudKitsEligibility.default)({
       enabled: isConnected
@@ -4948,6 +4908,9 @@ function ExportKitFooter() {
     navigate('/kit-library/cloud');
   };
   var handleUploadClick = function handleUploadClick() {
+    if (hasValidationErrors) {
+      return;
+    }
     dispatch({
       type: 'SET_KIT_SAVE_SOURCE',
       payload: 'cloud'
@@ -4958,6 +4921,18 @@ function ExportKitFooter() {
     });
   };
   var handleExportAsZip = function handleExportAsZip() {
+    var _data$customization;
+    if (hasValidationErrors) {
+      return;
+    }
+    var hasCloudMediaFormat = 'cloud' === ((_data$customization = data.customization) === null || _data$customization === void 0 || (_data$customization = _data$customization.content) === null || _data$customization === void 0 ? void 0 : _data$customization.mediaFormat);
+    if (hasCloudMediaFormat) {
+      dispatch({
+        type: 'SET_MEDIA_FORMAT_VALIDATION',
+        payload: true
+      });
+      return;
+    }
     dispatch({
       type: 'SET_KIT_SAVE_SOURCE',
       payload: 'file'
@@ -4975,7 +4950,7 @@ function ExportKitFooter() {
         variant: "outlined",
         color: "secondary",
         size: "small",
-        disabled: !isTemplateNameValid,
+        disabled: hasValidationErrors,
         href: ((_elementorAppConfig = elementorAppConfig) === null || _elementorAppConfig === void 0 || (_elementorAppConfig = _elementorAppConfig['cloud-library']) === null || _elementorAppConfig === void 0 || (_elementorAppConfig = _elementorAppConfig.library_connect_url) === null || _elementorAppConfig === void 0 ? void 0 : _elementorAppConfig.replace(/&#038;/g, '&')) || '#',
         "data-testid": "export-kit-footer-save-to-library-button"
       }, __('Save to library', 'elementor'));
@@ -4997,7 +4972,7 @@ function ExportKitFooter() {
         variant: "outlined",
         color: "secondary",
         size: "small",
-        disabled: !isTemplateNameValid,
+        disabled: hasValidationErrors,
         onClick: handleUpgradeClick,
         "data-testid": "export-kit-footer-save-to-library-button"
       }, __('Save to library', 'elementor'));
@@ -5006,7 +4981,7 @@ function ExportKitFooter() {
       variant: "outlined",
       color: "secondary",
       size: "small",
-      disabled: !isTemplateNameValid,
+      disabled: hasValidationErrors,
       onClick: handleUploadClick,
       "data-testid": "export-kit-footer-save-to-library-button"
     }, __('Save to library', 'elementor'));
@@ -5018,7 +4993,7 @@ function ExportKitFooter() {
     variant: "contained",
     color: "primary",
     size: "small",
-    disabled: !isTemplateNameValid,
+    disabled: hasValidationErrors,
     onClick: handleExportAsZip,
     "data-testid": "export-kit-footer-export-zip-button"
   }, __('Export as .zip', 'elementor')));
@@ -5044,10 +5019,14 @@ var _react = _interopRequireDefault(__webpack_require__(/*! react */ "react"));
 var _exportContext = __webpack_require__(/*! ../context/export-context */ "../app/modules/import-export-customization/assets/js/export/context/export-context.js");
 var _components = __webpack_require__(/*! ../../shared/components */ "../app/modules/import-export-customization/assets/js/shared/components/index.js");
 var _kitContentData = _interopRequireDefault(__webpack_require__(/*! ../../shared/kit-content-data */ "../app/modules/import-export-customization/assets/js/shared/kit-content-data.js"));
+var _useCloudKitsEligibility = _interopRequireDefault(__webpack_require__(/*! elementor-app/hooks/use-cloud-kits-eligibility */ "../app/assets/js/hooks/use-cloud-kits-eligibility.js"));
 function ExportKitPartsSelection() {
   var _useExportContext = (0, _exportContext.useExportContext)(),
     data = _useExportContext.data,
     dispatch = _useExportContext.dispatch;
+  var _useCloudKitsEligibil = (0, _useCloudKitsEligibility.default)(),
+    cloudKitsData = _useCloudKitsEligibil.data;
+  var isCloudKitsEligible = (cloudKitsData === null || cloudKitsData === void 0 ? void 0 : cloudKitsData.is_eligible) || false;
   var handleCheckboxChange = function handleCheckboxChange(itemType) {
     var isChecked = data.includes.includes(itemType);
     var kitItem = _kitContentData.default.find(function (item) {
@@ -5088,11 +5067,19 @@ function ExportKitPartsSelection() {
         payload: key
       });
     }
+    if (data.showMediaFormatValidation) {
+      dispatch({
+        type: 'SET_MEDIA_FORMAT_VALIDATION',
+        payload: false
+      });
+    }
   };
   return /*#__PURE__*/_react.default.createElement(_components.KitPartsSelection, {
     data: data,
     onCheckboxChange: handleCheckboxChange,
-    handleSaveCustomization: handleSaveCustomization
+    handleSaveCustomization: handleSaveCustomization,
+    isCloudKitsEligible: isCloudKitsEligible,
+    showMediaFormatValidation: data.showMediaFormatValidation
   });
 }
 
@@ -5152,17 +5139,17 @@ Object.defineProperty(exports, "__esModule", ({
 exports["default"] = KitInfo;
 var _react = _interopRequireDefault(__webpack_require__(/*! react */ "react"));
 var _ui = __webpack_require__(/*! @elementor/ui */ "@elementor/ui");
-var _exportContext = __webpack_require__(/*! ../context/export-context */ "../app/modules/import-export-customization/assets/js/export/context/export-context.js");
+var _useKitValidation2 = __webpack_require__(/*! ../hooks/use-kit-validation */ "../app/modules/import-export-customization/assets/js/export/hooks/use-kit-validation.js");
 function KitInfo() {
-  var _useExportContext = (0, _exportContext.useExportContext)(),
-    data = _useExportContext.data,
-    dispatch = _useExportContext.dispatch;
-  var _templateName$descrip = {
-      templateName: data.kitInfo.title || '',
-      description: data.kitInfo.description || ''
-    },
-    templateName = _templateName$descrip.templateName,
-    description = _templateName$descrip.description;
+  var _useKitValidation = (0, _useKitValidation2.useKitValidation)(),
+    templateName = _useKitValidation.templateName,
+    description = _useKitValidation.description,
+    nameError = _useKitValidation.nameError,
+    hasDescriptionError = _useKitValidation.hasDescriptionError,
+    descriptionCounterColor = _useKitValidation.descriptionCounterColor,
+    handleNameChange = _useKitValidation.handleNameChange,
+    handleDescriptionChange = _useKitValidation.handleDescriptionChange,
+    DESCRIPTION_MAX_LENGTH = _useKitValidation.DESCRIPTION_MAX_LENGTH;
   return /*#__PURE__*/_react.default.createElement(_ui.Box, {
     sx: {
       mb: 3,
@@ -5179,20 +5166,23 @@ function KitInfo() {
     fullWidth: true,
     required: true,
     value: templateName,
-    onChange: function onChange(e) {
-      return dispatch({
-        type: 'SET_KIT_TITLE',
-        payload: e.target.value || ''
-      });
-    },
+    onChange: handleNameChange,
     placeholder: __('Type name here...', 'elementor'),
     inputProps: {
       maxLength: 75
     },
+    error: !!nameError,
     sx: {
-      mb: 2
+      mb: nameError ? 1 : 2
     }
-  }), /*#__PURE__*/_react.default.createElement(_ui.Typography, {
+  }), nameError && /*#__PURE__*/_react.default.createElement(_ui.Typography, {
+    color: "error.main",
+    variant: "caption",
+    sx: {
+      mb: 2,
+      display: 'block'
+    }
+  }, nameError), /*#__PURE__*/_react.default.createElement(_ui.Typography, {
     variant: "caption",
     component: "label",
     color: "text.secondary"
@@ -5200,14 +5190,20 @@ function KitInfo() {
     fullWidth: true,
     multiline: true,
     value: description,
-    onChange: function onChange(e) {
-      return dispatch({
-        type: 'SET_KIT_DESCRIPTION',
-        payload: e.target.value || ''
-      });
+    onChange: handleDescriptionChange,
+    placeholder: __('Type description here...', 'elementor'),
+    inputProps: {
+      maxLength: DESCRIPTION_MAX_LENGTH
     },
-    placeholder: __('Type description here...', 'elementor')
-  }));
+    error: hasDescriptionError
+  }), /*#__PURE__*/_react.default.createElement(_ui.Typography, {
+    variant: "caption",
+    color: descriptionCounterColor,
+    sx: {
+      mt: 0.5,
+      display: 'block'
+    }
+  }, description.length, " / ", DESCRIPTION_MAX_LENGTH, " ", __('characters', 'elementor')));
 }
 
 /***/ }),
@@ -5267,6 +5263,11 @@ var initialState = {
       content: null,
       plugins: null
     }
+  },
+  showMediaFormatValidation: false,
+  validationErrors: {
+    name: null,
+    description: null
   }
 };
 function exportReducer(state, _ref) {
@@ -5330,6 +5331,14 @@ function exportReducer(state, _ref) {
           customization: _objectSpread(_objectSpread({}, (_state$analytics = state.analytics) === null || _state$analytics === void 0 ? void 0 : _state$analytics.customization), {}, (0, _defineProperty2.default)({}, payload.key, payload.value))
         }
       });
+    case 'SET_MEDIA_FORMAT_VALIDATION':
+      return _objectSpread(_objectSpread({}, state), {}, {
+        showMediaFormatValidation: payload
+      });
+    case 'SET_VALIDATION_ERRORS':
+      return _objectSpread(_objectSpread({}, state), {}, {
+        validationErrors: _objectSpread(_objectSpread({}, state.validationErrors), payload)
+      });
     case 'RESET_STATE':
       return _objectSpread({}, initialState);
     default:
@@ -5343,10 +5352,13 @@ function ExportContextProvider(_ref2) {
     _useReducer2 = (0, _slicedToArray2.default)(_useReducer, 2),
     data = _useReducer2[0],
     dispatch = _useReducer2[1];
+  var isNameEmpty = !(((_data$kitInfo$title = data.kitInfo.title) === null || _data$kitInfo$title === void 0 ? void 0 : _data$kitInfo$title.trim()) || '').length;
+  var hasNameError = data.validationErrors.name || isNameEmpty;
+  var hasDescriptionError = data.validationErrors.description;
   var value = {
     data: data,
     dispatch: dispatch,
-    isTemplateNameValid: (((_data$kitInfo$title = data.kitInfo.title) === null || _data$kitInfo$title === void 0 ? void 0 : _data$kitInfo$title.trim()) || '').length > 0,
+    hasValidationErrors: !!(hasNameError || hasDescriptionError),
     isExporting: data.exportStatus === EXPORT_STATUS.EXPORTING,
     isCompleted: data.exportStatus === EXPORT_STATUS.COMPLETED,
     isPending: data.exportStatus === EXPORT_STATUS.PENDING
@@ -5431,13 +5443,16 @@ Object.defineProperty(exports, "__esModule", ({
 }));
 exports.useExportKit = void 0;
 var _regenerator = _interopRequireDefault(__webpack_require__(/*! @babel/runtime/regenerator */ "../node_modules/@babel/runtime/regenerator/index.js"));
+var _typeof2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime/helpers/typeof */ "../node_modules/@babel/runtime/helpers/typeof.js"));
 var _asyncToGenerator2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime/helpers/asyncToGenerator */ "../node_modules/@babel/runtime/helpers/asyncToGenerator.js"));
 var _slicedToArray2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime/helpers/slicedToArray */ "../node_modules/@babel/runtime/helpers/slicedToArray.js"));
 var _react = __webpack_require__(/*! react */ "react");
 var _router = __webpack_require__(/*! @reach/router */ "../node_modules/@reach/router/es/index.js");
 var _screenshot = __webpack_require__(/*! ../utils/screenshot */ "../app/modules/import-export-customization/assets/js/export/utils/screenshot.js");
 var _exportContext = __webpack_require__(/*! ../context/export-context */ "../app/modules/import-export-customization/assets/js/export/context/export-context.js");
+var _importExportError = __webpack_require__(/*! ../../shared/error/import-export-error */ "../app/modules/import-export-customization/assets/js/shared/error/import-export-error.js");
 var STATUS_PROCESSING = 'processing';
+var STATUS_PROCESSING_MEDIA = 'processing-media';
 var STATUS_ERROR = 'error';
 var useExportKit = exports.useExportKit = function useExportKit(_ref) {
   var includes = _ref.includes,
@@ -5449,14 +5464,144 @@ var useExportKit = exports.useExportKit = function useExportKit(_ref) {
     _useState2 = (0, _slicedToArray2.default)(_useState, 2),
     status = _useState2[0],
     setStatus = _useState2[1];
+  var _useState3 = (0, _react.useState)(null),
+    _useState4 = (0, _slicedToArray2.default)(_useState3, 2),
+    error = _useState4[0],
+    setError = _useState4[1];
+  var _useState5 = (0, _react.useState)(null),
+    _useState6 = (0, _slicedToArray2.default)(_useState5, 2),
+    exportedData = _useState6[0],
+    setExportedData = _useState6[1];
   var navigate = (0, _router.useNavigate)();
-  var exportKit = (0, _react.useCallback)(/*#__PURE__*/(0, _asyncToGenerator2.default)(/*#__PURE__*/_regenerator.default.mark(function _callee() {
-    var _kitInfo$title, _kitInfo$description, _window$wpApiSettings, exportData, isCloudExport, screenshot, baseUrl, exportUrl, response, result, _result$data, _result$data2, errorMessage, isExportLocal, isExportToCloud, exportedData, _exportedData, _t;
-    return _regenerator.default.wrap(function (_context) {
-      while (1) switch (_context.prev = _context.next) {
+  var processMedia = (0, _react.useCallback)(/*#__PURE__*/function () {
+    var _ref2 = (0, _asyncToGenerator2.default)(/*#__PURE__*/_regenerator.default.mark(function _callee(exportData, mediaUrls, kit) {
+      var _window$wpApiSettings, _mediaResult$data4;
+      var baseUrl, mediaResponse, mediaResult, _mediaResult$data, _mediaResult$data2, _mediaResult$data3, errorMessage;
+      return _regenerator.default.wrap(function (_context) {
+        while (1) switch (_context.prev = _context.next) {
+          case 0:
+            setStatus(STATUS_PROCESSING_MEDIA);
+            baseUrl = elementorAppConfig['import-export-customization'].restApiBaseUrl;
+            _context.next = 1;
+            return fetch("".concat(baseUrl, "/process-media"), {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+                'X-WP-Nonce': ((_window$wpApiSettings = window.wpApiSettings) === null || _window$wpApiSettings === void 0 ? void 0 : _window$wpApiSettings.nonce) || ''
+              },
+              body: JSON.stringify({
+                media_urls: mediaUrls,
+                kit: kit
+              })
+            });
+          case 1:
+            mediaResponse = _context.sent;
+            _context.next = 2;
+            return mediaResponse.json();
+          case 2:
+            mediaResult = _context.sent;
+            if (mediaResponse.ok) {
+              _context.next = 3;
+              break;
+            }
+            errorMessage = (mediaResult === null || mediaResult === void 0 || (_mediaResult$data = mediaResult.data) === null || _mediaResult$data === void 0 ? void 0 : _mediaResult$data.message) || "Media processing error! Code: ".concat(mediaResult === null || mediaResult === void 0 || (_mediaResult$data2 = mediaResult.data) === null || _mediaResult$data2 === void 0 ? void 0 : _mediaResult$data2.code);
+            throw new _importExportError.ImportExportError(errorMessage, mediaResult === null || mediaResult === void 0 || (_mediaResult$data3 = mediaResult.data) === null || _mediaResult$data3 === void 0 ? void 0 : _mediaResult$data3.code);
+          case 3:
+            exportData.media = {
+              processed: true,
+              message: (mediaResult === null || mediaResult === void 0 || (_mediaResult$data4 = mediaResult.data) === null || _mediaResult$data4 === void 0 ? void 0 : _mediaResult$data4.message) || 'Media processed successfully'
+            };
+            return _context.abrupt("return", exportData);
+          case 4:
+          case "end":
+            return _context.stop();
+        }
+      }, _callee);
+    }));
+    return function (_x, _x2, _x3) {
+      return _ref2.apply(this, arguments);
+    };
+  }(), []);
+  var deleteKit = (0, _react.useCallback)(/*#__PURE__*/function () {
+    var _ref3 = (0, _asyncToGenerator2.default)(/*#__PURE__*/_regenerator.default.mark(function _callee2(kitId) {
+      var _t;
+      return _regenerator.default.wrap(function (_context2) {
+        while (1) switch (_context2.prev = _context2.next) {
+          case 0:
+            if (kitId) {
+              _context2.next = 1;
+              break;
+            }
+            return _context2.abrupt("return");
+          case 1:
+            _context2.prev = 1;
+            _context2.next = 2;
+            return $e.data.delete('cloud-kits/index', {
+              id: kitId
+            });
+          case 2:
+            _context2.next = 4;
+            break;
+          case 3:
+            _context2.prev = 3;
+            _t = _context2["catch"](1);
+          case 4:
+          case "end":
+            return _context2.stop();
+        }
+      }, _callee2, null, [[1, 3]]);
+    }));
+    return function (_x4) {
+      return _ref3.apply(this, arguments);
+    };
+  }(), []);
+  var retryMediaProcessing = (0, _react.useCallback)(/*#__PURE__*/(0, _asyncToGenerator2.default)(/*#__PURE__*/_regenerator.default.mark(function _callee3() {
+    var updatedExportedData, _t2;
+    return _regenerator.default.wrap(function (_context3) {
+      while (1) switch (_context3.prev = _context3.next) {
         case 0:
-          _context.prev = 0;
+          if (exportedData) {
+            _context3.next = 1;
+            break;
+          }
+          throw new _importExportError.ImportExportError('No export data available for media retry');
+        case 1:
+          _context3.prev = 1;
+          setError(null);
+          _context3.next = 2;
+          return processMedia(exportedData.exportedData, exportedData.mediaUrls, exportedData.kit);
+        case 2:
+          updatedExportedData = _context3.sent;
+          dispatch({
+            type: 'SET_EXPORTED_DATA',
+            payload: updatedExportedData
+          });
+          dispatch({
+            type: 'SET_EXPORT_STATUS',
+            payload: _exportContext.EXPORT_STATUS.COMPLETED
+          });
+          navigate('/export-customization/complete');
+          _context3.next = 4;
+          break;
+        case 3:
+          _context3.prev = 3;
+          _t2 = _context3["catch"](1);
+          setStatus(STATUS_ERROR);
+          setError(_t2 instanceof _importExportError.ImportExportError ? _t2 : new _importExportError.ImportExportError(_t2.message));
+        case 4:
+        case "end":
+          return _context3.stop();
+      }
+    }, _callee3, null, [[1, 3]]);
+  })), [exportedData, processMedia, dispatch, navigate]);
+  var exportKit = (0, _react.useCallback)(/*#__PURE__*/(0, _asyncToGenerator2.default)(/*#__PURE__*/_regenerator.default.mark(function _callee4() {
+    var _kitInfo$title, _kitInfo$description, _window$wpApiSettings2, exportData, isCloudExport, screenshot, baseUrl, exportUrl, response, result, _result$data, _result$data2, _result$data3, rawMessage, errorMessage, errorCode, isExportLocal, isExportToCloud, kitExportData, mediaUrls, _t3;
+    return _regenerator.default.wrap(function (_context4) {
+      while (1) switch (_context4.prev = _context4.next) {
+        case 0:
+          _context4.prev = 0;
           setStatus(STATUS_PROCESSING);
+          setError(null);
           exportData = {
             kitInfo: {
               title: ((_kitInfo$title = kitInfo.title) === null || _kitInfo$title === void 0 ? void 0 : _kitInfo$title.trim()) || null,
@@ -5468,91 +5613,113 @@ var useExportKit = exports.useExportKit = function useExportKit(_ref) {
           };
           isCloudExport = 'cloud' === kitInfo.source;
           if (!isCloudExport) {
-            _context.next = 2;
+            _context4.next = 2;
             break;
           }
-          _context.next = 1;
+          _context4.next = 1;
           return (0, _screenshot.generateScreenshot)();
         case 1:
-          screenshot = _context.sent;
+          screenshot = _context4.sent;
           exportData.screenShotBlob = screenshot;
         case 2:
           baseUrl = elementorAppConfig['import-export-customization'].restApiBaseUrl;
           exportUrl = "".concat(baseUrl, "/export");
-          _context.next = 3;
+          _context4.next = 3;
           return fetch(exportUrl, {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
-              'X-WP-Nonce': ((_window$wpApiSettings = window.wpApiSettings) === null || _window$wpApiSettings === void 0 ? void 0 : _window$wpApiSettings.nonce) || ''
+              'X-WP-Nonce': ((_window$wpApiSettings2 = window.wpApiSettings) === null || _window$wpApiSettings2 === void 0 ? void 0 : _window$wpApiSettings2.nonce) || ''
             },
             body: JSON.stringify(exportData)
           });
         case 3:
-          response = _context.sent;
-          _context.next = 4;
+          response = _context4.sent;
+          _context4.next = 4;
           return response.json();
         case 4:
-          result = _context.sent;
+          result = _context4.sent;
           if (response.ok) {
-            _context.next = 5;
+            _context4.next = 5;
             break;
           }
-          errorMessage = (result === null || result === void 0 || (_result$data = result.data) === null || _result$data === void 0 ? void 0 : _result$data.message) || "HTTP error! with the following code: ".concat(result === null || result === void 0 || (_result$data2 = result.data) === null || _result$data2 === void 0 ? void 0 : _result$data2.code);
-          throw new Error(errorMessage);
+          rawMessage = result === null || result === void 0 || (_result$data = result.data) === null || _result$data === void 0 ? void 0 : _result$data.message;
+          errorMessage = 'object' === (0, _typeof2.default)(rawMessage) ? rawMessage : rawMessage || "HTTP error! with the following code: ".concat(result === null || result === void 0 || (_result$data2 = result.data) === null || _result$data2 === void 0 ? void 0 : _result$data2.code);
+          errorCode = 408 === (response === null || response === void 0 ? void 0 : response.status) ? 'timeout' : result === null || result === void 0 || (_result$data3 = result.data) === null || _result$data3 === void 0 ? void 0 : _result$data3.code;
+          throw new _importExportError.ImportExportError(errorMessage, errorCode);
         case 5:
           isExportLocal = 'file' === kitInfo.source && result.data && result.data.file;
           isExportToCloud = 'cloud' === kitInfo.source && result.data && result.data.kit;
+          kitExportData = null;
           if (!isExportLocal) {
-            _context.next = 6;
+            _context4.next = 6;
             break;
           }
-          exportedData = {
+          kitExportData = {
             file: result.data.file,
             // This is base64 encoded file data
             manifest: result.data.manifest
           };
           dispatch({
             type: 'SET_EXPORTED_DATA',
-            payload: exportedData
+            payload: kitExportData
           });
-          _context.next = 8;
-          break;
-        case 6:
-          if (!isExportToCloud) {
-            _context.next = 7;
-            break;
-          }
-          _exportedData = {
-            kit: result.data.kit,
-            manifest: result.data.manifest
-          };
-          dispatch({
-            type: 'SET_EXPORTED_DATA',
-            payload: _exportedData
-          });
-          _context.next = 8;
-          break;
-        case 7:
-          throw new Error('Invalid response format from server');
-        case 8:
           dispatch({
             type: 'SET_EXPORT_STATUS',
             payload: _exportContext.EXPORT_STATUS.COMPLETED
           });
           navigate('/export-customization/complete');
-          _context.next = 10;
+          _context4.next = 9;
           break;
+        case 6:
+          if (!isExportToCloud) {
+            _context4.next = 8;
+            break;
+          }
+          kitExportData = {
+            kit: result.data.kit,
+            manifest: result.data.manifest
+          };
+          setExportedData({
+            exportedData: kitExportData,
+            mediaUrls: result.data.media_urls,
+            kit: result.data.kit
+          });
+          mediaUrls = result.data.media_urls;
+          if (!(mediaUrls && mediaUrls.length > 0)) {
+            _context4.next = 7;
+            break;
+          }
+          _context4.next = 7;
+          return processMedia(kitExportData, mediaUrls, result.data.kit);
+        case 7:
+          dispatch({
+            type: 'SET_EXPORTED_DATA',
+            payload: kitExportData
+          });
+          dispatch({
+            type: 'SET_EXPORT_STATUS',
+            payload: _exportContext.EXPORT_STATUS.COMPLETED
+          });
+          navigate('/export-customization/complete');
+          _context4.next = 9;
+          break;
+        case 8:
+          throw new _importExportError.ImportExportError('Invalid response format from server');
         case 9:
-          _context.prev = 9;
-          _t = _context["catch"](0);
-          setStatus(STATUS_ERROR);
+          _context4.next = 11;
+          break;
         case 10:
+          _context4.prev = 10;
+          _t3 = _context4["catch"](0);
+          setStatus(STATUS_ERROR);
+          setError(_t3 instanceof _importExportError.ImportExportError ? _t3 : new _importExportError.ImportExportError(_t3.message));
+        case 11:
         case "end":
-          return _context.stop();
+          return _context4.stop();
       }
-    }, _callee, null, [[0, 9]]);
-  })), [includes, kitInfo, customization, dispatch, navigate]);
+    }, _callee4, null, [[0, 10]]);
+  })), [includes, kitInfo, customization, dispatch, navigate, processMedia]);
   (0, _react.useEffect)(function () {
     if (isExporting) {
       exportKit();
@@ -5561,9 +5728,106 @@ var useExportKit = exports.useExportKit = function useExportKit(_ref) {
   return {
     status: status,
     STATUS_PROCESSING: STATUS_PROCESSING,
-    STATUS_ERROR: STATUS_ERROR
+    STATUS_PROCESSING_MEDIA: STATUS_PROCESSING_MEDIA,
+    STATUS_ERROR: STATUS_ERROR,
+    error: error,
+    exportKit: exportKit,
+    retryMediaProcessing: retryMediaProcessing,
+    deleteKit: deleteKit,
+    exportedData: exportedData
   };
 };
+
+/***/ }),
+
+/***/ "../app/modules/import-export-customization/assets/js/export/hooks/use-kit-validation.js":
+/*!***********************************************************************************************!*\
+  !*** ../app/modules/import-export-customization/assets/js/export/hooks/use-kit-validation.js ***!
+  \***********************************************************************************************/
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+"use strict";
+/* provided dependency */ var __ = __webpack_require__(/*! @wordpress/i18n */ "@wordpress/i18n")["__"];
+
+
+var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault */ "../node_modules/@babel/runtime/helpers/interopRequireDefault.js");
+Object.defineProperty(exports, "__esModule", ({
+  value: true
+}));
+exports.useKitValidation = useKitValidation;
+var _slicedToArray2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime/helpers/slicedToArray */ "../node_modules/@babel/runtime/helpers/slicedToArray.js"));
+var _react = __webpack_require__(/*! react */ "react");
+var _exportContext = __webpack_require__(/*! ../context/export-context */ "../app/modules/import-export-customization/assets/js/export/context/export-context.js");
+function useKitValidation() {
+  var _useExportContext = (0, _exportContext.useExportContext)(),
+    data = _useExportContext.data,
+    dispatch = _useExportContext.dispatch;
+  var _useState = (0, _react.useState)(null),
+    _useState2 = (0, _slicedToArray2.default)(_useState, 2),
+    nameError = _useState2[0],
+    setNameError = _useState2[1];
+  var DESCRIPTION_MAX_LENGTH = 300;
+  var validateKitName = function validateKitName(value) {
+    if (!value || 0 === value.trim().length) {
+      return __('Must add a website template name', 'elementor');
+    }
+    var problematicCharsRegex = /[^\w\s\-_.()]/g;
+    if (problematicCharsRegex.test(value)) {
+      return __('Use characters only', 'elementor');
+    }
+    return null;
+  };
+  var validateDescription = function validateDescription(value) {
+    if (value.length > DESCRIPTION_MAX_LENGTH) {
+      return __('Description exceeds 300 characters', 'elementor');
+    }
+    return null;
+  };
+  var templateName = data.kitInfo.title || '';
+  var description = data.kitInfo.description || '';
+  var hasDescriptionError = description.length > DESCRIPTION_MAX_LENGTH;
+  var descriptionCounterColor = hasDescriptionError ? 'error' : 'text.secondary';
+  (0, _react.useEffect)(function () {
+    var nameValidationError = validateKitName(templateName);
+    var descriptionValidationError = validateDescription(description);
+    setNameError(nameValidationError);
+    dispatch({
+      type: 'SET_VALIDATION_ERRORS',
+      payload: {
+        name: nameValidationError,
+        description: descriptionValidationError
+      }
+    });
+  }, [templateName, description, dispatch]);
+  var handleNameChange = function handleNameChange(e) {
+    var value = e.target.value || '';
+    dispatch({
+      type: 'SET_KIT_TITLE',
+      payload: value
+    });
+  };
+  var handleDescriptionChange = function handleDescriptionChange(e) {
+    var value = e.target.value || '';
+    if (value.length <= DESCRIPTION_MAX_LENGTH) {
+      dispatch({
+        type: 'SET_KIT_DESCRIPTION',
+        payload: value
+      });
+    }
+  };
+  return {
+    templateName: templateName,
+    description: description,
+    nameError: nameError,
+    hasDescriptionError: hasDescriptionError,
+    descriptionCounterColor: descriptionCounterColor,
+    handleNameChange: handleNameChange,
+    handleDescriptionChange: handleDescriptionChange,
+    DESCRIPTION_MAX_LENGTH: DESCRIPTION_MAX_LENGTH,
+    validateKitName: validateKitName,
+    validateDescription: validateDescription
+  };
+}
 
 /***/ }),
 
@@ -5644,6 +5908,7 @@ function ExportComplete() {
     if ('cloud' !== kitInfo.source && exportedData !== null && exportedData !== void 0 && exportedData.file) {
       downloadFile();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [exportedData, kitInfo.source]);
   (0, _react.useEffect)(function () {
     _appsEventTracking.AppsEventTracking.sendPageViewsWebsiteTemplates(elementorCommon.eventsManager.config.secondaryLocations.kitLibrary.kitExportSummary);
@@ -5935,7 +6200,7 @@ var _components = __webpack_require__(/*! ../../shared/components */ "../app/mod
 var _exportContext = __webpack_require__(/*! ../context/export-context */ "../app/modules/import-export-customization/assets/js/export/context/export-context.js");
 var _useExportKit2 = __webpack_require__(/*! ../hooks/use-export-kit */ "../app/modules/import-export-customization/assets/js/export/hooks/use-export-kit.js");
 var _exportProcessing = _interopRequireDefault(__webpack_require__(/*! ../components/export-processing */ "../app/modules/import-export-customization/assets/js/export/components/export-processing.js"));
-var _exportError = _interopRequireDefault(__webpack_require__(/*! ../components/export-error */ "../app/modules/import-export-customization/assets/js/export/components/export-error.js"));
+var _processingErrorDialog = __webpack_require__(/*! ../../shared/components/error/processing-error-dialog */ "../app/modules/import-export-customization/assets/js/shared/components/error/processing-error-dialog.js");
 function ExportProcess() {
   var _useExportContext = (0, _exportContext.useExportContext)(),
     data = _useExportContext.data,
@@ -5954,7 +6219,13 @@ function ExportProcess() {
     }),
     status = _useExportKit.status,
     STATUS_PROCESSING = _useExportKit.STATUS_PROCESSING,
-    STATUS_ERROR = _useExportKit.STATUS_ERROR;
+    STATUS_PROCESSING_MEDIA = _useExportKit.STATUS_PROCESSING_MEDIA,
+    STATUS_ERROR = _useExportKit.STATUS_ERROR,
+    error = _useExportKit.error,
+    exportKit = _useExportKit.exportKit,
+    retryMediaProcessing = _useExportKit.retryMediaProcessing,
+    deleteKit = _useExportKit.deleteKit,
+    exportedData = _useExportKit.exportedData;
   if (isPending) {
     return /*#__PURE__*/_react.default.createElement(_router.Redirect, {
       to: "/export-customization/",
@@ -5965,20 +6236,55 @@ function ExportProcess() {
     if (status === STATUS_PROCESSING) {
       return __('Setting up your website template...', 'elementor');
     }
+    if (status === STATUS_PROCESSING_MEDIA) {
+      return __('Processing media files...', 'elementor');
+    }
     return __('Export failed', 'elementor');
   };
   var headerContent = /*#__PURE__*/_react.default.createElement(_components.PageHeader, {
     title: __('Export', 'elementor')
   });
+  var handleTryAgain = function handleTryAgain() {
+    var isMediaError = 'media-processing-error' === (error === null || error === void 0 ? void 0 : error.code);
+    if (isMediaError) {
+      retryMediaProcessing();
+    } else {
+      exportKit();
+    }
+  };
+  var handleCloseError = function handleCloseError() {
+    var _exportedData$kit;
+    var isMediaError = 'media-processing-error' === (error === null || error === void 0 ? void 0 : error.code);
+    dispatch({
+      type: 'SET_EXPORT_STATUS',
+      payload: _exportContext.EXPORT_STATUS.PENDING
+    });
+    if (isMediaError && exportedData !== null && exportedData !== void 0 && (_exportedData$kit = exportedData.kit) !== null && _exportedData$kit !== void 0 && _exportedData$kit.id) {
+      deleteKit(exportedData.kit.id);
+    }
+  };
+  var handleExportAsZip = function handleExportAsZip() {
+    dispatch({
+      type: 'SET_KIT_SAVE_SOURCE',
+      payload: 'file'
+    });
+    dispatch({
+      type: 'SET_EXPORT_STATUS',
+      payload: _exportContext.EXPORT_STATUS.EXPORTING
+    });
+  };
   return /*#__PURE__*/_react.default.createElement(_components.BaseLayout, {
     topBar: /*#__PURE__*/_react.default.createElement(_components.TopBar, null, headerContent)
   }, /*#__PURE__*/_react.default.createElement(_components.CenteredContent, null, /*#__PURE__*/_react.default.createElement(_ui.Stack, {
     spacing: 3,
     alignItems: "center"
-  }, status === STATUS_PROCESSING && /*#__PURE__*/_react.default.createElement(_exportProcessing.default, {
+  }, (status === STATUS_PROCESSING || status === STATUS_PROCESSING_MEDIA) && /*#__PURE__*/_react.default.createElement(_exportProcessing.default, {
     statusText: getStatusText()
-  }), status === STATUS_ERROR && /*#__PURE__*/_react.default.createElement(_exportError.default, {
-    statusText: getStatusText()
+  }), status === STATUS_ERROR && /*#__PURE__*/_react.default.createElement(_processingErrorDialog.ProcessingErrorDialog, {
+    error: error,
+    handleClose: handleCloseError,
+    handleTryAgain: handleTryAgain,
+    handleExportAsZip: handleExportAsZip
   }))));
 }
 
@@ -6188,78 +6494,6 @@ DropZone.propTypes = {
   helperText: _propTypes.default.string
 };
 var _default = exports["default"] = DropZone;
-
-/***/ }),
-
-/***/ "../app/modules/import-export-customization/assets/js/import/components/import-error.js":
-/*!**********************************************************************************************!*\
-  !*** ../app/modules/import-export-customization/assets/js/import/components/import-error.js ***!
-  \**********************************************************************************************/
-/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
-
-"use strict";
-/* provided dependency */ var __ = __webpack_require__(/*! @wordpress/i18n */ "@wordpress/i18n")["__"];
-
-
-var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault */ "../node_modules/@babel/runtime/helpers/interopRequireDefault.js");
-Object.defineProperty(exports, "__esModule", ({
-  value: true
-}));
-exports["default"] = ImportError;
-var _react = _interopRequireDefault(__webpack_require__(/*! react */ "react"));
-var _ui = __webpack_require__(/*! @elementor/ui */ "@elementor/ui");
-var _propTypes = _interopRequireDefault(__webpack_require__(/*! prop-types */ "../node_modules/prop-types/index.js"));
-var _components = __webpack_require__(/*! ../../shared/components */ "../app/modules/import-export-customization/assets/js/shared/components/index.js");
-var _importContext = __webpack_require__(/*! ../context/import-context */ "../app/modules/import-export-customization/assets/js/import/context/import-context.js");
-var HELP_URL = 'https://go.elementor.com/app-import-download-failed';
-function ImportError(_ref) {
-  var statusText = _ref.statusText;
-  var _useImportContext = (0, _importContext.useImportContext)(),
-    dispatch = _useImportContext.dispatch;
-  var handleTryAgain = function handleTryAgain() {
-    dispatch({
-      type: 'RESET_STATE'
-    });
-    window.location.href = elementorAppConfig.base_url + '#/import-customization/';
-  };
-  var handleLearnMore = function handleLearnMore() {
-    window.open(HELP_URL, '_blank');
-  };
-  return /*#__PURE__*/_react.default.createElement(_react.default.Fragment, null, /*#__PURE__*/_react.default.createElement(_ui.Box, {
-    sx: {
-      width: 60,
-      height: 60,
-      borderRadius: '50%',
-      backgroundColor: 'error.main',
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-      color: 'white'
-    }
-  }, /*#__PURE__*/_react.default.createElement(_components.XIcon, {
-    sx: {
-      fontSize: '24px'
-    }
-  })), /*#__PURE__*/_react.default.createElement(_ui.Typography, {
-    variant: "h5",
-    component: "h2",
-    "data-testid": "import-error"
-  }, statusText), /*#__PURE__*/_react.default.createElement(_ui.Stack, {
-    direction: "row",
-    spacing: 2
-  }, /*#__PURE__*/_react.default.createElement(_ui.Button, {
-    variant: "contained",
-    onClick: handleTryAgain,
-    "data-testid": "import-error-try-again-button"
-  }, __('Try Again', 'elementor')), /*#__PURE__*/_react.default.createElement(_ui.Button, {
-    variant: "outlined",
-    onClick: handleLearnMore,
-    "data-testid": "import-error-learn-more-button"
-  }, __('Learn More', 'elementor'))));
-}
-ImportError.propTypes = {
-  statusText: _propTypes.default.string.isRequired
-};
 
 /***/ }),
 
@@ -6532,6 +6766,10 @@ var importReducer = function importReducer(state, _ref) {
       return _objectSpread(_objectSpread({}, state), {}, {
         customization: _objectSpread(_objectSpread({}, state.customization), {}, (0, _defineProperty2.default)({}, payload.key, payload.value))
       });
+    case 'SET_DURATION':
+      return _objectSpread(_objectSpread({}, state), {}, {
+        duration: payload
+      });
     default:
       return state;
   }
@@ -6552,7 +6790,8 @@ var initialState = {
     templates: null,
     content: null,
     plugins: null
-  }
+  },
+  duration: null
 };
 function ImportContextProvider(props) {
   var _data$uploadedData, _data$uploadedData2;
@@ -6734,6 +6973,7 @@ var _slicedToArray2 = _interopRequireDefault(__webpack_require__(/*! @babel/runt
 var _asyncToGenerator2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime/helpers/asyncToGenerator */ "../node_modules/@babel/runtime/helpers/asyncToGenerator.js"));
 var _react = __webpack_require__(/*! react */ "react");
 var _importContext = __webpack_require__(/*! ../context/import-context */ "../app/modules/import-export-customization/assets/js/import/context/import-context.js");
+var _importExportError = __webpack_require__(/*! ../../shared/error/import-export-error */ "../app/modules/import-export-customization/assets/js/shared/error/import-export-error.js");
 function _createForOfIteratorHelper(r, e) { var t = "undefined" != typeof Symbol && r[Symbol.iterator] || r["@@iterator"]; if (!t) { if (Array.isArray(r) || (t = _unsupportedIterableToArray(r)) || e && r && "number" == typeof r.length) { t && (r = t); var _n = 0, F = function F() {}; return { s: F, n: function n() { return _n >= r.length ? { done: !0 } : { done: !1, value: r[_n++] }; }, e: function e(r) { throw r; }, f: F }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); } var o, a = !0, u = !1; return { s: function s() { t = t.call(r); }, n: function n() { var r = t.next(); return a = r.done, r; }, e: function e(r) { u = !0, o = r; }, f: function f() { try { a || null == t.return || t.return(); } finally { if (u) throw o; } } }; }
 function _unsupportedIterableToArray(r, a) { if (r) { if ("string" == typeof r) return _arrayLikeToArray(r, a); var t = {}.toString.call(r).slice(8, -1); return "Object" === t && r.constructor && (t = r.constructor.name), "Map" === t || "Set" === t ? Array.from(r) : "Arguments" === t || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(t) ? _arrayLikeToArray(r, a) : void 0; } }
 function _arrayLikeToArray(r, a) { (null == a || a > r.length) && (a = r.length); for (var e = 0, n = Array(a); e < a; e++) n[e] = r[e]; return n; }
@@ -6743,7 +6983,7 @@ function request(_x) {
 function _request() {
   _request = (0, _asyncToGenerator2.default)(/*#__PURE__*/_regenerator.default.mark(function _callee3(_ref) {
     var _window$wpApiSettings;
-    var data, path, _ref$method, method, baseUrl, requestUrl, response, result, _result$data, _result$data2, errorMessage;
+    var data, path, _ref$method, method, baseUrl, requestUrl, response, result, _result$data, _result$data2, _result$data3, errorMessage, errorCode;
     return _regenerator.default.wrap(function (_context3) {
       while (1) switch (_context3.prev = _context3.next) {
         case 0:
@@ -6770,7 +7010,8 @@ function _request() {
             break;
           }
           errorMessage = (result === null || result === void 0 || (_result$data = result.data) === null || _result$data === void 0 ? void 0 : _result$data.message) || "HTTP error! with the following code: ".concat(result === null || result === void 0 || (_result$data2 = result.data) === null || _result$data2 === void 0 ? void 0 : _result$data2.code);
-          throw new Error(errorMessage);
+          errorCode = 408 === (response === null || response === void 0 ? void 0 : response.status) ? 'timeout' : result === null || result === void 0 || (_result$data3 = result.data) === null || _result$data3 === void 0 ? void 0 : _result$data3.code;
+          throw new _importExportError.ImportExportError(errorMessage, errorCode);
         case 3:
           return _context3.abrupt("return", result);
         case 4:
@@ -6800,9 +7041,13 @@ function useImportKit(_ref2) {
     _useState4 = (0, _slicedToArray2.default)(_useState3, 2),
     error = _useState4[0],
     setError = _useState4[1];
+  var _useState5 = (0, _react.useState)(null),
+    _useState6 = (0, _slicedToArray2.default)(_useState5, 2),
+    startTime = _useState6[0],
+    setStartTime = _useState6[1];
   var runImportRunners = /*#__PURE__*/function () {
     var _ref3 = (0, _asyncToGenerator2.default)(/*#__PURE__*/_regenerator.default.mark(function _callee() {
-      var session, runners, stopIterations, _iterator, _step, runner, _result$data$imported, result, runnerKey, _t, _t2;
+      var session, runners, stopIterations, _iterator, _step, runner, _result$data$imported, result, runnerKey, endTime, millisecondsToSeconds, importDuration, _t, _t2;
       return _regenerator.default.wrap(function (_context) {
         while (1) switch (_context.prev = _context.next) {
           case 0:
@@ -6863,6 +7108,15 @@ function useImportKit(_ref2) {
             _iterator.f();
             return _context.finish(10);
           case 11:
+            if (startTime) {
+              endTime = Date.now();
+              millisecondsToSeconds = 1000;
+              importDuration = (endTime - startTime) / millisecondsToSeconds;
+              dispatch({
+                type: 'SET_DURATION',
+                payload: Number(importDuration.toFixed(2))
+              });
+            }
             setImportStatus(IMPORT_PROCESSING_STATUS.DONE);
             dispatch({
               type: 'SET_IMPORT_STATUS',
@@ -6888,6 +7142,8 @@ function useImportKit(_ref2) {
         while (1) switch (_context2.prev = _context2.next) {
           case 0:
             _context2.prev = 0;
+            setError(null);
+            setStartTime(Date.now());
             setImportStatus(IMPORT_PROCESSING_STATUS.IN_PROGRESS);
             importData = {
               id: (_data$kitUploadParams = data.kitUploadParams) === null || _data$kitUploadParams === void 0 ? void 0 : _data$kitUploadParams.id,
@@ -6936,7 +7192,8 @@ function useImportKit(_ref2) {
   }, [data.importedData, isProcessing, error]);
   return {
     status: status,
-    error: error
+    error: error,
+    importKit: importKit
   };
 }
 
@@ -6963,6 +7220,7 @@ var _slicedToArray2 = _interopRequireDefault(__webpack_require__(/*! @babel/runt
 var _react = __webpack_require__(/*! react */ "react");
 var _importContext = __webpack_require__(/*! ../context/import-context */ "../app/modules/import-export-customization/assets/js/import/context/import-context.js");
 var _appsEventTracking = __webpack_require__(/*! ../../../../../../assets/js/event-track/apps-event-tracking */ "../app/assets/js/event-track/apps-event-tracking.js");
+var _importExportError = __webpack_require__(/*! ../../shared/error/import-export-error */ "../app/modules/import-export-customization/assets/js/shared/error/import-export-error.js");
 function ownKeys(e, r) { var t = Object.keys(e); if (Object.getOwnPropertySymbols) { var o = Object.getOwnPropertySymbols(e); r && (o = o.filter(function (r) { return Object.getOwnPropertyDescriptor(e, r).enumerable; })), t.push.apply(t, o); } return t; }
 function _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t = null != arguments[r] ? arguments[r] : {}; r % 2 ? ownKeys(Object(t), !0).forEach(function (r) { (0, _defineProperty2.default)(e, r, t[r]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(e, Object.getOwnPropertyDescriptors(t)) : ownKeys(Object(t)).forEach(function (r) { Object.defineProperty(e, r, Object.getOwnPropertyDescriptor(t, r)); }); } return e; }
 function useUploadKit() {
@@ -6983,12 +7241,13 @@ function useUploadKit() {
   }
   function _uploadKit() {
     _uploadKit = (0, _asyncToGenerator2.default)(/*#__PURE__*/_regenerator.default.mark(function _callee() {
-      var _window$wpApiSettings, baseUrl, uploadUrl, uploadData, _data$kitUploadParams, id, source, fileUrl, response, result, _result$data, _result$data2, errorMessage, _t;
+      var _window$wpApiSettings, baseUrl, uploadUrl, uploadData, _data$kitUploadParams, id, source, fileUrl, response, result, _result$data, _result$data2, _result$data3, errorMessage, errorCode, _t;
       return _regenerator.default.wrap(function (_context) {
         while (1) switch (_context.prev = _context.next) {
           case 0:
             _context.prev = 0;
             setUploading(true);
+            setError(null);
             baseUrl = elementorAppConfig['import-export-customization'].restApiBaseUrl;
             uploadUrl = "".concat(baseUrl, "/upload");
             uploadData = null;
@@ -7026,7 +7285,8 @@ function useUploadKit() {
               break;
             }
             errorMessage = (result === null || result === void 0 || (_result$data = result.data) === null || _result$data === void 0 ? void 0 : _result$data.message) || "HTTP error! with the following code: ".concat(result === null || result === void 0 || (_result$data2 = result.data) === null || _result$data2 === void 0 ? void 0 : _result$data2.code);
-            throw new Error(errorMessage);
+            errorCode = 408 === (response === null || response === void 0 ? void 0 : response.status) ? 'timeout' : result === null || result === void 0 || (_result$data3 = result.data) === null || _result$data3 === void 0 ? void 0 : _result$data3.code;
+            throw new _importExportError.ImportExportError(errorMessage, errorCode);
           case 3:
             if (data.file) {
               _appsEventTracking.AppsEventTracking.sendKitImportUploadFile('Success');
@@ -7040,7 +7300,7 @@ function useUploadKit() {
           case 4:
             _context.prev = 4;
             _t = _context["catch"](0);
-            setError(_t);
+            setError(_t instanceof _importExportError.ImportExportError ? _t : new _importExportError.ImportExportError(_t.message));
             _appsEventTracking.AppsEventTracking.sendKitImportUploadFile(_t.message);
           case 5:
             _context.prev = 5;
@@ -7064,7 +7324,8 @@ function useUploadKit() {
   }, [isUploading, data.file, data.kitUploadParams]);
   return {
     uploading: uploading,
-    error: error
+    error: error,
+    uploadKit: uploadKit
   };
 }
 
@@ -7148,6 +7409,7 @@ Object.defineProperty(exports, "__esModule", ({
 }));
 exports["default"] = ImportComplete;
 var _react = _interopRequireWildcard(__webpack_require__(/*! react */ "react"));
+var _defineProperty2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime/helpers/defineProperty */ "../node_modules/@babel/runtime/helpers/defineProperty.js"));
 var _slicedToArray2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime/helpers/slicedToArray */ "../node_modules/@babel/runtime/helpers/slicedToArray.js"));
 var _router = __webpack_require__(/*! @reach/router */ "../node_modules/@reach/router/es/index.js");
 var _ui = __webpack_require__(/*! @elementor/ui */ "@elementor/ui");
@@ -7157,19 +7419,24 @@ var _importContext = __webpack_require__(/*! ../context/import-context */ "../ap
 var _appsEventTracking = __webpack_require__(/*! elementor-app/event-track/apps-event-tracking */ "../app/assets/js/event-track/apps-event-tracking.js");
 var _utils = __webpack_require__(/*! ../../shared/utils/utils */ "../app/modules/import-export-customization/assets/js/shared/utils/utils.js");
 function _interopRequireWildcard(e, t) { if ("function" == typeof WeakMap) var r = new WeakMap(), n = new WeakMap(); return (_interopRequireWildcard = function _interopRequireWildcard(e, t) { if (!t && e && e.__esModule) return e; var o, i, f = { __proto__: null, default: e }; if (null === e || "object" != _typeof(e) && "function" != typeof e) return f; if (o = t ? n : r) { if (o.has(e)) return o.get(e); o.set(e, f); } for (var _t in e) "default" !== _t && {}.hasOwnProperty.call(e, _t) && ((i = (o = Object.defineProperty) && Object.getOwnPropertyDescriptor(e, _t)) && (i.get || i.set) ? o(f, _t, i) : f[_t] = e[_t]); return f; })(e, t); }
+function ownKeys(e, r) { var t = Object.keys(e); if (Object.getOwnPropertySymbols) { var o = Object.getOwnPropertySymbols(e); r && (o = o.filter(function (r) { return Object.getOwnPropertyDescriptor(e, r).enumerable; })), t.push.apply(t, o); } return t; }
+function _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t = null != arguments[r] ? arguments[r] : {}; r % 2 ? ownKeys(Object(t), !0).forEach(function (r) { (0, _defineProperty2.default)(e, r, t[r]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(e, Object.getOwnPropertyDescriptors(t)) : ownKeys(Object(t)).forEach(function (r) { Object.defineProperty(e, r, Object.getOwnPropertyDescriptor(t, r)); }); } return e; }
 var handleDone = function handleDone() {
   window.top.location = elementorAppConfig.admin_url;
 };
 function ImportComplete() {
-  var _runnersState$templat2, _elementorAppConfig;
+  var _data$uploadedData, _data$kitUploadParams, _runnersState$templat2, _elementorAppConfig, _data$kitUploadParams2;
   var _useImportContext = (0, _importContext.useImportContext)(),
     data = _useImportContext.data,
     isCompleted = _useImportContext.isCompleted,
     runnersState = _useImportContext.runnersState;
   var includes = data.includes,
     analytics = data.analytics,
-    uploadedData = data.uploadedData;
+    uploadedData = data.uploadedData,
+    duration = data.duration;
   var navigate = (0, _router.useNavigate)();
+  var title = (data === null || data === void 0 || (_data$uploadedData = data.uploadedData) === null || _data$uploadedData === void 0 || (_data$uploadedData = _data$uploadedData.manifest) === null || _data$uploadedData === void 0 ? void 0 : _data$uploadedData.title) || '';
+  var kitId = (data === null || data === void 0 || (_data$kitUploadParams = data.kitUploadParams) === null || _data$kitUploadParams === void 0 ? void 0 : _data$kitUploadParams.id) || '';
   var getTemplatesSummary = (0, _react.useCallback)(function () {
     var _runnersState$templat, _elementorAppConfig$i;
     var templatesSummary = runnersState === null || runnersState === void 0 || (_runnersState$templat = runnersState.templates) === null || _runnersState$templat === void 0 ? void 0 : _runnersState$templat.succeed_summary;
@@ -7185,8 +7452,8 @@ function ImportComplete() {
       if (!label) {
         return null;
       }
-      var title = count > 1 ? label.plural : label.single;
-      return "".concat(count, " ").concat(title);
+      var itemTitle = count > 1 ? label.plural : label.single;
+      return "".concat(count, " ").concat(itemTitle);
     }).filter(function (part) {
       return part !== null;
     });
@@ -7252,8 +7519,8 @@ function ImportComplete() {
         count = _ref8[1];
       var label = summaryTitles[docType];
       if (label && count > 0) {
-        var title = count > 1 ? label.plural : label.single;
-        summaryParts.push("".concat(count, " ").concat(title));
+        var itemTitle = count > 1 ? label.plural : label.single;
+        summaryParts.push("".concat(count, " ").concat(itemTitle));
       }
     });
     if (totalTaxonomies > 0) {
@@ -7271,8 +7538,8 @@ function ImportComplete() {
     return runnersState !== null && runnersState !== void 0 && runnersState.plugins ? plugins.join(' | ') : (0, _i18n.__)('No plugins imported', 'elementor');
   }, [runnersState === null || runnersState === void 0 ? void 0 : runnersState.plugins]);
   var getSettingsSummary = (0, _react.useCallback)(function () {
-    var _data$customization, _data$uploadedData;
-    var siteSettings = data.includes.includes('settings') ? (data === null || data === void 0 || (_data$customization = data.customization) === null || _data$customization === void 0 ? void 0 : _data$customization.settings) || (data === null || data === void 0 || (_data$uploadedData = data.uploadedData) === null || _data$uploadedData === void 0 ? void 0 : _data$uploadedData.manifest['site-settings']) || {} : {};
+    var _data$customization, _data$uploadedData2;
+    var siteSettings = data.includes.includes('settings') ? (data === null || data === void 0 || (_data$customization = data.customization) === null || _data$customization === void 0 ? void 0 : _data$customization.settings) || (data === null || data === void 0 || (_data$uploadedData2 = data.uploadedData) === null || _data$uploadedData2 === void 0 ? void 0 : _data$uploadedData2.manifest['site-settings']) || {} : {};
     if (!Object.keys(siteSettings).length || !Object.keys(runnersState['site-settings'] || {}).length) {
       return (0, _i18n.__)('No settings imported', 'elementor');
     }
@@ -7329,18 +7596,26 @@ function ImportComplete() {
   (0, _react.useEffect)(function () {
     _appsEventTracking.AppsEventTracking.sendPageViewsWebsiteTemplates(elementorCommon.eventsManager.config.secondaryLocations.kitLibrary.kitImportSummary);
   }, []);
+  var kitSource = (data === null || data === void 0 || (_data$kitUploadParams2 = data.kitUploadParams) === null || _data$kitUploadParams2 === void 0 ? void 0 : _data$kitUploadParams2.source) || 'file';
+  var isFromKitsLibrary = 'kit-library' === kitSource;
   (0, _react.useEffect)(function () {
-    var _data$kitUploadParams, _uploadedData$manifes;
-    _appsEventTracking.AppsEventTracking.sendImportKitCustomization({
-      kit_source: (data === null || data === void 0 || (_data$kitUploadParams = data.kitUploadParams) === null || _data$kitUploadParams === void 0 ? void 0 : _data$kitUploadParams.source) || 'file',
+    var _uploadedData$manifes;
+    _appsEventTracking.AppsEventTracking.sendImportKitCustomization(_objectSpread(_objectSpread(_objectSpread({
+      kit_source: kitSource,
       kit_import_content: includes.includes('content'),
       kit_import_templates: includes.includes('templates'),
       kit_import_settings: includes.includes('settings'),
       kit_import_plugins: includes.includes('plugins'),
       kit_import_deselected: analytics === null || analytics === void 0 ? void 0 : analytics.customization,
       kit_description: !!(uploadedData !== null && uploadedData !== void 0 && (_uploadedData$manifes = uploadedData.manifest) !== null && _uploadedData$manifes !== void 0 && _uploadedData$manifes.description)
-    });
-  }, [includes, analytics, uploadedData, data]);
+    }, kitId && isFromKitsLibrary && {
+      kit_import_id: kitId
+    }), title && isFromKitsLibrary && {
+      kit_import_title: title
+    }), duration && {
+      kit_import_duration: duration
+    }));
+  }, [includes, analytics, uploadedData, data, kitId, title, duration, kitSource, isFromKitsLibrary]);
   return /*#__PURE__*/_react.default.createElement(_components.BaseLayout, {
     topBar: /*#__PURE__*/_react.default.createElement(_components.TopBar, null, headerContent),
     footer: /*#__PURE__*/_react.default.createElement(_components.Footer, null, footerContent)
@@ -7523,7 +7798,7 @@ var _components = __webpack_require__(/*! ../../shared/components */ "../app/mod
 var _dropZone = _interopRequireDefault(__webpack_require__(/*! ../components/drop-zone */ "../app/modules/import-export-customization/assets/js/import/components/drop-zone.js"));
 var _importContext = __webpack_require__(/*! ../context/import-context */ "../app/modules/import-export-customization/assets/js/import/context/import-context.js");
 var _useUploadKit2 = __webpack_require__(/*! ../hooks/use-upload-kit */ "../app/modules/import-export-customization/assets/js/import/hooks/use-upload-kit.js");
-var _importError = _interopRequireDefault(__webpack_require__(/*! ../components/import-error */ "../app/modules/import-export-customization/assets/js/import/components/import-error.js"));
+var _processingErrorDialog = __webpack_require__(/*! ../../shared/components/error/processing-error-dialog */ "../app/modules/import-export-customization/assets/js/shared/components/error/processing-error-dialog.js");
 var _appsEventTracking = __webpack_require__(/*! elementor-app/event-track/apps-event-tracking */ "../app/assets/js/event-track/apps-event-tracking.js");
 function _interopRequireWildcard(e, t) { if ("function" == typeof WeakMap) var r = new WeakMap(), n = new WeakMap(); return (_interopRequireWildcard = function _interopRequireWildcard(e, t) { if (!t && e && e.__esModule) return e; var o, i, f = { __proto__: null, default: e }; if (null === e || "object" != _typeof(e) && "function" != typeof e) return f; if (o = t ? n : r) { if (o.has(e)) return o.get(e); o.set(e, f); } for (var _t in e) "default" !== _t && {}.hasOwnProperty.call(e, _t) && ((i = (o = Object.defineProperty) && Object.getOwnPropertyDescriptor(e, _t)) && (i.get || i.set) ? o(f, _t, i) : f[_t] = e[_t]); return f; })(e, t); }
 function ImportKit() {
@@ -7539,7 +7814,8 @@ function ImportKit() {
     nonce = _useQueryParams$getAl.nonce;
   var _useUploadKit = (0, _useUploadKit2.useUploadKit)(),
     uploading = _useUploadKit.uploading,
-    error = _useUploadKit.error;
+    error = _useUploadKit.error,
+    uploadKit = _useUploadKit.uploadKit;
   var headerContent = /*#__PURE__*/_react.default.createElement(_components.PageHeader, {
     title: (0, _i18n.__)('Import', 'elementor')
   });
@@ -7552,6 +7828,25 @@ function ImportKit() {
       type: 'SET_FILE',
       payload: file
     });
+  };
+  var handleTryAgain = function handleTryAgain() {
+    uploadKit();
+  };
+  var handleCloseError = function handleCloseError() {
+    var _data$kitUploadParams, _data$kitUploadParams2;
+    if (data.file) {
+      return dispatch({
+        type: 'SET_EXPORT_STATUS',
+        payload: _importContext.IMPORT_STATUS.CUSTOMIZING
+      });
+    }
+    var path = 'admin.php?page=elementor-tools#tab-import-export-kit';
+    if ('cloud' === (data === null || data === void 0 || (_data$kitUploadParams = data.kitUploadParams) === null || _data$kitUploadParams === void 0 ? void 0 : _data$kitUploadParams.source)) {
+      path = 'admin.php?page=elementor-app&source=kit_import#kit-library/cloud';
+    } else if ('kit-library' === (data === null || data === void 0 || (_data$kitUploadParams2 = data.kitUploadParams) === null || _data$kitUploadParams2 === void 0 ? void 0 : _data$kitUploadParams2.source)) {
+      path = "admin.php?page=elementor-app&source=kit_import#kit-library";
+    }
+    window.top.location = elementorAppConfig.admin_url + path;
   };
   (0, _react.useEffect)(function () {
     dispatch({
@@ -7620,16 +7915,6 @@ function ImportKit() {
     _appsEventTracking.AppsEventTracking.sendPageViewsWebsiteTemplates(elementorCommon.eventsManager.config.secondaryLocations.kitLibrary.kitImportUploadBox);
   }, []);
   var renderContent = function renderContent() {
-    if (error) {
-      return /*#__PURE__*/_react.default.createElement(_components.CenteredContent, {
-        "data-testid": "import-error"
-      }, /*#__PURE__*/_react.default.createElement(_ui.Stack, {
-        spacing: 3,
-        alignItems: "center"
-      }, /*#__PURE__*/_react.default.createElement(_importError.default, {
-        statusText: (0, _i18n.__)('Uploading failed', 'elementor')
-      })));
-    }
     if (uploading || referrer) {
       return /*#__PURE__*/_react.default.createElement(_components.CenteredContent, {
         "data-testid": "import-loader"
@@ -7685,7 +7970,11 @@ function ImportKit() {
   };
   return /*#__PURE__*/_react.default.createElement(_components.BaseLayout, {
     topBar: /*#__PURE__*/_react.default.createElement(_components.TopBar, null, headerContent)
-  }, renderContent());
+  }, renderContent(), /*#__PURE__*/_react.default.createElement(_processingErrorDialog.ProcessingErrorDialog, {
+    error: error,
+    handleClose: handleCloseError,
+    handleTryAgain: handleTryAgain
+  }));
 }
 
 /***/ }),
@@ -7699,7 +7988,6 @@ function ImportKit() {
 "use strict";
 
 
-var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault */ "../node_modules/@babel/runtime/helpers/interopRequireDefault.js");
 var _typeof = __webpack_require__(/*! @babel/runtime/helpers/typeof */ "../node_modules/@babel/runtime/helpers/typeof.js");
 Object.defineProperty(exports, "__esModule", ({
   value: true
@@ -7711,10 +7999,10 @@ var _router = __webpack_require__(/*! @reach/router */ "../node_modules/@reach/r
 var _i18n = __webpack_require__(/*! @wordpress/i18n */ "@wordpress/i18n");
 var _components = __webpack_require__(/*! ../../shared/components */ "../app/modules/import-export-customization/assets/js/shared/components/index.js");
 var _useImportKit2 = __webpack_require__(/*! ../hooks/use-import-kit */ "../app/modules/import-export-customization/assets/js/import/hooks/use-import-kit.js");
-var _importError = _interopRequireDefault(__webpack_require__(/*! ../components/import-error */ "../app/modules/import-export-customization/assets/js/import/components/import-error.js"));
 var _importContext = __webpack_require__(/*! ../context/import-context */ "../app/modules/import-export-customization/assets/js/import/context/import-context.js");
 var _pluginActivation = __webpack_require__(/*! ../components/plugin-activation */ "../app/modules/import-export-customization/assets/js/import/components/plugin-activation.js");
 var _appsEventTracking = __webpack_require__(/*! elementor-app/event-track/apps-event-tracking */ "../app/assets/js/event-track/apps-event-tracking.js");
+var _processingErrorDialog = __webpack_require__(/*! ../../shared/components/error/processing-error-dialog */ "../app/modules/import-export-customization/assets/js/shared/components/error/processing-error-dialog.js");
 function _interopRequireWildcard(e, t) { if ("function" == typeof WeakMap) var r = new WeakMap(), n = new WeakMap(); return (_interopRequireWildcard = function _interopRequireWildcard(e, t) { if (!t && e && e.__esModule) return e; var o, i, f = { __proto__: null, default: e }; if (null === e || "object" != _typeof(e) && "function" != typeof e) return f; if (o = t ? n : r) { if (o.has(e)) return o.get(e); o.set(e, f); } for (var _t in e) "default" !== _t && {}.hasOwnProperty.call(e, _t) && ((i = (o = Object.defineProperty) && Object.getOwnPropertyDescriptor(e, _t)) && (i.get || i.set) ? o(f, _t, i) : f[_t] = e[_t]); return f; })(e, t); }
 var headerContent = /*#__PURE__*/_react.default.createElement(_components.PageHeader, {
   title: (0, _i18n.__)('Import', 'elementor')
@@ -7735,12 +8023,13 @@ function ImportProcess() {
       dispatch: dispatch
     }),
     status = _useImportKit.status,
-    error = _useImportKit.error;
+    error = _useImportKit.error,
+    importKit = _useImportKit.importKit;
   var navigate = (0, _router.useNavigate)();
   (0, _react.useEffect)(function () {
     if (!error) {
       if (_useImportKit2.IMPORT_PROCESSING_STATUS.DONE === status) {
-        _appsEventTracking.AppsEventTracking.sendKitImportStatus();
+        _appsEventTracking.AppsEventTracking.sendKitImportStatus(null);
         navigate('import-customization/complete');
       } else if (!isProcessing) {
         navigate('import-customization', {
@@ -7751,6 +8040,16 @@ function ImportProcess() {
       _appsEventTracking.AppsEventTracking.sendKitImportStatus(error);
     }
   }, [status, error, navigate, isProcessing]);
+  var handleTryAgain = function handleTryAgain() {
+    importKit();
+  };
+  var handleCloseError = function handleCloseError() {
+    dispatch({
+      type: 'SET_IMPORT_STATUS',
+      payload: _importContext.IMPORT_STATUS.CUSTOMIZING
+    });
+    navigate('import-customization/content');
+  };
   return /*#__PURE__*/_react.default.createElement(_components.BaseLayout, {
     topBar: /*#__PURE__*/_react.default.createElement(_components.TopBar, null, headerContent)
   }, /*#__PURE__*/_react.default.createElement(_components.CenteredContent, null, /*#__PURE__*/_react.default.createElement(_ui.Stack, {
@@ -7769,8 +8068,10 @@ function ImportProcess() {
     variant: "subtitle1"
   }, (0, _i18n.__)('Don\'t close this window until the process is finished.', 'elementor')))), /*#__PURE__*/_react.default.createElement(_pluginActivation.PluginActivation, {
     plugins: runnersState === null || runnersState === void 0 ? void 0 : runnersState.plugins
-  })), error && /*#__PURE__*/_react.default.createElement(_importError.default, {
-    statusText: error.message
+  })), /*#__PURE__*/_react.default.createElement(_processingErrorDialog.ProcessingErrorDialog, {
+    error: error,
+    handleClose: handleCloseError,
+    handleTryAgain: handleTryAgain
   }))));
 }
 
@@ -8157,7 +8458,6 @@ function ListSettingSection(_ref) {
   return /*#__PURE__*/_react.default.createElement(_ui.Box, {
     key: settingKey,
     sx: {
-      mb: 3,
       border: 1,
       borderRadius: 1,
       borderColor: 'action.focus',
@@ -8436,6 +8736,234 @@ DownloadLink.propTypes = {
 
 /***/ }),
 
+/***/ "../app/modules/import-export-customization/assets/js/shared/components/error/processing-error-dialog.js":
+/*!***************************************************************************************************************!*\
+  !*** ../app/modules/import-export-customization/assets/js/shared/components/error/processing-error-dialog.js ***!
+  \***************************************************************************************************************/
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+"use strict";
+
+
+var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault */ "../node_modules/@babel/runtime/helpers/interopRequireDefault.js");
+var _typeof3 = __webpack_require__(/*! @babel/runtime/helpers/typeof */ "../node_modules/@babel/runtime/helpers/typeof.js");
+Object.defineProperty(exports, "__esModule", ({
+  value: true
+}));
+exports.ProcessingErrorDialog = ProcessingErrorDialog;
+exports.messagesContent = void 0;
+var _react = _interopRequireWildcard(__webpack_require__(/*! react */ "react"));
+var _typeof2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime/helpers/typeof */ "../node_modules/@babel/runtime/helpers/typeof.js"));
+var _slicedToArray2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime/helpers/slicedToArray */ "../node_modules/@babel/runtime/helpers/slicedToArray.js"));
+var _ui = __webpack_require__(/*! @elementor/ui */ "@elementor/ui");
+var _i18n = __webpack_require__(/*! @wordpress/i18n */ "@wordpress/i18n");
+var _propTypes = _interopRequireDefault(__webpack_require__(/*! prop-types */ "../node_modules/prop-types/index.js"));
+function _interopRequireWildcard(e, t) { if ("function" == typeof WeakMap) var r = new WeakMap(), n = new WeakMap(); return (_interopRequireWildcard = function _interopRequireWildcard(e, t) { if (!t && e && e.__esModule) return e; var o, i, f = { __proto__: null, default: e }; if (null === e || "object" != _typeof3(e) && "function" != typeof e) return f; if (o = t ? n : r) { if (o.has(e)) return o.get(e); o.set(e, f); } for (var _t in e) "default" !== _t && {}.hasOwnProperty.call(e, _t) && ((i = (o = Object.defineProperty) && Object.getOwnPropertyDescriptor(e, _t)) && (i.get || i.set) ? o(f, _t, i) : f[_t] = e[_t]); return f; })(e, t); }
+function Link(_ref) {
+  var href = _ref.href,
+    children = _ref.children;
+  return /*#__PURE__*/_react.default.createElement(_ui.Link, {
+    href: href,
+    variant: "body2",
+    color: "info.light",
+    underline: "hover",
+    target: "_blank",
+    rel: "noopener noreferrer"
+  }, children);
+}
+Link.propTypes = {
+  href: _propTypes.default.string.isRequired,
+  children: _propTypes.default.node.isRequired
+};
+var messagesContent = exports.messagesContent = {
+  general: {
+    title: (0, _i18n.__)('Unable to download the Website Template', 'elementor'),
+    text: /*#__PURE__*/_react.default.createElement(_react.default.Fragment, null, (0, _i18n.__)('We couldn’t download the Website Template due to technical difficulties on our part. Try again and if the problem persists contact ', 'elementor'), /*#__PURE__*/_react.default.createElement(Link, {
+      href: "https://my.elementor.com/support-center/"
+    }, (0, _i18n.__)('Support', 'elementor')))
+  },
+  'zip-archive-module-missing': {
+    title: (0, _i18n.__)('Couldn’t handle the Website Template', 'elementor'),
+    text: (0, _i18n.__)('Seems like your server is missing the PHP zip module. Install it on your server or contact your site host for further instructions.', 'elementor')
+  },
+  'invalid-zip-file': {
+    title: (0, _i18n.__)('Couldn’t use the .zip file', 'elementor'),
+    text: /*#__PURE__*/_react.default.createElement(_react.default.Fragment, null, (0, _i18n.__)('Seems like there is a problem with the zip’s files. Try installing again and if the problem persists contact ', 'elementor'), /*#__PURE__*/_react.default.createElement(Link, {
+      href: "https://my.elementor.com/support-center/"
+    }, (0, _i18n.__)('Support', 'elementor')))
+  },
+  timeout: {
+    title: (0, _i18n.__)('Unable to download the Website Template', 'elementor'),
+    text: /*#__PURE__*/_react.default.createElement(_react.default.Fragment, null, (0, _i18n.__)('It took too much time to download your Website Template and we were unable to complete the process. If all the Website Template’s parts don’t appear in ', 'elementor'), /*#__PURE__*/_react.default.createElement(Link, {
+      href: elementorAppConfig.pages_url
+    }, (0, _i18n.__)('Pages', 'elementor')), (0, _i18n.__)(', try again and if the problem persists contact ', 'elementor'), /*#__PURE__*/_react.default.createElement(Link, {
+      href: "https://my.elementor.com/support-center/"
+    }, (0, _i18n.__)('Support', 'elementor')))
+  },
+  'invalid-kit-library-zip-error': {
+    title: (0, _i18n.__)('Unable to download the Website Template', 'elementor'),
+    text: /*#__PURE__*/_react.default.createElement(_react.default.Fragment, null, (0, _i18n.__)('We couldn’t download the Website Template due to technical difficulty on our part. Try again in a few minutes and if the problem persists contact ', 'elementor'), /*#__PURE__*/_react.default.createElement(Link, {
+      href: "https://my.elementor.com/support-center/"
+    }, (0, _i18n.__)('Support', 'elementor')))
+  },
+  'no-write-permissions': {
+    title: (0, _i18n.__)('Couldn’t access the file', 'elementor'),
+    text: (0, _i18n.__)('Seems like Elementor isn’t authorized to access relevant files for installing this Website Template. Contact your site host to get permission.', 'elementor')
+  },
+  'plugin-installation-permissions-error': {
+    title: (0, _i18n.__)('Couldn’t install the Website Template', 'elementor'),
+    text: (0, _i18n.__)('The Website Template includes plugins you don’t have permission to install. Contact your site admin to change your permissions.', 'elementor')
+  },
+  'third-party-error': {
+    title: (0, _i18n.__)('Unable to download the Website Template', 'elementor'),
+    text: (0, _i18n.__)('This is due to a conflict with one or more third-party plugins already active on your site. Try disabling them, and then give the download another go.', 'elementor')
+  },
+  'domdocument-missing': {
+    title: (0, _i18n.__)('Unable to download the Website Template', 'elementor'),
+    text: (0, _i18n.__)('This download requires the \'DOMDocument\' PHP extension, which we couldn’t detect on your server. Enable this extension, or get in touch with your hosting service for support, and then give the download another go.', 'elementor')
+  },
+  'insufficient-quota': {
+    title: (0, _i18n.__)('Couldn’t Export the Website Template', 'elementor'),
+    text: /*#__PURE__*/_react.default.createElement(_react.default.Fragment, null, (0, _i18n.__)('The export failed because it will pass the maximum Website Templates you can export. ', 'elementor'), /*#__PURE__*/_react.default.createElement(Link, {
+      href: "https://go.elementor.com/app-general-load-issue/"
+    }, (0, _i18n.__)('Learn more', 'elementor')))
+  },
+  'failed-to-fetch-quota': {
+    title: (0, _i18n.__)('Couldn’t fetch quota', 'elementor'),
+    text: /*#__PURE__*/_react.default.createElement(_react.default.Fragment, null, (0, _i18n.__)('Failed to fetch quota, please try again. If the problem continues, contact ', 'elementor'), /*#__PURE__*/_react.default.createElement(Link, {
+      href: "https://my.elementor.com/support-center/"
+    }, (0, _i18n.__)('Support', 'elementor')), '. ', /*#__PURE__*/_react.default.createElement(Link, {
+      href: "https://go.elementor.com/app-import-export-common-errors"
+    }, (0, _i18n.__)('Learn more', 'elementor')))
+  },
+  'cloud-upload-failed': {
+    title: (0, _i18n.__)('Couldn’t Upload to Library', 'elementor'),
+    text: /*#__PURE__*/_react.default.createElement(_react.default.Fragment, null, (0, _i18n.__)('We couldn’t add your export to the library. Try again. ', 'elementor'), /*#__PURE__*/_react.default.createElement(Link, {
+      href: "https://go.elementor.com/app-import-export-common-errors"
+    }, (0, _i18n.__)('Learn more', 'elementor')))
+  },
+  'error-loading-resource': {
+    title: (0, _i18n.__)('Unable to download the Website Template', 'elementor'),
+    text: /*#__PURE__*/_react.default.createElement(_react.default.Fragment, null, (0, _i18n.__)('We couldn’t download the Website Template due to technical difficulties on our part. Try again and if the problem persists contact ', 'elementor'), /*#__PURE__*/_react.default.createElement(Link, {
+      href: "https://my.elementor.com/support-center/"
+    }, (0, _i18n.__)('Support', 'elementor')), '. ', /*#__PURE__*/_react.default.createElement(Link, {
+      href: "https://go.elementor.com/app-import-export-common-errors"
+    }, (0, _i18n.__)('Learn more', 'elementor')))
+  },
+  'media-processing-error': {
+    title: (0, _i18n.__)('Couldn’t save media files to the cloud', 'elementor'),
+    text: /*#__PURE__*/_react.default.createElement(_react.default.Fragment, null, (0, _i18n.__)('We ran into a problem while saving your media files to the cloud. Please try again. If the issue persists, edit the Content section and choose "Link to media" to save it as a reference. ', 'elementor'), /*#__PURE__*/_react.default.createElement(Link, {
+      href: "https://go.elementor.com/app-import-export-common-errors"
+    }, (0, _i18n.__)('Learn more', 'elementor')))
+  },
+  'insufficient-storage-quota': {
+    title: (0, _i18n.__)('Your library is full', 'elementor'),
+    text: function text() {
+      var _ref2 = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},
+        _ref2$filename = _ref2.filename,
+        filename = _ref2$filename === void 0 ? (0, _i18n.__)('This file', 'elementor') : _ref2$filename,
+        _ref2$maxSize = _ref2.maxSize,
+        maxSize = _ref2$maxSize === void 0 ? 0 : _ref2$maxSize;
+      return /*#__PURE__*/_react.default.createElement(_react.default.Fragment, null, /*#__PURE__*/_react.default.createElement(_ui.Typography, {
+        variant: "h6",
+        sx: {
+          mb: 2
+        }
+      }, (0, _i18n.sprintf)(/* Translators: %s: File name */
+      (0, _i18n.__)('%s exceeds the library size limit', 'elementor'), filename)), /*#__PURE__*/_react.default.createElement(_ui.Typography, {
+        variant: "body2"
+      }, (0, _i18n.sprintf)(/* Translators: %s: Quota threshold in GB */
+      (0, _i18n.__)('The maximum website template library size is %s GB. To save this file, you can either export it locally as a .zip file or get more storage by ', 'elementor'), maxSize), /*#__PURE__*/_react.default.createElement(Link, {
+        href: "https://go.elementor.com/go-pro-cloud-website-templates-library-advanced/"
+      }, (0, _i18n.__)('Upgrade now', 'elementor')), "."));
+    }
+  }
+};
+function ProcessingErrorDialog(_ref3) {
+  var error = _ref3.error,
+    handleClose = _ref3.handleClose,
+    handleTryAgain = _ref3.handleTryAgain,
+    handleExportAsZip = _ref3.handleExportAsZip;
+  var _useState = (0, _react.useState)(Boolean(error)),
+    _useState2 = (0, _slicedToArray2.default)(_useState, 2),
+    open = _useState2[0],
+    setOpen = _useState2[1];
+  var errorType = (error === null || error === void 0 ? void 0 : error.code) || 'general';
+  var errorMessageContent = messagesContent[errorType];
+  var resolveText = function resolveText() {
+    var details = (error === null || error === void 0 ? void 0 : error.details) || (error === null || error === void 0 ? void 0 : error.message);
+    var replacements = details && 'object' === (0, _typeof2.default)(details) ? details.replacements : null;
+    var text = errorMessageContent.text;
+    if ('function' === typeof text) {
+      return text(replacements);
+    }
+    return text;
+  };
+  var shouldRenderTryAgainButton = function shouldRenderTryAgainButton() {
+    return ['general', 'timeout', 'cloud-upload-failed', 'third-party-error', 'invalid-zip-file', 'zip-archive-module-missing', 'no-write-permissions', 'plugin-installation-permissions-error', 'failed-to-fetch-quota', 'insufficient-quota', 'error-loading-resource', 'media-processing-error'].includes(errorType);
+  };
+  var renderButtons = function renderButtons() {
+    var isQuotaError = 'insufficient-storage-quota' === errorType;
+    return /*#__PURE__*/_react.default.createElement(_react.default.Fragment, null, /*#__PURE__*/_react.default.createElement(_ui.Button, {
+      onClick: function onClick() {
+        if (handleClose) {
+          handleClose();
+        }
+        setOpen(false);
+      },
+      color: "secondary"
+    }, (0, _i18n.__)('Cancel', 'elementor')), isQuotaError && handleExportAsZip && /*#__PURE__*/_react.default.createElement(_ui.Button, {
+      onClick: function onClick() {
+        handleExportAsZip();
+        setOpen(false);
+      },
+      variant: "contained",
+      color: "primary"
+    }, (0, _i18n.__)('Export as .zip', 'elementor')), shouldRenderTryAgainButton(errorType) && !isQuotaError && /*#__PURE__*/_react.default.createElement(_ui.Button, {
+      "data-testid": "try-again-button",
+      onClick: function onClick() {
+        if (handleTryAgain) {
+          handleTryAgain();
+        }
+      },
+      variant: "contained",
+      color: "primary"
+    }, (0, _i18n.__)('Try Again', 'elementor')));
+  };
+  (0, _react.useEffect)(function () {
+    setOpen(Boolean(error));
+  }, [error]);
+  if (!error) {
+    return null;
+  }
+  return /*#__PURE__*/_react.default.createElement(_ui.Dialog, {
+    "data-testid": "error-dialog",
+    open: open,
+    onClose: function onClose() {
+      if (handleClose) {
+        handleClose();
+      }
+      setOpen(false);
+    },
+    maxWidth: "sm"
+  }, /*#__PURE__*/_react.default.createElement(_ui.DialogHeader, {
+    onClose: handleClose
+  }, /*#__PURE__*/_react.default.createElement(_ui.DialogTitle, null, errorMessageContent.title)), /*#__PURE__*/_react.default.createElement(_ui.DialogContent, {
+    dividers: true,
+    sx: {
+      p: 3
+    }
+  }, resolveText()), /*#__PURE__*/_react.default.createElement(_ui.DialogActions, null, renderButtons()));
+}
+ProcessingErrorDialog.propTypes = {
+  error: _propTypes.default.any,
+  handleClose: _propTypes.default.func,
+  handleTryAgain: _propTypes.default.func,
+  handleExportAsZip: _propTypes.default.func
+};
+
+/***/ }),
+
 /***/ "../app/modules/import-export-customization/assets/js/shared/components/icons/external-link-icon.js":
 /*!**********************************************************************************************************!*\
   !*** ../app/modules/import-export-customization/assets/js/shared/components/icons/external-link-icon.js ***!
@@ -8663,6 +9191,19 @@ var transformAnalyticsData = function transformAnalyticsData(payload, customPost
   }
   return transformed;
 };
+var MEDIA_FORMAT_OPTIONS = {
+  LINK: 'link',
+  CLOUD: 'cloud'
+};
+var MEDIA_FORMAT_CONFIG = [{
+  value: MEDIA_FORMAT_OPTIONS.LINK,
+  title: (0, _i18n.__)('Link to media', 'elementor'),
+  description: (0, _i18n.__)('Stores only the URLs. The export stays light, but files load only while the original site is online.', 'elementor')
+}, {
+  value: MEDIA_FORMAT_OPTIONS.CLOUD,
+  title: (0, _i18n.__)('Save media to the cloud', 'elementor'),
+  description: (0, _i18n.__)('All images and files are stored with the template. Keeps everything intact, but the file is larger.', 'elementor')
+}];
 function KitContentCustomizationDialog(_ref) {
   var _data$customization$c2;
   var open = _ref.open,
@@ -8670,17 +9211,24 @@ function KitContentCustomizationDialog(_ref) {
     _handleSaveChanges = _ref.handleSaveChanges,
     data = _ref.data,
     isImport = _ref.isImport,
-    isOldElementorVersion = _ref.isOldElementorVersion;
+    isOldElementorVersion = _ref.isOldElementorVersion,
+    _ref$isCloudKitsEligi = _ref.isCloudKitsEligible,
+    isCloudKitsEligible = _ref$isCloudKitsEligi === void 0 ? false : _ref$isCloudKitsEligi,
+    _ref$showMediaFormatV = _ref.showMediaFormatValidation,
+    showMediaFormatValidation = _ref$showMediaFormatV === void 0 ? false : _ref$showMediaFormatV;
   var _useKitCustomizationC = (0, _useKitCustomizationCustomPostTypes.useKitCustomizationCustomPostTypes)({
       data: data
     }),
     customPostTypes = _useKitCustomizationC.customPostTypes;
+  var alertRef = (0, _react.useRef)(null);
+  var mediaFormatSectionRef = (0, _react.useRef)(null);
   var _useState = (0, _react.useState)(function () {
       if (data.customization.content) {
         return data.customization.content;
       }
       return {
-        customPostTypes: []
+        customPostTypes: [],
+        mediaFormat: MEDIA_FORMAT_OPTIONS.LINK
       };
     }),
     _useState2 = (0, _slicedToArray2.default)(_useState, 2),
@@ -8704,7 +9252,8 @@ function KitContentCustomizationDialog(_ref) {
       setSettings(function (prevState) {
         if (!data.includes.includes('content')) {
           return {
-            customPostTypes: []
+            customPostTypes: [],
+            mediaFormat: MEDIA_FORMAT_OPTIONS.LINK
           };
         }
         return prevState;
@@ -8716,10 +9265,140 @@ function KitContentCustomizationDialog(_ref) {
       _appsEventTracking.AppsEventTracking.sendPageViewsWebsiteTemplates(elementorCommon.eventsManager.config.secondaryLocations.kitLibrary.kitExportCustomizationEdit);
     }
   }, [open]);
+  (0, _react.useEffect)(function () {
+    if (showMediaFormatValidation) {
+      setTimeout(function () {
+        var targetElement = alertRef.current || mediaFormatSectionRef.current;
+        if (targetElement) {
+          targetElement.scrollIntoView({
+            behavior: 'smooth',
+            block: 'center'
+          });
+        }
+      });
+    }
+  }, [showMediaFormatValidation]);
   var handleSettingsChange = function handleSettingsChange(settingKey, payload) {
     setSettings(function (prev) {
       return _objectSpread(_objectSpread({}, prev), {}, (0, _defineProperty2.default)({}, settingKey, payload));
     });
+  };
+  var renderMediaFormatSection = function renderMediaFormatSection() {
+    if (isImport) {
+      return /*#__PURE__*/_react.default.createElement(_customizationSettingSection.SettingSection, {
+        title: (0, _i18n.__)('Media format', 'elementor'),
+        settingKey: "mediaFormat",
+        hasToggle: false
+      }, /*#__PURE__*/_react.default.createElement(_ui.Alert, {
+        icon: /*#__PURE__*/_react.default.createElement(_ui.SvgIcon, {
+          color: "info",
+          viewBox: "0 0 24 24"
+        }, /*#__PURE__*/_react.default.createElement("path", {
+          d: "M11.8623 14.7549C12.3665 14.8061 12.7598 15.2322 12.7598 15.75C12.7598 16.2678 12.3665 16.6939 11.8623 16.7451L11.7598 16.75H11.75C11.1977 16.75 10.75 16.3023 10.75 15.75C10.75 15.1977 11.1977 14.75 11.75 14.75H11.7598L11.8623 14.7549Z",
+          fill: "currentColor"
+        }), /*#__PURE__*/_react.default.createElement("path", {
+          d: "M11.75 7C12.1642 7 12.5 7.33579 12.5 7.75V12.75C12.5 13.1642 12.1642 13.5 11.75 13.5C11.3358 13.5 11 13.1642 11 12.75V7.75C11 7.33579 11.3358 7 11.75 7Z",
+          fill: "currentColor"
+        }), /*#__PURE__*/_react.default.createElement("path", {
+          fillRule: "evenodd",
+          clipRule: "evenodd",
+          d: "M11.75 2C17.1348 2 21.5 6.36522 21.5 11.75C21.5 17.1348 17.1348 21.5 11.75 21.5C6.36522 21.5 2 17.1348 2 11.75C2 6.36522 6.36522 2 11.75 2ZM11.75 3.5C7.19365 3.5 3.5 7.19365 3.5 11.75C3.5 16.3063 7.19365 20 11.75 20C16.3063 20 20 16.3063 20 11.75C20 7.19365 16.3063 3.5 11.75 3.5Z",
+          fill: "currentColor"
+        })),
+        sx: {
+          backgroundColor: 'transparent',
+          p: 0
+        }
+      }, /*#__PURE__*/_react.default.createElement(_ui.Typography, {
+        variant: "body2",
+        color: "text.primary"
+      }, /*#__PURE__*/_react.default.createElement("strong", null, (0, _i18n.__)('Note:', 'elementor')), " ", (0, _i18n.__)('The media will be uploaded automatically, just as it was saved during export', 'elementor'))));
+    }
+    if (!isImport && !isCloudKitsEligible) {
+      return null;
+    }
+    return /*#__PURE__*/_react.default.createElement(_customizationSettingSection.SettingSection, {
+      ref: mediaFormatSectionRef,
+      description: (0, _i18n.__)('Select how do you want to save & export the media files.', 'elementor'),
+      title: (0, _i18n.__)('Media format', 'elementor'),
+      settingKey: "mediaFormat",
+      hasToggle: false
+    }, /*#__PURE__*/_react.default.createElement(_ui.Box, {
+      sx: {
+        pt: 2.5
+      }
+    }, /*#__PURE__*/_react.default.createElement(_ui.FormControl, {
+      component: "fieldset",
+      sx: {
+        width: '100%'
+      }
+    }, /*#__PURE__*/_react.default.createElement(_ui.RadioGroup, {
+      value: settings.mediaFormat,
+      onChange: function onChange(event) {
+        handleSettingsChange('mediaFormat', event.target.value);
+      },
+      sx: {
+        width: '100%'
+      }
+    }, MEDIA_FORMAT_CONFIG.map(function (option, index) {
+      return /*#__PURE__*/_react.default.createElement(_ui.Box, {
+        key: option.value,
+        sx: {
+          border: 1,
+          borderColor: settings.mediaFormat === option.value ? 'info.light' : 'divider',
+          borderRadius: 2,
+          p: 1,
+          mb: index < MEDIA_FORMAT_CONFIG.length - 1 ? 1.5 : 0,
+          width: '100%'
+        }
+      }, /*#__PURE__*/_react.default.createElement(_ui.FormControlLabel, {
+        value: option.value,
+        control: /*#__PURE__*/_react.default.createElement(_ui.Radio, {
+          color: "info",
+          "data-testid": "media-format-".concat(option.value)
+        }),
+        label: /*#__PURE__*/_react.default.createElement(_ui.Box, null, /*#__PURE__*/_react.default.createElement(_ui.Typography, {
+          variant: "body2",
+          sx: {
+            mb: 0.25
+          }
+        }, option.title), /*#__PURE__*/_react.default.createElement(_ui.Typography, {
+          variant: "body2",
+          color: "text.secondary"
+        }, option.description)),
+        sx: {
+          alignItems: 'flex-start',
+          m: 0,
+          width: '100%'
+        }
+      }));
+    }))), showMediaFormatValidation && /*#__PURE__*/_react.default.createElement(_ui.Alert, {
+      ref: alertRef,
+      icon: /*#__PURE__*/_react.default.createElement(_ui.SvgIcon, {
+        color: "error",
+        viewBox: "0 0 24 24"
+      }, /*#__PURE__*/_react.default.createElement("path", {
+        d: "M11.8623 14.7549C12.3665 14.8061 12.7598 15.2322 12.7598 15.75C12.7598 16.2678 12.3665 16.6939 11.8623 16.7451L11.7598 16.75H11.75C11.1977 16.75 10.75 16.3023 10.75 15.75C10.75 15.1977 11.1977 14.75 11.75 14.75H11.7598L11.8623 14.7549Z",
+        fill: "currentColor"
+      }), /*#__PURE__*/_react.default.createElement("path", {
+        d: "M11.75 7C12.1642 7 12.5 7.33579 12.5 7.75V12.75C12.5 13.1642 12.1642 13.5 11.75 13.5C11.3358 13.5 11 13.1642 11 12.75V7.75C11 7.33579 11.3358 7 11.75 7Z",
+        fill: "currentColor"
+      }), /*#__PURE__*/_react.default.createElement("path", {
+        fillRule: "evenodd",
+        clipRule: "evenodd",
+        d: "M11.75 2C17.1348 2 21.5 6.36522 21.5 11.75C21.5 17.1348 17.1348 21.5 11.75 21.5C6.36522 21.5 2 17.1348 2 11.75C2 6.36522 6.36522 2 11.75 2ZM11.75 3.5C7.19365 3.5 3.5 7.19365 3.5 11.75C3.5 16.3063 7.19365 20 11.75 20C16.3063 20 20 16.3063 20 11.75C20 7.19365 16.3063 3.5 11.75 3.5Z",
+        fill: "currentColor"
+      })),
+      sx: {
+        mt: 2,
+        ml: 1,
+        backgroundColor: 'transparent',
+        p: 0
+      }
+    }, /*#__PURE__*/_react.default.createElement(_ui.Typography, {
+      variant: "body2",
+      color: "text.primary"
+    }, /*#__PURE__*/_react.default.createElement("strong", null, (0, _i18n.__)('Note:', 'elementor')), " ", (0, _i18n.__)('To export a ZIP, go to Edit Content, choose \'Link to Media\', then Export as ZIP.', 'elementor'), /*#__PURE__*/_react.default.createElement("br", null), (0, _i18n.__)('Or, save this template to the cloud instead.', 'elementor')))));
   };
   return /*#__PURE__*/_react.default.createElement(_kitCustomizationDialog.KitCustomizationDialog, {
     open: open,
@@ -8743,7 +9422,7 @@ function KitContentCustomizationDialog(_ref) {
     },
     settings: settings.customPostTypes,
     items: customPostTypes
-  })));
+  }), renderMediaFormatSection()));
 }
 KitContentCustomizationDialog.propTypes = {
   open: _propTypes.default.bool.isRequired,
@@ -8751,7 +9430,9 @@ KitContentCustomizationDialog.propTypes = {
   isOldElementorVersion: _propTypes.default.bool,
   handleClose: _propTypes.default.func.isRequired,
   handleSaveChanges: _propTypes.default.func.isRequired,
-  data: _propTypes.default.object.isRequired
+  data: _propTypes.default.object.isRequired,
+  isCloudKitsEligible: _propTypes.default.bool,
+  showMediaFormatValidation: _propTypes.default.bool
 };
 
 /***/ }),
@@ -8782,9 +9463,14 @@ function KitCustomizationDialog(_ref) {
     children = _ref.children,
     _ref$saveDisabled = _ref.saveDisabled,
     saveDisabled = _ref$saveDisabled === void 0 ? false : _ref$saveDisabled;
+  var handleDialogClose = function handleDialogClose(_event, reason) {
+    if ('escapeKeyDown' === reason) {
+      handleClose();
+    }
+  };
   return /*#__PURE__*/_react.default.createElement(_ui.Dialog, {
     open: open,
-    onClose: handleClose,
+    onClose: handleDialogClose,
     maxWidth: "md",
     fullWidth: true
   }, /*#__PURE__*/_react.default.createElement(_ui.DialogHeader, {
@@ -8848,7 +9534,11 @@ function KitPartsSelection(_ref) {
   var data = _ref.data,
     onCheckboxChange = _ref.onCheckboxChange,
     testId = _ref.testId,
-    handleSaveCustomization = _ref.handleSaveCustomization;
+    handleSaveCustomization = _ref.handleSaveCustomization,
+    _ref$isCloudKitsEligi = _ref.isCloudKitsEligible,
+    isCloudKitsEligible = _ref$isCloudKitsEligi === void 0 ? false : _ref$isCloudKitsEligi,
+    _ref$showMediaFormatV = _ref.showMediaFormatValidation,
+    showMediaFormatValidation = _ref$showMediaFormatV === void 0 ? false : _ref$showMediaFormatV;
   var _useState = (0, _react.useState)(null),
     _useState2 = (0, _slicedToArray2.default)(_useState, 2),
     activeDialog = _useState2[0],
@@ -8856,6 +9546,11 @@ function KitPartsSelection(_ref) {
   var _useContextDetection = (0, _useContextDetection2.default)(),
     isImport = _useContextDetection.isImport,
     contextData = _useContextDetection.contextData;
+  (0, _react.useEffect)(function () {
+    if (showMediaFormatValidation && !isImport) {
+      setActiveDialog('content');
+    }
+  }, [showMediaFormatValidation, isImport]);
   var isSiteSettingsExported = function isSiteSettingsExported() {
     var _contextData$data;
     var siteSettings = contextData === null || contextData === void 0 || (_contextData$data = contextData.data) === null || _contextData$data === void 0 || (_contextData$data = _contextData$data.uploadedData) === null || _contextData$data === void 0 || (_contextData$data = _contextData$data.manifest) === null || _contextData$data === void 0 ? void 0 : _contextData$data['site-settings'];
@@ -9044,15 +9739,19 @@ function KitPartsSelection(_ref) {
       handleSaveChanges: handleSaveCustomization,
       isImport: isImport,
       isOldExport: contextData.isOldExport,
-      isOldElementorVersion: contextData.isOldElementorVersion
+      isOldElementorVersion: contextData.isOldElementorVersion,
+      isCloudKitsEligible: isCloudKitsEligible,
+      showMediaFormatValidation: showMediaFormatValidation
     }));
   }));
 }
 KitPartsSelection.propTypes = {
   data: _propTypes.default.object.isRequired,
   onCheckboxChange: _propTypes.default.func.isRequired,
+  testId: _propTypes.default.string,
   handleSaveCustomization: _propTypes.default.func.isRequired,
-  testId: _propTypes.default.string
+  isCloudKitsEligible: _propTypes.default.bool,
+  showMediaFormatValidation: _propTypes.default.bool
 };
 
 /***/ }),
@@ -9793,9 +10492,9 @@ function PageHeader(_ref2) {
     if (isImport) {
       var _contextData$data, _contextData$data2;
       if ('cloud' === (contextData === null || contextData === void 0 || (_contextData$data = contextData.data) === null || _contextData$data === void 0 || (_contextData$data = _contextData$data.kitUploadParams) === null || _contextData$data === void 0 ? void 0 : _contextData$data.source)) {
-        path = 'admin.php?page=elementor-app#kit-library/cloud';
+        path = 'admin.php?page=elementor-app&source=kit_import#kit-library/cloud';
       } else if ('kit-library' === (contextData === null || contextData === void 0 || (_contextData$data2 = contextData.data) === null || _contextData$data2 === void 0 || (_contextData$data2 = _contextData$data2.kitUploadParams) === null || _contextData$data2 === void 0 ? void 0 : _contextData$data2.source)) {
-        path = "admin.php?page=elementor-app#kit-library";
+        path = "admin.php?page=elementor-app&source=kit_import#kit-library";
       }
     }
     window.top.location = elementorAppConfig.admin_url + path;
@@ -10038,6 +10737,43 @@ function UpgradeVersionBanner() {
     color: "info"
   }, __('Update version', 'elementor'))));
 }
+
+/***/ }),
+
+/***/ "../app/modules/import-export-customization/assets/js/shared/error/import-export-error.js":
+/*!************************************************************************************************!*\
+  !*** ../app/modules/import-export-customization/assets/js/shared/error/import-export-error.js ***!
+  \************************************************************************************************/
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+"use strict";
+
+
+var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault */ "../node_modules/@babel/runtime/helpers/interopRequireDefault.js");
+Object.defineProperty(exports, "__esModule", ({
+  value: true
+}));
+exports.ImportExportError = void 0;
+var _createClass2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime/helpers/createClass */ "../node_modules/@babel/runtime/helpers/createClass.js"));
+var _classCallCheck2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime/helpers/classCallCheck */ "../node_modules/@babel/runtime/helpers/classCallCheck.js"));
+var _possibleConstructorReturn2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime/helpers/possibleConstructorReturn */ "../node_modules/@babel/runtime/helpers/possibleConstructorReturn.js"));
+var _getPrototypeOf2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime/helpers/getPrototypeOf */ "../node_modules/@babel/runtime/helpers/getPrototypeOf.js"));
+var _inherits2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime/helpers/inherits */ "../node_modules/@babel/runtime/helpers/inherits.js"));
+var _wrapNativeSuper2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime/helpers/wrapNativeSuper */ "../node_modules/@babel/runtime/helpers/wrapNativeSuper.js"));
+function _callSuper(t, o, e) { return o = (0, _getPrototypeOf2.default)(o), (0, _possibleConstructorReturn2.default)(t, _isNativeReflectConstruct() ? Reflect.construct(o, e || [], (0, _getPrototypeOf2.default)(t).constructor) : o.apply(t, e)); }
+function _isNativeReflectConstruct() { try { var t = !Boolean.prototype.valueOf.call(Reflect.construct(Boolean, [], function () {})); } catch (t) {} return (_isNativeReflectConstruct = function _isNativeReflectConstruct() { return !!t; })(); }
+var ImportExportError = exports.ImportExportError = /*#__PURE__*/function (_Error) {
+  function ImportExportError(errorMessage, errorCode) {
+    var _this;
+    (0, _classCallCheck2.default)(this, ImportExportError);
+    _this = _callSuper(this, ImportExportError, ['string' === typeof errorMessage ? errorMessage : '']);
+    _this.code = errorCode || 'general';
+    _this.details = errorMessage;
+    return _this;
+  }
+  (0, _inherits2.default)(ImportExportError, _Error);
+  return (0, _createClass2.default)(ImportExportError);
+}(/*#__PURE__*/(0, _wrapNativeSuper2.default)(Error));
 
 /***/ }),
 
@@ -11362,6 +12098,7 @@ function useKit() {
         return _objectSpread(_objectSpread({}, prevState), newState);
       });
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [ajaxState.status]);
   return {
     kitState: kitState,
@@ -11422,6 +12159,7 @@ function usePluginsData(plugins) {
     return elementorPlugins.concat(generalPlugins);
   };
   return {
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     pluginsData: (0, _react.useMemo)(function () {
       return getPluginsData();
     }, [plugins])
@@ -11564,6 +12302,7 @@ function usePlugins() {
     return function () {
       allowResponseUpdate.current = false;
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   return {
     response: response,
@@ -12014,6 +12753,7 @@ function ExportKit() {
       type: 'SET_CPT',
       payload: (0, _cptObjectToOptionsArray.cptObjectToOptionsArray)((_elementorAppConfig$i = elementorAppConfig['import-export'].summaryTitles.content) === null || _elementorAppConfig$i === void 0 ? void 0 : _elementorAppConfig$i.customPostTypes, 'plural')
     });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   return /*#__PURE__*/_react.default.createElement(_layout.default, {
     type: "export",
@@ -12332,6 +13072,7 @@ function ExportPlugins() {
       // When not starting from the main screen.
       navigate('/export');
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // On plugins change.
@@ -12346,6 +13087,7 @@ function ExportPlugins() {
       // In case that the kit has no content, it can only be exported if there is at least one selected plugin.
       setIsKitReady(isExportKitAllowed);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [plugins]);
   return /*#__PURE__*/_react.default.createElement(_layout.default, {
     type: "export",
@@ -16371,6 +17113,10 @@ var messagesContent = {
   'failed-to-fetch-quota': {
     title: __('Couldn’t fetch quota', 'elementor'),
     text: __('Failed to fetch quota.', 'elementor')
+  },
+  'insufficient-storage-quota': {
+    title: __('Couldn’t Export the Website Template', 'elementor'),
+    text: __('The export failed because it will pass the maximum Website Templates storage you have available.', 'elementor')
   }
 };
 function ProcessFailedDialog(_ref) {
@@ -16605,7 +17351,7 @@ function Layout(props) {
       if (returnTo && (0, _redirect.default)(returnTo)) {
         // Do nothing as the redirect is handled by the safeRedirect function.
       } else if ('kit-library' === sharedContext.data.referrer || 'kit-library' === referrer) {
-        window.top.location = elementorAppConfig.admin_url + 'admin.php?page=elementor-app#/kit-library';
+        window.top.location = elementorAppConfig.admin_url + 'admin.php?page=elementor-app&source=kit_import#/kit-library';
       } else {
         window.top.location = elementorAppConfig.admin_url + 'admin.php?page=elementor-tools#tab-import-export-kit';
       }
@@ -16983,12 +17729,19 @@ Object.defineProperty(exports, "Eligibility", ({
   }
 }));
 exports.Index = void 0;
+Object.defineProperty(exports, "Quota", ({
+  enumerable: true,
+  get: function get() {
+    return _quota.Quota;
+  }
+}));
 var _classCallCheck2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime/helpers/classCallCheck */ "../node_modules/@babel/runtime/helpers/classCallCheck.js"));
 var _createClass2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime/helpers/createClass */ "../node_modules/@babel/runtime/helpers/createClass.js"));
 var _possibleConstructorReturn2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime/helpers/possibleConstructorReturn */ "../node_modules/@babel/runtime/helpers/possibleConstructorReturn.js"));
 var _getPrototypeOf2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime/helpers/getPrototypeOf */ "../node_modules/@babel/runtime/helpers/getPrototypeOf.js"));
 var _inherits2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime/helpers/inherits */ "../node_modules/@babel/runtime/helpers/inherits.js"));
 var _eligibility = __webpack_require__(/*! ./eligibility */ "../app/modules/kit-library/assets/js/data/cloud-kits/commands-data/eligibility.js");
+var _quota = __webpack_require__(/*! ./quota */ "../app/modules/kit-library/assets/js/data/cloud-kits/commands-data/quota.js");
 function _callSuper(t, o, e) { return o = (0, _getPrototypeOf2.default)(o), (0, _possibleConstructorReturn2.default)(t, _isNativeReflectConstruct() ? Reflect.construct(o, e || [], (0, _getPrototypeOf2.default)(t).constructor) : o.apply(t, e)); }
 function _isNativeReflectConstruct() { try { var t = !Boolean.prototype.valueOf.call(Reflect.construct(Boolean, [], function () {})); } catch (t) {} return (_isNativeReflectConstruct = function _isNativeReflectConstruct() { return !!t; })(); }
 var Index = exports.Index = /*#__PURE__*/function (_$e$modules$CommandDa) {
@@ -17001,6 +17754,43 @@ var Index = exports.Index = /*#__PURE__*/function (_$e$modules$CommandDa) {
     key: "getEndpointFormat",
     value: function getEndpointFormat() {
       return 'cloud-kits/{id}';
+    }
+  }]);
+}($e.modules.CommandData);
+
+/***/ }),
+
+/***/ "../app/modules/kit-library/assets/js/data/cloud-kits/commands-data/quota.js":
+/*!***********************************************************************************!*\
+  !*** ../app/modules/kit-library/assets/js/data/cloud-kits/commands-data/quota.js ***!
+  \***********************************************************************************/
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+"use strict";
+
+
+var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault */ "../node_modules/@babel/runtime/helpers/interopRequireDefault.js");
+Object.defineProperty(exports, "__esModule", ({
+  value: true
+}));
+exports.Quota = void 0;
+var _classCallCheck2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime/helpers/classCallCheck */ "../node_modules/@babel/runtime/helpers/classCallCheck.js"));
+var _createClass2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime/helpers/createClass */ "../node_modules/@babel/runtime/helpers/createClass.js"));
+var _possibleConstructorReturn2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime/helpers/possibleConstructorReturn */ "../node_modules/@babel/runtime/helpers/possibleConstructorReturn.js"));
+var _getPrototypeOf2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime/helpers/getPrototypeOf */ "../node_modules/@babel/runtime/helpers/getPrototypeOf.js"));
+var _inherits2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime/helpers/inherits */ "../node_modules/@babel/runtime/helpers/inherits.js"));
+function _callSuper(t, o, e) { return o = (0, _getPrototypeOf2.default)(o), (0, _possibleConstructorReturn2.default)(t, _isNativeReflectConstruct() ? Reflect.construct(o, e || [], (0, _getPrototypeOf2.default)(t).constructor) : o.apply(t, e)); }
+function _isNativeReflectConstruct() { try { var t = !Boolean.prototype.valueOf.call(Reflect.construct(Boolean, [], function () {})); } catch (t) {} return (_isNativeReflectConstruct = function _isNativeReflectConstruct() { return !!t; })(); }
+var Quota = exports.Quota = /*#__PURE__*/function (_$e$modules$CommandDa) {
+  function Quota() {
+    (0, _classCallCheck2.default)(this, Quota);
+    return _callSuper(this, Quota, arguments);
+  }
+  (0, _inherits2.default)(Quota, _$e$modules$CommandDa);
+  return (0, _createClass2.default)(Quota, null, [{
+    key: "getEndpointFormat",
+    value: function getEndpointFormat() {
+      return 'cloud-kits/quota';
     }
   }]);
 }($e.modules.CommandData);
@@ -17792,6 +18582,25 @@ module.exports = _classCallCheck, module.exports.__esModule = true, module.expor
 
 /***/ }),
 
+/***/ "../node_modules/@babel/runtime/helpers/construct.js":
+/*!***********************************************************!*\
+  !*** ../node_modules/@babel/runtime/helpers/construct.js ***!
+  \***********************************************************/
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+var isNativeReflectConstruct = __webpack_require__(/*! ./isNativeReflectConstruct.js */ "../node_modules/@babel/runtime/helpers/isNativeReflectConstruct.js");
+var setPrototypeOf = __webpack_require__(/*! ./setPrototypeOf.js */ "../node_modules/@babel/runtime/helpers/setPrototypeOf.js");
+function _construct(t, e, r) {
+  if (isNativeReflectConstruct()) return Reflect.construct.apply(null, arguments);
+  var o = [null];
+  o.push.apply(o, e);
+  var p = new (t.bind.apply(t, o))();
+  return r && setPrototypeOf(p, r.prototype), p;
+}
+module.exports = _construct, module.exports.__esModule = true, module.exports["default"] = module.exports;
+
+/***/ }),
+
 /***/ "../node_modules/@babel/runtime/helpers/createClass.js":
 /*!*************************************************************!*\
   !*** ../node_modules/@babel/runtime/helpers/createClass.js ***!
@@ -17986,6 +18795,41 @@ function _interopRequireDefault(e) {
   };
 }
 module.exports = _interopRequireDefault, module.exports.__esModule = true, module.exports["default"] = module.exports;
+
+/***/ }),
+
+/***/ "../node_modules/@babel/runtime/helpers/isNativeFunction.js":
+/*!******************************************************************!*\
+  !*** ../node_modules/@babel/runtime/helpers/isNativeFunction.js ***!
+  \******************************************************************/
+/***/ ((module) => {
+
+function _isNativeFunction(t) {
+  try {
+    return -1 !== Function.toString.call(t).indexOf("[native code]");
+  } catch (n) {
+    return "function" == typeof t;
+  }
+}
+module.exports = _isNativeFunction, module.exports.__esModule = true, module.exports["default"] = module.exports;
+
+/***/ }),
+
+/***/ "../node_modules/@babel/runtime/helpers/isNativeReflectConstruct.js":
+/*!**************************************************************************!*\
+  !*** ../node_modules/@babel/runtime/helpers/isNativeReflectConstruct.js ***!
+  \**************************************************************************/
+/***/ ((module) => {
+
+function _isNativeReflectConstruct() {
+  try {
+    var t = !Boolean.prototype.valueOf.call(Reflect.construct(Boolean, [], function () {}));
+  } catch (t) {}
+  return (module.exports = _isNativeReflectConstruct = function _isNativeReflectConstruct() {
+    return !!t;
+  }, module.exports.__esModule = true, module.exports["default"] = module.exports)();
+}
+module.exports = _isNativeReflectConstruct, module.exports.__esModule = true, module.exports["default"] = module.exports;
 
 /***/ }),
 
@@ -18596,6 +19440,42 @@ function _unsupportedIterableToArray(r, a) {
   }
 }
 module.exports = _unsupportedIterableToArray, module.exports.__esModule = true, module.exports["default"] = module.exports;
+
+/***/ }),
+
+/***/ "../node_modules/@babel/runtime/helpers/wrapNativeSuper.js":
+/*!*****************************************************************!*\
+  !*** ../node_modules/@babel/runtime/helpers/wrapNativeSuper.js ***!
+  \*****************************************************************/
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+var getPrototypeOf = __webpack_require__(/*! ./getPrototypeOf.js */ "../node_modules/@babel/runtime/helpers/getPrototypeOf.js");
+var setPrototypeOf = __webpack_require__(/*! ./setPrototypeOf.js */ "../node_modules/@babel/runtime/helpers/setPrototypeOf.js");
+var isNativeFunction = __webpack_require__(/*! ./isNativeFunction.js */ "../node_modules/@babel/runtime/helpers/isNativeFunction.js");
+var construct = __webpack_require__(/*! ./construct.js */ "../node_modules/@babel/runtime/helpers/construct.js");
+function _wrapNativeSuper(t) {
+  var r = "function" == typeof Map ? new Map() : void 0;
+  return module.exports = _wrapNativeSuper = function _wrapNativeSuper(t) {
+    if (null === t || !isNativeFunction(t)) return t;
+    if ("function" != typeof t) throw new TypeError("Super expression must either be null or a function");
+    if (void 0 !== r) {
+      if (r.has(t)) return r.get(t);
+      r.set(t, Wrapper);
+    }
+    function Wrapper() {
+      return construct(t, arguments, getPrototypeOf(this).constructor);
+    }
+    return Wrapper.prototype = Object.create(t.prototype, {
+      constructor: {
+        value: Wrapper,
+        enumerable: !1,
+        writable: !0,
+        configurable: !0
+      }
+    }), setPrototypeOf(Wrapper, t);
+  }, module.exports.__esModule = true, module.exports["default"] = module.exports, _wrapNativeSuper(t);
+}
+module.exports = _wrapNativeSuper, module.exports.__esModule = true, module.exports["default"] = module.exports;
 
 /***/ }),
 
@@ -28136,9 +29016,9 @@ module.exports = ReactDOM;
 /******/ 		__webpack_require__.u = (chunkId) => {
 /******/ 			// return url for filenames not based on template
 /******/ 			if (chunkId === "vendors-node_modules_react-query_devtools_index_js") return "bb8b6cce5ae5b36077e0.bundle.js";
-/******/ 			if (chunkId === "kit-library") return "" + chunkId + ".ed7fc5d9656556af9353.bundle.js";
-/******/ 			if (chunkId === "app_modules_onboarding_assets_js_utils_modules_post-onboarding-tracker_js") return "cb72c088a03a8e0c21b1.bundle.js";
-/******/ 			if (chunkId === "onboarding") return "" + chunkId + ".50bce36b17131b8d21b7.bundle.js";
+/******/ 			if (chunkId === "kit-library") return "" + chunkId + ".2e38a4b9ca626956b67f.bundle.js";
+/******/ 			if (chunkId === "app_modules_onboarding_assets_js_utils_modules_post-onboarding-tracker_js") return "476658b095f7fe3d4745.bundle.js";
+/******/ 			if (chunkId === "onboarding") return "" + chunkId + ".a7a34522c0205e4ea1ea.bundle.js";
 /******/ 			// return url for filenames based on template
 /******/ 			return undefined;
 /******/ 		};

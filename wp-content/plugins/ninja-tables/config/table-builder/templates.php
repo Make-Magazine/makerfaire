@@ -1,5 +1,9 @@
 <?php
 
+if (!defined('ABSPATH')) {
+    die(__FILE__);
+}
+
 return [
     "pricing"    => [
         "name"   => __("Pricing Tables", "ninja-tables"),

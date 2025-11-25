@@ -2,7 +2,7 @@
 
 namespace NinjaTables\App\Http\Controllers;
 
-use NinjaTables\Framework\Request\Request;
+use NinjaTables\Framework\Http\Request\Request;
 use  NinjaTables\App\Modules\DataProviders\FluentFormProvider;
 use NinjaTables\Framework\Support\Arr;
 

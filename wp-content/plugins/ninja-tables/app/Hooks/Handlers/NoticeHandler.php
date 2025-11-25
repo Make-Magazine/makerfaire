@@ -173,7 +173,7 @@ class NoticeHandler
     {
         global $wpdb;
 
-        $tables = $wpdb->get_results(
+        $tables = $wpdb->get_results( // phpcs:ignore WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.DirectDatabaseQuery.DirectQuery
             "SELECT ID, post_date FROM {$wpdb->posts} 
              WHERE post_type = 'ninja-table' AND post_status = 'publish' 
              ORDER BY post_date DESC LIMIT 10"
@@ -230,21 +230,19 @@ class NoticeHandler
         $rateButton = '';
 
         if ($showRateButton) {
-            $reviewUrl  = esc_url('https://wordpress.org/support/plugin/ninja-tables/reviews/?filter=5');
+            $reviewUrl  = esc_url('https://wordpress.org/support/plugin/ninja-tables/reviews/');
             $rateButton = "<a class='nt-btn nt-btn-primary' target='_blank' href='{$reviewUrl}' rel='noopener'>Rate Now</a><div class='nt-divider'></div>";
         }
 
-        return <<<HTML
-<div class="nt_review_notice" data-notice-key="{$key}">
+        return '<div class="nt_review_notice" data-notice-key="' . $key . '">
     <div class="nt-notice-content">
-        <div class="nt-notice-text">{$message}</div>
+        <div class="nt-notice-text">' . $message . '</div>
         <div class="nt-notice-actions">
-            {$rateButton}
+            ' . $rateButton . '
             <a class="nt-btn nt-btn-secondary remind-me-later" href="#" data-notice-type="temp">Remind Me Later</a>
         </div>
     </div>
-</div>
-HTML;
+</div>';
     }
 
     private function getUpgradeNoticeHtml($key)

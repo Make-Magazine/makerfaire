@@ -1,4 +1,3 @@
-/*! elementor - v3.32.0 - 21-10-2025 */
 /******/ (() => { // webpackBootstrap
 /******/ 	var __webpack_modules__ = ({
 
@@ -395,10 +394,10 @@ var _default = exports["default"] = {
 
 /***/ }),
 
-/***/ "../modules/atomic-widgets/assets/js/editor/atomic-element-model.js":
-/*!**************************************************************************!*\
-  !*** ../modules/atomic-widgets/assets/js/editor/atomic-element-model.js ***!
-  \**************************************************************************/
+/***/ "../modules/atomic-widgets/assets/js/editor/atomic-element-base-model.js":
+/*!*******************************************************************************!*\
+  !*** ../modules/atomic-widgets/assets/js/editor/atomic-element-base-model.js ***!
+  \*******************************************************************************/
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
 "use strict";
@@ -418,13 +417,13 @@ var _inherits2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime/h
 function _callSuper(t, o, e) { return o = (0, _getPrototypeOf2.default)(o), (0, _possibleConstructorReturn2.default)(t, _isNativeReflectConstruct() ? Reflect.construct(o, e || [], (0, _getPrototypeOf2.default)(t).constructor) : o.apply(t, e)); }
 function _isNativeReflectConstruct() { try { var t = !Boolean.prototype.valueOf.call(Reflect.construct(Boolean, [], function () {})); } catch (t) {} return (_isNativeReflectConstruct = function _isNativeReflectConstruct() { return !!t; })(); }
 function _superPropGet(t, o, e, r) { var p = (0, _get2.default)((0, _getPrototypeOf2.default)(1 & r ? t.prototype : t), o, e); return 2 & r && "function" == typeof p ? function (t) { return p.apply(e, t); } : p; }
-var AtomicContainer = exports["default"] = /*#__PURE__*/function (_elementor$modules$el) {
-  function AtomicContainer() {
-    (0, _classCallCheck2.default)(this, AtomicContainer);
-    return _callSuper(this, AtomicContainer, arguments);
+var AtomicElementBaseModel = exports["default"] = /*#__PURE__*/function (_elementor$modules$el) {
+  function AtomicElementBaseModel() {
+    (0, _classCallCheck2.default)(this, AtomicElementBaseModel);
+    return _callSuper(this, AtomicElementBaseModel, arguments);
   }
-  (0, _inherits2.default)(AtomicContainer, _elementor$modules$el);
-  return (0, _createClass2.default)(AtomicContainer, [{
+  (0, _inherits2.default)(AtomicElementBaseModel, _elementor$modules$el);
+  return (0, _createClass2.default)(AtomicElementBaseModel, [{
     key: "isValidChild",
     value:
     /**
@@ -445,37 +444,606 @@ var AtomicContainer = exports["default"] = /*#__PURE__*/function (_elementor$mod
       if (isNewElementCreate) {
         this.onElementCreate();
       }
-      _superPropGet(AtomicContainer, "initialize", this, 3)([attributes, options]);
+      _superPropGet(AtomicElementBaseModel, "initialize", this, 3)([attributes, options]);
     }
   }, {
     key: "getDefaultChildren",
     value: function getDefaultChildren() {
       var defaultChildren = this.config.default_children;
-      return defaultChildren.map(function (element) {
-        return {
-          elType: element.elType,
-          widgetType: element.widgetType,
-          id: elementorCommon.helpers.getUniqueId(),
-          settings: element.settings || {},
-          elements: element.elements || [],
-          isLocked: element.isLocked || false
-        };
-      });
+      return defaultChildren;
     }
   }, {
     key: "onElementCreate",
     value: function onElementCreate() {
-      this.set('elements', this.getDefaultChildren());
+      var _this = this;
+      this.set('elements', this.getDefaultChildren().map(function (element) {
+        return _this.buildElement(element);
+      }));
+    }
+  }, {
+    key: "buildElement",
+    value: function buildElement(element) {
+      var _this2 = this;
+      var id = elementorCommon.helpers.getUniqueId();
+      var elements = (element.elements || []).map(function (el) {
+        return _this2.buildElement(el);
+      });
+      return {
+        elType: element.elType,
+        widgetType: element.widgetType,
+        id: id,
+        settings: element.settings || {},
+        elements: elements,
+        isLocked: element.isLocked || false,
+        editor_settings: element.editor_settings || {}
+      };
     }
   }]);
 }(elementor.modules.elements.models.Element);
 
 /***/ }),
 
-/***/ "../modules/atomic-widgets/assets/js/editor/atomic-element-view.js":
-/*!*************************************************************************!*\
-  !*** ../modules/atomic-widgets/assets/js/editor/atomic-element-view.js ***!
-  \*************************************************************************/
+/***/ "../modules/atomic-widgets/assets/js/editor/atomic-element-base-type.js":
+/*!******************************************************************************!*\
+  !*** ../modules/atomic-widgets/assets/js/editor/atomic-element-base-type.js ***!
+  \******************************************************************************/
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+"use strict";
+
+
+var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault */ "../node_modules/@babel/runtime/helpers/interopRequireDefault.js");
+Object.defineProperty(exports, "__esModule", ({
+  value: true
+}));
+exports["default"] = void 0;
+var _classCallCheck2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime/helpers/classCallCheck */ "../node_modules/@babel/runtime/helpers/classCallCheck.js"));
+var _createClass2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime/helpers/createClass */ "../node_modules/@babel/runtime/helpers/createClass.js"));
+var _possibleConstructorReturn2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime/helpers/possibleConstructorReturn */ "../node_modules/@babel/runtime/helpers/possibleConstructorReturn.js"));
+var _getPrototypeOf2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime/helpers/getPrototypeOf */ "../node_modules/@babel/runtime/helpers/getPrototypeOf.js"));
+var _inherits2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime/helpers/inherits */ "../node_modules/@babel/runtime/helpers/inherits.js"));
+function _callSuper(t, o, e) { return o = (0, _getPrototypeOf2.default)(o), (0, _possibleConstructorReturn2.default)(t, _isNativeReflectConstruct() ? Reflect.construct(o, e || [], (0, _getPrototypeOf2.default)(t).constructor) : o.apply(t, e)); }
+function _isNativeReflectConstruct() { try { var t = !Boolean.prototype.valueOf.call(Reflect.construct(Boolean, [], function () {})); } catch (t) {} return (_isNativeReflectConstruct = function _isNativeReflectConstruct() { return !!t; })(); }
+var AtomicElementBaseType = exports["default"] = /*#__PURE__*/function (_elementor$modules$el) {
+  function AtomicElementBaseType(elementType, viewClass) {
+    var _this;
+    var modelClass = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : null;
+    var emptyViewClass = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : null;
+    (0, _classCallCheck2.default)(this, AtomicElementBaseType);
+    _this = _callSuper(this, AtomicElementBaseType);
+    _this.elementType = elementType;
+    _this.viewClass = viewClass;
+    _this.modelClass = modelClass;
+    _this.emptyViewClass = emptyViewClass;
+    return _this;
+  }
+  (0, _inherits2.default)(AtomicElementBaseType, _elementor$modules$el);
+  return (0, _createClass2.default)(AtomicElementBaseType, [{
+    key: "getType",
+    value: function getType() {
+      return this.elementType;
+    }
+  }, {
+    key: "getView",
+    value: function getView() {
+      return this.viewClass;
+    }
+  }, {
+    key: "getEmptyView",
+    value: function getEmptyView() {
+      return this.emptyViewClass || elementor.modules.elements.views.EmptyComponent;
+    }
+  }, {
+    key: "getModel",
+    value: function getModel() {
+      return this.modelClass || elementor.modules.elements.models.AtomicElementBase;
+    }
+  }]);
+}(elementor.modules.elements.types.Base);
+
+/***/ }),
+
+/***/ "../modules/atomic-widgets/assets/js/editor/atomic-element-types/atomic-tab-panel/create-atomic-tab-panel-type.js":
+/*!************************************************************************************************************************!*\
+  !*** ../modules/atomic-widgets/assets/js/editor/atomic-element-types/atomic-tab-panel/create-atomic-tab-panel-type.js ***!
+  \************************************************************************************************************************/
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+"use strict";
+
+
+var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault */ "../node_modules/@babel/runtime/helpers/interopRequireDefault.js");
+Object.defineProperty(exports, "__esModule", ({
+  value: true
+}));
+exports["default"] = void 0;
+var _createAtomicTabPanelView = _interopRequireDefault(__webpack_require__(/*! ./create-atomic-tab-panel-view */ "../modules/atomic-widgets/assets/js/editor/atomic-element-types/atomic-tab-panel/create-atomic-tab-panel-view.js"));
+var createAtomicTabPanelType = function createAtomicTabPanelType() {
+  return new elementor.modules.elements.types.AtomicElementBase('e-tab-panel', (0, _createAtomicTabPanelView.default)());
+};
+var _default = exports["default"] = createAtomicTabPanelType;
+
+/***/ }),
+
+/***/ "../modules/atomic-widgets/assets/js/editor/atomic-element-types/atomic-tab-panel/create-atomic-tab-panel-view.js":
+/*!************************************************************************************************************************!*\
+  !*** ../modules/atomic-widgets/assets/js/editor/atomic-element-types/atomic-tab-panel/create-atomic-tab-panel-view.js ***!
+  \************************************************************************************************************************/
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+"use strict";
+
+
+var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault */ "../node_modules/@babel/runtime/helpers/interopRequireDefault.js");
+Object.defineProperty(exports, "__esModule", ({
+  value: true
+}));
+exports["default"] = void 0;
+var _defineProperty2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime/helpers/defineProperty */ "../node_modules/@babel/runtime/helpers/defineProperty.js"));
+var _classCallCheck2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime/helpers/classCallCheck */ "../node_modules/@babel/runtime/helpers/classCallCheck.js"));
+var _createClass2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime/helpers/createClass */ "../node_modules/@babel/runtime/helpers/createClass.js"));
+var _possibleConstructorReturn2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime/helpers/possibleConstructorReturn */ "../node_modules/@babel/runtime/helpers/possibleConstructorReturn.js"));
+var _getPrototypeOf2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime/helpers/getPrototypeOf */ "../node_modules/@babel/runtime/helpers/getPrototypeOf.js"));
+var _get2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime/helpers/get */ "../node_modules/@babel/runtime/helpers/get.js"));
+var _inherits2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime/helpers/inherits */ "../node_modules/@babel/runtime/helpers/inherits.js"));
+function ownKeys(e, r) { var t = Object.keys(e); if (Object.getOwnPropertySymbols) { var o = Object.getOwnPropertySymbols(e); r && (o = o.filter(function (r) { return Object.getOwnPropertyDescriptor(e, r).enumerable; })), t.push.apply(t, o); } return t; }
+function _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t = null != arguments[r] ? arguments[r] : {}; r % 2 ? ownKeys(Object(t), !0).forEach(function (r) { (0, _defineProperty2.default)(e, r, t[r]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(e, Object.getOwnPropertyDescriptors(t)) : ownKeys(Object(t)).forEach(function (r) { Object.defineProperty(e, r, Object.getOwnPropertyDescriptor(t, r)); }); } return e; }
+function _callSuper(t, o, e) { return o = (0, _getPrototypeOf2.default)(o), (0, _possibleConstructorReturn2.default)(t, _isNativeReflectConstruct() ? Reflect.construct(o, e || [], (0, _getPrototypeOf2.default)(t).constructor) : o.apply(t, e)); }
+function _isNativeReflectConstruct() { try { var t = !Boolean.prototype.valueOf.call(Reflect.construct(Boolean, [], function () {})); } catch (t) {} return (_isNativeReflectConstruct = function _isNativeReflectConstruct() { return !!t; })(); }
+function _superPropGet(t, o, e, r) { var p = (0, _get2.default)((0, _getPrototypeOf2.default)(1 & r ? t.prototype : t), o, e); return 2 & r && "function" == typeof p ? function (t) { return p.apply(e, t); } : p; }
+var createAtomicTabPanelView = function createAtomicTabPanelView() {
+  var AtomicElementBaseView = elementor.modules.elements.views.createAtomicElementBase('e-tab-panel');
+  return /*#__PURE__*/function (_AtomicElementBaseVie) {
+    function AtomicTabPanelView() {
+      (0, _classCallCheck2.default)(this, AtomicTabPanelView);
+      return _callSuper(this, AtomicTabPanelView, arguments);
+    }
+    (0, _inherits2.default)(AtomicTabPanelView, _AtomicElementBaseVie);
+    return (0, _createClass2.default)(AtomicTabPanelView, [{
+      key: "attributes",
+      value: function attributes() {
+        var tabId = this.model.getSetting('tab-id');
+        return tabId !== null && tabId !== void 0 && tabId.value ? _objectSpread({
+          'data-tab-id': tabId.value,
+          'aria-labelledby': tabId.value
+        }, _superPropGet(AtomicTabPanelView, "attributes", this, 3)([])) : _superPropGet(AtomicTabPanelView, "attributes", this, 3)([]);
+      }
+    }]);
+  }(AtomicElementBaseView);
+};
+var _default = exports["default"] = createAtomicTabPanelView;
+
+/***/ }),
+
+/***/ "../modules/atomic-widgets/assets/js/editor/atomic-element-types/atomic-tab/create-atomic-tab-type.js":
+/*!************************************************************************************************************!*\
+  !*** ../modules/atomic-widgets/assets/js/editor/atomic-element-types/atomic-tab/create-atomic-tab-type.js ***!
+  \************************************************************************************************************/
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+"use strict";
+
+
+var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault */ "../node_modules/@babel/runtime/helpers/interopRequireDefault.js");
+Object.defineProperty(exports, "__esModule", ({
+  value: true
+}));
+exports["default"] = void 0;
+var _createAtomicTabView = _interopRequireDefault(__webpack_require__(/*! ./create-atomic-tab-view */ "../modules/atomic-widgets/assets/js/editor/atomic-element-types/atomic-tab/create-atomic-tab-view.js"));
+var createAtomicTabType = function createAtomicTabType() {
+  return new elementor.modules.elements.types.AtomicElementBase('e-tab', (0, _createAtomicTabView.default)());
+};
+var _default = exports["default"] = createAtomicTabType;
+
+/***/ }),
+
+/***/ "../modules/atomic-widgets/assets/js/editor/atomic-element-types/atomic-tab/create-atomic-tab-view.js":
+/*!************************************************************************************************************!*\
+  !*** ../modules/atomic-widgets/assets/js/editor/atomic-element-types/atomic-tab/create-atomic-tab-view.js ***!
+  \************************************************************************************************************/
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+"use strict";
+
+
+var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault */ "../node_modules/@babel/runtime/helpers/interopRequireDefault.js");
+Object.defineProperty(exports, "__esModule", ({
+  value: true
+}));
+exports["default"] = void 0;
+var _defineProperty2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime/helpers/defineProperty */ "../node_modules/@babel/runtime/helpers/defineProperty.js"));
+var _classCallCheck2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime/helpers/classCallCheck */ "../node_modules/@babel/runtime/helpers/classCallCheck.js"));
+var _createClass2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime/helpers/createClass */ "../node_modules/@babel/runtime/helpers/createClass.js"));
+var _possibleConstructorReturn2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime/helpers/possibleConstructorReturn */ "../node_modules/@babel/runtime/helpers/possibleConstructorReturn.js"));
+var _getPrototypeOf2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime/helpers/getPrototypeOf */ "../node_modules/@babel/runtime/helpers/getPrototypeOf.js"));
+var _get2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime/helpers/get */ "../node_modules/@babel/runtime/helpers/get.js"));
+var _inherits2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime/helpers/inherits */ "../node_modules/@babel/runtime/helpers/inherits.js"));
+function ownKeys(e, r) { var t = Object.keys(e); if (Object.getOwnPropertySymbols) { var o = Object.getOwnPropertySymbols(e); r && (o = o.filter(function (r) { return Object.getOwnPropertyDescriptor(e, r).enumerable; })), t.push.apply(t, o); } return t; }
+function _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t = null != arguments[r] ? arguments[r] : {}; r % 2 ? ownKeys(Object(t), !0).forEach(function (r) { (0, _defineProperty2.default)(e, r, t[r]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(e, Object.getOwnPropertyDescriptors(t)) : ownKeys(Object(t)).forEach(function (r) { Object.defineProperty(e, r, Object.getOwnPropertyDescriptor(t, r)); }); } return e; }
+function _callSuper(t, o, e) { return o = (0, _getPrototypeOf2.default)(o), (0, _possibleConstructorReturn2.default)(t, _isNativeReflectConstruct() ? Reflect.construct(o, e || [], (0, _getPrototypeOf2.default)(t).constructor) : o.apply(t, e)); }
+function _isNativeReflectConstruct() { try { var t = !Boolean.prototype.valueOf.call(Reflect.construct(Boolean, [], function () {})); } catch (t) {} return (_isNativeReflectConstruct = function _isNativeReflectConstruct() { return !!t; })(); }
+function _superPropGet(t, o, e, r) { var p = (0, _get2.default)((0, _getPrototypeOf2.default)(1 & r ? t.prototype : t), o, e); return 2 & r && "function" == typeof p ? function (t) { return p.apply(e, t); } : p; }
+var createAtomicTabView = function createAtomicTabView() {
+  var atomicElementBaseView = elementor.modules.elements.views.createAtomicElementBase('e-tab');
+  return /*#__PURE__*/function (_atomicElementBaseVie) {
+    function AtomicTabView() {
+      (0, _classCallCheck2.default)(this, AtomicTabView);
+      return _callSuper(this, AtomicTabView, arguments);
+    }
+    (0, _inherits2.default)(AtomicTabView, _atomicElementBaseVie);
+    return (0, _createClass2.default)(AtomicTabView, [{
+      key: "attributes",
+      value: function attributes() {
+        var tabPanelId = this.model.getSetting('tab-panel-id');
+        return tabPanelId !== null && tabPanelId !== void 0 && tabPanelId.value ? _objectSpread({
+          'aria-controls': tabPanelId.value
+        }, _superPropGet(AtomicTabView, "attributes", this, 3)([])) : _superPropGet(AtomicTabView, "attributes", this, 3)([]);
+      }
+    }]);
+  }(atomicElementBaseView);
+};
+var _default = exports["default"] = createAtomicTabView;
+
+/***/ }),
+
+/***/ "../modules/atomic-widgets/assets/js/editor/atomic-element-types/atomic-tabs/create-atomic-tabs-model.js":
+/*!***************************************************************************************************************!*\
+  !*** ../modules/atomic-widgets/assets/js/editor/atomic-element-types/atomic-tabs/create-atomic-tabs-model.js ***!
+  \***************************************************************************************************************/
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+"use strict";
+
+
+var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault */ "../node_modules/@babel/runtime/helpers/interopRequireDefault.js");
+Object.defineProperty(exports, "__esModule", ({
+  value: true
+}));
+exports["default"] = void 0;
+var _classCallCheck2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime/helpers/classCallCheck */ "../node_modules/@babel/runtime/helpers/classCallCheck.js"));
+var _createClass2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime/helpers/createClass */ "../node_modules/@babel/runtime/helpers/createClass.js"));
+var _possibleConstructorReturn2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime/helpers/possibleConstructorReturn */ "../node_modules/@babel/runtime/helpers/possibleConstructorReturn.js"));
+var _getPrototypeOf2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime/helpers/getPrototypeOf */ "../node_modules/@babel/runtime/helpers/getPrototypeOf.js"));
+var _get2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime/helpers/get */ "../node_modules/@babel/runtime/helpers/get.js"));
+var _inherits2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime/helpers/inherits */ "../node_modules/@babel/runtime/helpers/inherits.js"));
+function _callSuper(t, o, e) { return o = (0, _getPrototypeOf2.default)(o), (0, _possibleConstructorReturn2.default)(t, _isNativeReflectConstruct() ? Reflect.construct(o, e || [], (0, _getPrototypeOf2.default)(t).constructor) : o.apply(t, e)); }
+function _isNativeReflectConstruct() { try { var t = !Boolean.prototype.valueOf.call(Reflect.construct(Boolean, [], function () {})); } catch (t) {} return (_isNativeReflectConstruct = function _isNativeReflectConstruct() { return !!t; })(); }
+function _superPropGet(t, o, e, r) { var p = (0, _get2.default)((0, _getPrototypeOf2.default)(1 & r ? t.prototype : t), o, e); return 2 & r && "function" == typeof p ? function (t) { return p.apply(e, t); } : p; }
+var createAtomicTabsModel = function createAtomicTabsModel() {
+  var AtomicElementBaseModel = elementor.modules.elements.models.AtomicElementBase;
+  return /*#__PURE__*/function (_AtomicElementBaseMod) {
+    function AtomicTabsModel() {
+      (0, _classCallCheck2.default)(this, AtomicTabsModel);
+      return _callSuper(this, AtomicTabsModel, arguments);
+    }
+    (0, _inherits2.default)(AtomicTabsModel, _AtomicElementBaseMod);
+    return (0, _createClass2.default)(AtomicTabsModel, [{
+      key: "onElementCreate",
+      value: function onElementCreate() {
+        _superPropGet(AtomicTabsModel, "onElementCreate", this, 3)([]);
+        var tabs = this.getChildrenByType(this.get('elements'), 'e-tab');
+        var tabPanels = this.getChildrenByType(this.get('elements'), 'e-tab-panel');
+        var currentSettings = this.get('settings') || {};
+        currentSettings['default-active-tab'] = {
+          $$type: 'string',
+          value: tabs[0].id
+        };
+        this.set('settings', currentSettings);
+
+        // TODO: maybe move this part to a dedicated "afterDefaultChildrenSet" method
+        tabs.forEach(function (tab, index) {
+          tab.settings._cssid = {
+            $$type: 'string',
+            value: tab.id
+          };
+          tab.settings['tab-panel-id'] = {
+            $$type: 'string',
+            value: tabPanels[index].id
+          };
+          var tabPanel = tabPanels[index];
+          tabPanel.settings._cssid = {
+            $$type: 'string',
+            value: tabPanels[index].id
+          };
+          tabPanel.settings['tab-id'] = {
+            $$type: 'string',
+            value: tab.id
+          };
+        });
+      }
+    }, {
+      key: "getChildrenByType",
+      value: function getChildrenByType(elements, type) {
+        var foundElements = [];
+        var _searchRecursively = function searchRecursively(collection) {
+          collection.forEach(function (element) {
+            if (type === element.elType) {
+              foundElements.push(element);
+            }
+            var childElements = element.elements;
+            if (childElements && childElements.length > 0) {
+              _searchRecursively(childElements);
+            }
+          });
+        };
+        _searchRecursively(elements);
+        return foundElements;
+      }
+    }]);
+  }(AtomicElementBaseModel);
+};
+var _default = exports["default"] = createAtomicTabsModel;
+
+/***/ }),
+
+/***/ "../modules/atomic-widgets/assets/js/editor/atomic-element-types/atomic-tabs/create-atomic-tabs-type.js":
+/*!**************************************************************************************************************!*\
+  !*** ../modules/atomic-widgets/assets/js/editor/atomic-element-types/atomic-tabs/create-atomic-tabs-type.js ***!
+  \**************************************************************************************************************/
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+"use strict";
+
+
+var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault */ "../node_modules/@babel/runtime/helpers/interopRequireDefault.js");
+Object.defineProperty(exports, "__esModule", ({
+  value: true
+}));
+exports["default"] = void 0;
+var _createAtomicTabsView = _interopRequireDefault(__webpack_require__(/*! ./create-atomic-tabs-view */ "../modules/atomic-widgets/assets/js/editor/atomic-element-types/atomic-tabs/create-atomic-tabs-view.js"));
+var _createAtomicTabsModel = _interopRequireDefault(__webpack_require__(/*! ./create-atomic-tabs-model */ "../modules/atomic-widgets/assets/js/editor/atomic-element-types/atomic-tabs/create-atomic-tabs-model.js"));
+var createAtomicTabsType = function createAtomicTabsType() {
+  return new elementor.modules.elements.types.AtomicElementBase('e-tabs', (0, _createAtomicTabsView.default)(), (0, _createAtomicTabsModel.default)());
+};
+var _default = exports["default"] = createAtomicTabsType;
+
+/***/ }),
+
+/***/ "../modules/atomic-widgets/assets/js/editor/atomic-element-types/atomic-tabs/create-atomic-tabs-view.js":
+/*!**************************************************************************************************************!*\
+  !*** ../modules/atomic-widgets/assets/js/editor/atomic-element-types/atomic-tabs/create-atomic-tabs-view.js ***!
+  \**************************************************************************************************************/
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+"use strict";
+
+
+var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault */ "../node_modules/@babel/runtime/helpers/interopRequireDefault.js");
+Object.defineProperty(exports, "__esModule", ({
+  value: true
+}));
+exports["default"] = void 0;
+var _defineProperty2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime/helpers/defineProperty */ "../node_modules/@babel/runtime/helpers/defineProperty.js"));
+var _classCallCheck2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime/helpers/classCallCheck */ "../node_modules/@babel/runtime/helpers/classCallCheck.js"));
+var _createClass2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime/helpers/createClass */ "../node_modules/@babel/runtime/helpers/createClass.js"));
+var _possibleConstructorReturn2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime/helpers/possibleConstructorReturn */ "../node_modules/@babel/runtime/helpers/possibleConstructorReturn.js"));
+var _getPrototypeOf2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime/helpers/getPrototypeOf */ "../node_modules/@babel/runtime/helpers/getPrototypeOf.js"));
+var _get2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime/helpers/get */ "../node_modules/@babel/runtime/helpers/get.js"));
+var _inherits2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime/helpers/inherits */ "../node_modules/@babel/runtime/helpers/inherits.js"));
+function ownKeys(e, r) { var t = Object.keys(e); if (Object.getOwnPropertySymbols) { var o = Object.getOwnPropertySymbols(e); r && (o = o.filter(function (r) { return Object.getOwnPropertyDescriptor(e, r).enumerable; })), t.push.apply(t, o); } return t; }
+function _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t = null != arguments[r] ? arguments[r] : {}; r % 2 ? ownKeys(Object(t), !0).forEach(function (r) { (0, _defineProperty2.default)(e, r, t[r]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(e, Object.getOwnPropertyDescriptors(t)) : ownKeys(Object(t)).forEach(function (r) { Object.defineProperty(e, r, Object.getOwnPropertyDescriptor(t, r)); }); } return e; }
+function _callSuper(t, o, e) { return o = (0, _getPrototypeOf2.default)(o), (0, _possibleConstructorReturn2.default)(t, _isNativeReflectConstruct() ? Reflect.construct(o, e || [], (0, _getPrototypeOf2.default)(t).constructor) : o.apply(t, e)); }
+function _isNativeReflectConstruct() { try { var t = !Boolean.prototype.valueOf.call(Reflect.construct(Boolean, [], function () {})); } catch (t) {} return (_isNativeReflectConstruct = function _isNativeReflectConstruct() { return !!t; })(); }
+function _superPropGet(t, o, e, r) { var p = (0, _get2.default)((0, _getPrototypeOf2.default)(1 & r ? t.prototype : t), o, e); return 2 & r && "function" == typeof p ? function (t) { return p.apply(e, t); } : p; }
+var createAtomicTabsView = function createAtomicTabsView() {
+  var AtomicElementBaseView = elementor.modules.elements.views.createAtomicElementBase('e-tabs');
+  return /*#__PURE__*/function (_AtomicElementBaseVie) {
+    function AtomicTabsView() {
+      (0, _classCallCheck2.default)(this, AtomicTabsView);
+      return _callSuper(this, AtomicTabsView, arguments);
+    }
+    (0, _inherits2.default)(AtomicTabsView, _AtomicElementBaseVie);
+    return (0, _createClass2.default)(AtomicTabsView, [{
+      key: "attributes",
+      value: function attributes() {
+        var defaultActiveTab = this.model.getSetting('default-active-tab');
+        return defaultActiveTab !== null && defaultActiveTab !== void 0 && defaultActiveTab.value ? _objectSpread({
+          'data-active-tab': defaultActiveTab.value
+        }, _superPropGet(AtomicTabsView, "attributes", this, 3)([])) : _superPropGet(AtomicTabsView, "attributes", this, 3)([]);
+      }
+    }]);
+  }(AtomicElementBaseView);
+};
+var _default = exports["default"] = createAtomicTabsView;
+
+/***/ }),
+
+/***/ "../modules/atomic-widgets/assets/js/editor/atomic-element-types/create-atomic-tabs-content-type.js":
+/*!**********************************************************************************************************!*\
+  !*** ../modules/atomic-widgets/assets/js/editor/atomic-element-types/create-atomic-tabs-content-type.js ***!
+  \**********************************************************************************************************/
+/***/ ((__unused_webpack_module, exports) => {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", ({
+  value: true
+}));
+exports["default"] = void 0;
+var createAtomicTabsContentType = function createAtomicTabsContentType() {
+  var AtomicTabsContentView = elementor.modules.elements.views.createAtomicElementBase('e-tabs-content');
+  return new elementor.modules.elements.types.AtomicElementBase('e-tabs-content', AtomicTabsContentView);
+};
+var _default = exports["default"] = createAtomicTabsContentType;
+
+/***/ }),
+
+/***/ "../modules/atomic-widgets/assets/js/editor/atomic-element-types/create-atomic-tabs-list-type.js":
+/*!*******************************************************************************************************!*\
+  !*** ../modules/atomic-widgets/assets/js/editor/atomic-element-types/create-atomic-tabs-list-type.js ***!
+  \*******************************************************************************************************/
+/***/ ((__unused_webpack_module, exports) => {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", ({
+  value: true
+}));
+exports["default"] = void 0;
+var createAtomicTabsListType = function createAtomicTabsListType() {
+  var AtomicTabsListView = elementor.modules.elements.views.createAtomicElementBase('e-tabs-list');
+  return new elementor.modules.elements.types.AtomicElementBase('e-tabs-list', AtomicTabsListView);
+};
+var _default = exports["default"] = createAtomicTabsListType;
+
+/***/ }),
+
+/***/ "../modules/atomic-widgets/assets/js/editor/atomic-element-types/create-div-block-type.js":
+/*!************************************************************************************************!*\
+  !*** ../modules/atomic-widgets/assets/js/editor/atomic-element-types/create-div-block-type.js ***!
+  \************************************************************************************************/
+/***/ ((__unused_webpack_module, exports) => {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", ({
+  value: true
+}));
+exports["default"] = void 0;
+var createDivBlockType = function createDivBlockType() {
+  var DivBlockView = elementor.modules.elements.views.createAtomicElementBase('e-div-block');
+  return new elementor.modules.elements.types.AtomicElementBase('e-div-block', DivBlockView);
+};
+var _default = exports["default"] = createDivBlockType;
+
+/***/ }),
+
+/***/ "../modules/atomic-widgets/assets/js/editor/atomic-element-types/create-flexbox-type.js":
+/*!**********************************************************************************************!*\
+  !*** ../modules/atomic-widgets/assets/js/editor/atomic-element-types/create-flexbox-type.js ***!
+  \**********************************************************************************************/
+/***/ ((__unused_webpack_module, exports) => {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", ({
+  value: true
+}));
+exports["default"] = void 0;
+var createFlexboxType = function createFlexboxType() {
+  var FlexboxView = elementor.modules.elements.views.createAtomicElementBase('e-flexbox');
+  return new elementor.modules.elements.types.AtomicElementBase('e-flexbox', FlexboxView);
+};
+var _default = exports["default"] = createFlexboxType;
+
+/***/ }),
+
+/***/ "../modules/atomic-widgets/assets/js/editor/component.js":
+/*!***************************************************************!*\
+  !*** ../modules/atomic-widgets/assets/js/editor/component.js ***!
+  \***************************************************************/
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+"use strict";
+
+
+var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault */ "../node_modules/@babel/runtime/helpers/interopRequireDefault.js");
+var _typeof = __webpack_require__(/*! @babel/runtime/helpers/typeof */ "../node_modules/@babel/runtime/helpers/typeof.js");
+Object.defineProperty(exports, "__esModule", ({
+  value: true
+}));
+exports["default"] = void 0;
+var _classCallCheck2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime/helpers/classCallCheck */ "../node_modules/@babel/runtime/helpers/classCallCheck.js"));
+var _createClass2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime/helpers/createClass */ "../node_modules/@babel/runtime/helpers/createClass.js"));
+var _possibleConstructorReturn2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime/helpers/possibleConstructorReturn */ "../node_modules/@babel/runtime/helpers/possibleConstructorReturn.js"));
+var _getPrototypeOf2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime/helpers/getPrototypeOf */ "../node_modules/@babel/runtime/helpers/getPrototypeOf.js"));
+var _inherits2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime/helpers/inherits */ "../node_modules/@babel/runtime/helpers/inherits.js"));
+var hooks = _interopRequireWildcard(__webpack_require__(/*! ./hooks */ "../modules/atomic-widgets/assets/js/editor/hooks/index.js"));
+function _interopRequireWildcard(e, t) { if ("function" == typeof WeakMap) var r = new WeakMap(), n = new WeakMap(); return (_interopRequireWildcard = function _interopRequireWildcard(e, t) { if (!t && e && e.__esModule) return e; var o, i, f = { __proto__: null, default: e }; if (null === e || "object" != _typeof(e) && "function" != typeof e) return f; if (o = t ? n : r) { if (o.has(e)) return o.get(e); o.set(e, f); } for (var _t in e) "default" !== _t && {}.hasOwnProperty.call(e, _t) && ((i = (o = Object.defineProperty) && Object.getOwnPropertyDescriptor(e, _t)) && (i.get || i.set) ? o(f, _t, i) : f[_t] = e[_t]); return f; })(e, t); }
+function _callSuper(t, o, e) { return o = (0, _getPrototypeOf2.default)(o), (0, _possibleConstructorReturn2.default)(t, _isNativeReflectConstruct() ? Reflect.construct(o, e || [], (0, _getPrototypeOf2.default)(t).constructor) : o.apply(t, e)); }
+function _isNativeReflectConstruct() { try { var t = !Boolean.prototype.valueOf.call(Reflect.construct(Boolean, [], function () {})); } catch (t) {} return (_isNativeReflectConstruct = function _isNativeReflectConstruct() { return !!t; })(); }
+var Component = exports["default"] = /*#__PURE__*/function (_$e$modules$Component) {
+  function Component() {
+    (0, _classCallCheck2.default)(this, Component);
+    return _callSuper(this, Component, arguments);
+  }
+  (0, _inherits2.default)(Component, _$e$modules$Component);
+  return (0, _createClass2.default)(Component, [{
+    key: "getNamespace",
+    value: function getNamespace() {
+      return 'document/atomic-widgets';
+    }
+  }, {
+    key: "defaultHooks",
+    value: function defaultHooks() {
+      return this.importHooks(hooks);
+    }
+  }]);
+}($e.modules.ComponentBase);
+
+/***/ }),
+
+/***/ "../modules/atomic-widgets/assets/js/editor/container/atomic-element-empty-view.js":
+/*!*****************************************************************************************!*\
+  !*** ../modules/atomic-widgets/assets/js/editor/container/atomic-element-empty-view.js ***!
+  \*****************************************************************************************/
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+"use strict";
+
+
+var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault */ "../node_modules/@babel/runtime/helpers/interopRequireDefault.js");
+Object.defineProperty(exports, "__esModule", ({
+  value: true
+}));
+exports["default"] = void 0;
+var _react = _interopRequireDefault(__webpack_require__(/*! react */ "react"));
+var _classCallCheck2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime/helpers/classCallCheck */ "../node_modules/@babel/runtime/helpers/classCallCheck.js"));
+var _createClass2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime/helpers/createClass */ "../node_modules/@babel/runtime/helpers/createClass.js"));
+var _possibleConstructorReturn2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime/helpers/possibleConstructorReturn */ "../node_modules/@babel/runtime/helpers/possibleConstructorReturn.js"));
+var _getPrototypeOf2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime/helpers/getPrototypeOf */ "../node_modules/@babel/runtime/helpers/getPrototypeOf.js"));
+var _inherits2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime/helpers/inherits */ "../node_modules/@babel/runtime/helpers/inherits.js"));
+var _defineProperty2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime/helpers/defineProperty */ "../node_modules/@babel/runtime/helpers/defineProperty.js"));
+var _react2 = _interopRequireDefault(__webpack_require__(/*! elementor-utils/react */ "../assets/dev/js/utils/react.js"));
+var _emptyComponent = _interopRequireDefault(__webpack_require__(/*! elementor-elements/views/container/empty-component */ "../assets/dev/js/editor/elements/views/container/empty-component.js"));
+function _callSuper(t, o, e) { return o = (0, _getPrototypeOf2.default)(o), (0, _possibleConstructorReturn2.default)(t, _isNativeReflectConstruct() ? Reflect.construct(o, e || [], (0, _getPrototypeOf2.default)(t).constructor) : o.apply(t, e)); }
+function _isNativeReflectConstruct() { try { var t = !Boolean.prototype.valueOf.call(Reflect.construct(Boolean, [], function () {})); } catch (t) {} return (_isNativeReflectConstruct = function _isNativeReflectConstruct() { return !!t; })(); }
+var AtomicElementEmptyView = exports["default"] = /*#__PURE__*/function (_Marionette$ItemView) {
+  function AtomicElementEmptyView() {
+    var _this;
+    (0, _classCallCheck2.default)(this, AtomicElementEmptyView);
+    for (var _len = arguments.length, args = new Array(_len), _key = 0; _key < _len; _key++) {
+      args[_key] = arguments[_key];
+    }
+    _this = _callSuper(this, AtomicElementEmptyView, [].concat(args));
+    (0, _defineProperty2.default)(_this, "template", '<div></div>');
+    (0, _defineProperty2.default)(_this, "className", 'elementor-empty-view');
+    return _this;
+  }
+  (0, _inherits2.default)(AtomicElementEmptyView, _Marionette$ItemView);
+  return (0, _createClass2.default)(AtomicElementEmptyView, [{
+    key: "renderReactDefaultElement",
+    value: function renderReactDefaultElement(container) {
+      var _ReactUtils$render = _react2.default.render(/*#__PURE__*/_react.default.createElement(_emptyComponent.default, {
+          container: container
+        }), this.el),
+        unmount = _ReactUtils$render.unmount;
+      this.unmount = unmount;
+    }
+  }, {
+    key: "onRender",
+    value: function onRender() {
+      this.$el.addClass(this.className);
+      this.renderReactDefaultElement();
+    }
+  }, {
+    key: "onDestroy",
+    value: function onDestroy() {
+      this.unmount();
+    }
+  }]);
+}(Marionette.ItemView);
+
+/***/ }),
+
+/***/ "../modules/atomic-widgets/assets/js/editor/create-atomic-element-base-view.js":
+/*!*************************************************************************************!*\
+  !*** ../modules/atomic-widgets/assets/js/editor/create-atomic-element-base-view.js ***!
+  \*************************************************************************************/
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
 "use strict";
@@ -487,7 +1055,7 @@ var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/inte
 Object.defineProperty(exports, "__esModule", ({
   value: true
 }));
-exports["default"] = createAtomicElementView;
+exports["default"] = createAtomicElementBaseView;
 var _defineProperty2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime/helpers/defineProperty */ "../node_modules/@babel/runtime/helpers/defineProperty.js"));
 var _toConsumableArray2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime/helpers/toConsumableArray */ "../node_modules/@babel/runtime/helpers/toConsumableArray.js"));
 var _slicedToArray2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime/helpers/slicedToArray */ "../node_modules/@babel/runtime/helpers/slicedToArray.js"));
@@ -496,7 +1064,7 @@ var _elementTypes = __webpack_require__(/*! elementor-editor/utils/element-types
 function ownKeys(e, r) { var t = Object.keys(e); if (Object.getOwnPropertySymbols) { var o = Object.getOwnPropertySymbols(e); r && (o = o.filter(function (r) { return Object.getOwnPropertyDescriptor(e, r).enumerable; })), t.push.apply(t, o); } return t; }
 function _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t = null != arguments[r] ? arguments[r] : {}; r % 2 ? ownKeys(Object(t), !0).forEach(function (r) { (0, _defineProperty2.default)(e, r, t[r]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(e, Object.getOwnPropertyDescriptors(t)) : ownKeys(Object(t)).forEach(function (r) { Object.defineProperty(e, r, Object.getOwnPropertyDescriptor(t, r)); }); } return e; }
 var BaseElementView = elementor.modules.elements.views.BaseElement;
-function createAtomicElementView(type) {
+function createAtomicElementBaseView(type) {
   var AtomicElementView = BaseElementView.extend({
     template: Marionette.TemplateCache.get("#tmpl-elementor-".concat(type, "-content")),
     emptyView: _atomicElementEmptyView.default,
@@ -506,7 +1074,8 @@ function createAtomicElementView(type) {
       }
       var tagControl = this.model.getSetting('tag');
       var tagControlValue = (tagControl === null || tagControl === void 0 ? void 0 : tagControl.value) || tagControl;
-      return tagControlValue || 'div';
+      var defaultTag = this.model.config.default_html_tag;
+      return tagControlValue || defaultTag;
     },
     getChildViewContainer: function getChildViewContainer() {
       this.childViewContainer = '';
@@ -534,11 +1103,12 @@ function createAtomicElementView(type) {
       return ui;
     },
     attributes: function attributes() {
-      var _this$model$getSettin, _this$model$getSettin2;
+      var _this$model$getSettin, _this$model$getSettin2, _this$model$config$in, _this$model;
       var attr = BaseElementView.prototype.attributes.apply(this);
       var local = {};
       var cssId = this.model.getSetting('_cssid');
       var customAttributes = (_this$model$getSettin = (_this$model$getSettin2 = this.model.getSetting('attributes')) === null || _this$model$getSettin2 === void 0 ? void 0 : _this$model$getSettin2.value) !== null && _this$model$getSettin !== void 0 ? _this$model$getSettin : [];
+      var initialAttributes = (_this$model$config$in = this === null || this === void 0 || (_this$model = this.model) === null || _this$model === void 0 || (_this$model = _this$model.config) === null || _this$model === void 0 ? void 0 : _this$model.initial_attributes) !== null && _this$model$config$in !== void 0 ? _this$model$config$in : {};
       if (cssId) {
         local.id = cssId.value;
       }
@@ -554,7 +1124,7 @@ function createAtomicElementView(type) {
           local[key] = value;
         }
       });
-      return _objectSpread(_objectSpread({}, attr), local);
+      return _objectSpread(_objectSpread(_objectSpread({}, attr), initialAttributes), local);
     },
     // TODO: Copied from `views/column.js`.
     attachElContent: function attachElContent() {
@@ -635,6 +1205,7 @@ function createAtomicElementView(type) {
     },
     onRender: function onRender() {
       var _this2 = this;
+      this.dispatchPreviewEvent('elementor/element/render');
       BaseElementView.prototype.onRender.apply(this, arguments);
 
       // Defer to wait for everything to render.
@@ -642,6 +1213,20 @@ function createAtomicElementView(type) {
         _this2.droppableInitialize();
         _this2.updateHandlesPosition();
       });
+    },
+    onDestroy: function onDestroy() {
+      BaseElementView.prototype.onDestroy.apply(this, arguments);
+      this.dispatchPreviewEvent('elementor/element/destroy');
+    },
+    dispatchPreviewEvent: function dispatchPreviewEvent(eventType) {
+      var _elementor;
+      (_elementor = elementor) === null || _elementor === void 0 || (_elementor = _elementor.$preview) === null || _elementor === void 0 || (_elementor = _elementor[0]) === null || _elementor === void 0 || _elementor.contentWindow.dispatchEvent(new CustomEvent(eventType, {
+        detail: {
+          id: this.model.get('id'),
+          type: this.model.get('elType'),
+          element: this.getDomElement().get(0)
+        }
+      }));
     },
     haveLink: function haveLink() {
       var _this$model$getSettin4;
@@ -700,6 +1285,7 @@ function createAtomicElementView(type) {
       return groups;
     },
     saveAsTemplate: function saveAsTemplate() {
+      elementor.templates.eventManager.sendNewSaveTemplateClickedEvent();
       $e.route('library/save-template', {
         model: this.model
       });
@@ -766,12 +1352,28 @@ function createAtomicElementView(type) {
             elements = Array.from((containerElement === null || containerElement === void 0 ? void 0 : containerElement.querySelectorAll(':scope > .elementor-element')) || []);
           var targetIndex = elements.indexOf(event.currentTarget);
           if (_this4.isPanelElement(draggedView, draggedElement)) {
+            var _elementorCommon;
             if (_this4.draggingOnBottomOrRightSide(side) && !_this4.emptyViewIsCurrentlyBeingDraggedOver()) {
               targetIndex++;
             }
             _this4.onDrop(event, {
               at: targetIndex
             });
+            if ((_elementorCommon = elementorCommon) !== null && _elementorCommon !== void 0 && (_elementorCommon = _elementorCommon.eventsManager) !== null && _elementorCommon !== void 0 && _elementorCommon.dispatchEvent) {
+              var selectedElement = elementor.channels.panelElements.request('element:selected');
+              if (selectedElement) {
+                var _selectedElement$mode, _selectedElement$mode2, _selectedElement$mode3, _selectedElement$mode4;
+                var elType = (_selectedElement$mode = (_selectedElement$mode2 = selectedElement.model) === null || _selectedElement$mode2 === void 0 ? void 0 : _selectedElement$mode2.get('elType')) !== null && _selectedElement$mode !== void 0 ? _selectedElement$mode : '';
+                var widgetType = (_selectedElement$mode3 = (_selectedElement$mode4 = selectedElement.model) === null || _selectedElement$mode4 === void 0 ? void 0 : _selectedElement$mode4.get('widgetType')) !== null && _selectedElement$mode3 !== void 0 ? _selectedElement$mode3 : '';
+                var elementName = 'widget' === elType ? widgetType : elType;
+                elementorCommon.eventsManager.dispatchEvent('add_element', {
+                  location: 'editor_panel',
+                  element_name: elementName,
+                  element_type: elType,
+                  widget_type: widgetType
+                });
+              }
+            }
             return;
           }
           if (_this4.isParentElement(draggedView.getContainer().id)) {
@@ -945,114 +1547,6 @@ function createAtomicElementView(type) {
   });
   return AtomicElementView;
 }
-
-/***/ }),
-
-/***/ "../modules/atomic-widgets/assets/js/editor/component.js":
-/*!***************************************************************!*\
-  !*** ../modules/atomic-widgets/assets/js/editor/component.js ***!
-  \***************************************************************/
-/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
-
-"use strict";
-
-
-var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault */ "../node_modules/@babel/runtime/helpers/interopRequireDefault.js");
-var _typeof = __webpack_require__(/*! @babel/runtime/helpers/typeof */ "../node_modules/@babel/runtime/helpers/typeof.js");
-Object.defineProperty(exports, "__esModule", ({
-  value: true
-}));
-exports["default"] = void 0;
-var _classCallCheck2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime/helpers/classCallCheck */ "../node_modules/@babel/runtime/helpers/classCallCheck.js"));
-var _createClass2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime/helpers/createClass */ "../node_modules/@babel/runtime/helpers/createClass.js"));
-var _possibleConstructorReturn2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime/helpers/possibleConstructorReturn */ "../node_modules/@babel/runtime/helpers/possibleConstructorReturn.js"));
-var _getPrototypeOf2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime/helpers/getPrototypeOf */ "../node_modules/@babel/runtime/helpers/getPrototypeOf.js"));
-var _inherits2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime/helpers/inherits */ "../node_modules/@babel/runtime/helpers/inherits.js"));
-var hooks = _interopRequireWildcard(__webpack_require__(/*! ./hooks */ "../modules/atomic-widgets/assets/js/editor/hooks/index.js"));
-function _interopRequireWildcard(e, t) { if ("function" == typeof WeakMap) var r = new WeakMap(), n = new WeakMap(); return (_interopRequireWildcard = function _interopRequireWildcard(e, t) { if (!t && e && e.__esModule) return e; var o, i, f = { __proto__: null, default: e }; if (null === e || "object" != _typeof(e) && "function" != typeof e) return f; if (o = t ? n : r) { if (o.has(e)) return o.get(e); o.set(e, f); } for (var _t in e) "default" !== _t && {}.hasOwnProperty.call(e, _t) && ((i = (o = Object.defineProperty) && Object.getOwnPropertyDescriptor(e, _t)) && (i.get || i.set) ? o(f, _t, i) : f[_t] = e[_t]); return f; })(e, t); }
-function _callSuper(t, o, e) { return o = (0, _getPrototypeOf2.default)(o), (0, _possibleConstructorReturn2.default)(t, _isNativeReflectConstruct() ? Reflect.construct(o, e || [], (0, _getPrototypeOf2.default)(t).constructor) : o.apply(t, e)); }
-function _isNativeReflectConstruct() { try { var t = !Boolean.prototype.valueOf.call(Reflect.construct(Boolean, [], function () {})); } catch (t) {} return (_isNativeReflectConstruct = function _isNativeReflectConstruct() { return !!t; })(); }
-var Component = exports["default"] = /*#__PURE__*/function (_$e$modules$Component) {
-  function Component() {
-    (0, _classCallCheck2.default)(this, Component);
-    return _callSuper(this, Component, arguments);
-  }
-  (0, _inherits2.default)(Component, _$e$modules$Component);
-  return (0, _createClass2.default)(Component, [{
-    key: "getNamespace",
-    value: function getNamespace() {
-      return 'document/atomic-widgets';
-    }
-  }, {
-    key: "defaultHooks",
-    value: function defaultHooks() {
-      return this.importHooks(hooks);
-    }
-  }]);
-}($e.modules.ComponentBase);
-
-/***/ }),
-
-/***/ "../modules/atomic-widgets/assets/js/editor/container/atomic-element-empty-view.js":
-/*!*****************************************************************************************!*\
-  !*** ../modules/atomic-widgets/assets/js/editor/container/atomic-element-empty-view.js ***!
-  \*****************************************************************************************/
-/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
-
-"use strict";
-
-
-var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault */ "../node_modules/@babel/runtime/helpers/interopRequireDefault.js");
-Object.defineProperty(exports, "__esModule", ({
-  value: true
-}));
-exports["default"] = void 0;
-var _react = _interopRequireDefault(__webpack_require__(/*! react */ "react"));
-var _classCallCheck2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime/helpers/classCallCheck */ "../node_modules/@babel/runtime/helpers/classCallCheck.js"));
-var _createClass2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime/helpers/createClass */ "../node_modules/@babel/runtime/helpers/createClass.js"));
-var _possibleConstructorReturn2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime/helpers/possibleConstructorReturn */ "../node_modules/@babel/runtime/helpers/possibleConstructorReturn.js"));
-var _getPrototypeOf2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime/helpers/getPrototypeOf */ "../node_modules/@babel/runtime/helpers/getPrototypeOf.js"));
-var _inherits2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime/helpers/inherits */ "../node_modules/@babel/runtime/helpers/inherits.js"));
-var _defineProperty2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime/helpers/defineProperty */ "../node_modules/@babel/runtime/helpers/defineProperty.js"));
-var _react2 = _interopRequireDefault(__webpack_require__(/*! elementor-utils/react */ "../assets/dev/js/utils/react.js"));
-var _emptyComponent = _interopRequireDefault(__webpack_require__(/*! elementor-elements/views/container/empty-component */ "../assets/dev/js/editor/elements/views/container/empty-component.js"));
-function _callSuper(t, o, e) { return o = (0, _getPrototypeOf2.default)(o), (0, _possibleConstructorReturn2.default)(t, _isNativeReflectConstruct() ? Reflect.construct(o, e || [], (0, _getPrototypeOf2.default)(t).constructor) : o.apply(t, e)); }
-function _isNativeReflectConstruct() { try { var t = !Boolean.prototype.valueOf.call(Reflect.construct(Boolean, [], function () {})); } catch (t) {} return (_isNativeReflectConstruct = function _isNativeReflectConstruct() { return !!t; })(); }
-var AtomicElementEmptyView = exports["default"] = /*#__PURE__*/function (_Marionette$ItemView) {
-  function AtomicElementEmptyView() {
-    var _this;
-    (0, _classCallCheck2.default)(this, AtomicElementEmptyView);
-    for (var _len = arguments.length, args = new Array(_len), _key = 0; _key < _len; _key++) {
-      args[_key] = arguments[_key];
-    }
-    _this = _callSuper(this, AtomicElementEmptyView, [].concat(args));
-    (0, _defineProperty2.default)(_this, "template", '<div></div>');
-    (0, _defineProperty2.default)(_this, "className", 'elementor-empty-view');
-    return _this;
-  }
-  (0, _inherits2.default)(AtomicElementEmptyView, _Marionette$ItemView);
-  return (0, _createClass2.default)(AtomicElementEmptyView, [{
-    key: "renderReactDefaultElement",
-    value: function renderReactDefaultElement(container) {
-      var _ReactUtils$render = _react2.default.render(/*#__PURE__*/_react.default.createElement(_emptyComponent.default, {
-          container: container
-        }), this.el),
-        unmount = _ReactUtils$render.unmount;
-      this.unmount = unmount;
-    }
-  }, {
-    key: "onRender",
-    value: function onRender() {
-      this.$el.addClass(this.className);
-      this.renderReactDefaultElement();
-    }
-  }, {
-    key: "onDestroy",
-    value: function onDestroy() {
-      this.unmount();
-    }
-  }]);
-}(Marionette.ItemView);
 
 /***/ }),
 
@@ -1922,50 +2416,24 @@ var __webpack_exports__ = {};
 
 
 var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault */ "../node_modules/@babel/runtime/helpers/interopRequireDefault.js");
-var _slicedToArray2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime/helpers/slicedToArray */ "../node_modules/@babel/runtime/helpers/slicedToArray.js"));
 var _classCallCheck2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime/helpers/classCallCheck */ "../node_modules/@babel/runtime/helpers/classCallCheck.js"));
 var _createClass2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime/helpers/createClass */ "../node_modules/@babel/runtime/helpers/createClass.js"));
 var _possibleConstructorReturn2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime/helpers/possibleConstructorReturn */ "../node_modules/@babel/runtime/helpers/possibleConstructorReturn.js"));
 var _getPrototypeOf2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime/helpers/getPrototypeOf */ "../node_modules/@babel/runtime/helpers/getPrototypeOf.js"));
 var _inherits2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime/helpers/inherits */ "../node_modules/@babel/runtime/helpers/inherits.js"));
 var _component = _interopRequireDefault(__webpack_require__(/*! ./component */ "../modules/atomic-widgets/assets/js/editor/component.js"));
-var _emptyComponent = _interopRequireDefault(__webpack_require__(/*! elementor-elements/views/container/empty-component */ "../assets/dev/js/editor/elements/views/container/empty-component.js"));
-var _atomicElementModel = _interopRequireDefault(__webpack_require__(/*! ./atomic-element-model */ "../modules/atomic-widgets/assets/js/editor/atomic-element-model.js"));
-var _atomicElementView = _interopRequireDefault(__webpack_require__(/*! ./atomic-element-view */ "../modules/atomic-widgets/assets/js/editor/atomic-element-view.js"));
+var _atomicElementBaseType = _interopRequireDefault(__webpack_require__(/*! ./atomic-element-base-type */ "../modules/atomic-widgets/assets/js/editor/atomic-element-base-type.js"));
+var _createAtomicElementBaseView = _interopRequireDefault(__webpack_require__(/*! ./create-atomic-element-base-view */ "../modules/atomic-widgets/assets/js/editor/create-atomic-element-base-view.js"));
+var _atomicElementBaseModel = _interopRequireDefault(__webpack_require__(/*! ./atomic-element-base-model */ "../modules/atomic-widgets/assets/js/editor/atomic-element-base-model.js"));
+var _createDivBlockType = _interopRequireDefault(__webpack_require__(/*! ./atomic-element-types/create-div-block-type */ "../modules/atomic-widgets/assets/js/editor/atomic-element-types/create-div-block-type.js"));
+var _createFlexboxType = _interopRequireDefault(__webpack_require__(/*! ./atomic-element-types/create-flexbox-type */ "../modules/atomic-widgets/assets/js/editor/atomic-element-types/create-flexbox-type.js"));
+var _createAtomicTabsType = _interopRequireDefault(__webpack_require__(/*! ./atomic-element-types/atomic-tabs/create-atomic-tabs-type */ "../modules/atomic-widgets/assets/js/editor/atomic-element-types/atomic-tabs/create-atomic-tabs-type.js"));
+var _createAtomicTabPanelType = _interopRequireDefault(__webpack_require__(/*! ./atomic-element-types/atomic-tab-panel/create-atomic-tab-panel-type */ "../modules/atomic-widgets/assets/js/editor/atomic-element-types/atomic-tab-panel/create-atomic-tab-panel-type.js"));
+var _createAtomicTabType = _interopRequireDefault(__webpack_require__(/*! ./atomic-element-types/atomic-tab/create-atomic-tab-type */ "../modules/atomic-widgets/assets/js/editor/atomic-element-types/atomic-tab/create-atomic-tab-type.js"));
+var _createAtomicTabsListType = _interopRequireDefault(__webpack_require__(/*! ./atomic-element-types/create-atomic-tabs-list-type */ "../modules/atomic-widgets/assets/js/editor/atomic-element-types/create-atomic-tabs-list-type.js"));
+var _createAtomicTabsContentType = _interopRequireDefault(__webpack_require__(/*! ./atomic-element-types/create-atomic-tabs-content-type */ "../modules/atomic-widgets/assets/js/editor/atomic-element-types/create-atomic-tabs-content-type.js"));
 function _callSuper(t, o, e) { return o = (0, _getPrototypeOf2.default)(o), (0, _possibleConstructorReturn2.default)(t, _isNativeReflectConstruct() ? Reflect.construct(o, e || [], (0, _getPrototypeOf2.default)(t).constructor) : o.apply(t, e)); }
 function _isNativeReflectConstruct() { try { var t = !Boolean.prototype.valueOf.call(Reflect.construct(Boolean, [], function () {})); } catch (t) {} return (_isNativeReflectConstruct = function _isNativeReflectConstruct() { return !!t; })(); }
-var DynamicAtomicElementType = /*#__PURE__*/function (_elementor$modules$el) {
-  function DynamicAtomicElementType(elementType, view) {
-    var _this;
-    (0, _classCallCheck2.default)(this, DynamicAtomicElementType);
-    _this = _callSuper(this, DynamicAtomicElementType);
-    _this.elementType = elementType;
-    _this.view = view;
-    return _this;
-  }
-  (0, _inherits2.default)(DynamicAtomicElementType, _elementor$modules$el);
-  return (0, _createClass2.default)(DynamicAtomicElementType, [{
-    key: "getType",
-    value: function getType() {
-      return this.elementType;
-    }
-  }, {
-    key: "getView",
-    value: function getView() {
-      return this.view;
-    }
-  }, {
-    key: "getEmptyView",
-    value: function getEmptyView() {
-      return _emptyComponent.default;
-    }
-  }, {
-    key: "getModel",
-    value: function getModel() {
-      return _atomicElementModel.default;
-    }
-  }]);
-}(elementor.modules.elements.types.Base);
 var Module = /*#__PURE__*/function (_elementorModules$edi) {
   function Module() {
     (0, _classCallCheck2.default)(this, Module);
@@ -1976,27 +2444,29 @@ var Module = /*#__PURE__*/function (_elementorModules$edi) {
     key: "onInit",
     value: function onInit() {
       $e.components.register(new _component.default());
-      this.registerAtomicWidgetTypes();
+      this.exposeAtomicElementClasses();
+      this.registerAtomicElements();
     }
   }, {
-    key: "registerAtomicWidgetTypes",
-    value: function registerAtomicWidgetTypes() {
-      this.registerDynamicAtomicTypes();
+    key: "exposeAtomicElementClasses",
+    value: function exposeAtomicElementClasses() {
+      elementor.modules.elements.types.AtomicElementBase = _atomicElementBaseType.default;
+      elementor.modules.elements.views.createAtomicElementBase = _createAtomicElementBaseView.default;
+      elementor.modules.elements.models.AtomicElementBase = _atomicElementBaseModel.default;
     }
   }, {
-    key: "registerDynamicAtomicTypes",
-    value: function registerDynamicAtomicTypes() {
-      Object.entries(elementor.config.elements).filter(function (_ref) {
-        var _ref2 = (0, _slicedToArray2.default)(_ref, 2),
-          element = _ref2[1];
-        return !!(element !== null && element !== void 0 && element.atomic_props_schema);
-      }).forEach(function (_ref3) {
-        var _ref4 = (0, _slicedToArray2.default)(_ref3, 1),
-          elementType = _ref4[0];
-        var view = (0, _atomicElementView.default)(elementType);
-        var dynamicType = new DynamicAtomicElementType(elementType, view);
-        elementor.elementsManager.registerElementType(dynamicType);
-      });
+    key: "registerAtomicElements",
+    value: function registerAtomicElements() {
+      var nestedElementsExperiment = 'e_nested_elements';
+      elementor.elementsManager.registerElementType((0, _createDivBlockType.default)());
+      elementor.elementsManager.registerElementType((0, _createFlexboxType.default)());
+      if (elementorCommon.config.experimentalFeatures[nestedElementsExperiment]) {
+        elementor.elementsManager.registerElementType((0, _createAtomicTabsType.default)());
+        elementor.elementsManager.registerElementType((0, _createAtomicTabPanelType.default)());
+        elementor.elementsManager.registerElementType((0, _createAtomicTabType.default)());
+        elementor.elementsManager.registerElementType((0, _createAtomicTabsListType.default)());
+        elementor.elementsManager.registerElementType((0, _createAtomicTabsContentType.default)());
+      }
     }
   }]);
 }(elementorModules.editor.utils.Module);

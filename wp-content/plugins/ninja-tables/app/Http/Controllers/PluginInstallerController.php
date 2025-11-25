@@ -5,7 +5,7 @@ namespace NinjaTables\App\Http\Controllers;
 use NinjaTables\App\Services\AjaxInstaller;
 use NinjaTables\App\Services\PluginInstaller;
 use NinjaTables\App\Services\BackgroundInstaller;
-use NinjaTables\Framework\Request\Request;
+use NinjaTables\Framework\Http\Request\Request;
 
 class PluginInstallerController extends Controller
 {
@@ -14,7 +14,7 @@ class PluginInstallerController extends Controller
         if ( ! current_user_can('install_plugins')) {
             return $this->sendError([
                 'data' => [
-                    'message' => __('You do not have permission to install a plugin, Please ask your administrator to install WP Fluent Form')
+                    'message' => __('You do not have permission to install a plugin, Please ask your administrator to install WP Fluent Form', 'ninja-tables')
                 ]
             ], 423);
         }
@@ -22,7 +22,7 @@ class PluginInstallerController extends Controller
         if (is_multisite()) {
             return $this->sendError([
                 'data' => [
-                    'message' => __('You are using wp multisite environment so please install WP FluentForm manually')
+                    'message' => __('You are using wp multisite environment so please install WP FluentForm manually', 'ninja-tables')
                 ]
             ], 423);
         }
@@ -33,7 +33,7 @@ class PluginInstallerController extends Controller
         if ($status) {
             return $this->sendSuccess([
                 'data' => [
-                    'message'      => __('WP Fluent Form successfully installed and activated, You are redirecting to WP Fluent Form Now'),
+                    'message'      => __('WP Fluent Form successfully installed and activated, You are redirecting to WP Fluent Form Now', 'ninja-tables'),
                     'redirect_url' => admin_url('admin.php?page=fluent_forms')
                 ]
             ], 200);
@@ -41,7 +41,7 @@ class PluginInstallerController extends Controller
 
         return $this->sendError([
             'data' => [
-                'message' => __('There was an error to install the plugin. Please install the plugin manually.')
+                'message' => __('There was an error to install the plugin. Please install the plugin manually.', 'ninja-tables')
             ]
         ], 423);
     }

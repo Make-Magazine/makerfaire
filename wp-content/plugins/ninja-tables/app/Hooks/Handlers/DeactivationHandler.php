@@ -45,17 +45,17 @@ class DeactivationHandler
     {
         $ipaddress = '';
         if (isset($_SERVER['HTTP_CLIENT_IP'])) {
-            $ipaddress = sanitize_text_field($_SERVER['HTTP_CLIENT_IP']);
+            $ipaddress = sanitize_text_field(wp_unslash($_SERVER['HTTP_CLIENT_IP']));
         } elseif (isset($_SERVER['HTTP_X_FORWARDED_FOR'])) {
-            $ipaddress = sanitize_text_field($_SERVER['HTTP_X_FORWARDED_FOR']);
+            $ipaddress = sanitize_text_field(wp_unslash($_SERVER['HTTP_X_FORWARDED_FOR']));
         } elseif (isset($_SERVER['HTTP_X_FORWARDED'])) {
-            $ipaddress = sanitize_text_field($_SERVER['HTTP_X_FORWARDED']);
+            $ipaddress = sanitize_text_field(wp_unslash($_SERVER['HTTP_X_FORWARDED']));
         } elseif (isset($_SERVER['HTTP_FORWARDED_FOR'])) {
-            $ipaddress = sanitize_text_field($_SERVER['HTTP_FORWARDED_FOR']);
+            $ipaddress = sanitize_text_field(wp_unslash($_SERVER['HTTP_FORWARDED_FOR']));
         } elseif (isset($_SERVER['HTTP_FORWARDED'])) {
-            $ipaddress = sanitize_text_field($_SERVER['HTTP_FORWARDED']);
+            $ipaddress = sanitize_text_field(wp_unslash($_SERVER['HTTP_FORWARDED']));
         } elseif (isset($_SERVER['REMOTE_ADDR'])) {
-            $ipaddress = sanitize_text_field($_SERVER['REMOTE_ADDR']);
+            $ipaddress = sanitize_text_field(wp_unslash($_SERVER['REMOTE_ADDR']));
         } else {
             $ipaddress = 'UNKNOWN';
         }
@@ -81,8 +81,8 @@ class DeactivationHandler
             return;
         }
 
-        $reasons = $this->getReasons();
-        $slug    = $this->slug;
+        $ninja_tables_reasons = $this->getReasons();
+        $ninja_tables_slug    = $this->slug;
         include NINJA_TABLES_DIR_PATH . 'app/Views/admin/deactivate-form.php';
     }
 
@@ -127,7 +127,7 @@ class DeactivationHandler
             return;
         }
 
-        $requestData    = ninja_tables_sanitize_array($_REQUEST);
+        $requestData    = ninja_tables_sanitize_array($_REQUEST); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
         $reason         = Arr::get($requestData, 'reason', 'other');
         $reason_message = Arr::get($requestData, 'custom_message', '');
 

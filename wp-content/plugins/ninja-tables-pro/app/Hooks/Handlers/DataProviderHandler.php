@@ -5,6 +5,7 @@ namespace NinjaTablesPro\App\Hooks\Handlers;
 use NinjaTablesPro\App\Modules\DataProviders\CsvProvider;
 use NinjaTablesPro\App\Modules\DataProviders\RawSqlProvider;
 use NinjaTablesPro\App\Modules\DataProviders\WoocommercePostsProvider;
+use NinjaTablesPro\App\Modules\DataProviders\WoocommerceReviewsProvider;
 use NinjaTablesPro\App\Modules\DataProviders\WPPostsProvider;
 
 
@@ -14,6 +15,7 @@ class DataProviderHandler
     {
         (new WPPostsProvider())->boot();
         (new WoocommercePostsProvider())->boot();
+        (new WoocommerceReviewsProvider())->boot();
         (new CsvProvider())->boot();
         (new RawSqlProvider())->boot();
     }

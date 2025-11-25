@@ -3,14 +3,14 @@
 namespace NinjaTables\App\Http\Controllers;
 
 use NinjaTables\App\Models\Post;
-use NinjaTables\Framework\Request\Request;
+use NinjaTables\Framework\Http\Request\Request;
 use NinjaTables\Framework\Support\Arr;
 
 class ToolsController extends Controller
 {
     public function getDefaultSettings(Request $request)
     {
-        $settings = getDefaultNinjaTableSettings();
+        $settings = ninjaTablesGetDefaultSettings();
 
         return $this->sendSuccess([
             'data' => [

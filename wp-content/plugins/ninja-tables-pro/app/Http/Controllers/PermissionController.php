@@ -20,14 +20,14 @@ class PermissionController extends Controller
             update_option('_ninja_tables_sql_permission', $sanitized_sql_permission, false);
 
             return $this->json([
-                'message' => __('Successfully saved the role(s).', 'ninja-tables')
+                'message' => __('Successfully saved the role(s).', 'ninja-tables-pro')
             ]);
 
         } else {
 
             return $this->sendError([
                 'message' => __('Sorry, You can not update permissions. Only administrators can update permissions',
-                    'ninja-tables')
+                    'ninja-tables-pro')
             ], 423);
 
         }

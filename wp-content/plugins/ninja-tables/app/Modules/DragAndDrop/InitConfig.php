@@ -101,7 +101,7 @@ class InitConfig
     public function tableRawStyling()
     {
         return [
-            'trId'            => rand(1000000, 9999999),
+            'trId'            => wp_rand(1000000, 9999999),
             'backgroundColor' => '',
             'rowHeight'       => 50
         ];
@@ -110,7 +110,7 @@ class InitConfig
     public function tableColumnStyling()
     {
         return [
-            'tdId'              => rand(10000000, 99999999),
+            'tdId'              => wp_rand(10000000, 99999999),
             'backgroundColor'   => '',
             'columnWidth'       => 150,
             'emptyCell'         => '',
@@ -150,7 +150,7 @@ class InitConfig
                 'style'   => $this->tableColumnStyling(),
                 'columns' => [
                     [
-                        'id'   => rand(100000000, 999999999),
+                        'id'   => wp_rand(100000000, 999999999),
                         'data' => $this->getDefaultPlaceholder($defaultText)
                     ]
                 ]

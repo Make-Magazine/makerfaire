@@ -59,7 +59,7 @@ use WP_Rocket\Engine\Media\Fonts\ServiceProvider as MediaFontsServiceProvider;
 use WP_Rocket\Engine\Media\PreloadFonts\ServiceProvider as PreloadFontsServiceProvider;
 use WP_Rocket\Engine\Media\PreconnectExternalDomains\ServiceProvider as PreconnectExternalDomainsServiceProvider;
 use WP_Rocket\Engine\Tracking\ServiceProvider as TrackingServiceProvider;
-use WP_Rocket\Engine\Admin\PerformanceMonitoring\ServiceProvider as PerformanceMonitoringServiceProvider;
+use WP_Rocket\Engine\Admin\RocketInsights\ServiceProvider as RocketInsightsServiceProvider;
 
 /**
  * Plugin Manager.
@@ -205,7 +205,7 @@ class Plugin {
 		$this->container->addServiceProvider( new OptimizationAdminServiceProvider() );
 		$this->container->addServiceProvider( new DomainChangeServiceProvider() );
 		$this->container->addServiceProvider( new AdminLazyloadCSSServiceProvider() );
-		$this->container->addServiceProvider( new PerformanceMonitoringServiceProvider() );
+		$this->container->addServiceProvider( new RocketInsightsServiceProvider() );
 
 		$subscribers = [
 			'beacon',
@@ -233,17 +233,9 @@ class Plugin {
 			'preconnect_external_domains_admin_subscriber',
 			'media_fonts_admin_subscriber',
 			'preload_fonts_admin_subscriber',
-			'pm_subscriber',
-			'pm_settings_subscriber',
+			'ri_subscriber',
+			'ri_settings_subscriber',
 		];
-
-		// Only add tracking service provider if cURL extension is loaded.
-		// MixPanel (used by TrackingServiceProvider) requires cURL and will throw a fatal error if not available.
-		// This prevents crashes when WP Rocket is installed on servers without cURL support.
-		if ( function_exists( 'curl_init' ) ) {
-			$this->container->addServiceProvider( new TrackingServiceProvider() );
-			$subscribers[] = 'tracking_subscriber';
-		}
 
 		return $subscribers;
 	}
@@ -316,7 +308,8 @@ class Plugin {
 		$this->container->addServiceProvider( new PreloadFontsServiceProvider() );
 		$this->container->addServiceProvider( new ThirdPartyServiceProvider() );
 		$this->container->addServiceProvider( new PreconnectExternalDomainsServiceProvider() );
-		$this->container->addServiceProvider( new PerformanceMonitoringServiceProvider() );
+		$this->container->addServiceProvider( new RocketInsightsServiceProvider() );
+		$this->container->addServiceProvider( new TrackingServiceProvider() );
 
 		$common_subscribers = [
 			'license_subscriber',
@@ -417,9 +410,11 @@ class Plugin {
 			'preload_fonts_frontend_subscriber',
 			'preload_fonts_admin_subscriber',
 			'preconnect_frontend_subscriber',
-			'pm_subscriber',
-			'pm_url_limit_subscriber',
+			'ri_subscriber',
+			'ri_url_limit_subscriber',
+			'ri_post_listing_subscriber',
 			'post_subscriber',
+			'tracking_subscriber',
 		];
 
 		$host_type = HostResolver::get_host_service();

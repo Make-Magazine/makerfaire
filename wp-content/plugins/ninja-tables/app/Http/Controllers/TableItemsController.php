@@ -3,7 +3,7 @@
 namespace NinjaTables\App\Http\Controllers;
 
 use NinjaTables\App\Models\NinjaTableItem;
-use NinjaTables\Framework\Request\Request;
+use NinjaTables\Framework\Http\Request\Request;
 use NinjaTables\Framework\Support\Arr;
 use NinjaTables\Framework\Support\Sanitizer;
 
@@ -88,8 +88,8 @@ class TableItemsController extends Controller
             $data = ninja_tables_sanitize_array($request->all());
         }
 
-        $columnKey   = Sanitizer::sanitizeTextField($data['column_key']);
-        $columnValue = wp_unslash($data['column_value']);
+        $columnKey   = Sanitizer::sanitizeTextField(Arr::get($data, 'column_key'));
+        $columnValue = Sanitizer::sanitizeTextField(Arr::get($data, 'column_value'));
 
         NinjaTableItem::editSingleCell($rowId, $row, $columnKey, $columnValue);
 

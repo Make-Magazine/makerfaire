@@ -11,6 +11,7 @@ use Elementor\Modules\ContentSanitizer\Interfaces\Sanitizable;
 use Elementor\Core\Utils\Hints;
 use Elementor\Core\Admin\Admin_Notices;
 use Elementor\Modules\Promotions\Controls\Promotion_Control;
+use Elementor\User;
 
 /**
  * Elementor heading widget.
@@ -461,6 +462,10 @@ class Widget_Heading extends Widget_Base implements Sanitizable {
 		if ( ! Hints::should_display_hint( $notice_id ) ) {
 			return;
 		}
+
+		if ( ! User::has_plugin_notice_been_displayed_for_required_time( 'image_optimization', WEEK_IN_SECONDS ) ) {
+			return;
+		}
 		$notice_content = esc_html__( 'Make sure your page is structured with accessibility in mind. Ally helps detect and fix common issues across your site.', 'elementor' );
 
 		$campaign_data = [
@@ -475,7 +480,7 @@ class Widget_Heading extends Widget_Base implements Sanitizable {
 
 		if ( Hints::is_plugin_installed( $plugin_slug ) && ! Hints::is_plugin_active( $plugin_slug ) ) {
 			$button_text = __( 'Activate Plugin', 'elementor' );
-		} else if ( Hints::is_plugin_active( $plugin_slug ) && empty( get_option( 'ea11y_access_token' ) ) ) {
+		} elseif ( Hints::is_plugin_active( $plugin_slug ) && empty( get_option( 'ea11y_access_token' ) ) ) {
 			$button_text = __( 'Connect to Ally', 'elementor' );
 			$action_url = admin_url( 'admin.php?page=accessibility-settings' );
 		}

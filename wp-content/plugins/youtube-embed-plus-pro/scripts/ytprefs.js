@@ -1205,7 +1205,10 @@
                                 }
                             }
                             $(iframe).removeClass('epyt-facade');
-                            $(iframe).attr('allowfullscreen', '').attr('title', $facade.find('img').attr('alt')).attr('allow', 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture');
+                            $(iframe).attr('allowfullscreen', '')
+                            .attr('title', $facade.find('img').attr('alt'))
+                            .attr('allow', 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share')
+                            .attr('referrerpolicy', 'strict-origin-when-cross-origin');
 
                             window._EPADashboard_.loadYTAPI();
                             $facade.replaceWith(iframe);

@@ -68,9 +68,10 @@ __webpack_require__.r(__webpack_exports__);
 
 
 function init() {
-  _elementor_editor_app_bar__WEBPACK_IMPORTED_MODULE_0__.toolsMenu.registerToggleAction({
+  _elementor_editor_app_bar__WEBPACK_IMPORTED_MODULE_0__.mainMenu.registerAction({
     id: 'toggle-notes',
-    priority: 4,
+    group: 'default',
+    priority: 20,
     useProps: _hooks_use_notes_action_props__WEBPACK_IMPORTED_MODULE_1__["default"]
   });
 }

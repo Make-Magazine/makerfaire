@@ -1,13 +1,13 @@
 <?php
 
-namespace wpai_acf_add_on\fields\acf\repeater;
+namespace wpai_acf_add_on_pro\fields\acf\repeater;
 
-use wpai_acf_add_on\ACFService;
-use wpai_acf_add_on\fields\Field;
+use pmai_acf_add_on\ACFService;
+use pmai_acf_add_on\fields\Field;
 
 /**
  * Class FieldRepeater
- * @package wpai_acf_add_on\fields\acf\repeater
+ * @package pmai_acf_add_on\fields\acf\repeater
  */
 class FieldRepeater extends Field {
 
@@ -278,7 +278,7 @@ class FieldRepeater extends Field {
             }
         }
 
-	    if ( apply_filters( 'pmxi_remove_old_acf_repeater_rows', true, $this->getPostID(), $this->getFieldName(), $countRows ) ) {
+	    if ( apply_filters( 'pmxi_remove_old_acf_repeater_rows', true, $this->getPostID(), $this->getFieldName(), $countRows) && ( ! in_array( $this->getImportType(), ['import_users','shop_customer','taxonomies']))) {
 
 		    // Remove old repeater rows from previous runs as they may not be removed when using some import settings.
 		    global $wpdb;
@@ -286,17 +286,27 @@ class FieldRepeater extends Field {
 		    $wpdb->query(
 			    $wpdb->prepare(
 				    "DELETE FROM {$wpdb->postmeta}
-        					WHERE post_id = %d
-        					AND (
-            					(meta_key LIKE %s AND CAST(SUBSTRING_INDEX(SUBSTRING(meta_key, CHAR_LENGTH(%s) + 2), '_', 1) AS UNSIGNED) >= %d)
-            				OR
-            					(meta_key LIKE %s AND CAST(SUBSTRING_INDEX(SUBSTRING(meta_key, CHAR_LENGTH(%s) + 3), '_', 1) AS UNSIGNED) >= %d)
-        					)",
+        WHERE post_id = %d
+        AND (
+            (
+                meta_key LIKE %s
+                AND SUBSTRING_INDEX(SUBSTRING(meta_key, CHAR_LENGTH(%s) + 2), '_', 1) REGEXP '^[0-9]+$'
+                AND CAST(SUBSTRING_INDEX(SUBSTRING(meta_key, CHAR_LENGTH(%s) + 2), '_', 1) AS UNSIGNED) >= %d
+            )
+            OR
+            (
+                meta_key LIKE %s
+                AND SUBSTRING_INDEX(SUBSTRING(meta_key, CHAR_LENGTH(%s) + 3), '_', 1) REGEXP '^[0-9]+$'
+                AND CAST(SUBSTRING_INDEX(SUBSTRING(meta_key, CHAR_LENGTH(%s) + 3), '_', 1) AS UNSIGNED) >= %d
+            )
+        )",
 				    $this->getPostID(),
-				    $this->getFieldName() . '_%',
+				    str_replace('_','\\_', $this->getFieldName() . '_%'),
+				    $this->getFieldName(),
 				    $this->getFieldName(),
 				    $countRows,
-				    '_' . $this->getFieldName() . '_%',
+				    str_replace('_','\\_','_' . $this->getFieldName() . '_%'),
+				    $this->getFieldName(),
 				    $this->getFieldName(),
 				    $countRows
 			    )

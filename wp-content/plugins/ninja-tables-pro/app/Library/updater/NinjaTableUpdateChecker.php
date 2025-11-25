@@ -106,7 +106,8 @@ class NinjaTableUpdateChecker
                         }
                         if (function_exists('ninjaTablesIsNotice') && ninjaTablesIsNotice('licence_activation')) {
                             echo '<div style="display: flex; justify-content: space-between;align-items: center;" class="error error_notice' . $this->get_var('option_group') . '"><p>' .
-                                 sprintf(__('The %s license needs to be activated. %sActivate Now%s', 'ninja-tables-pro'),
+                                 // translators: %1$s is the plugin title, %2$s is opening link tag, %3$s is closing link tag
+                                 sprintf(__('The %1$s license needs to be activated. %2$sActivate Now%3$s', 'ninja-tables-pro'),
                                      $this->get_var('plugin_title'), '<a href="' . $this->get_var('activate_url') . '">',
                                      '</a>') .
                                  '</p>
@@ -124,7 +125,8 @@ class NinjaTableUpdateChecker
                     }
                     if (function_exists('ninjaTablesIsNotice') && ninjaTablesIsNotice('licence_activation')) {
                         echo '<div style="display: flex; justify-content: space-between;align-items: center;" class="error error_notice' . $this->get_var('option_group') . '"><p>' .
-                             sprintf(__('The %s license needs to be activated. %sActivate Now%s', 'ninja-tables-pro'),
+                             // translators: %1$s is the plugin title, %2$s is opening link tag, %3$s is closing link tag
+                             sprintf(__('The %1$s license needs to be activated. %2$sActivate Now%3$s', 'ninja-tables-pro'),
                                  $this->get_var('plugin_title'), '<a href="' . $this->get_var('activate_url') . '">',
                                  '</a>') .
                              '</p>

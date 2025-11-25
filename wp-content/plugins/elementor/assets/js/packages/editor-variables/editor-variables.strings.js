@@ -7,17 +7,33 @@ __( 'Names have to include at least one non-special character.', 'elementor' );
 __( 'Keep names up to 50 characters.', 'elementor' );
 __( 'This variable name already exists. Please choose a unique name.', 'elementor' );
 __( 'There was a glitch. Try saving your variable again.', 'elementor' );
+__( 'We found %1$d duplicated %2$s.', 'elementor' );
+__( 'There was a glitch.', 'elementor' );
+__( 'Take me there', 'elementor' );
+__( 'Please rename the variables.', 'elementor' );
+__( 'Try saving your variables again.', 'elementor' );
 __( 'Missing variable', 'elementor' );
 __( 'Variables', 'elementor' );
+__( 'Create variable', 'elementor' );
+__( 'Variables Manager', 'elementor' );
 /* translators: %s: Variable Type. */
 __( 'Create your first %s variable', 'elementor' );
 __( 'Variables', 'elementor' );
 __( 'Search', 'elementor' );
+__(
+						'Variables are saved attributes that you can apply anywhere on your site.',
+						'elementor'
+					);
+__( 'No compatible variables', 'elementor' );
+__(
+						'Looks like none of your variables work with this control. Create a new variable to use it here.',
+						'elementor'
+					);
 __( 'Restore variable', 'elementor' );
 __( 'Name', 'elementor' );
 __( 'Value', 'elementor' );
 __( 'Restore', 'elementor' );
-__( 'Delete', 'elementor' );
+__( 'Delete variable', 'elementor' );
 __( 'Edit variable', 'elementor' );
 __( 'Go Back', 'elementor' );
 __( 'Name', 'elementor' );
@@ -31,17 +47,19 @@ __( 'Create', 'elementor' );
 __( 'Name', 'elementor' );
 __( 'Value', 'elementor' );
 __( 'Delete', 'elementor' );
-__( 'Variable Manager', 'elementor' );
-__( 'Save changes', 'elementor' );
-__( 'Something went wrong', 'elementor' );
+__( 'Variables Manager', 'elementor' );
+__( 'Search', 'elementor' );
 __( 'Create your first variable', 'elementor' );
 __(
-							'Variables are saved attributes that you can apply anywhere on your site.',
-							'elementor'
-						);
-__( 'Create a variable', 'elementor' );
-__( 'There are no variables', 'elementor' );
-__( 'With your current role, you can only connect and detach variables.', 'elementor' );
+								'Variables are saved attributes that you can apply anywhere on your site.',
+								'elementor'
+							);
+__( 'Save changes', 'elementor' );
+__( 'You have unsaved changes', 'elementor' );
+__( 'To avoid losing your updates, save your changes before leaving.', 'elementor' );
+__( 'Discard', 'elementor' );
+__( 'Save', 'elementor' );
+__( 'Add variable', 'elementor' );
 __( 'Sorry, nothing matched', 'elementor' );
 __( 'Try something else.', 'elementor' );
 __( 'Clear & try again', 'elementor' );
@@ -58,7 +76,10 @@ __(
 	);
 __( 'Clear', 'elementor' );
 __( 'Select variable', 'elementor' );
-__( 'Edit', 'elementor' );
+__( 'Edit variable', 'elementor' );
+__( 'Create a variable', 'elementor' );
+__( 'There are no variables', 'elementor' );
+__( 'With your current role, you can only connect and detach variables.', 'elementor' );
 __( 'Changes to variables go live right away.', 'elementor' );
 __(
 						"Don't worry - all other changes you make will wait until you publish your site.",
@@ -80,8 +101,8 @@ __( 'All elements using', 'elementor' );
 __( 'will keep their current values, but the variable itself will be removed.', 'elementor' );
 __( 'Not now', 'elementor' );
 __( 'Delete', 'elementor' );
-__( 'Font Family', 'elementor' );
+__( 'Font family', 'elementor' );
 __( 'Missing variable', 'elementor' );
 __( 'changed', 'elementor' );
 __( 'deleted', 'elementor' );
-__( 'Unlink', 'elementor' );
+__( 'Unlink variable', 'elementor' );

@@ -1,4 +1,4 @@
-/*! elementor-pro - v3.32.0 - 29-09-2025 */
+/*! elementor-pro - v3.33.0 - 11-11-2025 */
 (self["webpackChunkelementor_pro"] = self["webpackChunkelementor_pro"] || []).push([["frontend"],{
 
 /***/ "../assets/dev/js/frontend/frontend.js":
@@ -50,8 +50,8 @@ class ElementorProFrontend extends elementorModules.ViewModule {
 
     // TODO: BC Since 2.9.0
     this.modules.linkActions = {
-      addAction: function () {
-        elementorFrontend.utils.urlActions.addAction(...arguments);
+      addAction: (...args) => {
+        elementorFrontend.utils.urlActions.addAction(...args);
       }
     };
   }
@@ -118,8 +118,7 @@ class Controls {
    * @param {string} controlSubKey   A specific property of the control object.
    * @return {*} Control Value
    */
-  getResponsiveControlValue(controlSettings, controlKey) {
-    let controlSubKey = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : '';
+  getResponsiveControlValue(controlSettings, controlKey, controlSubKey = '') {
     const currentDeviceMode = elementorFrontend.getCurrentDeviceMode(),
       controlValueDesktop = this.getControlValue(controlSettings, controlKey, controlSubKey);
 
@@ -313,8 +312,8 @@ Object.defineProperty(exports, "__esModule", ({
 exports["default"] = void 0;
 var _motionFx = _interopRequireDefault(__webpack_require__(/*! ./motion-fx/motion-fx */ "../modules/motion-fx/assets/js/frontend/motion-fx/motion-fx.js"));
 class _default extends elementorModules.frontend.handlers.Base {
-  __construct() {
-    super.__construct(...arguments);
+  __construct(...args) {
+    super.__construct(...args);
     this.toggle = elementorFrontend.debounce(this.toggle, 200);
   }
   getDefaultSettings() {
@@ -732,7 +731,7 @@ class _default extends elementorModules.Module {
     });
     return value;
   }
-  runAction(actionName, actionData, passedPercents) {
+  runAction(actionName, actionData, passedPercents, ...args) {
     if (actionData.affectedRange) {
       if (actionData.affectedRange.start > passedPercents) {
         passedPercents = actionData.affectedRange.start;
@@ -740,9 +739,6 @@ class _default extends elementorModules.Module {
       if (actionData.affectedRange.end < passedPercents) {
         passedPercents = actionData.affectedRange.end;
       }
-    }
-    for (var _len = arguments.length, args = new Array(_len > 3 ? _len - 3 : 0), _key = 3; _key < _len; _key++) {
-      args[_key - 3] = arguments[_key];
     }
     this[actionName](actionData, passedPercents, ...args);
   }
@@ -804,9 +800,9 @@ class _default extends elementorModules.ViewModule {
     this.run();
     this.animationFrameRequest = requestAnimationFrame(this.onInsideViewport);
   };
-  runCallback() {
+  runCallback(...args) {
     const callback = this.getSettings('callback');
-    callback(...arguments);
+    callback(...args);
   }
   removeIntersectionObserver() {
     if (this.intersectionObserver) {
@@ -1059,18 +1055,14 @@ class _default extends elementorModules.ViewModule {
     this.elements.$parent.removeClass(settings.classes.perspective);
   }
   runInteractions() {
-    var _this = this;
     const settings = this.getSettings();
     this.actions.setCSSTransformVariables(settings.elementSettings);
     this.prepareSpecialActions();
     jQuery.each(settings.interactions, (interactionName, actions) => {
       this.interactions[interactionName] = new this.interactionsTypes[interactionName]({
         motionFX: this,
-        callback: function () {
-          for (var _len = arguments.length, args = new Array(_len), _key = 0; _key < _len; _key++) {
-            args[_key] = arguments[_key];
-          }
-          jQuery.each(actions, (actionName, actionData) => _this.actions.runAction(actionName, actionData, ...args));
+        callback: (...args) => {
+          jQuery.each(actions, (actionName, actionData) => this.actions.runAction(actionName, actionData, ...args));
         }
       });
       this.interactions[interactionName].run();
@@ -1393,10 +1385,9 @@ class _default extends elementorModules.Module {
   constructor() {
     super();
     elementorFrontend.hooks.addAction('frontend/element_ready/video-playlist.default', $element => {
-      __webpack_require__.e(/*! import() | video-playlist */ "video-playlist").then(__webpack_require__.bind(__webpack_require__, /*! ./handler */ "../modules/video-playlist/assets/js/frontend/handler.js")).then(_ref => {
-        let {
-          default: dynamicHandler
-        } = _ref;
+      __webpack_require__.e(/*! import() | video-playlist */ "video-playlist").then(__webpack_require__.bind(__webpack_require__, /*! ./handler */ "../modules/video-playlist/assets/js/frontend/handler.js")).then(({
+        default: dynamicHandler
+      }) => {
         elementorFrontend.elementsHandler.addHandler(dynamicHandler, {
           $element,
           toggleSelf: false

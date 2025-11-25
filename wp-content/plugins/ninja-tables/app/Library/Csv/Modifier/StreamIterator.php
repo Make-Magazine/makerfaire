@@ -85,7 +85,7 @@ class StreamIterator implements Iterator
         if (!is_resource($stream) || 'stream' !== get_resource_type($stream)) {
             throw new InvalidArgumentException(sprintf(
                 'Expected resource to be a stream, received %s instead',
-                is_object($stream) ? get_class($stream) : gettype($stream)
+                is_object($stream) ? get_class($stream) : gettype($stream) // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped
             ));
         }
 
@@ -129,7 +129,7 @@ class StreamIterator implements Iterator
             return $char;
         }
 
-        throw new InvalidArgumentException(sprintf('The %s character must be a single character', $type));
+        throw new InvalidArgumentException(sprintf('The %s character must be a single character', $type)); // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped
     }
 
     /**
@@ -321,7 +321,7 @@ class StreamIterator implements Iterator
      */
     public function fwrite($str, $length = 0)
     {
-        return fwrite($this->stream, $str, $length);
+        return fwrite($this->stream, $str, $length); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fwrite
     }
 
     /**

@@ -28,6 +28,10 @@
 
 /*! ../../add-or-remove-content */
 
+/*! ../../apply-unapply-actions */
+
+/*! ../../components/custom-css-indicator */
+
 /*! ../../components/popover-body */
 
 /*! ../../components/style-indicator */
@@ -55,6 +59,8 @@
 /*! ../../panel-divider */
 
 /*! ../../section-content */
+
+/*! ../../settings-field */
 
 /*! ../../style-tab-collapsible-content */
 
@@ -95,6 +101,8 @@
 /*! ../dynamic-control */
 
 /*! ../errors */
+
+/*! ../get-element-by-type */
 
 /*! ../hooks/use-active-style-def-id */
 
@@ -142,11 +150,15 @@
 
 /*! ../utils */
 
+/*! ../utils/get-styles-provider-color */
+
 /*! ../utils/prop-dependency-utils */
 
 /*! ./action */
 
 /*! ./action-icons */
+
+/*! ./actions */
 
 /*! ./align-content-field */
 
@@ -154,9 +166,13 @@
 
 /*! ./align-self-child-field */
 
+/*! ./apply-unapply-actions */
+
 /*! ./autocomplete-option-internal-properties */
 
 /*! ./background-color-overlay-transformer */
+
+/*! ./blend-mode-field */
 
 /*! ./border-color-field */
 
@@ -186,7 +202,9 @@
 
 /*! ./components/css-classes/css-class-selector */
 
-/*! ./components/custom-css */
+/*! ./components/custom-css-indicator */
+
+/*! ./components/dynamic-conditional-control */
 
 /*! ./components/dynamic-selection-control */
 
@@ -198,11 +216,21 @@
 
 /*! ./components/section-content */
 
+/*! ./components/style-indicator */
+
 /*! ./components/style-sections/typography-section/hooks/use-font-families */
+
+/*! ./components/style-tab */
+
+/*! ./components/style-tab-section */
 
 /*! ./conditional-field */
 
 /*! ./consts */
+
+/*! ./contexts/classes-prop-context */
+
+/*! ./contexts/element-context */
 
 /*! ./contexts/section-context */
 
@@ -234,8 +262,6 @@
 
 /*! ./css-classes/css-class-selector */
 
-/*! ./custom-css */
-
 /*! ./dimensions-field */
 
 /*! ./display-field */
@@ -251,6 +277,8 @@
 /*! ./editing-panel-tabs */
 
 /*! ./element-context */
+
+/*! ./element-controls/tabs-control/tabs-control */
 
 /*! ./errors */
 
@@ -279,6 +307,10 @@
 /*! ./hooks/use-font-families */
 
 /*! ./hooks/use-prop-dynamic-action */
+
+/*! ./hooks/use-styles-fields */
+
+/*! ./hooks/use-styles-rerender */
 
 /*! ./infotip */
 
@@ -323,6 +355,8 @@
 /*! ./settings-tab */
 
 /*! ./style-context */
+
+/*! ./style-indicator */
 
 /*! ./style-sections/background-section/background-section */
 
@@ -375,6 +409,8 @@
 /*! ./transformers/background-image-overlay-transformer */
 
 /*! ./transformers/background-overlay-transformer */
+
+/*! ./transformers/color-transformer */
 
 /*! ./use-apply-and-unapply-class */
 
@@ -601,12 +637,12 @@
   \*********************************************************************************/
 
 /*!**********************************************************************************!*\
-  !*** ./packages/packages/core/editor-editing-panel/src/components/style-tab.tsx ***!
+  !*** ./packages/packages/core/editor-editing-panel/src/apply-unapply-actions.ts ***!
   \**********************************************************************************/
 
-/*!***********************************************************************************!*\
-  !*** ./packages/packages/core/editor-editing-panel/src/components/custom-css.tsx ***!
-  \***********************************************************************************/
+/*!**********************************************************************************!*\
+  !*** ./packages/packages/core/editor-editing-panel/src/components/style-tab.tsx ***!
+  \**********************************************************************************/
 
 /*!***********************************************************************************!*\
   !*** ./packages/packages/core/editor-editing-panel/src/hooks/use-styles-field.ts ***!
@@ -773,6 +809,10 @@
   \********************************************************************************************/
 
 /*!*********************************************************************************************!*\
+  !*** ./packages/packages/core/editor-editing-panel/src/components/custom-css-indicator.tsx ***!
+  \*********************************************************************************************/
+
+/*!*********************************************************************************************!*\
   !*** ./packages/packages/core/editor-editing-panel/src/hooks/use-default-panel-settings.ts ***!
   \*********************************************************************************************/
 
@@ -880,12 +920,20 @@
   !*** ./packages/packages/core/editor-editing-panel/src/components/css-classes/css-class-convert-local.tsx ***!
   \************************************************************************************************************/
 
+/*!*************************************************************************************************************!*\
+  !*** ./packages/packages/core/editor-editing-panel/src/dynamics/components/dynamic-conditional-control.tsx ***!
+  \*************************************************************************************************************/
+
 /*!**************************************************************************************************************!*\
   !*** ./packages/packages/core/editor-editing-panel/src/styles-inheritance/components/infotip/label-chip.tsx ***!
   \**************************************************************************************************************/
 
 /*!***************************************************************************************************************!*\
   !*** ./packages/packages/core/editor-editing-panel/src/components/css-classes/use-apply-and-unapply-class.ts ***!
+  \***************************************************************************************************************/
+
+/*!***************************************************************************************************************!*\
+  !*** ./packages/packages/core/editor-editing-panel/src/styles-inheritance/transformers/color-transformer.tsx ***!
   \***************************************************************************************************************/
 
 /*!****************************************************************************************************************!*\
@@ -921,6 +969,10 @@
   \*******************************************************************************************************************/
 
 /*!*******************************************************************************************************************!*\
+  !*** ./packages/packages/core/editor-editing-panel/src/controls-registry/element-controls/get-element-by-type.ts ***!
+  \*******************************************************************************************************************/
+
+/*!*******************************************************************************************************************!*\
   !*** ./packages/packages/core/editor-editing-panel/src/styles-inheritance/components/infotip/breakpoint-icon.tsx ***!
   \*******************************************************************************************************************/
 
@@ -930,6 +982,10 @@
 
 /*!********************************************************************************************************************!*\
   !*** ./packages/packages/core/editor-editing-panel/src/components/style-sections/layout-section/display-field.tsx ***!
+  \********************************************************************************************************************/
+
+/*!********************************************************************************************************************!*\
+  !*** ./packages/packages/core/editor-editing-panel/src/controls-registry/element-controls/tabs-control/actions.ts ***!
   \********************************************************************************************************************/
 
 /*!********************************************************************************************************************!*\
@@ -993,6 +1049,10 @@
   \***********************************************************************************************************************/
 
 /*!************************************************************************************************************************!*\
+  !*** ./packages/packages/core/editor-editing-panel/src/components/style-sections/effects-section/blend-mode-field.tsx ***!
+  \************************************************************************************************************************/
+
+/*!************************************************************************************************************************!*\
   !*** ./packages/packages/core/editor-editing-panel/src/components/style-sections/layout-section/align-items-field.tsx ***!
   \************************************************************************************************************************/
 
@@ -1050,6 +1110,10 @@
 
 /*!**************************************************************************************************************************!*\
   !*** ./packages/packages/core/editor-editing-panel/src/components/style-sections/typography-section/transform-field.tsx ***!
+  \**************************************************************************************************************************/
+
+/*!**************************************************************************************************************************!*\
+  !*** ./packages/packages/core/editor-editing-panel/src/controls-registry/element-controls/tabs-control/tabs-control.tsx ***!
   \**************************************************************************************************************************/
 
 /*!***************************************************************************************************************************!*\

@@ -5,8 +5,7 @@ namespace WP_Rocket\Engine\Tracking;
 
 use WP_Rocket\Abstract_Render;
 use WP_Rocket\Admin\Options_Data;
-use WP_Rocket\Engine\Admin\PerformanceMonitoring\Database\Rows\PerformanceMonitoring;
-use WP_Rocket\Engine\Admin\PerformanceMonitoring\Managers\Plan;
+use WP_Rocket\Engine\Admin\RocketInsights\Database\Rows\RocketInsights;
 use WPMedia\Mixpanel\Optin;
 use WPMedia\Mixpanel\TrackingPlugin as MixpanelTracking;
 
@@ -150,6 +149,10 @@ class Tracking extends Abstract_Render {
 
 		if ( '1' === $value ) {
 			$this->optin->enable();
+			// Update the legacy option to prevent the notice from being displayed again after the opt-in is enabled.
+			update_option( 'rocket_analytics_notice_displayed', 1 );
+			// Set the thank-you transient to display the thank-you notice after the opt-in is enabled.
+			set_transient( 'rocket_analytics_optin', 1 );
 			wp_send_json_success( 'Opt-in enabled.' );
 		} elseif ( '0' === $value ) {
 			$this->optin->disable();
@@ -224,13 +227,13 @@ class Tracking extends Abstract_Render {
 	 * Track when a URL is added in Rocket Insights
 	 *
 	 * @param string $url        The URL that was added for monitoring.
-	 * @param String $plan       Plan name.
+	 * @param string $plan       Plan name.
 	 * @param int    $urls_count The current number of URLs being monitored.
 	 *
 	 * @return void
 	 */
 	public function track_rocket_insights_url_added( $url, $plan, $urls_count ): void {
-		if ( ! $this->optin->is_enabled() ) {
+		if ( ! $this->optin->can_track() ) {
 			return;
 		}
 
@@ -249,14 +252,14 @@ class Tracking extends Abstract_Render {
 	 *
 	 * @since 3.20
 	 *
-	 * @param PerformanceMonitoring $row_details Details related to the database row.
-	 * @param array                 $job_details Details related to the job.
-	 * @param string                $plan Plan name.
+	 * @param RocketInsights $row_details Details related to the database row.
+	 * @param array          $job_details Details related to the job.
+	 * @param string         $plan Plan name.
 	 *
 	 * @return void
 	 */
 	public function track_rocket_insights_test( $row_details, $job_details, $plan ): void {
-		if ( ! $this->optin->is_enabled() ) {
+		if ( ! $this->optin->can_track() ) {
 			return;
 		}
 
@@ -264,7 +267,7 @@ class Tracking extends Abstract_Render {
 			return;
 		}
 
-		$this->mixpanel->track(
+		$this->mixpanel->track_direct(
 			'Rocket Insights Performance Test',
 			[
 				'context'   => 'wp_plugin',

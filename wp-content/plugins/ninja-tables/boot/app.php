@@ -31,7 +31,7 @@ return function ($file) {
                         <p><?php esc_html_e('Ninja Tables Pro plugin is not compatible with the current version of Ninja Tables. Please update Ninja Tables Pro to the latest version.', 'ninja-tables'); ?></p>
                         <div style="margin-bottom: 20px;">
                             <a class="button button-primary"
-                               href="<?php echo admin_url('plugins.php?s=ninja-tables&plugin_status=all') ?>">Update
+                               href="<?php echo esc_url( admin_url('plugins.php?s=ninja-tables&plugin_status=all')) ?>">Update
                                 Ninja Tables Pro</a>
                         </div>
                     </div>

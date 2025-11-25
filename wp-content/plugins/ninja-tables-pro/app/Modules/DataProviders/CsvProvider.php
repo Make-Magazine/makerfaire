@@ -47,12 +47,12 @@ class CsvProvider
         $messages = array();
         // Validate Title
         if (!$tableId && empty(Arr::get($_REQUEST, 'post_title'))) {
-            $messages['title'] = __('The title field is required.', 'ninja-tables');
+            $messages['title'] = __('The title field is required.', 'ninja-tables-pro');
         }
 
         // Validate URL
         if (empty($url) || !ninja_tables_is_valid_url($url)) {
-            $messages['url'] = __('The url field is empty or invalid.', 'ninja-tables');
+            $messages['url'] = __('The url field is empty or invalid.', 'ninja-tables-pro');
         }
 
         // If Validation failed
@@ -69,7 +69,7 @@ class CsvProvider
             $parsedUrl = parse_url($url);
 
             if (!isset($parsedUrl['scheme'], $parsedUrl['host'], $parsedUrl['path'])) {
-                wp_send_json_error(['message' => __('Invalid Google Sheet URL', 'ninja-tables')], 400);
+                wp_send_json_error(['message' => __('Invalid Google Sheet URL', 'ninja-tables-pro')], 400);
                 wp_die();
             }
 
@@ -117,7 +117,7 @@ class CsvProvider
 
             // Validate Fields
             if (empty(Arr::get($_REQUEST, 'fields'))) {
-                $messages['fields'] = __('No fields were selected / no changes made', 'ninja-tables');
+                $messages['fields'] = __('No fields were selected / no changes made', 'ninja-tables-pro');
                 if (array_filter($messages)) {
                     wp_send_json_error(array('message' => $messages), 422);
                     wp_die();
@@ -390,7 +390,7 @@ class CsvProvider
         } else {
             return new \WP_Error(
                 423,
-                __('Expected CSV but received invalid data type from the given url.', 'ninja-tables')
+                __('Expected CSV but received invalid data type from the given url.', 'ninja-tables-pro')
             );
         }
     }

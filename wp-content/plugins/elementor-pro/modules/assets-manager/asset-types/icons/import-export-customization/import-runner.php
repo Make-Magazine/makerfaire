@@ -3,6 +3,7 @@
 namespace ElementorPro\Modules\AssetsManager\AssetTypes\Icons\ImportExportCustomization;
 
 use Elementor\App\Modules\ImportExportCustomization\Runners\Import\Import_Runner_Base;
+use Elementor\App\Modules\ImportExportCustomization\Utils as ImportExportUtils;
 use ElementorPro\Modules\AssetsManager\AssetTypes\Icons_Manager;
 use ElementorPro\Modules\AssetsManager\AssetTypes\Icons\Custom_Icons;
 use ElementorPro\Modules\AssetsManager\AssetTypes\ImportExport\Traits\External_Attachment_Trait;
@@ -33,7 +34,8 @@ class Import_Runner extends Import_Runner_Base {
 
 		$result = [];
 
-		$icon_sets_data = $imported_data['files']['custom-icons']['data'] ?? [];
+		$custom_icons_file_path = $data['extracted_directory_path'] . Import_Export_Customization::FILE_NAME;
+		$icon_sets_data = ImportExportUtils::read_json_file( $custom_icons_file_path );
 
 		$include_custom_icons = $data['customization']['settings']['customIcons'] ?? true;
 

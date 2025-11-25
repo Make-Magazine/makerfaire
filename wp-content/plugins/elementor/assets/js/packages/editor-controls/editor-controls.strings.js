@@ -1,8 +1,12 @@
+__( "Sorry, you can't upload that file yet.", 'elementor' );
+__( 'To upload them anyway, ask the site administrator to enable unfiltered', 'elementor' );
+__( 'file uploads.', 'elementor' );
 __( 'Preview SVG', 'elementor' );
 __( 'Select SVG', 'elementor' );
 __( 'Upload', 'elementor' );
 __( 'Stroke width', 'elementor' );
 __( 'Stroke color', 'elementor' );
+__( 'Search', 'elementor' );
 __( 'Center center', 'elementor' );
 __( 'Center left', 'elementor' );
 __( 'Center right', 'elementor' );
@@ -34,6 +38,12 @@ __( 'Select image', 'elementor' );
 __( 'Upload', 'elementor' );
 __( 'Image', 'elementor' );
 __( 'Resolution', 'elementor' );
+__( 'HTML Tag', 'elementor' );
+/* translators: %s is the element name. */
+__(
+			`The tag is locked to 'a' tag because this %s has a link. To pick a different tag, remove the link first.`,
+			'elementor'
+		);
 // translators: %s: Tooltip title.
 __( 'Link %s', 'elementor' );
 // translators: %s: Tooltip title.
@@ -77,11 +87,6 @@ __(
 	'Before you enable unfiltered files upload, note that such files include a security risk. Elementor does run a process to remove possible malicious code, but there is still risk involved when using such files.',
 	'elementor'
 );
-__( "Sorry, you can't upload that file yet", 'elementor' );
-__(
-	'This is because this file type may pose a security risk. To upload them anyway, ask the site administrator to enable unfiltered file uploads.',
-	'elementor'
-);
 __( 'Failed to enable unfiltered files upload.', 'elementor' );
 __(
 	'You can try again, if the problem persists, please contact support.',
@@ -89,7 +94,6 @@ __(
 );
 __( 'Cancel', 'elementor' );
 __( 'Enable', 'elementor' );
-__( 'Got it', 'elementor' );
 __( 'Recently Used', 'elementor' );
 __( 'Transition Property', 'elementor' );
 __( 'Type', 'elementor' );
@@ -102,9 +106,10 @@ __( 'Empty Transition', 'elementor' );
 __( 'All properties', 'elementor' );
 __( 'Default', 'elementor' );
 __( 'All properties', 'elementor' );
+__( 'Transform settings', 'elementor' );
 __( 'You can use each kind of transform only once per element.', 'elementor' );
 __( 'Transform', 'elementor' );
-__( 'Base Transform', 'elementor' );
+__( 'Transform settings', 'elementor' );
 __( 'Move', 'elementor' );
 __( 'Scale', 'elementor' );
 __( 'Rotate', 'elementor' );
@@ -114,11 +119,10 @@ __( 'Move', 'elementor' );
 __( 'Scale', 'elementor' );
 __( 'Rotate', 'elementor' );
 __( 'Skew', 'elementor' );
-__( 'Base Transform', 'elementor' );
-__( 'Font Family', 'elementor' );
+__( 'Font family', 'elementor' );
 __( 'Amount', 'elementor' );
 __( 'Filters', 'elementor' );
-__( 'Backdrop Filters', 'elementor' );
+__( 'Backdrop filters', 'elementor' );
 __( 'Filter', 'elementor' );
 __( 'Blur', 'elementor' );
 __( 'Radius', 'elementor' );
@@ -132,19 +136,12 @@ __( 'Invert', 'elementor' );
 __( 'Sepia', 'elementor' );
 __( 'Drop shadow', 'elementor' );
 __( 'Drop-shadow', 'elementor' );
+__( 'Full element', 'elementor' );
+__( 'Padding edges', 'elementor' );
+__( 'Content edges', 'elementor' );
+__( 'Text', 'elementor' );
 __( 'Color', 'elementor' );
-__(
-			'The use of pseudo-states is not permitted. Instead, switch to the desired pseudo state and add your custom code there.',
-			'elementor'
-		);
-__(
-			'The use of pseudo-states is not permitted. Instead, switch to the desired pseudo state and add your custom code there.',
-			'elementor'
-		);
-__(
-			'The use of @media is not permitted. Instead, switch to the desired breakpoint and add your custom code there.',
-			'elementor'
-		);
+__( 'Clipping', 'elementor' );
 __( 'Origin X', 'elementor' );
 __( 'Origin Y', 'elementor' );
 __( 'Origin Z', 'elementor' );

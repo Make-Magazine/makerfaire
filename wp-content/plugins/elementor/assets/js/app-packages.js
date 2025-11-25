@@ -1,4 +1,3 @@
-/*! elementor - v3.32.0 - 21-10-2025 */
 /******/ (() => { // webpackBootstrap
 /******/ 	var __webpack_modules__ = ({
 
@@ -2273,7 +2272,8 @@ function CardImage(props) {
     src: props.src,
     alt: props.alt,
     className: "eps-card__image",
-    loading: "lazy"
+    loading: "lazy",
+    onError: props.onError
   });
   return /*#__PURE__*/_react.default.createElement("figure", {
     className: "eps-card__figure ".concat(props.className)
@@ -2283,10 +2283,12 @@ CardImage.propTypes = {
   className: PropTypes.string,
   src: PropTypes.string.isRequired,
   alt: PropTypes.string.isRequired,
-  children: PropTypes.any
+  children: PropTypes.any,
+  onError: PropTypes.func
 };
 CardImage.defaultProps = {
-  className: ''
+  className: '',
+  onError: function onError() {}
 };
 
 /***/ }),

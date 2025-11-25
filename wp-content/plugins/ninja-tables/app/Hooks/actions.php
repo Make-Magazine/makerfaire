@@ -1,5 +1,9 @@
 <?php
 
+if (!defined('ABSPATH')) {
+    die(__FILE__);
+}
+
 use NinjaTables\App\Hooks\Handlers\AdminMenuHandler;
 use NinjaTables\App\Hooks\Handlers\CPTHandler;
 use NinjaTables\App\Hooks\Handlers\PublicDataHandler;
@@ -86,3 +90,5 @@ $app->addAction('wp_ajax_ninja-tables-drag-and-drop-export', [ExportHandler::cla
 
 (new \NinjaTables\App\Modules\Gutenberg\GutenbergModule())->register();
 (new \NinjaTables\App\Hooks\Handlers\NoticeHandler())->register();
+(new \NinjaTables\App\Modules\FluentCart\FluentCartModule())->register($app);
+(new \NinjaTables\App\Features\Features())->register();

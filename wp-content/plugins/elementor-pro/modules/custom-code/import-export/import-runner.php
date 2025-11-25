@@ -29,7 +29,8 @@ class Import_Runner extends Import_Runner_Base {
 	public function import( array $data, array $imported_data ) {
 		$this->session_id = $data['session_id'];
 
-		$snippets_data = $imported_data['files']['custom-code']['data'] ?? [];
+		$custom_code_file_path = $data['extracted_directory_path'] . Import_Export::FILE_NAME;
+		$snippets_data = ImportExportUtils::read_json_file( $custom_code_file_path );
 
 		$result = [];
 		if ( empty( $snippets_data ) ) {

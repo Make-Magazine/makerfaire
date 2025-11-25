@@ -87,7 +87,7 @@ class Editor extends App {
 	public function enqueue_editor_styles() {
 		wp_enqueue_style(
 			'elementor-pro',
-			$this->get_css_assets_url( 'editor', null, 'default', true ),
+			$this->get_css_assets_url( 'editor' ),
 			[
 				'elementor-editor',
 			],

@@ -23,8 +23,8 @@ class Import {
 		$theme_builder_result = $this->import_theme_builder_templates( $data, $runner );
 
 		if ( ! empty( $theme_builder_result ) ) {
-			$result['templates']['succeed'] = array_merge( $result['templates']['succeed'], $theme_builder_result['succeed'] );
-			$result['templates']['failed'] = array_merge( $result['templates']['failed'], $theme_builder_result['failed'] );
+			$result['templates']['succeed'] = $this->array_merge_with_key_preservation( $result['templates']['succeed'], $theme_builder_result['succeed'] );
+			$result['templates']['failed'] = $this->array_merge_with_key_preservation( $result['templates']['failed'], $theme_builder_result['failed'] );
 
 			foreach ( $theme_builder_result['succeed_summary'] as $doc_type => $count ) {
 				$result['templates']['succeed_summary'][ $doc_type ] = ( $result['templates']['succeed_summary'][ $doc_type ] ?? 0 ) + $count;
@@ -146,5 +146,9 @@ class Import {
 
 			$this->templates_conditions[ $template['template_id'] ] = $template_conditions;
 		}
+	}
+
+	public function array_merge_with_key_preservation( array $base_array, array $additional_array ): array {
+		return $base_array + $additional_array;
 	}
 }

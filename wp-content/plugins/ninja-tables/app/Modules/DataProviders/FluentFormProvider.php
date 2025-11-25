@@ -165,14 +165,39 @@ class FluentFormProvider
             add_filter('fluentform_verify_user_permission_fluentform_entries_viewer',
                 array($this, 'addEntryPermission'));
 
-            $formId  = get_post_meta($tableId, '_ninja_tables_data_provider_ff_form_id', true);
+            $formId = get_post_meta($tableId, '_ninja_tables_data_provider_ff_form_id', true);
+
+            $status            = get_post_meta($tableId, '_ninja_tables_data_provider_ff_entry_status', true);
+            $entryLimit        = get_post_meta($tableId, '_ninja_tables_data_provider_ff_entry_limit', true);
+            $ownSubmissionOnly = get_post_meta($tableId, '_ninja_tables_ff_own_submission_only', true);
+
+            $entryStatus  = $status ? $status : 'all';
+            $perPageLimit = $entryLimit ? intval($entryLimit) : intval($perPage);
+
+            $wheres = array();
+            if ($ownSubmissionOnly === 'yes') {
+                $userId = get_current_user_id();
+
+                // If user is not logged in and only want their submissions, return empty data
+                if ( ! $userId) {
+                    remove_filter('fluentform_verify_user_permission_fluentform_entries_viewer', array($this, 'addEntryPermission'));
+
+                    return array(array(), 0);
+                }
+
+                $wheres = array(
+                    array('user_id', $userId)
+                );
+            }
+            
             $entries = wpFluentForm('FluentForm\App\Modules\Entries\Entries')->_getEntries(
                 intval($formId),
-                isset($_GET['page']) ? intval($_GET['page']) : 1,
-                intval($perPage),
+                isset($_GET['page']) ? intval($_GET['page']) : 1, // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+                $perPageLimit,
                 $this->getOrderBy($tableId),
-                'all',
-                null
+                $entryStatus,
+                null,
+                $wheres
             );
 
             // removing this short-circuite to overwrite fluentform entry permissions
@@ -222,12 +247,14 @@ class FluentFormProvider
             $limit = (int)get_post_meta($tableId, '_ninja_tables_data_provider_ff_entry_limit', true);
         }
 
-        $entryStatus = apply_filters(
-            'ninja_tables_fluentform_entry_status', $status, $tableId, $formId
+        $entryLimit = $limit ? $limit : -1;
+        $entryLimit = apply_filters(
+            'ninja_tables_fluentform_per_page', $entryLimit, $tableId, $formId
         );
 
-        $entryLimit = apply_filters(
-            'ninja_tables_fluentform_per_page', ($limit ? $limit : -1), $tableId, $formId
+        $entryStatus = $status ? $status : 'all';
+        $entryStatus = apply_filters(
+            'ninja_tables_fluentform_entry_status', $entryStatus, $tableId, $formId
         );
 
         $orderBy = apply_filters(
@@ -235,12 +262,18 @@ class FluentFormProvider
         );
 
         $ownSubmissionOnly = get_post_meta($tableId, '_ninja_tables_ff_own_submission_only', true);
-        $wheres            = array();
-        if ($ownSubmissionOnly == 'yes') {
+
+        $wheres = array();
+        if ($ownSubmissionOnly === 'yes') {
             $userId = get_current_user_id();
+
+            // If user is not logged in and only want their submissions, return empty data
             if ( ! $userId) {
+                remove_filter('fluentform_verify_user_permission_fluentform_entries_viewer', array($this, 'addEntryPermission'));
+
                 return $data;
             }
+
             $wheres = array(
                 array('user_id', $userId)
             );
@@ -278,8 +311,8 @@ class FluentFormProvider
 
         //Need to update this code segment by replacing $_REQUEST
         $attributes = array(
-            'post_title'   => Sanitizer::sanitizeTextField($_REQUEST['post_title']),
-            'post_content' => isset($_REQUEST['post_content']) ? wp_kses_post($_REQUEST['post_content']) : '',
+            'post_title'   => isset($_REQUEST['post_title']) ? Sanitizer::sanitizeTextField(wp_unslash($_REQUEST['post_title'])) : '', //phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized, WordPress.Security.NonceVerification.Recommended
+            'post_content' => isset($_REQUEST['post_content']) ? wp_kses_post(wp_unslash($_REQUEST['post_content'])) : '', // phpcs:ignore WordPress.Security.NonceVerification.Recommended
             'post_type'    => 'ninja-table',
             'post_status'  => 'publish'
         );

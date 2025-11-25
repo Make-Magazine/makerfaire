@@ -139,6 +139,7 @@ class Conditions_Manager {
 			foreach ( $conditions_groups as $template_id => $conditions ) {
 				if ( ! get_post( $template_id ) ) {
 					$this->purge_post_from_cache( $template_id );
+					continue;
 				}
 
 				if ( $ignore_post_id === $template_id ) {

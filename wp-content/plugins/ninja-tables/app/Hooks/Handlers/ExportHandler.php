@@ -15,13 +15,13 @@ class ExportHandler
             return;
         }
 
-        $tableId = intval(Arr::get($_REQUEST, 'table_id'));
+        $tableId = intval(Arr::get($_REQUEST, 'table_id')); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 
         if ( ! $tableId) {
             return;
         }
 
-        $format     = Sanitizer::sanitizeTextField(Arr::get($_REQUEST, 'format'));
+        $format     = Sanitizer::sanitizeTextField(Arr::get($_REQUEST, 'format')); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
         $tableTitle = get_the_title($tableId);
         $fileName   = Sanitizer::sanitizeTitle($tableTitle);
         $tableData  = get_post_meta($tableId, '_ninja_table_builder_table_data', true);
@@ -84,12 +84,12 @@ class ExportHandler
             return;
         }
 
-        $tableId = intval(Arr::get($_REQUEST, 'table_id'));
-        $format  = Sanitizer::sanitizeTextField(Arr::get($_REQUEST, 'format'));
+        $tableId = intval(Arr::get($_REQUEST, 'table_id')); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+        $format  = Sanitizer::sanitizeTextField(Arr::get($_REQUEST, 'format')); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 
         $tableTitle = get_the_title($tableId);
 
-        $fileName = sanitize_title($tableTitle, 'Export-Table-' . date('Y-m-d-H-i-s'), 'preview');
+        $fileName = sanitize_title($tableTitle, 'Export-Table-' . gmdate('Y-m-d-H-i-s'), 'preview');
 
         $tableColumns = ninja_table_get_table_columns($tableId, 'admin');
 
@@ -178,7 +178,7 @@ class ExportHandler
 
     private static function exportAsCSV($data, $fileName = null, $header = null)
     {
-        $fileName = ($fileName) ? $fileName . '.csv' : 'export-data-' . date('d-m-Y') . '.csv';
+        $fileName = ($fileName) ? $fileName . '.csv' : 'export-data-' . gmdate('d-m-Y') . '.csv';
 
         $writer = Writer::createFromFileObject(new \SplTempFileObject());
         $writer->setDelimiter(",");
@@ -191,7 +191,7 @@ class ExportHandler
 
     private static function exportAsJSON($data, $fileName = null)
     {
-        $fileName = ($fileName) ? $fileName . '.json' : 'export-data-' . date('d-m-Y') . '.json';
+        $fileName = ($fileName) ? $fileName . '.json' : 'export-data-' . gmdate('d-m-Y') . '.json';
 
         header('Content-disposition: attachment; filename=' . $fileName);
 

@@ -2147,6 +2147,10 @@ body.rtl .e-con {
   .animated {
     animation: none !important;
   }
+  html * {
+    transition-duration: 0s !important;
+    transition-delay: 0s !important;
+  }
 }
 @media (max-width: ELEMENTOR_SCREEN_MOBILE_MAX) {
   .elementor .elementor-hidden-phone,

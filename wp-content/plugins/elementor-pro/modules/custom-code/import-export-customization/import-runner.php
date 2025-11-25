@@ -30,7 +30,8 @@ class Import_Runner extends Import_Runner_Base {
 		$this->session_id = $data['session_id'];
 		$include_custom_code = $data['customization']['settings']['customCode'] ?? true;
 
-		$snippets_data = $imported_data['files']['custom-code']['data'] ?? [];
+		$custom_code_file_path = $data['extracted_directory_path'] . Import_Export_Customization::FILE_NAME;
+		$snippets_data = ImportExportUtils::read_json_file( $custom_code_file_path );
 
 		$result = [];
 		if ( empty( $snippets_data ) || ! $include_custom_code ) {

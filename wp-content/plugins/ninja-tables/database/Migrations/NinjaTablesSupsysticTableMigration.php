@@ -13,7 +13,7 @@ class NinjaTablesSupsysticTableMigration extends NinjaTablesMigration
         $tables = array();
         try {
             if (Schema::hasTable($wpdb->prefix. 'supsystic_tbl_tables')) {
-                $tables = $wpdb->get_results("SELECT id as ID,title as post_title FROM {$wpdb->prefix}supsystic_tbl_tables", \OBJECT);
+                $tables = $wpdb->get_results("SELECT id as ID,title as post_title FROM {$wpdb->prefix}supsystic_tbl_tables", \OBJECT); // phpcs:ignore WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.DirectDatabaseQuery.DirectQuery
             }
         } catch (\Exception $exception) {
 
@@ -27,12 +27,12 @@ class NinjaTablesSupsysticTableMigration extends NinjaTablesMigration
         try {
             $tableId = (int)$tableId;
             global $wpdb;
-            $table = $wpdb->get_row("SELECT * FROM {$wpdb->prefix}supsystic_tbl_tables WHERE id = {$tableId} LIMIT 1");
+            $table = $wpdb->get_row($wpdb->prepare("SELECT * FROM {$wpdb->prefix}supsystic_tbl_tables WHERE id = %d LIMIT 1", $tableId)); // phpcs:ignore WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.DirectDatabaseQuery.DirectQuery
             if ( ! $table) {
                 return new \WP_Error('broke', __('No Table Found with the selected table', 'ninja-tables'));
             }
 
-            $tableRows = $wpdb->get_results("SELECT * FROM {$wpdb->prefix}supsystic_tbl_rows WHERE table_id = {$tableId}");
+            $tableRows = $wpdb->get_results($wpdb->prepare("SELECT * FROM {$wpdb->prefix}supsystic_tbl_rows WHERE table_id = %d", $tableId)); // phpcs:ignore WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.DirectDatabaseQuery.DirectQuery
 
             $rawHeaders  = array_shift($tableRows);
             $raw_header  = @unserialize($rawHeaders->data);

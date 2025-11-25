@@ -1,13 +1,17 @@
 <?php
 
-$margin = [
+if (!defined('ABSPATH')) {
+    die(__FILE__);
+}
+
+$ninja_tables_margin = [
     "top"    => 1,
     "bottom" => 1,
     "left"   => 1,
     "right"  => 1
 ];
 
-$padding = [
+$ninja_tables_padding = [
     "top"    => 0,
     "bottom" => 0,
     "left"   => 0,
@@ -29,7 +33,7 @@ return [
                     "fontSize"   => 10,
                     "color"      => '',
                     "alignment"  => 'center',
-                    "margin"     => $margin,
+                    "margin"     => $ninja_tables_margin,
                     "padding"    => [
                         "top"    => 2,
                         "bottom" => 2,
@@ -67,8 +71,8 @@ return [
                     "contentAlignment"     => 'center',
                     "alignment"            => 'center',
                     "fontWeight"           => [],
-                    "margin"               => $margin,
-                    "padding"              => $padding,
+                    "margin"               => $ninja_tables_margin,
+                    "padding"              => $ninja_tables_padding,
                     "enableIcon"           => false,
                     "iconColor"            => '',
                     "iconFontSize"         => 10,
@@ -88,8 +92,8 @@ return [
                     "color"     => '#000000',
                     "fontSize"  => 10,
                     "alignment" => 'center',
-                    "margin"    => $margin,
-                    "padding"   => $padding
+                    "margin"    => $ninja_tables_margin,
+                    "padding"   => $ninja_tables_padding
                 ],
             ],
             [
@@ -104,8 +108,8 @@ return [
                     "maxStar"         => 5,
                     "alignment"       => 'center',
                     "showRatingValue" => false,
-                    "margin"          => $margin,
-                    "padding"         => $padding
+                    "margin"          => $ninja_tables_margin,
+                    "padding"         => $ninja_tables_padding
                 ],
             ],
             [
@@ -123,8 +127,8 @@ return [
                     "lineHeight"  => 20,
                     'listStyle'   => 'circle',
                     'itemSpacing' => 0,
-                    "margin"      => $margin,
-                    "padding"     => $padding
+                    "margin"      => $ninja_tables_margin,
+                    "padding"     => $ninja_tables_padding
                 ]
             ],
             [
@@ -134,7 +138,7 @@ return [
                 "has_pro" => false,
                 "value"   => '<span style="display: block; text-align: center; line-height: 1.1">custom html</span>',
                 "style"   => [
-                    "margin"  => $margin,
+                    "margin"  => $ninja_tables_margin,
                     "padding" => [
                         "top"    => 4,
                         "bottom" => 4,
@@ -150,7 +154,7 @@ return [
                 "has_pro" => false,
                 "value"   => "[Shortcode]",
                 "style"   => [
-                    "margin"    => $margin,
+                    "margin"    => $ninja_tables_margin,
                     "padding"   => [
                         "top"    => 4,
                         "bottom" => 4,
@@ -174,8 +178,8 @@ return [
                     'link'           => '',
                     'linkAttributes' => [],
                     'target'         => false,
-                    "margin"         => $margin,
-                    "padding"        => $padding
+                    "margin"         => $ninja_tables_margin,
+                    "padding"        => $ninja_tables_padding
                 ],
             ],
         ],
@@ -201,8 +205,8 @@ return [
                     "alignment"    => 'center',
                     "fontWeight"   => [],
                     "lineHeight"   => 20,
-                    "margin"       => $margin,
-                    "padding"      => $padding
+                    "margin"       => $ninja_tables_margin,
+                    "padding"      => $ninja_tables_padding
                 ]
             ],
             [
@@ -213,8 +217,8 @@ return [
                 "value"   => "Ribbon",
                 "style"   => [
                     'ribbonType'       => 'side',
-                    "margin"           => $margin,
-                    "padding"          => $padding,
+                    "margin"           => $ninja_tables_margin,
+                    "padding"          => $ninja_tables_padding,
                     'ribbonPosition'   => 'left',
                     "color"            => '',
                     'fontSize'         => 10,
@@ -243,15 +247,16 @@ return [
                 "has_pro" => false,
                 "value"   => "",
                 "style"   => [
-                    "color"      => '',
+                    "color"      => '#1E90FF',
+                    "progressColor" => '#1E90FF',
                     "percentage" => 50,
                     "width"      => 100,
                     "thickness"  => 6,
                     "alignment"  => 'center',
                     'type'       => 'circle',
                     'fontSize'   => 10,
-                    "margin"     => $margin,
-                    "padding"    => $padding
+                    "margin"     => $ninja_tables_margin,
+                    "padding"    => $ninja_tables_padding
                 ],
             ],
             [
@@ -270,8 +275,8 @@ return [
                     "fontSize"     => 10,
                     "alignment"    => 'center',
                     "fontWeight"   => [],
-                    "margin"       => $margin,
-                    "padding"      => $padding,
+                    "margin"       => $ninja_tables_margin,
+                    "padding"      => $ninja_tables_padding,
                 ]
             ]
         ],

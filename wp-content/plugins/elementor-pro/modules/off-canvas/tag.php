@@ -55,8 +55,15 @@ class Tag extends DynamicTagsTag {
 			'off_canvas',
 			[
 				'label' => esc_html__( 'Choose Off-Canvas widget', 'elementor-pro' ),
+				'atomic_label' => esc_html__( 'Off-canvas widget', 'elementor-pro' ),
+				'placeholder' => '',
 				'type' => Controls_Manager::SELECT,
 				'label_block' => true,
+				'options' => [
+					'' => esc_html__( 'Select Off-canvas', 'elementor-pro' ),
+				],
+				'default' => '',
+				'collection_id' => $this->get_name(),
 			]
 		);
 	}
