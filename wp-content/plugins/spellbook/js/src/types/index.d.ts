@@ -39,7 +39,7 @@ export interface DetailedProduct extends BaseProduct {
     };
 }
 export type ProductType = 'perk' | 'connect' | 'shop' | 'free';
-export type LicensedProductType = 'perk' | 'connect' | 'shop';
+export type LicensedProductType = 'perk' | 'connect' | 'shop' | 'wiz-bundle';
 
 export interface PerkProduct extends BaseProduct {
     type: 'perk';
@@ -84,6 +84,7 @@ export interface LicenseData {
 	registered_products_limit: number;
     product_type: LicensedProductType;
 	valid: boolean;
+	is_bundle?: boolean;
 	manage_url: string;
 	extend_url: string;
 	upgrade_url: string;
@@ -94,6 +95,9 @@ export interface LicenseResponse {
     success: boolean;
     message: string;
     license_data: LicenseData | null;
+	migrated?: boolean;
+	from_type?: LicensedProductType;
+	to_type?: LicensedProductType;
     product?: {
         id: string;
         is_registered: boolean;

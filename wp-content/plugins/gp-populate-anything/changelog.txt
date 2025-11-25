@@ -1,5 +1,22 @@
 # Changelog
 
+## 2.1.52 | November 12, 2025
+
+- Fixed potential PHP warning with a List field on a form with Save & Continue active.
+- Fixed an issue where the name of a Populated product field doesn't show on the frontend.
+
+## 2.1.51 | November 5, 2025
+
+- Fixed an issue where the `is_in` operator did not work correctly with Post meta.
+
+## 2.1.50 | November 3, 2025
+
+- Fixed regression where dynamic value population could fatally error when Post or User object types were selected.
+
+## 2.1.49 | October 29, 2025
+
+- Fixed an issue where List field rows disappeared when populating from serialized post meta.
+
 ## 2.1.48 | October 9, 2025
 
 - Fixed an issue with Gravity Forms Coupons when coupon codes were populated via URL parameters with conditional logic enabled.

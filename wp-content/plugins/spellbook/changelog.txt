@@ -1,6 +1,10 @@
 
 # Changelog
 
+## 3.0.17 | November 11, 2025
+
+- Added support for the new [Wiz Bundle](https://gravitywiz.com/wiz-bundle).
+
 ## 3.0.16 | October 29, 2025
 
 - Fixed an issue where product-specific 'Buy License' links directed users to wrong pricing pages.

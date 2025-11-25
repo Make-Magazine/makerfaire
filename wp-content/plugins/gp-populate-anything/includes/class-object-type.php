@@ -406,34 +406,34 @@ abstract class GPPA_Object_Type {
 	 * @return array
 	 */
 	public function maybe_add_offset_to_query( $processed_filter_groups, $args ) {
-		/** @var string */
+		/** @var null|string */
 		$populate = null;
 
-		/** @var array */
+		/** @var null|array */
 		$filter_groups = null;
 
-		/** @var array */
+		/** @var null|array */
 		$ordering = null;
 
-		/** @var array */
+		/** @var null|array */
 		$templates = null;
 
-		/** @var string */
+		/** @var null|string */
 		$primary_property_value = null;
 
-		/** @var array */
+		/** @var null|array */
 		$field_values = null;
 
-		/** @var GF_Field */
+		/** @var null|GF_Field */
 		$field = null;
 
-		/** @var boolean */
+		/** @var null|boolean */
 		$unique = null;
 
 		/** @var int|null */
 		$page = null;
 
-		/** @var int */
+		/** @var null|int */
 		$limit = null;
 
 		// phpcs:ignore WordPress.PHP.DontExtract.extract_extract
@@ -461,34 +461,34 @@ abstract class GPPA_Object_Type {
 	 * @return array
 	 */
 	public function add_limit_to_query( $processed_filter_groups, $args ) {
-		/** @var string */
+		/** @var null|string */
 		$populate = null;
 
-		/** @var array */
+		/** @var null|array */
 		$filter_groups = null;
 
-		/** @var array */
+		/** @var null|array */
 		$ordering = null;
 
-		/** @var array */
+		/** @var null|array */
 		$templates = null;
 
-		/** @var string */
+		/** @var null|string */
 		$primary_property_value = null;
 
-		/** @var array */
+		/** @var null|array */
 		$field_values = null;
 
-		/** @var GF_Field */
+		/** @var null|GF_Field */
 		$field = null;
 
-		/** @var boolean */
+		/** @var null|boolean */
 		$unique = null;
 
 		/** @var int|null */
 		$page = null;
 
-		/** @var int */
+		/** @var null|int */
 		$limit = null;
 
 		// phpcs:ignore WordPress.PHP.DontExtract.extract_extract
@@ -564,39 +564,40 @@ abstract class GPPA_Object_Type {
 	 * @return bool
 	 */
 	public function can_skip_loading_properties_during_query() {
+		// @phpstan-ignore-next-line function.alreadyNarrowedType (There is likely a real issue here, saving as TODO to audit)
 		return method_exists( $this, 'get_property_value_from_property_id' );
 	}
 
 	public function process_query_args( $args, $processed_filter_groups = array() ) {
 
-		/** @var string */
+		/** @var null|string */
 		$populate = null;
 
-		/** @var array */
+		/** @var null|array */
 		$filter_groups = null;
 
-		/** @var array */
+		/** @var null|array */
 		$ordering = null;
 
-		/** @var array */
+		/** @var null|array */
 		$templates = null;
 
-		/** @var string */
+		/** @var null|string */
 		$primary_property_value = null;
 
-		/** @var array */
+		/** @var null|array */
 		$field_values = null;
 
-		/** @var GF_Field */
+		/** @var null|GF_Field */
 		$field = null;
 
-		/** @var boolean */
+		/** @var null|boolean */
 		$unique = null;
 
 		/** @var int|null */
 		$page = null;
 
-		/** @var int */
+		/** @var null|int */
 		$limit = null;
 
 		// phpcs:ignore WordPress.PHP.DontExtract.extract_extract
@@ -633,6 +634,7 @@ abstract class GPPA_Object_Type {
 				} else {
 					$property = array(
 						'value' => $this->get_property_value_from_property_id( $filter['property'] ),
+						// @phpstan-ignore-next-line function.alreadyNarrowedType (There is likely a real issue here, saving as TODO to audit)
 						'group' => method_exists( $this, 'get_property_value_from_property_id' ) ? $this->get_group_from_property_id( $filter['property'] ) : null,
 					);
 				}
@@ -830,6 +832,9 @@ abstract class GPPA_Object_Type {
 		}
 
 		if ( in_array( $sql_operator, array( 'IN', 'NOT IN' ), true ) ) {
+			if ( rgblank( $value ) ) {
+				$value = array( '' );
+			}
 			$specification_array = array_map( function ( $v ) {
 				return '%s';
 			}, $value );

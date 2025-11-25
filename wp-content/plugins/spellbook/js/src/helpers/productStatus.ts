@@ -6,33 +6,84 @@ interface RegistrationStatus {
 
 /**
  * Get the appropriate license for GCGS based on eligibility.
- * Returns Perk license if it's GCGS eligible and valid, otherwise Connect license.
+ * Priority order: Wiz Bundle > Perk license (if GCGS eligible) > Connect license.
  */
 const getGcgsLicense = (
     licenses: Record<string, LicenseData | undefined> | null | undefined
 ): LicenseData | undefined => {
+    // First check wiz bundle (highest priority)
+    const wizBundleLicense = licenses?.['wiz-bundle'];
+    if (wizBundleLicense?.valid) {
+        return wizBundleLicense;
+    }
+
+    // Then check Perk license if GCGS eligible
     const perkLicense = licenses?.perk;
     if (perkLicense?.gcgs_eligible && perkLicense.valid) {
         return perkLicense;
     }
+
     return licenses?.connect;
 };
 
 /**
  * Get the appropriate license for a product.
- * Handles special case for GCGS, otherwise returns license based on product type.
+ * Implements bundle-first logic: checks bundle licenses first, then individual licenses.
+ * Handles special case for GCGS.
  */
 export const getLicenseForProduct = (
     product: BaseProduct,
     licenses: Record<string, LicenseData | undefined> | null | undefined
 ): LicenseData | undefined => {
+    if (!licenses) return undefined;
+
+    // Special case for GCGS
     if (
         product.plugin_file === 'gc-google-sheets/gc-google-sheets.php' ||
         product.plugin_file === 'gp-google-sheets/gp-google-sheets.php'
     ) {
         return getGcgsLicense(licenses);
     }
-    return licenses?.[product.type];
+
+    // Bundle-first logic: Check bundle licenses first (by priority)
+    // For now, we only have wiz-bundle, but this is extensible
+    const bundleLicenses = ['wiz-bundle'] as const;
+
+    for (const bundleType of bundleLicenses) {
+        const bundleLicense = licenses[bundleType];
+        if (bundleLicense?.valid && bundleLicense.is_bundle) {
+            // Check if this product can be registered under this bundle
+            if (canProductUseBundle(product, bundleLicense)) {
+                return bundleLicense;
+            }
+        }
+    }
+
+    // Fall back to individual product license
+    return licenses[product.type];
+};
+
+/**
+ * Check if a product can use a bundle license.
+ * For Wiz bundle, it can only register perk and connect products (not shop).
+ */
+const canProductUseBundle = (
+    product: BaseProduct,
+    bundleLicense: LicenseData
+): boolean => {
+    if (!bundleLicense.is_bundle) return false;
+
+    // Wiz bundle only covers perk and connect products, not shop
+    if (bundleLicense.product_type === 'wiz-bundle') {
+        return product.type === 'perk' || product.type === 'connect';
+    }
+
+    // For other future bundles, check if they support plugin-based registration
+    if (bundleLicense.registered_products !== null) {
+        return true;
+    }
+
+    return false;
 };
 
 /**
@@ -183,7 +234,8 @@ export const isProductUnregistered = (
         return !registrationStatus?.is_registered &&
                !licenses?.perk?.key &&
                !licenses?.connect?.key &&
-               !licenses?.shop?.key;
+               !licenses?.shop?.key &&
+               !licenses?.['wiz-bundle']?.key;
     }
 
 	 const license = getLicenseForProduct(product, licenses);

@@ -10,8 +10,10 @@ interface State {
     removeNotification: (id: number) => void;
     forceLicenseRefresh: boolean;
     forceProductRefresh: boolean;
+    forceAnnouncementRefresh: boolean;
     setForceLicenseRefresh: (force: boolean) => void;
     setForceProductRefresh: (force: boolean) => void;
+    setForceAnnouncementRefresh: (force: boolean) => void;
 }
 
 const useStore = create<State>((set) => ({
@@ -34,8 +36,10 @@ const useStore = create<State>((set) => ({
     },
     forceLicenseRefresh: false,
     forceProductRefresh: false,
+    forceAnnouncementRefresh: false,
     setForceLicenseRefresh: (force) => set({ forceLicenseRefresh: force }),
-    setForceProductRefresh: (force) => set({ forceProductRefresh: force })
+    setForceProductRefresh: (force) => set({ forceProductRefresh: force }),
+    setForceAnnouncementRefresh: (force) => set({ forceAnnouncementRefresh: force })
 }));
 
 export default useStore;

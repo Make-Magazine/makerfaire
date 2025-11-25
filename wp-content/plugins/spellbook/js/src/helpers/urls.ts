@@ -6,12 +6,18 @@ interface LinkContext {
 
 /**
  * Add UTM parameters to a URL.
+ * Skips adding UTM params if the URL already contains any utm_ parameters.
  *
  * @param url     The URL to add UTM parameters to
  * @param context The context of where this link appears
- * @return        The URL with UTM parameters added
+ * @return        The URL with UTM parameters added (or original if UTM params already exist)
  */
 export function addUtmParams(url: string, context: LinkContext): string {
+    // Check if URL already has UTM params
+    if (url.includes('utm_')) {
+        return url;
+    }
+
     const urlObj = new URL(url);
 
     // Get current page from hash
@@ -43,13 +49,13 @@ export function addUtmParams(url: string, context: LinkContext): string {
  */
 export function getPricingUrl(productType: string): string {
 	const baseUrl = "https://gravitywiz.com";
-	
+
 	const productPaths: Record<string, string> = {
 		perk: '/gravity-perks/pricing',
 		connect: '/gravity-connect/pricing',
 		shop: '/gravity-shop/pricing'
 	};
-	
+
 	const path = productPaths[productType.toLowerCase()] ?? "/pricing";
 	return `${baseUrl}${path}`;
 }

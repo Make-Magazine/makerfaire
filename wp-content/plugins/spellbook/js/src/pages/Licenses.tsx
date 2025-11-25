@@ -23,6 +23,13 @@ const LicensesPage = () => {
                 </Button>
             </div>
             <div className="licenses-page__grid">
+				<LicenseBox
+                    type="wiz-bundle"
+                    title="Wiz Bundle"
+                    description="Go Pro with both Gravity Perks and Gravity Connection—one bundle, endless possibilities."
+                    learnMoreUrl="https://gravitywiz.com/wiz-bundle"
+					buyLicenseUrl="https://gravitywiz.com/wiz-bundle#pricing"
+                />
                 <LicenseBox
                     type="perk"
                     title="Gravity Perks"

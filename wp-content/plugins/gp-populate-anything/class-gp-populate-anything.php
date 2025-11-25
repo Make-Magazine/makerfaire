@@ -252,6 +252,7 @@ class GP_Populate_Anything extends GP_Plugin {
 		$nested_form = gp_populate_anything()->populate_form( $nested_form );
 
 		// Clear the form cache to prevent issues with prepopulation. Available since GF 2.6, but adding check to be safe.
+		// @phpstan-ignore-next-line function.alreadyNarrowedType (PHPStan will be discovering GF >2.6)
 		if ( method_exists( 'GFFormsModel', 'flush_current_form' ) && rgar( $nested_form, 'id' ) ) {
 			// GFFormsModel::get_form_cache_key is in 2.7+.
 			$cache_key = get_current_blog_id() . '_' . $nested_form['id'];
@@ -760,6 +761,7 @@ class GP_Populate_Anything extends GP_Plugin {
 
 			$filter_groups = array_merge( rgar( $field, 'gppa-choices-filter-groups', array() ), rgar( $field, 'gppa-values-filter-groups', array() ) );
 
+			// @phpstan-ignore-next-line function.alreadyNarrowedType (Safety check, the field could be misconfigured)
 			if ( ! is_array( $filter_groups ) || ! count( $filter_groups ) ) {
 				continue;
 			}
@@ -1143,7 +1145,7 @@ class GP_Populate_Anything extends GP_Plugin {
 			 * @param array $objects The objects returned from the object type's query method.
 			 * @param GPPA_Object_Type $object_type_instance The current GPPA object type instance
 			 * @param array{
-			 * 	 populate: string, // What is being populated. Either 'choices', 'values'.
+			 *   populate: string, // What is being populated. Either 'choices', 'values'.
 			 *   filter_groups: array, // Filters for querying/fetching the objects.
 			 *   ordering: array, // Ordering settings for querying/fetching (includes 'orderby' and 'order').
 			 *   templates: array, // Templates to determine how choices/values will utilize the returned objects.
@@ -1153,13 +1155,13 @@ class GP_Populate_Anything extends GP_Plugin {
 			 *   unique: bool, // Return only unique results.
 			 *   page?: int, // Which page of results to query.
 			 *   limit?: int, // Maximum number of results to return.
-			 * }
+			 * } $args Query arguments array.
 			 */
 			$this->_field_objects_cache[ $query_cache_hash ] = apply_filters(
 				'gppa_object_type_query_results',
 				$object_type_instance->query( $args, $field ),
 				$object_type_instance,
-				$args,
+				$args
 			);
 		}
 
@@ -1425,6 +1427,11 @@ class GP_Populate_Anything extends GP_Plugin {
 			return $template_value;
 		}
 
+		// Use GFFormsModel::get_input_type() so array-based settings from AJAX previews still resolve to "list".
+		if ( $populate === 'values' && GFFormsModel::get_input_type( $field ) === 'list' ) {
+			return $template_value;
+		}
+
 		if ( self::is_json( $template_value ) ) {
 			return apply_filters( 'gppa_array_value_to_text', $template_value, json_decode( $template_value, ARRAY_A ), $field, $object, $object_type, $objects, $template );
 		}
@@ -1459,6 +1466,7 @@ class GP_Populate_Anything extends GP_Plugin {
 			return '';
 		}
 
+		// @phpstan-ignore-next-line function.alreadyNarrowedType (Safety check, the field could be misconfigured)
 		if ( ! is_a( $field, 'GF_Field_MultiSelect' ) || ! method_exists( $field, 'to_array' ) ) {
 			return $template_value;
 		}
@@ -2484,6 +2492,7 @@ class GP_Populate_Anything extends GP_Plugin {
 				}
 			}
 
+			// @phpstan-ignore-next-line function.alreadyNarrowedType (Safety check)
 			if ( isset( $values ) && is_array( $values ) ) {
 				return apply_filters( 'gppa_array_value_to_text', $values, $values, $field, $objects_in_value, $this->get_object_type( $object_type_split[0] ), $objects, rgar( $templates, $template ) );
 			}
@@ -2812,6 +2821,11 @@ class GP_Populate_Anything extends GP_Plugin {
 						$field_value[ "{$field->id}.3" ] = rgar( $field_values, "{$field->id}.3", $field->disableQuantity );
 					}
 				}
+
+				// Populate the product name label.
+				if ( rgar( $field, 'gppa-values-enabled' ) ) {
+					$field->label = rgar( $field_value, "{$field->id}.1" );
+				}
 				break;
 			case 'calculation':
 				if ( rgblank( rgar( $field_value, "{$field->id}.1" ) ) ) {
@@ -3044,6 +3058,8 @@ class GP_Populate_Anything extends GP_Plugin {
 
 			// Only set preselected value if there is no posted value for this field
 			$has_posted_value = false;
+
+			// @phpstan-ignore-next-line function.alreadyNarrowedType (Safety check)
 			if ( is_array( $field_values ) && ! $field->allowsPrepopulate ) {
 				// For checkboxes, check if any input for this field has a value
 				foreach ( $field_values as $key => $val ) {
@@ -4056,6 +4072,7 @@ class GP_Populate_Anything extends GP_Plugin {
 			return $form;
 		}
 
+		// @phpstan-ignore-next-line function.alreadyNarrowedType (Safety check)
 		if ( ! is_array( $form ) ) {
 			return $form;
 		}
@@ -4068,6 +4085,7 @@ class GP_Populate_Anything extends GP_Plugin {
 			$GLOBALS['gppa-field-values'][ $form['id'] ] = array();
 		}
 
+		// @phpstan-ignore-next-line function.alreadyNarrowedType (Safety check)
 		if ( ! empty( $field_values ) && is_array( $field_values ) ) {
 			$this->prepopulate_fields_values[ $form['id'] ] = $field_values;
 			$GLOBALS['gppa-field-values'][ $form['id'] ]    = $field_values;

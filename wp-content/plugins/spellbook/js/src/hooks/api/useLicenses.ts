@@ -5,81 +5,91 @@ import useStore from '../../store';
 
 export const useAllLicenses = () => {
 	const forceLicenseRefresh = useStore(state => state.forceLicenseRefresh);
+	const setForceLicenseRefresh = useStore(state => state.setForceLicenseRefresh);
 
 	return useQuery<Record<LicensedProductType, LicenseData>>({
 		queryKey: ['licenses'],
 		queryFn: async ({ signal }) => {
-			return apiFetch({
+			const licenses = await apiFetch<Record<LicensedProductType, LicenseData>>({
 				path: `/gwiz/v1/license${forceLicenseRefresh ? '?force=1' : ''}`,
 				signal
 			});
+
+			if (forceLicenseRefresh) {
+				setForceLicenseRefresh(false);
+			}
+
+			return licenses;
 		},
 		staleTime: Infinity // Only refetch when we explicitly invalidate
 	});
 };
 
-export const useLicense = (type: LicensedProductType) => {
+export const useLicense = (type: LicensedProductType, useBundleIfAvailable = false) => {
 	const allLicensesQuery = useAllLicenses();
 
+	// Determine actual type (bundle-first for perk/connect if requested)
+	const actualType = useBundleIfAvailable && (type === 'perk' || type === 'connect') && allLicensesQuery.data?.['wiz-bundle']?.valid
+		? 'wiz-bundle'
+		: type;
+
 	return {
-		data: allLicensesQuery.data?.[type],
+		data: allLicensesQuery.data?.[actualType],
 		isLoading: allLicensesQuery.isLoading,
-		error: allLicensesQuery.error
+		error: allLicensesQuery.error,
+		actualType
 	};
 };
 
 export const useValidateLicenseWithUnknownProductType = () => {
-	const { validate: validatePerk } = useLicenseMutations('perk');
-	const { validate: validateConnect } = useLicenseMutations('connect');
-	const { validate: validateShop } = useLicenseMutations('shop');
+	// Define validation order: bundles first, then individual licenses
+	// This prevents showing "upgrade" notification when entering a bundle key directly
+	const validationTypes: LicensedProductType[] = ['wiz-bundle', 'perk', 'connect', 'shop'];
+	const mutations = {
+		perk: useLicenseMutations('perk'),
+		connect: useLicenseMutations('connect'),
+		shop: useLicenseMutations('shop'),
+		'wiz-bundle': useLicenseMutations('wiz-bundle'),
+	};
 
 	return {
 		mutate: async (key: string, options?: { onSuccess?: () => void }) => {
-			// Reset errors from previous attempts
-			validatePerk.reset();
-			validateConnect.reset();
-			validateShop.reset();
+			// Reset all mutations
+			Object.values(mutations).forEach(mutation => mutation.validate.reset());
 
-			// Try Perks first (most likely)
-			try {
-				await validatePerk.mutateAsync(key);
-				options?.onSuccess?.();
-				return;
-			} catch (error) {
-				// Only continue if it's a mismatch
-				if ((error as LicenseError).code === 'license_mismatch') {
-					// Try Connect second
-					try {
-						await validateConnect.mutateAsync(key);
-						options?.onSuccess?.();
-						return;
-					} catch (error) {
-						// Only continue if it's a mismatch
-						if ((error as LicenseError).code === 'license_mismatch') {
-							// Finally try Shop
-							await validateShop.mutateAsync(key);
-							options?.onSuccess?.();
-						}
+			// Try each validation type in order
+			for (const type of validationTypes) {
+				try {
+					await mutations[type].validate.mutateAsync(key);
+					options?.onSuccess?.();
+					return;
+				} catch (error) {
+					// Only continue if it's a license mismatch, otherwise re-throw
+					if ((error as LicenseError).code !== 'license_mismatch') {
+						throw error;
 					}
+					// Continue to next type if it's just a mismatch
 				}
 			}
 		},
 		reset: () => {
-			validatePerk.reset();
-			validateConnect.reset();
-			validateShop.reset();
+			Object.values(mutations).forEach(mutation => mutation.validate.reset());
 		},
-		isPending: validatePerk.isPending || validateConnect.isPending || validateShop.isPending,
-		// Only show current error if it's not a mismatch
-		error: validatePerk.error?.code !== 'license_mismatch' ? validatePerk.error :
-			validateConnect.error?.code !== 'license_mismatch' ? validateConnect.error :
-			validateShop.error?.code !== 'license_mismatch' ? validateShop.error :
-			undefined
+		isPending: Object.values(mutations).some(mutation => mutation.validate.isPending),
+		// Return the first non-mismatch error
+		error: Object.values(mutations)
+			.map(mutation => mutation.validate.error)
+			.find(error => error && error.code !== 'license_mismatch') || undefined
 	};
 };
 
-export const useLicenseMutations = (type: LicensedProductType) => {
+export const useLicenseMutations = (productType: LicensedProductType, useBundleIfAvailable = false) => {
 	const queryClient = useQueryClient();
+
+	// Determine actual type (bundle-first for perk/connect if requested)
+	const type = useBundleIfAvailable && (productType === 'perk' || productType === 'connect')
+		? (useAllLicenses().data?.['wiz-bundle']?.valid ? 'wiz-bundle' : productType)
+		: productType;
 
 	const updateLicenseInCache = (updates: Partial<LicenseData> | null, replace = false) => {
 		queryClient.setQueryData(['licenses'], (old: Record<LicensedProductType, LicenseData> | undefined) => {
@@ -108,8 +118,21 @@ export const useLicenseMutations = (type: LicensedProductType) => {
 					method: 'POST',
 					data: { license_key: key }
 				}),
-			onSuccess: (data) => {
-				updateLicenseInCache(data.license_data);
+			onSuccess: async (data) => {
+				// Check if this was a migration
+				if (data.migrated && data.from_type && data.to_type) {
+					// Backend has already migrated - refetch to get the correct state
+					await queryClient.refetchQueries({ queryKey: ['licenses'] });
+
+					// Show migration success message
+					useStore.getState().showNotification(
+						data.message || 'Your license has been upgraded to the Wiz Bundle!',
+						'success'
+					);
+				} else {
+					// Normal validation, just update the license
+					updateLicenseInCache(data.license_data);
+				}
 
 				// Reset products query to ensure we have the latest data
 				queryClient.invalidateQueries({ queryKey: ['products'] });
@@ -124,7 +147,8 @@ export const useLicenseMutations = (type: LicensedProductType) => {
 					method: 'POST'
 				}),
 			onSuccess: (data) => {
-				// Update license data with new registered_products array
+				// Update license data - the type should already be correct since we're using
+				// usePerksMutations/useConnectMutations which auto-select bundle if available
 				updateLicenseInCache(data.license_data);
 
 				// Update product's is_registered flag

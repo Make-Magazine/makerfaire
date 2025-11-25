@@ -10,6 +10,7 @@ const LicenseBarAll = () => {
     const { data: perkLicense, isLoading: perkLoading } = useLicense('perk');
     const { data: connectLicense, isLoading: connectLoading } = useLicense('connect');
     const { data: shopLicense, isLoading: shopLoading } = useLicense('shop');
+    const { data: wizBundleLicense, isLoading: wizBundleLoading } = useLicense('wiz-bundle');
     const { register, isPending: isRegistering, registrationStatus, isLoading: registrationLoading } = useSpellbookRegistration();
     const [name, setName] = useState('');
     const [email, setEmail] = useState('');
@@ -18,12 +19,12 @@ const LicenseBarAll = () => {
     const { mutate: validateUnknownLicense, isPending: isValidating, error, reset } = useValidateLicenseWithUnknownProductType();
 
 	// Show loading state
-	if (perkLoading || connectLoading || shopLoading || registrationLoading) {
+	if (perkLoading || connectLoading || shopLoading || wizBundleLoading || registrationLoading) {
 		return null;
 	}
 
 	// If registered or has valid license, hide the license bar
-	if (registrationStatus?.is_registered || perkLicense?.valid || connectLicense?.valid || shopLicense?.valid) {
+	if (registrationStatus?.is_registered || perkLicense?.valid || connectLicense?.valid || shopLicense?.valid || wizBundleLicense?.valid) {
 		return null;
 	}
 

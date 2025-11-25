@@ -39,7 +39,7 @@ class GW_Telemetry {
 		$entry_count = GFFormsModel::get_entry_count_all_forms( 'active' );
 		$meta_counts = GFFormsModel::get_entry_meta_counts();
 
-		return array(
+		$data = array(
 			// Basic Site Info
 			'site_url'     => get_site_url(),
 			'php_version'  => phpversion(),
@@ -71,6 +71,10 @@ class GW_Telemetry {
 				'shop'    => array(
 					'key'       => GWPerks::get_api()->get_license_key( 'shop' ),
 					'is_active' => $this->has_active_license( 'shop' ),
+				),
+				'wiz-bundle'    => array(
+					'key'       => GWPerks::get_api()->get_license_key( 'wiz-bundle' ),
+					'is_active' => $this->has_active_license( 'wiz-bundle' ),
 				)
 			),
 
@@ -83,6 +87,8 @@ class GW_Telemetry {
 				'entry_notes_count'   => (int) $meta_counts['notes'],
 			),
 		);
+
+		return $data;
 	}
 
 	public function maybe_send() {
@@ -181,11 +187,11 @@ class GW_Telemetry {
 
 		$license_data = GravityPerks::get_api()->get_license_data( $type );
 
-		if ( empty( $license_data ) || empty( $license_data['status'] ) ) {
+		if ( empty( $license_data ) || empty( $license_data['license'] ) ) {
 			return false;
 		}
 
-		return ! $license_data['valid'];
+		return $license_data['valid'];
 	}
 
 	private function get_db_version() {

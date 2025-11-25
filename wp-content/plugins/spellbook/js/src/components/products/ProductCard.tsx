@@ -29,7 +29,7 @@ interface ProductCardButtonsProps<T extends BaseProduct> {
 }
 
 const ProductCardButtons = <T extends BaseProduct>({ product, licenses, mutations }: ProductCardButtonsProps<T>) => {
-    const { register } = useLicenseMutations(product.type as LicensedProductType);
+	const { register } = useLicenseMutations(product.type as LicensedProductType, true);
     const isUnregistered = useUnregisteredStatus(product);
     const buttonConfig = useMemo(() => {
         // Free plugins can update if they're registered

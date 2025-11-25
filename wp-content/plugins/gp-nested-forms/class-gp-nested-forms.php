@@ -158,6 +158,9 @@ class GP_Nested_Forms extends GP_Plugin {
 		// Make single entry label and plural entry label translatable via WPML.
 		add_filter( 'gform_multilingual_field_keys', array( $this, 'wpml_translate_entry_labels' ) );
 
+		// Allow Gravity Forms 2.9.18+ to retain previously uploaded files when a nested entry is edited.
+		add_filter( 'gform_submission_files_pre_save_field_value', array( $this, 'prepare_submission_files_for_save' ), 9, 4 );
+
 		// Clear form's nested entries if save and continue is used (migrated from snippet library)
 		add_action( 'gform_post_process', function( $form ) {
 			if ( rgpost( 'gform_save' ) && class_exists( 'GPNF_Session' ) ) {
@@ -1900,6 +1903,110 @@ class GP_Nested_Forms extends GP_Plugin {
 		return $entry;
 	}
 
+	/**
+	 * Check if the given field supports the GF 2.9.18+ file upload pipeline.
+	 *
+	 * @param mixed $field Field instance or array.
+	 *
+	 * @return bool
+	 */
+	protected function supports_modern_file_upload_handling( $field ) {
+		return $field instanceof GF_Field_FileUpload && method_exists( $field, 'populate_file_urls_from_value' );
+	}
+
+	/**
+	 * Populate GF's submission cache for GF 2.9.18+ multi-file handling so existing files persist across edits.
+	 *
+	 * @param GF_Field_FileUpload $field Field instance.
+	 * @param array               $form  Form meta.
+	 * @param array               $entry Entry being prepared.
+	 *
+	 * @return void
+	 */
+	protected function hydrate_submission_files_cache( $field, $form, $entry ) {
+		if ( ! $field instanceof GF_Field_FileUpload ) {
+			return;
+		}
+
+		$form_id = (int) rgar( $form, 'id' );
+		if ( ! $form_id ) {
+			return;
+		}
+
+		if ( method_exists( $field, 'set_submission_files' ) ) {
+			// Start with a clean submission cache so populate_file_urls_from_value() can rebuild it.
+			$field->set_submission_files( null );
+		}
+
+		if ( method_exists( $field, 'set_context_property' ) ) {
+			// GF 2.9.18+ expects the current form & entry to be stored as context before populating files.
+			$field->set_context_property( 'form', $form );
+			$field->set_context_property( 'entry', $entry );
+		}
+
+		if ( ! isset( GFFormsModel::$uploaded_files[ $form_id ] ) || ! is_array( GFFormsModel::$uploaded_files[ $form_id ] ) ) {
+			GFFormsModel::$uploaded_files[ $form_id ] = array();
+		}
+
+		// Remove any stale cache keyed by this field so the helper can repopulate it.
+		unset( GFFormsModel::$uploaded_files[ $form_id ][ 'input_' . $field->id ] );
+
+		$field_value = rgar( $entry, $field->id );
+		$field->populate_file_urls_from_value( $field_value );
+	}
+
+	/**
+	 * Drop the dynamic URL marker so GF keeps original uploads when saving the field.
+	 *
+	 * GF treats entries in $files['existing'] with a URL as dynamic data; since we don't repost the raw field value,
+	 * those would be discarded unless we strip the URL before save. Removing it lets GF reuse the stored file path.
+	 *
+	 * @param array                $files Files Gravity Forms is about to save.
+	 * @param GF_Field_FileUpload  $field File upload field instance.
+	 * @param array                $entry Entry being saved (partial at this point).
+	 * @param array                $form  Current form.
+	 *
+	 * @return array
+	 */
+	public function prepare_submission_files_for_save( $files, $field, $entry, $form ) {
+		if ( ! $this->is_nested_form_edit_submission() || ! $this->supports_modern_file_upload_handling( $field ) || empty( $files['existing'] ) || ! $field->multipleFiles ) {
+			return $files;
+		}
+
+		// Load the original entry so we can compare the stored file URLs against the current payload.
+		$original_entry = $this->entry_being_edited;
+		if ( empty( $original_entry ) ) {
+			$entry_id       = $this->get_posted_entry_id();
+			$original_entry = $entry_id ? GFAPI::get_entry( $entry_id ) : null;
+			if ( is_wp_error( $original_entry ) || empty( $original_entry ) ) {
+				return $files;
+			}
+
+			$this->entry_being_edited = $original_entry;
+		}
+
+		$original_urls = json_decode( rgar( $original_entry, $field->id ), true );
+		if ( ! is_array( $original_urls ) ) {
+			return $files;
+		}
+
+		foreach ( $files['existing'] as &$existing_file ) {
+			$url = rgar( $existing_file, 'url' );
+			if ( empty( $url ) ) {
+				continue;
+			}
+
+			// When GF sees a URL without a temp filename it treats the file as dynamically populated and drops it.
+			if ( in_array( $url, $original_urls, true ) && empty( $existing_file['temp_filename'] ) ) {
+				unset( $existing_file['url'] );
+			}
+		}
+
+		unset( $existing_file );
+
+		return $files;
+	}
+
 	public function get_posted_nested_form_field( $form ) {
 		foreach ( $form['fields'] as $field ) {
 			if ( $field->id == $this->get_posted_nested_form_field_id() ) {
@@ -2953,8 +3060,18 @@ class GP_Nested_Forms extends GP_Plugin {
 					break;
 
 				case 'fileupload':
+					$field_id = (int) $field->id;
+					$value    = rgar( $entry, $field_id );
+					// Fetch the field from GF so populate_file_urls_from_value() updates the instance Gravity Forms saves.
+					$field_object = GFFormsModel::get_field( $form, $field_id );
+
+					// For GF 2.9.18+ multi-file fields, seed Gravity Forms' submission cache and skip the legacy branch below.
+					if ( $this->supports_modern_file_upload_handling( $field_object ) ) {
+						$this->hydrate_submission_files_cache( $field_object, $form, $entry );
+						break;
+					}
+
 					$is_multiple = $field->multipleFiles;
-					$value       = rgar( $entry, $field->id );
 					$return      = array();
 
 					if ( $is_multiple ) {
@@ -2963,35 +3080,37 @@ class GP_Nested_Forms extends GP_Plugin {
 						$files = array( $value );
 					}
 
-					foreach ( $files as $file ) {
+					if ( is_array( $files ) ) {
+						foreach ( $files as $file ) {
 
-						$path_info = pathinfo( $file );
+							$path_info = pathinfo( $file );
 
-						// Check if file has been "deleted" via form UI.
-						$upload_files = json_decode( rgpost( 'gform_uploaded_files' ), ARRAY_A );
-						$input_name   = "input_{$field->id}";
+							// Check if file has been "deleted" via form UI.
+							$upload_files = json_decode( rgpost( 'gform_uploaded_files' ), ARRAY_A );
+							$input_name   = "input_{$field_id}";
 
-						if ( is_array( $upload_files ) && array_key_exists( $input_name, $upload_files ) && ! $upload_files[ $input_name ] ) {
-							continue;
-						}
+							if ( is_array( $upload_files ) && array_key_exists( $input_name, $upload_files ) && ! $upload_files[ $input_name ] ) {
+								continue;
+							}
 
-						if ( $is_multiple ) {
-							$return[] = array(
-								'uploaded_filename' => $path_info['basename'],
-							);
-						} else {
-							$return[] = $path_info['basename'];
+							if ( $is_multiple ) {
+								$return[] = array(
+									'uploaded_filename' => $path_info['basename'],
+								);
+							} else {
+								$return[] = $path_info['basename'];
+							}
 						}
 					}
 
 					// if $uploaded_files array is not set for this form at all, init as array
-					if ( ! isset( GFFormsModel::$uploaded_files[ $form['id'] ] ) ) {
+					if ( ! isset( GFFormsModel::$uploaded_files[ $form['id'] ] ) || ! is_array( GFFormsModel::$uploaded_files[ $form['id'] ] ) ) {
 						GFFormsModel::$uploaded_files[ $form['id'] ] = array();
 					}
 
 					// check if this field's key has been set in the $uploaded_files array, if not add this file (otherwise, a new image may have been uploaded so don't overwrite)
-					if ( ! isset( GFFormsModel::$uploaded_files[ $form['id'] ][ "input_{$field->id}" ] ) ) {
-						GFFormsModel::$uploaded_files[ $form['id'] ][ "input_{$field->id}" ] = $is_multiple ? $return : reset( $return );
+					if ( ! isset( GFFormsModel::$uploaded_files[ $form['id'] ][ "input_{$field_id}" ] ) ) {
+						GFFormsModel::$uploaded_files[ $form['id'] ][ "input_{$field_id}" ] = $is_multiple ? $return : reset( $return );
 					}
 			}
 
@@ -3323,9 +3442,15 @@ class GP_Nested_Forms extends GP_Plugin {
 				continue;
 			}
 
-			$input_name = "input_{$field['id']}";
+			$field_id   = (int) ( $field instanceof GF_Field ? $field->id : $input_id );
+			$input_name = "input_{$field_id}";
 
 			if ( $field->get_input_type() != 'fileupload' ) {
+				continue;
+			}
+
+			// GF 2.9.18+ fields already have their cache seeded in prepare_entry_for_population().
+			if ( $this->supports_modern_file_upload_handling( $field ) ) {
 				continue;
 			}
 

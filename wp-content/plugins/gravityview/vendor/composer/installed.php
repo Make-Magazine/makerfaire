@@ -3,7 +3,7 @@
         'name' => 'gravityview/gravityview',
         'pretty_version' => 'dev-main',
         'version' => 'dev-main',
-        'reference' => 'f7df49fc708974ead1ace7ed196a81f70a21f57a',
+        'reference' => '6ac0935974887f9e862cd79660f675fb8a6184ec',
         'type' => 'wordpress-plugin',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
@@ -40,7 +40,7 @@
         'gravitykit/foundation' => array(
             'pretty_version' => 'dev-main',
             'version' => 'dev-main',
-            'reference' => 'a48f3bc32e5720065a49ecb7988f47ddb441b982',
+            'reference' => 'b291b630b00f923f97ca3374f008ffe1868d2eba',
             'type' => 'library',
             'install_path' => __DIR__ . '/../gravitykit/foundation',
             'aliases' => array(),
@@ -49,7 +49,7 @@
         'gravityview/gravityview' => array(
             'pretty_version' => 'dev-main',
             'version' => 'dev-main',
-            'reference' => 'f7df49fc708974ead1ace7ed196a81f70a21f57a',
+            'reference' => '6ac0935974887f9e862cd79660f675fb8a6184ec',
             'type' => 'wordpress-plugin',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),

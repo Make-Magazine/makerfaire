@@ -15,7 +15,7 @@ interface LicenseManagerProps {
 }
 
 const LicenseBarSuite = ({ type }: LicenseManagerProps) => {
-    const { data: license, isLoading } = useLicense(type);
+	const { data: license, isLoading, actualType: licenseType } = useLicense(type, true);
     const { validate } = useLicenseMutations(type);
     const [licenseKey, setLicenseKey] = useState('');
 
@@ -96,31 +96,33 @@ const LicenseBarSuite = ({ type }: LicenseManagerProps) => {
     } = license;
 
     const suiteName = (() => {
-        switch (type) {
+        switch (licenseType) {
             case 'perk':
                 return 'Gravity Perks';
             case 'connect':
                 return 'Gravity Connect';
             case 'shop':
                 return 'Gravity Shop';
+            case 'wiz-bundle':
+                return 'Wiz Bundle';
         }
     })();
 
     return (
         <div className="license-bar-suite license-bar-suite--activated">
-            <div className={`suite-icon suite-icon--${type}`}>
-                <SuiteIcon type={type} width={40} />
+            <div className={`suite-icon suite-icon--${licenseType}`}>
+                <SuiteIcon type={licenseType} width={40} />
             </div>
 
             <div className="spellbook-title">
-                {`${suiteName} ${priceName}`}
+                {suiteName} {priceName && <span>{priceName}</span>}
             </div>
 
             <div className="spellbook-usage">
-                {type === 'perk' && registeredProducts && (
-                    <>{`${Object.entries(registeredProducts).length}/${registeredProductsLimit == 0 ? '∞' : registeredProductsLimit} perks registered`}</>
+                {(licenseType === 'perk' || licenseType === 'wiz-bundle') && registeredProducts && (
+                    <>{`${Object.entries(registeredProducts).length}/${registeredProductsLimit == 0 ? '∞' : registeredProductsLimit} ${licenseType === 'wiz-bundle' ? 'plugins' : 'perks'} registered`}</>
                 )}
-                {type === 'connect' && registeredProducts && (
+                {licenseType === 'connect' && registeredProducts && (
                     <>{`${Object.entries(registeredProducts).length}/${registeredProductsLimit == 0 ? '∞' : registeredProductsLimit} connections registered`}</>
                 )}
 

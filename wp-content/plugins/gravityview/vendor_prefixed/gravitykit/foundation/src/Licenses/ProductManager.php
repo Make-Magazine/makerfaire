@@ -2,13 +2,14 @@
 /**
  * @license GPL-2.0-or-later
  *
- * Modified by gravityview on 10-October-2025 using {@see https://github.com/BrianHenryIE/strauss}.
+ * Modified by gravityview on 17-November-2025 using {@see https://github.com/BrianHenryIE/strauss}.
  */
 
 namespace GravityKit\GravityView\Foundation\Licenses;
 
 use Exception;
 use GravityKit\GravityView\Foundation\Core;
+use GravityKit\GravityView\Foundation\Exceptions\LockAcquisitionException;
 use GravityKit\GravityView\Foundation\Helpers\Arr;
 use GravityKit\GravityView\Foundation\Helpers\WP;
 use GravityKit\GravityView\Foundation\Logger\Framework as LoggerFramework;
@@ -31,6 +32,62 @@ class ProductManager {
 	const PRODUCTS_DATA_CACHE_ID = Framework::ID . '/products/' . Core::VERSION;
 
 	const PRODUCTS_DATA_CACHE_EXPIRATION = 86400; // 24 hours in seconds.
+
+	/**
+	 * Duration in seconds for the force-refresh lock window.
+	 *
+	 * Concurrent force-refresh requests within this window will share the same fetch operation.
+	 *
+	 * @since 1.7.0
+	 */
+	const FORCE_REFRESH_LOCK_WINDOW = 5;
+
+	/**
+	 * Maximum number of polling attempts when waiting for a concurrent fetch.
+	 *
+	 * Uses exponential backoff: 100ms, 200ms, 400ms, 800ms, then 1s (capped).
+	 * Total wait time: ~10.5 seconds with 13 attempts.
+	 *
+	 * @since 1.7.0
+	 */
+	const FETCH_WAIT_MAX_ATTEMPTS = 13;
+
+	/**
+	 * Initial delay in microseconds for exponential backoff polling.
+	 *
+	 * Doubled on each attempt until FETCH_WAIT_POLL_MAX is reached.
+	 *
+	 * @since 1.7.0
+	 */
+	const FETCH_WAIT_POLL_INITIAL = 100000; // 100 milliseconds.
+
+	/**
+	 * Maximum delay in microseconds between polling attempts (exponential backoff cap).
+	 *
+	 * @since 1.7.0
+	 */
+	const FETCH_WAIT_POLL_MAX = 1000000; // 1 second.
+
+	/**
+	 * Lock timeout in seconds for product fetch operations.
+	 *
+	 * @since 1.7.0
+	 */
+	const FETCH_LOCK_TIMEOUT = 15;
+
+	/**
+	 * Brief delay in microseconds to allow other processes to complete their lock acquisition.
+	 *
+	 * @since 1.7.0
+	 */
+	const FETCH_LOCK_RACE_DELAY = 10000; // 10 milliseconds.
+
+	/**
+	 * Wait duration in microseconds after losing a lock race before checking cache.
+	 *
+	 * @since 1.7.0
+	 */
+	const FETCH_LOCK_LOST_RACE_WAIT = 500000; // 0.5 seconds.
 
 	/**
 	 * {@ProductManager} class instance.
@@ -677,25 +734,233 @@ class ProductManager {
 	 *
 	 * @since 1.0.0
 	 * @since 1.2.0 Result is no longer grouped by category and is now keyed by product ID.
+	 * @since 1.7.0 Added request locking to prevent concurrent API calls.
+	 *
+	 * @param bool $force_refresh (optional) Whether to bypass cache and fetch fresh data. Default: false.
+	 *
+	 * @throws LockAcquisitionException When unable to acquire lock for product fetch operation.
+	 * @throws Exception
+	 *
+	 * @return array
+	 */
+	public function get_remote_products( bool $force_refresh = false ): array {
+		$cache_key = self::PRODUCTS_DATA_CACHE_ID;
+		$lock_key  = $this->get_fetch_lock_key( $force_refresh );
+
+		// Try to wait for any concurrent fetch to complete.
+		if ( ! $force_refresh ) {
+			$cached_result = $this->wait_for_concurrent_fetch( $lock_key, $cache_key );
+			if ( false !== $cached_result ) {
+				return $cached_result;
+			}
+		}
+
+		// Acquire lock or handle race condition.
+		$lock_token = $this->acquire_fetch_lock( $lock_key );
+
+		// Delete cache after acquiring lock to prevent race condition.
+		if ( $force_refresh && false !== $lock_token ) {
+			WP::delete_transient( $cache_key );
+		}
+
+		// If we lost the lock race, check if cache is now available.
+		if ( false === $lock_token ) {
+			$cached_result = $this->get_cached_products( $cache_key );
+			if ( false !== $cached_result ) {
+				return $cached_result;
+			}
+
+			// Lock not acquired and no cache available - do not proceed to fetch.
+			throw LockAcquisitionException::failed(
+				$lock_key,
+				esc_html__( 'Unable to fetch product data at this time. Please try again.', 'gk-gravityview' ),
+				[
+					'cache_key' => $cache_key,
+					'reason'    => 'Failed to acquire distributed lock for concurrent fetch prevention',
+				]
+			);
+		}
+
+		try {
+			$normalized_products = $this->fetch_and_normalize_products();
+		} catch ( Exception $e ) {
+			$this->release_fetch_lock( $lock_key, $lock_token );
+			throw $e;
+		}
+
+		// Release lock now that we're done.
+		$this->release_fetch_lock( $lock_key, $lock_token );
+
+		return $normalized_products;
+	}
+
+	/**
+	 * Generates the lock key for product fetching operations.
+	 *
+	 * @since 1.7.0
+	 *
+	 * @param bool $force_refresh Whether this is a force refresh operation.
+	 *
+	 * @return string
+	 */
+	private function get_fetch_lock_key( bool $force_refresh ): string {
+		$lock_key = self::PRODUCTS_DATA_CACHE_ID . '/fetch_lock';
+
+		// For force refresh, add timestamp to ensure fresh fetch while allowing concurrent requests to share it.
+		if ( $force_refresh ) {
+			$lock_key .= '_' . floor( time() / self::FORCE_REFRESH_LOCK_WINDOW );
+		}
+
+		return $lock_key;
+	}
+
+	/**
+	 * Waits for a concurrent fetch operation to complete and returns cached result if available.
+	 *
+	 * @since 1.7.0
+	 *
+	 * @param string $lock_key  The lock key to monitor.
+	 * @param string $cache_key The cache key to check for results.
+	 *
+	 * @return array|false Array of products if found in cache, false otherwise.
+	 */
+	private function wait_for_concurrent_fetch( string $lock_key, string $cache_key ) {
+		$initial_lock_value = WP::get_transient( $lock_key );
+
+		if ( false === $initial_lock_value ) {
+			return false;
+		}
+
+		// Another process is fetching. Poll for the cached result using exponential backoff.
+		$attempt    = 0;
+		$poll_delay = self::FETCH_WAIT_POLL_INITIAL;
+
+		while ( $attempt < self::FETCH_WAIT_MAX_ATTEMPTS ) {
+			// Exponential backoff: start at 100ms, double each time, cap at 1s.
+			usleep( $poll_delay );
+
+			$poll_delay = min( $poll_delay * 2, self::FETCH_WAIT_POLL_MAX );
+
+			// Check if the fetch completed and data is now cached.
+			$cached_result = $this->get_cached_products( $cache_key );
+			if ( false !== $cached_result ) {
+				LoggerFramework::get_instance()->debug( 'Using cached products from concurrent request' );
+				return $cached_result;
+			}
+
+			// Check if lock was released (other process finished or failed).
+			if ( false === WP::get_transient( $lock_key ) ) {
+				return false;
+			}
+
+			$attempt++;
+		}
+
+		// If we timed out and lock still exists, attempt to release it.
+		// release_fetch_lock will verify ownership before releasing.
+		if ( false !== WP::get_transient( $lock_key ) ) {
+			LoggerFramework::get_instance()->warning( 'Stale fetch lock detected after timeout, attempting to release' );
+			$this->release_fetch_lock( $lock_key, $initial_lock_value );
+		}
+
+		return false;
+	}
+
+	/**
+	 * Retrieves cached products data if valid.
+	 *
+	 * @since 1.7.0
+	 *
+	 * @param string $cache_key The cache key to check.
+	 *
+	 * @return array|false Array of products if found and valid, false otherwise.
+	 */
+	private function get_cached_products( string $cache_key ) {
+		$cached_products = WP::get_transient( $cache_key );
+
+		if ( ! $cached_products ) {
+			return false;
+		}
+
+		$decoded = json_decode( $cached_products, true );
+
+		if ( empty( $decoded['raw'] ) || ! is_array( $decoded['raw'] ) ) {
+			return false;
+		}
+
+		return $decoded['raw'];
+	}
+
+	/**
+	 * Attempts to acquire a lock for product fetching.
+	 *
+	 * @since 1.7.0
+	 *
+	 * @param string $lock_key The lock key to acquire.
+	 *
+	 * @return string|false The unique lock token if acquired, false if another process has the lock.
+	 */
+	private function acquire_fetch_lock( string $lock_key ) {
+		// Attempt to acquire lock using a unique value to detect race conditions.
+		$our_lock_value = uniqid( 'gk_fetch_', true );
+		WP::set_transient( $lock_key, $our_lock_value, self::FETCH_LOCK_TIMEOUT );
+
+		// Verify we actually got the lock (handles race condition).
+		usleep( self::FETCH_LOCK_RACE_DELAY );
+
+		if ( WP::get_transient( $lock_key ) === $our_lock_value ) {
+			return $our_lock_value;
+		}
+
+		// Another process won the race. Wait briefly to give it time to cache results.
+		usleep( self::FETCH_LOCK_LOST_RACE_WAIT );
+
+		return false;
+	}
+
+	/**
+	 * Safely releases a lock by verifying ownership before deletion.
+	 *
+	 * Only deletes the lock if the current lock value matches our token,
+	 * preventing accidental deletion of locks acquired by other processes.
+	 *
+	 * @since 1.7.0
+	 *
+	 * @param string $lock_key   The lock key to release.
+	 * @param string $lock_token The unique token that was returned when the lock was acquired.
+	 *
+	 * @return void
+	 */
+	private function release_fetch_lock( string $lock_key, string $lock_token ): void {
+		$current_lock_value = WP::get_transient( $lock_key );
+
+		// Only delete the lock if we still own it.
+		if ( $current_lock_value !== $lock_token ) {
+			return;
+		}
+
+		WP::delete_transient( $lock_key );
+	}
+
+	/**
+	 * Fetches products from the API and normalizes them.
+	 *
+	 * @since 1.7.0
 	 *
 	 * @throws Exception
 	 *
 	 * @return array
 	 */
-	public function get_remote_products() {
-		try {
-			$response = Helpers::query_api(
-				self::EDD_PRODUCTS_API_ENDPOINT,
-				[
-					'key'         => self::EDD_PRODUCTS_API_KEY,
-					'token'       => self::EDD_PRODUCTS_API_TOKEN,
-					'api_version' => self::EDD_PRODUCTS_API_VERSION,
-					'bust_cache'  => time(),
-				]
-			);
-		} catch ( Exception $e ) {
-			throw new Exception( $e->getMessage() );
-		}
+	private function fetch_and_normalize_products(): array {
+		$response = Helpers::query_api(
+			self::EDD_PRODUCTS_API_ENDPOINT,
+			[
+				'key'         => self::EDD_PRODUCTS_API_KEY,
+				'token'       => self::EDD_PRODUCTS_API_TOKEN,
+				'api_version' => self::EDD_PRODUCTS_API_VERSION,
+				'bust_cache'  => time(),
+			]
+		);
 
 		$products = Arr::get( $response, 'products', [] );
 
@@ -911,16 +1176,44 @@ class ProductManager {
 			];
 
 			try {
-				$products['raw'] = $this->get_remote_products();
+				$products['raw'] = $this->get_remote_products( $args['skip_remote_cache'] );
+			} catch ( LockAcquisitionException $e ) {
+				// Lock acquisition failed - another instance is fetching.
+				// Try to use stale transient cache and re-normalize it with current data.
+				LoggerFramework::get_instance()->warning(
+					'Product fetch skipped due to lock contention: ' . $e->getMessage(),
+					$e->get_data()
+				);
+
+				// Attempt to retrieve full cache structure from transient.
+				$stale_products = WP::get_transient( self::PRODUCTS_DATA_CACHE_ID );
+
+				if ( $stale_products ) {
+					if ( ! is_array( $stale_products ) ) {
+						$stale_products = json_decode( $stale_products, true );
+					}
+
+					if ( ! empty( $stale_products['raw'] ) ) {
+						// Use stale cache but continue to normalization to ensure installation status,
+						// licenses, and dependencies are current.
+						$products = $stale_products;
+					}
+				}
+				// If no stale cache available, $products remains with empty 'raw' array from line 1150-1155,
+				// and the code below will handle empty products appropriately.
 			} catch ( Exception $e ) {
-				LoggerFramework::get_instance()->error( 'Unable to get products from the API.' . $e->getMessage() );
+				// Actual API/fetch error - log but continue to cache for retry logic.
+				LoggerFramework::get_instance()->error( 'Unable to get products from the API: ' . $e->getMessage() );
 			}
 
-			WP::set_transient(
-				self::PRODUCTS_DATA_CACHE_ID,
-				wp_json_encode( $products ),
-				self::PRODUCTS_DATA_CACHE_EXPIRATION
-			);
+			// Only cache if we have data (either fresh or from previous cache).
+			if ( ! empty( $products['raw'] ) ) {
+				WP::set_transient(
+					self::PRODUCTS_DATA_CACHE_ID,
+					wp_json_encode( $products ),
+					self::PRODUCTS_DATA_CACHE_EXPIRATION
+				);
+			}
 		}
 
 		if ( empty( $products['raw'] ) ) {

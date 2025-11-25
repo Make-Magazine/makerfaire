@@ -2,7 +2,7 @@
 /**
  * @license GPL-2.0-or-later
  *
- * Modified by gravityview on 10-October-2025 using {@see https://github.com/BrianHenryIE/strauss}.
+ * Modified by gravityview on 17-November-2025 using {@see https://github.com/BrianHenryIE/strauss}.
  */
 
 namespace GravityKit\GravityView\Foundation\Logger;
@@ -19,6 +19,8 @@ use GravityKit\GravityView\Foundation\Encryption\Encryption;
 use GravityKit\GravityView\Foundation\ThirdParty\Psr\Log\LoggerInterface;
 use GravityKit\GravityView\Foundation\ThirdParty\Psr\Log\LoggerTrait;
 use Exception;
+use Throwable;
+use UnexpectedValueException;
 
 /**
  * Logging framework for GravityKit.
@@ -92,6 +94,15 @@ class Framework implements LoggerInterface {
 	 * @var string
 	 */
 	private $_log_path = 'logs';
+
+	/**
+	 * Cached logger enabled state to avoid repeated settings queries.
+	 *
+	 * @since 1.7.0
+	 *
+	 * @var bool|null
+	 */
+	private $_logger_enabled = null;
 
 	/**
 	 * Class constructor.
@@ -170,9 +181,12 @@ class Framework implements LoggerInterface {
 	 * @return void|ChromePHPHandler|GravityFormsHandler|StreamHandler|RotatingFileHandler|WeeklyRotatingFileHandler|QueryMonitorHandler
 	 */
 	public function get_logger_handler() {
+		// phpcs:disable WordPress.PHP.DevelopmentFunctions.error_log_error_log
 		$settings = $this->_settings->get_plugin_settings( FoundationCore::ID );
 
-		if ( empty( $settings['logger'] ) ) {
+		$this->_logger_enabled = ! empty( $settings['logger'] );
+
+		if ( ! $this->_logger_enabled ) {
 			if ( class_exists( 'GFLogging' ) && get_option( 'gform_enable_logging' ) ) {
 				return new GravityFormsHandler( $this->_logger_id, $this->_logger_title );
 			}
@@ -189,6 +203,32 @@ class Framework implements LoggerInterface {
 				try {
 					// Check if we should migrate existing log file.
 					$this->maybe_migrate_existing_log();
+
+					// Check if the log directory is writable or can be created.
+					$log_file = $this->get_log_file();
+					$log_dir  = dirname( $log_file );
+
+					// Ensure target is a directory and writable (or creatable).
+					if ( file_exists( $log_dir ) && ! is_dir( $log_dir ) ) {
+						error_log( 'GravityKit Foundation Logger: Log path exists but is not a directory at ' . $log_dir );
+
+						return;
+					}
+
+					if ( ! file_exists( $log_dir ) ) {
+						// Try to create the directory.
+						if ( ! wp_mkdir_p( $log_dir ) ) {
+							// Can't create the directory, logging won't work.
+							error_log( 'GravityKit Foundation Logger: Cannot create log directory at ' . $log_dir );
+
+							return;
+						}
+					} elseif ( ! is_writable( $log_dir ) ) {
+						// Directory exists but is not writable.
+						error_log( 'GravityKit Foundation Logger: Log directory is not writable at ' . $log_dir );
+
+						return;
+					}
 
 					// Get rotation settings.
 					$max_files       = isset( $settings['logger_max_files'] ) ? absint( $settings['logger_max_files'] ) : 7;
@@ -219,7 +259,7 @@ class Framework implements LoggerInterface {
 
 					return $handler;
 				} catch ( Exception $e ) {
-					error_log( 'Could not initialize file logging for GravityKit:' . $e->getMessage() ); // phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log
+					error_log( 'Could not initialize file logging for GravityKit: ' . $e->getMessage() ); // phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log
 
 					return;
 				}
@@ -228,6 +268,7 @@ class Framework implements LoggerInterface {
 			case 'chrome_logger':
 				return new ChromePHPHandler( $log_level );
 		}
+		// phpcs:enable WordPress.PHP.DevelopmentFunctions.error_log_error_log
 	}
 
 	/**
@@ -329,10 +370,7 @@ class Framework implements LoggerInterface {
 	 * @return mixed|void
 	 */
 	public function __call( $name, array $arguments = [] ) {
-		if ( ! $this->_logger instanceof MonologLogger ) {
-			return;
-		}
-
+		// phpcs:disable WordPress.PHP.DevelopmentFunctions.error_log_error_log
 		/**
 		 * Allows logging of WP heartbeat requests.
 		 *
@@ -348,10 +386,117 @@ class Framework implements LoggerInterface {
 			return;
 		}
 
-		if ( CoreHelpers::is_callable_class_method( [ $this->_logger, $name ] ) ) {
-			/** @phpstan-ignore-next-line */
-			return call_user_func_array( [ $this->_logger, $name ], $arguments );
+		if ( ! $this->_logger instanceof MonologLogger ) {
+			// No logger instance available (e.g., the log folder is read-only and the log file can't be created) - fall back to using error_log() if logging is enabled.
+			// Use cached logger enabled state to avoid repeated settings queries.
+			if ( $this->_logger_enabled && isset( $arguments[0] ) ) {
+				$log_message = $this->format_log_message( $arguments[0] );
+
+				$message = sprintf(
+					'GravityKit Foundation Logger [%s]: %s',
+					strtoupper( $name ),
+					$log_message
+				);
+
+				// Add context if provided.
+				if ( ! empty( $arguments[1] ) && is_array( $arguments[1] ) ) {
+					$context_json = wp_json_encode( $arguments[1] );
+					if ( false !== $context_json ) {
+						$message .= ' | Context: ' . $context_json;
+					}
+				}
+
+				error_log( $message );
+			}
+
+			return;
 		}
+
+		if ( CoreHelpers::is_callable_class_method( [ $this->_logger, $name ] ) ) {
+			try {
+				/** @phpstan-ignore-next-line */
+				return call_user_func_array( [ $this->_logger, $name ], $arguments );
+			} catch ( UnexpectedValueException $e ) {
+				// File write failed (e.g., read-only file system).
+				// Log the original payload via error_log() so operators can still see what was being logged.
+				$log_message = isset( $arguments[0] ) ? $this->format_log_message( $arguments[0] ) : '(no message)';
+
+				$fallback_message = sprintf(
+					'GravityKit Foundation Logger: File write failed | Level: %s | Message: %s',
+					strtoupper( $name ),
+					$log_message
+				);
+
+				// Add context if provided.
+				if ( ! empty( $arguments[1] ) && is_array( $arguments[1] ) ) {
+					$context_json = wp_json_encode( $arguments[1] );
+
+					if ( false !== $context_json ) {
+						$fallback_message .= ' | Context: ' . $context_json;
+					}
+				}
+
+				// Add exception details.
+				$fallback_message .= ' | Exception: ' . $e->getMessage();
+
+				error_log( $fallback_message );
+
+				return;
+			} catch ( Throwable $e ) {
+				// Catch any other exceptions that might occur during logging.
+				$log_message = isset( $arguments[0] ) ? $this->format_log_message( $arguments[0] ) : '(no message)';
+
+				$fallback_message = sprintf(
+					'GravityKit Foundation Logger: Logging error | Level: %s | Message: %s',
+					strtoupper( $name ),
+					$log_message
+				);
+
+				// Add context if provided.
+				if ( ! empty( $arguments[1] ) && is_array( $arguments[1] ) ) {
+					$context_json = wp_json_encode( $arguments[1] );
+
+					if ( false !== $context_json ) {
+						$fallback_message .= ' | Context: ' . $context_json;
+					}
+				}
+
+				// Add exception details.
+				$fallback_message .= ' | Exception: ' . $e->getMessage();
+
+				error_log( $fallback_message );
+
+				return;
+			}
+		}
+		// phpcs:enable WordPress.PHP.DevelopmentFunctions.error_log_error_log
+	}
+
+	/**
+	 * Defensively formats a log message to ensure it's a string.
+	 *
+	 * @since TBD
+	 *
+	 * @param mixed $message The message to format.
+	 *
+	 * @return string The formatted message.
+	 */
+	private function format_log_message( $message ) {
+		if ( is_string( $message ) ) {
+			return $message;
+		}
+
+		$encoded = wp_json_encode( $message );
+
+		if ( false !== $encoded ) {
+			return $encoded;
+		}
+
+		if ( is_scalar( $message ) ) {
+			return (string) $message;
+		}
+
+		return '(non-string message)';
 	}
 
 	/**
@@ -366,6 +511,7 @@ class Framework implements LoggerInterface {
 	 * @param mixed[] $context Log context.
 	 */
 	public function log( $level, $message, array $context = [] ) {
+		// The __call method now handles exceptions, so we can safely call it.
 		$this->__call( $level, [ $message, $context ] );
 	}
 }

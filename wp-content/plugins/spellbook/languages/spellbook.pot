@@ -2,14 +2,14 @@
 # This file is distributed under the GPL2.
 msgid ""
 msgstr ""
-"Project-Id-Version: Spellbook 3.0.16\n"
-"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/cloned-perk-EaeDvd0qxT\n"
+"Project-Id-Version: Spellbook 3.0.17\n"
+"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/cloned-perk-bgkiHBNJuk\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2025-10-29T19:08:43+00:00\n"
+"POT-Creation-Date: 2025-11-11T20:54:57+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.10.0\n"
 "X-Domain: spellbook\n"
@@ -17,8 +17,8 @@ msgstr ""
 #. Plugin Name of the plugin
 #: spellbook.php
 #: class-gravityperks.php:204
-#: class-gravityperks.php:1177
-#: class-gravityperks.php:1431
+#: class-gravityperks.php:1181
+#: class-gravityperks.php:1435
 msgid "Spellbook"
 msgstr ""
 
@@ -103,84 +103,89 @@ msgid "Your license for %1$s has expired. <a href=\"%2$s\" target=\"_blank\">Ren
 msgstr ""
 
 #: class-gravityperks.php:602
-#: class-gravityperks.php:830
+#: class-gravityperks.php:834
 msgid "Updating free plugins in Spellbook requires a license or email. <a href=\"%1$s\" target=\"_blank\">Enter in Spellbook</a>"
 msgstr ""
 
-#: class-gravityperks.php:809
+#: class-gravityperks.php:813
 msgid "Your %1$s license is invalid or missing. <a href=\"%2$s\" target=\"_blank\">Enter in Spellbook</a> or <a href=\"%3$s\" target=\"_blank\">Buy License</a>."
 msgstr ""
 
-#: class-gravityperks.php:817
+#: class-gravityperks.php:821
 msgid "%s is unregistered. <a href=\"%s\" target=\"_blank\">Register in Spellbook</a>"
 msgstr ""
 
-#: class-gravityperks.php:822
+#: class-gravityperks.php:826
 msgid "Your %1$s license has expired. <a href=\"%2$s\" target=\"_blank\">Renew License</a>"
 msgstr ""
 
-#: class-gravityperks.php:853
+#: class-gravityperks.php:857
 msgid "<strong>Uh-oh!</strong> We ran into a problem when updating your Gravity Wiz plugins."
 msgstr ""
 
-#: class-gravityperks.php:854
+#: class-gravityperks.php:858
 msgid "<strong>Uh-oh!</strong> We ran into some problems when updating your Gravity Wiz plugins."
 msgstr ""
 
-#: class-gravityperks.php:870
+#: class-gravityperks.php:874
 msgid "Manage in Spellbook"
 msgstr ""
 
-#: class-gravityperks.php:971
+#: class-gravityperks.php:975
 msgid "<strong>Spellbook</strong> must be network activated before a <strong>perk</strong> can be network activated."
 msgstr ""
 
-#: class-gravityperks.php:1079
+#: class-gravityperks.php:1083
 msgid "Oops! Your site is having some trouble communicating with our API."
 msgstr ""
 
-#: class-gravityperks.php:1080
+#: class-gravityperks.php:1084
 msgid "Let's get this fixed."
 msgstr ""
 
-#: class-gravityperks.php:1495
 #: class-gravityperks.php:1499
+#: class-gravityperks.php:1503
 msgid "Perks"
 msgstr ""
 
-#: includes/api/class-rest-license-controller.php:170
+#: includes/api/class-rest-license-controller.php:169
 msgid "The provided license key is invalid."
 msgstr ""
 
-#: includes/api/class-rest-license-controller.php:171
+#: includes/api/class-rest-license-controller.php:193
+#: includes/api/class-rest-license-controller.php:209
+msgid "Your license has been upgraded to the Wiz Bundle!"
+msgstr ""
+
+#: includes/api/class-rest-license-controller.php:219
 msgid "The provided license key does not match this product."
 msgstr ""
 
-#: includes/api/class-rest-license-controller.php:179
+#: includes/api/class-rest-license-controller.php:230
 msgid "License key is valid"
 msgstr ""
 
-#: includes/api/class-rest-license-controller.php:197
+#: includes/api/class-rest-license-controller.php:248
 msgid "Failed to deactivate license."
 msgstr ""
 
-#: includes/api/class-rest-license-controller.php:204
+#: includes/api/class-rest-license-controller.php:255
 msgid "License deactivated successfully"
 msgstr ""
 
-#: includes/api/class-rest-license-controller.php:221
+#: includes/api/class-rest-license-controller.php:272
 msgid "Failed to register product."
 msgstr ""
 
-#: includes/api/class-rest-license-controller.php:231
+#: includes/api/class-rest-license-controller.php:282
 msgid "Product registered successfully"
 msgstr ""
 
-#: includes/api/class-rest-license-controller.php:253
+#: includes/api/class-rest-license-controller.php:304
 msgid "Failed to deregister product."
 msgstr ""
 
-#: includes/api/class-rest-license-controller.php:260
+#: includes/api/class-rest-license-controller.php:311
 msgid "Product deregistered successfully"
 msgstr ""
 
@@ -324,11 +329,11 @@ msgstr ""
 msgid "Whether the plugin has settings."
 msgstr ""
 
-#: includes/class-gwapi.php:298
+#: includes/class-gwapi.php:310
 msgid "<strong>Important Note!</strong> GP Google Sheets has been converted to GC Google Sheets"
 msgstr ""
 
-#: includes/class-gwapi.php:302
+#: includes/class-gwapi.php:314
 msgid "GC Google Sheets has been activated."
 msgstr ""
 

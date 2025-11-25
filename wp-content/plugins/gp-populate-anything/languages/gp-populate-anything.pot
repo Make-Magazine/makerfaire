@@ -2,14 +2,14 @@
 # This file is distributed under the GPL2.
 msgid ""
 msgstr ""
-"Project-Id-Version: GP Populate Anything 2.1.48\n"
-"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/cloned-perk-eQZWTe252C\n"
+"Project-Id-Version: GP Populate Anything 2.1.52\n"
+"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/cloned-perk-sU10BXvIwc\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2025-10-09T18:02:52+00:00\n"
+"POT-Creation-Date: 2025-11-12T20:05:00+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.10.0\n"
 "X-Domain: gp-populate-anything\n"
@@ -39,232 +39,232 @@ msgstr ""
 msgid "https://gravitywiz.com/"
 msgstr ""
 
-#: class-gp-populate-anything.php:580
+#: class-gp-populate-anything.php:581
 msgid "Populate choices dynamically"
 msgstr ""
 
-#: class-gp-populate-anything.php:581
+#: class-gp-populate-anything.php:582
 msgid "Populate value dynamically"
 msgstr ""
 
-#: class-gp-populate-anything.php:582
+#: class-gp-populate-anything.php:583
 msgid "Or"
 msgstr ""
 
-#: class-gp-populate-anything.php:583
+#: class-gp-populate-anything.php:584
 msgid "And"
 msgstr ""
 
-#: class-gp-populate-anything.php:584
+#: class-gp-populate-anything.php:585
 msgid "Filter {0}"
 msgstr ""
 
-#: class-gp-populate-anything.php:585
+#: class-gp-populate-anything.php:586
 msgid "Filter Group {0}"
 msgstr ""
 
-#: class-gp-populate-anything.php:586
+#: class-gp-populate-anything.php:587
 msgid "Filter Groups"
 msgstr ""
 
-#: class-gp-populate-anything.php:587
+#: class-gp-populate-anything.php:588
 msgid "Add Filter"
 msgstr ""
 
-#: class-gp-populate-anything.php:588
+#: class-gp-populate-anything.php:589
 msgid "Add Filter Group"
 msgstr ""
 
-#: class-gp-populate-anything.php:589
+#: class-gp-populate-anything.php:590
 msgid "Remove Filter"
 msgstr ""
 
-#: class-gp-populate-anything.php:590
+#: class-gp-populate-anything.php:591
 msgid "Remove Filter {0}"
 msgstr ""
 
-#: class-gp-populate-anything.php:591
+#: class-gp-populate-anything.php:592
 msgid "Label"
 msgstr ""
 
-#: class-gp-populate-anything.php:592
+#: class-gp-populate-anything.php:593
 msgid "Value"
 msgstr ""
 
-#: class-gp-populate-anything.php:593
+#: class-gp-populate-anything.php:594
 msgid "Price"
 msgstr ""
 
-#: class-gp-populate-anything.php:594
+#: class-gp-populate-anything.php:595
 #: includes/class-compatibility-jetsloth-image-choices.php:62
 msgid "Image"
 msgstr ""
 
-#: class-gp-populate-anything.php:595
+#: class-gp-populate-anything.php:596
 msgid "Loading..."
 msgstr ""
 
-#: class-gp-populate-anything.php:596
+#: class-gp-populate-anything.php:597
 msgid "Default"
 msgstr ""
 
-#: class-gp-populate-anything.php:600
+#: class-gp-populate-anything.php:601
 msgid "✎ Custom Value"
 msgstr ""
 
-#: class-gp-populate-anything.php:601
+#: class-gp-populate-anything.php:602
 msgid "Standard Values"
 msgstr ""
 
-#: class-gp-populate-anything.php:602
+#: class-gp-populate-anything.php:603
 msgid "Form Field Values"
 msgstr ""
 
-#: class-gp-populate-anything.php:603
+#: class-gp-populate-anything.php:604
 msgid "Special Values"
 msgstr ""
 
-#: class-gp-populate-anything.php:604
+#: class-gp-populate-anything.php:605
 msgid "(boolean) true"
 msgstr ""
 
-#: class-gp-populate-anything.php:605
+#: class-gp-populate-anything.php:606
 msgid "(boolean) false"
 msgstr ""
 
-#: class-gp-populate-anything.php:606
+#: class-gp-populate-anything.php:607
 msgid "(null) NULL"
 msgstr ""
 
 #. translators: placeholder is the primary property to be selected such as a Form or Database Table
-#: class-gp-populate-anything.php:608
+#: class-gp-populate-anything.php:609
 msgid "Select a %s"
 msgstr ""
 
 #. translators: placeholder is the primary property to be selected such as a Form or Database Table
-#: class-gp-populate-anything.php:609
+#: class-gp-populate-anything.php:610
 msgid "Only Show Unique Results"
 msgstr ""
 
-#: class-gp-populate-anything.php:610
+#: class-gp-populate-anything.php:611
 msgid "Reset"
 msgstr ""
 
-#: class-gp-populate-anything.php:611
+#: class-gp-populate-anything.php:612
 msgid "Type"
 msgstr ""
 
-#: class-gp-populate-anything.php:612
+#: class-gp-populate-anything.php:613
 msgid "Object Type"
 msgstr ""
 
-#: class-gp-populate-anything.php:613
+#: class-gp-populate-anything.php:614
 msgid "Filters"
 msgstr ""
 
-#: class-gp-populate-anything.php:614
+#: class-gp-populate-anything.php:615
 msgid "Ordering"
 msgstr ""
 
-#: class-gp-populate-anything.php:615
+#: class-gp-populate-anything.php:616
 msgid "Ascending"
 msgstr ""
 
-#: class-gp-populate-anything.php:616
+#: class-gp-populate-anything.php:617
 msgid "Descending"
 msgstr ""
 
-#: class-gp-populate-anything.php:617
+#: class-gp-populate-anything.php:618
 msgid "Random"
 msgstr ""
 
-#: class-gp-populate-anything.php:618
+#: class-gp-populate-anything.php:619
 msgid "Choice Template"
 msgstr ""
 
-#: class-gp-populate-anything.php:619
+#: class-gp-populate-anything.php:620
 msgid "Value Templates"
 msgstr ""
 
-#: class-gp-populate-anything.php:621
+#: class-gp-populate-anything.php:622
 msgid "is"
 msgstr ""
 
-#: class-gp-populate-anything.php:622
+#: class-gp-populate-anything.php:623
 msgid "is not"
 msgstr ""
 
-#: class-gp-populate-anything.php:623
+#: class-gp-populate-anything.php:624
 msgid ">"
 msgstr ""
 
-#: class-gp-populate-anything.php:624
+#: class-gp-populate-anything.php:625
 msgid ">="
 msgstr ""
 
-#: class-gp-populate-anything.php:625
+#: class-gp-populate-anything.php:626
 msgid "<"
 msgstr ""
 
-#: class-gp-populate-anything.php:626
+#: class-gp-populate-anything.php:627
 msgid "<="
 msgstr ""
 
-#: class-gp-populate-anything.php:627
+#: class-gp-populate-anything.php:628
 msgid "contains"
 msgstr ""
 
-#: class-gp-populate-anything.php:628
+#: class-gp-populate-anything.php:629
 msgid "does not contain"
 msgstr ""
 
-#: class-gp-populate-anything.php:629
+#: class-gp-populate-anything.php:630
 msgid "starts with"
 msgstr ""
 
-#: class-gp-populate-anything.php:630
+#: class-gp-populate-anything.php:631
 msgid "ends with"
 msgstr ""
 
-#: class-gp-populate-anything.php:631
+#: class-gp-populate-anything.php:632
 msgid "is LIKE"
 msgstr ""
 
-#: class-gp-populate-anything.php:632
+#: class-gp-populate-anything.php:633
 msgid "is in"
 msgstr ""
 
-#: class-gp-populate-anything.php:633
+#: class-gp-populate-anything.php:634
 msgid "is not in"
 msgstr ""
 
-#: class-gp-populate-anything.php:635
+#: class-gp-populate-anything.php:636
 msgid "No results matched"
 msgstr ""
 
-#: class-gp-populate-anything.php:636
+#: class-gp-populate-anything.php:637
 msgid "This field is configured to an object type for which you do not have permission to edit."
 msgstr ""
 
-#: class-gp-populate-anything.php:637
+#: class-gp-populate-anything.php:638
 msgid "The selected Object Type is restricted. Non-super admins will not be able to edit this field's GPPA settings."
 msgstr ""
 
-#: class-gp-populate-anything.php:638
+#: class-gp-populate-anything.php:639
 msgid "Too many values to display."
 msgstr ""
 
-#: class-gp-populate-anything.php:1935
-#: class-gp-populate-anything.php:5053
-#: includes/class-live-merge-tags.php:1350
+#: class-gp-populate-anything.php:1943
+#: class-gp-populate-anything.php:5071
+#: includes/class-live-merge-tags.php:1349
 msgid "Fill Out Other Fields"
 msgstr ""
 
-#: class-gp-populate-anything.php:1972
+#: class-gp-populate-anything.php:1980
 msgid "No Results"
 msgstr ""
 
-#: class-gp-populate-anything.php:3557
+#: class-gp-populate-anything.php:3573
 msgid "Please fill out other fields."
 msgstr ""
 
@@ -340,55 +340,55 @@ msgstr ""
 msgid "Post"
 msgstr ""
 
-#: includes/class-object-type-post.php:64
+#: includes/class-object-type-post.php:68
 msgid "Post Taxonomies"
 msgstr ""
 
-#: includes/class-object-type-post.php:73
+#: includes/class-object-type-post.php:72
 msgid "Post Meta"
 msgstr ""
 
-#: includes/class-object-type-post.php:460
+#: includes/class-object-type-post.php:467
 msgid "Author"
 msgstr ""
 
-#: includes/class-object-type-post.php:467
+#: includes/class-object-type-post.php:474
 msgid "Post Status"
 msgstr ""
 
-#: includes/class-object-type-post.php:473
+#: includes/class-object-type-post.php:480
 msgid "Post Title"
 msgstr ""
 
-#: includes/class-object-type-post.php:495
+#: includes/class-object-type-post.php:488
 msgid "Post Content"
 msgstr ""
 
-#: includes/class-object-type-post.php:501
+#: includes/class-object-type-post.php:494
 msgid "Post Excerpt"
 msgstr ""
 
-#: includes/class-object-type-post.php:508
+#: includes/class-object-type-post.php:501
 msgid "Post Name (Slug)"
 msgstr ""
 
-#: includes/class-object-type-post.php:515
+#: includes/class-object-type-post.php:508
 msgid "Post ID"
 msgstr ""
 
-#: includes/class-object-type-post.php:537
+#: includes/class-object-type-post.php:516
 msgid "Post Type"
 msgstr ""
 
-#: includes/class-object-type-post.php:544
+#: includes/class-object-type-post.php:523
 msgid "Post Date"
 msgstr ""
 
-#: includes/class-object-type-post.php:551
+#: includes/class-object-type-post.php:530
 msgid "Parent Post"
 msgstr ""
 
-#: includes/class-object-type-post.php:557
+#: includes/class-object-type-post.php:536
 msgid "Featured Image URL"
 msgstr ""
 

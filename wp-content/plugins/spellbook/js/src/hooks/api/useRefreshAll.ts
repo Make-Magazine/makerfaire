@@ -1,30 +1,47 @@
 import { useQueryClient } from '@tanstack/react-query';
 import useStore from '../../store';
-import { useEffect } from 'react';
+import { useCallback, useEffect } from 'react';
 
 export const useRefreshAll = () => {
 	const queryClient = useQueryClient();
 	const setForceLicenseRefresh = useStore(state => state.setForceLicenseRefresh);
 	const setForceProductRefresh = useStore(state => state.setForceProductRefresh);
+	const setForceAnnouncementRefresh = useStore(state => state.setForceAnnouncementRefresh);
 	const forceLicenseRefresh = useStore(state => state.forceLicenseRefresh);
 	const forceProductRefresh = useStore(state => state.forceProductRefresh);
+	const forceAnnouncementRefresh = useStore(state => state.forceAnnouncementRefresh);
+
+	const refresh = useCallback(async () => {
+		if (forceLicenseRefresh) {
+			await queryClient.resetQueries({ queryKey: ['licenses'] });
+		}
+
+		if (forceProductRefresh) {
+			await queryClient.resetQueries({ queryKey: ['products'] });
+		}
+
+		if (forceAnnouncementRefresh) {
+			await queryClient.resetQueries({ queryKey: ['announcements'] });
+		}
+	}, [
+		forceLicenseRefresh,
+		forceProductRefresh,
+		forceAnnouncementRefresh,
+		queryClient
+	]);
 
 	useEffect(() => {
-		const refresh = async () => {
-			if (forceLicenseRefresh) {
-				await queryClient.resetQueries({ queryKey: ['licenses'] });
-				setForceLicenseRefresh(false);
-				setForceProductRefresh(true);
-			} else if (forceProductRefresh) {
-				await queryClient.resetQueries({ queryKey: ['products'] });
-				setForceProductRefresh(false);
-			}
-		};
 		refresh();
-	}, [forceLicenseRefresh, forceProductRefresh, queryClient, setForceLicenseRefresh, setForceProductRefresh]);
+	}, [
+		forceLicenseRefresh,
+		forceProductRefresh,
+		forceAnnouncementRefresh,
+		queryClient,
+	]);
 
 	return () => {
 		setForceLicenseRefresh(true);
 		setForceProductRefresh(true);
+		setForceAnnouncementRefresh(true);
 	};
 };

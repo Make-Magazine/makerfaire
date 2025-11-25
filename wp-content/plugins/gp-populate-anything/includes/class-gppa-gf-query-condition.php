@@ -15,6 +15,7 @@ class GPPA_GF_Query_Condition extends GF_Query_Condition {
 
 		$field = GFFormsModel::get_field( GFAPI::get_form( $this->left->source ), $this->left->field_id );
 
+		// @phpstan-ignore-next-line function.alreadyNarrowedType (Safety check)
 		if ( ! $field || ! method_exists( $field, 'get_entry_inputs' ) ) {
 			return parent::sql( $query );
 		}

@@ -1,5 +1,5 @@
 import Text from '@gravityforms/components/react/admin/elements/Text';
-import type { LicenseData, ProductType } from '../../../types';
+import type { LicenseData, LicensedProductType } from '../../../types';
 import { format, addDays, isBefore } from 'date-fns';
 import { __ } from '@wordpress/i18n';
 import LicenseStatus from '../LicenseStatus';
@@ -7,7 +7,7 @@ import { addUtmParams } from '../../../helpers/urls';
 
 interface LicenseInfoProps {
 	license: LicenseData;
-	type: ProductType;
+	type: LicensedProductType;
 }
 
 const LicenseInfo = ({ license, type }: LicenseInfoProps) => {

@@ -25,6 +25,7 @@ const Layout = () => {
 	useLicense('perk');
 	useLicense('connect');
 	useLicense('shop');
+	useLicense('wiz-bundle');
 
 	// Pull notifications from Zustand store and show them using addSnackbarMessage then remove them from store.
 	useEffect(() => {

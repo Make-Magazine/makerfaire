@@ -353,7 +353,6 @@ class GP_Populate_Anything_Live_Merge_Tags {
 		}
 
 		return $form_string;
-
 	}
 
 	public function replace_live_merge_tag_attr( $form_string, $form ) {
@@ -1014,7 +1013,7 @@ class GP_Populate_Anything_Live_Merge_Tags {
 				}
 
 				// Convert array values to comma-separated strings.
-				if ( is_array( $entry_value ) ) {
+				if ( is_array( $entry_value ) && count( $entry_value ) > 0 && count( array_filter( $entry_value, 'is_array' ) ) === 0 ) {
 					$entry_values[ $input_id ] = implode( ', ', $entry_value );
 				}
 

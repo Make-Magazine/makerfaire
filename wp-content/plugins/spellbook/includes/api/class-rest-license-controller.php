@@ -157,27 +157,78 @@ class GravityPerks_REST_License_Controller extends WP_REST_Controller {
 		// Set the license key for the product type
 		$this->api->set_license_key($product_type, $license_key);
 
-		// Force check by passing false to flush cache
+		// Force check by passing true to flush cache
 		$license_data = $this->api->get_license_data( $product_type, true );
 
-		if ($license_data['license'] === 'invalid' || $license_data['license'] === 'item_name_mismatch') {
-			// Clear the license key if it's invalid or mismatched
+		if ($license_data['license'] === 'invalid') {
+			// Clear the license key if it's invalid
 			$this->api->remove_license_key($product_type);
 
 			return $this->format_error(
-				$license_data['license'] === 'invalid' ? 'invalid_license' : 'license_mismatch',
-				$license_data['license'] === 'invalid'
-					? __('The provided license key is invalid.', 'spellbook')
-					: __('The provided license key does not match this product.', 'spellbook'),
+				'invalid_license',
+				__('The provided license key is invalid.', 'spellbook'),
 				400
 			);
 		}
 
+		// Check if the API returned Wiz Bundle data when we asked for perk/connect
+		// This means the license was already upgraded on the backend
+		$returned_item_name = urldecode($license_data['item_name'] ?? '');
+		$is_bundle_response = $returned_item_name === 'Wiz Bundle' && in_array($product_type, ['perk', 'connect']);
+
+		if ($is_bundle_response) {
+			// The license has been upgraded to Wiz Bundle
+			// Perform the migration to update local state
+			$this->api->handle_wiz_bundle_upgrade($license_data['license_key'] ?? $license_key, $product_type);
+
+			// Get fresh bundle license data
+			$bundle_license_data = $this->api->get_license_data('wiz-bundle', true);
+			$prepared = $this->prepare_license_for_response($bundle_license_data, 'wiz-bundle');
+
+			return rest_ensure_response([
+				'is_valid' => true,
+				'migrated' => true,
+				'from_type' => $product_type,
+				'to_type' => 'wiz-bundle',
+				'message' => __('Your license has been upgraded to the Wiz Bundle!', 'spellbook'),
+				'license_data' => $prepared,
+			]);
+		}
+
+		// Check for bundle upgrade via mismatch (legacy path)
+		$bundle_license_data = $this->api->check_and_handle_wiz_bundle_upgrade( $license_data, $product_type );
+
+		if ( $bundle_license_data ) {
+			$prepared = $this->prepare_license_for_response($bundle_license_data, 'wiz-bundle');
+
+			return rest_ensure_response([
+				'is_valid' => true,
+				'migrated' => true,
+				'from_type' => $product_type,
+				'to_type' => 'wiz-bundle',
+				'message' => __('Your license has been upgraded to the Wiz Bundle!', 'spellbook'),
+				'license_data' => $prepared,
+			]);
+		}
+
+		// Handle regular mismatch
+		if ($license_data['license'] === 'item_name_mismatch') {
+			$this->api->remove_license_key($product_type);
+			return $this->format_error(
+				'license_mismatch',
+				__('The provided license key does not match this product.', 'spellbook'),
+				400
+			);
+		}
+
+		// Valid license
 		$license_data = $this->api->get_license_data($product_type);
+		$prepared = $this->prepare_license_for_response($license_data, $product_type);
+
 		return rest_ensure_response([
 			'is_valid' => true,
 			'message' => __('License key is valid', 'spellbook'),
-			'license_data' => $this->prepare_license_for_response($license_data, $product_type),
+			'license_data' => $prepared,
 		]);
 	}
 
@@ -341,6 +392,28 @@ class GravityPerks_REST_License_Controller extends WP_REST_Controller {
 	 *   extend_url: string
 	 *   manage_url: string
 	 *   upgrade_url: string
+	 * }|array{
+	 *   success: bool,
+	 *   license: 'valid'|'invalid'|'expired'|'site_inactive'|'item_name_mismatch',
+	 *   item_id: false,
+	 *   item_name: 'Wiz+Bundle',
+	 *   checksum: string,
+	 *   expires: string|'lifetime',
+	 *   payment_id: int,
+	 *   customer_name: string,
+	 *   customer_email: string,
+	 *   license_limit: int,
+	 *   site_count: int,
+	 *   activations_left: int|'unlimited',
+	 *   price_id: string,
+	 *   ID: int,
+	 *   price_name: string,
+	 *   valid: bool,
+	 *   registered_plugins: array<string>,
+	 *   plugin_limit: int
+	 *   extend_url: string
+	 *   manage_url: string
+	 *   upgrade_url: string
 	 * }
 	 * @param string $product_type
 	 * @return array
@@ -349,12 +422,27 @@ class GravityPerks_REST_License_Controller extends WP_REST_Controller {
 		$registered_products = null;
 		$registered_products_limit = null;
 
-		if ($product_type === 'perk') {
-			$registered_products = $license_data['registered_perks'] ?? [];
-			$registered_products_limit = $license_data['perk_limit'] ?? 0;
-		} elseif ($product_type === 'connect') {
-			$registered_products = $license_data['registered_connections'] ?? [];
-			$registered_products_limit = $license_data['connection_limit'] ?? 0;
+		// Handle different registration types based on product configuration
+		$registration_type = $this->api->get_registration_type($product_type);
+
+		switch ($registration_type) {
+			case 'plugin':
+				// Bundle licenses use registered_plugins + plugin_limit
+				$registered_products = $license_data['registered_plugins'] ?? [];
+				$registered_products_limit = $license_data['plugin_limit'] ?? 0;
+				break;
+
+			case 'category':
+			default:
+				// Individual licenses use category-specific arrays
+				if ($product_type === 'perk') {
+					$registered_products = $license_data['registered_perks'] ?? [];
+					$registered_products_limit = $license_data['perk_limit'] ?? 0;
+				} elseif ($product_type === 'connect') {
+					$registered_products = $license_data['registered_connections'] ?? [];
+					$registered_products_limit = $license_data['connection_limit'] ?? 0;
+				}
+				break;
 		}
 
 		return [
@@ -364,6 +452,7 @@ class GravityPerks_REST_License_Controller extends WP_REST_Controller {
 			'registered_products_limit' => $registered_products_limit,
 			'valid' => $license_data['valid'],
 			'product_type' => $product_type,
+			'is_bundle' => $this->api->is_bundle_type($product_type),
 			'type' => rgar( $license_data, 'price_name' ),
 			'expiration' => rgar( $license_data, 'expires' ),
 			'site_count' => rgar( $license_data, 'site_count' ),

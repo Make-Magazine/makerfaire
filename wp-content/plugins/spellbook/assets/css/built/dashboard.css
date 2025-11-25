@@ -629,6 +629,251 @@ body.folded .spellbook-app {
     box-sizing: border-box;
 }
 
+.announcement-banner-container {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    margin-bottom: 20px;
+}
+
+.announcement-banner {
+    position: relative;
+    border-radius: 3px;
+    padding: 24px;
+    display: flex;
+    overflow: hidden;
+    font-family: inter, -apple-system, blinkmacsystemfont, "Segoe UI", roboto, oxygen-sans, ubuntu, cantarell, "Helvetica Neue", sans-serif;
+    box-shadow: 0 2px 2px rgba(58, 58, 87, 0.0596411);
+}
+
+.announcement-banner__close {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 4px;
+    transition: background-color 0.2s;
+    z-index: 2;
+}
+
+.announcement-banner__close:hover {
+    background: rgba(0, 0, 0, 0.05);
+}
+
+.announcement-banner__content {
+    display: flex;
+    gap: 24px;
+    width: 100%;
+    align-items: center;
+}
+
+.announcement-banner__image {
+    flex-shrink: 0;
+    width: 120px;
+    height: auto;
+}
+
+@container spellbook (max-width: 767px) {
+    .announcement-banner__image {
+        display: none;
+    }
+}
+
+.announcement-banner__text {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.announcement-banner__heading {
+    font-size: 20px;
+    font-weight: 700;
+    line-height: 1.3;
+    margin: 0;
+    padding: 0;
+}
+
+.announcement-banner__description {
+    font-size: 14px;
+    line-height: 1.5;
+    margin: 0;
+    padding: 0;
+}
+
+.announcement-banner__description *:first-child {
+	margin-top: 0;
+}
+
+.announcement-banner__description *:last-child {
+	margin-bottom: 0;
+}
+
+.announcement-banner__cta {
+    display: inline-flex;
+    align-items: center;
+    padding: 8px 16px;
+    border-radius: 4px;
+    font-size: 14px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.2s;
+    align-self: flex-start;
+    margin-top: 8px;
+}
+
+/* Black Friday Style */
+.announcement-banner--black-friday {
+    background: #FFF2F4;
+    border: 1px solid #FE2C55;
+}
+
+.announcement-banner--black-friday .announcement-banner__close {
+    color: #E13455;
+}
+
+.announcement-banner--black-friday .announcement-banner__close:hover {
+    background: rgba(254, 44, 85, 0.1);
+}
+
+.announcement-banner--black-friday .announcement-banner__heading {
+    color: #212121;
+}
+
+.announcement-banner--black-friday .announcement-banner__description {
+    color: #263339;
+}
+
+.announcement-banner--black-friday .announcement-banner__cta {
+    background: #000;
+    color: #fff;
+    border: 0;
+}
+
+.announcement-banner--black-friday .announcement-banner__cta:hover {
+    background: #212121;
+}
+
+/* Info Style */
+.announcement-banner--info {
+    background: #e5fcff;
+    border: 1px solid #00adc6;
+}
+
+.announcement-banner--info .announcement-banner__close {
+    color: #007385;
+}
+
+.announcement-banner--info .announcement-banner__close:hover {
+    background: rgba(0, 173, 198, 0.1);
+}
+
+.announcement-banner--info .announcement-banner__heading {
+    color: #005461;
+}
+
+.announcement-banner--info .announcement-banner__description {
+    color: #007385;
+}
+
+.announcement-banner--info .announcement-banner__cta {
+    background: #00adc6;
+    color: #fff;
+}
+
+.announcement-banner--info .announcement-banner__cta:hover {
+    background: #009bb3;
+}
+
+/* Warning Style */
+.announcement-banner--warning {
+    background: #fffcf7;
+    border: 1px solid #f39c19;
+}
+
+.announcement-banner--warning .announcement-banner__close {
+    color: #943400;
+}
+
+.announcement-banner--warning .announcement-banner__close:hover {
+    background: rgba(243, 156, 25, 0.1);
+}
+
+.announcement-banner--warning .announcement-banner__heading {
+    color: #641700;
+}
+
+.announcement-banner--warning .announcement-banner__description {
+    color: #943400;
+}
+
+.announcement-banner--warning .announcement-banner__cta {
+    background: #f39c19;
+    color: #fff;
+}
+
+.announcement-banner--warning .announcement-banner__cta:hover {
+    background: #db7500;
+}
+
+/* Success Style */
+.announcement-banner--success {
+    background: #f8fbfa;
+    border: 1px solid #0f8a56;
+}
+
+.announcement-banner--success .announcement-banner__close {
+    color: #07452b;
+}
+
+.announcement-banner--success .announcement-banner__close:hover {
+    background: rgba(15, 138, 86, 0.1);
+}
+
+.announcement-banner--success .announcement-banner__heading {
+    color: #031c11;
+}
+
+.announcement-banner--success .announcement-banner__description {
+    color: #07452b;
+}
+
+.announcement-banner--success .announcement-banner__cta {
+    background: #0f8a56;
+    color: #fff;
+}
+
+.announcement-banner--success .announcement-banner__cta:hover {
+    background: #0c6e45;
+}
+
+/* Responsive adjustments */
+@container spellbook (max-width: 767px) {
+    .announcement-banner {
+        padding: 20px;
+    }
+
+    .announcement-banner__close {
+        top: 12px;
+        right: 12px;
+    }
+
+    .announcement-banner__heading {
+        font-size: 18px;
+        padding-right: 32px;
+    }
+
+    .announcement-banner__description {
+        font-size: 13px;
+    }
+}
+
 /* Badge styles */
 .gform-tabs__tab-badge {
     display: inline-flex;
@@ -926,6 +1171,14 @@ body.folded .spellbook-app {
 }
 
 .license-bar-suite--activated .suite-icon--shop path[opacity="0.08"] {
+	display: none;
+}
+
+.license-bar-suite--activated .suite-icon--wiz-bundle {
+	background: #fff7ec;
+}
+
+.license-bar-suite--activated .suite-icon--wiz-bundle path[fill-opacity="0.16"] {
 	display: none;
 }
 

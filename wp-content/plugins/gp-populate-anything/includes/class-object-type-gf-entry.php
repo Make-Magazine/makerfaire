@@ -252,25 +252,25 @@ class GPPA_Object_Type_GF_Entry extends GPPA_Object_Type {
 
 	public function process_filter_default( $processed_args, $args ) {
 
-		/** @var string|string[] */
+		/** @var null|string|string[] */
 		$filter_value = null;
 
-		/** @var array */
+		/** @var null|array */
 		$filter = null;
 
-		/** @var array */
+		/** @var null|array */
 		$filter_group = null;
 
-		/** @var int */
+		/** @var null|int */
 		$filter_group_index = null;
 
-		/** @var string */
+		/** @var null|string */
 		$primary_property_value = null;
 
-		/** @var string */
+		/** @var null|string */
 		$property = null;
 
-		/** @var string */
+		/** @var null|string */
 		$property_id = null;
 
 		// phpcs:ignore WordPress.PHP.DontExtract.extract_extract
@@ -568,34 +568,34 @@ class GPPA_Object_Type_GF_Entry extends GPPA_Object_Type {
 	 * Creates a GF_Query instance to be used for querying and generating a cache hash.
 	 */
 	public function create_gf_query( $args ) {
-		/** @var string */
+		/** @var null|string */
 		$populate = null;
 
-		/** @var array */
+		/** @var null|array */
 		$filter_groups = null;
 
-		/** @var array */
+		/** @var null|array */
 		$ordering = null;
 
-		/** @var array */
+		/** @var null|array */
 		$templates = null;
 
-		/** @var string */
+		/** @var null|string */
 		$primary_property_value = null;
 
-		/** @var array */
+		/** @var null|array */
 		$field_values = null;
 
-		/** @var GF_Field */
+		/** @var null|GF_Field */
 		$field = null;
 
-		/** @var boolean */
+		/** @var null|boolean */
 		$unique = null;
 
-		/** @var int|null */
+		/** @var null|int|null */
 		$page = null;
 
-		/** @var int */
+		/** @var null|int */
 		$limit = null;
 
 		// phpcs:ignore WordPress.PHP.DontExtract.extract_extract

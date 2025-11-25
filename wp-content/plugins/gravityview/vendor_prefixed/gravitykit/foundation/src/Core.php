@@ -2,7 +2,7 @@
 /**
  * @license GPL-2.0-or-later
  *
- * Modified by gravityview on 10-October-2025 using {@see https://github.com/BrianHenryIE/strauss}.
+ * Modified by gravityview on 17-November-2025 using {@see https://github.com/BrianHenryIE/strauss}.
  */
 
 namespace GravityKit\GravityView\Foundation;
@@ -46,7 +46,7 @@ use GravityKit\GravityView\Foundation\Settings\WPDebugSettings;
  * @method static SecureDownload secure_download()
  */
 class Core {
-	const VERSION = '1.6.0';
+	const VERSION = '1.7.0';
 
 	const ID = 'gk_foundation';
 
@@ -947,7 +947,12 @@ HTML;
 				'slug'         => 'namespace-conflicts',
 				'message'      => strtr(
 					// translators: [plugins] is replaced with a list of plugin names.
-					__( '[plugins] contain both namespaced and non-namespaced Foundation, which may cause conflicts with the standalone Foundation plugin.', 'gk-gravityview' ),
+					_n(
+						'[plugins] contains both namespaced and non-namespaced Foundation, which may cause conflicts with the standalone Foundation plugin.',
+						'[plugins] contain both namespaced and non-namespaced Foundation, which may cause conflicts with the standalone Foundation plugin.',
+						count( $conflicting_plugins ),
+						'gk-gravityview'
+					),
 					[ '[plugins]' => '<strong>' . implode( ', ', $conflicting_plugins ) . '</strong>' ]
 				),
 				'severity'     => 'warning',

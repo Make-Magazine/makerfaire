@@ -3,6 +3,7 @@ import ProductGrid from '../components/products/ProductGrid';
 import PageHeader from '../components/PageHeader';
 import { useProducts } from '../hooks/api/useProducts';
 import LicenseBarAll from '../components/license/LicenseBarAll';
+import AnnouncementBanner from '../components/AnnouncementBanner';
 import SearchBar from '../components/SearchBar';
 import { useState } from 'react';
 import { useProductFilterSearch } from '../hooks/useProductFilterSearch';
@@ -42,6 +43,7 @@ const AllPage = () => {
 
     return (
         <div className="gravityperks-settings-app__perks">
+			<AnnouncementBanner />
 			<LicenseBarAll />
 			<SearchBar
                 value={searchTerm}

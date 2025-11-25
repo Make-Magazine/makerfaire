@@ -5,6 +5,7 @@ import useStore from '../../store';
 
 export const useProducts = () => {
   const forceProductRefresh = useStore(state => state.forceProductRefresh);
+  const setForceProductRefresh = useStore(state => state.setForceProductRefresh);
 
   return useQuery<Record<string, Record<string, BaseProduct>>>({
     queryKey: ['products'],
@@ -13,6 +14,10 @@ export const useProducts = () => {
         path: `/gwiz/v1/products${forceProductRefresh ? '?force=1' : ''}`,
         signal
       });
+
+	  if (forceProductRefresh) {
+		setForceProductRefresh(false);
+	  }
 
       // Replace &amp; with & in product data
       const sanitizedProducts = products.map(product => ({

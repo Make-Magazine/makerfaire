@@ -219,7 +219,7 @@ class GravityPerks {
 		define( 'GW_URL', GW_PROTOCOL . '://' . GW_DOMAIN );
 
 		if ( ! defined( 'GWAPI_URL' ) ) {
-			define( 'GWAPI_URL', GW_URL . '/gwapi/v7/' );
+			define( 'GWAPI_URL', GW_URL . '/gwapi/v8/' );
 		}
 
 		define( 'GW_UPGRADE_URL', GW_URL . '/upgrade/' );
@@ -701,6 +701,7 @@ class GravityPerks {
 		require_once( self::get_base_path() . '/includes/api/class-rest-products-controller.php' );
 		require_once( self::get_base_path() . '/includes/api/class-rest-license-controller.php' );
 		require_once( self::get_base_path() . '/includes/api/class-rest-spellbook-controller.php' );
+		require_once( self::get_base_path() . '/includes/api/class-rest-announcements-controller.php' );
 
 		$products_controller = new GravityPerks_REST_Products_Controller();
 		$products_controller->register_routes();
@@ -710,6 +711,9 @@ class GravityPerks {
 
 		$spellbook_controller = new GravityPerks_REST_Spellbook_Controller();
 		$spellbook_controller->register_routes();
+
+		$announcements_controller = new GravityPerks_REST_Announcements_Controller();
+		$announcements_controller->register_routes();
 	}
 
 	public static function init_perk_as_plugin_functionality() {

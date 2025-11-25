@@ -8,7 +8,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  *
- * Modified by gravityview on 10-October-2025 using {@see https://github.com/BrianHenryIE/strauss}.
+ * Modified by gravityview on 17-November-2025 using {@see https://github.com/BrianHenryIE/strauss}.
  */
 
 namespace GravityKit\GravityView\Symfony\Component\HttpFoundation;

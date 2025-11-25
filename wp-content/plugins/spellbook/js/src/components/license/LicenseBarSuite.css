@@ -210,6 +210,14 @@
 	display: none;
 }
 
+.license-bar-suite--activated .suite-icon--wiz-bundle {
+	background: #fff7ec;
+}
+
+.license-bar-suite--activated .suite-icon--wiz-bundle path[fill-opacity="0.16"] {
+	display: none;
+}
+
 .license-bar-suite--activated .spellbook-info {
     flex: 1;
     display: flex;

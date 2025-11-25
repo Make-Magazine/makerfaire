@@ -19,18 +19,23 @@ require_once( dirname( __FILE__ ) . '/traits/trait-perk-license.php' );
 require_once( dirname( __FILE__ ) . '/traits/trait-connect-license.php' );
 require_once( dirname( __FILE__ ) . '/traits/trait-shop-license.php' );
 require_once( dirname( __FILE__ ) . '/traits/trait-gcgs-license.php' );
+require_once( dirname( __FILE__ ) . '/traits/trait-wiz-bundle-license.php' );
+require_once( dirname( __FILE__ ) . '/traits/trait-wiz-bundle-upgrade.php' );
 
 class GWAPI {
     use GWAPI_Perk_License;
     use GWAPI_Connect_License;
     use GWAPI_Shop_License;
     use GWAPI_GCGS_License;
+    use GWAPI_Wiz_Bundle_License;
+    use GWAPI_Wiz_Bundle_Upgrade;
 
 	// Product type constants
 	const PRODUCT_TYPE_PERK = 'perk';
 	const PRODUCT_TYPE_CONNECT = 'connect';
 	const PRODUCT_TYPE_SHOP = 'shop';
 	const PRODUCT_TYPE_FREE = 'free';
+	const PRODUCT_TYPE_WIZ_BUNDLE = 'wiz-bundle';
 
 	// Product type configuration
 	public static $product_config = [
@@ -50,7 +55,14 @@ class GWAPI {
 			'categories' => ['free-plugin'],
 			'item_name' => 'Free Plugins',
 			'has_license' => false,
-		]
+		],
+		self::PRODUCT_TYPE_WIZ_BUNDLE => [
+			'categories' => ['wiz-bundle'],
+			'item_name' => 'Wiz Bundle',
+			'is_bundle' => true,
+			'registration_type' => 'plugin',
+			'bundle_priority' => 1,
+		],
 	];
 
 	private $gcgs_upgrade_successful = false;
@@ -566,13 +578,15 @@ class GWAPI {
 
 
 	/**
-	* Get Dashboard Announcements
+	* Get Spellbook Announcements from GWAPI v8
 	*/
-	public function get_dashboard_announcements() {
+	public function get_spellbook_announcements( $flush = false ) {
 
 		return $this->request( array(
-			'action' => 'get_dashboard_announcements',
-			'output' => OBJECT,
+			'action' => 'spellbook_announcements',
+			'output' => ARRAY_A,
+			'cache' => true,
+			'flush' => $flush,
 		) );
 
 	}
@@ -592,6 +606,15 @@ class GWAPI {
 		}
 
 		GravityPerks::log_debug( 'pre_set_site_transient_update_plugins_filter() start. Retrieves download package for individual product auto-updates.' );
+
+		// Check for license upgrades using cached data (no forced API call)
+		// This allows automatic migration during update checks
+		if ( $this->get_perk_license_key() ) {
+			$this->get_license_data( 'perk', $force_check );
+		}
+		if ( $this->get_connect_license_key() ) {
+			$this->get_license_data( 'connect', $force_check );
+		}
 
 		if ( ! is_object( $_transient_data ) ) {
 			$_transient_data = new stdClass;
@@ -818,6 +841,42 @@ class GWAPI {
 		return self::$product_config[ $product_type ]['item_name'];
 	}
 
+	/**
+	 * Get all bundle product types, sorted by priority (highest first).
+	 *
+	 * @return array Array of bundle product type keys
+	 */
+	public function get_bundle_types() {
+		$bundles = [];
+		foreach (self::$product_config as $type => $config) {
+			if (!empty($config['is_bundle'])) {
+				$bundles[$type] = $config['bundle_priority'] ?? 0;
+			}
+		}
+		arsort($bundles); // Sort by priority (highest first)
+		return array_keys($bundles);
+	}
+
+	/**
+	 * Check if a product type is a bundle.
+	 *
+	 * @param string $product_type Product type to check
+	 * @return bool True if it's a bundle, false otherwise
+	 */
+	public function is_bundle_type($product_type) {
+		return !empty(self::$product_config[$product_type]['is_bundle']);
+	}
+
+	/**
+	 * Get the registration type for a product type.
+	 *
+	 * @param string $product_type Product type
+	 * @return string Registration type ('plugin' or 'category')
+	 */
+	public function get_registration_type($product_type) {
+		return self::$product_config[$product_type]['registration_type'] ?? 'category';
+	}
+
 	public function get_local_product_version( $plugin_file ) {
 		$installed_plugins = GWPerks::get_plugins();
 
@@ -854,7 +913,9 @@ class GWAPI {
 			'transient'  => 'gwapi_license_data_' . $product_type,
 			'flush'      => $flush,
 			'cache'      => true,
-			'callback'   => array( $this, 'process_license_data' ),
+			'callback'   => function( $response ) use ( $product_type ) {
+				return $this->process_license_data( $response, $product_type );
+			},
 			'api_params' => array(
 				'license'      => $license_key,
 				'item_name' => urlencode( $item_name ),
@@ -874,9 +935,10 @@ class GWAPI {
 	 * }
 	 *
 	 * @param array $response License API response
+	 * @param string|null $checking_type The product type being checked (for upgrade detection)
 	 * @return array Processed response with 'valid' key added
 	 */
-	public function process_license_data( $response ) {
+	public function process_license_data( $response, $checking_type = null ) {
 		$has_valid_license = false;
 
 		// Get product type from item name
@@ -889,13 +951,26 @@ class GWAPI {
 		}
 
 		if ( is_array( $response ) ) {
-			// at some point EDD added 'site_inactive' status which indicates the license has not been activated for this
-			// site even though it already might have been, go ahead and activate it and see if it is still active
-			if ( in_array( $response['license'], array( 'inactive', 'site_inactive' ) ) && $product_type ) {
+			// Check for bundle upgrade (uses shared method)
+			if ( $checking_type ) {
+				$bundle_license_data = $this->check_and_handle_wiz_bundle_upgrade( $response, $checking_type );
+				if ( $bundle_license_data ) {
+					// Log the automatic upgrade
+					GravityPerks::log_debug( "Automatically upgraded {$checking_type} license to Wiz Bundle" );
+
+					// Return the bundle license data
+					$response = $bundle_license_data;
+					$product_type = 'wiz-bundle';
+					$has_valid_license = $response['license'] === 'valid';
+				}
+			}
+
+			// Existing inactive/site_inactive handling (only if not already migrated)
+			if ( ! $has_valid_license && in_array( $response['license'], array( 'inactive', 'site_inactive' ) ) && $product_type ) {
 				$license = $this->get_license_key($product_type);
 				$has_valid_license = $this->activate_license( $product_type, $license );
 				$response['license'] = $has_valid_license ? 'valid' : $response['license'];
-			} else {
+			} else if ( ! $has_valid_license ) {
 				$has_valid_license = $response['license'] == 'valid';
 			}
 		}
@@ -984,6 +1059,9 @@ class GWAPI {
 				break;
 			case self::PRODUCT_TYPE_SHOP:
 				$this->remove_shop_license_key();
+				break;
+			case self::PRODUCT_TYPE_WIZ_BUNDLE:
+				$this->remove_wiz_bundle_license_key();
 				break;
 		}
 		return true;
@@ -1124,6 +1202,8 @@ class GWAPI {
 				return $this->get_connect_license_key();
 			case self::PRODUCT_TYPE_SHOP:
 				return $this->get_shop_license_key();
+			case self::PRODUCT_TYPE_WIZ_BUNDLE:
+				return $this->get_wiz_bundle_license_key();
 			case self::PRODUCT_TYPE_FREE:
 				return null; // Free plugins do not have a license key
 			default:
@@ -1151,6 +1231,8 @@ class GWAPI {
 				return $this->set_connect_license_key($license_key);
 			case self::PRODUCT_TYPE_SHOP:
 				return $this->set_shop_license_key($license_key);
+			case self::PRODUCT_TYPE_WIZ_BUNDLE:
+				return $this->set_wiz_bundle_license_key($license_key);
 			default:
 				throw new InvalidArgumentException('Invalid product type: ' . $product_type);
 		}
@@ -1175,6 +1257,8 @@ class GWAPI {
 				return $this->remove_connect_license_key();
 			case self::PRODUCT_TYPE_SHOP:
 				return $this->remove_shop_license_key();
+			case self::PRODUCT_TYPE_WIZ_BUNDLE:
+				return $this->remove_wiz_bundle_license_key();
 			default:
 				throw new InvalidArgumentException('Invalid product type: ' . $product_type);
 		}
@@ -1192,6 +1276,14 @@ class GWAPI {
 			return false;
 		}
 
+		// If bundle key is present and type is connect or perk, use bundle key.
+		if (in_array($product_type, [self::PRODUCT_TYPE_PERK, self::PRODUCT_TYPE_CONNECT])) {
+			$bundle_key = $this->get_wiz_bundle_license_key();
+			if ($bundle_key) {
+				return $bundle_key;
+			}
+		}
+
 		return $this->get_license_key($product_type);
 	}
 
@@ -1207,15 +1299,35 @@ class GWAPI {
 			return false;
 		}
 
+		// If bundle key is present and type is connect or perk, use bundle key.
+		if (in_array($product_type, [self::PRODUCT_TYPE_PERK, self::PRODUCT_TYPE_CONNECT])) {
+			$bundle_license = $this->get_license_data(self::PRODUCT_TYPE_WIZ_BUNDLE);
+			if ($bundle_license) {
+				return $bundle_license;
+			}
+		}
+
 		return $this->get_license_data($product_type);
 	}
 
 	/**
 	 * Get any valid license data from any product type.
+	 * Checks bundle licenses first, then individual licenses.
 	 *
 	 * @return array|false License data array or false if no valid license found
 	 */
 	private function get_any_valid_license_data() {
+		// Check bundle licenses first (by priority)
+		$bundle_types = $this->get_bundle_types();
+		foreach ($bundle_types as $type) {
+			$license_data = $this->get_license_data($type);
+			if ($license_data && $license_data['valid']) {
+				$license_data['product_type'] = $type;
+				return $license_data;
+			}
+		}
+
+		// Fall back to individual licenses
 		foreach ([self::PRODUCT_TYPE_PERK, self::PRODUCT_TYPE_CONNECT, self::PRODUCT_TYPE_SHOP] as $type) {
 			$license_data = $this->get_license_data($type);
 			if ($license_data && $license_data['valid']) {
@@ -1267,6 +1379,7 @@ class GWAPI {
 
 	/**
 	 * Prepare package URL for licensed plugins.
+	 * Uses bundle-first logic to get the best available license.
 	 *
 	 * @param string $package_url Original package URL
 	 * @param string $plugin_file Plugin file path
@@ -1275,12 +1388,14 @@ class GWAPI {
 	 */
 	private function prepare_licensed_plugin_package_url($package_url, $plugin_file, $product_version) {
 		$license = $this->get_license_data_by_plugin_file($plugin_file);
+
 		$replacements = array(
 			'%URL%' => rawurlencode(GWAPI::get_site_url()),
 			'%LICENSE_ID%' => rawurlencode(isset($license['ID']) ? $license['ID'] : ''),
 			'%LICENSE_HASH%' => rawurlencode(md5($this->get_license_key_by_plugin_file($plugin_file))),
 			'%PRODUCT_VERSION%' => $product_version
 		);
+
 		return str_replace(array_keys($replacements), array_values($replacements), $package_url);
 	}
 
@@ -1305,6 +1420,9 @@ class GWAPI {
 				break;
 			case self::PRODUCT_TYPE_SHOP:
 				$this->flush_shop_license_info();
+				break;
+			case self::PRODUCT_TYPE_WIZ_BUNDLE:
+				$this->flush_wiz_bundle_license_info();
 				break;
 			default:
 				throw new InvalidArgumentException('Invalid product type: ' . $product_type);
