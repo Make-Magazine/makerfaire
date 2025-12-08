@@ -425,6 +425,7 @@ function edit_yearbook_faire( $entry, $form ) {
 	$exhibit_num  	= rgar( $entry, '161' );
 	$name  			= rgar( $entry, '96.3' ) . " " . rgar( $entry, '96.6' );
 	//$email  		= rgar( $entry, '98' ); this is the producer email, not a contact email
+	$badge			= rgar( $entry, '194' );
 	$video  		= rgar( $entry, '191' );
 	$photos			= str_replace('[', "", str_replace(']', "", str_replace('"', "", rgar( $entry, '122' ))));
 	$photo_credit	= rgar( $entry, '189' );
@@ -464,6 +465,42 @@ function edit_yearbook_faire( $entry, $form ) {
 		if(!empty($youtube_link)) { update_field('faire_info_social_links_youtube', $youtube_link, $post_id); } 
 		if(!empty($other_link)) { update_field('faire_info_social_links_other', $other_link, $post_id); }
 
+		// now do the circular badge
+		$file_url = trim(stripslashes($badge)); // remove escaping
+		$file_url = str_replace('\\/', '/', $file_url); // fix escaped slashes
+
+		// Get file path from URL
+		$upload_dir = wp_upload_dir();
+		$file_path  = str_replace($upload_dir['baseurl'], $upload_dir['basedir'], $file_url);
+
+		if (file_exists($file_path)) {
+			// Prepare attachment
+			$filetype = wp_check_filetype(basename($file_path), null);
+
+			$attachment = [
+				'guid'           => $file_url,
+				'post_mime_type' => $filetype['type'],
+				'post_title'     => sanitize_file_name(basename($file_path)),
+				'post_content'   => '',
+				'post_status'    => 'inherit'
+			];
+
+			// Insert into Media Library (if not already)
+			$attach_id = wp_insert_attachment($attachment, $file_path, $post_id);
+
+			if (!is_wp_error($attach_id)) {
+				// Generate image metadata
+				require_once(ABSPATH . 'wp-admin/includes/image.php');
+				$attach_data = wp_generate_attachment_metadata($attach_id, $file_path);
+				wp_update_attachment_metadata($attach_id, $attach_data);
+				// Update ACF Gallery field
+				$group = get_field('producer_section', $post_id);
+				$group['circular_faire_logo'] = $attach_id;
+				update_field("producer_section", $group, $post_id);
+			} 
+		}
+		// END BADGE
+		
 		// finally, get all the additional photos
 		if (!is_array($photos)) {
 			$photos = explode(',', $photos);
