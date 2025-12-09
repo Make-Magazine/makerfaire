@@ -423,7 +423,7 @@ function edit_yearbook_faire( $entry, $form ) {
 	$nice_name		= trim(str_ireplace("maker faire", "", $title));
 	$attendee_num 	= rgar( $entry, '157' );
 	$exhibit_num  	= rgar( $entry, '161' );
-	$name  			= rgar( $entry, '96.3' ) . " " . rgar( $entry, '96.6' );
+	$name  			= rgar( $entry, '241' );
 	//$email  		= rgar( $entry, '98' ); this is the producer email, not a contact email
 	$badge			= rgar( $entry, '194' );
 	$video  		= rgar( $entry, '191' );
