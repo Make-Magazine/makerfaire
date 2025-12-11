@@ -201,7 +201,6 @@
       max-width: 300px;
       margin: 5px 0px 10px;
       overflow: hidden;
-      margin-top: 0px;
       h1 { 
          position: absolute;
          z-index: 9;
@@ -209,6 +208,7 @@
          text-shadow: 1px 1px 3px black;
          font-size: 24px;
          overflow: hidden;
+         margin-top: 0px;
       }
       #faireLogo {
          position: relative;
