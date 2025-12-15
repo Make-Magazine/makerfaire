@@ -5,6 +5,7 @@ pulls yearbook project data and entries for a specific year
 */
 
 $year  = (isset($_GET['faire_year'])?$_GET['faire_year']:date("Y",strtotime("-1 year")));
+$featured = isset( $_GET['featured'] ) && $_GET['featured'] === 'true';
 $count = (isset($_GET['count'])?$_GET['count']:10);
 
 if($year!='') {
@@ -39,6 +40,16 @@ if($year!='') {
             ),
         ),
     );
+
+    // ---- Optional ACF featured filter ----
+    if ( $featured ) {
+        $args['meta_query'] = [
+            [
+                'key'     => 'blue_ribbon__maker_of_merit',
+                'compare' => 'EXISTS',
+            ],
+        ];
+    }
     $query = new WP_Query($args);
     $posts = $query->posts;
 }
