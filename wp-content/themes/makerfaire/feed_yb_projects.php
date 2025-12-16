@@ -9,19 +9,31 @@ $featured = isset( $_GET['featured'] ) && $_GET['featured'] === 'true';
 $count = (isset($_GET['count'])?$_GET['count']:10);
 
 if($year!='') {
+
+    // our meta query is by year, and optionally for featured makers
+    $meta_query = array(
+        'relation' => 'AND',
+        array(
+            'key'     => 'faire_information_faire_year',
+            'value'   => $year,
+            'compare' => '='
+        ),
+    );
+    if ( $featured ) {
+        $meta_query[] = array(
+            'key'     => 'blue_ribbon__maker_of_merit',
+            'value'   => '',
+            'compare' => '!='
+        );
+    }
+
     // to get around caches, we are counting all posts within this period, and then running a random offset to truly randomize in a way order_by rand won't do
     $total_query = new WP_Query(array(
         'post_type'      => 'projects',
         'post_status'    => 'publish',
         'fields'         => 'ids',
         'posts_per_page' => $count,
-        'meta_query'     => array(
-            array(
-                'key'     => 'faire_information_faire_year',
-                'value'   => $year,
-                'compare' => '='
-            ),
-        ),
+        'meta_query'     => $meta_query,
     ));
     $total = $total_query->found_posts;
 
@@ -32,24 +44,9 @@ if($year!='') {
         'post_status'    => 'publish',
         'posts_per_page' => $count,
         'offset'         => $offset,
-        'meta_query'     => array(
-            array(
-                'key'     => 'faire_information_faire_year',
-                'value'   => $year,
-                'compare' => '='
-            ),
-        ),
+        'meta_query'     => $meta_query,
     );
 
-    // ---- Optional ACF featured filter ----
-    if ( $featured ) {
-        $args['meta_query'] = [
-            [
-                'key'     => 'blue_ribbon__maker_of_merit',
-                'compare' => 'EXISTS',
-            ],
-        ];
-    }
     $query = new WP_Query($args);
     $posts = $query->posts;
 }
