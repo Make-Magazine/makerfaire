@@ -128,30 +128,38 @@ function getTikTokVideoId($url) {
   return null;
 }
 
-// turn a normal url into a youtube embed url
-function getYoutubeEmbedUrl($url) {
-  //If this is a youtube shorts, replace "shorts/" with "watch?v="
-  if(stripos($url,'shorts/') !== false){
-    $url = str_replace('shorts/', 'watch?v=',$url ?? '');
-  }
+function getYoutubeEmbedUrl( $url ) {
+    if ( empty( $url ) ) {
+        return null;
+    }
+    // Normalize Shorts URLs
+    if ( stripos( $url, 'shorts/' ) !== false ) {
+        $url = str_replace( 'shorts/', 'watch?v=', $url );
+    }
+    $video_id    = '';
+    $playlist_id = '';
+    // Extract playlist ID
+    if ( preg_match( '/[?&]list=([a-zA-Z0-9_-]+)/', $url, $matches ) ) {
+        $playlist_id = $matches[1];
+    }
 
-  $youtube_id = '';
-  $shortUrlRegex = '/youtu.be\/([a-zA-Z0-9_-]+)\??/i';
-  $longUrlRegex = '/youtube.com\/((?:embed)|(?:watch))((?:\?v\=)|(?:\/))([a-zA-Z0-9_-]+)/i';
-
-  if (preg_match($longUrlRegex, $url, $matches)) {
-    $youtube_id = $matches[count($matches) - 1];
-  }
-
-  if (preg_match($shortUrlRegex, $url, $matches)) {
-    $youtube_id = $matches[count($matches) - 1];
-  }
-
-  if ($youtube_id !== '') {
-    return 'https://www.youtube.com/embed/' . $youtube_id;
-  } else {
-    return;
-  }
+    // Short URL (youtu.be)
+    if ( preg_match( '/youtu\.be\/([a-zA-Z0-9_-]+)/', $url, $matches ) ) {
+        $video_id = $matches[1];
+    }
+    // Standard YouTube URLs
+    if ( preg_match( '/youtube\.com\/.*[?&]v=([a-zA-Z0-9_-]+)/', $url, $matches ) ) {
+        $video_id = $matches[1];
+    }
+    // Playlist embed takes priority
+    if ( $playlist_id ) {
+        return 'https://www.youtube.com/embed/videoseries?list=' . $playlist_id;
+    }
+    // Video embed
+    if ( $video_id ) {
+        return 'https://www.youtube.com/embed/' . $video_id;
+    }
+    return null;
 }
 
 /**

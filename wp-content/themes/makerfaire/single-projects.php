@@ -131,8 +131,11 @@ $maker_data = get_field("maker_data");
                         <blockquote class="tiktok-embed" data-video-id="<?php echo $tiktok_code; ?>" style="max-width: 605px;min-width: 325px;" > 
                         <section data-warning="Don't Remove This"></section> 
                         </blockquote> <script async src="https://www.tiktok.com/embed.js"></script>
-                    <?php } else { ?>
-                        <iframe width="560" height="315" src="<?php echo getYoutubeEmbedUrl($exhibit_video) . "?autoplay=1&mute=1"; ?>" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+                    <?php } else { 
+                            $separator = ( strpos( $exhibit_video, '?' ) !== false ) ? '&' : '?';
+                            $embed .= getYoutubeEmbedUrl($exhibit_video) . $separator . 'autoplay=1&mute=1';
+                        ?>
+                        <iframe width="560" height="315" src="<?php echo $embed ; ?>" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
                     <?php }               
                 ?>
             </div>
