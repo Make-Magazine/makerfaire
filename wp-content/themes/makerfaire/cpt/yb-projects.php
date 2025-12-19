@@ -136,6 +136,7 @@ function projects_posts_columns($columns) {
 		'faire_region'	 	=> __('Maker Region', 'makerfaire'),
 		'faire_country'	 	=> __('Maker Country', 'makerfaire'),
 		'first_maker_name'	=> __('Maker', 'makerfaire'),
+		'maker_photo'	=> __('Maker Photo', 'makerfaire'),
 	);
 
 	return $columns;
@@ -168,6 +169,11 @@ function projects_content_column($column, $post_id) {
 			//they only want the first maker name
 			echo (!empty($maker_data) && isset($maker_data[0]["maker_or_group_name"]) ? $maker_data[0]["maker_or_group_name"] : '');
 			break;
+		case 'maker_photo':
+			if(!empty($maker_data) && isset($maker_data[0]["maker_photo"]['url'])) {
+				echo wp_get_attachment_image( $maker_data[0]["maker_photo"]['ID'], array('100', '100'), "", array( "class" => "img-responsive" ) );
+			} 
+			break;
 		case 'faire_region':
 			if (isset($project_location["region"]) && isset($project_location["region"]->name)) {
 				echo $project_location["region"]->name;
@@ -176,7 +182,9 @@ function projects_content_column($column, $post_id) {
 		case 'primary_category':
 			$primary_cat_id = get_primary_taxonomy_id($post_id, "mf-project-cat");        	
 			$category 		= get_term( $primary_cat_id );
-			echo $category->name;						
+			if(isset($category->name)) {
+				echo $category->name;
+			}						
 			break;
 	}
 }
