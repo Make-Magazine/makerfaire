@@ -631,16 +631,16 @@ select {
 .dialog-type-alert .dialog-buttons-wrapper .dialog-button:visited {
   color: initial;
 }
-.dialog-type-confirm .dialog-buttons-wrapper .dialog-button[disabled],
-.dialog-type-alert .dialog-buttons-wrapper .dialog-button[disabled] {
-  background-color: var(--e-a-btn-bg-disabled);
-  cursor: not-allowed;
-}
 .dialog-type-confirm .dialog-buttons-wrapper .dialog-button[disabled]:hover, .dialog-type-confirm .dialog-buttons-wrapper .dialog-button[disabled]:focus, .dialog-type-confirm .dialog-buttons-wrapper .dialog-button[disabled]:visited,
 .dialog-type-alert .dialog-buttons-wrapper .dialog-button[disabled]:hover,
 .dialog-type-alert .dialog-buttons-wrapper .dialog-button[disabled]:focus,
 .dialog-type-alert .dialog-buttons-wrapper .dialog-button[disabled]:visited {
   background-color: var(--e-a-btn-bg-disabled);
+}
+.dialog-type-confirm .dialog-buttons-wrapper .dialog-button[disabled],
+.dialog-type-alert .dialog-buttons-wrapper .dialog-button[disabled] {
+  background-color: var(--e-a-btn-bg-disabled);
+  cursor: not-allowed;
 }
 
 /*
@@ -1902,6 +1902,8 @@ body:not(.elementor-device-mobile) .elementor-control.elementor-control-responsi
   margin-block-start: 0;
 }
 
+.elementor-control-start-end .eicon-text-align-left,
+.elementor-control-start-end .eicon-text-align-right,
 .elementor-control-start-end .eicon-h-align-left,
 .elementor-control-start-end .eicon-h-align-right {
   scale: calc(1 * var(--direction-multiplier)) 1;
@@ -5472,6 +5474,36 @@ body.e-is-device-mode:not(.elementor-device-desktop) #elementor-preview-responsi
   background-color: var(--e-a-bg-hover);
 }
 
+#elementor-template-library-toolbar .source-option-badge {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border: none;
+  border-radius: 20px;
+  font-size: 14px;
+  font-weight: 500;
+  white-space: nowrap;
+}
+#elementor-template-library-toolbar .source-option-badge i {
+  margin: 0;
+  font-size: 14px;
+}
+#elementor-template-library-toolbar .source-option-badge.cloud-badge {
+  background-color: var(--e-a-bg-info);
+  color: var(--e-a-color-info);
+}
+#elementor-template-library-toolbar .source-option-badge.cloud-badge i {
+  color: var(--e-a-color-info);
+}
+#elementor-template-library-toolbar .source-option-badge.site-badge {
+  background-color: var(--e-a-bg-warning);
+  color: var(--e-a-btn-bg-warning-hover);
+}
+#elementor-template-library-toolbar .source-option-badge.site-badge i {
+  color: var(--e-a-btn-bg-warning-hover);
+}
+
 #elementor-template-library-filter-toolbar-remote {
   font-size: 11px;
 }
@@ -6005,15 +6037,15 @@ label.elementor-template-library-order-label:hover {
   height: 55px;
   font-size: 16px;
 }
-#elementor-template-library-save-template-form .cloud-library-form-inputs {
-  display: block;
-  width: 500px;
-  margin: 0 auto;
-}
 #elementor-template-library-save-template-form .cloud-library-form-inputs > * {
   height: 55px;
   font-size: 16px;
   margin-block-end: 15px;
+}
+#elementor-template-library-save-template-form .cloud-library-form-inputs {
+  display: block;
+  width: 500px;
+  margin: 0 auto;
 }
 #elementor-template-library-save-template-form .cloud-library-form-inputs .upgrade-tooltip,
 #elementor-template-library-save-template-form .cloud-library-form-inputs .connect-badge {
@@ -6114,10 +6146,13 @@ label.elementor-template-library-order-label:hover {
   white-space: nowrap;
   text-overflow: ellipsis;
   overflow: hidden;
+  display: inline-flex;
+  align-items: baseline;
   line-height: 27px;
 }
 #elementor-template-library-save-template-form .cloud-library-form-inputs .source-selections-input #cloud,
 #elementor-template-library-save-template-form .cloud-library-form-inputs .source-selections-input #local {
+  flex-shrink: 0;
   position: relative;
   inset-block-start: 2px;
 }
@@ -6136,13 +6171,24 @@ label.elementor-template-library-order-label:hover {
 #elementor-template-library-save-template-form .cloud-library-form-inputs .source-selections-input .selected-folder {
   display: none;
   margin-inline-end: 5px;
+  align-items: baseline;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
+#elementor-template-library-save-template-form .cloud-library-form-inputs .source-selections-input .selected-folder[style*="display: inline"] {
+  display: inline-flex !important;
 }
 #elementor-template-library-save-template-form .cloud-library-form-inputs .source-selections-input .selected-folder-text {
   text-decoration: underline;
   cursor: pointer;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
 }
 #elementor-template-library-save-template-form .cloud-library-form-inputs .source-selections-input .eicon-editor-close {
   cursor: pointer;
+  flex-shrink: 0;
 }
 #elementor-template-library-save-template-form .cloud-library-form-inputs .source-selections-input #elementor-template-library-connect__badge {
   color: var(--e-a-color-primary-bold);
@@ -6200,8 +6246,7 @@ label.elementor-template-library-order-label:hover {
 #elementor-template-library-save-template-form .cloud-library-form-inputs .cloud-folder-selection-dropdown .no-results {
   text-align: center;
   font-size: 13px;
-  width: 155px;
-  margin: 0 auto;
+  margin: 0 20px;
   padding-block: 15px;
   pointer-events: none;
 }
@@ -6216,6 +6261,244 @@ label.elementor-template-library-order-label:hover {
 #elementor-template-library-save-template-form .cloud-library-form-inputs .source-selections-input.disabled {
   pointer-events: none;
   opacity: 0.3;
+}
+#elementor-template-library-save-template-form .cloud-library-form-inputs.variant-b {
+  display: flex;
+  flex-direction: column;
+  width: 600px;
+  text-align: start;
+}
+#elementor-template-library-save-template-form .cloud-library-form-inputs.variant-b .template-name-label,
+#elementor-template-library-save-template-form .cloud-library-form-inputs.variant-b .save-location-label {
+  font-size: 12px;
+  font-weight: 400;
+  color: var(--e-a-color-txt);
+}
+#elementor-template-library-save-template-form .cloud-library-form-inputs.variant-b #elementor-template-library-save-template-name {
+  width: 100%;
+  padding: 12px 15px;
+  border: var(--e-a-border-bold);
+  border-radius: 3px;
+  margin-block-end: 0;
+}
+#elementor-template-library-save-template-form .cloud-library-form-inputs.variant-b .source-selections {
+  border: none;
+  padding: 0;
+  gap: 12px;
+  margin-block-start: 20px;
+}
+#elementor-template-library-save-template-form .cloud-library-form-inputs.variant-b .source-selections .source-selections-input {
+  display: flex;
+  align-items: center;
+  padding: 12px 15px;
+  border: var(--e-a-border-bold);
+  border-radius: 3px;
+  width: 100%;
+  line-height: normal;
+  gap: 8px;
+}
+#elementor-template-library-save-template-form .cloud-library-form-inputs.variant-b .source-selections .source-selections-input.cloud, #elementor-template-library-save-template-form .cloud-library-form-inputs.variant-b .source-selections .source-selections-input.local {
+  display: flex;
+}
+#elementor-template-library-save-template-form .cloud-library-form-inputs.variant-b .source-selections .source-selections-input input[type=checkbox] {
+  margin-inline-end: 0;
+  flex-shrink: 0;
+  position: relative;
+}
+#elementor-template-library-save-template-form .cloud-library-form-inputs.variant-b .source-selections .source-selections-input input[type=checkbox]::after {
+  content: "";
+  position: absolute;
+  inset-inline-end: -8px;
+  width: 1px;
+  height: 18px;
+  background-color: var(--e-a-border-color);
+}
+#elementor-template-library-save-template-form .cloud-library-form-inputs.variant-b .source-selections .source-selections-input > i:first-of-type {
+  margin-inline-start: 8px;
+  margin-inline-end: 0;
+  font-size: 18px;
+  color: var(--e-a-color-txt);
+}
+#elementor-template-library-save-template-form .cloud-library-form-inputs.variant-b .source-selections .source-selections-input label {
+  flex: 0 0 auto;
+  margin: 0;
+  cursor: pointer;
+}
+#elementor-template-library-save-template-form .cloud-library-form-inputs.variant-b .source-selections .source-selections-input .divider {
+  margin-inline: 0;
+}
+#elementor-template-library-save-template-form .cloud-library-form-inputs.variant-b .source-selections .source-selections-input .ellipsis-container {
+  display: inline;
+  background: transparent;
+  padding: 0;
+  border-radius: 0;
+  vertical-align: baseline;
+  text-decoration: underline;
+  cursor: pointer;
+  margin-inline-start: 0;
+}
+#elementor-template-library-save-template-form .cloud-library-form-inputs.variant-b .source-selections .source-selections-input .ellipsis-container:hover {
+  background: transparent;
+}
+#elementor-template-library-save-template-form .cloud-library-form-inputs.variant-b .source-selections .source-selections-input .select-folder-link {
+  color: var(--e-a-color-primary-bold);
+  text-decoration: underline;
+  cursor: pointer;
+  margin-inline-start: 4px;
+}
+#elementor-template-library-save-template-form .cloud-library-form-inputs.variant-b .source-selections .source-selections-input .select-folder-link:hover {
+  text-decoration: none;
+}
+#elementor-template-library-save-template-form .cloud-library-form-inputs.variant-b .source-selections .source-selections-input .upgrade-badge {
+  display: none;
+  border: none;
+  padding: 0;
+  border-radius: 0;
+  margin-inline-start: 0;
+  background: transparent;
+  transition: background-color 0.2s;
+  padding: 3px 8px;
+}
+#elementor-template-library-save-template-form .cloud-library-form-inputs.variant-b .source-selections .source-selections-input .upgrade-badge:hover {
+  background-color: var(--e-a-btn-bg-primary-hover);
+  border-radius: 3px;
+}
+#elementor-template-library-save-template-form .cloud-library-form-inputs.variant-b .source-selections .source-selections-input .upgrade-badge a {
+  color: var(--e-a-btn-bg-accent);
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 14px;
+  font-weight: 500;
+}
+#elementor-template-library-save-template-form .cloud-library-form-inputs.variant-b .source-selections .source-selections-input .upgrade-badge a i {
+  margin: 0;
+  font-size: 14px;
+}
+#elementor-template-library-save-template-form .cloud-library-form-inputs.variant-b .source-selections .source-selections-input .connect-badge {
+  display: none;
+}
+#elementor-template-library-save-template-form .cloud-library-form-inputs.variant-b .source-selections .source-selections-input .connect-badge .connect-divider {
+  color: var(--e-a-color-txt-muted);
+  margin-inline: 5px;
+}
+#elementor-template-library-save-template-form .cloud-library-form-inputs.variant-b .source-selections .source-selections-input .connect-badge a {
+  color: var(--e-a-color-primary-bold);
+  text-decoration: none;
+}
+#elementor-template-library-save-template-form .cloud-library-form-inputs.variant-b .source-selections .source-selections-input .connect-badge a:hover {
+  text-decoration: underline;
+}
+#elementor-template-library-save-template-form .cloud-library-form-inputs.variant-b .source-selections .source-selections-input .account-badge {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border: none;
+  border-radius: 20px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: opacity 0.2s;
+  margin-inline-start: auto;
+}
+#elementor-template-library-save-template-form .cloud-library-form-inputs.variant-b .source-selections .source-selections-input .account-badge:hover {
+  opacity: 0.8;
+}
+#elementor-template-library-save-template-form .cloud-library-form-inputs.variant-b .source-selections .source-selections-input .account-badge i {
+  margin: 0;
+  font-size: 14px;
+}
+#elementor-template-library-save-template-form .cloud-library-form-inputs.variant-b .source-selections .source-selections-input .account-badge.cloud-account-badge {
+  background-color: var(--e-a-bg-info);
+  color: var(--e-a-color-info);
+}
+#elementor-template-library-save-template-form .cloud-library-form-inputs.variant-b .source-selections .source-selections-input .account-badge.cloud-account-badge i {
+  color: var(--e-a-color-info);
+}
+#elementor-template-library-save-template-form .cloud-library-form-inputs.variant-b .source-selections .source-selections-input .account-badge.site-account-badge {
+  background-color: var(--e-a-bg-warning);
+  color: var(--e-a-btn-bg-warning-hover);
+}
+#elementor-template-library-save-template-form .cloud-library-form-inputs.variant-b .source-selections .source-selections-input .account-badge.site-account-badge i {
+  color: var(--e-a-btn-bg-warning-hover);
+}
+#elementor-template-library-save-template-form .cloud-library-form-inputs.variant-b .source-selections .source-selections-input .selected-folder {
+  display: none;
+  margin-inline-start: 8px;
+  align-items: center;
+  gap: 6px;
+}
+#elementor-template-library-save-template-form .cloud-library-form-inputs.variant-b .source-selections .source-selections-input .selected-folder[style*="display: inline"] {
+  display: inline-flex !important;
+}
+#elementor-template-library-save-template-form .cloud-library-form-inputs.variant-b .source-selections .source-selections-input .selected-folder-text {
+  text-decoration: underline;
+  cursor: pointer;
+}
+#elementor-template-library-save-template-form .cloud-library-form-inputs.variant-b .source-selections .source-selections-input .eicon-editor-close {
+  cursor: pointer;
+  font-size: 14px;
+}
+#elementor-template-library-save-template-form .cloud-library-form-inputs.variant-b .cloud-folder-selection-dropdown {
+  inset-block-start: 70px;
+}
+#elementor-template-library-save-template-form .cloud-library-form-inputs.variant-b .source-selections-input.cloud:not(:has(.connect-badge)) .connect-badge {
+  display: none;
+}
+#elementor-template-library-save-template-form .cloud-library-form-inputs.variant-b .source-selections-input.cloud:has(.connect-badge) .connect-badge {
+  display: inline;
+}
+#elementor-template-library-save-template-form .cloud-library-form-inputs.variant-b .source-selections-input.cloud:has(.connect-badge) .upgrade-badge {
+  display: none;
+}
+#elementor-template-library-save-template-form .cloud-library-form-inputs.variant-b .source-selections-input.cloud:has(.connect-badge) {
+  border-color: var(--e-a-border-color);
+}
+#elementor-template-library-save-template-form .cloud-library-form-inputs.variant-b .source-selections-input.cloud:has(.connect-badge) > i:first-of-type,
+#elementor-template-library-save-template-form .cloud-library-form-inputs.variant-b .source-selections-input.cloud:has(.connect-badge) label,
+#elementor-template-library-save-template-form .cloud-library-form-inputs.variant-b .source-selections-input.cloud:has(.connect-badge) .divider {
+  color: var(--e-a-color-txt-disabled);
+}
+#elementor-template-library-save-template-form .cloud-library-form-inputs.variant-b .source-selections-input.cloud:has(.connect-badge) input[type=checkbox]::after {
+  background-color: var(--e-a-color-txt-disabled);
+}
+#elementor-template-library-save-template-form .cloud-library-form-inputs.variant-b.promotion .source-selections-input.cloud, #elementor-template-library-save-template-form .cloud-library-form-inputs.variant-b.max-capacity .source-selections-input.cloud {
+  border-color: var(--e-a-border-color);
+}
+#elementor-template-library-save-template-form .cloud-library-form-inputs.variant-b.promotion .source-selections-input.cloud > i:first-of-type,
+#elementor-template-library-save-template-form .cloud-library-form-inputs.variant-b.promotion .source-selections-input.cloud label,
+#elementor-template-library-save-template-form .cloud-library-form-inputs.variant-b.promotion .source-selections-input.cloud .divider, #elementor-template-library-save-template-form .cloud-library-form-inputs.variant-b.max-capacity .source-selections-input.cloud > i:first-of-type,
+#elementor-template-library-save-template-form .cloud-library-form-inputs.variant-b.max-capacity .source-selections-input.cloud label,
+#elementor-template-library-save-template-form .cloud-library-form-inputs.variant-b.max-capacity .source-selections-input.cloud .divider {
+  color: var(--e-a-color-txt-disabled);
+}
+#elementor-template-library-save-template-form .cloud-library-form-inputs.variant-b.promotion .source-selections-input.cloud input[type=checkbox]::after, #elementor-template-library-save-template-form .cloud-library-form-inputs.variant-b.max-capacity .source-selections-input.cloud input[type=checkbox]::after {
+  background-color: var(--e-a-color-txt-disabled);
+}
+#elementor-template-library-save-template-form .cloud-library-form-inputs.variant-b.promotion .source-selections-input.cloud .upgrade-badge, #elementor-template-library-save-template-form .cloud-library-form-inputs.variant-b.max-capacity .source-selections-input.cloud .upgrade-badge {
+  display: inline-flex;
+}
+#elementor-template-library-save-template-form .cloud-library-form-inputs.variant-b.promotion .source-selections-input.cloud .ellipsis-container, #elementor-template-library-save-template-form .cloud-library-form-inputs.variant-b.max-capacity .source-selections-input.cloud .ellipsis-container {
+  display: none;
+}
+#elementor-template-library-save-template-form .cloud-library-form-inputs.variant-b.promotion .source-selections-input.cloud .divider, #elementor-template-library-save-template-form .cloud-library-form-inputs.variant-b.max-capacity .source-selections-input.cloud .divider {
+  display: block;
+}
+#elementor-template-library-save-template-form .cloud-library-form-inputs.variant-b.promotion .source-selections-input.cloud input[type=checkbox],
+#elementor-template-library-save-template-form .cloud-library-form-inputs.variant-b.promotion .source-selections-input.cloud label, #elementor-template-library-save-template-form .cloud-library-form-inputs.variant-b.max-capacity .source-selections-input.cloud input[type=checkbox],
+#elementor-template-library-save-template-form .cloud-library-form-inputs.variant-b.max-capacity .source-selections-input.cloud label {
+  pointer-events: none;
+}
+#elementor-template-library-save-template-form .cloud-library-form-inputs.variant-b.max-capacity .quota-cta {
+  display: block;
+  margin-block-start: 15px;
+}
+#elementor-template-library-save-template-form .cloud-library-form-inputs.variant-b #elementor-template-library-save-template-submit {
+  align-self: center;
+  margin-block-start: 20px;
+  float: none;
 }
 
 #elementor-template-library-save-template-name {
@@ -6349,24 +6632,46 @@ label.elementor-template-library-order-label:hover {
 }
 
 #elementor-library--infotip__dialog,
-#elementor-library--connect_infotip__dialog {
+#elementor-library--connect_infotip__dialog,
+#elementor-library--cloud-upgrade__dialog,
+#elementor-library--site-info__dialog {
   position: absolute;
   z-index: 10000;
   background-color: var(--e-a-bg-default);
   box-shadow: var(--e-a-popover-shadow);
   border-radius: var(--e-a-border-radius);
 }
+#elementor-library--infotip__dialog.variant-b,
+#elementor-library--connect_infotip__dialog.variant-b,
+#elementor-library--cloud-upgrade__dialog.variant-b,
+#elementor-library--site-info__dialog.variant-b {
+  width: 200px;
+  color: var(--e-a-color-txt-invert);
+  background-color: var(--e-a-bg-secondary);
+}
+#elementor-library--infotip__dialog.variant-b .dialog-message,
+#elementor-library--connect_infotip__dialog.variant-b .dialog-message,
+#elementor-library--cloud-upgrade__dialog.variant-b .dialog-message,
+#elementor-library--site-info__dialog.variant-b .dialog-message {
+  padding: 4px 8px 4px 8px;
+}
 #elementor-library--infotip__dialog__title,
-#elementor-library--connect_infotip__dialog__title {
+#elementor-library--connect_infotip__dialog__title,
+#elementor-library--cloud-upgrade__dialog__title,
+#elementor-library--site-info__dialog__title {
   font-size: 14px;
 }
 #elementor-library--infotip__dialog .dialog-buttons-wrapper,
-#elementor-library--connect_infotip__dialog .dialog-buttons-wrapper {
+#elementor-library--connect_infotip__dialog .dialog-buttons-wrapper,
+#elementor-library--cloud-upgrade__dialog .dialog-buttons-wrapper,
+#elementor-library--site-info__dialog .dialog-buttons-wrapper {
   padding: 10px 0 10px 10px;
   float: inline-end;
 }
 #elementor-library--infotip__dialog .dialog-button,
-#elementor-library--connect_infotip__dialog .dialog-button {
+#elementor-library--connect_infotip__dialog .dialog-button,
+#elementor-library--cloud-upgrade__dialog .dialog-button,
+#elementor-library--site-info__dialog .dialog-button {
   padding: 7px 25px;
   font-size: 13px;
   background: none;
@@ -6376,7 +6681,9 @@ label.elementor-template-library-order-label:hover {
   cursor: pointer;
 }
 #elementor-library--infotip__dialog:after,
-#elementor-library--connect_infotip__dialog:after {
+#elementor-library--connect_infotip__dialog:after,
+#elementor-library--cloud-upgrade__dialog:after,
+#elementor-library--site-info__dialog:after {
   content: "";
   position: absolute;
   inset-inline-end: 46%;
@@ -6394,6 +6701,9 @@ label.elementor-template-library-order-label:hover {
   inset-block-start: 100%;
   border-block-start-color: var(--e-a-bg-default);
 }
+#elementor-library--infotip__dialog.variant-b:after {
+  border-block-start-color: var(--e-a-bg-secondary);
+}
 
 #elementor-library--connect_infotip__dialog {
   width: 265px;
@@ -6404,6 +6714,31 @@ label.elementor-template-library-order-label:hover {
 #elementor-library--connect_infotip__dialog:after {
   inset-block-end: 100%;
   border-block-end-color: var(--e-a-bg-default);
+}
+#elementor-library--connect_infotip__dialog.variant-b:after {
+  border-block-end-color: var(--e-a-bg-secondary);
+}
+
+#elementor-library--cloud-upgrade__dialog {
+  width: 265px;
+}
+#elementor-library--cloud-upgrade__dialog:after {
+  inset-block-start: 100%;
+  border-block-start-color: var(--e-a-bg-default);
+}
+#elementor-library--cloud-upgrade__dialog.variant-b:after {
+  border-block-start-color: var(--e-a-bg-secondary);
+}
+
+#elementor-library--site-info__dialog {
+  width: 265px;
+}
+#elementor-library--site-info__dialog:after {
+  inset-block-start: 100%;
+  border-block-start-color: var(--e-a-bg-default);
+}
+#elementor-library--site-info__dialog.variant-b:after {
+  border-block-start-color: var(--e-a-bg-secondary);
 }
 
 .elementor-tags-list {
@@ -7582,16 +7917,20 @@ label.e-scrubbing-over {
 
 [class^=eicon-flex], [class*=" eicon-flex"] {
   transition: 0.3s all;
-  --is-ltr: 0;
-  --is-rtl: 1;
-  --rotation-direction: calc(var(--is-ltr) - var(--is-rtl));
 }
 [class^=eicon-flex].eicon-inline, [class*=" eicon-flex"].eicon-inline {
   max-height: 1em;
   max-width: 1em;
 }
+[class^=eicon-flex], [class*=" eicon-flex"] {
+  --is-ltr: 0;
+  --is-rtl: 1;
+}
 [class^=eicon-flex]:is(.eicon-justify-start-h, .eicon-justify-end-h), [class*=" eicon-flex"]:is(.eicon-justify-start-h, .eicon-justify-end-h) {
   --rotation-direction: calc(var(--is-ltr) + var(--is-rtl));
+}
+[class^=eicon-flex], [class*=" eicon-flex"] {
+  --rotation-direction: calc(var(--is-ltr) - var(--is-rtl));
 }
 :is(.e-ui-state--document-direction-mode__column, .e-ui-state--document-direction-mode__column-reverse) [class^=eicon-flex]:not(.eicon-wrap):not(.eicon-nowrap):not(.eicon-grow), :is(.e-ui-state--document-direction-mode__column, .e-ui-state--document-direction-mode__column-reverse) [class*=" eicon-flex"]:not(.eicon-wrap):not(.eicon-nowrap):not(.eicon-grow) {
   transform: rotate(calc(var(--rotation-direction) * 90deg));

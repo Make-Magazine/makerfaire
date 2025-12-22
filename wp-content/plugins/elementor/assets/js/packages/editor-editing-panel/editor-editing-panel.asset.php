@@ -13,6 +13,7 @@ return [
 		'elementor-v2-editor-controls',
 		'elementor-v2-editor-documents',
 		'elementor-v2-editor-elements',
+		'elementor-v2-editor-interactions',
 		'elementor-v2-editor-panels',
 		'elementor-v2-editor-props',
 		'elementor-v2-editor-responsive',

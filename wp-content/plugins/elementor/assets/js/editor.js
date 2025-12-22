@@ -1033,7 +1033,7 @@ var Widget = exports.Widget = /*#__PURE__*/function (_MediaParser) {
      */
     function () {
       var _parse = (0, _asyncToGenerator2.default)(/*#__PURE__*/_regenerator.default.mark(function _callee() {
-        var file, container, _t, _t2, _t3, _t4, _t5, _t6;
+        var file, container, _t, _t2, _t3, _t4, _t5;
         return _regenerator.default.wrap(function (_context) {
           while (1) switch (_context.prev = _context.next) {
             case 0:
@@ -1052,11 +1052,10 @@ var Widget = exports.Widget = /*#__PURE__*/function (_MediaParser) {
               _t5 = {
                 image: _t4
               };
-              _t6 = {
+              container = _t.createElementContainer.call(_t, {
                 widgetType: 'image',
                 settings: _t5
-              };
-              container = _t.createElementContainer.call(_t, _t6);
+              });
               this.upload(file).then(function (_ref) {
                 var data = _ref.data;
                 $e.internal('document/elements/set-settings', {
@@ -1405,7 +1404,7 @@ var Widget = exports.Widget = /*#__PURE__*/function (_MediaParser) {
      */
     function () {
       var _parse = (0, _asyncToGenerator2.default)(/*#__PURE__*/_regenerator.default.mark(function _callee() {
-        var file, container, _t, _t2, _t3, _t4, _t5, _t6;
+        var file, container, _t, _t2, _t3, _t4, _t5;
         return _regenerator.default.wrap(function (_context) {
           while (1) switch (_context.prev = _context.next) {
             case 0:
@@ -1425,11 +1424,10 @@ var Widget = exports.Widget = /*#__PURE__*/function (_MediaParser) {
                 video_type: 'hosted',
                 hosted_url: _t4
               };
-              _t6 = {
+              container = _t.createElementContainer.call(_t, {
                 widgetType: 'video',
                 settings: _t5
-              };
-              container = _t.createElementContainer.call(_t, _t6);
+              });
               this.upload(file).then(function (_ref) {
                 var data = _ref.data;
                 $e.internal('document/elements/set-settings', {
@@ -8285,13 +8283,41 @@ var EVENTS_MAP = {
   INSERT_APPLY_SETTINGS: 'insert_apply_settings',
   UPGRADE_CLICKED: 'upgrade_clicked',
   PAGE_VIEWED: 'page_viewed',
-  DELETION_UNDO: 'deletion_undo'
+  DELETION_UNDO: 'deletion_undo',
+  CT_RECORDING_START: 'ctemplates_session_replay_start',
+  CT_BADGE_HOVER: 'ct_badge_hover'
+};
+var CLOUD_TEMPLATES_EXPERIMENTS = {
+  SAVE_TEMPLATE: 'save-template-cloud'
 };
 var EventManager = exports.EventManager = /*#__PURE__*/function () {
   function EventManager() {
     (0, _classCallCheck2.default)(this, EventManager);
   }
   return (0, _createClass2.default)(EventManager, [{
+    key: "getExperimentVariant",
+    value: function getExperimentVariant(experimentName) {
+      var _elementorCommon, _elementorCommon2;
+      if (!((_elementorCommon = elementorCommon) !== null && _elementorCommon !== void 0 && _elementorCommon.eventsManager)) {
+        return 'control';
+      }
+      return ((_elementorCommon2 = elementorCommon) === null || _elementorCommon2 === void 0 || (_elementorCommon2 = _elementorCommon2.eventsManager) === null || _elementorCommon2 === void 0 ? void 0 : _elementorCommon2.getExperimentVariant(experimentName, 'control')) || 'control';
+    }
+  }, {
+    key: "getSaveTemplateExperimentVariant",
+    value: function getSaveTemplateExperimentVariant() {
+      return this.getExperimentVariant(CLOUD_TEMPLATES_EXPERIMENTS.SAVE_TEMPLATE);
+    }
+  }, {
+    key: "startSaveTemplateExperiment",
+    value: function startSaveTemplateExperiment(variant) {
+      var _elementorCommon3, _elementorCommon4;
+      if (!((_elementorCommon3 = elementorCommon) !== null && _elementorCommon3 !== void 0 && _elementorCommon3.eventsManager)) {
+        return;
+      }
+      return (_elementorCommon4 = elementorCommon) === null || _elementorCommon4 === void 0 || (_elementorCommon4 = _elementorCommon4.eventsManager) === null || _elementorCommon4 === void 0 ? void 0 : _elementorCommon4.startExperiment(CLOUD_TEMPLATES_EXPERIMENTS.SAVE_TEMPLATE, variant);
+    }
+  }, {
     key: "sendEvent",
     value: function sendEvent(eventName, data) {
       return elementorCommon.eventsManager.dispatchEvent(eventName, data);
@@ -8424,6 +8450,37 @@ var EventManager = exports.EventManager = /*#__PURE__*/function () {
     value: function sendDeletionUndoEvent(data) {
       return this.sendEvent(EVENTS_MAP.DELETION_UNDO, _objectSpread({}, data));
     }
+  }, {
+    key: "sendCloudTemplatesSessionRecordingStartEvent",
+    value: function sendCloudTemplatesSessionRecordingStartEvent() {
+      return this.sendEvent(EVENTS_MAP.CT_RECORDING_START, {
+        location: elementorCommon.eventsManager.config.locations.templatesLibrary.library
+      });
+    }
+  }, {
+    key: "startSessionRecording",
+    value: function startSessionRecording() {
+      return elementorCommon.eventsManager.startSessionRecording();
+    }
+  }, {
+    key: "stopSessionRecording",
+    value: function stopSessionRecording() {
+      return elementorCommon.eventsManager.stopSessionRecording();
+    }
+  }, {
+    key: "isSessionRecordingInProgress",
+    value: function isSessionRecordingInProgress() {
+      return elementorCommon.eventsManager.isSessionRecordingInProgress();
+    }
+  }, {
+    key: "sendCTBadgeEvent",
+    value: function sendCTBadgeEvent(data) {
+      return this.sendEvent(EVENTS_MAP.CT_BADGE_HOVER, {
+        ct_badge_hover_position: data.ct_badge_hover_position,
+        ct_badge_type: data.ct_badge_type,
+        ct_position_state: data.ct_position_state
+      });
+    }
   }]);
 }();
 
@@ -8466,6 +8523,18 @@ var TemplateLibraryManager = function TemplateLibraryManager() {
     viewKey = 'view',
     bulkSelectedItems = new Set(),
     lastDeletedItems = new Set();
+  var variantsConfig = {
+    control: {
+      saveBtnText: __('Save', 'elementor'),
+      saveDialogDescription: sprintf(/* Translators: 1: Opening bold tag, 2: Closing bold tag.  2: Line break tag. 4: Opening bold tag, 5: Closing bold tag. */
+      __("You can save it to %1$sCloud Templates%2$s to reuse across any of your Elementor sites at any time%3$sor to %4$sSite Templates%5$s so it's always ready when editing this website.", 'elementor'), '<b>', '</b>', '<br>', '<b>', '</b>')
+    },
+    B: {
+      saveBtnText: __('Save page', 'elementor'),
+      saveDialogDescription: sprintf(/* Translators: 1: Opening bold tag, 2: Closing bold tag. 3: Opening bold tag, 4: Closing bold tag. */
+      __('Store your design in %1$sCloud Templates%2$s for future Elementor projects. Or save it to %3$sSite Templates%4$s, to reuse anywhere on this site.', 'elementor'), '<b>', '</b>', '<b>', '</b>')
+    }
+  };
   var deleteDialog,
     errorDialog,
     templatesCollection,
@@ -8479,25 +8548,28 @@ var TemplateLibraryManager = function TemplateLibraryManager() {
     },
     bulkSelectedItemsTypes = [];
   var registerDefaultTemplateTypes = function registerDefaultTemplateTypes() {
-    var data = self.getDefaultTemplateTypeData();
-    var elements = Object.entries(elementor.getConfig().elements).reduce(function (acc, _ref) {
-      var _ref2 = (0, _slicedToArray2.default)(_ref, 2),
-        type = _ref2[0],
-        element = _ref2[1];
-      if (!(element !== null && element !== void 0 && element.atomic_props_schema)) {
+    self.getDefaultTemplateTypeData().then(function (data) {
+      var elements = Object.entries(elementor.getConfig().elements).reduce(function (acc, _ref) {
+        var _ref2 = (0, _slicedToArray2.default)(_ref, 2),
+          type = _ref2[0],
+          element = _ref2[1];
+        if (!(element !== null && element !== void 0 && element.atomic_props_schema)) {
+          return acc;
+        }
+        acc[type] = element.title;
         return acc;
-      }
-      acc[type] = element.title;
-      return acc;
-    }, {});
-    var translationMap = _objectSpread(_objectSpread({
-      page: __('Page', 'elementor'),
-      section: __('Section', 'elementor'),
-      container: __('Container', 'elementor')
-    }, elements), {}, (0, _defineProperty2.default)({}, elementor.config.document.type, elementor.config.document.panel.title));
-    jQuery.each(translationMap, function (type, title) {
-      var safeData = jQuery.extend(true, {}, data, self.getDefaultTemplateTypeSafeData(title));
-      self.registerTemplateType(type, safeData);
+      }, {});
+      var translationMap = _objectSpread(_objectSpread({
+        page: __('Page', 'elementor'),
+        section: __('Section', 'elementor'),
+        container: __('Container', 'elementor')
+      }, elements), {}, (0, _defineProperty2.default)({}, elementor.config.document.type, elementor.config.document.panel.title));
+      jQuery.each(translationMap, function (type, title) {
+        self.getDefaultTemplateTypeSafeData(title).then(function (defaultTemplateData) {
+          var safeData = jQuery.extend(true, {}, data, defaultTemplateData);
+          self.registerTemplateType(type, safeData);
+        });
+      });
     });
   };
   var registerDefaultFilterTerms = function registerDefaultFilterTerms() {
@@ -8562,57 +8634,62 @@ var TemplateLibraryManager = function TemplateLibraryManager() {
     document.addEventListener('keydown', this.handleKeydown);
   };
   this.getDefaultTemplateTypeData = function () {
-    return {
-      saveDialog: {
-        icon: '<i class="eicon-library-upload" aria-hidden="true"></i>',
-        canSaveToCloud: true,
-        saveBtnText: __('Save', 'elementor')
-      },
-      moveDialog: {
-        description: __('Alternatively, you can copy the template.', 'elementor'),
-        icon: '<i class="eicon-library-move" aria-hidden="true"></i>',
-        canSaveToCloud: true,
-        saveBtnText: __('Move', 'elementor')
-      },
-      copyDialog: {
-        description: __('Alternatively, you can move the template.', 'elementor'),
-        icon: '<i class="eicon-library-copy" aria-hidden="true"></i>',
-        canSaveToCloud: true,
-        saveBtnText: __('Copy', 'elementor')
-      },
-      bulkMoveDialog: {
-        description: __('Alternatively, you can copy the templates.', 'elementor'),
-        title: __('Move templates to a different location', 'elementor'),
-        icon: '<i class="eicon-library-move" aria-hidden="true"></i>',
-        canSaveToCloud: true,
-        saveBtnText: __('Move', 'elementor')
-      },
-      bulkCopyDialog: {
-        description: __('Alternatively, you can move the templates.', 'elementor'),
-        title: __('Copy templates to a different location', 'elementor'),
-        icon: '<i class="eicon-library-copy" aria-hidden="true"></i>',
-        canSaveToCloud: true,
-        saveBtnText: __('Copy', 'elementor')
-      }
-    };
+    return this.eventManager.getSaveTemplateExperimentVariant().then(function (experimentVariant) {
+      var _variantsConfig$exper;
+      return {
+        saveDialog: {
+          icon: '<i class="eicon-library-upload" aria-hidden="true"></i>',
+          canSaveToCloud: true,
+          saveBtnText: (_variantsConfig$exper = variantsConfig[experimentVariant]) === null || _variantsConfig$exper === void 0 ? void 0 : _variantsConfig$exper.saveBtnText
+        },
+        moveDialog: {
+          description: __('Alternatively, you can copy the template.', 'elementor'),
+          icon: '<i class="eicon-library-move" aria-hidden="true"></i>',
+          canSaveToCloud: true,
+          saveBtnText: __('Move', 'elementor')
+        },
+        copyDialog: {
+          description: __('Alternatively, you can move the template.', 'elementor'),
+          icon: '<i class="eicon-library-copy" aria-hidden="true"></i>',
+          canSaveToCloud: true,
+          saveBtnText: __('Copy', 'elementor')
+        },
+        bulkMoveDialog: {
+          description: __('Alternatively, you can copy the templates.', 'elementor'),
+          title: __('Move templates to a different location', 'elementor'),
+          icon: '<i class="eicon-library-move" aria-hidden="true"></i>',
+          canSaveToCloud: true,
+          saveBtnText: __('Move', 'elementor')
+        },
+        bulkCopyDialog: {
+          description: __('Alternatively, you can move the templates.', 'elementor'),
+          title: __('Copy templates to a different location', 'elementor'),
+          icon: '<i class="eicon-library-copy" aria-hidden="true"></i>',
+          canSaveToCloud: true,
+          saveBtnText: __('Copy', 'elementor')
+        }
+      };
+    });
   };
   this.getDefaultTemplateTypeSafeData = function (title) {
-    return {
-      saveDialog: {
-        description: sprintf(/* Translators: 1: Opening bold tag, 2: Closing bold tag.  2: Line break tag. 4: Opening bold tag, 5: Closing bold tag. */
-        __('You can save it to %1$sCloud Templates%2$s to reuse across any of your Elementor sites at any time%3$sor to %4$sSite Templates%5$s so it’s always ready when editing this website.', 'elementor'), '<b>', '</b>', '<br>', '<b>', '</b>'),
-        /* Translators: %s: Template type. */
-        title: sprintf(__('Save this %s to your library', 'elementor'), title)
-      },
-      moveDialog: {
-        /* Translators: %s: Template type. */
-        title: sprintf(__('Move your %s to a different location', 'elementor'), title)
-      },
-      copyDialog: {
-        /* Translators: %s: Template type. */
-        title: sprintf(__('Copy your %s to a different location', 'elementor'), title)
-      }
-    };
+    return this.eventManager.getSaveTemplateExperimentVariant().then(function (experimentVariant) {
+      var _variantsConfig$exper2;
+      return {
+        saveDialog: {
+          description: (_variantsConfig$exper2 = variantsConfig[experimentVariant]) === null || _variantsConfig$exper2 === void 0 ? void 0 : _variantsConfig$exper2.saveDialogDescription,
+          /* Translators: %s: Template type. */
+          title: sprintf(__('Save this %s to your library', 'elementor'), title)
+        },
+        moveDialog: {
+          /* Translators: %s: Template type. */
+          title: sprintf(__('Move your %s to a different location', 'elementor'), title)
+        },
+        copyDialog: {
+          /* Translators: %s: Template type. */
+          title: sprintf(__('Copy your %s to a different location', 'elementor'), title)
+        }
+      };
+    });
   };
   this.isSelectAllShortcut = function (event) {
     return (event.metaKey || event.ctrlKey) && 'a' === event.key;
@@ -8702,6 +8779,17 @@ var TemplateLibraryManager = function TemplateLibraryManager() {
             options.onSuccess(response);
           }
           self.layout.updateViewCollection(self.filterTemplates());
+          var buttons = 'cloud' === source ? [{
+            name: 'undo_bulk',
+            text: __('Undo', 'elementor'),
+            callback: function callback() {
+              self.onUndoDelete();
+            }
+          }] : null;
+          elementor.notifications.showToast({
+            message: "1 item deleted successfully",
+            buttons: buttons
+          });
           self.triggerQuotaUpdate();
           self.resetBulkActionBar();
           self.eventManager.sendItemDeletedEvent({
@@ -9196,6 +9284,7 @@ var TemplateLibraryManager = function TemplateLibraryManager() {
     self.showTemplates();
   };
   this.loadTemplates = function (onUpdate) {
+    var _elementorCommon$conf;
     this.clearLastRemovedItems();
     isLoading = true;
     total = 0;
@@ -9208,6 +9297,11 @@ var TemplateLibraryManager = function TemplateLibraryManager() {
     // TODO: Remove - it when all the data commands is ready, manage the cache!.
     if ('local' === query.source || 'cloud' === query.source) {
       options.refresh = true;
+    }
+    var shouldStartSessionRecording = 'cloud' === query.source && ((_elementorCommon$conf = elementorCommon.config.editor_events.session_replays) === null || _elementorCommon$conf === void 0 ? void 0 : _elementorCommon$conf.cloudTemplates) && !elementor.templates.eventManager.isSessionRecordingInProgress();
+    if (shouldStartSessionRecording) {
+      elementor.templates.eventManager.startSessionRecording();
+      elementor.templates.eventManager.sendCloudTemplatesSessionRecordingStartEvent();
     }
     this.setFilter('parent', null, query);
     var loadTemplatesData = function loadTemplatesData() {
@@ -9635,11 +9729,22 @@ var TemplateLibraryHeaderActionsView = __webpack_require__(/*! elementor-templat
   TemplateLibraryHeaderBackView = __webpack_require__(/*! elementor-templates/views/parts/header-parts/back */ "../assets/dev/js/editor/components/template-library/views/parts/header-parts/back.js"),
   TemplateLibraryCollectionView = __webpack_require__(/*! elementor-templates/views/parts/templates */ "../assets/dev/js/editor/components/template-library/views/parts/templates.js"),
   TemplateLibrarySaveTemplateView = __webpack_require__(/*! elementor-templates/views/parts/save-template */ "../assets/dev/js/editor/components/template-library/views/parts/save-template.js"),
+  TemplateLibrarySaveTemplateVariantBView = __webpack_require__(/*! elementor-templates/views/parts/save-template-variant-b */ "../assets/dev/js/editor/components/template-library/views/parts/save-template-variant-b.js"),
   TemplateLibraryImportView = __webpack_require__(/*! elementor-templates/views/parts/import */ "../assets/dev/js/editor/components/template-library/views/parts/import.js"),
   TemplateLibraryConnectView = __webpack_require__(/*! elementor-templates/views/parts/connect */ "../assets/dev/js/editor/components/template-library/views/parts/connect.js"),
   TemplateLibraryCloudStateView = __webpack_require__(/*! elementor-templates/views/parts/cloud-states */ "../assets/dev/js/editor/components/template-library/views/parts/cloud-states.js"),
   TemplateLibraryPreviewView = __webpack_require__(/*! elementor-templates/views/parts/preview */ "../assets/dev/js/editor/components/template-library/views/parts/preview.js"),
   TemplateLibraryNavigationContainerView = __webpack_require__(/*! elementor-templates/views/parts/navigation-container */ "../assets/dev/js/editor/components/template-library/views/parts/navigation-container.js");
+function resolveSaveTemplateByVariant(variant) {
+  switch (variant) {
+    case 'B':
+      return TemplateLibrarySaveTemplateVariantBView;
+    case 'control':
+    case 'A':
+    default:
+      return TemplateLibrarySaveTemplateView;
+  }
+}
 module.exports = elementorModules.common.views.modal.Layout.extend({
   getModalOptions: function getModalOptions() {
     var _window$elementor$con, _window;
@@ -9653,6 +9758,24 @@ module.exports = elementorModules.common.views.modal.Layout.extend({
         ignore: '.dialog-widget-content, .dialog-buttons-undo_bulk_delete, .dialog-buttons-template_after_save, #elementor-library--infotip__dialog, #elementor-template-library-rename-dialog, #elementor-template-library-delete-dialog'
       }
     };
+  },
+  initialize: function initialize() {
+    elementorModules.common.views.modal.Layout.prototype.initialize.call(this);
+    this.handleBeforeUnload = this.handleBeforeUnload.bind(this);
+    window.addEventListener('beforeunload', this.handleBeforeUnload);
+  },
+  initModal: function initModal() {
+    elementorModules.common.views.modal.Layout.prototype.initModal.call(this);
+    this.modal.on('hide', function () {
+      elementor.templates.eventManager.stopSessionRecording();
+    });
+  },
+  onDestroy: function onDestroy() {
+    elementor.templates.eventManager.stopSessionRecording();
+    window.removeEventListener('beforeunload', this.handleBeforeUnload);
+  },
+  handleBeforeUnload: function handleBeforeUnload() {
+    elementor.templates.eventManager.stopSessionRecording();
   },
   getLogoOptions: function getLogoOptions() {
     return {
@@ -9725,16 +9848,35 @@ module.exports = elementorModules.common.views.modal.Layout.extend({
     this.modalContent.show(new TemplateLibraryCloudStateView());
   },
   showSaveTemplateView: function showSaveTemplateView(elementModel) {
-    var context = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : _constants.SAVE_CONTEXTS.SAVE;
-    var headerView = this.getHeaderView();
-    headerView.menuArea.reset();
-    if (_constants.SAVE_CONTEXTS.SAVE !== context) {
-      headerView.logoArea.show(new TemplateLibraryHeaderBackView());
-    }
-    this.modalContent.show(new TemplateLibrarySaveTemplateView({
-      model: elementModel,
-      context: context
-    }));
+    var _arguments = arguments,
+      _this = this;
+    return (0, _asyncToGenerator2.default)(/*#__PURE__*/_regenerator.default.mark(function _callee() {
+      var context, headerView, experimentVariant, SaveTemplateView;
+      return _regenerator.default.wrap(function (_context) {
+        while (1) switch (_context.prev = _context.next) {
+          case 0:
+            context = _arguments.length > 1 && _arguments[1] !== undefined ? _arguments[1] : _constants.SAVE_CONTEXTS.SAVE;
+            headerView = _this.getHeaderView();
+            headerView.menuArea.reset();
+            if (_constants.SAVE_CONTEXTS.SAVE !== context) {
+              headerView.logoArea.show(new TemplateLibraryHeaderBackView());
+            }
+            _context.next = 1;
+            return elementor.templates.eventManager.getSaveTemplateExperimentVariant();
+          case 1:
+            experimentVariant = _context.sent;
+            SaveTemplateView = resolveSaveTemplateByVariant(experimentVariant);
+            elementor.templates.eventManager.startSaveTemplateExperiment(experimentVariant);
+            _this.modalContent.show(new SaveTemplateView({
+              model: elementModel,
+              context: context
+            }));
+          case 2:
+          case "end":
+            return _context.stop();
+        }
+      }, _callee);
+    }))();
   },
   showPreviewView: function showPreviewView(templateModel) {
     this.modalContent.show(new TemplateLibraryPreviewView({
@@ -9748,23 +9890,23 @@ module.exports = elementorModules.common.views.modal.Layout.extend({
     headerView.logoArea.show(new TemplateLibraryHeaderBackView());
   },
   showFolderView: function showFolderView(elementModel) {
-    return (0, _asyncToGenerator2.default)(/*#__PURE__*/_regenerator.default.mark(function _callee() {
-      return _regenerator.default.wrap(function (_context) {
-        while (1) switch (_context.prev = _context.next) {
+    return (0, _asyncToGenerator2.default)(/*#__PURE__*/_regenerator.default.mark(function _callee2() {
+      return _regenerator.default.wrap(function (_context2) {
+        while (1) switch (_context2.prev = _context2.next) {
           case 0:
-            _context.prev = 0;
+            _context2.prev = 0;
             elementor.templates.layout.showLoadingView();
-            _context.next = 1;
+            _context2.next = 1;
             return elementor.templates.getFolderTemplates(elementModel);
           case 1:
-            _context.prev = 1;
+            _context2.prev = 1;
             elementor.templates.layout.hideLoadingView();
-            return _context.finish(1);
+            return _context2.finish(1);
           case 2:
           case "end":
-            return _context.stop();
+            return _context2.stop();
         }
-      }, _callee, null, [[0,, 1, 2]]);
+      }, _callee2, null, [[0,, 1, 2]]);
     }))();
   },
   createScreenshotIframe: function createScreenshotIframe(previewUrl) {
@@ -10382,6 +10524,125 @@ module.exports = TemplateLibraryPreviewView;
 
 /***/ }),
 
+/***/ "../assets/dev/js/editor/components/template-library/views/parts/save-template-variant-b.js":
+/*!**************************************************************************************************!*\
+  !*** ../assets/dev/js/editor/components/template-library/views/parts/save-template-variant-b.js ***!
+  \**************************************************************************************************/
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+"use strict";
+/* provided dependency */ var __ = __webpack_require__(/*! @wordpress/i18n */ "@wordpress/i18n")["__"];
+/* provided dependency */ var sprintf = __webpack_require__(/*! @wordpress/i18n */ "@wordpress/i18n")["sprintf"];
+
+
+var TemplateLibrarySaveTemplateView = __webpack_require__(/*! ./save-template */ "../assets/dev/js/editor/components/template-library/views/parts/save-template.js");
+var TemplateLibrarySaveTemplateVariantBView = TemplateLibrarySaveTemplateView.extend({
+  id: 'elementor-template-library-save-template-variant-b',
+  template: '#tmpl-elementor-template-library-save-template-variant-b',
+  ui: function ui() {
+    return _.extend(TemplateLibrarySaveTemplateView.prototype.ui.apply(this, arguments), {
+      selectFolderLink: '.select-folder-link',
+      cloudAccountBadge: '.cloud-account-badge',
+      siteAccountBadge: '.site-account-badge',
+      connect: '#elementor-template-library-connect__badge-variant-b'
+    });
+  },
+  events: function events() {
+    return _.extend(TemplateLibrarySaveTemplateView.prototype.events.apply(this, arguments), {
+      'click @ui.selectFolderLink': 'onEllipsisIconClick',
+      'mouseenter @ui.upgradeBadge': 'showInfoTip',
+      'mouseenter @ui.cloudAccountBadge': 'showCloudAccountBadgeTooltip',
+      'mouseenter @ui.siteAccountBadge': 'showSiteAccountBadgeTooltip'
+    });
+  },
+  showInfoTip: function showInfoTip() {
+    if (this.infoTipDialog) {
+      this.infoTipDialog.hide();
+    }
+    var message = elementor.templates.hasCloudLibraryQuota() ? __('Upgrade your subscription to get more space and reuse saved assets across all your sites.', 'elementor') : __('Upgrade your subscription to access Cloud Templates and reuse saved assets across all your sites.', 'elementor');
+    this.infoTipDialog = elementor.dialogsManager.createWidget('buttons', {
+      id: 'elementor-library--infotip__dialog',
+      effects: {
+        show: 'show',
+        hide: 'hide'
+      },
+      position: {
+        of: this.ui.upgradeBadge,
+        at: 'top-50'
+      }
+    }).setMessage(message);
+    this.infoTipDialog.getElements('header').remove();
+    this.infoTipDialog.getElements('buttonsWrapper').remove();
+    this.infoTipDialog.getElements('widget').addClass('variant-b');
+    this.infoTipDialog.show();
+    this.sendCTBadgeEvent('cloud');
+  },
+  showCloudAccountBadgeTooltip: function showCloudAccountBadgeTooltip() {
+    if (this.cloudAccountBadgeDialog) {
+      this.cloudAccountBadgeDialog.hide();
+    }
+    var emailReplacement = elementor.config.library_connect.is_connected ? elementor.config.library_connect.user_email : __('connected', 'elementor');
+    /* Translators: %s: User's email. */
+    var message = sprintf(__('Only %s Elementor account can access Cloud Templates from any connected site.', 'elementor'), emailReplacement);
+    this.cloudAccountBadgeDialog = elementor.dialogsManager.createWidget('buttons', {
+      id: 'elementor-library--cloud-upgrade__dialog',
+      effects: {
+        show: 'show',
+        hide: 'hide'
+      },
+      position: {
+        of: this.ui.cloudAccountBadge,
+        at: 'top-50'
+      }
+    }).setMessage(message);
+    this.cloudAccountBadgeDialog.getElements('widget').addClass('variant-b');
+    this.cloudAccountBadgeDialog.getElements('header').remove();
+    this.cloudAccountBadgeDialog.getElements('buttonsWrapper').remove();
+    this.cloudAccountBadgeDialog.show();
+  },
+  showSiteAccountBadgeTooltip: function showSiteAccountBadgeTooltip() {
+    if (this.siteAccountBadgeDialog) {
+      this.siteAccountBadgeDialog.hide();
+    }
+    var message = __('Authorized users on this site can access Site Templates.', 'elementor');
+    this.siteAccountBadgeDialog = elementor.dialogsManager.createWidget('buttons', {
+      id: 'elementor-library--site-info__dialog',
+      effects: {
+        show: 'show',
+        hide: 'hide'
+      },
+      position: {
+        of: this.ui.siteAccountBadge,
+        at: 'top-50'
+      }
+    }).setMessage(message);
+    this.siteAccountBadgeDialog.getElements('widget').addClass('variant-b');
+    this.siteAccountBadgeDialog.getElements('header').remove();
+    this.siteAccountBadgeDialog.getElements('buttonsWrapper').remove();
+    this.siteAccountBadgeDialog.show();
+    this.sendCTBadgeEvent('site');
+  },
+  sendCTBadgeEvent: function sendCTBadgeEvent(badgeType) {
+    elementor.templates.eventManager.sendCTBadgeEvent({
+      ct_badge_hover_position: this.getOption('context'),
+      ct_badge_type: badgeType,
+      ct_position_state: this.getPositionState()
+    });
+  },
+  getPositionState: function getPositionState() {
+    if (!elementor.config.library_connect.is_connected) {
+      return 'connect';
+    }
+    if (!elementor.templates.hasCloudLibraryQuota() || this.cloudMaxCapacityReached()) {
+      return 'upgrade';
+    }
+    return 'eligible';
+  }
+});
+module.exports = TemplateLibrarySaveTemplateVariantBView;
+
+/***/ }),
+
 /***/ "../assets/dev/js/editor/components/template-library/views/parts/save-template.js":
 /*!****************************************************************************************!*\
   !*** ../assets/dev/js/editor/components/template-library/views/parts/save-template.js ***!
@@ -10405,38 +10666,42 @@ var LOAD_MORE_ID = 0;
 var TemplateLibrarySaveTemplateView = Marionette.ItemView.extend({
   id: 'elementor-template-library-save-template',
   template: '#tmpl-elementor-template-library-save-template',
-  ui: {
-    form: '#elementor-template-library-save-template-form',
-    submitButton: '#elementor-template-library-save-template-submit',
-    ellipsisIcon: '.cloud-library-form-inputs .ellipsis-container',
-    foldersList: '.cloud-folder-selection-dropdown ul',
-    foldersDropdown: '.cloud-folder-selection-dropdown',
-    foldersListContainer: '.cloud-folder-selection-dropdown-list',
-    removeFolderSelection: '.source-selections .selected-folder i',
-    selectedFolder: '.selected-folder',
-    selectedFolderText: '.selected-folder-text',
-    hiddenInputSelectedFolder: '#parentId',
-    templateNameInput: '#elementor-template-library-save-template-name',
-    localInput: '.source-selections-input.local',
-    cloudInput: '.source-selections-input.cloud',
-    sourceSelectionCheckboxes: '.source-selections-input input[type="checkbox"]',
-    infoIcon: '.source-selections-input.cloud .eicon-info',
-    connect: '#elementor-template-library-connect__badge',
-    connectBadge: '.source-selections-input.cloud .connect-badge',
-    cloudFormInputs: '.cloud-library-form-inputs',
-    upgradeBadge: '.source-selections-input.cloud upgrade-badge'
+  ui: function ui() {
+    return {
+      form: '#elementor-template-library-save-template-form',
+      submitButton: '#elementor-template-library-save-template-submit',
+      ellipsisIcon: '.cloud-library-form-inputs .ellipsis-container',
+      foldersList: '.cloud-folder-selection-dropdown ul',
+      foldersDropdown: '.cloud-folder-selection-dropdown',
+      foldersListContainer: '.cloud-folder-selection-dropdown-list',
+      removeFolderSelection: '.source-selections .selected-folder i',
+      selectedFolder: '.selected-folder',
+      selectedFolderText: '.selected-folder-text',
+      hiddenInputSelectedFolder: '#parentId',
+      templateNameInput: '#elementor-template-library-save-template-name',
+      localInput: '.source-selections-input.local',
+      cloudInput: '.source-selections-input.cloud',
+      sourceSelectionCheckboxes: '.source-selections-input input[type="checkbox"]',
+      infoIcon: '.source-selections-input.cloud .eicon-info',
+      connect: '#elementor-template-library-connect__badge',
+      connectBadge: '.source-selections-input.cloud .connect-badge',
+      cloudFormInputs: '.cloud-library-form-inputs',
+      upgradeBadge: '.source-selections-input.cloud .upgrade-badge'
+    };
   },
-  events: {
-    'submit @ui.form': 'onFormSubmit',
-    'click @ui.ellipsisIcon': 'onEllipsisIconClick',
-    'click @ui.foldersList': 'onFoldersListClick',
-    'click @ui.removeFolderSelection': 'onRemoveFolderSelectionClick',
-    'click @ui.selectedFolderText': 'onSelectedFolderTextClick',
-    'click @ui.upgradeBadge': 'onUpgradeBadgeClicked',
-    'change @ui.sourceSelectionCheckboxes': 'handleSourceSelectionChange',
-    'mouseenter @ui.infoIcon': 'showInfoTip',
-    'mouseenter @ui.connect': 'showConnectInfoTip',
-    'input @ui.templateNameInput': 'onTemplateNameInputChange'
+  events: function events() {
+    return {
+      'submit @ui.form': 'onFormSubmit',
+      'click @ui.ellipsisIcon': 'onEllipsisIconClick',
+      'click @ui.foldersList': 'onFoldersListClick',
+      'click @ui.removeFolderSelection': 'onRemoveFolderSelectionClick',
+      'click @ui.selectedFolderText': 'onSelectedFolderTextClick',
+      'click @ui.upgradeBadge': 'onUpgradeBadgeClicked',
+      'change @ui.sourceSelectionCheckboxes': 'handleSourceSelectionChange',
+      'mouseenter @ui.infoIcon': 'showInfoTip',
+      'mouseenter @ui.connectBadge': 'showConnectInfoTip',
+      'input @ui.templateNameInput': 'onTemplateNameInputChange'
+    };
   },
   onRender: function onRender() {
     var _elementorAppConfig$c,
@@ -10456,8 +10721,12 @@ var TemplateLibrarySaveTemplateView = Marionette.ItemView.extend({
       this.handleOnRender();
     }
   },
+  onDestroy: function onDestroy() {
+    this.unbindDocumentClickHandler();
+  },
   handleOnRender: function handleOnRender() {
-    var _this2 = this;
+    var _this2 = this,
+      _elementorCommon$conf;
     setTimeout(function () {
       return _this2.ui.templateNameInput.trigger('focus');
     });
@@ -10465,6 +10734,11 @@ var TemplateLibrarySaveTemplateView = Marionette.ItemView.extend({
     elementor.templates.eventManager.sendPageViewEvent({
       location: elementorCommon.eventsManager.config.secondaryLocations.templateLibrary["".concat(context, "Modal")]
     });
+    var shouldStartSessionRecording = ((_elementorCommon$conf = elementorCommon.config.editor_events.session_replays) === null || _elementorCommon$conf === void 0 ? void 0 : _elementorCommon$conf.cloudTemplates) && !elementor.templates.eventManager.isSessionRecordingInProgress();
+    if (shouldStartSessionRecording) {
+      elementor.templates.eventManager.startSessionRecording();
+      elementor.templates.eventManager.sendCloudTemplatesSessionRecordingStartEvent();
+    }
     if (_constants.SAVE_CONTEXTS.SAVE === context) {
       this.handleSaveAction();
     }
@@ -10483,6 +10757,7 @@ var TemplateLibrarySaveTemplateView = Marionette.ItemView.extend({
     if (!elementor.config.library_connect.is_connected) {
       this.handleElementorConnect();
     }
+    this.bindDocumentClickHandler();
   },
   cloudMaxCapacityReached: function cloudMaxCapacityReached() {
     var _elementorAppConfig$c2, _elementorAppConfig$c3, _elementorAppConfig$c4, _elementorAppConfig$c5;
@@ -10690,6 +10965,8 @@ var TemplateLibrarySaveTemplateView = Marionette.ItemView.extend({
     }
     if (!this.ui.foldersDropdown.is(':visible')) {
       this.ui.foldersDropdown.show();
+    } else {
+      this.hideFoldersDropdown();
     }
   },
   onEllipsisIconClick: function onEllipsisIconClick() {
@@ -10702,7 +10979,7 @@ var TemplateLibrarySaveTemplateView = Marionette.ItemView.extend({
               _context.next = 1;
               break;
             }
-            _this4.ui.foldersDropdown.hide();
+            _this4.hideFoldersDropdown();
             return _context.abrupt("return");
           case 1:
             _this4.ui.foldersDropdown.show();
@@ -10804,7 +11081,7 @@ var TemplateLibrarySaveTemplateView = Marionette.ItemView.extend({
   },
   handleFolderSelected: function handleFolderSelected(id, value) {
     this.highlightSelectedFolder(id);
-    this.ui.foldersDropdown.hide();
+    this.hideFoldersDropdown();
     this.ui.ellipsisIcon.hide();
     this.ui.selectedFolderText.html(value);
     this.ui.selectedFolder.show();
@@ -10825,7 +11102,7 @@ var TemplateLibrarySaveTemplateView = Marionette.ItemView.extend({
     this.ui.selectedFolder.hide();
     this.ui.ellipsisIcon.show();
     this.ui.hiddenInputSelectedFolder.val('');
-    this.ui.foldersDropdown.hide();
+    this.hideFoldersDropdown();
   },
   loadMoreFolders: function loadMoreFolders() {
     var _this6 = this;
@@ -10963,6 +11240,32 @@ var TemplateLibrarySaveTemplateView = Marionette.ItemView.extend({
   updateSubmitButtonState: function updateSubmitButtonState(shouldDisableSubmitButton) {
     this.ui.submitButton.toggleClass('e-primary', !shouldDisableSubmitButton);
     this.ui.submitButton.prop('disabled', shouldDisableSubmitButton);
+  },
+  hideFoldersDropdown: function hideFoldersDropdown() {
+    this.ui.foldersDropdown.hide();
+  },
+  bindDocumentClickHandler: function bindDocumentClickHandler() {
+    this.documentClickHandler = this.hideDropdownIfClickOutside.bind(this);
+    elementor.templates.layout.modalContent.$el.on('click', this.documentClickHandler);
+  },
+  unbindDocumentClickHandler: function unbindDocumentClickHandler() {
+    if (!this.documentClickHandler) {
+      return;
+    }
+    elementor.templates.layout.modalContent.$el.off('click', this.documentClickHandler);
+    this.documentClickHandler = null;
+  },
+  hideDropdownIfClickOutside: function hideDropdownIfClickOutside(event) {
+    if (!this.ui.foldersDropdown.is(':visible')) {
+      return;
+    }
+    var target = jQuery(event.target);
+    var isClickInsideDropdown = target.closest(this.ui.foldersDropdown).length > 0;
+    var isClickOnEllipsisIcon = target.closest(this.ui.ellipsisIcon).length > 0;
+    var isClickOnSelectedFolderText = target.closest(this.ui.selectedFolderText).length > 0;
+    if (!isClickInsideDropdown && !isClickOnEllipsisIcon && !isClickOnSelectedFolderText) {
+      this.hideFoldersDropdown();
+    }
   },
   onUpgradeBadgeClicked: function onUpgradeBadgeClicked() {
     var upgradePosition = elementor.templates.hasCloudLibraryQuota() ? 'save to-max' : 'save to-free';
@@ -11124,7 +11427,10 @@ var TemplateLibraryCollectionView = Marionette.CompositeView.extend({
     quotaValue: '.quota-progress-container .quota-progress-bar-value',
     quotaWarning: '.quota-progress-container .progress-bar-container .quota-warning',
     quotaUpgrade: '.quota-progress-container .progress-bar-container .quota-warning a',
-    navigationContainer: '#elementor-template-library-navigation-container'
+    navigationContainer: '#elementor-template-library-navigation-container',
+    sourceOptionBadges: '.source-option-badge.variant-b-only',
+    cloudBadge: '.source-option-badge.cloud-badge',
+    siteBadge: '.source-option-badge.site-badge'
   },
   events: {
     'input @ui.textFilter': 'onTextFilterInput',
@@ -11142,7 +11448,9 @@ var TemplateLibraryCollectionView = Marionette.CompositeView.extend({
     'click @ui.bulkMove': 'onClickBulkMove',
     'click @ui.bulkActionBarDelete': 'onBulkDeleteClick',
     'click @ui.bulkCopy': 'onClickBulkCopy',
-    'click @ui.quotaUpgrade': 'onQuotaUpgradeClicked'
+    'click @ui.quotaUpgrade': 'onQuotaUpgradeClicked',
+    'mouseenter @ui.cloudBadge': 'showCloudBadgeTooltip',
+    'mouseenter @ui.siteBadge': 'showSiteBadgeTooltip'
   },
   className: 'no-bulk-selections',
   resetQuotaBarStyles: function resetQuotaBarStyles() {
@@ -11267,6 +11575,7 @@ var TemplateLibraryCollectionView = Marionette.CompositeView.extend({
     this.handleQuotaBar = this.handleQuotaBar.bind(this);
     this.handleQuotaUpdate = this.handleQuotaUpdate.bind(this);
     this.listenTo(elementor.channels.templates, 'filter:change', this._renderChildren);
+    this.listenTo(elementor.channels.templates, 'filter:change', this.handleSourceOptionBadges);
     this.listenTo(elementor.channels.templates, 'quota:updated', this.handleQuotaUpdate);
     this.debouncedSearchTemplates = _.debounce(this.searchTemplates, 300);
   },
@@ -11400,6 +11709,52 @@ var TemplateLibraryCollectionView = Marionette.CompositeView.extend({
       this.removeScrollListener();
     }
   },
+  shouldShowVariantB: function shouldShowVariantB() {
+    return (0, _asyncToGenerator2.default)(/*#__PURE__*/_regenerator.default.mark(function _callee() {
+      var experimentVariant;
+      return _regenerator.default.wrap(function (_context) {
+        while (1) switch (_context.prev = _context.next) {
+          case 0:
+            _context.next = 1;
+            return elementor.templates.eventManager.getSaveTemplateExperimentVariant();
+          case 1:
+            experimentVariant = _context.sent;
+            return _context.abrupt("return", 'B' === experimentVariant);
+          case 2:
+          case "end":
+            return _context.stop();
+        }
+      }, _callee);
+    }))();
+  },
+  handleSourceOptionBadges: function handleSourceOptionBadges() {
+    var _this3 = this;
+    return (0, _asyncToGenerator2.default)(/*#__PURE__*/_regenerator.default.mark(function _callee2() {
+      var shouldShow, activeSource;
+      return _regenerator.default.wrap(function (_context2) {
+        while (1) switch (_context2.prev = _context2.next) {
+          case 0:
+            _context2.next = 1;
+            return _this3.shouldShowVariantB();
+          case 1:
+            shouldShow = _context2.sent;
+            if (shouldShow) {
+              _context2.next = 2;
+              break;
+            }
+            _this3.ui.sourceOptionBadges.hide();
+            return _context2.abrupt("return");
+          case 2:
+            activeSource = elementor.templates.getFilter('source');
+            _this3.$('.source-option-badge.site-badge').toggle('local' === activeSource);
+            _this3.$('.source-option-badge.cloud-badge').toggle('cloud' === activeSource);
+          case 3:
+          case "end":
+            return _context2.stop();
+        }
+      }, _callee2);
+    }))();
+  },
   onRender: function onRender() {
     elementor.templates.clearBulkSelectionItems();
     var activeSource = elementor.templates.getFilter('source');
@@ -11420,6 +11775,7 @@ var TemplateLibraryCollectionView = Marionette.CompositeView.extend({
         location: elementorCommon.eventsManager.config.secondaryLocations.templateLibrary.siteTab
       });
     }
+    this.handleSourceOptionBadges();
   },
   onRenderCollection: function onRenderCollection() {
     this.addSourceData();
@@ -11433,6 +11789,7 @@ var TemplateLibraryCollectionView = Marionette.CompositeView.extend({
       this.addViewData();
       this.handleQuotaUpdate();
     }
+    this.handleSourceOptionBadges();
   },
   onBeforeRenderEmpty: function onBeforeRenderEmpty() {
     this.addSourceData();
@@ -11450,27 +11807,27 @@ var TemplateLibraryCollectionView = Marionette.CompositeView.extend({
     elementor.templates.setFilter('text', this.ui.textFilter.val());
   },
   searchTemplates: function searchTemplates(source) {
-    var _this3 = this;
-    return (0, _asyncToGenerator2.default)(/*#__PURE__*/_regenerator.default.mark(function _callee() {
-      return _regenerator.default.wrap(function (_context) {
-        while (1) switch (_context.prev = _context.next) {
+    var _this4 = this;
+    return (0, _asyncToGenerator2.default)(/*#__PURE__*/_regenerator.default.mark(function _callee3() {
+      return _regenerator.default.wrap(function (_context3) {
+        while (1) switch (_context3.prev = _context3.next) {
           case 0:
-            _this3.showLoadingSpinner();
-            _context.prev = 1;
-            _context.next = 2;
+            _this4.showLoadingSpinner();
+            _context3.prev = 1;
+            _context3.next = 2;
             return elementor.templates.searchTemplates({
               source: source,
-              search: _this3.ui.textFilter.val()
+              search: _this4.ui.textFilter.val()
             });
           case 2:
-            _context.prev = 2;
-            _this3.showSearchIcon();
-            return _context.finish(2);
+            _context3.prev = 2;
+            _this4.showSearchIcon();
+            return _context3.finish(2);
           case 3:
           case "end":
-            return _context.stop();
+            return _context3.stop();
         }
-      }, _callee, null, [[1,, 2, 3]]);
+      }, _callee3, null, [[1,, 2, 3]]);
     }))();
   },
   showLoadingSpinner: function showLoadingSpinner() {
@@ -11510,7 +11867,7 @@ var TemplateLibraryCollectionView = Marionette.CompositeView.extend({
   },
   handleLoadMore: function handleLoadMore() {
     var _elementor,
-      _this4 = this;
+      _this5 = this;
     if (this.removeScrollListener) {
       this.removeScrollListener();
     }
@@ -11524,13 +11881,13 @@ var TemplateLibraryCollectionView = Marionette.CompositeView.extend({
       if (scrollPercentage < 90 || !canLoadMore) {
         return;
       }
-      _this4.ui.loadMoreAnchor.toggleClass('elementor-visibility-hidden');
+      _this5.ui.loadMoreAnchor.toggleClass('elementor-visibility-hidden');
       elementor.templates.layout.selectAllCheckboxMinus();
       elementor.templates.loadMore({
         onUpdate: function onUpdate() {
-          _this4.ui.loadMoreAnchor.toggleClass('elementor-visibility-hidden');
+          _this5.ui.loadMoreAnchor.toggleClass('elementor-visibility-hidden');
         },
-        search: _this4.ui.textFilter.val()
+        search: _this5.ui.textFilter.val()
       });
     };
     scrollableContainer.on('scroll', listener);
@@ -11601,6 +11958,50 @@ var TemplateLibraryCollectionView = Marionette.CompositeView.extend({
       secondaryLocation: elementorCommon.eventsManager.config.secondaryLocations.templateLibrary.quotaBar,
       upgrade_position: "quota bar ".concat(value ? value + '%' : '')
     });
+  },
+  showCloudBadgeTooltip: function showCloudBadgeTooltip() {
+    if (this.cloudBadgeDialog) {
+      this.cloudBadgeDialog.hide();
+    }
+    var emailReplacement = elementor.config.library_connect.is_connected ? elementor.config.library_connect.user_email : __('connected', 'elementor');
+    /* Translators: %s: User's email. */
+    var message = sprintf(__('Only %s Elementor account can access Cloud Templates from any connected site.', 'elementor'), emailReplacement);
+    this.cloudBadgeDialog = elementor.dialogsManager.createWidget('buttons', {
+      id: 'elementor-library--cloud-upgrade__dialog',
+      effects: {
+        show: 'show',
+        hide: 'hide'
+      },
+      position: {
+        of: this.ui.cloudBadge,
+        at: 'top-50'
+      }
+    }).setMessage(message);
+    this.cloudBadgeDialog.getElements('widget').addClass('variant-b');
+    this.cloudBadgeDialog.getElements('header').remove();
+    this.cloudBadgeDialog.getElements('buttonsWrapper').remove();
+    this.cloudBadgeDialog.show();
+  },
+  showSiteBadgeTooltip: function showSiteBadgeTooltip() {
+    if (this.siteBadgeDialog) {
+      this.siteBadgeDialog.hide();
+    }
+    var message = __('Authorized users on this site can access Site Templates.', 'elementor');
+    this.siteBadgeDialog = elementor.dialogsManager.createWidget('buttons', {
+      id: 'elementor-library--site-info__dialog',
+      effects: {
+        show: 'show',
+        hide: 'hide'
+      },
+      position: {
+        of: this.ui.siteBadge,
+        at: 'top-50'
+      }
+    }).setMessage(message);
+    this.siteBadgeDialog.getElements('widget').addClass('variant-b');
+    this.siteBadgeDialog.getElements('header').remove();
+    this.siteBadgeDialog.getElements('buttonsWrapper').remove();
+    this.siteBadgeDialog.show();
   }
 });
 module.exports = TemplateLibraryCollectionView;
@@ -20002,6 +20403,7 @@ var _createClass2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtim
 var _possibleConstructorReturn2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime/helpers/possibleConstructorReturn */ "../node_modules/@babel/runtime/helpers/possibleConstructorReturn.js"));
 var _getPrototypeOf2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime/helpers/getPrototypeOf */ "../node_modules/@babel/runtime/helpers/getPrototypeOf.js"));
 var _inherits2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime/helpers/inherits */ "../node_modules/@babel/runtime/helpers/inherits.js"));
+var _containerHelper = _interopRequireDefault(__webpack_require__(/*! elementor-editor-utils/container-helper */ "../assets/dev/js/editor/utils/container-helper.js"));
 function _callSuper(t, o, e) { return o = (0, _getPrototypeOf2.default)(o), (0, _possibleConstructorReturn2.default)(t, _isNativeReflectConstruct() ? Reflect.construct(o, e || [], (0, _getPrototypeOf2.default)(t).constructor) : o.apply(t, e)); }
 function _isNativeReflectConstruct() { try { var t = !Boolean.prototype.valueOf.call(Reflect.construct(Boolean, [], function () {})); } catch (t) {} return (_isNativeReflectConstruct = function _isNativeReflectConstruct() { return !!t; })(); }
 var Paste = exports.Paste = /*#__PURE__*/function (_$e$modules$editor$do) {
@@ -20121,6 +20523,8 @@ var Paste = exports.Paste = /*#__PURE__*/function (_$e$modules$editor$do) {
         data.forEach(function (model) {
           switch (model.elType) {
             case 'container':
+            case 'e-flexbox':
+            case 'e-div-block':
               {
                 // Push the cloned container to the 'document'.
                 result.push(_this.pasteTo([targetContainer], [model], {
@@ -20178,11 +20582,23 @@ var Paste = exports.Paste = /*#__PURE__*/function (_$e$modules$editor$do) {
               {
                 // The 'default' case is widget.
                 var target;
+                var isAtomic = elementor.helpers.isAtomicWidget(model);
                 if ('section' === targetContainer.model.get('elType')) {
                   // On trying to paste widget on section, the paste should be at the first column.
                   target = [targetContainer.view.children.findByIndex(0).getContainer()];
                 } else if ('container' === targetContainer.model.get('elType')) {
                   target = [targetContainer];
+                } else if (isAtomic) {
+                  var options = {
+                    at: createNewElementAtTheBottomOfThePage ? ++index : index,
+                    useHistory: false
+                  };
+                  target = _containerHelper.default.createContainerFromModel({
+                    elType: _containerHelper.default.V4_DEFAULT_CONTAINER_TYPE
+                  }, targetContainer, {
+                    options: options
+                  });
+                  target = [target];
                 } else if (elementorCommon.config.experimentalFeatures.container) {
                   // If the container experiment is active, create a new wrapper container.
                   target = $e.run('document/elements/create', {
@@ -26185,6 +26601,8 @@ Object.defineProperty(exports, "__esModule", ({
   value: true
 }));
 exports["default"] = exports.Save = void 0;
+var _regenerator = _interopRequireDefault(__webpack_require__(/*! @babel/runtime/regenerator */ "../node_modules/@babel/runtime/regenerator/index.js"));
+var _asyncToGenerator2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime/helpers/asyncToGenerator */ "../node_modules/@babel/runtime/helpers/asyncToGenerator.js"));
 var _classCallCheck2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime/helpers/classCallCheck */ "../node_modules/@babel/runtime/helpers/classCallCheck.js"));
 var _createClass2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime/helpers/createClass */ "../node_modules/@babel/runtime/helpers/createClass.js"));
 var _possibleConstructorReturn2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime/helpers/possibleConstructorReturn */ "../node_modules/@babel/runtime/helpers/possibleConstructorReturn.js"));
@@ -26200,61 +26618,79 @@ var Save = exports.Save = /*#__PURE__*/function (_$e$modules$CommandIn) {
   (0, _inherits2.default)(Save, _$e$modules$CommandIn);
   return (0, _createClass2.default)(Save, [{
     key: "apply",
-    value: function apply(args) {
-      var _this = this;
-      var _args$status = args.status,
-        status = _args$status === void 0 ? 'draft' : _args$status,
-        _args$force = args.force,
-        force = _args$force === void 0 ? false : _args$force,
-        _args$onSuccess = args.onSuccess,
-        onSuccess = _args$onSuccess === void 0 ? null : _args$onSuccess,
-        _args$document = args.document,
-        document = _args$document === void 0 ? elementor.documents.getCurrent() : _args$document;
-      if (!force && document.editor.isSaving) {
-        return jQuery.Deferred().reject('Document already in save progress');
-      }
-      var container = document.container,
-        settings = container.settings.toJSON({
-          remove: ['default']
-        }),
-        oldStatus = container.settings.get('post_status');
-      this.addPersistentSettingsToPayload(settings, container);
+    value: function () {
+      var _apply = (0, _asyncToGenerator2.default)(/*#__PURE__*/_regenerator.default.mark(function _callee(args) {
+        var _elementorCommon$conf,
+          _this = this;
+        var _args$status, status, _args$force, force, _args$onSuccess, onSuccess, _args$document, document, container, settings, oldStatus, _elementorCommon$__be, _elementorCommon, elements, successArgs, deferred;
+        return _regenerator.default.wrap(function (_context) {
+          while (1) switch (_context.prev = _context.next) {
+            case 0:
+              _args$status = args.status, status = _args$status === void 0 ? 'draft' : _args$status, _args$force = args.force, force = _args$force === void 0 ? false : _args$force, _args$onSuccess = args.onSuccess, onSuccess = _args$onSuccess === void 0 ? null : _args$onSuccess, _args$document = args.document, document = _args$document === void 0 ? elementor.documents.getCurrent() : _args$document;
+              if (!(!force && document.editor.isSaving)) {
+                _context.next = 1;
+                break;
+              }
+              return _context.abrupt("return", jQuery.Deferred().reject('Document already in save progress'));
+            case 1:
+              container = document.container, settings = container.settings.toJSON({
+                remove: ['default']
+              }), oldStatus = container.settings.get('post_status');
+              this.addPersistentSettingsToPayload(settings, container);
 
-      // TODO: Remove - Backwards compatibility.
-      elementor.saver.trigger('before:save', args).trigger('before:save:' + status, args);
-      document.editor.isSaving = true;
-      document.editor.isChangedDuringSave = false;
-      settings.post_status = status;
-      var elements = [];
-      if (elementor.config.document.panel.has_elements) {
-        elements = container.model.get('elements').toJSON({
-          remove: ['default', 'editSettings', 'defaultEditSettings']
-        });
+              // TODO: Remove - Backwards compatibility.
+              elementor.saver.trigger('before:save', args).trigger('before:save:' + status, args);
+              document.editor.isSaving = true;
+              document.editor.isChangedDuringSave = false;
+              settings.post_status = status;
+              if (!((_elementorCommon$conf = elementorCommon.config.experimentalFeatures) !== null && _elementorCommon$conf !== void 0 && _elementorCommon$conf.e_components)) {
+                _context.next = 2;
+                break;
+              }
+              _context.next = 2;
+              return (_elementorCommon$__be = (_elementorCommon = elementorCommon).__beforeSave) === null || _elementorCommon$__be === void 0 ? void 0 : _elementorCommon$__be.call(_elementorCommon, {
+                container: container,
+                status: status
+              });
+            case 2:
+              elements = [];
+              if (elementor.config.document.panel.has_elements) {
+                elements = container.model.get('elements').toJSON({
+                  remove: ['default', 'editSettings', 'defaultEditSettings']
+                });
+              }
+              successArgs = {
+                status: status,
+                oldStatus: oldStatus,
+                elements: elements,
+                document: document,
+                currentHistoryId: document.history.currentItem.get('id')
+              };
+              deferred = elementorCommon.ajax.addRequest('save_builder', {
+                data: {
+                  status: status,
+                  elements: elements,
+                  settings: settings
+                },
+                error: function error(data) {
+                  return _this.onSaveError(data, status, document);
+                }
+              }).then(function (data) {
+                return _this.onSaveSuccess(data, successArgs, onSuccess);
+              }); // TODO: Remove - Backwards compatibility
+              elementor.saver.trigger('save', args);
+              return _context.abrupt("return", deferred);
+            case 3:
+            case "end":
+              return _context.stop();
+          }
+        }, _callee, this);
+      }));
+      function apply(_x) {
+        return _apply.apply(this, arguments);
       }
-      var successArgs = {
-        status: status,
-        oldStatus: oldStatus,
-        elements: elements,
-        document: document,
-        currentHistoryId: document.history.currentItem.get('id')
-      };
-      var deferred = elementorCommon.ajax.addRequest('save_builder', {
-        data: {
-          status: status,
-          elements: elements,
-          settings: settings
-        },
-        error: function error(data) {
-          return _this.onSaveError(data, status, document);
-        }
-      }).then(function (data) {
-        return _this.onSaveSuccess(data, successArgs, onSuccess);
-      });
-
-      // TODO: Remove - Backwards compatibility
-      elementor.saver.trigger('save', args);
-      return deferred;
-    }
+      return apply;
+    }()
   }, {
     key: "onSaveSuccess",
     value: function onSaveSuccess(data, args) {
@@ -29742,7 +30178,8 @@ ElementModel = _baseElementModel.default.extend({
     settings: {},
     defaultEditSettings: {
       defaultEditRoute: 'content'
-    }
+    },
+    interactions: {}
   },
   remoteRender: false,
   _htmlCache: null,
@@ -30889,6 +31326,9 @@ BaseElementView = BaseContainer.extend({
     if (!elementor.userCan('design') && elementType !== 'widget') {
       return;
     }
+    if (!this.getContainer().isEditable()) {
+      return;
+    }
     var isElement = (0, _elementTypes.getAllElementTypes)().includes(elementType);
     var $handlesOverlay = jQuery('<div>', {
         class: 'elementor-element-overlay'
@@ -31764,6 +32204,9 @@ BaseElementView = BaseContainer.extend({
     if (!this.$el.hasClass('.e-con') && !this.$el.parents('.e-con').length) {
       return;
     }
+    if (!this.getContainer().isEditable()) {
+      return;
+    }
     this.getDomElement().html5Draggable({
       onDragStart: function onDragStart(e) {
         var _this0$options$dragga;
@@ -32061,6 +32504,7 @@ module.exports = Marionette.Behavior.extend({
     return this.contextMenu;
   },
   onContextMenu: function onContextMenu(event) {
+    var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
     if ($e.shortcuts.isControlEvent(event)) {
       return;
     }
@@ -32078,10 +32522,13 @@ module.exports = Marionette.Behavior.extend({
     if (this.view._parent) {
       this.view._parent.triggerMethod('toggleSortMode', false);
     }
-    this.getContextMenu().show(event);
+    var location = options.location || elementorCommon.eventsManager.config.locations.canvas;
+    this.getContextMenu().show(event, {
+      location: location
+    });
     elementor.channels.editor.reply('contextMenu:targetView', this.view);
   },
-  onRequestContextMenu: function onRequestContextMenu(event) {
+  onRequestContextMenu: function onRequestContextMenu(event, options) {
     var modal = this.getContextMenu().getModal(),
       iframe = modal.getSettings('iframe'),
       toolsGroup = _.findWhere(this.contextMenu.getSettings('groups'), {
@@ -32089,7 +32536,7 @@ module.exports = Marionette.Behavior.extend({
       });
     toolsGroup.isVisible = false;
     modal.setSettings('iframe', null);
-    this.onContextMenu(event);
+    this.onContextMenu(event, options);
     toolsGroup.isVisible = true;
     modal.setSettings('iframe', iframe);
   },
@@ -35637,6 +36084,12 @@ var _default = exports["default"] = /*#__PURE__*/function (_Marionette$Composite
   }, {
     key: "onItemClick",
     value: function onItemClick(event) {
+      window.dispatchEvent(new CustomEvent('elementor/navigator/item/click', {
+        detail: {
+          id: this.model.get('id'),
+          type: this.model.get('elType')
+        }
+      }));
       this.model.trigger('request:edit', {
         append: event.ctrlKey || event.metaKey,
         scrollIntoView: true
@@ -35736,7 +36189,9 @@ var _default = exports["default"] = /*#__PURE__*/function (_Marionette$Composite
   }, {
     key: "onContextMenu",
     value: function onContextMenu(event) {
-      this.model.trigger('request:contextmenu', event);
+      this.model.trigger('request:contextmenu', event, {
+        location: elementorCommon.eventsManager.config.locations.structurePanel
+      });
     }
   }, {
     key: "onEditRequest",
@@ -39732,6 +40187,15 @@ var ContainerHelper = exports.ContainerHelper = /*#__PURE__*/function () {
         container: container
       });
     }
+  }, {
+    key: "createContainerFromModel",
+    value: function createContainerFromModel(model, target) {
+      var options = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
+      return $e.run('document/elements/create', _objectSpread({
+        model: model,
+        container: target
+      }, options));
+    }
   }]);
 }();
 _ContainerHelper = ContainerHelper;
@@ -39742,6 +40206,7 @@ _ContainerHelper = ContainerHelper;
 (0, _defineProperty2.default)(ContainerHelper, "DIRECTION_COLUMN_REVERSED", 'column-reverse');
 (0, _defineProperty2.default)(ContainerHelper, "DIRECTION_DEFAULT", _ContainerHelper.DIRECTION_COLUMN);
 (0, _defineProperty2.default)(ContainerHelper, "CONTAINER_TYPE_GRID", 'grid');
+(0, _defineProperty2.default)(ContainerHelper, "V4_DEFAULT_CONTAINER_TYPE", 'e-flexbox');
 var _default = exports["default"] = ContainerHelper;
 
 /***/ }),
@@ -39757,6 +40222,7 @@ var _default = exports["default"] = ContainerHelper;
 
 module.exports = elementorModules.Module.extend({
   openMenuEvent: null,
+  location: null,
   getDefaultSettings: function getDefaultSettings() {
     return {
       context: 'preview',
@@ -39887,7 +40353,11 @@ module.exports = elementorModules.Module.extend({
     if (!this.isActionEnabled(action) || !this.isActionVisible(action)) {
       return;
     }
-    action.callback(this.openMenuEvent);
+    action.callback(this.openMenuEvent, {
+      location: this.location,
+      secondaryLocation: elementorCommon.eventsManager.config.secondaryLocations.contextMenu,
+      trigger: elementorCommon.eventsManager.config.triggers.rightClick
+    });
     this.getModal().hide();
   },
   initModal: function initModal() {
@@ -39915,9 +40385,11 @@ module.exports = elementorModules.Module.extend({
     };
   },
   show: function show(event) {
+    var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
     var self = this,
       modal = self.getModal();
     this.openMenuEvent = event;
+    this.location = options.location;
     modal.setSettings('position', {
       of: event
     });
@@ -41518,7 +41990,10 @@ module.exports = {
     return this.getAtomicElementTypes().includes(elType);
   },
   getWidgetCache: function getWidgetCache(model) {
-    var elementType = 'widget' === model.get('elType') ? model.get('widgetType') : model.get('elType');
+    var isModel = model && 'function' === typeof model.get;
+    var elType = isModel ? model.get('elType') : model === null || model === void 0 ? void 0 : model.elType;
+    var widgetType = isModel ? model.get('widgetType') : model === null || model === void 0 ? void 0 : model.widgetType;
+    var elementType = 'widget' === elType ? widgetType : elType;
     return elementor.widgetsCache[elementType];
   },
   isAtomicWidget: function isAtomicWidget(model) {
@@ -41701,8 +42176,8 @@ var _default = exports["default"] = function _default(object, constructors) {
     _step;
   try {
     for (_iterator.s(); !(_step = _iterator.n()).done;) {
-      var _constructor = _step.value;
-      if (object.constructor.name === _constructor.prototype[Symbol.toStringTag]) {
+      var constructor = _step.value;
+      if (object.constructor.name === constructor.prototype[Symbol.toStringTag]) {
         return true;
       }
     }
@@ -43076,6 +43551,7 @@ var _default = exports["default"] = AddSectionView;
 
 var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault */ "../node_modules/@babel/runtime/helpers/interopRequireDefault.js");
 var _slicedToArray2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime/helpers/slicedToArray */ "../node_modules/@babel/runtime/helpers/slicedToArray.js"));
+var _containerHelper = _interopRequireDefault(__webpack_require__(/*! elementor-editor-utils/container-helper */ "../assets/dev/js/editor/utils/container-helper.js"));
 /**
  * @typedef {import('elementor/assets/lib/backbone/backbone.marionette')} Marionette
  * @name BaseContainer
@@ -43190,24 +43666,7 @@ module.exports = Marionette.CompositeView.extend({
     }
     var container = this.getContainer();
     if (options.shouldWrap) {
-      var containerExperiment = elementorCommon.config.experimentalFeatures.container;
-      container = $e.run('document/elements/create', {
-        model: {
-          elType: containerExperiment ? 'container' : 'section'
-        },
-        container: container,
-        columns: Number(!containerExperiment),
-        options: {
-          at: options.at,
-          scrollIntoView: options.scrollIntoView,
-          useHistory: useHistory
-        }
-      });
-
-      // Since wrapping an element with container doesn't produce a column, we shouldn't try to access it.
-      if (!containerExperiment) {
-        container = container.view.children.findByIndex(0).getContainer();
-      }
+      container = this.getWrappingContainer(container, model, options);
     }
 
     // Create the element in column.
@@ -43222,6 +43681,38 @@ module.exports = Marionette.CompositeView.extend({
       });
     }
     return widget;
+  },
+  getWrappingContainer: function getWrappingContainer(container, model, settings) {
+    var _settings$useHistory;
+    var isAtomic = elementor.helpers.isAtomicWidget(model);
+    var options = {
+      at: settings.at,
+      scrollIntoView: settings.scrollIntoView,
+      useHistory: (_settings$useHistory = settings === null || settings === void 0 ? void 0 : settings.useHistory) !== null && _settings$useHistory !== void 0 ? _settings$useHistory : true
+    };
+    if (isAtomic) {
+      return _containerHelper.default.createContainerFromModel({
+        elType: _containerHelper.default.V4_DEFAULT_CONTAINER_TYPE
+      }, container, {
+        options: options
+      });
+    }
+    return this.getV3Container(container, options);
+  },
+  getV3Container: function getV3Container(container, options) {
+    var isContainerExperimentActive = elementorCommon.config.experimentalFeatures.container;
+    container = _containerHelper.default.createContainerFromModel({
+      elType: isContainerExperimentActive ? 'container' : 'section'
+    }, container, {
+      columns: Number(!isContainerExperimentActive),
+      options: options
+    });
+
+    // Since wrapping an element with container doesn't produce a column, we shouldn't try to access it.
+    if (!isContainerExperimentActive) {
+      container = container.view.children.findByIndex(0).getContainer();
+    }
+    return container;
   },
   onDrop: function onDrop(event, options) {
     var _elementor$channels$p, _elementorCommon;
@@ -56451,19 +56942,17 @@ function _regeneratorDefine(e, r, n, t) {
     i = 0;
   }
   module.exports = _regeneratorDefine = function regeneratorDefine(e, r, n, t) {
-    if (r) i ? i(e, r, {
+    function o(r, n) {
+      _regeneratorDefine(e, r, function (e) {
+        return this._invoke(r, n, e);
+      });
+    }
+    r ? i ? i(e, r, {
       value: n,
       enumerable: !t,
       configurable: !t,
       writable: !t
-    }) : e[r] = n;else {
-      var o = function o(r, n) {
-        _regeneratorDefine(e, r, function (e) {
-          return this._invoke(r, n, e);
-        });
-      };
-      o("next", 0), o("throw", 1), o("return", 2);
-    }
+    }) : e[r] = n : (o("next", 0), o("throw", 1), o("return", 2));
   }, module.exports.__esModule = true, module.exports["default"] = module.exports, _regeneratorDefine(e, r, n, t);
 }
 module.exports = _regeneratorDefine, module.exports.__esModule = true, module.exports["default"] = module.exports;
@@ -56893,14 +57382,14 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   MiddlewareArray: () => (/* binding */ MiddlewareArray),
 /* harmony export */   SHOULD_AUTOBATCH: () => (/* binding */ SHOULD_AUTOBATCH),
 /* harmony export */   TaskAbortError: () => (/* binding */ TaskAbortError),
-/* harmony export */   __DO_NOT_USE__ActionTypes: () => (/* reexport safe */ redux__WEBPACK_IMPORTED_MODULE_0__.__DO_NOT_USE__ActionTypes),
+/* harmony export */   __DO_NOT_USE__ActionTypes: () => (/* reexport safe */ redux__WEBPACK_IMPORTED_MODULE_1__.__DO_NOT_USE__ActionTypes),
 /* harmony export */   addListener: () => (/* binding */ addListener),
-/* harmony export */   applyMiddleware: () => (/* reexport safe */ redux__WEBPACK_IMPORTED_MODULE_0__.applyMiddleware),
+/* harmony export */   applyMiddleware: () => (/* reexport safe */ redux__WEBPACK_IMPORTED_MODULE_1__.applyMiddleware),
 /* harmony export */   autoBatchEnhancer: () => (/* binding */ autoBatchEnhancer),
-/* harmony export */   bindActionCreators: () => (/* reexport safe */ redux__WEBPACK_IMPORTED_MODULE_0__.bindActionCreators),
+/* harmony export */   bindActionCreators: () => (/* reexport safe */ redux__WEBPACK_IMPORTED_MODULE_1__.bindActionCreators),
 /* harmony export */   clearAllListeners: () => (/* binding */ clearAllListeners),
-/* harmony export */   combineReducers: () => (/* reexport safe */ redux__WEBPACK_IMPORTED_MODULE_0__.combineReducers),
-/* harmony export */   compose: () => (/* reexport safe */ redux__WEBPACK_IMPORTED_MODULE_0__.compose),
+/* harmony export */   combineReducers: () => (/* reexport safe */ redux__WEBPACK_IMPORTED_MODULE_1__.combineReducers),
+/* harmony export */   compose: () => (/* reexport safe */ redux__WEBPACK_IMPORTED_MODULE_1__.compose),
 /* harmony export */   configureStore: () => (/* binding */ configureStore),
 /* harmony export */   createAction: () => (/* binding */ createAction),
 /* harmony export */   createActionCreatorInvariantMiddleware: () => (/* binding */ createActionCreatorInvariantMiddleware),
@@ -56909,15 +57398,15 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   createEntityAdapter: () => (/* binding */ createEntityAdapter),
 /* harmony export */   createImmutableStateInvariantMiddleware: () => (/* binding */ createImmutableStateInvariantMiddleware),
 /* harmony export */   createListenerMiddleware: () => (/* binding */ createListenerMiddleware),
-/* harmony export */   createNextState: () => (/* reexport safe */ immer__WEBPACK_IMPORTED_MODULE_2__["default"]),
+/* harmony export */   createNextState: () => (/* reexport safe */ immer__WEBPACK_IMPORTED_MODULE_0__["default"]),
 /* harmony export */   createReducer: () => (/* binding */ createReducer),
-/* harmony export */   createSelector: () => (/* reexport safe */ reselect__WEBPACK_IMPORTED_MODULE_1__.createSelector),
+/* harmony export */   createSelector: () => (/* reexport safe */ reselect__WEBPACK_IMPORTED_MODULE_2__.createSelector),
 /* harmony export */   createSerializableStateInvariantMiddleware: () => (/* binding */ createSerializableStateInvariantMiddleware),
 /* harmony export */   createSlice: () => (/* binding */ createSlice),
-/* harmony export */   createStore: () => (/* reexport safe */ redux__WEBPACK_IMPORTED_MODULE_0__.createStore),
-/* harmony export */   current: () => (/* reexport safe */ immer__WEBPACK_IMPORTED_MODULE_2__.current),
+/* harmony export */   createStore: () => (/* reexport safe */ redux__WEBPACK_IMPORTED_MODULE_1__.createStore),
+/* harmony export */   current: () => (/* reexport safe */ immer__WEBPACK_IMPORTED_MODULE_0__.current),
 /* harmony export */   findNonSerializableValue: () => (/* binding */ findNonSerializableValue),
-/* harmony export */   freeze: () => (/* reexport safe */ immer__WEBPACK_IMPORTED_MODULE_2__.freeze),
+/* harmony export */   freeze: () => (/* reexport safe */ immer__WEBPACK_IMPORTED_MODULE_0__.freeze),
 /* harmony export */   getDefaultMiddleware: () => (/* binding */ getDefaultMiddleware),
 /* harmony export */   getType: () => (/* binding */ getType),
 /* harmony export */   isAction: () => (/* binding */ isAction),
@@ -56925,7 +57414,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   isAllOf: () => (/* binding */ isAllOf),
 /* harmony export */   isAnyOf: () => (/* binding */ isAnyOf),
 /* harmony export */   isAsyncThunkAction: () => (/* binding */ isAsyncThunkAction),
-/* harmony export */   isDraft: () => (/* reexport safe */ immer__WEBPACK_IMPORTED_MODULE_2__.isDraft),
+/* harmony export */   isDraft: () => (/* reexport safe */ immer__WEBPACK_IMPORTED_MODULE_0__.isDraft),
 /* harmony export */   isFluxStandardAction: () => (/* binding */ isFSA),
 /* harmony export */   isFulfilled: () => (/* binding */ isFulfilled),
 /* harmony export */   isImmutableDefault: () => (/* binding */ isImmutableDefault),
@@ -56934,17 +57423,17 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   isPlainObject: () => (/* binding */ isPlainObject),
 /* harmony export */   isRejected: () => (/* binding */ isRejected),
 /* harmony export */   isRejectedWithValue: () => (/* binding */ isRejectedWithValue),
-/* harmony export */   legacy_createStore: () => (/* reexport safe */ redux__WEBPACK_IMPORTED_MODULE_0__.legacy_createStore),
+/* harmony export */   legacy_createStore: () => (/* reexport safe */ redux__WEBPACK_IMPORTED_MODULE_1__.legacy_createStore),
 /* harmony export */   miniSerializeError: () => (/* binding */ miniSerializeError),
 /* harmony export */   nanoid: () => (/* binding */ nanoid),
-/* harmony export */   original: () => (/* reexport safe */ immer__WEBPACK_IMPORTED_MODULE_2__.original),
+/* harmony export */   original: () => (/* reexport safe */ immer__WEBPACK_IMPORTED_MODULE_0__.original),
 /* harmony export */   prepareAutoBatched: () => (/* binding */ prepareAutoBatched),
 /* harmony export */   removeListener: () => (/* binding */ removeListener),
 /* harmony export */   unwrapResult: () => (/* binding */ unwrapResult)
 /* harmony export */ });
-/* harmony import */ var immer__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! immer */ "../node_modules/immer/dist/immer.esm.mjs");
-/* harmony import */ var redux__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! redux */ "../node_modules/redux/es/redux.js");
-/* harmony import */ var reselect__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! reselect */ "../node_modules/reselect/es/index.js");
+/* harmony import */ var immer__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! immer */ "../node_modules/immer/dist/immer.esm.mjs");
+/* harmony import */ var redux__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! redux */ "../node_modules/redux/es/redux.js");
+/* harmony import */ var reselect__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! reselect */ "../node_modules/reselect/es/index.js");
 /* harmony import */ var redux_thunk__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! redux-thunk */ "../node_modules/redux-thunk/es/index.js");
 var __extends = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -57048,13 +57537,13 @@ var createDraftSafeSelector = function () {
     for (var _i = 0; _i < arguments.length; _i++) {
         args[_i] = arguments[_i];
     }
-    var selector = reselect__WEBPACK_IMPORTED_MODULE_1__.createSelector.apply(void 0, args);
+    var selector = reselect__WEBPACK_IMPORTED_MODULE_2__.createSelector.apply(void 0, args);
     var wrappedSelector = function (value) {
         var rest = [];
         for (var _i = 1; _i < arguments.length; _i++) {
             rest[_i - 1] = arguments[_i];
         }
-        return selector.apply(void 0, __spreadArray([(0,immer__WEBPACK_IMPORTED_MODULE_2__.isDraft)(value) ? (0,immer__WEBPACK_IMPORTED_MODULE_2__.current)(value) : value], rest));
+        return selector.apply(void 0, __spreadArray([(0,immer__WEBPACK_IMPORTED_MODULE_0__.isDraft)(value) ? (0,immer__WEBPACK_IMPORTED_MODULE_0__.current)(value) : value], rest));
     };
     return wrappedSelector;
 };
@@ -57066,8 +57555,8 @@ var composeWithDevTools = typeof window !== "undefined" && window.__REDUX_DEVTOO
     if (arguments.length === 0)
         return void 0;
     if (typeof arguments[0] === "object")
-        return redux__WEBPACK_IMPORTED_MODULE_0__.compose;
-    return redux__WEBPACK_IMPORTED_MODULE_0__.compose.apply(null, arguments);
+        return redux__WEBPACK_IMPORTED_MODULE_1__.compose;
+    return redux__WEBPACK_IMPORTED_MODULE_1__.compose.apply(null, arguments);
 };
 var devToolsEnhancer = typeof window !== "undefined" && window.__REDUX_DEVTOOLS_EXTENSION__ ? window.__REDUX_DEVTOOLS_EXTENSION__ : function () {
     return function (noop2) {
@@ -57247,7 +57736,7 @@ var EnhancerArray = /** @class */ (function (_super) {
     return EnhancerArray;
 }(Array));
 function freezeDraftable(val) {
-    return (0,immer__WEBPACK_IMPORTED_MODULE_2__.isDraftable)(val) ? (0,immer__WEBPACK_IMPORTED_MODULE_2__["default"])(val, function () {
+    return (0,immer__WEBPACK_IMPORTED_MODULE_0__.isDraftable)(val) ? (0,immer__WEBPACK_IMPORTED_MODULE_0__["default"])(val, function () {
     }) : val;
 }
 // src/immutableStateInvariantMiddleware.ts
@@ -57551,7 +58040,7 @@ function configureStore(options) {
         rootReducer = reducer;
     }
     else if (isPlainObject(reducer)) {
-        rootReducer = (0,redux__WEBPACK_IMPORTED_MODULE_0__.combineReducers)(reducer);
+        rootReducer = (0,redux__WEBPACK_IMPORTED_MODULE_1__.combineReducers)(reducer);
     }
     else {
         throw new Error('"reducer" is a required argument, and must be a function or an object of functions that can be passed to combineReducers');
@@ -57566,8 +58055,8 @@ function configureStore(options) {
     if (!IS_PRODUCTION && finalMiddleware.some(function (item) { return typeof item !== "function"; })) {
         throw new Error("each middleware provided to configureStore must be a function");
     }
-    var middlewareEnhancer = redux__WEBPACK_IMPORTED_MODULE_0__.applyMiddleware.apply(void 0, finalMiddleware);
-    var finalCompose = redux__WEBPACK_IMPORTED_MODULE_0__.compose;
+    var middlewareEnhancer = redux__WEBPACK_IMPORTED_MODULE_1__.applyMiddleware.apply(void 0, finalMiddleware);
+    var finalCompose = redux__WEBPACK_IMPORTED_MODULE_1__.compose;
     if (devTools) {
         finalCompose = composeWithDevTools(__spreadValues({
             trace: !IS_PRODUCTION
@@ -57582,7 +58071,7 @@ function configureStore(options) {
         storeEnhancers = enhancers(defaultEnhancers);
     }
     var composedEnhancer = finalCompose.apply(void 0, storeEnhancers);
-    return (0,redux__WEBPACK_IMPORTED_MODULE_0__.createStore)(rootReducer, preloadedState, composedEnhancer);
+    return (0,redux__WEBPACK_IMPORTED_MODULE_1__.createStore)(rootReducer, preloadedState, composedEnhancer);
 }
 // src/createReducer.ts
 
@@ -57673,7 +58162,7 @@ function createReducer(initialState, mapOrBuilderCallback, actionMatchers, defau
         }
         return caseReducers.reduce(function (previousState, caseReducer) {
             if (caseReducer) {
-                if ((0,immer__WEBPACK_IMPORTED_MODULE_2__.isDraft)(previousState)) {
+                if ((0,immer__WEBPACK_IMPORTED_MODULE_0__.isDraft)(previousState)) {
                     var draft = previousState;
                     var result = caseReducer(draft, action);
                     if (result === void 0) {
@@ -57681,7 +58170,7 @@ function createReducer(initialState, mapOrBuilderCallback, actionMatchers, defau
                     }
                     return result;
                 }
-                else if (!(0,immer__WEBPACK_IMPORTED_MODULE_2__.isDraftable)(previousState)) {
+                else if (!(0,immer__WEBPACK_IMPORTED_MODULE_0__.isDraftable)(previousState)) {
                     var result = caseReducer(previousState, action);
                     if (result === void 0) {
                         if (previousState === null) {
@@ -57692,7 +58181,7 @@ function createReducer(initialState, mapOrBuilderCallback, actionMatchers, defau
                     return result;
                 }
                 else {
-                    return (0,immer__WEBPACK_IMPORTED_MODULE_2__["default"])(previousState, function (draft) {
+                    return (0,immer__WEBPACK_IMPORTED_MODULE_0__["default"])(previousState, function (draft) {
                         return caseReducer(draft, action);
                     });
                 }
@@ -57845,12 +58334,12 @@ function createStateOperator(mutator) {
                 mutator(arg, draft);
             }
         };
-        if ((0,immer__WEBPACK_IMPORTED_MODULE_2__.isDraft)(state)) {
+        if ((0,immer__WEBPACK_IMPORTED_MODULE_0__.isDraft)(state)) {
             runMutator(state);
             return state;
         }
         else {
-            return (0,immer__WEBPACK_IMPORTED_MODULE_2__["default"])(state, runMutator);
+            return (0,immer__WEBPACK_IMPORTED_MODULE_0__["default"])(state, runMutator);
         }
     };
 }
@@ -58959,7 +59448,7 @@ var autoBatchEnhancer = function (options) {
     }; };
 };
 // src/index.ts
-(0,immer__WEBPACK_IMPORTED_MODULE_2__.enableES5)();
+(0,immer__WEBPACK_IMPORTED_MODULE_0__.enableES5)();
 
 //# sourceMappingURL=redux-toolkit.esm.js.map
 
@@ -58972,7 +59461,7 @@ var autoBatchEnhancer = function (options) {
 /***/ ((module) => {
 
 "use strict";
-/*! @license DOMPurify 3.2.6 | (c) Cure53 and other contributors | Released under the Apache license 2.0 and Mozilla Public License 2.0 | github.com/cure53/DOMPurify/blob/3.2.6/LICENSE */
+/*! @license DOMPurify 3.3.0 | (c) Cure53 and other contributors | Released under the Apache license 2.0 and Mozilla Public License 2.0 | github.com/cure53/DOMPurify/blob/3.3.0/LICENSE */
 
 
 
@@ -59003,12 +59492,18 @@ if (!seal) {
   };
 }
 if (!apply) {
-  apply = function apply(fun, thisValue, args) {
-    return fun.apply(thisValue, args);
+  apply = function apply(func, thisArg) {
+    for (var _len = arguments.length, args = new Array(_len > 2 ? _len - 2 : 0), _key = 2; _key < _len; _key++) {
+      args[_key - 2] = arguments[_key];
+    }
+    return func.apply(thisArg, args);
   };
 }
 if (!construct) {
-  construct = function construct(Func, args) {
+  construct = function construct(Func) {
+    for (var _len2 = arguments.length, args = new Array(_len2 > 1 ? _len2 - 1 : 0), _key2 = 1; _key2 < _len2; _key2++) {
+      args[_key2 - 1] = arguments[_key2];
+    }
     return new Func(...args);
   };
 }
@@ -59037,8 +59532,8 @@ function unapply(func) {
     if (thisArg instanceof RegExp) {
       thisArg.lastIndex = 0;
     }
-    for (var _len = arguments.length, args = new Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
-      args[_key - 1] = arguments[_key];
+    for (var _len3 = arguments.length, args = new Array(_len3 > 1 ? _len3 - 1 : 0), _key3 = 1; _key3 < _len3; _key3++) {
+      args[_key3 - 1] = arguments[_key3];
     }
     return apply(func, thisArg, args);
   };
@@ -59049,12 +59544,12 @@ function unapply(func) {
  * @param func - The constructor function to be wrapped and called.
  * @returns A new function that constructs an instance of the given constructor function with the provided arguments.
  */
-function unconstruct(func) {
+function unconstruct(Func) {
   return function () {
-    for (var _len2 = arguments.length, args = new Array(_len2), _key2 = 0; _key2 < _len2; _key2++) {
-      args[_key2] = arguments[_key2];
+    for (var _len4 = arguments.length, args = new Array(_len4), _key4 = 0; _key4 < _len4; _key4++) {
+      args[_key4] = arguments[_key4];
     }
-    return construct(func, args);
+    return construct(Func, args);
   };
 }
 /**
@@ -59153,8 +59648,8 @@ function lookupGetter(object, prop) {
   return fallbackValue;
 }
 
-const html$1 = freeze(['a', 'abbr', 'acronym', 'address', 'area', 'article', 'aside', 'audio', 'b', 'bdi', 'bdo', 'big', 'blink', 'blockquote', 'body', 'br', 'button', 'canvas', 'caption', 'center', 'cite', 'code', 'col', 'colgroup', 'content', 'data', 'datalist', 'dd', 'decorator', 'del', 'details', 'dfn', 'dialog', 'dir', 'div', 'dl', 'dt', 'element', 'em', 'fieldset', 'figcaption', 'figure', 'font', 'footer', 'form', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'head', 'header', 'hgroup', 'hr', 'html', 'i', 'img', 'input', 'ins', 'kbd', 'label', 'legend', 'li', 'main', 'map', 'mark', 'marquee', 'menu', 'menuitem', 'meter', 'nav', 'nobr', 'ol', 'optgroup', 'option', 'output', 'p', 'picture', 'pre', 'progress', 'q', 'rp', 'rt', 'ruby', 's', 'samp', 'section', 'select', 'shadow', 'small', 'source', 'spacer', 'span', 'strike', 'strong', 'style', 'sub', 'summary', 'sup', 'table', 'tbody', 'td', 'template', 'textarea', 'tfoot', 'th', 'thead', 'time', 'tr', 'track', 'tt', 'u', 'ul', 'var', 'video', 'wbr']);
-const svg$1 = freeze(['svg', 'a', 'altglyph', 'altglyphdef', 'altglyphitem', 'animatecolor', 'animatemotion', 'animatetransform', 'circle', 'clippath', 'defs', 'desc', 'ellipse', 'filter', 'font', 'g', 'glyph', 'glyphref', 'hkern', 'image', 'line', 'lineargradient', 'marker', 'mask', 'metadata', 'mpath', 'path', 'pattern', 'polygon', 'polyline', 'radialgradient', 'rect', 'stop', 'style', 'switch', 'symbol', 'text', 'textpath', 'title', 'tref', 'tspan', 'view', 'vkern']);
+const html$1 = freeze(['a', 'abbr', 'acronym', 'address', 'area', 'article', 'aside', 'audio', 'b', 'bdi', 'bdo', 'big', 'blink', 'blockquote', 'body', 'br', 'button', 'canvas', 'caption', 'center', 'cite', 'code', 'col', 'colgroup', 'content', 'data', 'datalist', 'dd', 'decorator', 'del', 'details', 'dfn', 'dialog', 'dir', 'div', 'dl', 'dt', 'element', 'em', 'fieldset', 'figcaption', 'figure', 'font', 'footer', 'form', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'head', 'header', 'hgroup', 'hr', 'html', 'i', 'img', 'input', 'ins', 'kbd', 'label', 'legend', 'li', 'main', 'map', 'mark', 'marquee', 'menu', 'menuitem', 'meter', 'nav', 'nobr', 'ol', 'optgroup', 'option', 'output', 'p', 'picture', 'pre', 'progress', 'q', 'rp', 'rt', 'ruby', 's', 'samp', 'search', 'section', 'select', 'shadow', 'slot', 'small', 'source', 'spacer', 'span', 'strike', 'strong', 'style', 'sub', 'summary', 'sup', 'table', 'tbody', 'td', 'template', 'textarea', 'tfoot', 'th', 'thead', 'time', 'tr', 'track', 'tt', 'u', 'ul', 'var', 'video', 'wbr']);
+const svg$1 = freeze(['svg', 'a', 'altglyph', 'altglyphdef', 'altglyphitem', 'animatecolor', 'animatemotion', 'animatetransform', 'circle', 'clippath', 'defs', 'desc', 'ellipse', 'enterkeyhint', 'exportparts', 'filter', 'font', 'g', 'glyph', 'glyphref', 'hkern', 'image', 'inputmode', 'line', 'lineargradient', 'marker', 'mask', 'metadata', 'mpath', 'part', 'path', 'pattern', 'polygon', 'polyline', 'radialgradient', 'rect', 'stop', 'style', 'switch', 'symbol', 'text', 'textpath', 'title', 'tref', 'tspan', 'view', 'vkern']);
 const svgFilters = freeze(['feBlend', 'feColorMatrix', 'feComponentTransfer', 'feComposite', 'feConvolveMatrix', 'feDiffuseLighting', 'feDisplacementMap', 'feDistantLight', 'feDropShadow', 'feFlood', 'feFuncA', 'feFuncB', 'feFuncG', 'feFuncR', 'feGaussianBlur', 'feImage', 'feMerge', 'feMergeNode', 'feMorphology', 'feOffset', 'fePointLight', 'feSpecularLighting', 'feSpotLight', 'feTile', 'feTurbulence']);
 // List of SVG elements that are disallowed by default.
 // We still need to know them so that we can do namespace
@@ -59167,8 +59662,8 @@ const mathMl$1 = freeze(['math', 'menclose', 'merror', 'mfenced', 'mfrac', 'mgly
 const mathMlDisallowed = freeze(['maction', 'maligngroup', 'malignmark', 'mlongdiv', 'mscarries', 'mscarry', 'msgroup', 'mstack', 'msline', 'msrow', 'semantics', 'annotation', 'annotation-xml', 'mprescripts', 'none']);
 const text = freeze(['#text']);
 
-const html = freeze(['accept', 'action', 'align', 'alt', 'autocapitalize', 'autocomplete', 'autopictureinpicture', 'autoplay', 'background', 'bgcolor', 'border', 'capture', 'cellpadding', 'cellspacing', 'checked', 'cite', 'class', 'clear', 'color', 'cols', 'colspan', 'controls', 'controlslist', 'coords', 'crossorigin', 'datetime', 'decoding', 'default', 'dir', 'disabled', 'disablepictureinpicture', 'disableremoteplayback', 'download', 'draggable', 'enctype', 'enterkeyhint', 'face', 'for', 'headers', 'height', 'hidden', 'high', 'href', 'hreflang', 'id', 'inputmode', 'integrity', 'ismap', 'kind', 'label', 'lang', 'list', 'loading', 'loop', 'low', 'max', 'maxlength', 'media', 'method', 'min', 'minlength', 'multiple', 'muted', 'name', 'nonce', 'noshade', 'novalidate', 'nowrap', 'open', 'optimum', 'pattern', 'placeholder', 'playsinline', 'popover', 'popovertarget', 'popovertargetaction', 'poster', 'preload', 'pubdate', 'radiogroup', 'readonly', 'rel', 'required', 'rev', 'reversed', 'role', 'rows', 'rowspan', 'spellcheck', 'scope', 'selected', 'shape', 'size', 'sizes', 'span', 'srclang', 'start', 'src', 'srcset', 'step', 'style', 'summary', 'tabindex', 'title', 'translate', 'type', 'usemap', 'valign', 'value', 'width', 'wrap', 'xmlns', 'slot']);
-const svg = freeze(['accent-height', 'accumulate', 'additive', 'alignment-baseline', 'amplitude', 'ascent', 'attributename', 'attributetype', 'azimuth', 'basefrequency', 'baseline-shift', 'begin', 'bias', 'by', 'class', 'clip', 'clippathunits', 'clip-path', 'clip-rule', 'color', 'color-interpolation', 'color-interpolation-filters', 'color-profile', 'color-rendering', 'cx', 'cy', 'd', 'dx', 'dy', 'diffuseconstant', 'direction', 'display', 'divisor', 'dur', 'edgemode', 'elevation', 'end', 'exponent', 'fill', 'fill-opacity', 'fill-rule', 'filter', 'filterunits', 'flood-color', 'flood-opacity', 'font-family', 'font-size', 'font-size-adjust', 'font-stretch', 'font-style', 'font-variant', 'font-weight', 'fx', 'fy', 'g1', 'g2', 'glyph-name', 'glyphref', 'gradientunits', 'gradienttransform', 'height', 'href', 'id', 'image-rendering', 'in', 'in2', 'intercept', 'k', 'k1', 'k2', 'k3', 'k4', 'kerning', 'keypoints', 'keysplines', 'keytimes', 'lang', 'lengthadjust', 'letter-spacing', 'kernelmatrix', 'kernelunitlength', 'lighting-color', 'local', 'marker-end', 'marker-mid', 'marker-start', 'markerheight', 'markerunits', 'markerwidth', 'maskcontentunits', 'maskunits', 'max', 'mask', 'media', 'method', 'mode', 'min', 'name', 'numoctaves', 'offset', 'operator', 'opacity', 'order', 'orient', 'orientation', 'origin', 'overflow', 'paint-order', 'path', 'pathlength', 'patterncontentunits', 'patterntransform', 'patternunits', 'points', 'preservealpha', 'preserveaspectratio', 'primitiveunits', 'r', 'rx', 'ry', 'radius', 'refx', 'refy', 'repeatcount', 'repeatdur', 'restart', 'result', 'rotate', 'scale', 'seed', 'shape-rendering', 'slope', 'specularconstant', 'specularexponent', 'spreadmethod', 'startoffset', 'stddeviation', 'stitchtiles', 'stop-color', 'stop-opacity', 'stroke-dasharray', 'stroke-dashoffset', 'stroke-linecap', 'stroke-linejoin', 'stroke-miterlimit', 'stroke-opacity', 'stroke', 'stroke-width', 'style', 'surfacescale', 'systemlanguage', 'tabindex', 'tablevalues', 'targetx', 'targety', 'transform', 'transform-origin', 'text-anchor', 'text-decoration', 'text-rendering', 'textlength', 'type', 'u1', 'u2', 'unicode', 'values', 'viewbox', 'visibility', 'version', 'vert-adv-y', 'vert-origin-x', 'vert-origin-y', 'width', 'word-spacing', 'wrap', 'writing-mode', 'xchannelselector', 'ychannelselector', 'x', 'x1', 'x2', 'xmlns', 'y', 'y1', 'y2', 'z', 'zoomandpan']);
+const html = freeze(['accept', 'action', 'align', 'alt', 'autocapitalize', 'autocomplete', 'autopictureinpicture', 'autoplay', 'background', 'bgcolor', 'border', 'capture', 'cellpadding', 'cellspacing', 'checked', 'cite', 'class', 'clear', 'color', 'cols', 'colspan', 'controls', 'controlslist', 'coords', 'crossorigin', 'datetime', 'decoding', 'default', 'dir', 'disabled', 'disablepictureinpicture', 'disableremoteplayback', 'download', 'draggable', 'enctype', 'enterkeyhint', 'exportparts', 'face', 'for', 'headers', 'height', 'hidden', 'high', 'href', 'hreflang', 'id', 'inert', 'inputmode', 'integrity', 'ismap', 'kind', 'label', 'lang', 'list', 'loading', 'loop', 'low', 'max', 'maxlength', 'media', 'method', 'min', 'minlength', 'multiple', 'muted', 'name', 'nonce', 'noshade', 'novalidate', 'nowrap', 'open', 'optimum', 'part', 'pattern', 'placeholder', 'playsinline', 'popover', 'popovertarget', 'popovertargetaction', 'poster', 'preload', 'pubdate', 'radiogroup', 'readonly', 'rel', 'required', 'rev', 'reversed', 'role', 'rows', 'rowspan', 'spellcheck', 'scope', 'selected', 'shape', 'size', 'sizes', 'slot', 'span', 'srclang', 'start', 'src', 'srcset', 'step', 'style', 'summary', 'tabindex', 'title', 'translate', 'type', 'usemap', 'valign', 'value', 'width', 'wrap', 'xmlns', 'slot']);
+const svg = freeze(['accent-height', 'accumulate', 'additive', 'alignment-baseline', 'amplitude', 'ascent', 'attributename', 'attributetype', 'azimuth', 'basefrequency', 'baseline-shift', 'begin', 'bias', 'by', 'class', 'clip', 'clippathunits', 'clip-path', 'clip-rule', 'color', 'color-interpolation', 'color-interpolation-filters', 'color-profile', 'color-rendering', 'cx', 'cy', 'd', 'dx', 'dy', 'diffuseconstant', 'direction', 'display', 'divisor', 'dur', 'edgemode', 'elevation', 'end', 'exponent', 'fill', 'fill-opacity', 'fill-rule', 'filter', 'filterunits', 'flood-color', 'flood-opacity', 'font-family', 'font-size', 'font-size-adjust', 'font-stretch', 'font-style', 'font-variant', 'font-weight', 'fx', 'fy', 'g1', 'g2', 'glyph-name', 'glyphref', 'gradientunits', 'gradienttransform', 'height', 'href', 'id', 'image-rendering', 'in', 'in2', 'intercept', 'k', 'k1', 'k2', 'k3', 'k4', 'kerning', 'keypoints', 'keysplines', 'keytimes', 'lang', 'lengthadjust', 'letter-spacing', 'kernelmatrix', 'kernelunitlength', 'lighting-color', 'local', 'marker-end', 'marker-mid', 'marker-start', 'markerheight', 'markerunits', 'markerwidth', 'maskcontentunits', 'maskunits', 'max', 'mask', 'mask-type', 'media', 'method', 'mode', 'min', 'name', 'numoctaves', 'offset', 'operator', 'opacity', 'order', 'orient', 'orientation', 'origin', 'overflow', 'paint-order', 'path', 'pathlength', 'patterncontentunits', 'patterntransform', 'patternunits', 'points', 'preservealpha', 'preserveaspectratio', 'primitiveunits', 'r', 'rx', 'ry', 'radius', 'refx', 'refy', 'repeatcount', 'repeatdur', 'restart', 'result', 'rotate', 'scale', 'seed', 'shape-rendering', 'slope', 'specularconstant', 'specularexponent', 'spreadmethod', 'startoffset', 'stddeviation', 'stitchtiles', 'stop-color', 'stop-opacity', 'stroke-dasharray', 'stroke-dashoffset', 'stroke-linecap', 'stroke-linejoin', 'stroke-miterlimit', 'stroke-opacity', 'stroke', 'stroke-width', 'style', 'surfacescale', 'systemlanguage', 'tabindex', 'tablevalues', 'targetx', 'targety', 'transform', 'transform-origin', 'text-anchor', 'text-decoration', 'text-rendering', 'textlength', 'type', 'u1', 'u2', 'unicode', 'values', 'viewbox', 'visibility', 'version', 'vert-adv-y', 'vert-origin-x', 'vert-origin-y', 'width', 'word-spacing', 'wrap', 'writing-mode', 'xchannelselector', 'ychannelselector', 'x', 'x1', 'x2', 'xmlns', 'y', 'y1', 'y2', 'z', 'zoomandpan']);
 const mathMl = freeze(['accent', 'accentunder', 'align', 'bevelled', 'close', 'columnsalign', 'columnlines', 'columnspan', 'denomalign', 'depth', 'dir', 'display', 'displaystyle', 'encoding', 'fence', 'frame', 'height', 'href', 'id', 'largeop', 'length', 'linethickness', 'lspace', 'lquote', 'mathbackground', 'mathcolor', 'mathsize', 'mathvariant', 'maxsize', 'minsize', 'movablelimits', 'notation', 'numalign', 'open', 'rowalign', 'rowlines', 'rowspacing', 'rowspan', 'rspace', 'rquote', 'scriptlevel', 'scriptminsize', 'scriptsizemultiplier', 'selection', 'separator', 'separators', 'stretchy', 'subscriptshift', 'supscriptshift', 'symmetric', 'voffset', 'width', 'xmlns']);
 const xml = freeze(['xlink:href', 'xml:id', 'xlink:title', 'xml:space', 'xmlns:xlink']);
 
@@ -59275,7 +59770,7 @@ const _createHooksMap = function _createHooksMap() {
 function createDOMPurify() {
   let window = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : getGlobal();
   const DOMPurify = root => createDOMPurify(root);
-  DOMPurify.version = '3.2.6';
+  DOMPurify.version = '3.3.0';
   DOMPurify.removed = [];
   if (!window || !window.document || window.document.nodeType !== NODE_TYPE.document || !window.Element) {
     // Not running in a browser, provide a factory function
@@ -59386,6 +59881,21 @@ function createDOMPurify() {
   let FORBID_TAGS = null;
   /* Explicitly forbidden attributes (overrides ALLOWED_ATTR/ADD_ATTR) */
   let FORBID_ATTR = null;
+  /* Config object to store ADD_TAGS/ADD_ATTR functions (when used as functions) */
+  const EXTRA_ELEMENT_HANDLING = Object.seal(create(null, {
+    tagCheck: {
+      writable: true,
+      configurable: false,
+      enumerable: true,
+      value: null
+    },
+    attributeCheck: {
+      writable: true,
+      configurable: false,
+      enumerable: true,
+      value: null
+    }
+  }));
   /* Decide if ARIA attributes are okay */
   let ALLOW_ARIA_ATTR = true;
   /* Decide if custom data attributes are okay */
@@ -59578,16 +60088,24 @@ function createDOMPurify() {
     }
     /* Merge configuration parameters */
     if (cfg.ADD_TAGS) {
-      if (ALLOWED_TAGS === DEFAULT_ALLOWED_TAGS) {
-        ALLOWED_TAGS = clone(ALLOWED_TAGS);
+      if (typeof cfg.ADD_TAGS === 'function') {
+        EXTRA_ELEMENT_HANDLING.tagCheck = cfg.ADD_TAGS;
+      } else {
+        if (ALLOWED_TAGS === DEFAULT_ALLOWED_TAGS) {
+          ALLOWED_TAGS = clone(ALLOWED_TAGS);
+        }
+        addToSet(ALLOWED_TAGS, cfg.ADD_TAGS, transformCaseFunc);
       }
-      addToSet(ALLOWED_TAGS, cfg.ADD_TAGS, transformCaseFunc);
     }
     if (cfg.ADD_ATTR) {
-      if (ALLOWED_ATTR === DEFAULT_ALLOWED_ATTR) {
-        ALLOWED_ATTR = clone(ALLOWED_ATTR);
+      if (typeof cfg.ADD_ATTR === 'function') {
+        EXTRA_ELEMENT_HANDLING.attributeCheck = cfg.ADD_ATTR;
+      } else {
+        if (ALLOWED_ATTR === DEFAULT_ALLOWED_ATTR) {
+          ALLOWED_ATTR = clone(ALLOWED_ATTR);
+        }
+        addToSet(ALLOWED_ATTR, cfg.ADD_ATTR, transformCaseFunc);
       }
-      addToSet(ALLOWED_ATTR, cfg.ADD_ATTR, transformCaseFunc);
     }
     if (cfg.ADD_URI_SAFE_ATTR) {
       addToSet(URI_SAFE_ATTRIBUTES, cfg.ADD_URI_SAFE_ATTR, transformCaseFunc);
@@ -59895,7 +60413,7 @@ function createDOMPurify() {
       return true;
     }
     /* Remove element if anything forbids its presence */
-    if (!ALLOWED_TAGS[tagName] || FORBID_TAGS[tagName]) {
+    if (!(EXTRA_ELEMENT_HANDLING.tagCheck instanceof Function && EXTRA_ELEMENT_HANDLING.tagCheck(tagName)) && (!ALLOWED_TAGS[tagName] || FORBID_TAGS[tagName])) {
       /* Check if we have a custom element to handle */
       if (!FORBID_TAGS[tagName] && _isBasicCustomElement(tagName)) {
         if (CUSTOM_ELEMENT_HANDLING.tagNameCheck instanceof RegExp && regExpTest(CUSTOM_ELEMENT_HANDLING.tagNameCheck, tagName)) {
@@ -59967,12 +60485,12 @@ function createDOMPurify() {
         (https://html.spec.whatwg.org/multipage/dom.html#embedding-custom-non-visible-data-with-the-data-*-attributes)
         XML-compatible (https://html.spec.whatwg.org/multipage/infrastructure.html#xml-compatible and http://www.w3.org/TR/xml/#d0e804)
         We don't need to check the value; it's always URI safe. */
-    if (ALLOW_DATA_ATTR && !FORBID_ATTR[lcName] && regExpTest(DATA_ATTR, lcName)) ; else if (ALLOW_ARIA_ATTR && regExpTest(ARIA_ATTR, lcName)) ; else if (!ALLOWED_ATTR[lcName] || FORBID_ATTR[lcName]) {
+    if (ALLOW_DATA_ATTR && !FORBID_ATTR[lcName] && regExpTest(DATA_ATTR, lcName)) ; else if (ALLOW_ARIA_ATTR && regExpTest(ARIA_ATTR, lcName)) ; else if (EXTRA_ELEMENT_HANDLING.attributeCheck instanceof Function && EXTRA_ELEMENT_HANDLING.attributeCheck(lcName, lcTag)) ; else if (!ALLOWED_ATTR[lcName] || FORBID_ATTR[lcName]) {
       if (
       // First condition does a very basic check if a) it's basically a valid custom element tagname AND
       // b) if the tagName passes whatever the user has configured for CUSTOM_ELEMENT_HANDLING.tagNameCheck
       // and c) if the attribute name passes whatever the user has configured for CUSTOM_ELEMENT_HANDLING.attributeNameCheck
-      _isBasicCustomElement(lcTag) && (CUSTOM_ELEMENT_HANDLING.tagNameCheck instanceof RegExp && regExpTest(CUSTOM_ELEMENT_HANDLING.tagNameCheck, lcTag) || CUSTOM_ELEMENT_HANDLING.tagNameCheck instanceof Function && CUSTOM_ELEMENT_HANDLING.tagNameCheck(lcTag)) && (CUSTOM_ELEMENT_HANDLING.attributeNameCheck instanceof RegExp && regExpTest(CUSTOM_ELEMENT_HANDLING.attributeNameCheck, lcName) || CUSTOM_ELEMENT_HANDLING.attributeNameCheck instanceof Function && CUSTOM_ELEMENT_HANDLING.attributeNameCheck(lcName)) ||
+      _isBasicCustomElement(lcTag) && (CUSTOM_ELEMENT_HANDLING.tagNameCheck instanceof RegExp && regExpTest(CUSTOM_ELEMENT_HANDLING.tagNameCheck, lcTag) || CUSTOM_ELEMENT_HANDLING.tagNameCheck instanceof Function && CUSTOM_ELEMENT_HANDLING.tagNameCheck(lcTag)) && (CUSTOM_ELEMENT_HANDLING.attributeNameCheck instanceof RegExp && regExpTest(CUSTOM_ELEMENT_HANDLING.attributeNameCheck, lcName) || CUSTOM_ELEMENT_HANDLING.attributeNameCheck instanceof Function && CUSTOM_ELEMENT_HANDLING.attributeNameCheck(lcName, lcTag)) ||
       // Alternative, second condition checks if it's an `is`-attribute, AND
       // the value passes whatever the user has configured for CUSTOM_ELEMENT_HANDLING.tagNameCheck
       lcName === 'is' && CUSTOM_ELEMENT_HANDLING.allowCustomizedBuiltInElements && (CUSTOM_ELEMENT_HANDLING.tagNameCheck instanceof RegExp && regExpTest(CUSTOM_ELEMENT_HANDLING.tagNameCheck, value) || CUSTOM_ELEMENT_HANDLING.tagNameCheck instanceof Function && CUSTOM_ELEMENT_HANDLING.tagNameCheck(value))) ; else {
@@ -60051,7 +60569,12 @@ function createDOMPurify() {
         value = SANITIZE_NAMED_PROPS_PREFIX + value;
       }
       /* Work around a security issue with comments inside attributes */
-      if (SAFE_FOR_XML && regExpTest(/((--!?|])>)|<\/(style|title)/i, value)) {
+      if (SAFE_FOR_XML && regExpTest(/((--!?|])>)|<\/(style|title|textarea)/i, value)) {
+        _removeAttribute(name, currentNode);
+        continue;
+      }
+      /* Make sure we cannot easily use animated hrefs, even if animations are allowed */
+      if (lcName === 'attributename' && stringMatch(value, 'href')) {
         _removeAttribute(name, currentNode);
         continue;
       }
@@ -60357,7 +60880,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   setUseProxies: () => (/* binding */ vn)
 /* harmony export */ });
 function n(n){for(var r=arguments.length,t=Array(r>1?r-1:0),e=1;e<r;e++)t[e-1]=arguments[e];if(true){var i=Y[n],o=i?"function"==typeof i?i.apply(null,t):i:"unknown error nr: "+n;throw Error("[Immer] "+o)}// removed by dead control flow
-{}}function r(n){return!!n&&!!n[Q]}function t(n){var r;return!!n&&(function(n){if(!n||"object"!=typeof n)return!1;var r=Object.getPrototypeOf(n);if(null===r)return!0;var t=Object.hasOwnProperty.call(r,"constructor")&&r.constructor;return t===Object||"function"==typeof t&&Function.toString.call(t)===Z}(n)||Array.isArray(n)||!!n[L]||!!(null===(r=n.constructor)||void 0===r?void 0:r[L])||s(n)||v(n))}function e(t){return r(t)||n(23,t),t[Q].t}function i(n,r,t){void 0===t&&(t=!1),0===o(n)?(t?Object.keys:nn)(n).forEach((function(e){t&&"symbol"==typeof e||r(e,n[e],n)})):n.forEach((function(t,e){return r(e,t,n)}))}function o(n){var r=n[Q];return r?r.i>3?r.i-4:r.i:Array.isArray(n)?1:s(n)?2:v(n)?3:0}function u(n,r){return 2===o(n)?n.has(r):Object.prototype.hasOwnProperty.call(n,r)}function a(n,r){return 2===o(n)?n.get(r):n[r]}function f(n,r,t){var e=o(n);2===e?n.set(r,t):3===e?n.add(t):n[r]=t}function c(n,r){return n===r?0!==n||1/n==1/r:n!=n&&r!=r}function s(n){return X&&n instanceof Map}function v(n){return q&&n instanceof Set}function p(n){return n.o||n.t}function l(n){if(Array.isArray(n))return Array.prototype.slice.call(n);var r=rn(n);delete r[Q];for(var t=nn(r),e=0;e<t.length;e++){var i=t[e],o=r[i];!1===o.writable&&(o.writable=!0,o.configurable=!0),(o.get||o.set)&&(r[i]={configurable:!0,writable:!0,enumerable:o.enumerable,value:n[i]})}return Object.create(Object.getPrototypeOf(n),r)}function d(n,e){return void 0===e&&(e=!1),y(n)||r(n)||!t(n)||(o(n)>1&&(n.set=n.add=n.clear=n.delete=h),Object.freeze(n),e&&i(n,(function(n,r){return d(r,!0)}),!0)),n}function h(){n(2)}function y(n){return null==n||"object"!=typeof n||Object.isFrozen(n)}function b(r){var t=tn[r];return t||n(18,r),t}function m(n,r){tn[n]||(tn[n]=r)}function _(){return false||U||n(0),U}function j(n,r){r&&(b("Patches"),n.u=[],n.s=[],n.v=r)}function g(n){O(n),n.p.forEach(S),n.p=null}function O(n){n===U&&(U=n.l)}function w(n){return U={p:[],l:U,h:n,m:!0,_:0}}function S(n){var r=n[Q];0===r.i||1===r.i?r.j():r.g=!0}function P(r,e){e._=e.p.length;var i=e.p[0],o=void 0!==r&&r!==i;return e.h.O||b("ES5").S(e,r,o),o?(i[Q].P&&(g(e),n(4)),t(r)&&(r=M(e,r),e.l||x(e,r)),e.u&&b("Patches").M(i[Q].t,r,e.u,e.s)):r=M(e,i,[]),g(e),e.u&&e.v(e.u,e.s),r!==H?r:void 0}function M(n,r,t){if(y(r))return r;var e=r[Q];if(!e)return i(r,(function(i,o){return A(n,e,r,i,o,t)}),!0),r;if(e.A!==n)return r;if(!e.P)return x(n,e.t,!0),e.t;if(!e.I){e.I=!0,e.A._--;var o=4===e.i||5===e.i?e.o=l(e.k):e.o,u=o,a=!1;3===e.i&&(u=new Set(o),o.clear(),a=!0),i(u,(function(r,i){return A(n,e,o,r,i,t,a)})),x(n,o,!1),t&&n.u&&b("Patches").N(e,t,n.u,n.s)}return e.o}function A(e,i,o,a,c,s,v){if( true&&c===o&&n(5),r(c)){var p=M(e,c,s&&i&&3!==i.i&&!u(i.R,a)?s.concat(a):void 0);if(f(o,a,p),!r(p))return;e.m=!1}else v&&o.add(c);if(t(c)&&!y(c)){if(!e.h.D&&e._<1)return;M(e,c),i&&i.A.l||x(e,c)}}function x(n,r,t){void 0===t&&(t=!1),!n.l&&n.h.D&&n.m&&d(r,t)}function z(n,r){var t=n[Q];return(t?p(t):n)[r]}function I(n,r){if(r in n)for(var t=Object.getPrototypeOf(n);t;){var e=Object.getOwnPropertyDescriptor(t,r);if(e)return e;t=Object.getPrototypeOf(t)}}function k(n){n.P||(n.P=!0,n.l&&k(n.l))}function E(n){n.o||(n.o=l(n.t))}function N(n,r,t){var e=s(r)?b("MapSet").F(r,t):v(r)?b("MapSet").T(r,t):n.O?function(n,r){var t=Array.isArray(n),e={i:t?1:0,A:r?r.A:_(),P:!1,I:!1,R:{},l:r,t:n,k:null,o:null,j:null,C:!1},i=e,o=en;t&&(i=[e],o=on);var u=Proxy.revocable(i,o),a=u.revoke,f=u.proxy;return e.k=f,e.j=a,f}(r,t):b("ES5").J(r,t);return(t?t.A:_()).p.push(e),e}function R(e){return r(e)||n(22,e),function n(r){if(!t(r))return r;var e,u=r[Q],c=o(r);if(u){if(!u.P&&(u.i<4||!b("ES5").K(u)))return u.t;u.I=!0,e=D(r,c),u.I=!1}else e=D(r,c);return i(e,(function(r,t){u&&a(u.t,r)===t||f(e,r,n(t))})),3===c?new Set(e):e}(e)}function D(n,r){switch(r){case 2:return new Map(n);case 3:return Array.from(n)}return l(n)}function F(){function t(n,r){var t=s[n];return t?t.enumerable=r:s[n]=t={configurable:!0,enumerable:r,get:function(){var r=this[Q];return true&&f(r),en.get(r,n)},set:function(r){var t=this[Q]; true&&f(t),en.set(t,n,r)}},t}function e(n){for(var r=n.length-1;r>=0;r--){var t=n[r][Q];if(!t.P)switch(t.i){case 5:a(t)&&k(t);break;case 4:o(t)&&k(t)}}}function o(n){for(var r=n.t,t=n.k,e=nn(t),i=e.length-1;i>=0;i--){var o=e[i];if(o!==Q){var a=r[o];if(void 0===a&&!u(r,o))return!0;var f=t[o],s=f&&f[Q];if(s?s.t!==a:!c(f,a))return!0}}var v=!!r[Q];return e.length!==nn(r).length+(v?0:1)}function a(n){var r=n.k;if(r.length!==n.t.length)return!0;var t=Object.getOwnPropertyDescriptor(r,r.length-1);if(t&&!t.get)return!0;for(var e=0;e<r.length;e++)if(!r.hasOwnProperty(e))return!0;return!1}function f(r){r.g&&n(3,JSON.stringify(p(r)))}var s={};m("ES5",{J:function(n,r){var e=Array.isArray(n),i=function(n,r){if(n){for(var e=Array(r.length),i=0;i<r.length;i++)Object.defineProperty(e,""+i,t(i,!0));return e}var o=rn(r);delete o[Q];for(var u=nn(o),a=0;a<u.length;a++){var f=u[a];o[f]=t(f,n||!!o[f].enumerable)}return Object.create(Object.getPrototypeOf(r),o)}(e,n),o={i:e?5:4,A:r?r.A:_(),P:!1,I:!1,R:{},l:r,t:n,k:i,o:null,g:!1,C:!1};return Object.defineProperty(i,Q,{value:o,writable:!0}),i},S:function(n,t,o){o?r(t)&&t[Q].A===n&&e(n.p):(n.u&&function n(r){if(r&&"object"==typeof r){var t=r[Q];if(t){var e=t.t,o=t.k,f=t.R,c=t.i;if(4===c)i(o,(function(r){r!==Q&&(void 0!==e[r]||u(e,r)?f[r]||n(o[r]):(f[r]=!0,k(t)))})),i(e,(function(n){void 0!==o[n]||u(o,n)||(f[n]=!1,k(t))}));else if(5===c){if(a(t)&&(k(t),f.length=!0),o.length<e.length)for(var s=o.length;s<e.length;s++)f[s]=!1;else for(var v=e.length;v<o.length;v++)f[v]=!0;for(var p=Math.min(o.length,e.length),l=0;l<p;l++)o.hasOwnProperty(l)||(f[l]=!0),void 0===f[l]&&n(o[l])}}}}(n.p[0]),e(n.p))},K:function(n){return 4===n.i?o(n):a(n)}})}function T(){function e(n){if(!t(n))return n;if(Array.isArray(n))return n.map(e);if(s(n))return new Map(Array.from(n.entries()).map((function(n){return[n[0],e(n[1])]})));if(v(n))return new Set(Array.from(n).map(e));var r=Object.create(Object.getPrototypeOf(n));for(var i in n)r[i]=e(n[i]);return u(n,L)&&(r[L]=n[L]),r}function f(n){return r(n)?e(n):n}var c="add";m("Patches",{$:function(r,t){return t.forEach((function(t){for(var i=t.path,u=t.op,f=r,s=0;s<i.length-1;s++){var v=o(f),p=i[s];"string"!=typeof p&&"number"!=typeof p&&(p=""+p),0!==v&&1!==v||"__proto__"!==p&&"constructor"!==p||n(24),"function"==typeof f&&"prototype"===p&&n(24),"object"!=typeof(f=a(f,p))&&n(15,i.join("/"))}var l=o(f),d=e(t.value),h=i[i.length-1];switch(u){case"replace":switch(l){case 2:return f.set(h,d);case 3:n(16);default:return f[h]=d}case c:switch(l){case 1:return"-"===h?f.push(d):f.splice(h,0,d);case 2:return f.set(h,d);case 3:return f.add(d);default:return f[h]=d}case"remove":switch(l){case 1:return f.splice(h,1);case 2:return f.delete(h);case 3:return f.delete(t.value);default:return delete f[h]}default:n(17,u)}})),r},N:function(n,r,t,e){switch(n.i){case 0:case 4:case 2:return function(n,r,t,e){var o=n.t,s=n.o;i(n.R,(function(n,i){var v=a(o,n),p=a(s,n),l=i?u(o,n)?"replace":c:"remove";if(v!==p||"replace"!==l){var d=r.concat(n);t.push("remove"===l?{op:l,path:d}:{op:l,path:d,value:p}),e.push(l===c?{op:"remove",path:d}:"remove"===l?{op:c,path:d,value:f(v)}:{op:"replace",path:d,value:f(v)})}}))}(n,r,t,e);case 5:case 1:return function(n,r,t,e){var i=n.t,o=n.R,u=n.o;if(u.length<i.length){var a=[u,i];i=a[0],u=a[1];var s=[e,t];t=s[0],e=s[1]}for(var v=0;v<i.length;v++)if(o[v]&&u[v]!==i[v]){var p=r.concat([v]);t.push({op:"replace",path:p,value:f(u[v])}),e.push({op:"replace",path:p,value:f(i[v])})}for(var l=i.length;l<u.length;l++){var d=r.concat([l]);t.push({op:c,path:d,value:f(u[l])})}i.length<u.length&&e.push({op:"replace",path:r.concat(["length"]),value:i.length})}(n,r,t,e);case 3:return function(n,r,t,e){var i=n.t,o=n.o,u=0;i.forEach((function(n){if(!o.has(n)){var i=r.concat([u]);t.push({op:"remove",path:i,value:n}),e.unshift({op:c,path:i,value:n})}u++})),u=0,o.forEach((function(n){if(!i.has(n)){var o=r.concat([u]);t.push({op:c,path:o,value:n}),e.unshift({op:"remove",path:o,value:n})}u++}))}(n,r,t,e)}},M:function(n,r,t,e){t.push({op:"replace",path:[],value:r===H?void 0:r}),e.push({op:"replace",path:[],value:n})}})}function C(){function r(n,r){function t(){this.constructor=n}a(n,r),n.prototype=(t.prototype=r.prototype,new t)}function e(n){n.o||(n.R=new Map,n.o=new Map(n.t))}function o(n){n.o||(n.o=new Set,n.t.forEach((function(r){if(t(r)){var e=N(n.A.h,r,n);n.p.set(r,e),n.o.add(e)}else n.o.add(r)})))}function u(r){r.g&&n(3,JSON.stringify(p(r)))}var a=function(n,r){return(a=Object.setPrototypeOf||{__proto__:[]}instanceof Array&&function(n,r){n.__proto__=r}||function(n,r){for(var t in r)r.hasOwnProperty(t)&&(n[t]=r[t])})(n,r)},f=function(){function n(n,r){return this[Q]={i:2,l:r,A:r?r.A:_(),P:!1,I:!1,o:void 0,R:void 0,t:n,k:this,C:!1,g:!1},this}r(n,Map);var o=n.prototype;return Object.defineProperty(o,"size",{get:function(){return p(this[Q]).size}}),o.has=function(n){return p(this[Q]).has(n)},o.set=function(n,r){var t=this[Q];return u(t),p(t).has(n)&&p(t).get(n)===r||(e(t),k(t),t.R.set(n,!0),t.o.set(n,r),t.R.set(n,!0)),this},o.delete=function(n){if(!this.has(n))return!1;var r=this[Q];return u(r),e(r),k(r),r.t.has(n)?r.R.set(n,!1):r.R.delete(n),r.o.delete(n),!0},o.clear=function(){var n=this[Q];u(n),p(n).size&&(e(n),k(n),n.R=new Map,i(n.t,(function(r){n.R.set(r,!1)})),n.o.clear())},o.forEach=function(n,r){var t=this;p(this[Q]).forEach((function(e,i){n.call(r,t.get(i),i,t)}))},o.get=function(n){var r=this[Q];u(r);var i=p(r).get(n);if(r.I||!t(i))return i;if(i!==r.t.get(n))return i;var o=N(r.A.h,i,r);return e(r),r.o.set(n,o),o},o.keys=function(){return p(this[Q]).keys()},o.values=function(){var n,r=this,t=this.keys();return(n={})[V]=function(){return r.values()},n.next=function(){var n=t.next();return n.done?n:{done:!1,value:r.get(n.value)}},n},o.entries=function(){var n,r=this,t=this.keys();return(n={})[V]=function(){return r.entries()},n.next=function(){var n=t.next();if(n.done)return n;var e=r.get(n.value);return{done:!1,value:[n.value,e]}},n},o[V]=function(){return this.entries()},n}(),c=function(){function n(n,r){return this[Q]={i:3,l:r,A:r?r.A:_(),P:!1,I:!1,o:void 0,t:n,k:this,p:new Map,g:!1,C:!1},this}r(n,Set);var t=n.prototype;return Object.defineProperty(t,"size",{get:function(){return p(this[Q]).size}}),t.has=function(n){var r=this[Q];return u(r),r.o?!!r.o.has(n)||!(!r.p.has(n)||!r.o.has(r.p.get(n))):r.t.has(n)},t.add=function(n){var r=this[Q];return u(r),this.has(n)||(o(r),k(r),r.o.add(n)),this},t.delete=function(n){if(!this.has(n))return!1;var r=this[Q];return u(r),o(r),k(r),r.o.delete(n)||!!r.p.has(n)&&r.o.delete(r.p.get(n))},t.clear=function(){var n=this[Q];u(n),p(n).size&&(o(n),k(n),n.o.clear())},t.values=function(){var n=this[Q];return u(n),o(n),n.o.values()},t.entries=function(){var n=this[Q];return u(n),o(n),n.o.entries()},t.keys=function(){return this.values()},t[V]=function(){return this.values()},t.forEach=function(n,r){for(var t=this.values(),e=t.next();!e.done;)n.call(r,e.value,e.value,this),e=t.next()},n}();m("MapSet",{F:function(n,r){return new f(n,r)},T:function(n,r){return new c(n,r)}})}function J(){F(),C(),T()}function K(n){return n}function $(n){return n}var G,U,W="undefined"!=typeof Symbol&&"symbol"==typeof Symbol("x"),X="undefined"!=typeof Map,q="undefined"!=typeof Set,B="undefined"!=typeof Proxy&&void 0!==Proxy.revocable&&"undefined"!=typeof Reflect,H=W?Symbol.for("immer-nothing"):((G={})["immer-nothing"]=!0,G),L=W?Symbol.for("immer-draftable"):"__$immer_draftable",Q=W?Symbol.for("immer-state"):"__$immer_state",V="undefined"!=typeof Symbol&&Symbol.iterator||"@@iterator",Y={0:"Illegal state",1:"Immer drafts cannot have computed properties",2:"This object has been frozen and should not be mutated",3:function(n){return"Cannot use a proxy that has been revoked. Did you pass an object from inside an immer function to an async process? "+n},4:"An immer producer returned a new value *and* modified its draft. Either return a new value *or* modify the draft.",5:"Immer forbids circular references",6:"The first or second argument to `produce` must be a function",7:"The third argument to `produce` must be a function or undefined",8:"First argument to `createDraft` must be a plain object, an array, or an immerable object",9:"First argument to `finishDraft` must be a draft returned by `createDraft`",10:"The given draft is already finalized",11:"Object.defineProperty() cannot be used on an Immer draft",12:"Object.setPrototypeOf() cannot be used on an Immer draft",13:"Immer only supports deleting array indices",14:"Immer only supports setting array indices and the 'length' property",15:function(n){return"Cannot apply patch, path doesn't resolve: "+n},16:'Sets cannot have "replace" patches.',17:function(n){return"Unsupported patch operation: "+n},18:function(n){return"The plugin for '"+n+"' has not been loaded into Immer. To enable the plugin, import and call `enable"+n+"()` when initializing your application."},20:"Cannot use proxies if Proxy, Proxy.revocable or Reflect are not available",21:function(n){return"produce can only be called on things that are draftable: plain objects, arrays, Map, Set or classes that are marked with '[immerable]: true'. Got '"+n+"'"},22:function(n){return"'current' expects a draft, got: "+n},23:function(n){return"'original' expects a draft, got: "+n},24:"Patching reserved attributes like __proto__, prototype and constructor is not allowed"},Z=""+Object.prototype.constructor,nn="undefined"!=typeof Reflect&&Reflect.ownKeys?Reflect.ownKeys:void 0!==Object.getOwnPropertySymbols?function(n){return Object.getOwnPropertyNames(n).concat(Object.getOwnPropertySymbols(n))}:Object.getOwnPropertyNames,rn=Object.getOwnPropertyDescriptors||function(n){var r={};return nn(n).forEach((function(t){r[t]=Object.getOwnPropertyDescriptor(n,t)})),r},tn={},en={get:function(n,r){if(r===Q)return n;var e=p(n);if(!u(e,r))return function(n,r,t){var e,i=I(r,t);return i?"value"in i?i.value:null===(e=i.get)||void 0===e?void 0:e.call(n.k):void 0}(n,e,r);var i=e[r];return n.I||!t(i)?i:i===z(n.t,r)?(E(n),n.o[r]=N(n.A.h,i,n)):i},has:function(n,r){return r in p(n)},ownKeys:function(n){return Reflect.ownKeys(p(n))},set:function(n,r,t){var e=I(p(n),r);if(null==e?void 0:e.set)return e.set.call(n.k,t),!0;if(!n.P){var i=z(p(n),r),o=null==i?void 0:i[Q];if(o&&o.t===t)return n.o[r]=t,n.R[r]=!1,!0;if(c(t,i)&&(void 0!==t||u(n.t,r)))return!0;E(n),k(n)}return n.o[r]===t&&(void 0!==t||r in n.o)||Number.isNaN(t)&&Number.isNaN(n.o[r])||(n.o[r]=t,n.R[r]=!0),!0},deleteProperty:function(n,r){return void 0!==z(n.t,r)||r in n.t?(n.R[r]=!1,E(n),k(n)):delete n.R[r],n.o&&delete n.o[r],!0},getOwnPropertyDescriptor:function(n,r){var t=p(n),e=Reflect.getOwnPropertyDescriptor(t,r);return e?{writable:!0,configurable:1!==n.i||"length"!==r,enumerable:e.enumerable,value:t[r]}:e},defineProperty:function(){n(11)},getPrototypeOf:function(n){return Object.getPrototypeOf(n.t)},setPrototypeOf:function(){n(12)}},on={};i(en,(function(n,r){on[n]=function(){return arguments[0]=arguments[0][0],r.apply(this,arguments)}})),on.deleteProperty=function(r,t){return true&&isNaN(parseInt(t))&&n(13),on.set.call(this,r,t,void 0)},on.set=function(r,t,e){return true&&"length"!==t&&isNaN(parseInt(t))&&n(14),en.set.call(this,r[0],t,e,r[0])};var un=function(){function e(r){var e=this;this.O=B,this.D=!0,this.produce=function(r,i,o){if("function"==typeof r&&"function"!=typeof i){var u=i;i=r;var a=e;return function(n){var r=this;void 0===n&&(n=u);for(var t=arguments.length,e=Array(t>1?t-1:0),o=1;o<t;o++)e[o-1]=arguments[o];return a.produce(n,(function(n){var t;return(t=i).call.apply(t,[r,n].concat(e))}))}}var f;if("function"!=typeof i&&n(6),void 0!==o&&"function"!=typeof o&&n(7),t(r)){var c=w(e),s=N(e,r,void 0),v=!0;try{f=i(s),v=!1}finally{v?g(c):O(c)}return"undefined"!=typeof Promise&&f instanceof Promise?f.then((function(n){return j(c,o),P(n,c)}),(function(n){throw g(c),n})):(j(c,o),P(f,c))}if(!r||"object"!=typeof r){if(void 0===(f=i(r))&&(f=r),f===H&&(f=void 0),e.D&&d(f,!0),o){var p=[],l=[];b("Patches").M(r,f,p,l),o(p,l)}return f}n(21,r)},this.produceWithPatches=function(n,r){if("function"==typeof n)return function(r){for(var t=arguments.length,i=Array(t>1?t-1:0),o=1;o<t;o++)i[o-1]=arguments[o];return e.produceWithPatches(r,(function(r){return n.apply(void 0,[r].concat(i))}))};var t,i,o=e.produce(n,r,(function(n,r){t=n,i=r}));return"undefined"!=typeof Promise&&o instanceof Promise?o.then((function(n){return[n,t,i]})):[o,t,i]},"boolean"==typeof(null==r?void 0:r.useProxies)&&this.setUseProxies(r.useProxies),"boolean"==typeof(null==r?void 0:r.autoFreeze)&&this.setAutoFreeze(r.autoFreeze)}var i=e.prototype;return i.createDraft=function(e){t(e)||n(8),r(e)&&(e=R(e));var i=w(this),o=N(this,e,void 0);return o[Q].C=!0,O(i),o},i.finishDraft=function(r,t){var e=r&&r[Q]; true&&(e&&e.C||n(9),e.I&&n(10));var i=e.A;return j(i,t),P(void 0,i)},i.setAutoFreeze=function(n){this.D=n},i.setUseProxies=function(r){r&&!B&&n(20),this.O=r},i.applyPatches=function(n,t){var e;for(e=t.length-1;e>=0;e--){var i=t[e];if(0===i.path.length&&"replace"===i.op){n=i.value;break}}e>-1&&(t=t.slice(e+1));var o=b("Patches").$;return r(n)?o(n,t):this.produce(n,(function(n){return o(n,t)}))},e}(),an=new un,fn=an.produce,cn=an.produceWithPatches.bind(an),sn=an.setAutoFreeze.bind(an),vn=an.setUseProxies.bind(an),pn=an.applyPatches.bind(an),ln=an.createDraft.bind(an),dn=an.finishDraft.bind(an);/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (fn);
+}function r(n){return!!n&&!!n[Q]}function t(n){var r;return!!n&&(function(n){if(!n||"object"!=typeof n)return!1;var r=Object.getPrototypeOf(n);if(null===r)return!0;var t=Object.hasOwnProperty.call(r,"constructor")&&r.constructor;return t===Object||"function"==typeof t&&Function.toString.call(t)===Z}(n)||Array.isArray(n)||!!n[L]||!!(null===(r=n.constructor)||void 0===r?void 0:r[L])||s(n)||v(n))}function e(t){return r(t)||n(23,t),t[Q].t}function i(n,r,t){void 0===t&&(t=!1),0===o(n)?(t?Object.keys:nn)(n).forEach((function(e){t&&"symbol"==typeof e||r(e,n[e],n)})):n.forEach((function(t,e){return r(e,t,n)}))}function o(n){var r=n[Q];return r?r.i>3?r.i-4:r.i:Array.isArray(n)?1:s(n)?2:v(n)?3:0}function u(n,r){return 2===o(n)?n.has(r):Object.prototype.hasOwnProperty.call(n,r)}function a(n,r){return 2===o(n)?n.get(r):n[r]}function f(n,r,t){var e=o(n);2===e?n.set(r,t):3===e?n.add(t):n[r]=t}function c(n,r){return n===r?0!==n||1/n==1/r:n!=n&&r!=r}function s(n){return X&&n instanceof Map}function v(n){return q&&n instanceof Set}function p(n){return n.o||n.t}function l(n){if(Array.isArray(n))return Array.prototype.slice.call(n);var r=rn(n);delete r[Q];for(var t=nn(r),e=0;e<t.length;e++){var i=t[e],o=r[i];!1===o.writable&&(o.writable=!0,o.configurable=!0),(o.get||o.set)&&(r[i]={configurable:!0,writable:!0,enumerable:o.enumerable,value:n[i]})}return Object.create(Object.getPrototypeOf(n),r)}function d(n,e){return void 0===e&&(e=!1),y(n)||r(n)||!t(n)||(o(n)>1&&(n.set=n.add=n.clear=n.delete=h),Object.freeze(n),e&&i(n,(function(n,r){return d(r,!0)}),!0)),n}function h(){n(2)}function y(n){return null==n||"object"!=typeof n||Object.isFrozen(n)}function b(r){var t=tn[r];return t||n(18,r),t}function m(n,r){tn[n]||(tn[n]=r)}function _(){return false||U||n(0),U}function j(n,r){r&&(b("Patches"),n.u=[],n.s=[],n.v=r)}function g(n){O(n),n.p.forEach(S),n.p=null}function O(n){n===U&&(U=n.l)}function w(n){return U={p:[],l:U,h:n,m:!0,_:0}}function S(n){var r=n[Q];0===r.i||1===r.i?r.j():r.g=!0}function P(r,e){e._=e.p.length;var i=e.p[0],o=void 0!==r&&r!==i;return e.h.O||b("ES5").S(e,r,o),o?(i[Q].P&&(g(e),n(4)),t(r)&&(r=M(e,r),e.l||x(e,r)),e.u&&b("Patches").M(i[Q].t,r,e.u,e.s)):r=M(e,i,[]),g(e),e.u&&e.v(e.u,e.s),r!==H?r:void 0}function M(n,r,t){if(y(r))return r;var e=r[Q];if(!e)return i(r,(function(i,o){return A(n,e,r,i,o,t)}),!0),r;if(e.A!==n)return r;if(!e.P)return x(n,e.t,!0),e.t;if(!e.I){e.I=!0,e.A._--;var o=4===e.i||5===e.i?e.o=l(e.k):e.o,u=o,a=!1;3===e.i&&(u=new Set(o),o.clear(),a=!0),i(u,(function(r,i){return A(n,e,o,r,i,t,a)})),x(n,o,!1),t&&n.u&&b("Patches").N(e,t,n.u,n.s)}return e.o}function A(e,i,o,a,c,s,v){if( true&&c===o&&n(5),r(c)){var p=M(e,c,s&&i&&3!==i.i&&!u(i.R,a)?s.concat(a):void 0);if(f(o,a,p),!r(p))return;e.m=!1}else v&&o.add(c);if(t(c)&&!y(c)){if(!e.h.D&&e._<1)return;M(e,c),i&&i.A.l||x(e,c)}}function x(n,r,t){void 0===t&&(t=!1),!n.l&&n.h.D&&n.m&&d(r,t)}function z(n,r){var t=n[Q];return(t?p(t):n)[r]}function I(n,r){if(r in n)for(var t=Object.getPrototypeOf(n);t;){var e=Object.getOwnPropertyDescriptor(t,r);if(e)return e;t=Object.getPrototypeOf(t)}}function k(n){n.P||(n.P=!0,n.l&&k(n.l))}function E(n){n.o||(n.o=l(n.t))}function N(n,r,t){var e=s(r)?b("MapSet").F(r,t):v(r)?b("MapSet").T(r,t):n.O?function(n,r){var t=Array.isArray(n),e={i:t?1:0,A:r?r.A:_(),P:!1,I:!1,R:{},l:r,t:n,k:null,o:null,j:null,C:!1},i=e,o=en;t&&(i=[e],o=on);var u=Proxy.revocable(i,o),a=u.revoke,f=u.proxy;return e.k=f,e.j=a,f}(r,t):b("ES5").J(r,t);return(t?t.A:_()).p.push(e),e}function R(e){return r(e)||n(22,e),function n(r){if(!t(r))return r;var e,u=r[Q],c=o(r);if(u){if(!u.P&&(u.i<4||!b("ES5").K(u)))return u.t;u.I=!0,e=D(r,c),u.I=!1}else e=D(r,c);return i(e,(function(r,t){u&&a(u.t,r)===t||f(e,r,n(t))})),3===c?new Set(e):e}(e)}function D(n,r){switch(r){case 2:return new Map(n);case 3:return Array.from(n)}return l(n)}function F(){function t(n,r){var t=s[n];return t?t.enumerable=r:s[n]=t={configurable:!0,enumerable:r,get:function(){var r=this[Q];return true&&f(r),en.get(r,n)},set:function(r){var t=this[Q]; true&&f(t),en.set(t,n,r)}},t}function e(n){for(var r=n.length-1;r>=0;r--){var t=n[r][Q];if(!t.P)switch(t.i){case 5:a(t)&&k(t);break;case 4:o(t)&&k(t)}}}function o(n){for(var r=n.t,t=n.k,e=nn(t),i=e.length-1;i>=0;i--){var o=e[i];if(o!==Q){var a=r[o];if(void 0===a&&!u(r,o))return!0;var f=t[o],s=f&&f[Q];if(s?s.t!==a:!c(f,a))return!0}}var v=!!r[Q];return e.length!==nn(r).length+(v?0:1)}function a(n){var r=n.k;if(r.length!==n.t.length)return!0;var t=Object.getOwnPropertyDescriptor(r,r.length-1);if(t&&!t.get)return!0;for(var e=0;e<r.length;e++)if(!r.hasOwnProperty(e))return!0;return!1}function f(r){r.g&&n(3,JSON.stringify(p(r)))}var s={};m("ES5",{J:function(n,r){var e=Array.isArray(n),i=function(n,r){if(n){for(var e=Array(r.length),i=0;i<r.length;i++)Object.defineProperty(e,""+i,t(i,!0));return e}var o=rn(r);delete o[Q];for(var u=nn(o),a=0;a<u.length;a++){var f=u[a];o[f]=t(f,n||!!o[f].enumerable)}return Object.create(Object.getPrototypeOf(r),o)}(e,n),o={i:e?5:4,A:r?r.A:_(),P:!1,I:!1,R:{},l:r,t:n,k:i,o:null,g:!1,C:!1};return Object.defineProperty(i,Q,{value:o,writable:!0}),i},S:function(n,t,o){o?r(t)&&t[Q].A===n&&e(n.p):(n.u&&function n(r){if(r&&"object"==typeof r){var t=r[Q];if(t){var e=t.t,o=t.k,f=t.R,c=t.i;if(4===c)i(o,(function(r){r!==Q&&(void 0!==e[r]||u(e,r)?f[r]||n(o[r]):(f[r]=!0,k(t)))})),i(e,(function(n){void 0!==o[n]||u(o,n)||(f[n]=!1,k(t))}));else if(5===c){if(a(t)&&(k(t),f.length=!0),o.length<e.length)for(var s=o.length;s<e.length;s++)f[s]=!1;else for(var v=e.length;v<o.length;v++)f[v]=!0;for(var p=Math.min(o.length,e.length),l=0;l<p;l++)o.hasOwnProperty(l)||(f[l]=!0),void 0===f[l]&&n(o[l])}}}}(n.p[0]),e(n.p))},K:function(n){return 4===n.i?o(n):a(n)}})}function T(){function e(n){if(!t(n))return n;if(Array.isArray(n))return n.map(e);if(s(n))return new Map(Array.from(n.entries()).map((function(n){return[n[0],e(n[1])]})));if(v(n))return new Set(Array.from(n).map(e));var r=Object.create(Object.getPrototypeOf(n));for(var i in n)r[i]=e(n[i]);return u(n,L)&&(r[L]=n[L]),r}function f(n){return r(n)?e(n):n}var c="add";m("Patches",{$:function(r,t){return t.forEach((function(t){for(var i=t.path,u=t.op,f=r,s=0;s<i.length-1;s++){var v=o(f),p=i[s];"string"!=typeof p&&"number"!=typeof p&&(p=""+p),0!==v&&1!==v||"__proto__"!==p&&"constructor"!==p||n(24),"function"==typeof f&&"prototype"===p&&n(24),"object"!=typeof(f=a(f,p))&&n(15,i.join("/"))}var l=o(f),d=e(t.value),h=i[i.length-1];switch(u){case"replace":switch(l){case 2:return f.set(h,d);case 3:n(16);default:return f[h]=d}case c:switch(l){case 1:return"-"===h?f.push(d):f.splice(h,0,d);case 2:return f.set(h,d);case 3:return f.add(d);default:return f[h]=d}case"remove":switch(l){case 1:return f.splice(h,1);case 2:return f.delete(h);case 3:return f.delete(t.value);default:return delete f[h]}default:n(17,u)}})),r},N:function(n,r,t,e){switch(n.i){case 0:case 4:case 2:return function(n,r,t,e){var o=n.t,s=n.o;i(n.R,(function(n,i){var v=a(o,n),p=a(s,n),l=i?u(o,n)?"replace":c:"remove";if(v!==p||"replace"!==l){var d=r.concat(n);t.push("remove"===l?{op:l,path:d}:{op:l,path:d,value:p}),e.push(l===c?{op:"remove",path:d}:"remove"===l?{op:c,path:d,value:f(v)}:{op:"replace",path:d,value:f(v)})}}))}(n,r,t,e);case 5:case 1:return function(n,r,t,e){var i=n.t,o=n.R,u=n.o;if(u.length<i.length){var a=[u,i];i=a[0],u=a[1];var s=[e,t];t=s[0],e=s[1]}for(var v=0;v<i.length;v++)if(o[v]&&u[v]!==i[v]){var p=r.concat([v]);t.push({op:"replace",path:p,value:f(u[v])}),e.push({op:"replace",path:p,value:f(i[v])})}for(var l=i.length;l<u.length;l++){var d=r.concat([l]);t.push({op:c,path:d,value:f(u[l])})}i.length<u.length&&e.push({op:"replace",path:r.concat(["length"]),value:i.length})}(n,r,t,e);case 3:return function(n,r,t,e){var i=n.t,o=n.o,u=0;i.forEach((function(n){if(!o.has(n)){var i=r.concat([u]);t.push({op:"remove",path:i,value:n}),e.unshift({op:c,path:i,value:n})}u++})),u=0,o.forEach((function(n){if(!i.has(n)){var o=r.concat([u]);t.push({op:c,path:o,value:n}),e.unshift({op:"remove",path:o,value:n})}u++}))}(n,r,t,e)}},M:function(n,r,t,e){t.push({op:"replace",path:[],value:r===H?void 0:r}),e.push({op:"replace",path:[],value:n})}})}function C(){function r(n,r){function t(){this.constructor=n}a(n,r),n.prototype=(t.prototype=r.prototype,new t)}function e(n){n.o||(n.R=new Map,n.o=new Map(n.t))}function o(n){n.o||(n.o=new Set,n.t.forEach((function(r){if(t(r)){var e=N(n.A.h,r,n);n.p.set(r,e),n.o.add(e)}else n.o.add(r)})))}function u(r){r.g&&n(3,JSON.stringify(p(r)))}var a=function(n,r){return(a=Object.setPrototypeOf||{__proto__:[]}instanceof Array&&function(n,r){n.__proto__=r}||function(n,r){for(var t in r)r.hasOwnProperty(t)&&(n[t]=r[t])})(n,r)},f=function(){function n(n,r){return this[Q]={i:2,l:r,A:r?r.A:_(),P:!1,I:!1,o:void 0,R:void 0,t:n,k:this,C:!1,g:!1},this}r(n,Map);var o=n.prototype;return Object.defineProperty(o,"size",{get:function(){return p(this[Q]).size}}),o.has=function(n){return p(this[Q]).has(n)},o.set=function(n,r){var t=this[Q];return u(t),p(t).has(n)&&p(t).get(n)===r||(e(t),k(t),t.R.set(n,!0),t.o.set(n,r),t.R.set(n,!0)),this},o.delete=function(n){if(!this.has(n))return!1;var r=this[Q];return u(r),e(r),k(r),r.t.has(n)?r.R.set(n,!1):r.R.delete(n),r.o.delete(n),!0},o.clear=function(){var n=this[Q];u(n),p(n).size&&(e(n),k(n),n.R=new Map,i(n.t,(function(r){n.R.set(r,!1)})),n.o.clear())},o.forEach=function(n,r){var t=this;p(this[Q]).forEach((function(e,i){n.call(r,t.get(i),i,t)}))},o.get=function(n){var r=this[Q];u(r);var i=p(r).get(n);if(r.I||!t(i))return i;if(i!==r.t.get(n))return i;var o=N(r.A.h,i,r);return e(r),r.o.set(n,o),o},o.keys=function(){return p(this[Q]).keys()},o.values=function(){var n,r=this,t=this.keys();return(n={})[V]=function(){return r.values()},n.next=function(){var n=t.next();return n.done?n:{done:!1,value:r.get(n.value)}},n},o.entries=function(){var n,r=this,t=this.keys();return(n={})[V]=function(){return r.entries()},n.next=function(){var n=t.next();if(n.done)return n;var e=r.get(n.value);return{done:!1,value:[n.value,e]}},n},o[V]=function(){return this.entries()},n}(),c=function(){function n(n,r){return this[Q]={i:3,l:r,A:r?r.A:_(),P:!1,I:!1,o:void 0,t:n,k:this,p:new Map,g:!1,C:!1},this}r(n,Set);var t=n.prototype;return Object.defineProperty(t,"size",{get:function(){return p(this[Q]).size}}),t.has=function(n){var r=this[Q];return u(r),r.o?!!r.o.has(n)||!(!r.p.has(n)||!r.o.has(r.p.get(n))):r.t.has(n)},t.add=function(n){var r=this[Q];return u(r),this.has(n)||(o(r),k(r),r.o.add(n)),this},t.delete=function(n){if(!this.has(n))return!1;var r=this[Q];return u(r),o(r),k(r),r.o.delete(n)||!!r.p.has(n)&&r.o.delete(r.p.get(n))},t.clear=function(){var n=this[Q];u(n),p(n).size&&(o(n),k(n),n.o.clear())},t.values=function(){var n=this[Q];return u(n),o(n),n.o.values()},t.entries=function(){var n=this[Q];return u(n),o(n),n.o.entries()},t.keys=function(){return this.values()},t[V]=function(){return this.values()},t.forEach=function(n,r){for(var t=this.values(),e=t.next();!e.done;)n.call(r,e.value,e.value,this),e=t.next()},n}();m("MapSet",{F:function(n,r){return new f(n,r)},T:function(n,r){return new c(n,r)}})}function J(){F(),C(),T()}function K(n){return n}function $(n){return n}var G,U,W="undefined"!=typeof Symbol&&"symbol"==typeof Symbol("x"),X="undefined"!=typeof Map,q="undefined"!=typeof Set,B="undefined"!=typeof Proxy&&void 0!==Proxy.revocable&&"undefined"!=typeof Reflect,H=W?Symbol.for("immer-nothing"):((G={})["immer-nothing"]=!0,G),L=W?Symbol.for("immer-draftable"):"__$immer_draftable",Q=W?Symbol.for("immer-state"):"__$immer_state",V="undefined"!=typeof Symbol&&Symbol.iterator||"@@iterator",Y={0:"Illegal state",1:"Immer drafts cannot have computed properties",2:"This object has been frozen and should not be mutated",3:function(n){return"Cannot use a proxy that has been revoked. Did you pass an object from inside an immer function to an async process? "+n},4:"An immer producer returned a new value *and* modified its draft. Either return a new value *or* modify the draft.",5:"Immer forbids circular references",6:"The first or second argument to `produce` must be a function",7:"The third argument to `produce` must be a function or undefined",8:"First argument to `createDraft` must be a plain object, an array, or an immerable object",9:"First argument to `finishDraft` must be a draft returned by `createDraft`",10:"The given draft is already finalized",11:"Object.defineProperty() cannot be used on an Immer draft",12:"Object.setPrototypeOf() cannot be used on an Immer draft",13:"Immer only supports deleting array indices",14:"Immer only supports setting array indices and the 'length' property",15:function(n){return"Cannot apply patch, path doesn't resolve: "+n},16:'Sets cannot have "replace" patches.',17:function(n){return"Unsupported patch operation: "+n},18:function(n){return"The plugin for '"+n+"' has not been loaded into Immer. To enable the plugin, import and call `enable"+n+"()` when initializing your application."},20:"Cannot use proxies if Proxy, Proxy.revocable or Reflect are not available",21:function(n){return"produce can only be called on things that are draftable: plain objects, arrays, Map, Set or classes that are marked with '[immerable]: true'. Got '"+n+"'"},22:function(n){return"'current' expects a draft, got: "+n},23:function(n){return"'original' expects a draft, got: "+n},24:"Patching reserved attributes like __proto__, prototype and constructor is not allowed"},Z=""+Object.prototype.constructor,nn="undefined"!=typeof Reflect&&Reflect.ownKeys?Reflect.ownKeys:void 0!==Object.getOwnPropertySymbols?function(n){return Object.getOwnPropertyNames(n).concat(Object.getOwnPropertySymbols(n))}:Object.getOwnPropertyNames,rn=Object.getOwnPropertyDescriptors||function(n){var r={};return nn(n).forEach((function(t){r[t]=Object.getOwnPropertyDescriptor(n,t)})),r},tn={},en={get:function(n,r){if(r===Q)return n;var e=p(n);if(!u(e,r))return function(n,r,t){var e,i=I(r,t);return i?"value"in i?i.value:null===(e=i.get)||void 0===e?void 0:e.call(n.k):void 0}(n,e,r);var i=e[r];return n.I||!t(i)?i:i===z(n.t,r)?(E(n),n.o[r]=N(n.A.h,i,n)):i},has:function(n,r){return r in p(n)},ownKeys:function(n){return Reflect.ownKeys(p(n))},set:function(n,r,t){var e=I(p(n),r);if(null==e?void 0:e.set)return e.set.call(n.k,t),!0;if(!n.P){var i=z(p(n),r),o=null==i?void 0:i[Q];if(o&&o.t===t)return n.o[r]=t,n.R[r]=!1,!0;if(c(t,i)&&(void 0!==t||u(n.t,r)))return!0;E(n),k(n)}return n.o[r]===t&&(void 0!==t||r in n.o)||Number.isNaN(t)&&Number.isNaN(n.o[r])||(n.o[r]=t,n.R[r]=!0),!0},deleteProperty:function(n,r){return void 0!==z(n.t,r)||r in n.t?(n.R[r]=!1,E(n),k(n)):delete n.R[r],n.o&&delete n.o[r],!0},getOwnPropertyDescriptor:function(n,r){var t=p(n),e=Reflect.getOwnPropertyDescriptor(t,r);return e?{writable:!0,configurable:1!==n.i||"length"!==r,enumerable:e.enumerable,value:t[r]}:e},defineProperty:function(){n(11)},getPrototypeOf:function(n){return Object.getPrototypeOf(n.t)},setPrototypeOf:function(){n(12)}},on={};i(en,(function(n,r){on[n]=function(){return arguments[0]=arguments[0][0],r.apply(this,arguments)}})),on.deleteProperty=function(r,t){return true&&isNaN(parseInt(t))&&n(13),on.set.call(this,r,t,void 0)},on.set=function(r,t,e){return true&&"length"!==t&&isNaN(parseInt(t))&&n(14),en.set.call(this,r[0],t,e,r[0])};var un=function(){function e(r){var e=this;this.O=B,this.D=!0,this.produce=function(r,i,o){if("function"==typeof r&&"function"!=typeof i){var u=i;i=r;var a=e;return function(n){var r=this;void 0===n&&(n=u);for(var t=arguments.length,e=Array(t>1?t-1:0),o=1;o<t;o++)e[o-1]=arguments[o];return a.produce(n,(function(n){var t;return(t=i).call.apply(t,[r,n].concat(e))}))}}var f;if("function"!=typeof i&&n(6),void 0!==o&&"function"!=typeof o&&n(7),t(r)){var c=w(e),s=N(e,r,void 0),v=!0;try{f=i(s),v=!1}finally{v?g(c):O(c)}return"undefined"!=typeof Promise&&f instanceof Promise?f.then((function(n){return j(c,o),P(n,c)}),(function(n){throw g(c),n})):(j(c,o),P(f,c))}if(!r||"object"!=typeof r){if(void 0===(f=i(r))&&(f=r),f===H&&(f=void 0),e.D&&d(f,!0),o){var p=[],l=[];b("Patches").M(r,f,p,l),o(p,l)}return f}n(21,r)},this.produceWithPatches=function(n,r){if("function"==typeof n)return function(r){for(var t=arguments.length,i=Array(t>1?t-1:0),o=1;o<t;o++)i[o-1]=arguments[o];return e.produceWithPatches(r,(function(r){return n.apply(void 0,[r].concat(i))}))};var t,i,o=e.produce(n,r,(function(n,r){t=n,i=r}));return"undefined"!=typeof Promise&&o instanceof Promise?o.then((function(n){return[n,t,i]})):[o,t,i]},"boolean"==typeof(null==r?void 0:r.useProxies)&&this.setUseProxies(r.useProxies),"boolean"==typeof(null==r?void 0:r.autoFreeze)&&this.setAutoFreeze(r.autoFreeze)}var i=e.prototype;return i.createDraft=function(e){t(e)||n(8),r(e)&&(e=R(e));var i=w(this),o=N(this,e,void 0);return o[Q].C=!0,O(i),o},i.finishDraft=function(r,t){var e=r&&r[Q]; true&&(e&&e.C||n(9),e.I&&n(10));var i=e.A;return j(i,t),P(void 0,i)},i.setAutoFreeze=function(n){this.D=n},i.setUseProxies=function(r){r&&!B&&n(20),this.O=r},i.applyPatches=function(n,t){var e;for(e=t.length-1;e>=0;e--){var i=t[e];if(0===i.path.length&&"replace"===i.op){n=i.value;break}}e>-1&&(t=t.slice(e+1));var o=b("Patches").$;return r(n)?o(n,t):this.produce(n,(function(n){return o(n,t)}))},e}(),an=new un,fn=an.produce,cn=an.produceWithPatches.bind(an),sn=an.setAutoFreeze.bind(an),vn=an.setUseProxies.bind(an),pn=an.applyPatches.bind(an),ln=an.createDraft.bind(an),dn=an.finishDraft.bind(an);/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (fn);
 //# sourceMappingURL=immer.esm.js.map
 
 
@@ -62823,8 +63346,8 @@ module.exports = ReactDOM;
 /******/ 		// This function allow to reference async chunks
 /******/ 		__webpack_require__.u = (chunkId) => {
 /******/ 			// return url for filenames not based on template
-/******/ 			if (chunkId === "app_modules_onboarding_assets_js_utils_modules_post-onboarding-tracker_js") return "476658b095f7fe3d4745.bundle.js";
-/******/ 			if (chunkId === "assets_dev_js_editor_utils_post-onboarding-tracking_js") return "ef3edd287b253495c7d6.bundle.js";
+/******/ 			if (chunkId === "app_modules_onboarding_assets_js_utils_modules_post-onboarding-tracker_js") return "b2e8e6071c9bc14c04e4.bundle.js";
+/******/ 			if (chunkId === "assets_dev_js_editor_utils_post-onboarding-tracking_js") return "e883e6638ef93bfd3204.bundle.js";
 /******/ 			// return url for filenames based on template
 /******/ 			return undefined;
 /******/ 		};
@@ -62867,7 +63390,6 @@ module.exports = ReactDOM;
 /******/ 				script = document.createElement('script');
 /******/ 		
 /******/ 				script.charset = 'utf-8';
-/******/ 				script.timeout = 120;
 /******/ 				if (__webpack_require__.nc) {
 /******/ 					script.setAttribute("nonce", __webpack_require__.nc);
 /******/ 				}

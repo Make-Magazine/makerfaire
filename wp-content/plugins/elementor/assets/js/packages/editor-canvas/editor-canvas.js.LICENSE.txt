@@ -1,9 +1,13 @@
 /*!
-* tabbable 6.2.0
+* tabbable 6.3.0
 * @license MIT, https://github.com/focus-trap/tabbable/blob/master/LICENSE
 */
 
 /*! ../../renderers/multi-props */
+
+/*! ../../resources/widgets-schema-resource */
+
+/*! ../../utils/do-update-element-property */
 
 /*! ../create-transformer */
 
@@ -12,6 +16,10 @@
 /*! ../hooks/use-documents-css-links */
 
 /*! ../hooks/use-floating-on-element */
+
+/*! ../hooks/use-has-overlapping */
+
+/*! ../hooks/use-interactions-items */
 
 /*! ../hooks/use-style-items */
 
@@ -33,6 +41,8 @@
 
 /*! ../utils/abort-previous-runs */
 
+/*! ../utils/inline-editing-utils */
+
 /*! ../utils/signalized-process */
 
 /*! ./cjs/react-jsx-runtime.development.js */
@@ -41,13 +51,13 @@
 
 /*! ./components/elements-overlays */
 
+/*! ./components/interactions-renderer */
+
 /*! ./components/style-renderer */
 
 /*! ./create-element-type */
 
 /*! ./create-templated-element-type */
-
-/*! ./element-overlay */
 
 /*! ./errors */
 
@@ -57,17 +67,35 @@
 
 /*! ./init-style-transformers */
 
+/*! ./inline-editor-overlay */
+
+/*! ./legacy/create-templated-element-type */
+
 /*! ./legacy/init-legacy-views */
 
+/*! ./legacy/types */
+
+/*! ./mcp/canvas-mcp */
+
+/*! ./mcp/mcp-description */
+
 /*! ./multi-props */
+
+/*! ./outline-overlay */
 
 /*! ./paste-style */
 
 /*! ./prevent-link-in-link-commands */
 
+/*! ./prompt */
+
 /*! ./renderers/create-props-resolver */
 
 /*! ./reset-style */
+
+/*! ./resources/widgets-schema-resource */
+
+/*! ./schema */
 
 /*! ./settings-transformers-registry */
 
@@ -77,6 +105,14 @@
 
 /*! ./sync/drag-element-from-panel */
 
+/*! ./sync/get-canvas-iframe-document */
+
+/*! ./tools/build-composition/tool */
+
+/*! ./tools/configure-element/tool */
+
+/*! ./tools/get-element-config/tool */
+
 /*! ./transformers/create-transformer */
 
 /*! ./transformers/create-transformers-registry */
@@ -84,6 +120,8 @@
 /*! ./transformers/settings/attributes-transformer */
 
 /*! ./transformers/settings/classes-transformer */
+
+/*! ./transformers/settings/date-time-transformer */
 
 /*! ./transformers/settings/link-transformer */
 
@@ -155,9 +193,15 @@
 
 /*! @elementor/editor */
 
+/*! @elementor/editor-controls */
+
 /*! @elementor/editor-documents */
 
 /*! @elementor/editor-elements */
+
+/*! @elementor/editor-interactions */
+
+/*! @elementor/editor-mcp */
 
 /*! @elementor/editor-notifications */
 
@@ -170,6 +214,8 @@
 /*! @elementor/editor-styles-repository */
 
 /*! @elementor/editor-v1-adapters */
+
+/*! @elementor/schema */
 
 /*! @elementor/twing */
 
@@ -231,9 +277,17 @@
   !*** external ["elementorV2","editor"] ***!
   \*****************************************/
 
+/*!*****************************************!*\
+  !*** external ["elementorV2","schema"] ***!
+  \*****************************************/
+
 /*!******************************************!*\
   !*** external ["elementorV2","wpMedia"] ***!
   \******************************************/
+
+/*!********************************************!*\
+  !*** external ["elementorV2","editorMcp"] ***!
+  \********************************************/
 
 /*!**********************************************!*\
   !*** external ["elementorV2","editorProps"] ***!
@@ -242,6 +296,10 @@
 /*!***********************************************!*\
   !*** external ["elementorV2","editorStyles"] ***!
   \***********************************************/
+
+/*!*************************************************!*\
+  !*** external ["elementorV2","editorControls"] ***!
+  \*************************************************/
 
 /*!*************************************************!*\
   !*** external ["elementorV2","editorElements"] ***!
@@ -263,6 +321,10 @@
   !*** ./packages/node_modules/react/jsx-runtime.js ***!
   \****************************************************/
 
+/*!*****************************************************!*\
+  !*** external ["elementorV2","editorInteractions"] ***!
+  \*****************************************************/
+
 /*!******************************************************!*\
   !*** external ["elementorV2","editorNotifications"] ***!
   \******************************************************/
@@ -283,6 +345,14 @@
   !*** ./packages/packages/core/editor-canvas/src/init.tsx ***!
   \***********************************************************/
 
+/*!******************************************************************!*\
+  !*** ./packages/packages/core/editor-canvas/src/legacy/types.ts ***!
+  \******************************************************************/
+
+/*!********************************************************************!*\
+  !*** ./packages/packages/core/editor-canvas/src/mcp/canvas-mcp.ts ***!
+  \********************************************************************/
+
 /*!**********************************************************************!*\
   !*** ./packages/packages/core/editor-canvas/src/renderers/errors.ts ***!
   \**********************************************************************/
@@ -297,6 +367,10 @@
 
 /*!*************************************************************************!*\
   !*** ./packages/node_modules/@floating-ui/dom/dist/floating-ui.dom.mjs ***!
+  \*************************************************************************/
+
+/*!*************************************************************************!*\
+  !*** ./packages/packages/core/editor-canvas/src/mcp/mcp-description.ts ***!
   \*************************************************************************/
 
 /*!**************************************************************************!*\
@@ -344,6 +418,10 @@
   \******************************************************************************/
 
 /*!*******************************************************************************!*\
+  !*** ./packages/packages/core/editor-canvas/src/hooks/use-has-overlapping.ts ***!
+  \*******************************************************************************/
+
+/*!*******************************************************************************!*\
   !*** ./packages/packages/core/editor-canvas/src/utils/abort-previous-runs.ts ***!
   \*******************************************************************************/
 
@@ -371,17 +449,25 @@
   !*** ./packages/packages/core/editor-canvas/src/style-commands/reset-style.ts ***!
   \********************************************************************************/
 
+/*!********************************************************************************!*\
+  !*** ./packages/packages/core/editor-canvas/src/utils/inline-editing-utils.ts ***!
+  \********************************************************************************/
+
 /*!*********************************************************************************!*\
   !*** ./packages/node_modules/@floating-ui/utils/dist/floating-ui.utils.dom.mjs ***!
   \*********************************************************************************/
 
 /*!*********************************************************************************!*\
-  !*** ./packages/packages/core/editor-canvas/src/components/element-overlay.tsx ***!
+  !*** ./packages/packages/core/editor-canvas/src/components/outline-overlay.tsx ***!
   \*********************************************************************************/
 
 /*!*********************************************************************************!*\
   !*** ./packages/packages/core/editor-canvas/src/style-transformers-registry.ts ***!
   \*********************************************************************************/
+
+/*!**********************************************************************************!*\
+  !*** ./packages/packages/core/editor-canvas/src/hooks/use-interactions-items.ts ***!
+  \**********************************************************************************/
 
 /*!**********************************************************************************!*\
   !*** ./packages/packages/core/editor-canvas/src/sync/drag-element-from-panel.ts ***!
@@ -436,8 +522,44 @@
   \*************************************************************************************/
 
 /*!**************************************************************************************!*\
+  !*** ./packages/packages/core/editor-canvas/src/mcp/tools/build-composition/tool.ts ***!
+  \**************************************************************************************/
+
+/*!**************************************************************************************!*\
+  !*** ./packages/packages/core/editor-canvas/src/mcp/tools/configure-element/tool.ts ***!
+  \**************************************************************************************/
+
+/*!**************************************************************************************!*\
   !*** ./packages/packages/core/editor-canvas/src/renderers/create-styles-renderer.ts ***!
   \**************************************************************************************/
+
+/*!***************************************************************************************!*\
+  !*** ./packages/packages/core/editor-canvas/src/components/inline-editor-overlay.tsx ***!
+  \***************************************************************************************/
+
+/*!***************************************************************************************!*\
+  !*** ./packages/packages/core/editor-canvas/src/components/interactions-renderer.tsx ***!
+  \***************************************************************************************/
+
+/*!***************************************************************************************!*\
+  !*** ./packages/packages/core/editor-canvas/src/mcp/tools/get-element-config/tool.ts ***!
+  \***************************************************************************************/
+
+/*!****************************************************************************************!*\
+  !*** ./packages/packages/core/editor-canvas/src/mcp/tools/build-composition/prompt.ts ***!
+  \****************************************************************************************/
+
+/*!****************************************************************************************!*\
+  !*** ./packages/packages/core/editor-canvas/src/mcp/tools/build-composition/schema.ts ***!
+  \****************************************************************************************/
+
+/*!****************************************************************************************!*\
+  !*** ./packages/packages/core/editor-canvas/src/mcp/tools/configure-element/prompt.ts ***!
+  \****************************************************************************************/
+
+/*!****************************************************************************************!*\
+  !*** ./packages/packages/core/editor-canvas/src/mcp/tools/configure-element/schema.ts ***!
+  \****************************************************************************************/
 
 /*!****************************************************************************************!*\
   !*** ./packages/packages/core/editor-canvas/src/style-commands/init-style-commands.ts ***!
@@ -445,6 +567,10 @@
 
 /*!******************************************************************************************!*\
   !*** ./packages/packages/core/editor-canvas/src/legacy/create-templated-element-type.ts ***!
+  \******************************************************************************************/
+
+/*!******************************************************************************************!*\
+  !*** ./packages/packages/core/editor-canvas/src/mcp/utils/do-update-element-property.ts ***!
   \******************************************************************************************/
 
 /*!******************************************************************************************!*\
@@ -457,6 +583,10 @@
 
 /*!*******************************************************************************************!*\
   !*** ./packages/packages/core/editor-canvas/src/hooks/use-bind-react-props-to-element.ts ***!
+  \*******************************************************************************************/
+
+/*!*******************************************************************************************!*\
+  !*** ./packages/packages/core/editor-canvas/src/mcp/resources/widgets-schema-resource.ts ***!
   \*******************************************************************************************/
 
 /*!*******************************************************************************************!*\
@@ -514,6 +644,10 @@
 /*!************************************************************************************************!*\
   !*** ./packages/packages/core/editor-canvas/src/transformers/styles/transition-transformer.ts ***!
   \************************************************************************************************/
+
+/*!*************************************************************************************************!*\
+  !*** ./packages/packages/core/editor-canvas/src/transformers/settings/date-time-transformer.ts ***!
+  \*************************************************************************************************/
 
 /*!**************************************************************************************************!*\
   !*** ./packages/packages/core/editor-canvas/src/transformers/settings/attributes-transformer.ts ***!

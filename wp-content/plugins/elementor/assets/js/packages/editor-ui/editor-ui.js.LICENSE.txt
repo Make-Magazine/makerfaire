@@ -12,6 +12,8 @@
 
 /*! ./components/ellipsis-with-tooltip */
 
+/*! ./components/form */
+
 /*! ./components/global-dialog */
 
 /*! ./components/info-alert */
@@ -95,6 +97,10 @@
 /*!*************************************************************!*\
   !*** ./packages/packages/libs/editor-ui/src/hooks/index.ts ***!
   \*************************************************************/
+
+/*!******************************************************************!*\
+  !*** ./packages/packages/libs/editor-ui/src/components/form.tsx ***!
+  \******************************************************************/
 
 /*!********************************************************************!*\
   !*** ./packages/packages/libs/editor-ui/src/hooks/use-editable.ts ***!

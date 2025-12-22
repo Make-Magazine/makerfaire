@@ -206,6 +206,7 @@ export function KitSettingsCustomizationDialog( {
 										checked={ settings.customFonts }
 										disabled={ ( isImport && ! data?.uploadedData?.manifest?.[ 'custom-fonts' ] ) || ! isHighTier() }
 										tooltip={ ! isHighTier() }
+										notExported={ isImport && ! data?.uploadedData?.manifest?.[ 'custom-fonts' ] }
 									/>
 									<SubSetting
 										label={ __( 'Custom icons', 'elementor' ) }
@@ -214,6 +215,7 @@ export function KitSettingsCustomizationDialog( {
 										checked={ settings.customIcons }
 										disabled={ ( isImport && ! data?.uploadedData?.manifest?.[ 'custom-icons' ] ) || ! isHighTier() }
 										tooltip={ ! isHighTier() }
+										notExported={ isImport && ! data?.uploadedData?.manifest?.[ 'custom-icons' ] }
 									/>
 									<SubSetting
 										label={ __( 'Custom code', 'elementor' ) }
@@ -222,6 +224,7 @@ export function KitSettingsCustomizationDialog( {
 										checked={ settings.customCode }
 										disabled={ ( isImport && ! data?.uploadedData?.manifest?.[ 'custom-code' ] ) || ! isHighTier() }
 										tooltip={ ! isHighTier() }
+										notExported={ isImport && ! data?.uploadedData?.manifest?.[ 'custom-code' ] }
 									/>
 								</Stack>
 							</SettingSection>

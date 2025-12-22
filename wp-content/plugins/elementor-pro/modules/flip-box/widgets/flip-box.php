@@ -504,20 +504,25 @@ class Flip_Box extends Base_Widget {
 				'label' => esc_html__( 'Alignment', 'elementor-pro' ),
 				'type' => Controls_Manager::CHOOSE,
 				'options' => [
-					'left' => [
-						'title' => esc_html__( 'Left', 'elementor-pro' ),
+					'start' => [
+						'title' => esc_html__( 'Start', 'elementor-pro' ),
 						'icon' => 'eicon-text-align-left',
 					],
 					'center' => [
 						'title' => esc_html__( 'Center', 'elementor-pro' ),
 						'icon' => 'eicon-text-align-center',
 					],
-					'right' => [
-						'title' => esc_html__( 'Right', 'elementor-pro' ),
+					'end' => [
+						'title' => esc_html__( 'End', 'elementor-pro' ),
 						'icon' => 'eicon-text-align-right',
 					],
 				],
 				'default' => 'center',
+				'classes' => 'elementor-control-start-end',
+				'selectors_dictionary' => [
+					'left' => is_rtl() ? 'end' : 'start',
+					'right' => is_rtl() ? 'start' : 'end',
+				],
 				'selectors' => [
 					'{{WRAPPER}} .elementor-flip-box__front .elementor-flip-box__layer__overlay' => 'text-align: {{VALUE}}',
 				],
@@ -1129,23 +1134,28 @@ class Flip_Box extends Base_Widget {
 				'label' => esc_html__( 'Alignment', 'elementor-pro' ),
 				'type' => Controls_Manager::CHOOSE,
 				'options' => [
-					'left' => [
-						'title' => esc_html__( 'Left', 'elementor-pro' ),
+					'start' => [
+						'title' => esc_html__( 'Start', 'elementor-pro' ),
 						'icon' => 'eicon-text-align-left',
 					],
 					'center' => [
 						'title' => esc_html__( 'Center', 'elementor-pro' ),
 						'icon' => 'eicon-text-align-center',
 					],
-					'right' => [
-						'title' => esc_html__( 'Right', 'elementor-pro' ),
+					'end' => [
+						'title' => esc_html__( 'End', 'elementor-pro' ),
 						'icon' => 'eicon-text-align-right',
 					],
 				],
 				'default' => 'center',
+				'classes' => 'elementor-control-start-end',
+				'selectors_dictionary' => [
+					'left' => is_rtl() ? 'end' : 'start',
+					'right' => is_rtl() ? 'start' : 'end',
+				],
 				'selectors' => [
 					'{{WRAPPER}} .elementor-flip-box__back .elementor-flip-box__layer__overlay' => 'text-align: {{VALUE}}',
-					'{{WRAPPER}} .elementor-flip-box__button' => 'margin-{{VALUE}}: 0',
+					'{{WRAPPER}} .elementor-flip-box__button' => 'margin-inline-{{VALUE}}: 0',
 				],
 			]
 		);
@@ -1587,6 +1597,7 @@ class Flip_Box extends Base_Widget {
 		$title_tag = Utils::validate_html_tag( $settings['title_tag'] );
 		$description_tag = Utils::validate_html_tag( $settings['description_tag'] );
 		$migration_allowed = Icons_Manager::is_migration_allowed();
+
 		$this->add_render_attribute( 'button', 'class', [
 			'elementor-flip-box__button',
 			'elementor-button',
@@ -1620,14 +1631,19 @@ class Flip_Box extends Base_Widget {
 			}
 
 			if ( ! empty( $settings['icon'] ) ) {
-				$this->add_render_attribute( 'icon', 'class', $settings['icon'] );
+				$this->add_render_attribute(
+					'icon',
+					[
+						'class' => $settings['icon'],
+						'aria-hidden' => 'true',
+					]
+				);
 			}
 		}
 
 		$has_icon = ! empty( $settings['icon'] ) || ! empty( $settings['selected_icon'] );
 		$migrated = isset( $settings['__fa4_migrated']['selected_icon'] );
 		$is_new = empty( $settings['icon'] ) && $migration_allowed;
-
 		?>
 		<div class="elementor-flip-box" tabindex="0">
 			<div class="elementor-flip-box__layer elementor-flip-box__front">
@@ -1641,7 +1657,7 @@ class Flip_Box extends Base_Widget {
 							<div <?php $this->print_render_attribute_string( 'icon-wrapper' ); ?>>
 								<div class="elementor-icon">
 									<?php if ( $is_new || $migrated ) :
-										Icons_Manager::render_icon( $settings['selected_icon'] );
+										Icons_Manager::render_icon( $settings['selected_icon'], [ 'aria-hidden' => 'true' ] );
 									else : ?>
 										<i <?php $this->print_render_attribute_string( 'icon' ); ?>></i>
 									<?php endif; ?>
@@ -1736,7 +1752,6 @@ class Flip_Box extends Base_Widget {
 			iconHTML = elementor.helpers.renderIcon( view, settings.selected_icon, { 'aria-hidden': true }, 'i' , 'object' ),
 			migrated = elementor.helpers.isIconMigrated( settings, 'selected_icon' );
 		#>
-
 		<div class="elementor-flip-box" tabindex="0">
 			<div class="elementor-flip-box__layer elementor-flip-box__front">
 				<div class="elementor-flip-box__layer__overlay">
@@ -1751,7 +1766,7 @@ class Flip_Box extends Base_Widget {
 								<# if ( iconHTML && iconHTML.rendered && ( ! settings.icon || migrated ) ) { #>
 									{{{ iconHTML.value }}}
 								<# } else { #>
-									<i class="{{ settings.icon }}"></i>
+									<i class="{{ settings.icon }}" aria-hidden="true"></i>
 								<# } #>
 							</div>
 						</div>

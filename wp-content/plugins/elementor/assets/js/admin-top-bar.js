@@ -132,27 +132,39 @@ var _connectionButton = _interopRequireDefault(__webpack_require__(/*! ./compone
 var _usePageTitle = __webpack_require__(/*! ./hooks/use-page-title/use-page-title */ "../modules/admin-top-bar/assets/js/hooks/use-page-title/use-page-title.js");
 var _environment = _interopRequireDefault(__webpack_require__(/*! elementor-common/utils/environment */ "../core/common/assets/js/utils/environment.js"));
 function _interopRequireWildcard(e, t) { if ("function" == typeof WeakMap) var r = new WeakMap(), n = new WeakMap(); return (_interopRequireWildcard = function _interopRequireWildcard(e, t) { if (!t && e && e.__esModule) return e; var o, i, f = { __proto__: null, default: e }; if (null === e || "object" != _typeof(e) && "function" != typeof e) return f; if (o = t ? n : r) { if (o.has(e)) return o.get(e); o.set(e, f); } for (var _t in e) "default" !== _t && {}.hasOwnProperty.call(e, _t) && ((i = (o = Object.defineProperty) && Object.getOwnPropertyDescriptor(e, _t)) && (i.get || i.set) ? o(f, _t, i) : f[_t] = e[_t]); return f; })(e, t); }
+var isEditorOneEnabled = function isEditorOneEnabled() {
+  var _window$elementorComm, _window$elementorComm2;
+  return (_window$elementorComm = (_window$elementorComm2 = window.elementorCommon) === null || _window$elementorComm2 === void 0 || (_window$elementorComm2 = _window$elementorComm2.config) === null || _window$elementorComm2 === void 0 || (_window$elementorComm2 = _window$elementorComm2.experimentalFeatures) === null || _window$elementorComm2 === void 0 ? void 0 : _window$elementorComm2.e_editor_one) !== null && _window$elementorComm !== void 0 ? _window$elementorComm : false;
+};
 function AdminTopBar() {
   var _window, _elementorNotificatio;
   var actionButtonsRef = (0, _react.useRef)(),
-    promotion = window.elementorAdminTopBarConfig.promotion;
+    promotion = window.elementorAdminTopBarConfig.promotion,
+    editorOneEnabled = isEditorOneEnabled();
 
   // Handle Top Bar visibility on initiation: Indicate that the admin top bar is visible and the page content needs to push down below the admin top bar for visibility.
   (0, _react.useEffect)(function () {
     var adminTopBarElement = document.querySelector('#e-admin-top-bar-root');
     adminTopBarElement.classList.add('e-admin-top-bar--active');
-  }, []);
+    if (editorOneEnabled) {
+      adminTopBarElement.classList.add('e-admin-top-bar--editor-one');
+    }
+  }, [editorOneEnabled]);
 
   // Handle the page title visibility in admin top bar.
   var pageTitleText = (0, _usePageTitle.usePageTitle)();
 
   // Handle the action buttons visibility in admin top bar on initiation.
+  // Skip moving buttons when Editor One is enabled - they stay in .wrap
   (0, _react.useEffect)(function () {
+    if (editorOneEnabled) {
+      return;
+    }
     var actionButtonElements = document.querySelectorAll('.page-title-action');
     actionButtonElements.forEach(function (actionButtonElement) {
       actionButtonsRef.current.appendChild(actionButtonElement);
     });
-  }, []);
+  }, [editorOneEnabled]);
   var finderAction = function finderAction() {
     $e.route('finder');
   };

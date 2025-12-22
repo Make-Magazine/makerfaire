@@ -68,7 +68,11 @@ class Site_Settings extends Import_Runner_Base {
 		$new_kit = Plugin::elementor()->kits_manager->create_new_kit( $title, $new_site_settings );
 		$this->imported_kit_id = (int) $new_kit;
 
-		$result['site-settings'] = (bool) $new_kit;
+		$result['site-settings']['imported_kit_id'] = $this->imported_kit_id;
+
+		foreach ( $new_site_settings as $key => $value ) {
+			$result['site-settings'][ $key ] = $value;
+		}
 
 		if ( $customization['theme'] ?? false ) {
 			$import_theme_result = $runner->import_theme( $data );

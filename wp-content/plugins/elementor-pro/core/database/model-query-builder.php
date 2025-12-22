@@ -26,7 +26,7 @@ class Model_Query_Builder extends Query_Builder {
 	 * @param string $model_classname - Model to use inside the builder.
 	 * @param \wpdb|null $connection - MySQL connection.
 	 */
-	public function __construct( $model_classname, \wpdb $connection = null ) {
+	public function __construct( $model_classname, ?\wpdb $connection = null ) {
 		$this->set_model( $model_classname );
 
 		parent::__construct( $connection );

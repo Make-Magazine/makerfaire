@@ -145,6 +145,16 @@ const CustomCss = () => {
       });
     }
   };
+  const syntaxRuleOptions = (0,react__WEBPACK_IMPORTED_MODULE_0__.useMemo)(() => {
+    if (!meta.breakpoint || meta.breakpoint === 'desktop') {
+      return {
+        rules: {
+          mediaQuery: false
+        }
+      };
+    }
+    return undefined;
+  }, [meta.breakpoint]);
   return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(_elementor_editor_editing_panel__WEBPACK_IMPORTED_MODULE_3__.SectionContent, {
     gap: 1
   }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(_custom_css_field__WEBPACK_IMPORTED_MODULE_6__.CustomCssField, null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(_elementor_ui__WEBPACK_IMPORTED_MODULE_4__.Stack, {
@@ -153,7 +163,8 @@ const CustomCss = () => {
     gap: 1
   }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(_elementor_editor_controls__WEBPACK_IMPORTED_MODULE_1__.ControlFormLabel, null, (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_5__.__)('CSS code', 'elementor-pro')), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(_elementor_editor_controls__WEBPACK_IMPORTED_MODULE_1__.ControlAdornments, null))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(_elementor_editor_controls_extended__WEBPACK_IMPORTED_MODULE_2__.CssEditor, {
     value: currentLocalState.value,
-    onChange: handleChange
+    onChange: handleChange,
+    syntaxRuleOptions: syntaxRuleOptions
   }));
 };
 
@@ -169,24 +180,50 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   init: function() { return /* binding */ init; }
 /* harmony export */ });
-/* harmony import */ var _elementor_editor_controls_extended__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @elementor/editor-controls-extended */ "@elementor/editor-controls-extended");
-/* harmony import */ var _elementor_editor_controls_extended__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_elementor_editor_controls_extended__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _elementor_editor_editing_panel__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @elementor/editor-editing-panel */ "@elementor/editor-editing-panel");
-/* harmony import */ var _elementor_editor_editing_panel__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_elementor_editor_editing_panel__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var _elementor_editor_props__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @elementor/editor-props */ "@elementor/editor-props");
-/* harmony import */ var _elementor_editor_props__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_elementor_editor_props__WEBPACK_IMPORTED_MODULE_2__);
-/* harmony import */ var _components_custom_css_section__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./components/custom-css-section */ "./packages/packages/pro/editor-editing-panel-extended/src/components/custom-css-section.tsx");
+/* harmony import */ var _elementor_editor_canvas__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @elementor/editor-canvas */ "@elementor/editor-canvas");
+/* harmony import */ var _elementor_editor_canvas__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_elementor_editor_canvas__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _elementor_editor_controls_extended__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @elementor/editor-controls-extended */ "@elementor/editor-controls-extended");
+/* harmony import */ var _elementor_editor_controls_extended__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_elementor_editor_controls_extended__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var _elementor_editor_editing_panel__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @elementor/editor-editing-panel */ "@elementor/editor-editing-panel");
+/* harmony import */ var _elementor_editor_editing_panel__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_elementor_editor_editing_panel__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var _elementor_editor_props__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @elementor/editor-props */ "@elementor/editor-props");
+/* harmony import */ var _elementor_editor_props__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_elementor_editor_props__WEBPACK_IMPORTED_MODULE_3__);
+/* harmony import */ var _components_custom_css_section__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./components/custom-css-section */ "./packages/packages/pro/editor-editing-panel-extended/src/components/custom-css-section.tsx");
+/* harmony import */ var _transformers_settings_attributes_transformer__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./transformers/settings/attributes-transformer */ "./packages/packages/pro/editor-editing-panel-extended/src/transformers/settings/attributes-transformer.ts");
+
+
 
 
 
 
 async function init() {
-  _elementor_editor_editing_panel__WEBPACK_IMPORTED_MODULE_1__.controlsRegistry.register('attributes', _elementor_editor_controls_extended__WEBPACK_IMPORTED_MODULE_0__.AttributesControl, 'full', _elementor_editor_props__WEBPACK_IMPORTED_MODULE_2__.keyValuePropTypeUtil);
-  (0,_elementor_editor_editing_panel__WEBPACK_IMPORTED_MODULE_1__.injectIntoStyleTab)({
+  _elementor_editor_canvas__WEBPACK_IMPORTED_MODULE_0__.settingsTransformersRegistry.register('attributes', _transformers_settings_attributes_transformer__WEBPACK_IMPORTED_MODULE_5__.proAttributesTransformer);
+  _elementor_editor_editing_panel__WEBPACK_IMPORTED_MODULE_2__.controlsRegistry.register('attributes', _elementor_editor_controls_extended__WEBPACK_IMPORTED_MODULE_1__.AttributesControl, 'full', _elementor_editor_props__WEBPACK_IMPORTED_MODULE_3__.keyValuePropTypeUtil);
+  (0,_elementor_editor_editing_panel__WEBPACK_IMPORTED_MODULE_2__.injectIntoStyleTab)({
     id: 'custom-css',
-    component: _components_custom_css_section__WEBPACK_IMPORTED_MODULE_3__.CustomCssStyleSection
+    component: _components_custom_css_section__WEBPACK_IMPORTED_MODULE_4__.CustomCssStyleSection
   });
+  _elementor_editor_editing_panel__WEBPACK_IMPORTED_MODULE_2__.controlsRegistry.register('display-conditions', _elementor_editor_controls_extended__WEBPACK_IMPORTED_MODULE_1__.DisplayConditionsControl, 'two-columns', _elementor_editor_controls_extended__WEBPACK_IMPORTED_MODULE_1__.displayConditionsPropTypeUtil);
 }
+
+/***/ }),
+
+/***/ "./packages/packages/pro/editor-editing-panel-extended/src/transformers/settings/attributes-transformer.ts":
+/*!*****************************************************************************************************************!*\
+  !*** ./packages/packages/pro/editor-editing-panel-extended/src/transformers/settings/attributes-transformer.ts ***!
+  \*****************************************************************************************************************/
+/***/ (function(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   proAttributesTransformer: function() { return /* binding */ proAttributesTransformer; }
+/* harmony export */ });
+/* harmony import */ var _elementor_editor_canvas__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @elementor/editor-canvas */ "@elementor/editor-canvas");
+/* harmony import */ var _elementor_editor_canvas__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_elementor_editor_canvas__WEBPACK_IMPORTED_MODULE_0__);
+
+const proAttributesTransformer = (0,_elementor_editor_canvas__WEBPACK_IMPORTED_MODULE_0__.createTransformer)(values => {
+  return values.map(value => value.key && value.value ? `${value.key}="${value.value}"` : '').join(' ');
+});
 
 /***/ }),
 
@@ -197,6 +234,16 @@ async function init() {
 /***/ (function(module) {
 
 module.exports = window["React"];
+
+/***/ }),
+
+/***/ "@elementor/editor-canvas":
+/*!***********************************************!*\
+  !*** external ["elementorV2","editorCanvas"] ***!
+  \***********************************************/
+/***/ (function(module) {
+
+module.exports = window["elementorV2"]["editorCanvas"];
 
 /***/ }),
 

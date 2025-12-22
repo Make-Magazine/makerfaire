@@ -8,6 +8,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 return [
 	'handle' => 'elementor-v2-editor-editing-panel-extended',
 	'deps' => [
+		'elementor-v2-editor-canvas',
 		'elementor-v2-editor-controls',
 		'elementor-v2-editor-controls-extended',
 		'elementor-v2-editor-editing-panel',

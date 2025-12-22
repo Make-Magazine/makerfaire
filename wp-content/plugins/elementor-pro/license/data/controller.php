@@ -15,5 +15,6 @@ class Controller extends Base_Controller {
 
 	protected function register_endpoints() {
 		$this->register_endpoint( Endpoints\Get_Tier_Features::class );
+		$this->register_endpoint( Endpoints\Get_License_Status::class );
 	}
 }

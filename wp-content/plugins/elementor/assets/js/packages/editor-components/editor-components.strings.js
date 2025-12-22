@@ -1,10 +1,30 @@
 __( 'Components', 'elementor' );
-__( 'Component saved successfully as: %1$s (ID: %2$s)', 'elementor' );
+__( 'Edit Component', 'elementor' );
+__( 'Default', 'elementor' );
+/* translators: %s is the name of the user who is currently editing the document */
+__( '%s is currently editing this document', 'elementor' );
+__(
+							'You can wait for them to finish or reach out to coordinate your changes together.',
+							'elementor'
+						);
+__( 'Close', 'elementor' );
+__( 'Exit component editing mode', 'elementor' );
+__( 'Override Property', 'elementor' );
+__( 'Default', 'elementor' );
+__( 'Name', 'elementor' );
+__( 'Group Name', 'elementor' );
+__( 'Create new property', 'elementor' );
+__( 'Update property', 'elementor' );
+__( 'Create', 'elementor' );
+__( 'Update', 'elementor' );
+__( 'Enter value', 'elementor' );
+__( 'Overridable property', 'elementor' );
+__( 'Make prop overridable', 'elementor' );
+__( 'Component saved successfully as: %1$s (UID: %2$s)', 'elementor' );
 __( 'Failed to save component. Please try again.', 'elementor' );
 __( 'Save as a component', 'elementor' );
 __( 'Name', 'elementor' );
 __( 'Cancel', 'elementor' );
-__( 'Creating…', 'elementor' );
 __( 'Create', 'elementor' );
 __( 'Text that explains that there are no Components yet.', 'elementor' );
 __(

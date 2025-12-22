@@ -134,7 +134,7 @@ class Query_Builder {
 	 *
 	 * @param \wpdb|null $connection - The Mysql connection instance to use.
 	 */
-	public function __construct( \wpdb $connection = null ) {
+	public function __construct( ?\wpdb $connection = null ) {
 		if ( $connection ) {
 			$this->connection = $connection;
 			return;
@@ -265,7 +265,7 @@ class Query_Builder {
 	 *
 	 * @return $this
 	 */
-	public function when( $condition, callable $true_callback, callable $false_callback = null ) {
+	public function when( $condition, callable $true_callback, ?callable $false_callback = null ) {
 		if ( $condition ) {
 			call_user_func( $true_callback, $this, $condition );
 		} elseif ( $false_callback instanceof \Closure ) {

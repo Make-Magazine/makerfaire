@@ -8,6 +8,7 @@ use Elementor\Core\Base\App;
 use Elementor\Core\Upgrade\Manager as Upgrade_Manager;
 use Elementor\Core\Utils\Assets_Config_Provider;
 use Elementor\Core\Utils\Collection;
+use Elementor\Modules\FloatingButtons\Module as Floating_Buttons_Module;
 use Elementor\Plugin;
 use Elementor\Settings;
 use Elementor\User;
@@ -34,6 +35,34 @@ class Admin extends App {
 	 */
 	public function get_name() {
 		return 'admin';
+	}
+
+	/**
+	 * Check if current page is an Elementor admin page.
+	 *
+	 * @param \WP_Screen|null $current_screen Optional. Screen object to check. Defaults to current screen.
+	 *
+	 * @return bool Whether current page is an Elementor admin page.
+	 */
+	public static function is_elementor_admin_page( $current_screen = null ) {
+		if ( ! $current_screen ) {
+			$current_screen = get_current_screen();
+		}
+
+		if ( ! $current_screen ) {
+			return false;
+		}
+
+		$screen_id = $current_screen->id ?? '';
+		$post_type = $current_screen->post_type ?? '';
+
+		$is_elementor_screen = strpos( $screen_id, 'elementor' ) !== false
+			|| strpos( $screen_id, Floating_Buttons_Module::CPT_FLOATING_BUTTONS ) !== false;
+
+		$is_elementor_post_type = strpos( $post_type, 'elementor' ) !== false
+			|| strpos( $post_type, Floating_Buttons_Module::CPT_FLOATING_BUTTONS ) !== false;
+
+		return $is_elementor_screen || $is_elementor_post_type;
 	}
 
 	/**
@@ -372,8 +401,8 @@ class Admin extends App {
 	public function plugin_row_meta( $plugin_meta, $plugin_file ) {
 		if ( ELEMENTOR_PLUGIN_BASE === $plugin_file ) {
 			$row_meta = [
-				'docs' => '<a href="https://go.elementor.com/docs-admin-plugins/" aria-label="' . esc_attr( esc_html__( 'View Elementor Documentation', 'elementor' ) ) . '" target="_blank">' . esc_html__( 'Docs & FAQs', 'elementor' ) . '</a>',
-				'ideo' => '<a href="https://go.elementor.com/yt-admin-plugins/" aria-label="' . esc_attr( esc_html__( 'View Elementor Video Tutorials', 'elementor' ) ) . '" target="_blank">' . esc_html__( 'Video Tutorials', 'elementor' ) . '</a>',
+				'docs' => '<a href="https://go.elementor.com/docs-admin-plugins/" aria-label="' . esc_attr__( 'View Elementor Documentation', 'elementor' ) . '" target="_blank">' . esc_html__( 'Docs & FAQs', 'elementor' ) . '</a>',
+				'ideo' => '<a href="https://go.elementor.com/yt-admin-plugins/" aria-label="' . esc_attr__( 'View Elementor Video Tutorials', 'elementor' ) . '" target="_blank">' . esc_html__( 'Video Tutorials', 'elementor' ) . '</a>',
 			];
 
 			$plugin_meta = array_merge( $plugin_meta, $row_meta );

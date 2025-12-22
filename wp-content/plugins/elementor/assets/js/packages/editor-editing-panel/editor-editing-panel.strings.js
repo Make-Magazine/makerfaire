@@ -18,6 +18,7 @@ __( 'Effects', 'elementor' );
 __( 'Edit %s', 'elementor' );
 __( 'General', 'elementor' );
 __( 'Style', 'elementor' );
+__( 'Interactions', 'elementor' );
 __( 'Show less', 'elementor' );
 __( 'Show more', 'elementor' );
 __( 'Linear gradient', 'elementor' );
@@ -66,7 +67,14 @@ __(
 					'You’ve reached the limit of 50 classes. Please remove an existing one to create a new class.',
 					'elementor'
 				);
+__( 'normal', 'elementor' );
+__( 'hover', 'elementor' );
+__( 'focus', 'elementor' );
+__( 'active', 'elementor' );
 __( 'States', 'elementor' );
+/* translators: %s: Element type title. */
+__( '%s States', 'elementor' );
+__( 'selected', 'elementor' );
 __( 'With your current role, you can only use existing states.', 'elementor' );
 __( 'Has style', 'elementor' );
 __( 'Remove', 'elementor' );
@@ -77,15 +85,16 @@ __(
 __( 'Rename', 'elementor' );
 __( 'Open CSS Class Menu', 'elementor' );
 __( 'Inherited from base styles', 'elementor' );
-__( 'Tabs', 'elementor' );
-__( 'Default', 'elementor' );
-__( 'Tab name', 'elementor' );
-__( 'Set as default tab', 'elementor' );
-__( 'To change the default tab, simply set another tab as default.', 'elementor' );
 __( 'Duplicate Tab', 'elementor' );
 __( 'Reorder Tabs', 'elementor' );
 __( 'Tabs', 'elementor' );
 __( 'Tabs', 'elementor' );
+__( 'Tabs', 'elementor' );
+__( 'Default', 'elementor' );
+__( 'Tabs', 'elementor' );
+__( 'Set as default tab', 'elementor' );
+__( 'Tab name', 'elementor' );
+__( 'To change the default tab, simply set another tab as default.', 'elementor' );
 __( 'Word spacing', 'elementor' );
 __( 'Text transform', 'elementor' );
 __( 'None', 'elementor' );
@@ -273,7 +282,6 @@ __( 'Bottom left', 'elementor' );
 __( 'Bottom left', 'elementor' );
 __( 'Bottom right', 'elementor' );
 __( 'Adjust corners', 'elementor' );
-__( 'Border', 'elementor' );
 __( 'Border color', 'elementor' );
 __( 'Background', 'elementor' );
 __( 'System', 'elementor' );

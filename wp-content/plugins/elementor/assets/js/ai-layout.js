@@ -6395,19 +6395,17 @@ function _regeneratorDefine(e, r, n, t) {
     i = 0;
   }
   module.exports = _regeneratorDefine = function regeneratorDefine(e, r, n, t) {
-    if (r) i ? i(e, r, {
+    function o(r, n) {
+      _regeneratorDefine(e, r, function (e) {
+        return this._invoke(r, n, e);
+      });
+    }
+    r ? i ? i(e, r, {
       value: n,
       enumerable: !t,
       configurable: !t,
       writable: !t
-    }) : e[r] = n;else {
-      var o = function o(r, n) {
-        _regeneratorDefine(e, r, function (e) {
-          return this._invoke(r, n, e);
-        });
-      };
-      o("next", 0), o("throw", 1), o("return", 2);
-    }
+    }) : e[r] = n : (o("next", 0), o("throw", 1), o("return", 2));
   }, module.exports.__esModule = true, module.exports["default"] = module.exports, _regeneratorDefine(e, r, n, t);
 }
 module.exports = _regeneratorDefine, module.exports.__esModule = true, module.exports["default"] = module.exports;
@@ -9002,19 +9000,18 @@ exports["default"] = void 0;
 var React = _interopRequireWildcard(__webpack_require__(/*! react */ "react"));
 var _propTypes = _interopRequireDefault(__webpack_require__(/*! prop-types */ "../node_modules/prop-types/index.js"));
 var _reactDom = _interopRequireDefault(__webpack_require__(/*! react-dom */ "react-dom"));
-var _clsx = _interopRequireDefault(__webpack_require__(/*! clsx */ "../node_modules/react-draggable/node_modules/clsx/dist/clsx.m.js"));
+var _clsx = __webpack_require__(/*! clsx */ "../node_modules/react-draggable/node_modules/clsx/dist/clsx.js");
 var _domFns = __webpack_require__(/*! ./utils/domFns */ "../node_modules/react-draggable/build/cjs/utils/domFns.js");
 var _positionFns = __webpack_require__(/*! ./utils/positionFns */ "../node_modules/react-draggable/build/cjs/utils/positionFns.js");
 var _shims = __webpack_require__(/*! ./utils/shims */ "../node_modules/react-draggable/build/cjs/utils/shims.js");
 var _DraggableCore = _interopRequireDefault(__webpack_require__(/*! ./DraggableCore */ "../node_modules/react-draggable/build/cjs/DraggableCore.js"));
 var _log = _interopRequireDefault(__webpack_require__(/*! ./utils/log */ "../node_modules/react-draggable/build/cjs/utils/log.js"));
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-function _getRequireWildcardCache(nodeInterop) { if (typeof WeakMap !== "function") return null; var cacheBabelInterop = new WeakMap(); var cacheNodeInterop = new WeakMap(); return (_getRequireWildcardCache = function (nodeInterop) { return nodeInterop ? cacheNodeInterop : cacheBabelInterop; })(nodeInterop); }
-function _interopRequireWildcard(obj, nodeInterop) { if (!nodeInterop && obj && obj.__esModule) { return obj; } if (obj === null || typeof obj !== "object" && typeof obj !== "function") { return { default: obj }; } var cache = _getRequireWildcardCache(nodeInterop); if (cache && cache.has(obj)) { return cache.get(obj); } var newObj = {}; var hasPropertyDescriptor = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var key in obj) { if (key !== "default" && Object.prototype.hasOwnProperty.call(obj, key)) { var desc = hasPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : null; if (desc && (desc.get || desc.set)) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } newObj.default = obj; if (cache) { cache.set(obj, newObj); } return newObj; }
-function _extends() { _extends = Object.assign ? Object.assign.bind() : function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; }; return _extends.apply(this, arguments); }
-function _defineProperty(obj, key, value) { key = _toPropertyKey(key); if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
-function _toPropertyKey(arg) { var key = _toPrimitive(arg, "string"); return typeof key === "symbol" ? key : String(key); }
-function _toPrimitive(input, hint) { if (typeof input !== "object" || input === null) return input; var prim = input[Symbol.toPrimitive]; if (prim !== undefined) { var res = prim.call(input, hint || "default"); if (typeof res !== "object") return res; throw new TypeError("@@toPrimitive must return a primitive value."); } return (hint === "string" ? String : Number)(input); } /*:: import type {ControlPosition, PositionOffsetControlPosition, DraggableCoreProps, DraggableCoreDefaultProps} from './DraggableCore';*/
+function _interopRequireDefault(e) { return e && e.__esModule ? e : { default: e }; }
+function _interopRequireWildcard(e, t) { if ("function" == typeof WeakMap) var r = new WeakMap(), n = new WeakMap(); return (_interopRequireWildcard = function (e, t) { if (!t && e && e.__esModule) return e; var o, i, f = { __proto__: null, default: e }; if (null === e || "object" != typeof e && "function" != typeof e) return f; if (o = t ? n : r) { if (o.has(e)) return o.get(e); o.set(e, f); } for (const t in e) "default" !== t && {}.hasOwnProperty.call(e, t) && ((i = (o = Object.defineProperty) && Object.getOwnPropertyDescriptor(e, t)) && (i.get || i.set) ? o(f, t, i) : f[t] = e[t]); return f; })(e, t); }
+function _extends() { return _extends = Object.assign ? Object.assign.bind() : function (n) { for (var e = 1; e < arguments.length; e++) { var t = arguments[e]; for (var r in t) ({}).hasOwnProperty.call(t, r) && (n[r] = t[r]); } return n; }, _extends.apply(null, arguments); }
+function _defineProperty(e, r, t) { return (r = _toPropertyKey(r)) in e ? Object.defineProperty(e, r, { value: t, enumerable: !0, configurable: !0, writable: !0 }) : e[r] = t, e; }
+function _toPropertyKey(t) { var i = _toPrimitive(t, "string"); return "symbol" == typeof i ? i : i + ""; }
+function _toPrimitive(t, r) { if ("object" != typeof t || !t) return t; var e = t[Symbol.toPrimitive]; if (void 0 !== e) { var i = e.call(t, r || "default"); if ("object" != typeof i) return i; throw new TypeError("@@toPrimitive must return a primitive value."); } return ("string" === r ? String : Number)(t); } /*:: import type {ControlPosition, PositionOffsetControlPosition, DraggableCoreProps, DraggableCoreDefaultProps} from './DraggableCore';*/
 /*:: import type {Bounds, DraggableEventHandler} from './utils/types';*/
 /*:: import type {Element as ReactElement} from 'react';*/
 /*:: type DraggableState = {
@@ -9187,16 +9184,17 @@ class Draggable extends React.Component /*:: <DraggableProps, DraggableState>*/{
     }
   }
   componentWillUnmount() {
-    this.setState({
-      dragging: false
-    }); // prevents invariant if unmounted while dragging
+    if (this.state.dragging) {
+      this.setState({
+        dragging: false
+      }); // prevents invariant if unmounted while dragging
+    }
   }
 
   // React Strict Mode compatibility: if `nodeRef` is passed, we will use it instead of trying to find
   // the underlying DOM node ourselves. See the README for more information.
   findDOMNode() /*: ?HTMLElement*/{
-    var _this$props$nodeRef$c, _this$props;
-    return (_this$props$nodeRef$c = (_this$props = this.props) === null || _this$props === void 0 || (_this$props = _this$props.nodeRef) === null || _this$props === void 0 ? void 0 : _this$props.current) !== null && _this$props$nodeRef$c !== void 0 ? _this$props$nodeRef$c : _reactDom.default.findDOMNode(this);
+    return this.props?.nodeRef?.current ?? _reactDom.default.findDOMNode(this);
   }
   render() /*: ReactElement<any>*/{
     const {
@@ -9238,7 +9236,7 @@ class Draggable extends React.Component /*:: <DraggableProps, DraggableState>*/{
     }
 
     // Mark with class while dragging
-    const className = (0, _clsx.default)(children.props.className || '', defaultClassName, {
+    const className = (0, _clsx.clsx)(children.props.className || '', defaultClassName, {
       [defaultClassNameDragging]: this.state.dragging,
       [defaultClassNameDragged]: this.state.dragged
     });
@@ -9405,12 +9403,11 @@ var _domFns = __webpack_require__(/*! ./utils/domFns */ "../node_modules/react-d
 var _positionFns = __webpack_require__(/*! ./utils/positionFns */ "../node_modules/react-draggable/build/cjs/utils/positionFns.js");
 var _shims = __webpack_require__(/*! ./utils/shims */ "../node_modules/react-draggable/build/cjs/utils/shims.js");
 var _log = _interopRequireDefault(__webpack_require__(/*! ./utils/log */ "../node_modules/react-draggable/build/cjs/utils/log.js"));
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-function _getRequireWildcardCache(nodeInterop) { if (typeof WeakMap !== "function") return null; var cacheBabelInterop = new WeakMap(); var cacheNodeInterop = new WeakMap(); return (_getRequireWildcardCache = function (nodeInterop) { return nodeInterop ? cacheNodeInterop : cacheBabelInterop; })(nodeInterop); }
-function _interopRequireWildcard(obj, nodeInterop) { if (!nodeInterop && obj && obj.__esModule) { return obj; } if (obj === null || typeof obj !== "object" && typeof obj !== "function") { return { default: obj }; } var cache = _getRequireWildcardCache(nodeInterop); if (cache && cache.has(obj)) { return cache.get(obj); } var newObj = {}; var hasPropertyDescriptor = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var key in obj) { if (key !== "default" && Object.prototype.hasOwnProperty.call(obj, key)) { var desc = hasPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : null; if (desc && (desc.get || desc.set)) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } newObj.default = obj; if (cache) { cache.set(obj, newObj); } return newObj; }
-function _defineProperty(obj, key, value) { key = _toPropertyKey(key); if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
-function _toPropertyKey(arg) { var key = _toPrimitive(arg, "string"); return typeof key === "symbol" ? key : String(key); }
-function _toPrimitive(input, hint) { if (typeof input !== "object" || input === null) return input; var prim = input[Symbol.toPrimitive]; if (prim !== undefined) { var res = prim.call(input, hint || "default"); if (typeof res !== "object") return res; throw new TypeError("@@toPrimitive must return a primitive value."); } return (hint === "string" ? String : Number)(input); }
+function _interopRequireDefault(e) { return e && e.__esModule ? e : { default: e }; }
+function _interopRequireWildcard(e, t) { if ("function" == typeof WeakMap) var r = new WeakMap(), n = new WeakMap(); return (_interopRequireWildcard = function (e, t) { if (!t && e && e.__esModule) return e; var o, i, f = { __proto__: null, default: e }; if (null === e || "object" != typeof e && "function" != typeof e) return f; if (o = t ? n : r) { if (o.has(e)) return o.get(e); o.set(e, f); } for (const t in e) "default" !== t && {}.hasOwnProperty.call(e, t) && ((i = (o = Object.defineProperty) && Object.getOwnPropertyDescriptor(e, t)) && (i.get || i.set) ? o(f, t, i) : f[t] = e[t]); return f; })(e, t); }
+function _defineProperty(e, r, t) { return (r = _toPropertyKey(r)) in e ? Object.defineProperty(e, r, { value: t, enumerable: !0, configurable: !0, writable: !0 }) : e[r] = t, e; }
+function _toPropertyKey(t) { var i = _toPrimitive(t, "string"); return "symbol" == typeof i ? i : i + ""; }
+function _toPrimitive(t, r) { if ("object" != typeof t || !t) return t; var e = t[Symbol.toPrimitive]; if (void 0 !== e) { var i = e.call(t, r || "default"); if ("object" != typeof i) return i; throw new TypeError("@@toPrimitive must return a primitive value."); } return ("string" === r ? String : Number)(t); }
 /*:: import type {EventHandler, MouseTouchEvent} from './utils/types';*/
 /*:: import type {Element as ReactElement} from 'react';*/
 // Simple abstraction for dragging events names.
@@ -9440,6 +9437,7 @@ let dragEventFor = eventsFor.mouse;
 /*:: export type PositionOffsetControlPosition = {x: number|string, y: number|string};*/
 /*:: export type DraggableCoreDefaultProps = {
   allowAnyClick: boolean,
+  allowMobileScroll: boolean,
   disabled: boolean,
   enableUserSelectHack: boolean,
   onStart: DraggableEventHandler,
@@ -9496,7 +9494,7 @@ class DraggableCore extends React.Component /*:: <DraggableCoreProps>*/{
 
       // Prevent scrolling on mobile devices, like ipad/iphone.
       // Important that this is after handle/cancel.
-      if (e.type === 'touchstart') e.preventDefault();
+      if (e.type === 'touchstart' && !this.props.allowMobileScroll) e.preventDefault();
 
       // Set touch identifier in component state if this is a touch event. This allows us to
       // distinguish between individual touches on multitouch screens by identifying which
@@ -9601,7 +9599,7 @@ class DraggableCore extends React.Component /*:: <DraggableCoreProps>*/{
       const thisNode = this.findDOMNode();
       if (thisNode) {
         // Remove user-select hack
-        if (this.props.enableUserSelectHack) (0, _domFns.removeUserSelectStyles)(thisNode.ownerDocument);
+        if (this.props.enableUserSelectHack) (0, _domFns.scheduleRemoveUserSelectStyles)(thisNode.ownerDocument);
       }
       (0, _log.default)('DraggableCore: handleDragStop: %j', coreEvent);
 
@@ -9664,15 +9662,14 @@ class DraggableCore extends React.Component /*:: <DraggableCoreProps>*/{
       (0, _domFns.removeEvent)(thisNode, eventsFor.touch.start, this.onTouchStart, {
         passive: false
       });
-      if (this.props.enableUserSelectHack) (0, _domFns.removeUserSelectStyles)(ownerDocument);
+      if (this.props.enableUserSelectHack) (0, _domFns.scheduleRemoveUserSelectStyles)(ownerDocument);
     }
   }
 
   // React Strict Mode compatibility: if `nodeRef` is passed, we will use it instead of trying to find
   // the underlying DOM node ourselves. See the README for more information.
   findDOMNode() /*: ?HTMLElement*/{
-    var _this$props, _this$props2;
-    return (_this$props = this.props) !== null && _this$props !== void 0 && _this$props.nodeRef ? (_this$props2 = this.props) === null || _this$props2 === void 0 || (_this$props2 = _this$props2.nodeRef) === null || _this$props2 === void 0 ? void 0 : _this$props2.current : _reactDom.default.findDOMNode(this);
+    return this.props?.nodeRef ? this.props?.nodeRef?.current : _reactDom.default.findDOMNode(this);
   }
   render() /*: React.Element<any>*/{
     // Reuse the child provided
@@ -9699,6 +9696,14 @@ _defineProperty(DraggableCore, "propTypes", {
    * Defaults to `false`.
    */
   allowAnyClick: _propTypes.default.bool,
+  /**
+   * `allowMobileScroll` turns off cancellation of the 'touchstart' event
+   * on mobile devices. Only enable this if you are having trouble with click
+   * events. Prefer using 'handle' / 'cancel' instead.
+   *
+   * Defaults to `false`.
+   */
+  allowMobileScroll: _propTypes.default.bool,
   children: _propTypes.default.node.isRequired,
   /**
    * `disabled`, if true, stops the <Draggable> from dragging. All handlers,
@@ -9818,6 +9823,7 @@ _defineProperty(DraggableCore, "propTypes", {
 _defineProperty(DraggableCore, "defaultProps", {
   allowAnyClick: false,
   // by default only accept left click
+  allowMobileScroll: false,
   disabled: false,
   enableUserSelectHack: true,
   onStart: function () {},
@@ -9881,11 +9887,10 @@ exports.outerHeight = outerHeight;
 exports.outerWidth = outerWidth;
 exports.removeClassName = removeClassName;
 exports.removeEvent = removeEvent;
-exports.removeUserSelectStyles = removeUserSelectStyles;
+exports.scheduleRemoveUserSelectStyles = scheduleRemoveUserSelectStyles;
 var _shims = __webpack_require__(/*! ./shims */ "../node_modules/react-draggable/build/cjs/utils/shims.js");
 var _getPrefix = _interopRequireWildcard(__webpack_require__(/*! ./getPrefix */ "../node_modules/react-draggable/build/cjs/utils/getPrefix.js"));
-function _getRequireWildcardCache(nodeInterop) { if (typeof WeakMap !== "function") return null; var cacheBabelInterop = new WeakMap(); var cacheNodeInterop = new WeakMap(); return (_getRequireWildcardCache = function (nodeInterop) { return nodeInterop ? cacheNodeInterop : cacheBabelInterop; })(nodeInterop); }
-function _interopRequireWildcard(obj, nodeInterop) { if (!nodeInterop && obj && obj.__esModule) { return obj; } if (obj === null || typeof obj !== "object" && typeof obj !== "function") { return { default: obj }; } var cache = _getRequireWildcardCache(nodeInterop); if (cache && cache.has(obj)) { return cache.get(obj); } var newObj = {}; var hasPropertyDescriptor = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var key in obj) { if (key !== "default" && Object.prototype.hasOwnProperty.call(obj, key)) { var desc = hasPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : null; if (desc && (desc.get || desc.set)) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } newObj.default = obj; if (cache) { cache.set(obj, newObj); } return newObj; }
+function _interopRequireWildcard(e, t) { if ("function" == typeof WeakMap) var r = new WeakMap(), n = new WeakMap(); return (_interopRequireWildcard = function (e, t) { if (!t && e && e.__esModule) return e; var o, i, f = { __proto__: null, default: e }; if (null === e || "object" != typeof e && "function" != typeof e) return f; if (o = t ? n : r) { if (o.has(e)) return o.get(e); o.set(e, f); } for (const t in e) "default" !== t && {}.hasOwnProperty.call(e, t) && ((i = (o = Object.defineProperty) && Object.getOwnPropertyDescriptor(e, t)) && (i.get || i.set) ? o(f, t, i) : f[t] = e[t]); return f; })(e, t); }
 /*:: import type {ControlPosition, PositionOffsetControlPosition, MouseTouchEvent} from './types';*/
 let matchesSelectorFunc = '';
 function matchesSelector(el /*: Node*/, selector /*: string*/) /*: boolean*/{
@@ -10011,11 +10016,11 @@ function getTranslation(_ref /*:: */, positionOffset /*: PositionOffsetControlPo
     x,
     y
   } /*: ControlPosition*/ = _ref /*: ControlPosition*/;
-  let translation = "translate(".concat(x).concat(unitSuffix, ",").concat(y).concat(unitSuffix, ")");
+  let translation = `translate(${x}${unitSuffix},${y}${unitSuffix})`;
   if (positionOffset) {
-    const defaultX = "".concat(typeof positionOffset.x === 'string' ? positionOffset.x : positionOffset.x + unitSuffix);
-    const defaultY = "".concat(typeof positionOffset.y === 'string' ? positionOffset.y : positionOffset.y + unitSuffix);
-    translation = "translate(".concat(defaultX, ", ").concat(defaultY, ")") + translation;
+    const defaultX = `${typeof positionOffset.x === 'string' ? positionOffset.x : positionOffset.x + unitSuffix}`;
+    const defaultY = `${typeof positionOffset.y === 'string' ? positionOffset.y : positionOffset.y + unitSuffix}`;
+    translation = `translate(${defaultX}, ${defaultY})` + translation;
   }
   return translation;
 }
@@ -10045,6 +10050,16 @@ function addUserSelectStyles(doc /*: ?Document*/) {
   }
   if (doc.body) addClassName(doc.body, 'react-draggable-transparent-selection');
 }
+function scheduleRemoveUserSelectStyles(doc /*: ?Document*/) {
+  // Prevent a possible "forced reflow"
+  if (window.requestAnimationFrame) {
+    window.requestAnimationFrame(() => {
+      removeUserSelectStyles(doc);
+    });
+  } else {
+    removeUserSelectStyles(doc);
+  }
+}
 function removeUserSelectStyles(doc /*: ?Document*/) {
   if (!doc) return;
   try {
@@ -10069,8 +10084,8 @@ function addClassName(el /*: HTMLElement*/, className /*: string*/) {
   if (el.classList) {
     el.classList.add(className);
   } else {
-    if (!el.className.match(new RegExp("(?:^|\\s)".concat(className, "(?!\\S)")))) {
-      el.className += " ".concat(className);
+    if (!el.className.match(new RegExp(`(?:^|\\s)${className}(?!\\S)`))) {
+      el.className += ` ${className}`;
     }
   }
 }
@@ -10078,7 +10093,7 @@ function removeClassName(el /*: HTMLElement*/, className /*: string*/) {
   if (el.classList) {
     el.classList.remove(className);
   } else {
-    el.className = el.className.replace(new RegExp("(?:^|\\s)".concat(className, "(?!\\S)"), 'g'), '');
+    el.className = el.className.replace(new RegExp(`(?:^|\\s)${className}(?!\\S)`, 'g'), '');
   }
 }
 
@@ -10102,7 +10117,6 @@ exports["default"] = void 0;
 exports.getPrefix = getPrefix;
 const prefixes = ['Moz', 'Webkit', 'O', 'ms'];
 function getPrefix() /*: string*/{
-  var _window$document;
   let prop /*: string*/ = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 'transform';
   // Ensure we're running in an environment where there is actually a global
   // `window` obj
@@ -10110,7 +10124,7 @@ function getPrefix() /*: string*/{
 
   // If we're in a pseudo-browser server-side environment, this access
   // path may not exist, so bail out if it doesn't.
-  const style = (_window$document = window.document) === null || _window$document === void 0 || (_window$document = _window$document.documentElement) === null || _window$document === void 0 ? void 0 : _window$document.style;
+  const style = window.document?.documentElement?.style;
   if (!style) return '';
   if (prop in style) return '';
   for (let i = 0; i < prefixes.length; i++) {
@@ -10119,10 +10133,10 @@ function getPrefix() /*: string*/{
   return '';
 }
 function browserPrefixToKey(prop /*: string*/, prefix /*: string*/) /*: string*/{
-  return prefix ? "".concat(prefix).concat(kebabToTitleCase(prop)) : prop;
+  return prefix ? `${prefix}${kebabToTitleCase(prop)}` : prop;
 }
 function browserPrefixToStyle(prop /*: string*/, prefix /*: string*/) /*: string*/{
-  return prefix ? "-".concat(prefix.toLowerCase(), "-").concat(prop) : prop;
+  return prefix ? `-${prefix.toLowerCase()}-${prop}` : prop;
 }
 function kebabToTitleCase(str /*: string*/) /*: string*/{
   let out = '';
@@ -10211,7 +10225,12 @@ function getBoundPosition(draggable /*: Draggable*/, x /*: number*/, y /*: numbe
     if (bounds === 'parent') {
       boundNode = node.parentNode;
     } else {
-      boundNode = ownerDocument.querySelector(bounds);
+      // Flow assigns the wrong return type (Node) for getRootNode(),
+      // so we cast it to one of the correct types (Element).
+      // The others are Document and ShadowRoot.
+      // All three implement querySelector() so it's safe to call.
+      const rootNode = ((node.getRootNode() /*: any*/) /*: Element*/);
+      boundNode = rootNode.querySelector(bounds);
     }
     if (!(boundNode instanceof ownerWindow.HTMLElement)) {
       throw new Error('Bounds selector "' + bounds + '" could not find an element.');
@@ -10357,25 +10376,19 @@ function int(a /*: string*/) /*: number*/{
 }
 function dontSetMe(props /*: Object*/, propName /*: string*/, componentName /*: string*/) /*: ?Error*/{
   if (props[propName]) {
-    return new Error("Invalid prop ".concat(propName, " passed to ").concat(componentName, " - do not set this, set it on the child."));
+    return new Error(`Invalid prop ${propName} passed to ${componentName} - do not set this, set it on the child.`);
   }
 }
 
 /***/ }),
 
-/***/ "../node_modules/react-draggable/node_modules/clsx/dist/clsx.m.js":
-/*!************************************************************************!*\
-  !*** ../node_modules/react-draggable/node_modules/clsx/dist/clsx.m.js ***!
-  \************************************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+/***/ "../node_modules/react-draggable/node_modules/clsx/dist/clsx.js":
+/*!**********************************************************************!*\
+  !*** ../node_modules/react-draggable/node_modules/clsx/dist/clsx.js ***!
+  \**********************************************************************/
+/***/ ((module) => {
 
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   clsx: () => (/* binding */ clsx),
-/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
-/* harmony export */ });
-function r(e){var t,f,n="";if("string"==typeof e||"number"==typeof e)n+=e;else if("object"==typeof e)if(Array.isArray(e))for(t=0;t<e.length;t++)e[t]&&(f=r(e[t]))&&(n&&(n+=" "),n+=f);else for(t in e)e[t]&&(n&&(n+=" "),n+=t);return n}function clsx(){for(var e,t,f=0,n="";f<arguments.length;)(e=arguments[f++])&&(t=r(e))&&(n&&(n+=" "),n+=t);return n}/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (clsx);
+function r(e){var o,t,f="";if("string"==typeof e||"number"==typeof e)f+=e;else if("object"==typeof e)if(Array.isArray(e)){var n=e.length;for(o=0;o<n;o++)e[o]&&(t=r(e[o]))&&(f&&(f+=" "),f+=t)}else for(t in e)e[t]&&(f&&(f+=" "),f+=t);return f}function e(){for(var e,o,t=0,f="",n=arguments.length;t<n;t++)(e=arguments[t])&&(o=r(e))&&(f&&(f+=" "),f+=o);return f}module.exports=e,module.exports.clsx=e;
 
 /***/ }),
 
@@ -10635,21 +10648,95 @@ function isURL(url, options) {
   url = split.shift();
   split = url.split('?');
   url = split.shift();
-  split = url.split('://');
-  if (split.length > 1) {
-    protocol = split.shift().toLowerCase();
+
+  // Replaced the 'split("://")' logic with a regex to match the protocol.
+  // This correctly identifies schemes like `javascript:` which don't use `//`.
+  // However, we need to be careful not to confuse authentication credentials (user:password@host)
+  // with protocols. A colon before an @ symbol might be part of auth, not a protocol separator.
+  var protocol_match = url.match(/^([a-z][a-z0-9+\-.]*):/i);
+  var had_explicit_protocol = false;
+  var cleanUpProtocol = function cleanUpProtocol(potential_protocol) {
+    had_explicit_protocol = true;
+    protocol = potential_protocol.toLowerCase();
     if (options.require_valid_protocol && options.protocols.indexOf(protocol) === -1) {
+      // The identified protocol is not in the allowed list.
       return false;
+    }
+
+    // Remove the protocol from the URL string.
+    return url.substring(protocol_match[0].length);
+  };
+  if (protocol_match) {
+    var potential_protocol = protocol_match[1];
+    var after_colon = url.substring(protocol_match[0].length);
+
+    // Check if what follows looks like authentication credentials (user:password@host)
+    // rather than a protocol. This happens when:
+    // 1. There's no `//` after the colon (protocols like `http://` have this)
+    // 2. There's an `@` symbol before any `/`
+    // 3. The part before `@` contains only valid auth characters (alphanumeric, -, _, ., %, :)
+    var starts_with_slashes = after_colon.slice(0, 2) === '//';
+    if (!starts_with_slashes) {
+      var first_slash_position = after_colon.indexOf('/');
+      var before_slash = first_slash_position === -1 ? after_colon : after_colon.substring(0, first_slash_position);
+      var at_position = before_slash.indexOf('@');
+      if (at_position !== -1) {
+        var before_at = before_slash.substring(0, at_position);
+        var valid_auth_regex = /^[a-zA-Z0-9\-_.%:]*$/;
+        var is_valid_auth = valid_auth_regex.test(before_at);
+        if (is_valid_auth) {
+          // This looks like authentication (e.g., user:password@host), not a protocol
+          if (options.require_protocol) {
+            return false;
+          }
+
+          // Don't consume the colon; let the auth parsing handle it later
+        } else {
+          // This looks like a malicious protocol (e.g., javascript:alert();@host)
+          url = cleanUpProtocol(potential_protocol);
+          if (url === false) {
+            return false;
+          }
+        }
+      } else {
+        // No @ symbol found. Check if this could be a port number instead of a protocol.
+        // If what's after the colon is numeric (or starts with a digit and contains only
+        // valid port characters until a path separator), it's likely hostname:port, not a protocol.
+        var looks_like_port = /^[0-9]/.test(after_colon);
+        if (looks_like_port) {
+          // This looks like hostname:port, not a protocol
+          if (options.require_protocol) {
+            return false;
+          }
+          // Don't consume anything; let it be parsed as hostname:port
+        } else {
+          // This is definitely a protocol
+          url = cleanUpProtocol(potential_protocol);
+          if (url === false) {
+            return false;
+          }
+        }
+      }
+    } else {
+      // Starts with '//', this is definitely a protocol like http://
+      url = cleanUpProtocol(potential_protocol);
+      if (url === false) {
+        return false;
+      }
     }
   } else if (options.require_protocol) {
     return false;
-  } else if (url.slice(0, 2) === '//') {
-    if (!options.allow_protocol_relative_urls) {
+  }
+
+  // Handle leading '//' only as protocol-relative when there was NO explicit protocol.
+  // If there was an explicit protocol, '//' is the normal separator
+  // and should be stripped unconditionally.
+  if (url.slice(0, 2) === '//') {
+    if (!had_explicit_protocol && !options.allow_protocol_relative_urls) {
       return false;
     }
-    split[0] = url.slice(2);
+    url = url.slice(2);
   }
-  url = split.join('://');
   if (url === '') {
     return false;
   }

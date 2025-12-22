@@ -48,13 +48,13 @@ if ( ! defined( 'ABSPATH' ) ) {
 		<img src="<?php echo ELEMENTOR_PRO_MODULES_URL; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>theme-builder/assets/images/conditions-tab.svg" loading="lazy">
 	</div>
 	<div class="elementor-template-library-blank-title">
-		{{ sprintf(
+		{{ wp.i18n.sprintf(
 			'<?php echo esc_html__( 'Where do you want to display your %s?', 'elementor-pro' ); ?>',
 			elementor.config.document.post_type_title
 		) }}
 	</div>
 	<div class="elementor-template-library-blank-message">
-		{{ sprintf(
+		{{ wp.i18n.sprintf(
 			'<?php echo esc_html__( 'Set the conditions that determine where your %s is used throughout your site.', 'elementor-pro' ); ?>',
 			elementor.config.document.post_type_title
 		) }}

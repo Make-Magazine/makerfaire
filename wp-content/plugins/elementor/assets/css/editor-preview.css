@@ -532,6 +532,8 @@ body:not(.elementor-device-mobile) .elementor-control.elementor-control-responsi
   margin-block-start: 0;
 }
 
+.elementor-control-start-end .eicon-text-align-left,
+.elementor-control-start-end .eicon-text-align-right,
 .elementor-control-start-end .eicon-h-align-left,
 .elementor-control-start-end .eicon-h-align-right {
   scale: calc(1 * var(--direction-multiplier)) 1;
@@ -3472,16 +3474,20 @@ body.elementor-editor-active .elementor.elementor-edit-mode .elementor-element.e
 
 [class^=eicon-flex], [class*=" eicon-flex"] {
   transition: 0.3s all;
-  --is-ltr: 1;
-  --is-rtl: 0;
-  --rotation-direction: calc(var(--is-ltr) - var(--is-rtl));
 }
 [class^=eicon-flex].eicon-inline, [class*=" eicon-flex"].eicon-inline {
   max-height: 1em;
   max-width: 1em;
 }
+[class^=eicon-flex], [class*=" eicon-flex"] {
+  --is-ltr: 1;
+  --is-rtl: 0;
+}
 [class^=eicon-flex]:is(.eicon-justify-start-h, .eicon-justify-end-h), [class*=" eicon-flex"]:is(.eicon-justify-start-h, .eicon-justify-end-h) {
   --rotation-direction: calc(var(--is-ltr) + var(--is-rtl));
+}
+[class^=eicon-flex], [class*=" eicon-flex"] {
+  --rotation-direction: calc(var(--is-ltr) - var(--is-rtl));
 }
 :is(.e-ui-state--document-direction-mode__column, .e-ui-state--document-direction-mode__column-reverse) [class^=eicon-flex]:not(.eicon-wrap):not(.eicon-nowrap):not(.eicon-grow), :is(.e-ui-state--document-direction-mode__column, .e-ui-state--document-direction-mode__column-reverse) [class*=" eicon-flex"]:not(.eicon-wrap):not(.eicon-nowrap):not(.eicon-grow) {
   transform: rotate(calc(var(--rotation-direction) * 90deg));

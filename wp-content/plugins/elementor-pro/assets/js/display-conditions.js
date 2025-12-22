@@ -1,4 +1,4 @@
-/*! elementor-pro - v3.33.0 - 11-11-2025 */
+/*! elementor-pro - v3.34.0 - 22-12-2025 */
 /******/ (() => { // webpackBootstrap
 /******/ 	var __webpack_modules__ = ({
 
@@ -72,6 +72,7 @@ const App = props => {
       }, fadeDuration);
       return () => clearTimeout(timeoutId);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dialogOpen]);
   const handleCloseDialog = () => {
     setDialogOpen(false);
@@ -128,13 +129,10 @@ var _default = exports["default"] = App;
 /* provided dependency */ var __ = __webpack_require__(/*! @wordpress/i18n */ "@wordpress/i18n")["__"];
 
 
-var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault */ "../node_modules/@babel/runtime/helpers/interopRequireDefault.js");
 Object.defineProperty(exports, "__esModule", ({
   value: true
 }));
 exports["default"] = void 0;
-var _react = _interopRequireDefault(__webpack_require__(/*! react */ "react"));
-var _app = _interopRequireDefault(__webpack_require__(/*! ./app */ "../modules/display-conditions/assets/js/editor/app.js"));
 class DisplayConditionsBehavior extends Marionette.Behavior {
   ui() {
     const iconClass = '.eicon-flow.e-control-display-conditions';
@@ -176,26 +174,26 @@ class DisplayConditionsBehavior extends Marionette.Behavior {
     return rootElement;
   }
   mount() {
-    const colorScheme = elementor?.getPreferences?.('ui_theme') || 'auto',
-      isRTL = elementorCommon.config.isRTL,
-      rootElement = this.getRootElement();
+    const rootElement = this.getRootElement();
     window.parent.document.body.appendChild(rootElement);
-    ReactDOM.render(/*#__PURE__*/_react.default.createElement(_app.default // eslint-disable-line react/no-deprecated
-    , {
-      colorScheme: colorScheme,
-      isRTL: isRTL,
-      getControlValue: this.getOption('getControlValue'),
-      setControlValue: this.getOption('setControlValue'),
-      fetchData: this.getOption('fetchData'),
-      onClose: () => this.unmount(rootElement),
-      conditionsConfig: this.getOption('conditionsConfig'),
-      setCacheNoticeStatus: this.getOption('setCacheNoticeStatus')
-    }), rootElement);
+    window.dispatchEvent(new CustomEvent('elementor/display-conditions/open', {
+      detail: {
+        rootElement,
+        props: {
+          getControlValue: this.getOption('getControlValue'),
+          setControlValue: this.getOption('setControlValue'),
+          onClose: () => this.unmount(rootElement),
+          setCacheNoticeStatus: this.getOption('setCacheNoticeStatus')
+        }
+      }
+    }));
   }
   unmount(rootElement) {
-    // eslint-disable-next-line react/no-deprecated
-    ReactDOM.unmountComponentAtNode(rootElement);
-    rootElement.remove();
+    window.dispatchEvent(new CustomEvent('elementor/display-conditions/close', {
+      detail: {
+        rootElement
+      }
+    }));
   }
 }
 exports["default"] = DisplayConditionsBehavior;
@@ -880,10 +878,35 @@ const AutocompleteControl = ({
     label = controlValue?.length ? '' : conditions[condition.condition].label || '';
   (0, _react.useEffect)(() => {
     setControlValue(formatValue(value));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [condition]);
   const handleChangeOption = newValue => {
     onChangeOption(newValue);
     setControlValue(newValue);
+  };
+  const renderOption = ({
+    key,
+    ...optionProps
+  }, option) => {
+    return /*#__PURE__*/React.createElement(_ui.Typography, (0, _extends2.default)({
+      component: "li"
+    }, optionProps, {
+      key: key
+    }), /*#__PURE__*/React.createElement(_conditionSelectOption.default, {
+      component: "span",
+      variant: "inherit",
+      noWrap: true,
+      controlCount: controlCount
+    }, options[option]));
+  };
+  const renderInput = params => {
+    return /*#__PURE__*/React.createElement(_ui.TextField, (0, _extends2.default)({
+      error: shouldShowError,
+      helperText: errorMessage
+    }, params, {
+      placeholder: label,
+      color: "secondary"
+    }));
   };
   return /*#__PURE__*/React.createElement(_ui.Autocomplete, {
     multiple: isMultiple,
@@ -901,13 +924,7 @@ const AutocompleteControl = ({
         }
       }
     },
-    renderInput: params => /*#__PURE__*/React.createElement(_ui.TextField, (0, _extends2.default)({
-      error: shouldShowError,
-      helperText: errorMessage
-    }, params, {
-      placeholder: label,
-      color: "secondary"
-    })),
+    renderInput: renderInput,
     ListboxProps: {
       sx: {
         maxHeight: 280
@@ -915,14 +932,7 @@ const AutocompleteControl = ({
     },
     size: "small",
     onChange: (_event, newValues) => handleChangeOption(formatValue(newValues)),
-    renderOption: (optionProps, option) => /*#__PURE__*/React.createElement(_ui.Typography, (0, _extends2.default)({
-      component: "li"
-    }, optionProps), /*#__PURE__*/React.createElement(_conditionSelectOption.default, {
-      component: "span",
-      variant: "inherit",
-      noWrap: true,
-      controlCount: controlCount
-    }, options[option])),
+    renderOption: renderOption,
     forcePopupIcon: !Object.keys(options).length <= 1
   });
 };
@@ -936,8 +946,6 @@ AutocompleteControl.propTypes = {
   errorMessage: PropTypes.string.isRequired,
   shouldShowError: PropTypes.bool.isRequired,
   isMultiple: PropTypes.bool.isRequired,
-  optionsStyles: PropTypes.object.isRequired,
-  menuStyles: PropTypes.object.isRequired,
   controlCount: PropTypes.number.isRequired
 };
 var _default = exports["default"] = AutocompleteControl;
@@ -1928,6 +1936,158 @@ var _default = exports["default"] = useConditions;
 
 /***/ }),
 
+/***/ "../modules/display-conditions/assets/js/editor/modal.js":
+/*!***************************************************************!*\
+  !*** ../modules/display-conditions/assets/js/editor/modal.js ***!
+  \***************************************************************/
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+"use strict";
+
+
+var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault */ "../node_modules/@babel/runtime/helpers/interopRequireDefault.js");
+Object.defineProperty(exports, "__esModule", ({
+  value: true
+}));
+exports.setupModal = setupModal;
+var _react = _interopRequireDefault(__webpack_require__(/*! react */ "react"));
+__webpack_require__(/*! core-js/modules/es.array.push.js */ "../node_modules/core-js/modules/es.array.push.js");
+var _app = _interopRequireDefault(__webpack_require__(/*! ./app */ "../modules/display-conditions/assets/js/editor/app.js"));
+function getGroupedConditionKeys(conditionsConfig) {
+  return Object.keys(conditionsConfig?.groups || {}).reduce((group, groupName) => {
+    const conditions = getConditionKeyByGroup(conditionsConfig.conditions, groupName);
+    if (conditions.length) {
+      group[groupName] = conditions;
+    }
+    return group;
+  }, {});
+}
+function getConditionKeyByGroup(conditions, groupName) {
+  return Object.keys(conditions).filter(conditionKey => groupName === conditions[conditionKey].group);
+}
+function getFlattenedConditionOptions(conditionsByGroup) {
+  const {
+    conditions = {},
+    groups = {}
+  } = elementor.config.displayConditions || {};
+  return Object.entries(conditionsByGroup).reduce((optionList, [groupName, conditionKeys]) => {
+    const relevantConditions = conditionKeys.map(key => ({
+      key,
+      label: conditions[key].label,
+      isGroup: false
+    }));
+    optionList.push({
+      key: groupName,
+      label: groups[groupName].label,
+      isGroup: true
+    }, ...relevantConditions);
+    return optionList;
+  }, []);
+}
+function doAjaxRequest(action, data) {
+  try {
+    return new Promise((resolve, reject) => {
+      elementorCommon.ajax.addRequest(action, {
+        data,
+        error: () => reject(),
+        success: res => {
+          resolve(res);
+        }
+      });
+    });
+  } catch (error) {
+    return false;
+  }
+}
+async function defaultFetchData(value, control) {
+  const response = await doAjaxRequest('pro_panel_posts_control_filter_autocomplete', {
+    autocomplete: control.autocomplete,
+    q: value
+  });
+  return response?.results ?? [];
+}
+async function defaultSetCacheNoticeStatus() {
+  const response = await doAjaxRequest('display_conditions_set_cache_notice_status');
+  if (response) {
+    elementor.config.displayConditions.show_cache_notice = false;
+  }
+  return response;
+}
+function setupModal() {
+  let appRoot = null;
+  const getRootElement = () => {
+    let rootElement = window.parent.document.getElementById('elementor-conditions__modal');
+    if (!!rootElement) {
+      return rootElement;
+    }
+    rootElement = document.createElement('div');
+    rootElement.setAttribute('id', 'elementor-conditions__modal');
+    return rootElement;
+  };
+  const getConditionsConfig = () => {
+    const conditionsByGroup = getGroupedConditionKeys(elementor.config.displayConditions || {});
+    const flattenedConditionOptions = getFlattenedConditionOptions(conditionsByGroup);
+    return {
+      ...elementor.config.displayConditions,
+      conditionsByGroup,
+      flattenedConditionOptions
+    };
+  };
+  const renderAppModal = ({
+    colorScheme,
+    isRTL,
+    getControlValue,
+    setControlValue,
+    fetchData,
+    onClose,
+    conditionsConfig,
+    setCacheNoticeStatus
+  }, rootElement) => {
+    appRoot = ReactDOM.createRoot(rootElement);
+    appRoot.render(/*#__PURE__*/_react.default.createElement(_app.default, {
+      colorScheme: colorScheme ?? (elementor?.getPreferences?.('ui_theme') || 'auto'),
+      isRTL: isRTL ?? elementorCommon.config.isRTL,
+      getControlValue: getControlValue,
+      setControlValue: setControlValue,
+      fetchData: fetchData ?? defaultFetchData,
+      onClose: onClose,
+      conditionsConfig: conditionsConfig ?? getConditionsConfig(),
+      setCacheNoticeStatus: setCacheNoticeStatus ?? defaultSetCacheNoticeStatus
+    }));
+  };
+  window.addEventListener('elementor/display-conditions/open', event => {
+    renderAppModal(event.detail.props, event.detail.rootElement ?? getRootElement());
+  });
+  window.addEventListener('elementor/display-conditions/close', event => {
+    const {
+      rootElement
+    } = event.detail ?? {};
+    appRoot?.unmount?.();
+    rootElement?.remove?.();
+  });
+  window.addEventListener('elementor/display-conditions/set-cache-notice-status', async event => {
+    const {
+      resolve,
+      reject
+    } = event.detail ?? {};
+    if (!resolve || !reject) {
+      return;
+    }
+    try {
+      const response = await doAjaxRequest('display_conditions_set_cache_notice_status');
+      const success = !!response;
+      if (success) {
+        elementor.config.displayConditions.show_cache_notice = false;
+      }
+      resolve(success);
+    } catch (error) {
+      reject(error);
+    }
+  });
+}
+
+/***/ }),
+
 /***/ "../modules/display-conditions/assets/js/editor/module.js":
 /*!****************************************************************!*\
   !*** ../modules/display-conditions/assets/js/editor/module.js ***!
@@ -1948,6 +2108,7 @@ var _behavior = _interopRequireDefault(__webpack_require__(/*! ./behavior */ "..
 class Module extends elementorModules.editor.utils.Module {
   pasteAction = 'paste';
   clearAction = 'clear';
+  atomicDisplayConditionsKey = 'display-conditions';
   getDefaultSettings() {
     return {
       selectors: {
@@ -1963,7 +2124,8 @@ class Module extends elementorModules.editor.utils.Module {
     elementor.hooks.addFilter('controls/base/behaviors', this.registerControlBehavior);
     elementor.channels.editor.on('section:activated', this.highlightIconIfFilled);
     elementor.on('navigator:init', this.onNavigatorInit.bind(this));
-    const elTypes = ['widget', 'section', 'column', 'container'];
+    const atomicElements = this.getAtomicElementTypes();
+    const elTypes = ['widget', 'section', 'column', 'container', ...atomicElements];
     elTypes.forEach(type => {
       elementor.hooks.addFilter(`elements/${type}/contextMenuGroups`, this.registerContextMenuGroups.bind(this));
     });
@@ -2005,8 +2167,11 @@ class Module extends elementorModules.editor.utils.Module {
     return groups;
   }
   isPasteDisplayConditionsEnabled(selectedElement) {
+    if (window.ElementorProDisplayConditions?.isLicenseExpired || false) {
+      return false;
+    }
     const displayConditions = this.getSelectedElementDisplayCondition(selectedElement),
-      doesClipboardHaveConditions = !!JSON.parse(this.getDisplayConditionsFromClipboard()).length;
+      doesClipboardHaveConditions = !!this.getDisplayConditionsFromClipboard().length;
     return !displayConditions.length && !elementor.selection.isMultiple() && doesClipboardHaveConditions;
   }
   isClearDisplayConditionsEnabled(selectedElement) {
@@ -2014,15 +2179,20 @@ class Module extends elementorModules.editor.utils.Module {
     return displayConditions.length && !elementor.selection.isMultiple();
   }
   getSelectedElementDisplayCondition(selectedElement) {
-    return JSON.parse(selectedElement?.model?.getSetting(this.getSettings('controls').displayConditions) || '[]');
+    const isAtomic = this.isAtomic(selectedElement?.model);
+    const settingsKey = this.getSettingsKey(isAtomic);
+    const displayConditions = selectedElement?.model?.getSetting(settingsKey);
+    return isAtomic ? this.transformV4ToV3Conditions(displayConditions) : JSON.parse(displayConditions || '[]');
   }
   getDisplayConditionsFromClipboard() {
     const clipboard = elementorCommon.storage.get('clipboard'),
       elements = clipboard?.elements || [];
     if (1 !== elements.length) {
-      return '[]';
+      return [];
     }
-    return elements[0]?.settings?.e_display_conditions || '[]';
+    const element = elements[0];
+    const isAtomic = this.isAtomic(element);
+    return this.extractDisplayConditions(element?.settings, isAtomic);
   }
 
   /**
@@ -2033,14 +2203,16 @@ class Module extends elementorModules.editor.utils.Module {
    */
   tryContextMenuActions(containers, action) {
     const container = containers?.[0] || null,
-      displayConditions = this.pasteAction === action ? this.getDisplayConditionsFromClipboard() : '';
+      displayConditions = this.pasteAction === action ? this.getDisplayConditionsFromClipboard() : null;
     if (!container) {
       return;
     }
+    const isAtomic = this.isAtomic(container.model);
+    const settingsKey = this.getSettingsKey(isAtomic);
     $e.run('document/elements/settings', {
       container,
       settings: {
-        e_display_conditions: displayConditions
+        [settingsKey]: this.createDisplayConditions(displayConditions, isAtomic)
       }
     });
     container.panel.refresh();
@@ -2059,8 +2231,6 @@ class Module extends elementorModules.editor.utils.Module {
     if (!behaviors) {
       behaviors = {};
     }
-    const conditionsByGroup = this._getGroupedConditionKeys(elementor.config.displayConditions || {});
-    const flattenedConditionOptions = this._getFlattenedConditionOptions(conditionsByGroup);
     behaviors.displayConditions = {
       behaviorClass: _behavior.default,
       getControlValue: () => {
@@ -2068,7 +2238,8 @@ class Module extends elementorModules.editor.utils.Module {
         if (!controlView) {
           return [];
         }
-        return this._getStructuredConditions(JSON.parse(controlView.getControlValue() || '[]'));
+        const value = controlView.getControlValue();
+        return this.getStructuredConditions(JSON.parse(value || '[]'));
       },
       setControlValue: value => {
         const displayConditionsInput = this.getEditorControlView(this.getSettings('controls').displayConditions),
@@ -2083,24 +2254,12 @@ class Module extends elementorModules.editor.utils.Module {
           this.highlightIcon(icon, displayConditionsInput);
         }
       },
-      fetchData: async (value, control) => {
-        const response = await this.doAjaxRequest('pro_panel_posts_control_filter_autocomplete', {
-          autocomplete: control.autocomplete,
-          q: value
-        });
-        return response?.results ?? [];
-      },
       setCacheNoticeStatus: async () => {
         const response = await this.doAjaxRequest('display_conditions_set_cache_notice_status');
         if (response) {
           elementor.config.displayConditions.show_cache_notice = false;
         }
         return response;
-      },
-      conditionsConfig: {
-        ...elementor.config.displayConditions,
-        conditionsByGroup,
-        flattenedConditionOptions
       }
     };
     return behaviors;
@@ -2126,7 +2285,7 @@ class Module extends elementorModules.editor.utils.Module {
     elementor.navigator.indicators.displayConditions = {
       icon: 'flow',
       title: __('Display Conditions', 'elementor-pro'),
-      settingKeys: ['e_display_conditions'],
+      settingKeys: ['e_display_conditions', 'display-conditions'],
       section: 'e_display_conditions_trigger'
     };
   }
@@ -2135,7 +2294,7 @@ class Module extends elementorModules.editor.utils.Module {
       return;
     }
     const conditionValue = controlView.getControlValue() || '[]',
-      conditionArray = '[]' !== conditionValue ? this._getStructuredConditions(JSON.parse(conditionValue)) : [];
+      conditionArray = '[]' !== conditionValue ? this.getStructuredConditions(JSON.parse(conditionValue)) : [];
     if (!conditionArray.length) {
       icon[0]?.classList?.remove('filled');
     } else {
@@ -2157,42 +2316,51 @@ class Module extends elementorModules.editor.utils.Module {
       return false;
     }
   };
-  _getStructuredConditions = conditions => {
-    return this._shouldConvertConditionsStructure(conditions) ? [conditions] : conditions;
+  getStructuredConditions = conditions => {
+    return this.shouldConvertConditionsStructure(conditions) ? [conditions] : conditions;
   };
-  _shouldConvertConditionsStructure = conditions => {
+  shouldConvertConditionsStructure = conditions => {
     return conditions.length && !Array.isArray(conditions[0]);
   };
-  _getGroupedConditionKeys = conditionsConfig => {
-    return Object.keys(conditionsConfig?.groups || {}).reduce((group, groupName) => {
-      const conditions = this._getConditionKeyByGroup(conditionsConfig.conditions, groupName);
-      if (conditions.length) {
-        group[groupName] = conditions;
-      }
-      return group;
-    }, {});
+  isAtomic = model => {
+    return elementor.helpers.isAtomicWidget(model);
   };
-  _getConditionKeyByGroup = (conditions, groupName) => {
-    return Object.keys(conditions).filter(conditionKey => groupName === conditions[conditionKey].group);
+  getSettingsKey = (isAtomic = false) => {
+    return isAtomic ? this.atomicDisplayConditionsKey : 'e_display_conditions';
   };
-  _getFlattenedConditionOptions = conditionsByGroup => {
-    const {
-      conditions = {},
-      groups = {}
-    } = elementor.config.displayConditions || {};
-    return Object.entries(conditionsByGroup).reduce((optionList, [groupName, conditionKeys]) => {
-      const relevantConditions = conditionKeys.map(key => ({
-        key,
-        label: conditions[key].label,
-        isGroup: false
-      }));
-      optionList.push({
-        key: groupName,
-        label: groups[groupName].label,
-        isGroup: true
-      }, ...relevantConditions);
-      return optionList;
-    }, []);
+  getAtomicElementTypes = () => {
+    return Object.entries(elementor.config.elements).filter(([, element]) => !!element?.atomic_props_schema).map(([elType]) => elType);
+  };
+  createDisplayConditions = (displayConditions, isAtomic = false) => {
+    // Value must be falsy for navigator indication to work properly
+    if (!displayConditions?.length) {
+      return isAtomic ? null : '';
+    }
+    return isAtomic ? this.transformV3ToV4Conditions(displayConditions) : JSON.stringify(displayConditions);
+  };
+  extractDisplayConditions = (settings, isAtomic) => {
+    const settingsKey = this.getSettingsKey(isAtomic);
+    const displayConditions = settings?.[settingsKey];
+    return isAtomic ? this.transformV4ToV3Conditions(displayConditions, isAtomic) : JSON.parse(displayConditions || '[]');
+  };
+  transformV4ToV3Conditions = conditions => {
+    return conditions?.value?.length ? conditions.value.map(({
+      value: conditionGroup
+    }) => conditionGroup?.map(({
+      value
+    }) => JSON.parse(value)) ?? null).filter(conditionGroup => !!conditionGroup?.length) : [];
+  };
+  transformV3ToV4Conditions = displayConditions => {
+    return displayConditions?.length ? {
+      $$type: this.atomicDisplayConditionsKey,
+      value: displayConditions.map(conditions => ({
+        $$type: 'condition-group',
+        value: conditions.map(condition => ({
+          $$type: 'string',
+          value: JSON.stringify(condition)
+        }))
+      }))
+    } : null;
   };
 }
 exports["default"] = Module;
@@ -5590,7 +5758,9 @@ var __webpack_exports__ = {};
 
 var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault */ "../node_modules/@babel/runtime/helpers/interopRequireDefault.js");
 var _module = _interopRequireDefault(__webpack_require__(/*! ./module.js */ "../modules/display-conditions/assets/js/editor/module.js"));
+var _modal = __webpack_require__(/*! ./modal.js */ "../modules/display-conditions/assets/js/editor/modal.js");
 new _module.default();
+(0, _modal.setupModal)();
 })();
 
 /******/ })()

@@ -21,6 +21,10 @@ use ElementorPro\Modules\Woocommerce\Widgets\Products as Products_Widget;
 use Elementor\Icons_Manager;
 use ElementorPro\Modules\LoopBuilder\Module as LoopBuilderModule;
 use ElementorPro\License\API;
+use Elementor\App\Modules\ImportExportCustomization\Processes\Import;
+use Elementor\App\Modules\ImportExportCustomization\Processes\Revert;
+use ElementorPro\Modules\Woocommerce\ImportExportCustomization\Woocommerce_Settings;
+use ElementorPro\Modules\Woocommerce\ImportExportCustomization\Woocommerce_Settings_Revert;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -1360,8 +1364,19 @@ class Module extends Module_Base {
 		return Plugin::elementor()->preview->is_preview_mode() || is_preview();
 	}
 
+	public function register_import_runner( Import $import ) {
+		$import->register( new Woocommerce_Settings() );
+	}
+
+	public function register_revert_runner( Revert $revert ) {
+		$revert->register( new Woocommerce_Settings_Revert() );
+	}
+
 	public function __construct() {
 		parent::__construct();
+
+		add_action( 'elementor/import-export-customization/import-kit', [ $this, 'register_import_runner' ] );
+		add_action( 'elementor/import-export-customization/revert-kit', [ $this, 'register_revert_runner' ] );
 
 		add_action( 'elementor/kit/register_tabs', [ $this, 'init_site_settings' ], 1, 40 );
 		$this->add_update_kit_settings_hooks();

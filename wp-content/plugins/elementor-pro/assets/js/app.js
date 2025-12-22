@@ -1,4 +1,4 @@
-/*! elementor-pro - v3.33.0 - 11-11-2025 */
+/*! elementor-pro - v3.34.0 - 22-12-2025 */
 /******/ (() => { // webpackBootstrap
 /******/ 	var __webpack_modules__ = ({
 
@@ -2484,7 +2484,7 @@ function KitContentCustomizationDialog({
       return /*#__PURE__*/_react.default.createElement(_customizationSubSetting.SubSetting, {
         key: taxonomy.value,
         label: taxonomy.label,
-        settingKey: "taxonomies",
+        settingKey: `taxonomies_${taxonomy.value}`,
         checked: settings.taxonomies.includes(taxonomy.value),
         disabled: !(0, _useTier.isHighTier)(),
         tooltip: !(0, _useTier.isHighTier)(),
@@ -2797,21 +2797,24 @@ function KitSettingsCustomizationDialog({
     onSettingChange: handleToggleChange,
     checked: settings.customFonts,
     disabled: isImport && !data?.uploadedData?.manifest?.['custom-fonts'] || !(0, _useTier.isHighTier)(),
-    tooltip: !(0, _useTier.isHighTier)()
+    tooltip: !(0, _useTier.isHighTier)(),
+    notExported: isImport && !data?.uploadedData?.manifest?.['custom-fonts']
   }), /*#__PURE__*/_react.default.createElement(_customizationSubSetting.SubSetting, {
     label: (0, _i18n.__)('Custom icons', 'elementor'),
     settingKey: "customIcons",
     onSettingChange: handleToggleChange,
     checked: settings.customIcons,
     disabled: isImport && !data?.uploadedData?.manifest?.['custom-icons'] || !(0, _useTier.isHighTier)(),
-    tooltip: !(0, _useTier.isHighTier)()
+    tooltip: !(0, _useTier.isHighTier)(),
+    notExported: isImport && !data?.uploadedData?.manifest?.['custom-icons']
   }), /*#__PURE__*/_react.default.createElement(_customizationSubSetting.SubSetting, {
     label: (0, _i18n.__)('Custom code', 'elementor'),
     settingKey: "customCode",
     onSettingChange: handleToggleChange,
     checked: settings.customCode,
     disabled: isImport && !data?.uploadedData?.manifest?.['custom-code'] || !(0, _useTier.isHighTier)(),
-    tooltip: !(0, _useTier.isHighTier)()
+    tooltip: !(0, _useTier.isHighTier)(),
+    notExported: isImport && !data?.uploadedData?.manifest?.['custom-code']
   }))))), /*#__PURE__*/_react.default.createElement(_upgradeNoticeBanner.UpgradeNoticeBanner, null)));
 }
 KitSettingsCustomizationDialog.propTypes = {

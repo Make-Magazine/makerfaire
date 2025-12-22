@@ -35,7 +35,7 @@ class Note_Query_Builder extends Model_Query_Builder {
 	 *
 	 * @param \wpdb|null $connection
 	 */
-	public function __construct( \wpdb $connection = null ) {
+	public function __construct( ?\wpdb $connection = null ) {
 		parent::__construct( Note::class, $connection );
 	}
 
@@ -72,7 +72,7 @@ class Note_Query_Builder extends Model_Query_Builder {
 	 *
 	 * @return $this
 	 */
-	public function with_replies( callable $callback = null ) {
+	public function with_replies( ?callable $callback = null ) {
 		$key = 'replies';
 		$foreign_key = 'parent_id';
 		$local_key = 'id';

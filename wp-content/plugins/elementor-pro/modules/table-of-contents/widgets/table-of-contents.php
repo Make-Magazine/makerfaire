@@ -545,9 +545,6 @@ class Table_Of_Contents extends Base_Widget {
 			]
 		);
 
-		$logical_start = is_rtl() ? 'right' : 'left';
-		$logical_end = is_rtl() ? 'left' : 'right';
-
 		$this->add_responsive_control(
 			'header_text_align',
 			[
@@ -556,7 +553,7 @@ class Table_Of_Contents extends Base_Widget {
 				'options' => [
 					'start' => [
 						'title' => esc_html__( 'Start', 'elementor-pro' ),
-						'icon' => "eicon-text-align-$logical_start",
+						'icon' => 'eicon-text-align-left',
 					],
 					'center' => [
 						'title' => esc_html__( 'Center', 'elementor-pro' ),
@@ -564,10 +561,11 @@ class Table_Of_Contents extends Base_Widget {
 					],
 					'end' => [
 						'title' => esc_html__( 'End', 'elementor-pro' ),
-						'icon' => "eicon-text-align-$logical_end",
+						'icon' => 'eicon-text-align-right',
 					],
 				],
 				'default' => 'start',
+				'classes' => 'elementor-control-start-end',
 				'selectors' => [
 					'{{WRAPPER}} .elementor-toc__header-title' => 'text-align: {{VALUE}}',
 				],
@@ -633,15 +631,16 @@ class Table_Of_Contents extends Base_Widget {
 				'options' => [
 					'row-reverse' => [
 						'title' => esc_html__( 'Start', 'elementor-pro' ),
-						'icon' => "eicon-h-align-$logical_start",
+						'icon' => 'eicon-h-align-left',
 					],
 					'row' => [
 						'title' => esc_html__( 'End', 'elementor-pro' ),
-						'icon' => "eicon-h-align-$logical_end",
+						'icon' => 'eicon-h-align-right',
 					],
 				],
 				'default' => 'row',
 				'toggle' => false,
+				'classes' => 'elementor-control-start-end',
 				'selectors' => [
 					'{{WRAPPER}} .elementor-toc__header' => 'flex-direction: {{VALUE}};',
 				],

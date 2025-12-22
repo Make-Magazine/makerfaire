@@ -1,5 +1,23 @@
 # Elementor Pro - by Elementor.com
 
+#### 3.34.0 - 2025-12-22
+
+* New: Added support for Display Conditions for Atomic Elements - Editor V4
+* Tweak: Enabled media queries for the Desktop breakpoint only in Custom CSS - Editor V4
+* Tweak: Added support for ACF field in Dynamic Tags - Editor V4
+* Tweak: Added support for Google Calendar in Contact URL Dynamic Tag - Editor V4
+* Tweak: Added support for Tel link in Contact URL Dynamic Tag - Editor V4
+* Tweak: Added support for ACF Image field in Dynamic Tags - Editor V4
+* Tweak: Removed icon from the accessibility tree in Flip Box widget
+* Tweak: Applied CSS logical properties in text-align controls and improved RTL rendering in the Editor
+* Fix: Website Template library displayed in English instead of the translated language
+* Fix: Custom CSS field breaks when using certain characters - Editor V4
+
+#### 3.33.2 - 2025-12-03
+
+* Fix: Incorrect status shown for Custom Code, Fonts, and Icons after importing a Website Template
+* Fix: Display Conditions window appears empty in the editor
+
 #### 3.33.1 - 2025-11-11
 
 * Fix: Styles not loading correctly in Custom Fonts and Custom Icons admin screens ([#33396](https://github.com/elementor/elementor/issues/33396))

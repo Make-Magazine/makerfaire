@@ -69,11 +69,7 @@ class Elements_Manager {
 	 */
 	public function create_element_instance( array $element_data, array $element_args = [], ?Element_Base $element_type = null ) {
 		if ( null === $element_type ) {
-			if ( 'widget' === $element_data['elType'] ) {
-				$element_type = Plugin::$instance->widgets_manager->get_widget_types( $element_data['widgetType'] );
-			} else {
-				$element_type = $this->get_element_types( $element_data['elType'] );
-			}
+			$element_type = $this->get_element( $element_data['elType'], isset( $element_data['widgetType'] ) ? $element_data['widgetType'] : null );
 		}
 
 		if ( ! $element_type ) {
@@ -88,6 +84,18 @@ class Elements_Manager {
 			$element = new $element_class( $element_data, $args );
 		} catch ( \Exception $e ) {
 			return null;
+		}
+
+		return $element;
+	}
+
+	public function get_element( string $el_type, ?string $widget_type = null ) {
+		$element = null;
+
+		if ( 'widget' === $el_type ) {
+			$element = Plugin::$instance->widgets_manager->get_widget_types( $widget_type );
+		} else {
+			$element = $this->get_element_types( $el_type );
 		}
 
 		return $element;
@@ -363,6 +371,12 @@ class Elements_Manager {
 	public function enqueue_elements_scripts() {
 		foreach ( $this->get_element_types() as $element ) {
 			$element->enqueue_scripts();
+		}
+	}
+
+	public function register_frontend_handlers() {
+		foreach ( $this->get_element_types() as $element ) {
+			$element->register_frontend_handlers();
 		}
 	}
 

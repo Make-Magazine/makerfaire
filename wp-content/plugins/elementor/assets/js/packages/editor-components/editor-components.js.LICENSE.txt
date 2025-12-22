@@ -1,18 +1,58 @@
+/*! ../../../store/store */
+
+/*! ../../api */
+
+/*! ../../hooks/use-canvas-document */
+
 /*! ../../hooks/use-components */
 
-/*! ../../hooks/use-create-component */
+/*! ../../hooks/use-element-rect */
+
+/*! ../../prop-types/component-overridable-prop-type */
+
+/*! ../../store/actions */
+
+/*! ../../store/create-unpublished-component */
+
+/*! ../../store/load-components-assets */
+
+/*! ../../store/set-overridable-prop */
+
+/*! ../../store/store */
 
 /*! ../../utils/get-container-for-new-element */
 
+/*! ../../utils/tracking */
+
 /*! ../api */
+
+/*! ../components/create-component-form/utils/replace-element-with-component */
+
+/*! ../consts */
 
 /*! ../create-component-form/utils/replace-element-with-component */
 
+/*! ../create-component-type */
+
+/*! ../store/create-unpublished-component */
+
 /*! ../store/store */
 
-/*! ../store/thunks */
+/*! ../utils/component-document-data */
 
 /*! ../utils/get-component-ids */
+
+/*! ../utils/tracking */
+
+/*! ./api */
+
+/*! ./component-document-data */
+
+/*! ./component-instance-transformer */
+
+/*! ./component-modal */
+
+/*! ./component-overridable-transformer */
 
 /*! ./component-search */
 
@@ -22,15 +62,37 @@
 
 /*! ./components/components-tab/components */
 
+/*! ./components/consts */
+
 /*! ./components/create-component-form/create-component-form */
+
+/*! ./components/edit-component/edit-component */
+
+/*! ./components/in-edit-mode */
+
+/*! ./components/overridable-props/overridable-prop-indicator */
+
+/*! ./create-component-type */
+
+/*! ./create-components-before-save */
 
 /*! ./hooks/use-form */
 
+/*! ./indicator */
+
 /*! ./init */
+
+/*! ./load-components-styles */
 
 /*! ./loading-components */
 
+/*! ./mcp */
+
+/*! ./overridable-prop-form */
+
 /*! ./populate-store */
+
+/*! ./save-as-component-tool */
 
 /*! ./search-provider */
 
@@ -38,7 +100,7 @@
 
 /*! ./store/components-styles-provider */
 
-/*! ./store/load-components-styles */
+/*! ./store/load-components-assets */
 
 /*! ./store/remove-component-styles */
 
@@ -46,21 +108,37 @@
 
 /*! ./store/thunks */
 
+/*! ./sync/before-save */
+
 /*! ./thunks */
+
+/*! ./update-components-before-save */
+
+/*! ./utils/component-document-data */
 
 /*! ./utils/component-form-schema */
 
-/*! ./utils/replace-element-with-component */
+/*! ./utils/get-component-event-data */
+
+/*! ./utils/get-overridable-prop */
+
+/*! ./utils/tracking */
 
 /*! @elementor/editor */
 
 /*! @elementor/editor-canvas */
 
+/*! @elementor/editor-controls */
+
 /*! @elementor/editor-documents */
+
+/*! @elementor/editor-editing-panel */
 
 /*! @elementor/editor-elements */
 
 /*! @elementor/editor-elements-panel */
+
+/*! @elementor/editor-mcp */
 
 /*! @elementor/editor-props */
 
@@ -74,6 +152,8 @@
 
 /*! @elementor/icons */
 
+/*! @elementor/mixpanel */
+
 /*! @elementor/schema */
 
 /*! @elementor/store */
@@ -86,9 +166,15 @@
 
 /*! react */
 
+/*! react-dom */
+
 /*!**************************!*\
   !*** external ["React"] ***!
   \**************************/
+
+/*!*****************************!*\
+  !*** external ["ReactDOM"] ***!
+  \*****************************/
 
 /*!******************************!*\
   !*** external ["wp","i18n"] ***!
@@ -122,6 +208,14 @@
   !*** external ["elementorV2","editorUi"] ***!
   \*******************************************/
 
+/*!*******************************************!*\
+  !*** external ["elementorV2","mixpanel"] ***!
+  \*******************************************/
+
+/*!********************************************!*\
+  !*** external ["elementorV2","editorMcp"] ***!
+  \********************************************/
+
 /*!*********************************************!*\
   !*** external ["elementorV2","httpClient"] ***!
   \*********************************************/
@@ -135,6 +229,10 @@
   \***********************************************/
 
 /*!*************************************************!*\
+  !*** external ["elementorV2","editorControls"] ***!
+  \*************************************************/
+
+/*!*************************************************!*\
   !*** external ["elementorV2","editorElements"] ***!
   \*************************************************/
 
@@ -145,6 +243,10 @@
 /*!***************************************************!*\
   !*** external ["elementorV2","editorV1Adapters"] ***!
   \***************************************************/
+
+/*!*****************************************************!*\
+  !*** external ["elementorV2","editorEditingPanel"] ***!
+  \*****************************************************/
 
 /*!******************************************************!*\
   !*** external ["elementorV2","editorElementsPanel"] ***!
@@ -166,6 +268,10 @@
   !*** ./packages/packages/core/editor-components/src/index.ts ***!
   \***************************************************************/
 
+/*!*******************************************************************!*\
+  !*** ./packages/packages/core/editor-components/src/mcp/index.ts ***!
+  \*******************************************************************/
+
 /*!*********************************************************************!*\
   !*** ./packages/packages/core/editor-components/src/store/store.ts ***!
   \*********************************************************************/
@@ -174,21 +280,61 @@
   !*** ./packages/packages/core/editor-components/src/store/thunks.ts ***!
   \**********************************************************************/
 
+/*!***********************************************************************!*\
+  !*** ./packages/packages/core/editor-components/src/store/actions.ts ***!
+  \***********************************************************************/
+
 /*!************************************************************************!*\
   !*** ./packages/packages/core/editor-components/src/populate-store.ts ***!
   \************************************************************************/
+
+/*!************************************************************************!*\
+  !*** ./packages/packages/core/editor-components/src/utils/tracking.ts ***!
+  \************************************************************************/
+
+/*!**************************************************************************!*\
+  !*** ./packages/packages/core/editor-components/src/sync/before-save.ts ***!
+  \**************************************************************************/
+
+/*!***************************************************************************!*\
+  !*** ./packages/packages/core/editor-components/src/components/consts.ts ***!
+  \***************************************************************************/
 
 /*!******************************************************************************!*\
   !*** ./packages/packages/core/editor-components/src/hooks/use-components.ts ***!
   \******************************************************************************/
 
+/*!*******************************************************************************!*\
+  !*** ./packages/packages/core/editor-components/src/create-component-type.ts ***!
+  \*******************************************************************************/
+
+/*!********************************************************************************!*\
+  !*** ./packages/packages/core/editor-components/src/hooks/use-element-rect.ts ***!
+  \********************************************************************************/
+
 /*!*********************************************************************************!*\
   !*** ./packages/packages/core/editor-components/src/utils/get-component-ids.ts ***!
   \*********************************************************************************/
 
+/*!**********************************************************************************!*\
+  !*** ./packages/packages/core/editor-components/src/components/in-edit-mode.tsx ***!
+  \**********************************************************************************/
+
+/*!***********************************************************************************!*\
+  !*** ./packages/packages/core/editor-components/src/hooks/use-canvas-document.ts ***!
+  \***********************************************************************************/
+
 /*!************************************************************************************!*\
-  !*** ./packages/packages/core/editor-components/src/hooks/use-create-component.ts ***!
+  !*** ./packages/packages/core/editor-components/src/mcp/save-as-component-tool.ts ***!
   \************************************************************************************/
+
+/*!************************************************************************************!*\
+  !*** ./packages/packages/core/editor-components/src/store/set-overridable-prop.ts ***!
+  \************************************************************************************/
+
+/*!**************************************************************************************!*\
+  !*** ./packages/packages/core/editor-components/src/store/load-components-assets.ts ***!
+  \**************************************************************************************/
 
 /*!**************************************************************************************!*\
   !*** ./packages/packages/core/editor-components/src/store/load-components-styles.ts ***!
@@ -198,9 +344,33 @@
   !*** ./packages/packages/core/editor-components/src/store/remove-component-styles.ts ***!
   \***************************************************************************************/
 
+/*!***************************************************************************************!*\
+  !*** ./packages/packages/core/editor-components/src/utils/component-document-data.ts ***!
+  \***************************************************************************************/
+
+/*!****************************************************************************************!*\
+  !*** ./packages/packages/core/editor-components/src/component-instance-transformer.ts ***!
+  \****************************************************************************************/
+
 /*!******************************************************************************************!*\
   !*** ./packages/packages/core/editor-components/src/store/components-styles-provider.ts ***!
   \******************************************************************************************/
+
+/*!*******************************************************************************************!*\
+  !*** ./packages/packages/core/editor-components/src/component-overridable-transformer.ts ***!
+  \*******************************************************************************************/
+
+/*!********************************************************************************************!*\
+  !*** ./packages/packages/core/editor-components/src/store/create-unpublished-component.ts ***!
+  \********************************************************************************************/
+
+/*!********************************************************************************************!*\
+  !*** ./packages/packages/core/editor-components/src/sync/create-components-before-save.ts ***!
+  \********************************************************************************************/
+
+/*!********************************************************************************************!*\
+  !*** ./packages/packages/core/editor-components/src/sync/update-components-before-save.ts ***!
+  \********************************************************************************************/
 
 /*!*********************************************************************************************!*\
   !*** ./packages/packages/core/editor-components/src/utils/get-container-for-new-element.ts ***!
@@ -209,6 +379,14 @@
 /*!***********************************************************************************************!*\
   !*** ./packages/packages/core/editor-components/src/components/components-tab/components.tsx ***!
   \***********************************************************************************************/
+
+/*!*************************************************************************************************!*\
+  !*** ./packages/packages/core/editor-components/src/components/overridable-props/indicator.tsx ***!
+  \*************************************************************************************************/
+
+/*!***************************************************************************************************!*\
+  !*** ./packages/packages/core/editor-components/src/components/edit-component/edit-component.tsx ***!
+  \***************************************************************************************************/
 
 /*!****************************************************************************************************!*\
   !*** ./packages/packages/core/editor-components/src/components/components-tab/components-item.tsx ***!
@@ -220,6 +398,14 @@
 
 /*!****************************************************************************************************!*\
   !*** ./packages/packages/core/editor-components/src/components/components-tab/search-provider.tsx ***!
+  \****************************************************************************************************/
+
+/*!****************************************************************************************************!*\
+  !*** ./packages/packages/core/editor-components/src/components/edit-component/component-modal.tsx ***!
+  \****************************************************************************************************/
+
+/*!****************************************************************************************************!*\
+  !*** ./packages/packages/core/editor-components/src/prop-types/component-overridable-prop-type.ts ***!
   \****************************************************************************************************/
 
 /*!*****************************************************************************************************!*\
@@ -234,13 +420,29 @@
   !*** ./packages/packages/core/editor-components/src/components/create-component-form/hooks/use-form.ts ***!
   \*********************************************************************************************************/
 
+/*!*************************************************************************************************************!*\
+  !*** ./packages/packages/core/editor-components/src/components/overridable-props/overridable-prop-form.tsx ***!
+  \*************************************************************************************************************/
+
 /*!*****************************************************************************************************************!*\
   !*** ./packages/packages/core/editor-components/src/components/create-component-form/create-component-form.tsx ***!
   \*****************************************************************************************************************/
 
+/*!*****************************************************************************************************************!*\
+  !*** ./packages/packages/core/editor-components/src/components/overridable-props/utils/get-overridable-prop.ts ***!
+  \*****************************************************************************************************************/
+
+/*!******************************************************************************************************************!*\
+  !*** ./packages/packages/core/editor-components/src/components/overridable-props/overridable-prop-indicator.tsx ***!
+  \******************************************************************************************************************/
+
 /*!**********************************************************************************************************************!*\
   !*** ./packages/packages/core/editor-components/src/components/create-component-form/utils/component-form-schema.ts ***!
   \**********************************************************************************************************************/
+
+/*!*************************************************************************************************************************!*\
+  !*** ./packages/packages/core/editor-components/src/components/create-component-form/utils/get-component-event-data.ts ***!
+  \*************************************************************************************************************************/
 
 /*!*******************************************************************************************************************************!*\
   !*** ./packages/packages/core/editor-components/src/components/create-component-form/utils/replace-element-with-component.ts ***!

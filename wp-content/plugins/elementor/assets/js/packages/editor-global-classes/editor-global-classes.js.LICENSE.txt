@@ -1,6 +1,10 @@
 /*! ../../../../hooks/use-filtered-css-class-usage */
 
+/*! ../../../../utils/tracking */
+
 /*! ../../../hooks/use-css-class-usage-by-id */
+
+/*! ../../../utils/tracking */
 
 /*! ../../context */
 
@@ -24,6 +28,8 @@
 
 /*! ../../store */
 
+/*! ../../utils/tracking */
+
 /*! ../api */
 
 /*! ../components/css-class-usage/types */
@@ -31,6 +37,8 @@
 /*! ../components/search-and-filter/context */
 
 /*! ../css-class-usage/components */
+
+/*! ../errors */
 
 /*! ../global-classes-styles-provider */
 
@@ -48,6 +56,8 @@
 
 /*! ../store */
 
+/*! ../utils/tracking */
+
 /*! ./api */
 
 /*! ./capabilities */
@@ -57,6 +67,8 @@
 /*! ./class-manager-introduction */
 
 /*! ./class-manager-panel */
+
+/*! ./classes-resource */
 
 /*! ./clear-icon-button */
 
@@ -88,6 +100,8 @@
 
 /*! ./global-classes-styles-provider */
 
+/*! ./hooks/use-prefetch-css-class-usage */
+
 /*! ./init */
 
 /*! ./mcp-apply-unapply-global-classes */
@@ -118,6 +132,8 @@
 
 /*! ./utils/snapshot-history */
 
+/*! ./utils/tracking */
+
 /*! @elementor/editor */
 
 /*! @elementor/editor-current-user */
@@ -130,8 +146,6 @@
 
 /*! @elementor/editor-panels */
 
-/*! @elementor/editor-props */
-
 /*! @elementor/editor-styles */
 
 /*! @elementor/editor-styles-repository */
@@ -143,6 +157,8 @@
 /*! @elementor/http-client */
 
 /*! @elementor/icons */
+
+/*! @elementor/mixpanel */
 
 /*! @elementor/query */
 
@@ -198,6 +214,10 @@
   !*** external ["elementorV2","editorUi"] ***!
   \*******************************************/
 
+/*!*******************************************!*\
+  !*** external ["elementorV2","mixpanel"] ***!
+  \*******************************************/
+
 /*!********************************************!*\
   !*** external ["elementorV2","editorMcp"] ***!
   \********************************************/
@@ -205,10 +225,6 @@
 /*!*********************************************!*\
   !*** external ["elementorV2","httpClient"] ***!
   \*********************************************/
-
-/*!**********************************************!*\
-  !*** external ["elementorV2","editorProps"] ***!
-  \**********************************************/
 
 /*!***********************************************!*\
   !*** external ["elementorV2","editorPanels"] ***!
@@ -261,6 +277,10 @@
 /*!**************************************************************************!*\
   !*** ./packages/packages/core/editor-global-classes/src/capabilities.ts ***!
   \**************************************************************************/
+
+/*!****************************************************************************!*\
+  !*** ./packages/packages/core/editor-global-classes/src/utils/tracking.ts ***!
+  \****************************************************************************/
 
 /*!*******************************************************************************!*\
   !*** ./packages/packages/core/editor-global-classes/src/hooks/use-filters.ts ***!
@@ -328,6 +348,10 @@
 
 /*!**********************************************************************************************!*\
   !*** ./packages/packages/core/editor-global-classes/src/components/css-class-usage/utils.ts ***!
+  \**********************************************************************************************/
+
+/*!**********************************************************************************************!*\
+  !*** ./packages/packages/core/editor-global-classes/src/mcp-integration/classes-resource.ts ***!
   \**********************************************************************************************/
 
 /*!************************************************************************************************!*\

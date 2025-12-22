@@ -12,7 +12,7 @@ class Taxonomies extends Import_Runner_Base {
 	public function handle( $result, array $data, array $imported_data, array $customization, $runner ) {
 		$path = $data['extracted_directory_path'] . 'taxonomies/';
 		$this->import_session_id = $data['session_id'];
-		$selected_taxonomies = $data['selected_taxonomies'] ?? [];
+		$selected_taxonomies = $customization['taxonomies'] ?? [];
 
 		$wp_builtin_post_types = ImportExportUtils::get_builtin_wp_post_types();
 		$selected_custom_post_types = isset( $data['selected_custom_post_types'] ) ? $data['selected_custom_post_types'] : [];

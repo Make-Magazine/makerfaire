@@ -1233,16 +1233,16 @@ body.post-type-attachment table.media .column-title .media-icon img[src$=".svg"]
 .dialog-type-alert .dialog-buttons-wrapper .dialog-button:visited {
   color: initial;
 }
-.dialog-type-confirm .dialog-buttons-wrapper .dialog-button[disabled],
-.dialog-type-alert .dialog-buttons-wrapper .dialog-button[disabled] {
-  background-color: var(--e-a-btn-bg-disabled);
-  cursor: not-allowed;
-}
 .dialog-type-confirm .dialog-buttons-wrapper .dialog-button[disabled]:hover, .dialog-type-confirm .dialog-buttons-wrapper .dialog-button[disabled]:focus, .dialog-type-confirm .dialog-buttons-wrapper .dialog-button[disabled]:visited,
 .dialog-type-alert .dialog-buttons-wrapper .dialog-button[disabled]:hover,
 .dialog-type-alert .dialog-buttons-wrapper .dialog-button[disabled]:focus,
 .dialog-type-alert .dialog-buttons-wrapper .dialog-button[disabled]:visited {
   background-color: var(--e-a-btn-bg-disabled);
+}
+.dialog-type-confirm .dialog-buttons-wrapper .dialog-button[disabled],
+.dialog-type-alert .dialog-buttons-wrapper .dialog-button[disabled] {
+  background-color: var(--e-a-btn-bg-disabled);
+  cursor: not-allowed;
 }
 
 :root {
@@ -1967,16 +1967,16 @@ fieldset:disabled a.e-button {
 .dialog-type-alert .dialog-buttons-wrapper .dialog-button:visited {
   color: initial;
 }
-.dialog-type-confirm .dialog-buttons-wrapper .dialog-button[disabled],
-.dialog-type-alert .dialog-buttons-wrapper .dialog-button[disabled] {
-  background-color: var(--e-a-btn-bg-disabled);
-  cursor: not-allowed;
-}
 .dialog-type-confirm .dialog-buttons-wrapper .dialog-button[disabled]:hover, .dialog-type-confirm .dialog-buttons-wrapper .dialog-button[disabled]:focus, .dialog-type-confirm .dialog-buttons-wrapper .dialog-button[disabled]:visited,
 .dialog-type-alert .dialog-buttons-wrapper .dialog-button[disabled]:hover,
 .dialog-type-alert .dialog-buttons-wrapper .dialog-button[disabled]:focus,
 .dialog-type-alert .dialog-buttons-wrapper .dialog-button[disabled]:visited {
   background-color: var(--e-a-btn-bg-disabled);
+}
+.dialog-type-confirm .dialog-buttons-wrapper .dialog-button[disabled],
+.dialog-type-alert .dialog-buttons-wrapper .dialog-button[disabled] {
+  background-color: var(--e-a-btn-bg-disabled);
+  cursor: not-allowed;
 }
 
 @keyframes elementor-rotation {
@@ -2126,6 +2126,7 @@ fieldset:disabled a.e-button {
 #elementor_rollback > div,
 #elementor_rollback_pro > div {
   display: flex;
+  align-items: center;
 }
 #elementor_rollback > div input,
 #elementor_rollback > div select,

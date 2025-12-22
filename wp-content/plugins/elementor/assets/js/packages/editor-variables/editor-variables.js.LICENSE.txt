@@ -20,6 +20,8 @@
 
 /*! ../../hooks/use-permissions */
 
+/*! ../../utils/tracking */
+
 /*! ../../utils/validations */
 
 /*! ../../variable-restore */
@@ -188,6 +190,8 @@
 
 /*! ./variables-registry/variable-type-registry */
 
+/*! ./variables-resource */
+
 /*! ./variables-selection */
 
 /*! @elementor/editor */
@@ -343,6 +347,10 @@
 /*!******************************************************************************!*\
   !*** ./packages/packages/core/editor-variables/src/utils/unlink-variable.ts ***!
   \******************************************************************************/
+
+/*!*******************************************************************************!*\
+  !*** ./packages/packages/core/editor-variables/src/mcp/variables-resource.ts ***!
+  \*******************************************************************************/
 
 /*!*******************************************************************************!*\
   !*** ./packages/packages/core/editor-variables/src/utils/filter-by-search.ts ***!

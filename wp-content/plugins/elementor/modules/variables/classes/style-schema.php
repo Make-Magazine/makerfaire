@@ -18,6 +18,12 @@ class Style_Schema {
 	public function augment( array $schema ): array {
 		foreach ( $schema as $key => $prop_type ) {
 			$schema[ $key ] = $this->update( $prop_type );
+			if ( method_exists( $prop_type, 'get_meta' ) && method_exists( $schema[ $key ], 'meta' ) ) {
+				$meta = $schema[ $key ]->get_meta() ?? [];
+				foreach ( $meta as $meta_key => $meta_value ) {
+					$schema[ $key ]->meta( $meta_key, $meta_value );
+				}
+			}
 		}
 
 		if ( isset( $schema['font-family'] ) ) {
@@ -70,24 +76,16 @@ class Style_Schema {
 	}
 
 	private function update_union( Union_Prop_Type $union_prop_type ): Union_Prop_Type {
-		$new_union = Union_Prop_Type::make();
-		$dependencies = $union_prop_type->get_dependencies();
-		$new_union->set_dependencies( $dependencies );
-
 		foreach ( $union_prop_type->get_prop_types() as $prop_type ) {
 			$updated = $this->update( $prop_type );
 
 			if ( $updated instanceof Union_Prop_Type ) {
 				foreach ( $updated->get_prop_types() as $updated_prop_type ) {
-					$new_union->add_prop_type( $updated_prop_type );
+					$union_prop_type->add_prop_type( $updated_prop_type );
 				}
-
-				continue;
 			}
-
-			$new_union->add_prop_type( $updated );
 		}
 
-		return $new_union;
+		return $union_prop_type;
 	}
 }

@@ -1562,7 +1562,7 @@ span.font-variations-count {
 }
 .e-site-editor-conditions__remove-condition {
   color: #818A96;
-  font-size: 1.125rem;
+  font-size: type(size, "18");
   display: flex;
   align-items: center;
   justify-content: center;
@@ -1621,7 +1621,7 @@ span.font-variations-count {
 .e-site-editor-conditions__input-wrapper select {
   appearance: none;
   -webkit-appearance: none;
-  font-size: 0.75rem;
+  font-size: type(size, "12");
   height: 2.5rem;
   border-width: 0;
   padding: 0 0.625rem;
@@ -1634,7 +1634,7 @@ span.font-variations-count {
 .e-site-editor-conditions__input-wrapper::after {
   font-family: eicons;
   content: "\e8ad";
-  font-size: 0.75rem;
+  font-size: type(size, "12");
   pointer-events: none;
   position: absolute;
   inset-block-start: 50%;
@@ -1647,7 +1647,7 @@ span.font-variations-count {
 }
 .e-site-editor-conditions__input-wrapper .select2-container--default .select2-selection--single .select2-selection__rendered {
   line-height: 2.5rem;
-  font-size: 0.75rem;
+  font-size: type(size, "12");
 }
 .e-site-editor-conditions__input-wrapper .select2-selection {
   outline: none;
@@ -1666,7 +1666,7 @@ span.font-variations-count {
   transform: translateY(-50%);
   inset-block-start: 50%;
   inset-inline-start: 0.75rem;
-  font-size: 0.9375rem;
+  font-size: type(size, "15");
   pointer-events: none;
   z-index: 1000;
 }
@@ -1674,7 +1674,7 @@ span.font-variations-count {
   text-transform: uppercase;
   padding-inline-start: 2.125rem;
   width: 7.5rem;
-  font-size: 0.75rem;
+  font-size: type(size, "12");
   border-inline-end: 1px solid;
   border-color: var(--e-site-editor-input-wrapper-border-color);
 }

@@ -4,6 +4,7 @@ namespace Elementor\Core\Admin;
 use Elementor\Api;
 use Elementor\Core\Admin\UI\Components\Button;
 use Elementor\Core\Base\Module;
+use Elementor\Core\Upgrade\Manager;
 use Elementor\Core\Utils\Promotions\Filtered_Promotions_Manager;
 use Elementor\Plugin;
 use Elementor\Settings;
@@ -20,6 +21,7 @@ class Admin_Notices extends Module {
 
 	const DEFAULT_EXCLUDED_PAGES = [ 'plugins.php', 'plugin-install.php', 'plugin-editor.php' ];
 	const LOCAL_GOOGLE_FONTS_DISABLED_NOTICE_ID = 'local_google_fonts_disabled';
+	const LOCAL_GOOGLE_FONTS_NOTICE_MIN_VERSION = '3.33.3';
 
 	const EXIT_EARLY_FOR_BACKWARD_COMPATIBILITY = false;
 
@@ -137,14 +139,14 @@ class Admin_Notices extends Module {
 			/* translators: 1: Details URL, 2: Accessibility text, 3: Version number, 4: Update URL, 5: Accessibility text. */
 			__( 'There is a new version of Elementor Page Builder available. <a href="%1$s" class="thickbox open-plugin-details-modal" aria-label="%2$s">View version %3$s details</a> or <a href="%4$s" class="update-link" aria-label="%5$s">update now</a>.', 'elementor' ),
 			esc_url( $details_url ),
-			esc_attr( sprintf(
+			sprintf(
 				/* translators: %s: Elementor version. */
-				__( 'View Elementor version %s details', 'elementor' ),
+				esc_attr__( 'View Elementor version %s details', 'elementor' ),
 				$new_version
-			) ),
+			),
 			$new_version,
 			esc_url( $upgrade_url ),
-			esc_attr( esc_html__( 'Update Now', 'elementor' ) )
+			esc_attr__( 'Update Now', 'elementor' )
 		);
 
 		$options = [
@@ -524,6 +526,10 @@ class Admin_Notices extends Module {
 			return false;
 		}
 
+		if ( ! Manager::had_install_prior_to( self::LOCAL_GOOGLE_FONTS_NOTICE_MIN_VERSION ) ) {
+			return false;
+		}
+
 		if ( User::is_user_notice_viewed( self::LOCAL_GOOGLE_FONTS_DISABLED_NOTICE_ID ) ) {
 			return false;
 		}
@@ -567,10 +573,6 @@ class Admin_Notices extends Module {
 		}
 
 		if ( ! current_user_can( 'manage_options' ) || User::is_user_notice_viewed( $notice_id ) ) {
-			return false;
-		}
-
-		if ( ! User::has_plugin_notice_been_displayed_for_required_time( 'image_optimization', WEEK_IN_SECONDS ) ) {
 			return false;
 		}
 
@@ -734,8 +736,6 @@ class Admin_Notices extends Module {
 		if ( ! current_user_can( 'manage_options' ) || User::is_user_notice_viewed( $notice_id ) ) {
 			return false;
 		}
-
-		User::set_user_notice_first_time( 'image_optimization' );
 
 		$attachments = new \WP_Query( [
 			'post_type' => 'attachment',

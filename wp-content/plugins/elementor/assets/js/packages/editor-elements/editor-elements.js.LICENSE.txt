@@ -1,8 +1,40 @@
+/*! ../../styles/create-element-style */
+
+/*! ../../styles/delete-element-style */
+
+/*! ../../styles/update-element-style */
+
+/*! ../../sync/create-element */
+
+/*! ../../sync/delete-element */
+
+/*! ../../sync/duplicate-element */
+
+/*! ../../sync/get-container */
+
+/*! ../../sync/get-current-document-container */
+
+/*! ../../sync/get-element-setting */
+
+/*! ../../sync/get-element-styles */
+
+/*! ../../sync/get-element-type */
+
+/*! ../../sync/get-selected-elements */
+
+/*! ../../sync/get-widgets-cache */
+
+/*! ../../sync/move-element */
+
+/*! ../../sync/update-element-settings */
+
 /*! ../errors */
 
 /*! ../sync/get-container */
 
 /*! ../sync/get-element-editor-settings */
+
+/*! ../sync/get-element-interactions */
 
 /*! ../sync/get-element-setting */
 
@@ -14,6 +46,8 @@
 
 /*! ../sync/update-element-settings */
 
+/*! ./common-style-utils */
+
 /*! ./consts */
 
 /*! ./create-element */
@@ -21,6 +55,8 @@
 /*! ./delete-element */
 
 /*! ./duplicate-element */
+
+/*! ./elements-tool */
 
 /*! ./get-container */
 
@@ -30,9 +66,41 @@
 
 /*! ./get-widgets-cache */
 
+/*! ./handlers/create-element */
+
+/*! ./handlers/create-style */
+
+/*! ./handlers/delete-element */
+
+/*! ./handlers/delete-style */
+
+/*! ./handlers/deselect-element */
+
+/*! ./handlers/duplicate-element */
+
+/*! ./handlers/get-element-props */
+
+/*! ./handlers/get-element-schema */
+
+/*! ./handlers/get-selected */
+
+/*! ./handlers/get-styles */
+
+/*! ./handlers/list-available-types */
+
+/*! ./handlers/move-element */
+
+/*! ./handlers/select-element */
+
+/*! ./handlers/update-props */
+
+/*! ./handlers/update-styles */
+
 /*! ./hooks/use-element-children */
 
 /*! ./hooks/use-element-editor-settings */
+
+/*! ./hooks/use-element-interactions */
 
 /*! ./hooks/use-element-setting */
 
@@ -41,6 +109,8 @@
 /*! ./hooks/use-selected-element */
 
 /*! ./link-restriction */
+
+/*! ./mcp */
 
 /*! ./move-element */
 
@@ -76,6 +146,8 @@
 
 /*! ./sync/get-element-editor-settings */
 
+/*! ./sync/get-element-interactions */
+
 /*! ./sync/get-element-label */
 
 /*! ./sync/get-element-setting */
@@ -100,9 +172,13 @@
 
 /*! ./sync/update-element-editor-settings */
 
+/*! ./sync/update-element-interactions */
+
 /*! ./sync/update-element-settings */
 
 /*! ./types */
+
+/*! @elementor/editor-mcp */
 
 /*! @elementor/editor-props */
 
@@ -110,9 +186,17 @@
 
 /*! @elementor/editor-v1-adapters */
 
+/*! @elementor/schema */
+
 /*! @elementor/utils */
 
 /*! @wordpress/i18n */
+
+/*! react */
+
+/*!**************************!*\
+  !*** external ["React"] ***!
+  \**************************/
 
 /*!******************************!*\
   !*** external ["wp","i18n"] ***!
@@ -121,6 +205,14 @@
 /*!****************************************!*\
   !*** external ["elementorV2","utils"] ***!
   \****************************************/
+
+/*!*****************************************!*\
+  !*** external ["elementorV2","schema"] ***!
+  \*****************************************/
+
+/*!********************************************!*\
+  !*** external ["elementorV2","editorMcp"] ***!
+  \********************************************/
 
 /*!**********************************************!*\
   !*** external ["elementorV2","editorProps"] ***!
@@ -146,6 +238,10 @@
   !*** ./packages/packages/libs/editor-elements/src/errors.ts ***!
   \**************************************************************/
 
+/*!*****************************************************************!*\
+  !*** ./packages/packages/libs/editor-elements/src/mcp/index.ts ***!
+  \*****************************************************************/
+
 /*!*********************************************************************!*\
   !*** ./packages/packages/libs/editor-elements/src/styles/consts.ts ***!
   \*********************************************************************/
@@ -153,6 +249,10 @@
 /*!************************************************************************!*\
   !*** ./packages/packages/libs/editor-elements/src/link-restriction.ts ***!
   \************************************************************************/
+
+/*!*************************************************************************!*\
+  !*** ./packages/packages/libs/editor-elements/src/mcp/elements-tool.ts ***!
+  \*************************************************************************/
 
 /*!*************************************************************************!*\
   !*** ./packages/packages/libs/editor-elements/src/sync/drop-element.ts ***!
@@ -211,6 +311,10 @@
   \******************************************************************************/
 
 /*!*******************************************************************************!*\
+  !*** ./packages/packages/libs/editor-elements/src/mcp/handlers/get-styles.ts ***!
+  \*******************************************************************************/
+
+/*!*******************************************************************************!*\
   !*** ./packages/packages/libs/editor-elements/src/sync/duplicate-elements.ts ***!
   \*******************************************************************************/
 
@@ -234,6 +338,26 @@
   !*** ./packages/packages/libs/editor-elements/src/hooks/use-element-setting.ts ***!
   \*********************************************************************************/
 
+/*!*********************************************************************************!*\
+  !*** ./packages/packages/libs/editor-elements/src/mcp/handlers/create-style.ts ***!
+  \*********************************************************************************/
+
+/*!*********************************************************************************!*\
+  !*** ./packages/packages/libs/editor-elements/src/mcp/handlers/delete-style.ts ***!
+  \*********************************************************************************/
+
+/*!*********************************************************************************!*\
+  !*** ./packages/packages/libs/editor-elements/src/mcp/handlers/get-selected.ts ***!
+  \*********************************************************************************/
+
+/*!*********************************************************************************!*\
+  !*** ./packages/packages/libs/editor-elements/src/mcp/handlers/move-element.ts ***!
+  \*********************************************************************************/
+
+/*!*********************************************************************************!*\
+  !*** ./packages/packages/libs/editor-elements/src/mcp/handlers/update-props.ts ***!
+  \*********************************************************************************/
+
 /*!**********************************************************************************!*\
   !*** ./packages/packages/libs/editor-elements/src/hooks/use-element-children.ts ***!
   \**********************************************************************************/
@@ -243,8 +367,24 @@
   \**********************************************************************************/
 
 /*!**********************************************************************************!*\
+  !*** ./packages/packages/libs/editor-elements/src/mcp/handlers/update-styles.ts ***!
+  \**********************************************************************************/
+
+/*!**********************************************************************************!*\
   !*** ./packages/packages/libs/editor-elements/src/sync/get-selected-elements.ts ***!
   \**********************************************************************************/
+
+/*!***********************************************************************************!*\
+  !*** ./packages/packages/libs/editor-elements/src/mcp/handlers/create-element.ts ***!
+  \***********************************************************************************/
+
+/*!***********************************************************************************!*\
+  !*** ./packages/packages/libs/editor-elements/src/mcp/handlers/delete-element.ts ***!
+  \***********************************************************************************/
+
+/*!***********************************************************************************!*\
+  !*** ./packages/packages/libs/editor-elements/src/mcp/handlers/select-element.ts ***!
+  \***********************************************************************************/
 
 /*!***********************************************************************************!*\
   !*** ./packages/packages/libs/editor-elements/src/styles/create-element-style.ts ***!
@@ -270,12 +410,48 @@
   !*** ./packages/packages/libs/editor-elements/src/sync/update-element-settings.ts ***!
   \************************************************************************************/
 
+/*!*************************************************************************************!*\
+  !*** ./packages/packages/libs/editor-elements/src/mcp/handlers/deselect-element.ts ***!
+  \*************************************************************************************/
+
+/*!*************************************************************************************!*\
+  !*** ./packages/packages/libs/editor-elements/src/sync/get-element-interactions.ts ***!
+  \*************************************************************************************/
+
+/*!**************************************************************************************!*\
+  !*** ./packages/packages/libs/editor-elements/src/hooks/use-element-interactions.ts ***!
+  \**************************************************************************************/
+
+/*!**************************************************************************************!*\
+  !*** ./packages/packages/libs/editor-elements/src/mcp/handlers/duplicate-element.ts ***!
+  \**************************************************************************************/
+
+/*!**************************************************************************************!*\
+  !*** ./packages/packages/libs/editor-elements/src/mcp/handlers/get-element-props.ts ***!
+  \**************************************************************************************/
+
+/*!***************************************************************************************!*\
+  !*** ./packages/packages/libs/editor-elements/src/mcp/handlers/common-style-utils.ts ***!
+  \***************************************************************************************/
+
+/*!***************************************************************************************!*\
+  !*** ./packages/packages/libs/editor-elements/src/mcp/handlers/get-element-schema.ts ***!
+  \***************************************************************************************/
+
 /*!****************************************************************************************!*\
   !*** ./packages/packages/libs/editor-elements/src/sync/get-element-editor-settings.ts ***!
   \****************************************************************************************/
 
+/*!****************************************************************************************!*\
+  !*** ./packages/packages/libs/editor-elements/src/sync/update-element-interactions.ts ***!
+  \****************************************************************************************/
+
 /*!*****************************************************************************************!*\
   !*** ./packages/packages/libs/editor-elements/src/hooks/use-element-editor-settings.ts ***!
+  \*****************************************************************************************/
+
+/*!*****************************************************************************************!*\
+  !*** ./packages/packages/libs/editor-elements/src/mcp/handlers/list-available-types.ts ***!
   \*****************************************************************************************/
 
 /*!*******************************************************************************************!*\

@@ -1,4 +1,4 @@
-/*! elementor-pro - v3.33.0 - 11-11-2025 */
+/*! elementor-pro - v3.34.0 - 22-12-2025 */
 :root {
   --color-box-shadow-color: rgba(0, 0, 0, 0.05);
 }
@@ -20,7 +20,7 @@
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  font-size: 0.6875rem;
+  font-size: type(text, xxs);
 }
 .e-site-template__meta-data:last-of-type {
   margin-inline-end: auto;
@@ -31,7 +31,7 @@
 .e-site-template__meta-data .eps-icon {
   margin-inline-end: 0.3125rem;
   color: var(--eps-meta-icon-color);
-  font-size: 0.8125rem;
+  font-size: type(text, sm);
 }
 .e-site-template__placeholder .eps-card__image {
   filter: var(--placeholder-filter, none);
@@ -74,7 +74,7 @@
 .e-site-template__instances .eps-icon {
   margin-inline-end: 0.3125rem;
   color: var(--eps-meta-icon-color);
-  font-size: 0.8125rem;
+  font-size: type(text, sm);
 }
 .e-site-template__instances-list {
   overflow: hidden;
@@ -162,7 +162,7 @@
 }
 .e-site-editor-conditions__remove-condition {
   color: #818A96;
-  font-size: 1.125rem;
+  font-size: type(size, "18");
   display: flex;
   align-items: center;
   justify-content: center;
@@ -222,7 +222,7 @@
   -moz-appearance: none;
        appearance: none;
   -webkit-appearance: none;
-  font-size: 0.75rem;
+  font-size: type(size, "12");
   height: 2.5rem;
   border-width: 0;
   padding: 0 0.625rem;
@@ -235,7 +235,7 @@
 .e-site-editor-conditions__input-wrapper::after {
   font-family: eicons;
   content: "\e8ad";
-  font-size: 0.75rem;
+  font-size: type(size, "12");
   pointer-events: none;
   position: absolute;
   inset-block-start: 50%;
@@ -248,7 +248,7 @@
 }
 .e-site-editor-conditions__input-wrapper .select2-container--default .select2-selection--single .select2-selection__rendered {
   line-height: 2.5rem;
-  font-size: 0.75rem;
+  font-size: type(size, "12");
 }
 .e-site-editor-conditions__input-wrapper .select2-selection {
   outline: none;
@@ -267,7 +267,7 @@
   transform: translateY(-50%);
   inset-block-start: 50%;
   inset-inline-start: 0.75rem;
-  font-size: 0.9375rem;
+  font-size: type(size, "15");
   pointer-events: none;
   z-index: 1000;
 }
@@ -275,7 +275,7 @@
   text-transform: uppercase;
   padding-inline-start: 2.125rem;
   width: 7.5rem;
-  font-size: 0.75rem;
+  font-size: type(size, "12");
   border-inline-end: 1px solid;
   border-color: var(--e-site-editor-input-wrapper-border-color);
 }

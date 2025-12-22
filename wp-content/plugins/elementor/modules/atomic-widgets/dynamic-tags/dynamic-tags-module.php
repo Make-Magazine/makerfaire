@@ -43,11 +43,18 @@ class Dynamic_Tags_Module {
 
 		add_filter(
 			'elementor/atomic-widgets/props-schema',
-			fn( array $schema ) => Dynamic_Prop_Types_Mapping::make()->get_modified_prop_types( $schema )
+			fn( array $schema ) => Dynamic_Prop_Types_Mapping::make()->get_extended_schema( $schema )
 		);
 
 		add_action(
 			'elementor/atomic-widgets/settings/transformers/register',
+			fn ( $transformers, $prop_resolver ) => $this->register_transformers( $transformers, $prop_resolver ),
+			10,
+			2
+		);
+
+		add_action(
+			'elementor/atomic-widgets/styles/transformers/register',
 			fn ( $transformers, $prop_resolver ) => $this->register_transformers( $transformers, $prop_resolver ),
 			10,
 			2

@@ -5,14 +5,18 @@ use Elementor\Controls_Manager;
 use Elementor\Utils;
 use ElementorPro\Base\Module_Base;
 use ElementorPro\License\API;
+use ElementorPro\Modules\AtomicWidgets\Transformers\Display_Conditions as Display_Conditions_Transformer;
 use ElementorPro\Modules\DisplayConditions\Classes\Or_Condition;
 use ElementorPro\Plugin;
+use Elementor\Modules\AtomicWidgets\Controls\Section;
+use ElementorPro\Modules\AtomicWidgets\PropTypes\Display_Conditions\Display_Conditions_Prop_Type;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
 
 class Module extends Module_Base {
+
 
 	private $hidden_elements_ids = [];
 
@@ -27,6 +31,42 @@ class Module extends Module_Base {
 		}
 
 		$this->maybe_add_actions_and_components();
+
+		add_filter(
+			'elementor/atomic-widgets/controls',
+			fn( $element_controls, $atomic_element ) => $this->inject_display_conditions_control( $element_controls, $atomic_element ),
+			100,
+			2
+		);
+	}
+
+	private function inject_display_conditions_control( $element_controls, $atomic_element ) {
+
+		$schema = $atomic_element::get_props_schema();
+
+		if ( ! array_key_exists( Display_Conditions_Prop_Type::get_key(), $schema ) ) {
+			return $element_controls;
+		}
+
+		foreach ( $element_controls as $item ) {
+			if ( $item instanceof Section && $item->get_id() === 'settings' ) {
+				$control = Display_Conditions_Control::bind_to( Display_Conditions_Prop_Type::get_key() )
+					->set_label( __( 'Display Conditions', 'elementor-pro' ) )
+					->set_meta( [
+						'topDivider' => true,
+					] );
+
+				if ( API::is_license_expired() ) {
+					$control->set_disabled( true );
+				}
+
+				$item->add_item( $control );
+
+				break;
+			}
+		}
+
+		return $element_controls;
 	}
 
 	public static function should_show_promo(): bool {
@@ -74,6 +114,15 @@ class Module extends Module_Base {
 			ELEMENTOR_PRO_VERSION,
 			true
 		);
+
+		$inline_script = sprintf(
+			'window.ElementorProDisplayConditions = %s;',
+			wp_json_encode( [
+				'isLicenseExpired' => API::is_license_expired(),
+			] )
+		);
+
+		wp_add_inline_script( 'e-display-conditions', $inline_script, 'before' );
 
 		wp_set_script_translations( 'e-display-conditions', 'elementor-pro' );
 	}
@@ -162,9 +211,13 @@ class Module extends Module_Base {
 	}
 
 	protected function get_saved_conditions( $settings ) {
-		$conditions_json = ! empty( $settings['e_display_conditions'] ) ? $settings['e_display_conditions'] : [];
+		if ( isset( $settings[ Display_Conditions_Prop_Type::get_key() ] ) ) {
+			$settings['e_display_conditions'] = Display_Conditions_Transformer::extract_from_settings( $settings );
+		}
 
-		return ! empty( $conditions_json ) && ! empty( $conditions_json[0] )
+		$conditions_json = ! empty( $settings['e_display_conditions'] ) ? $settings['e_display_conditions'] : '[]';
+
+		return ! empty( $conditions_json )
 			? json_decode( $conditions_json[0], true )
 			: [];
 	}
@@ -174,7 +227,7 @@ class Module extends Module_Base {
 		$is_visible = true;
 		$saved_conditions = $this->get_saved_conditions( $settings );
 
-		if ( empty( $settings['e_display_conditions'] ) || Plugin::elementor()->editor->is_edit_mode() || empty( $saved_conditions ) ) {
+		if ( Plugin::elementor()->editor->is_edit_mode() || empty( $saved_conditions ) ) {
 			return $is_visible;
 		}
 

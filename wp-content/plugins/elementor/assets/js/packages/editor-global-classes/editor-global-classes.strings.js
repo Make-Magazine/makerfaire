@@ -22,7 +22,7 @@ __( 'Before', 'elementor' );
 __( 'After', 'elementor' );
 __( 'Your designs and classes are safe.', 'elementor' );
 __(
-									'Only the prefixes were added.Find them in Class Manager by searching',
+									'Only the prefixes were added. Find them in Class Manager by searching',
 									'elementor'
 								);
 __( 'Go to Class Manager', 'elementor' );
@@ -78,7 +78,6 @@ __( 'Popup', 'elementor' );
 __( 'Header', 'elementor' );
 __( 'Footer', 'elementor' );
 __( 'Locator', 'elementor' );
-__( 'Search', 'elementor' );
 __( 'Unused', 'elementor' );
 __( 'Empty', 'elementor' );
 __( 'On this page', 'elementor' );
@@ -86,3 +85,4 @@ __( 'Filters', 'elementor' );
 __( 'Clear all', 'elementor' );
 __( 'Filters', 'elementor' );
 __( 'Clear Filters', 'elementor' );
+__( 'Search', 'elementor' );

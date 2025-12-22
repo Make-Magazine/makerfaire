@@ -413,7 +413,7 @@ export function KitContentCustomizationDialog( {
 							<SubSetting
 								key={ taxonomy.value }
 								label={ taxonomy.label }
-								settingKey="taxonomies"
+								settingKey={ `taxonomies_${ taxonomy.value }` }
 								checked={ settings.taxonomies.includes( taxonomy.value ) }
 								disabled={ ! isHighTier() }
 								tooltip={ ! isHighTier() }

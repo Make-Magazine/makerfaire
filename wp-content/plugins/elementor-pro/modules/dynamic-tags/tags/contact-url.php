@@ -34,12 +34,10 @@ class Contact_URL extends Tag {
 				'label' => esc_html__( 'Type', 'elementor-pro' ),
 				'type' => Controls_Manager::SELECT,
 				'options' => [
-					'' => '— ' . esc_html__( 'Select', 'elementor-pro' ) . ' —',
 					'email' => esc_html__( 'Email', 'elementor-pro' ),
 					'tel' => esc_html__( 'Tel', 'elementor-pro' ),
 					'sms' => esc_html__( 'SMS', 'elementor-pro' ),
 					'whatsapp' => esc_html__( 'WhatsApp', 'elementor-pro' ),
-					'skype' => esc_html__( 'Skype', 'elementor-pro' ),
 					'messenger' => esc_html__( 'Messenger', 'elementor-pro' ),
 					'viber' => esc_html__( 'Viber', 'elementor-pro' ),
 					'waze' => esc_html__( 'Waze', 'elementor-pro' ),
@@ -132,25 +130,6 @@ class Contact_URL extends Tag {
 				'default' => 'contact',
 				'condition' => [
 					'link_type' => 'viber',
-				],
-			]
-		);
-
-		$this->add_control(
-			'skype_action',
-			[
-				'label' => esc_html__( 'Action', 'elementor-pro' ),
-				'type' => Controls_Manager::SELECT,
-				'options' => [
-					'call' => esc_html__( 'Call', 'elementor-pro' ),
-					'chat' => esc_html__( 'Chat', 'elementor-pro' ),
-					'userinfo' => esc_html__( 'Show Profile', 'elementor-pro' ),
-					'add' => esc_html__( 'Add to Contacts', 'elementor-pro' ),
-					'voicemail' => esc_html__( 'Send Voice Mail', 'elementor-pro' ),
-				],
-				'default' => 'call',
-				'condition' => [
-					'link_type' => 'skype',
 				],
 			]
 		);
@@ -290,19 +269,6 @@ class Contact_URL extends Tag {
 		return 'https://api.whatsapp.com/send?phone=' . $settings['tel_number'];
 	}
 
-	private function build_skype_link( $settings ) {
-		if ( empty( $settings['username'] ) ) {
-			return '';
-		}
-
-		$action = 'call';
-		if ( ! empty( $settings['skype_action'] ) ) {
-			$action = $settings['skype_action'];
-		}
-		$link = 'skype:' . $settings['username'] . '?' . $action;
-		return $link;
-	}
-
 	private function build_waze_link( $settings ) {
 		$link = 'https://waze.com/ul?';
 
@@ -317,6 +283,10 @@ class Contact_URL extends Tag {
 
 	private function date_to_iso( $date, $all_day = false ) {
 		$time = strtotime( $date );
+
+		if ( false === $time ) {
+			return '';
+		}
 
 		if ( $all_day ) {
 			return gmdate( 'Ymd\/Ymd', $time );
@@ -340,7 +310,9 @@ class Contact_URL extends Tag {
 			if ( empty( $settings['event_end_date'] ) ) {
 				$dates = $this->date_to_iso( $settings['event_start_date'], true );
 			} else {
-				$dates = $this->date_to_iso( $settings['event_start_date'] ) . '/' . $this->date_to_iso( $settings['event_end_date'] );
+				$start = $this->date_to_iso( $settings['event_start_date'] );
+				$end = $this->date_to_iso( $settings['event_end_date'] );
+				$dates = $start && $end ? ( $start . '/' . $end ) : ( $start ? $start : ( $end ? $end : '' ) );
 			}
 		}
 		$link = 'https://www.google.com/calendar/render?action=TEMPLATE&';
@@ -435,9 +407,6 @@ class Contact_URL extends Tag {
 				break;
 			case 'whatsapp':
 				$value = $this->build_whatsapp_link( $settings );
-				break;
-			case 'skype':
-				$value = $this->build_skype_link( $settings );
 				break;
 			case 'waze':
 				$value = $this->build_waze_link( $settings );

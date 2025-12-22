@@ -24,6 +24,7 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
+const RESTRICTED_KEYBOARD_SHORTCUT_UNITS = ['auto'];
 const RESTRICTED_INPUT_KEYS = ['e', 'E', '+', '-'];
 function notAnEmptySize(value) {
   return null !== value && undefined !== value && !isNaN(Number(value));
@@ -93,7 +94,7 @@ const SizeField = ({
     const newChar = key.toLowerCase();
     const updatedBuffer = (unitInputBufferRef.current + newChar).slice(-3);
     unitInputBufferRef.current = updatedBuffer;
-    const matchedUnit = units.find(u => u.includes(updatedBuffer)) || units.find(u => u.startsWith(newChar)) || units.find(u => u.includes(newChar));
+    const matchedUnit = units.find(u => !RESTRICTED_KEYBOARD_SHORTCUT_UNITS.includes(u) && u.includes(updatedBuffer)) || units.find(u => !RESTRICTED_KEYBOARD_SHORTCUT_UNITS.includes(u) && u.startsWith(newChar)) || units.find(u => !RESTRICTED_KEYBOARD_SHORTCUT_UNITS.includes(u) && u.includes(newChar));
     if (matchedUnit) {
       handleUnitChange(matchedUnit);
     }
