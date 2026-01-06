@@ -2,7 +2,7 @@
 /**
  * @license GPL-2.0-or-later
  *
- * Modified by __root__ on 16-October-2025 using Strauss.
+ * Modified by __root__ on 05-December-2025 using Strauss.
  * @see https://github.com/BrianHenryIE/strauss
  */
 
@@ -47,7 +47,7 @@ use GravityKit\GravityEdit\Foundation\Settings\WPDebugSettings;
  * @method static SecureDownload secure_download()
  */
 class Core {
-	const VERSION = '1.6.0';
+	const VERSION = '1.7.0';
 
 	const ID = 'gk_foundation';
 
@@ -948,7 +948,12 @@ HTML;
 				'slug'         => 'namespace-conflicts',
 				'message'      => strtr(
 					// translators: [plugins] is replaced with a list of plugin names.
-					__( '[plugins] contain both namespaced and non-namespaced Foundation, which may cause conflicts with the standalone Foundation plugin.', 'gk-gravityedit' ),
+					_n(
+						'[plugins] contains both namespaced and non-namespaced Foundation, which may cause conflicts with the standalone Foundation plugin.',
+						'[plugins] contain both namespaced and non-namespaced Foundation, which may cause conflicts with the standalone Foundation plugin.',
+						count( $conflicting_plugins ),
+						'gk-gravityedit'
+					),
 					[ '[plugins]' => '<strong>' . implode( ', ', $conflicting_plugins ) . '</strong>' ]
 				),
 				'severity'     => 'warning',

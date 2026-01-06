@@ -7,7 +7,6 @@ namespace Gravity_Forms_Stripe\API\Model;
  *
  * @since 5.5.0
  */
-#[\AllowDynamicProperties]
 class Base implements \ArrayAccess {
 
 	/**
@@ -114,9 +113,24 @@ class Base implements \ArrayAccess {
 	protected function maybe_expand( $key, $value ) {
 		$nested_objects = $this->get_nested_objects();
 		$class_name     = rgar( $nested_objects, $key );
+
+		// Trying to expand a single object
 		if ( $class_name && is_array( $value ) ) {
 			return new $class_name( $value, $this->api );
 		}
+
+		// Trying to expand an array of objects
+		$class_name = rgar( $nested_objects, $key . '[]' );
+		if ( $class_name && is_array( $value ) ) {
+			$objects = array();
+			$items = rgar( $value, 'object' ) === 'list' ? $value['data'] : $value;
+
+			foreach ( $items as $item ) {
+				$objects[] = is_array( $item ) ? new $class_name( $item, $this->api ) : $item;
+			}
+			return $objects;
+		}
+
 		return $value;
 	}
 

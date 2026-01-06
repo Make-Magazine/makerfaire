@@ -126,7 +126,7 @@ ul.custom-rss-element.horizontal li {
 	margin-bottom: 0px;
 	min-width: 320px;
 	flex-grow: 1;
-	margin: 20px 10px 0px
+	margin: 30px 10px 0px 0px;
 }
 ul.custom-rss-element.horizontal li .rss-image-wrapper {
 	min-width: 100px;
@@ -237,6 +237,7 @@ ul.custom-rss-element.horizontal:not(.carousel) {
 ul.custom-rss-element.horizontal.carousel {
 	overflow-x: hidden;
 	padding-bottom: 12px;
+	min-width: 100%;
 }
 ul.custom-rss-element.horizontal.carousel .owl-nav button{
 	position: absolute;

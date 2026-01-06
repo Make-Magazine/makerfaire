@@ -1,7 +1,7 @@
 <?php
 /** @noinspection PhpComposerExtensionStubsInspection *
  * @license MIT
- * Modified by __root__ on 16-October-2025 using Strauss.
+ * Modified by __root__ on 05-December-2025 using Strauss.
  * @see https://github.com/BrianHenryIE/strauss
  */
 

@@ -3,7 +3,7 @@
  * Plugin Name: Gravity Forms Stripe Add-On
  * Plugin URI: https://gravityforms.com
  * Description: Integrates Gravity Forms with Stripe, enabling end users to purchase goods and services through Gravity Forms.
- * Version: 5.9.0
+ * Version: 6.0.2
  * Author: Gravity Forms
  * Author URI: https://gravityforms.com
  * License: GPL-2.0+
@@ -11,7 +11,7 @@
  * Domain Path: /languages
  *
  * ------------------------------------------------------------------------
- * Copyright 2009 - 2024 Rocketgenius, Inc.
+ * Copyright 2009 - 2025 Rocketgenius, Inc.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,7 +30,7 @@
 
 defined( 'ABSPATH' ) || die();
 
-define( 'GF_STRIPE_VERSION', '5.9.0' );
+define( 'GF_STRIPE_VERSION', '6.0.2' );
 
 // If Gravity Forms is loaded, bootstrap the Stripe Add-On.
 add_action( 'gform_loaded', array( 'GF_Stripe_Bootstrap', 'load' ), 5 );
@@ -60,12 +60,21 @@ class GF_Stripe_Bootstrap {
 			return;
 		}
 
-		require_once( 'class-gf-stripe.php' );
+		// Load the right version of the Stripe Add-On based on the Gravity Forms version. The Stripe Add-On was refactored after Gravity Forms 2.9 to take advantage of AJAX submission functionality.
+		$force_stripe_v5 = apply_filters( 'gform_force_stripe_v5', false );
+		if ( version_compare( GFForms::$version, '2.9.6.3', '<' ) || $force_stripe_v5 ) {
+			require_once( 'deprecated/class-gf-stripe.php' );
+		} else {
+			require_once( 'class-gf-stripe.php' );
+		}
 
 		GFAddOn::register( 'GFStripe' );
-
 	}
 
+	public static function get_base_path( $full_path = '' ) {
+		$path = empty( $full_path ) ? __FILE__ : $full_path;
+		return plugin_dir_path( $path );
+	}
 }
 
 /**

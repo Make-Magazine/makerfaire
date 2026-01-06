@@ -1,7 +1,7 @@
 === GravityView - DataTables Layout ===
 Tags: gravityview
 Requires at least: 4.4
-Tested up to: 6.8.3
+Tested up to: 6.9
 Stable tag: trunk
 Contributors: The GravityKit Team
 License: GPL 3 or higher
@@ -15,6 +15,25 @@ Display entries in a dynamic table powered by DataTables & GravityView.
 3. Follow the instructions
 
 == Changelog ==
+
+= 3.7.0 on December 4, 2025 =
+
+This release adds support for Gravity Flow Workflow Approval Links field and fixes several display and functionality issues.
+
+#### 🚀 Added
+* Support for Gravity Flow Workflow Approval Links field.
+
+#### 🐛 Fixed
+* Rows were not properly grouped under a single heading when using RowGroup with [Inline Edit](https://www.gravitykit.com/products/gravityedit/) enabled.
+* The `{sequence}` merge tag restarting on each page instead of continuing across pages.
+* JavaScript error that could prevent DataTables from loading on certain site configurations.
+
+= 3.6.2 on November 27, 2025 =
+
+This update fixes a search issue affecting Multi Select fields.
+
+#### 🐛 Fixed
+* URL query parameters were not updated with all Multi Select field selections when searching, causing the table to be improperly filtered after reloading the page.
 
 = 3.6.1 on October 30, 2025 =
 

@@ -322,7 +322,8 @@ gform.extensions.styles.gravityformsstripe = gform.extensions.styles.gravityform
 		const componentStyles = Object.keys(this.cardStyle).length > 0 ? JSON.parse(JSON.stringify(this.cardStyle)) : gform.extensions.styles.gravityformsstripe[this.formId][this.pageInstance] || {};
 
 		this.setComponentStyleValue = function (key, value, themeFrameworkStyles, manualElement) {
-			let resolvedValue = '';
+			// Helper to resolve CSS property key
+			const resolveKey = key => key === 'fontSmoothing' ? '-webkit-font-smoothing' : key.replace(/([a-z])([A-Z])/g, '$1-$2').toLowerCase();
 
 			// If the value provided is a custom property let's begin
 			if (value.indexOf('--') === 0) {
@@ -330,22 +331,17 @@ gform.extensions.styles.gravityformsstripe = gform.extensions.styles.gravityform
 
 				// If we have a computed end value from the custom property, let's use that
 				if (computedValue) {
-					resolvedValue = computedValue;
-				}
-				// Otherwise, let's use a provided element or the form wrapper
-				// along with the key to nab the computed end value for the CSS property
-				else {
-						const selector = manualElement ? getComputedStyle(manualElement) : themeFrameworkStyles;
-						const resolvedKey = key === 'fontSmoothing' ? '-webkit-font-smoothing' : key;
-						resolvedValue = selector.getPropertyValue(resolvedKey.replace(/([a-z])([A-Z])/g, '$1-$2').toLowerCase());
-					}
-			}
-			// Otherwise let's treat the provided value as the actual CSS value wanted
-			else {
-					resolvedValue = value;
+					return computedValue.trim();
 				}
 
-			return resolvedValue.trim();
+				// Otherwise, let's use a provided element or the form wrapper
+				// along with the key to nab the computed end value for the CSS property
+				const selector = manualElement ? getComputedStyle(manualElement) : themeFrameworkStyles;
+				return selector.getPropertyValue(resolveKey(key)).trim();
+			}
+
+			// Otherwise let's treat the provided value as the actual CSS value wanted
+			return value.trim();
 		};
 
 		this.setComponentStyles = function (obj, objKey, parentKey) {
@@ -356,10 +352,34 @@ gform.extensions.styles.gravityformsstripe = gform.extensions.styles.gravityform
 
 			// Grab the computed styles for the form, which the global CSS API and theme framework are scoped to
 			const form = document.getElementById('gform_' + this.formId);
+
+			// If form doesn't exist, abort.
+			if (!form) {
+				return;
+			}
+
 			const themeFrameworkStyles = getComputedStyle(form);
 
 			// Grab the first form control in the form for fallback CSS property value computation
 			const firstFormControl = form.querySelector('.gfield input');
+
+			// Helper method to handle outline style properties and turn it into Stripe's
+			// required shorthand outline property
+			const processOutlineProperty = (target, key, value) => {
+				if (!this.outlineProperties) {
+					this.outlineProperties = { value: '', count: 0 };
+				}
+
+				this.outlineProperties.value += this.outlineProperties.count > 0 ? ` ${value}` : value;
+				this.outlineProperties.count++;
+
+				if (this.outlineProperties.count === 3) {
+					target['outline'] = this.outlineProperties.value;
+
+					// Reset for future calls
+					this.outlineProperties = { value: '', count: 0 };
+				}
+			};
 
 			// Note, this currently only supports three levels deep of object nesting.
 			Object.keys(obj).forEach(key => {
@@ -385,30 +405,25 @@ gform.extensions.styles.gravityformsstripe = gform.extensions.styles.gravityform
 				}
 
 				// Handling of keys that are not objects and need their value to be set
-				if (typeof obj[key] !== 'object') {
-					let value = '';
-					// Handling of nested keys
-					if (parentKey) {
-						if (objKey && objKey !== parentKey) {
-							// Setting value for a key three levels into the object
-							value = this.setComponentStyleValue(key, componentStyles[parentKey][objKey][key], themeFrameworkStyles, firstFormControl);
-							if (value) {
-								this.cardStyle[parentKey][objKey][key] = value;
-							}
+				let value = '';
+				const updateStyle = (target, keyPath) => {
+					value = this.setComponentStyleValue(key, keyPath, themeFrameworkStyles, firstFormControl);
+					if (value) {
+						if (['outlineWidth', 'outlineStyle', 'outlineColor'].includes(key)) {
+							delete target[key];
+							processOutlineProperty(target, key, value);
 						} else {
-							// Setting value for a key two levels into the object
-							value = this.setComponentStyleValue(key, componentStyles[parentKey][key], themeFrameworkStyles, firstFormControl);
-							if (value) {
-								this.cardStyle[parentKey][key] = value;
-							}
-						}
-					} else {
-						// Setting value for a key one level into the object
-						value = this.setComponentStyleValue(key, componentStyles[key], themeFrameworkStyles, firstFormControl);
-						if (value) {
-							this.cardStyle[key] = value;
+							target[key] = value;
 						}
 					}
+				};
+
+				if (parentKey && objKey && objKey !== parentKey) {
+					updateStyle(this.cardStyle[parentKey][objKey], componentStyles[parentKey][objKey][key]);
+				} else if (parentKey) {
+					updateStyle(this.cardStyle[parentKey], componentStyles[parentKey][key]);
+				} else {
+					updateStyle(this.cardStyle, componentStyles[key]);
 				}
 			});
 		};
@@ -592,6 +607,11 @@ gform.extensions.styles.gravityformsstripe = gform.extensions.styles.gravityform
 
 			// bind Stripe functionality to submit event
 			$('#gform_' + this.formId).on('submit', function (event) {
+
+				// If the input isn't present on the page just return, this could happen in edit entry view.
+				if (!GFStripeObj.GFCCField || GFStripeObj.GFCCField.length === 0) {
+					return;
+				}
 
 				// Don't proceed with payment logic if clicking on the Previous button.
 				let skipElementsHandler = false;
@@ -1300,6 +1320,7 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
 
 
 
+
 class StripePaymentsHandler {
 
 	/**
@@ -1325,6 +1346,13 @@ class StripePaymentsHandler {
 			'recurringAmount': 0,
 			'paymentAmount': 0
 		};
+
+		// If field is not rendered, do not initialize the payment element.
+		const fieldContainer = gform.utils.getNode(`#field_${this.GFStripeObj.formId}_${this.GFStripeObj.ccFieldId}`, document, true);
+		if (!fieldContainer) {
+			return;
+		}
+
 		// The object gets initialized everytime frontend feeds are evaluated so we need to clear any previous errors.
 		Object(_error_handler__WEBPACK_IMPORTED_MODULE_1__["clearErrors"])();
 
@@ -1495,6 +1523,20 @@ class StripePaymentsHandler {
 		if ('payment_method_types' in initialPaymentInformation) {
 			initialPaymentInformation.payment_method_types = Object.values(initialPaymentInformation.payment_method_types);
 		}
+
+		// Payment Element doesn't yet support new AJAX. Revert to POSTBACK if new AJAX is enabled.
+		window.gform.utils.addAsyncFilter('gform/submission/pre_submission', data => {
+
+			// If this is not a Payment Element submission, abort.
+			if (this.GFStripeObj.formId != data.form.dataset.formid) {
+				return data;
+			}
+
+			if (data.submissionMethod === window.gform.submission.SUBMISSION_METHOD_AJAX) {
+				data.submissionMethod = window.gform.submission.SUBMISSION_METHOD_POSTBACK;
+			}
+			return data;
+		});
 
 		this.elements = this.stripe.elements(_extends({}, initialPaymentInformation, { appearance }));
 
@@ -1687,7 +1729,7 @@ class StripePaymentsHandler {
 			return true;
 		}
 
-		return coupon.is_valid && payment_amount == this.order.paymentAmount;
+		return coupon.is_valid;
 	}
 
 	/**

@@ -263,6 +263,7 @@ final class GravityView_Inline_Edit_Scripts {
 			'file',
 			'entry_tags',
 			'image_choice',
+			'survey',
 		);
 
 		foreach ( $custom_inline_edit_field_types as $custom_field ) {
@@ -291,6 +292,14 @@ final class GravityView_Inline_Edit_Scripts {
 				wp_enqueue_style('tagify',GK_ENTRY_TAGS_URL.'assets/tagify/tagify.css');
 
 
+			}
+
+			if ( 'survey' === $custom_field && class_exists( 'GFSurvey' ) ) {
+
+				wp_enqueue_style( 'gsurvey_css', GFSurvey::get_instance()->get_base_url() . '/assets/css/dist/admin.css', array(), GFSurvey::get_instance()->get_version(), 'all' );
+				wp_enqueue_style( 'gravityformssurvey_gravity_theme', GFSurvey::get_instance()->get_base_url() . '/assets/css/dist/theme'.$script_debug.'.css', array(), GFSurvey::get_instance()->get_version(), 'all' );
+				wp_enqueue_script( 'gsurvey_js', GFSurvey::get_instance()->get_base_url() . '/js/gsurvey'.$script_debug.'.js', array( 'jquery', 'jquery-ui-sortable', 'jquery-touch-punch' ), GFSurvey::get_instance()->get_version(), true );
+			
 			}
 
 			if ( 'gvlist' === $custom_field ) {

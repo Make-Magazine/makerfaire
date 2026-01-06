@@ -562,8 +562,9 @@ class GP_Populate_Anything extends GP_Plugin {
 			return;
 		}
 
+		// Use a relative AJAX URL so wildcard subdomain embeds stay same-origin.
 		wp_localize_script( 'gp-populate-anything', 'GPPA', array(
-			'AJAXURL'    => admin_url( 'admin-ajax.php', null ),
+			'AJAXURL'    => admin_url( 'admin-ajax.php', 'relative' ),
 			'GF_BASEURL' => GFCommon::get_base_url(),
 			'NONCE'      => wp_create_nonce( 'gppa' ),
 			'I18N'       => $this->get_js_strings(),
@@ -2215,7 +2216,33 @@ class GP_Populate_Anything extends GP_Plugin {
 			}
 		}
 
-		if ( in_array( $field->type, array( 'checkbox', 'image_choice' ) ) ) {
+		if ( $field->type === 'multi_choice' ) {
+			$values_to_select_by_input = array();
+
+			foreach ( $field->choices as $choice ) {
+				if ( count( $values_to_select ) > 0 ) {
+					foreach ( $values_to_select as $key => $value ) {
+						$input = $key;
+						if ( $choice['value'] === $value ) {
+							// When values are populated from another form entry, the key refers to the source field ID (e.g., 1.2).
+							// However, the current form field receiving the value may have a different ID.
+							// Therefore, we need to replace the source key with the current form field ID to ensure correct mapping.
+							$key_parts = explode( '.', $key );
+							if ( count( $key_parts ) == 2 ) {
+								$input                               = $field->id . '.' . $key_parts[1];
+								$values_to_select_by_input[ $input ] = $choice['value'];
+							}
+						}
+					}
+				}
+			}
+
+			if ( count( $values_to_select_by_input ) > 0 ) {
+				return $values_to_select_by_input;
+			}
+		}
+
+		if ( in_array( $field->type, array( 'checkbox', 'image_choice', 'multi_choice' ) ) ) {
 			$values_to_select_by_input = array();
 
 			$choice_number = 0;
@@ -2229,29 +2256,6 @@ class GP_Populate_Anything extends GP_Plugin {
 				$input = $field->id . '.' . $choice_number;
 				if ( in_array( $choice['value'], $values_to_select ) ) {
 					$values_to_select_by_input[ $input ] = $choice['value'];
-				}
-			}
-
-			return $values_to_select_by_input;
-		} elseif ( $field->type === 'multi_choice' ) {
-			$values_to_select_by_input = array();
-
-			foreach ( $field->choices as $choice ) {
-				if ( count( $values_to_select ) > 0 ) {
-					foreach ( $values_to_select as $key => $value ) {
-						$input = $key;
-						if ( $choice['value'] === $value ) {
-							// When values are populated from another form entry, the key refers to the source field ID (e.g., 1.2).
-							// However, the current form field receiving the value may have a different ID.
-							// Therefore, we need to replace the source key with the current form field ID to ensure correct mapping.
-							$key_parts = explode( '.', $key );
-							if ( count( $key_parts ) == 2 ) {
-								$input = $field->id . '.' . $key_parts[1];
-							}
-
-							$values_to_select_by_input[ $input ] = $choice['value'];
-						}
-					}
 				}
 			}
 

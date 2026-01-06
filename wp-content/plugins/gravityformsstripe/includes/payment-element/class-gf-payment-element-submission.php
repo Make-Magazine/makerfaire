@@ -112,12 +112,10 @@ class GF_Payment_Element_Submission {
 	 * @return string|WP_Error
 	 */
 	public function create_draft_submission( $form_id, $stripe_encrypted_params ) {
-
-		$files                           = array();
 		$form                            = GFAPI::get_form( $form_id );
 		$feed                            = $this->addon->get_feed( rgpost( 'feed_id' ) );
 		$tracking_id                     = rgget( 'tracking_id' );
-		$field_values                    = RGForms::post( 'gform_field_values' );
+		$field_values                    = rgpost( 'gform_field_values' );
 		$lead                            = GFFormsModel::get_current_lead();
 		$lead['stripe_encrypted_params'] = $stripe_encrypted_params;
 		$lead['version_hash']            = rgpost( 'version_hash' );
@@ -212,47 +210,76 @@ class GF_Payment_Element_Submission {
 	 * @return array
 	 */
 	public function handle_file_uploads( $form ) {
-		$file_upload_types = array( 'fileupload', 'post_image' );
-		$files = array();
-		// Handle single file uploads.
-		foreach ( $form['fields'] as $field ) {
-			if ( is_a( $field, 'GF_Field_Fileupload') && ! $field->multipleFiles && isset( $_FILES[ 'input_' . $field->id ] ) && ! empty( $_FILES[ 'input_' . $field->id ]['name'] ) ) {
-				// File exists in $_FILES and is a single file, just upload it.
-				$files[ 'input_' . $field->id ] = $field->upload_file( $form['id'], wp_unslash( $_FILES[ 'input_' . $field->id ] ) );
-			} elseif (
-				is_a( $field, 'GF_Field_Fileupload')
-				&& ! $field->multipleFiles
-				&& empty( $_POST[ 'input_' . $field->id ] )
-				&& ! empty( $_POST['gform_uploaded_files'] )
-			) {
-				// File was uploaded in a previous submission, we need to extract the temp file name and then move it
-				$file_data = json_decode( stripslashes( $_POST['gform_uploaded_files'] ), true );
-				foreach ( $file_data as $input_id => $file_name ) {
-					if ( $input_id == 'input_' . $field->id ) {
-						$file_extension                 = pathinfo( $file_name, PATHINFO_EXTENSION );
-						$files[ 'input_' . $field->id ] = array(
-							'uploaded_filename' => $file_name,
-							'temp_filename'     => $_POST['gform_unique_id'] . '_input_' . $field->id . '.' . $file_extension,
-						);
+		$files          = array();
+		$form_id        = absint( rgar( $form, 'id' ) );
+		$form_unique_id = null;
 
-						$files[ 'input_' . $field->id ] = $field->move_temp_file( $form['id'], $files[ 'input_' . $field->id ] );
+		foreach ( $form['fields'] as $field ) {
+			if ( ! $field instanceof GF_Field_FileUpload ) {
+				continue;
+			}
+
+			$input_name = 'input_' . absint( $field->id );
+
+			if ( method_exists( $field, 'get_submission_files' ) ) {
+				$field_files = $field->get_submission_files();
+			} else {
+				$field_files = array(
+					'existing' => rgar( GFFormsModel::$uploaded_files, $form_id . '/' . $input_name, array() ),
+					'new'      => array(),
+				);
+
+				if ( ! $field->multipleFiles ) {
+					$new_file = rgar( $_FILES, $input_name );
+					if ( rgar( $new_file, 'error' ) === UPLOAD_ERR_OK ) {
+						$field_files['new'][] = $new_file;
 					}
 				}
 			}
-		}
 
-		// Handle multi file uploads.
-		$multi_file_uploads_json = str_replace( '\\', '', rgar( $_POST, 'gform_uploaded_files' ) );
-		$multi_file_uploads      = json_decode( $multi_file_uploads_json, true );
-		if ( ! empty( $multi_file_uploads ) ) {
-			foreach ( $form['fields'] as $field ) {
-				if ( is_a( $field, 'GF_Field_Fileupload') && $field->multipleFiles && isset( $multi_file_uploads[ 'input_' . $field->id ] ) ) {
-					$files[ 'input_' . $field->id ] = array();
-					foreach ( $multi_file_uploads[ 'input_' . $field->id ] as $file_upload_info ) {
-						$files[ 'input_' . $field->id ][] = $field->move_temp_file( $form['id'], $file_upload_info );
+			if ( empty( $field_files['existing'] ) && empty( $field_files['new'] ) ) {
+				$files[ $input_name ] = '';
+				continue;
+			}
+
+			$field_value = array();
+
+			foreach ( $field_files['existing'] as $file ) {
+				if ( is_string( $file ) ) { // Single file field upload by earlier page or validation error using GF 2.9.17 or older.
+					if ( is_null( $form_unique_id ) ) {
+						$form_unique_id = GFFormsModel::get_form_unique_id( $form_id );
 					}
-					$files[ 'input_' . $field->id ] = json_encode( $files[ 'input_' . $field->id ] );
+					$extension = pathinfo( $file, PATHINFO_EXTENSION );
+
+					$field_value[] = $field->move_temp_file( $form_id, array(
+						'uploaded_filename' => $file,
+						'temp_filename'     => "{$form_unique_id}_{$input_name}.{$extension}",
+					) );
+				} elseif ( isset( $file['url'] ) ) { // Dynamic population using GF 2.9.18+/UR 5.4.1+ update feed.
+					$field_value[] = $file['url'];
+				} elseif ( isset( $file['temp_filename'] ) ) { // Multi-file field or GF 2.9.18+ single file field uploaded by earlier page or validation error.
+					$field_value[] = $field->move_temp_file( $form_id, $file );
+				} elseif ( isset( $file['uploaded_filename'] ) ) { // Legacy UR update feed population.
+					$field_value[] = $file['uploaded_filename'];
 				}
+
+				if ( ! $field->multipleFiles && count( $field_value ) === 1 ) {
+					break;
+				}
+			}
+
+			foreach ( $field_files['new'] as $file ) {
+				if ( ! $field->multipleFiles && count( $field_value ) === 1 ) {
+					break;
+				}
+
+				$field_value[] = $field->upload_file( $form_id, $file );
+			}
+
+			if ( $field->multipleFiles || $field->storageType === 'json' ) {
+				$files[ $input_name ] = json_encode( $field_value );
+			} else {
+				$files[ $input_name ] = $field_value[0];
 			}
 		}
 

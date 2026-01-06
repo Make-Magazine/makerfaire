@@ -274,6 +274,16 @@ class GFStripe extends GFPaymentAddOn {
 	protected $payment_element_handler;
 
 	/**
+	 * @var \Gravity_Forms\Gravity_Forms\GF_Service_Container $container
+	 */
+	private static $container;
+
+
+	const GF_STRIPE_CONFIG = 'gf_stripe_config';
+	const DATA_PARSER = 'data_parser';
+	const CONFIG_COLLECTION = 'config_collection';
+
+	/**
 	 * Get an instance of this class.
 	 *
 	 * @since  1.0
@@ -311,9 +321,46 @@ class GFStripe extends GFPaymentAddOn {
 
 		// When the manage subscription link is clicked, it should be handled here.
 		add_action( 'wp', array( $this->get_billing_portal_handler(), 'maybe_redirect_logged_in_user_to_self_serve_link' ), 10 );
-		parent::pre_init();
+
+        parent::pre_init();
 
 		require_once 'includes/class-gf-field-stripe-creditcard.php';
+	}
+
+	/**
+	 * Register service providers for the plugin.
+	 *
+	 * @since 6.0
+	 *
+	 * @return void
+	 */
+	public function register_services() {
+
+		$container = self::get_service_container();
+
+		$container->add_provider( new \Gravity_Forms\Gravity_Forms_Stripe\Elements\Experimental_GF_Elements_Service_Provider() );
+		$container->add_provider( new \Gravity_Forms\Gravity_Forms_Stripe\Common\Webhook_Service_Provider() );
+	}
+
+	/**
+	 * Get the Service Container for the plugin.
+	 *
+	 * @since 6.0
+	 *
+	 * @return \Gravity_Forms\Gravity_Forms\GF_Service_Container
+	 */
+	public static function get_service_container() {
+
+		require_once 'includes/elements/class-gf-elements-service-provider.php';
+		require_once 'includes/common/class-webhook-service-provider.php';
+
+		if ( ! empty( self::$container ) ) {
+			return self::$container;
+		}
+		self::$container = \GFForms::get_service_container();
+
+
+		return self::$container;
 	}
 
 	/**
@@ -420,6 +467,8 @@ class GFStripe extends GFPaymentAddOn {
 					'capture_confirm'                 => wp_strip_all_tags( __( 'Are you sure you want to capture this payment?', 'gravityformstripe' ) ),
 					'capture_processing'              => wp_strip_all_tags( __( 'Processing capture', 'gravityformsstripe' ) ),
 					'capture_complete'                => wp_strip_all_tags( __( 'Transaction successfully captured', 'gravityformsstripe' ) ),
+					'copied'					      => wp_strip_all_tags( __( 'Copied', 'gravityformsstripe' ) ),
+					'copied_to_clipboard'             => wp_strip_all_tags( __( 'Webhook URL copied to clipboard', 'gravityformsstripe' ) ),
 				),
 			),
 			array(
@@ -443,6 +492,42 @@ class GFStripe extends GFPaymentAddOn {
 					'payment_element_supported'        => $this->is_payment_element_supported(),
 					'payment_element_disabled_message' => wp_strip_all_tags( __( 'To enable additional payment methods, you must update Gravity Forms to the latest version.', 'gravityformsstripe' ) ),
 					'email_field_id_text'              => wp_strip_all_tags( __( 'Field ID', 'gravityformsstripe' ) ),
+				),
+			),
+			array(
+				'handle'    => 'gform_stripe_vendor_theme_js',
+				'src'       => trailingslashit( $this->get_base_url() ) . "assets/js/dist/vendor-theme{$this->_asset_min}.js",
+				'version'   => $this->_version,
+				'in_footer' => true,
+				'enqueue'   => array(
+					array( $this, 'is_refactored_payment_method' ),
+				),
+			),
+			array(
+				'handle'    => 'gform_stripe_theme_js',
+				'src'       => trailingslashit( $this->get_base_url() ) . "assets/js/dist/scripts-theme{$this->_asset_min}.js",
+				'version'   => $this->_version,
+				'deps'      => array( 'gform_stripe_vendor_theme_js', 'stripe_v3' ),
+				'in_footer' => true,
+				'enqueue'   => array(
+					array( $this, 'is_refactored_payment_method' ),
+					array( 'admin_page' => ( 'block_editor' ) ),
+				),
+				'strings'   => array(
+					'publishable_key'                     => $this->get_publishable_api_key(),
+					'create_payment_intent_nonce'         => wp_create_nonce( 'gfstripe_create_payment_intent' ),
+					'create_subscription_nonce'           => wp_create_nonce( 'gfstripe_create_subscription' ),
+					'increase_error_count_nonce'          => wp_create_nonce( 'gfstripe_increase_error_count' ),
+					'get_entry_nonce'                     => wp_create_nonce( 'gfstripe_get_entry' ),
+					'get_country_code_nonce'              => wp_create_nonce( 'gfstripe_get_country_code' ),
+					'handle_successful_entry_nonce'       => wp_create_nonce( 'gfstripe_handle_successful_entry' ),
+					'payment_timeout_message'             => esc_html__( 'This process is taking longer than expected. You will receive a confirmation via email when your payment is completed.', 'gravityformsstripe' ),
+					'processing_payment'                  => esc_html__( 'Processing payment...', 'gravityformsstripe' ),
+					'payment_failed_message'              => esc_html__( 'Your payment has failed. Please update your payment method and try again.', 'gravityformsstripe' ),
+					'try_again'                           => esc_html__( 'Try again', 'gravityformsstripe' ),
+					'card_error_message'                  => esc_html__( 'Please enter your card details.', 'gravityformsstripe' ),
+					'subscription_creation_error_message' => esc_html__( 'Could not create subscription.', 'gravityformsstripe' ),
+					'unknown_error_message'               => esc_html__( 'There was an error processing your request. Please try again later.', 'gravityformsstripe' ),
 				),
 			),
 		);
@@ -581,16 +666,9 @@ class GFStripe extends GFPaymentAddOn {
 		}
 
 		$form = GFAPI::get_form( $form_id );
-		if ( ! $this->has_stripe_card_field( $form ) ) {
-			return array();
-		}
 
-		if ( $this->is_payment_element_enabled( $form ) ) {
-			return $this->get_stripe_payment_element_styles();
-		} else {
-			return $this->get_stripe_card_styles();
-		}
-
+		// Only enqueue third party styles for the payment element. The refactored card element uses config to output styles since it supports loading on demand, integrating well with the block editor.
+		return $this->is_payment_element_enabled( $form ) ? $this->get_stripe_payment_element_styles() : array();
 	}
 
 	/**
@@ -600,7 +678,7 @@ class GFStripe extends GFPaymentAddOn {
 	 *
 	 * @return array Returns an array containing styles for the card element.
 	 */
-	private function get_stripe_card_styles() {
+	public function get_stripe_card_styles() {
         return array(
             'base'    => array(
                 'backgroundColor' => 'transparent',
@@ -651,201 +729,374 @@ class GFStripe extends GFPaymentAddOn {
 	 * @return array Returns an array containg styles for Stripe's payment element.
 	 */
 	private function get_stripe_payment_element_styles() {
-        return array(
-            'labels'    => 'floating',
-            'theme'     => 'stripe',
-            'variables' => array(
-                'borderRadius'          => '--gf-ctrl-radius',
-                'colorBackground'       => '--gf-ctrl-bg-color',
-                'colorBackgroundText'   => '--gf-ctrl-color',
-                'colorIcon'             => '--gf-ctrl-color',
-                'colorIconCardCvc'      => '--gf-ctrl-color',
-                'colorIconCardCvcError' => '--gf-color-danger',
-                'colorIconCardError'    => '--gf-color-danger',
-                //'colorIconSelectArrow' => '--gf-color-in-ctrl-dark-lighter', not currently supported
-                'colorIconTab'          => '--gf-ctrl-btn-icon-color-secondary',
-                'colorIconTabHover'     => '--gf-ctrl-btn-icon-color-hover-secondary',
-                'colorIconTabSelected'  => '--gf-ctrl-btn-color-secondary',
-                'colorIconTabMore'      => '--gf-ctrl-btn-icon-color-secondary',
-                'colorIconTabMoreHover' => '--gf-ctrl-btn-icon-color-hover-secondary',
-                'colorIconMenu'         => '--gf-ctrl-color',
-                'colorPrimary'          => '--gf-color-primary',
-                'colorPrimaryText'      => '--gf-color-primary-contrast',
-                'colorDanger'           => '--gf-color-danger',
-                'colorDangerText'       => '--gf-color-danger-contrast',
-                'colorSuccess'          => '--gf-color-success',
-                'colorSuccessText'      => '--gf-color-success-contrast',
-                'colorText'             => '--gf-ctrl-color',
-                'colorTextPlaceholder'  => '--gf-ctrl-placeholder-color',
-                'colorTextSecondary'    => '--gf-ctrl-color',
-                'fontFamily'            => '--gf-font-family-base',
-                'fontSizeBase'          => '16px',
-                'fontSmooth'            => '--gf-ctrl-font-smoothing',
-                'spacingGridRow'        => '--gf-field-gap-y',
-                'spacingGridColumn'     => '--gf-field-gap-x',
-            ),
-            'rules'     => array(
-                '.Input'                        => array(
-                    'borderColor'   => '--gf-ctrl-border-color',
-                    'borderWidth'   => '--gf-ctrl-border-width',
-                    'borderStyle'   => '--gf-ctrl-border-style',
-                    'color'         => '--gf-ctrl-color',
-                    'fontWeight'    => '--gf-ctrl-font-weight',
-                    'fontSize'      => '--gf-ctrl-font-size',
-                    'letterSpacing' => '--gf-ctrl-letter-spacing',
-                ),
-                '.Input:hover'                  => array(
-                    'backgroundColor' => '--gf-ctrl-bg-color-hover',
-                    'borderColor'     => '--gf-ctrl-border-color-hover',
-                    'color'           => '--gf-ctrl-color-hover',
-                ),
-                '.Input:hover:focus'            => array(
-                    'backgroundColor' => '--gf-ctrl-bg-color-focus',
-                    'borderColor'     => '--gf-ctrl-border-color-focus',
-                    'boxShadow'       => '--gf-ctrl-shadow-focus',
-                    'color'           => '--gf-ctrl-color-focus',
-                ),
-                '.Input:focus'                  => array(
-                    'backgroundColor' => '--gf-ctrl-bg-color-focus',
-                    'borderColor'     => '--gf-ctrl-border-color-focus',
-                    'boxShadow'       => '--gf-ctrl-shadow-focus',
-                    'color'           => '--gf-ctrl-color-focus',
-                ),
-                '.Input:disabled'               => array(
-                    'backgroundColor' => '--gf-ctrl-bg-color-disabled',
-                    'borderColor'     => '--gf-ctrl-border-color-disabled',
-                    'color'           => '--gf-ctrl-color-disabled',
-                ),
-                '.Input:disabled:hover'         => array(
-                    'backgroundColor' => '--gf-ctrl-bg-color-disabled',
-                    'borderColor'     => '--gf-ctrl-border-color-disabled',
-                    'color'           => '--gf-ctrl-color-disabled',
-                ),
-                '.Input--invalid'               => array(
-                    'backgroundColor' => '--gf-ctrl-bg-color-error',
-                    'borderColor'     => '--gf-ctrl-border-color-error',
-                    'boxShadow'       => '0',
-                    'color'           => '--gf-ctrl-color-error',
-                ),
-                '.Input--invalid:hover'         => array(
-                    'borderColor' => '--gf-ctrl-border-color-error',
-                ),
-                '.Input::placeholder'           => array(
-                    'fontFamily'    => '--gf-ctrl-placeholder-font-family',
-                    'fontSize'      => '--gf-ctrl-placeholder-font-size',
-                    'fontWeight'    => '--gf-ctrl-placeholder-font-weight',
-                    'letterSpacing' => '--gf-ctrl-placeholder-letter-spacing',
-                ),
-                '.CodeInput'                    => array(
-                    'borderColor'   => '--gf-ctrl-border-color',
-                    'borderWidth'   => '--gf-ctrl-border-width',
-                    'borderStyle'   => '--gf-ctrl-border-style',
-                    'color'         => '--gf-ctrl-color',
-                    'fontWeight'    => '--gf-ctrl-font-weight',
-                    'fontSize'      => '--gf-ctrl-font-size',
-                    'letterSpacing' => '--gf-ctrl-letter-spacing',
-                ),
-                '.CodeInput:focus'              => array(
-                    'backgroundColor' => '--gf-ctrl-bg-color-focus',
-                    'borderColor'     => '--gf-ctrl-border-color-focus',
-                    'boxShadow'       => '--gf-ctrl-shadow-focus',
-                    'color'           => '--gf-ctrl-color-focus',
-                ),
-                '.CheckboxInput'                => array(
-                    'borderColor'  => '--gf-ctrl-border-color',
-                    'borderWidth'  => '--gf-ctrl-border-width',
-                    'borderStyle'  => '--gf-ctrl-border-style',
-                    'borderRadius' => '--gf-ctrl-checkbox-check-radius',
-                ),
-                '.CheckboxInput:hover'          => array(
-                    'backgroundColor' => '--gf-ctrl-bg-color-hover',
-                    'borderColor'     => '--gf-ctrl-border-color-hover',
-                ),
-                '.CheckboxInput--checked:hover' => array(
-                    'backgroundColor' => '--gf-ctrl-bg-color',
-                    'borderColor'     => '--gf-ctrl-border-color',
-                ),
-                '.Error'                        => array(
-                    'color'         => '--gf-ctrl-desc-color-error',
-                    'fontFamily'    => '--gf-ctrl-desc-font-family-error',
-                    'fontSize'      => '--gf-ctrl-desc-font-size-error',
-                    'fontWeight'    => '--gf-ctrl-desc-font-weight-error',
-                    'letterSpacing' => '--gf-ctrl-desc-letter-spacing-error',
-                    'lineHeight'    => '--gf-ctrl-desc-line-height-error',
-                    'marginTop'     => '--gf-desc-space',
-                ),
-                '.Label--resting'               => array(
-                    'color'         => '--gf-ctrl-placeholder-color',
-                    'fontFamily'    => '--gf-ctrl-placeholder-font-family',
-                    'fontSize'      => '--gf-ctrl-placeholder-font-size',
-                    'fontWeight'    => '--gf-ctrl-placeholder-font-weight',
-                    'letterSpacing' => '--gf-ctrl-placeholder-letter-spacing',
-                    'opacity'       => '--gf-ctrl-placeholder-opacity',
-                ),
-                '.Label--floating'              => array(
-                    'color'         => '--gf-ctrl-color',
-                    'fontFamily'    => '--gf-ctrl-placeholder-font-family',
-                    'fontWeight'    => '--gf-ctrl-label-font-weight-primary',
-                    'letterSpacing' => '--gf-ctrl-placeholder-letter-spacing',
-                ),
-                '.Tab'                          => array(
-                    'backgroundColor' => '--gf-ctrl-button-bg-color-secondary',
-                    'borderColor'     => '--gf-ctrl-button-border-color-secondary',
-                    'borderWidth'     => '--gf-ctrl-button-border-width-secondary',
-                    'borderStyle'     => '--gf-ctrl-button-border-style-secondary',
-                    'color'           => '--gf-ctrl-button-color-secondary',
-                ),
-                '.Tab:hover'                    => array(
-                    'backgroundColor' => '--gf-ctrl-btn-bg-color-hover-secondary',
-                    'borderColor'     => '--gf-ctrl-btn-border-color-hover-secondary',
-                    'color'           => '--gf-ctrl-btn-color-hover-secondary',
-                ),
-                '.Tab:focus'                    => array(
-                    'backgroundColor' => '--gf-ctrl-btn-bg-color-focus-secondary',
-                    'borderColor'     => '--gf-ctrl-btn-border-color-focus-secondary',
-                    'boxShadow'       => '--gf-ctrl-shadow-focus',
-                    'color'           => '--gf-ctrl-btn-color-focus-secondary',
-                ),
-                '.Tab:disabled'                 => array(
-                    'backgroundColor' => '--gf-ctrl-btn-bg-color-disabled-secondary',
-                    'borderColor'     => '--gf-ctrl-btn-border-color-disabled-secondary',
-                    'color'           => '--gf-ctrl-btn-color-disabled-secondary',
-                ),
-                '.Tab--selected'                => array(
-                    'borderColor' => '--gf-ctrl-btn-border-color-focus-secondary',
-                    'color'       => '--gf-ctrl-btn-color-secondary',
-                ),
-                '.Tab--selected:hover'          => array(
-                    'borderColor' => '--gf-ctrl-btn-border-color-focus-secondary',
-                    'color'       => '--gf-ctrl-btn-color-secondary',
-                ),
-                '.Tab--selected:focus'          => array(
-                    'borderColor' => '--gf-ctrl-btn-border-color-focus-secondary',
-                    'boxShadow'   => '--gf-ctrl-shadow-focus',
-                    'color'       => '--gf-ctrl-btn-color-secondary',
-                ),
-                '.RedirectText'                 => array(
-                    'color'         => '--gf-color-primary',
-                    'fontFamily'    => '--gf-ctrl-desc-font-family',
-                    'fontSize'      => '--gf-ctrl-desc-font-size',
-                    'fontWeight'    => '--gf-ctrl-desc-font-weight',
-                    'letterSpacing' => '--gf-ctrl-desc-letter-spacing',
-                    'lineHeight'    => '--gf-ctrl-desc-line-height',
-                ),
-                '.PickerItem--new'              => array(
-                    'color' => '--gf-ctrl-color',
-                ),
-                '.TermsText'                    => array(
-                    'color' => '--gf-ctrl-desc-color',
-                ),
-                '.TermsLink'                    => array(
-                    'color' => '--gf-ctrl-desc-color',
-                ),
-                '.Block'                        => array(
-                    'borderRadius' => '--gf-ctrl-radius-max-lg',
-                ),
-            ),
-        );
+		$style_rules = array(
+			'.Input'                        => array(
+				'borderColor'   => '--gf-ctrl-border-color',
+				'borderWidth'   => '--gf-ctrl-border-width',
+				'borderStyle'   => '--gf-ctrl-border-style',
+				'color'         => '--gf-ctrl-color',
+				'fontWeight'    => '--gf-ctrl-font-weight',
+				'fontSize'      => '--gf-ctrl-font-size',
+				'letterSpacing' => '--gf-ctrl-letter-spacing',
+			),
+			'.Input:hover'                  => array(
+				'backgroundColor' => '--gf-ctrl-bg-color-hover',
+				'borderColor'     => '--gf-ctrl-border-color-hover',
+				'color'           => '--gf-ctrl-color-hover',
+			),
+			'.Input:hover:focus'            => array(
+				'backgroundColor' => '--gf-ctrl-bg-color-focus',
+				'borderColor'     => '--gf-ctrl-border-color-focus',
+				'color'           => '--gf-ctrl-color-focus',
+			),
+			'.Input:focus'                  => array(
+				'backgroundColor' => '--gf-ctrl-bg-color-focus',
+				'borderColor'     => '--gf-ctrl-border-color-focus',
+				'color'           => '--gf-ctrl-color-focus',
+			),
+			'.Input:disabled'               => array(
+				'backgroundColor' => '--gf-ctrl-bg-color-disabled',
+				'borderColor'     => '--gf-ctrl-border-color-disabled',
+				'color'           => '--gf-ctrl-color-disabled',
+			),
+			'.Input:disabled:hover'         => array(
+				'backgroundColor' => '--gf-ctrl-bg-color-disabled',
+				'borderColor'     => '--gf-ctrl-border-color-disabled',
+				'color'           => '--gf-ctrl-color-disabled',
+			),
+			'.Input--invalid'               => array(
+				'backgroundColor' => '--gf-ctrl-bg-color-error',
+				'borderColor'     => '--gf-ctrl-border-color-error',
+				'boxShadow'       => 'none',
+				'color'           => '--gf-ctrl-color-error',
+			),
+			'.Input--invalid:hover'         => array(
+				'borderColor' => '--gf-ctrl-border-color-error',
+			),
+			'.Input::placeholder'           => array(
+				'fontFamily'    => '--gf-ctrl-placeholder-font-family',
+				'fontSize'      => '--gf-ctrl-placeholder-font-size',
+				'fontWeight'    => '--gf-ctrl-placeholder-font-weight',
+				'letterSpacing' => '--gf-ctrl-placeholder-letter-spacing',
+			),
+			'.CodeInput'                    => array(
+				'borderColor'   => '--gf-ctrl-border-color',
+				'borderWidth'   => '--gf-ctrl-border-width',
+				'borderStyle'   => '--gf-ctrl-border-style',
+				'color'         => '--gf-ctrl-color',
+				'fontWeight'    => '--gf-ctrl-font-weight',
+				'fontSize'      => '--gf-ctrl-font-size',
+				'letterSpacing' => '--gf-ctrl-letter-spacing',
+			),
+			'.CodeInput:focus'              => array(
+				'backgroundColor' => '--gf-ctrl-bg-color-focus',
+				'borderColor'     => '--gf-ctrl-border-color-focus',
+				'color'           => '--gf-ctrl-color-focus',
+			),
+			'.CheckboxInput'                => array(
+				'backgroundColor' => '--gf-ctrl-bg-color',
+				'borderColor'     => '--gf-ctrl-border-color',
+				'borderWidth'     => '--gf-ctrl-border-width',
+				'borderStyle'     => '--gf-ctrl-border-style',
+				'borderRadius'    => '--gf-ctrl-checkbox-check-radius',
+			),
+			'.CheckboxInput:hover'          => array(
+				'backgroundColor' => '--gf-ctrl-bg-color-hover',
+				'borderColor'     => '--gf-ctrl-border-color-hover',
+			),
+			'.CheckboxInput:focus'          => array(
+				'backgroundColor' => '--gf-ctrl-bg-color-focus',
+				'borderColor'     => '--gf-ctrl-border-color-focus',
+			),
+			'.CheckboxInput--checked'       => array(
+				'backgroundColor' => '--gf-ctrl-choice-check-color',
+				'borderColor'     => '--gf-ctrl-choice-check-color',
+			),
+			'.CheckboxInput--checked:hover' => array(
+				'backgroundColor' => '--gf-ctrl-choice-check-color',
+				'borderColor'     => '--gf-ctrl-choice-check-color',
+			),
+			'.CheckboxInput--checked:focus' => array(
+				'backgroundColor' => '--gf-ctrl-choice-check-color',
+				'borderColor'     => '--gf-ctrl-border-color-focus',
+			),
+			'.Error'                        => array(
+				'color'         => '--gf-ctrl-desc-color-error',
+				'fontFamily'    => '--gf-ctrl-desc-font-family-error',
+				'fontSize'      => '--gf-ctrl-desc-font-size-error',
+				'fontWeight'    => '--gf-ctrl-desc-font-weight-error',
+				'letterSpacing' => '--gf-ctrl-desc-letter-spacing-error',
+				'lineHeight'    => '--gf-ctrl-desc-line-height-error',
+				'marginTop'     => '--gf-desc-space',
+			),
+			'.Label--resting'               => array(
+				'color'         => '--gf-ctrl-placeholder-color',
+				'fontFamily'    => '--gf-ctrl-placeholder-font-family',
+				'fontSize'      => '--gf-ctrl-placeholder-font-size',
+				'fontWeight'    => '--gf-ctrl-placeholder-font-weight',
+				'letterSpacing' => '--gf-ctrl-placeholder-letter-spacing',
+				'opacity'       => '--gf-ctrl-placeholder-opacity',
+			),
+			'.Label--floating'              => array(
+				'color'         => '--gf-ctrl-color',
+				'fontFamily'    => '--gf-ctrl-placeholder-font-family',
+				'fontWeight'    => '--gf-ctrl-label-font-weight-primary',
+				'letterSpacing' => '--gf-ctrl-placeholder-letter-spacing',
+			),
+			'.Tab'                          => array(
+				'backgroundColor' => '--gf-ctrl-button-bg-color-secondary',
+				'borderColor'     => '--gf-ctrl-button-border-color-secondary',
+				'borderWidth'     => '--gf-ctrl-button-border-width-secondary',
+				'borderStyle'     => '--gf-ctrl-button-border-style-secondary',
+				'color'           => '--gf-ctrl-button-color-secondary',
+			),
+			'.Tab:hover'                    => array(
+				'backgroundColor' => '--gf-ctrl-btn-bg-color-hover-secondary',
+				'borderColor'     => '--gf-ctrl-btn-border-color-hover-secondary',
+				'color'           => '--gf-ctrl-btn-color-hover-secondary',
+			),
+			'.Tab:focus'                    => array(
+				'backgroundColor' => '--gf-ctrl-btn-bg-color-focus-secondary',
+				'borderColor'     => '--gf-ctrl-btn-border-color-focus-secondary',
+				'color'           => '--gf-ctrl-btn-color-focus-secondary',
+			),
+			'.Tab:disabled'                 => array(
+				'backgroundColor' => '--gf-ctrl-btn-bg-color-disabled-secondary',
+				'borderColor'     => '--gf-ctrl-btn-border-color-disabled-secondary',
+				'color'           => '--gf-ctrl-btn-color-disabled-secondary',
+			),
+			'.Tab--selected'                => array(
+				'borderColor' => '--gf-ctrl-btn-border-color-focus-secondary',
+				'color'       => '--gf-ctrl-btn-color-secondary',
+			),
+			'.Tab--selected:hover'          => array(
+				'borderColor' => '--gf-ctrl-btn-border-color-focus-secondary',
+				'color'       => '--gf-ctrl-btn-color-secondary',
+			),
+			'.Tab--selected:focus'          => array(
+				'borderColor' => '--gf-ctrl-btn-border-color-focus-secondary',
+				'color'       => '--gf-ctrl-btn-color-secondary',
+			),
+			'.RedirectText'                 => array(
+				'color'         => '--gf-color-primary',
+				'fontFamily'    => '--gf-ctrl-desc-font-family',
+				'fontSize'      => '--gf-ctrl-desc-font-size',
+				'fontWeight'    => '--gf-ctrl-desc-font-weight',
+				'letterSpacing' => '--gf-ctrl-desc-letter-spacing',
+				'lineHeight'    => '--gf-ctrl-desc-line-height',
+			),
+			'.PickerItem--new'              => array(
+				'color' => '--gf-ctrl-color',
+			),
+			'.TermsText'                    => array(
+				'color' => '--gf-ctrl-desc-color',
+			),
+			'.TermsLink'                    => array(
+				'color' => '--gf-ctrl-desc-color',
+			),
+			'.Block'                        => array(
+				'borderRadius' => '--gf-ctrl-radius-max-lg',
+			),
+		);
+
+		/*
+		NOTE:
+		The Theme Framework CSS approach for focus styles has been updated as of Gravity Forms 2.9.0.1
+		for better A11Y from being box-shadow based to outline based. The box-shadow approach is now
+		deprecated, however we want to support older version of core for a bit as a precaution given
+		this is important for A11Y.
+
+		It's also important to note that for the outline property to be properly computed into the outline
+		shorthand property required/supported by Stripe, the outline based properties/keys below should
+		always remain grouped together in this order: width, style, color
+
+		Deprecated version (core): 2.9.0.1
+		End of support version (core): 3.0
+		Deprecated version (stripe): 5.9.1
+		*/
+		if ( version_compare( GFForms::$version, '2.9.0.1', '>=' ) ) {
+			$style_rules_additional = array(
+				'.Input'                  => array(
+					'outlineWidth'  => '--gf-ctrl-outline-width',
+					'outlineStyle'  => '--gf-ctrl-outline-style',
+					'outlineColor'  => '--gf-ctrl-outline-color',
+					'outlineOffset' => '--gf-ctrl-outline-offset',
+					'transition'    => '--gf-ctrl-transition',
+				),
+				'.Input:hover:focus'      => array(
+					'outlineWidth' => '--gf-ctrl-outline-width-focus',
+					'outlineStyle' => '--gf-ctrl-outline-style',
+					'outlineColor' => '--gf-ctrl-outline-color-focus',
+				),
+				'.Input:focus'            => array(
+					'boxShadow'    => 'none',
+					'outlineWidth' => '--gf-ctrl-outline-width-focus',
+					'outlineStyle' => '--gf-ctrl-outline-style',
+					'outlineColor' => '--gf-ctrl-outline-color-focus',
+				),
+				'.CodeInput'              => array(
+					'outlineWidth'  => '--gf-ctrl-outline-width',
+					'outlineStyle'  => '--gf-ctrl-outline-style',
+					'outlineColor'  => '--gf-ctrl-outline-color',
+					'outlineOffset' => '--gf-ctrl-outline-offset',
+					'transition'    => '--gf-ctrl-transition',
+				),
+				'.CodeInput:focus'        => array(
+					'boxShadow'    => 'none',
+					'outlineWidth' => '--gf-ctrl-outline-width-focus',
+					'outlineStyle' => '--gf-ctrl-outline-style',
+					'outlineColor' => '--gf-ctrl-outline-color-focus',
+				),
+				'.CheckboxInput'          => array(
+					'outlineWidth'  => '--gf-ctrl-outline-width',
+					'outlineStyle'  => '--gf-ctrl-outline-style',
+					'outlineColor'  => '--gf-ctrl-outline-color',
+					'outlineOffset' => '--gf-ctrl-outline-offset',
+					'transition'    => '--gf-ctrl-transition',
+				),
+				'.CheckboxInput:focus'    => array(
+					'boxShadow'    => 'none',
+					'outlineWidth' => '--gf-ctrl-outline-width-focus',
+					'outlineStyle' => '--gf-ctrl-outline-style',
+					'outlineColor' => '--gf-ctrl-outline-color-focus',
+				),
+				'.Tab'                    => array(
+					'outlineWidth'  => '--gf-ctrl-outline-width',
+					'outlineStyle'  => '--gf-ctrl-outline-style',
+					'outlineColor'  => '--gf-ctrl-outline-color',
+					'outlineOffset' => '--gf-ctrl-outline-offset',
+					'transition'    => '--gf-ctrl-transition',
+				),
+				'.Tab:focus'              => array(
+					'boxShadow'    => 'none',
+					'outlineWidth' => '--gf-ctrl-outline-width-focus',
+					'outlineStyle' => '--gf-ctrl-outline-style',
+					'outlineColor' => '--gf-ctrl-outline-color-focus',
+				),
+				'.Tab--selected:focus'    => array(
+					'boxShadow'    => 'none',
+					'outlineWidth' => '--gf-ctrl-outline-width-focus',
+					'outlineStyle' => '--gf-ctrl-outline-style',
+					'outlineColor' => '--gf-ctrl-outline-color-focus',
+				),
+				'.PickerItem'             => array(
+					'outlineWidth'  => '--gf-ctrl-outline-width',
+					'outlineStyle'  => '--gf-ctrl-outline-style',
+					'outlineColor'  => '--gf-ctrl-outline-color',
+					'outlineOffset' => '--gf-ctrl-outline-offset',
+					'transition'    => '--gf-ctrl-transition',
+				),
+				'.PickerItem:hover:focus' => array(
+					'boxShadow'    => 'none',
+					'outlineWidth' => '--gf-ctrl-outline-width-focus',
+					'outlineStyle' => '--gf-ctrl-outline-style',
+					'outlineColor' => '--gf-ctrl-outline-color-focus',
+				),
+				'.PickerItem:focus'       => array(
+					'boxShadow'    => 'none',
+					'outlineWidth' => '--gf-ctrl-outline-width-focus',
+					'outlineStyle' => '--gf-ctrl-outline-style',
+					'outlineColor' => '--gf-ctrl-outline-color-focus',
+				),
+				'.MenuIcon'               => array(
+					'borderColor'   => 'transparent',
+					'borderWidth'   => '--gf-ctrl-border-width',
+					'borderStyle'   => '--gf-ctrl-border-style',
+					'outlineWidth'  => '--gf-ctrl-outline-width',
+					'outlineStyle'  => '--gf-ctrl-outline-style',
+					'outlineColor'  => '--gf-ctrl-outline-color',
+					'outlineOffset' => '--gf-ctrl-outline-offset',
+					'transition'    => '--gf-ctrl-transition',
+				),
+				'.MenuIcon:focus'         => array(
+					'borderColor'  => '--gf-ctrl-border-color-focus',
+					'boxShadow'    => 'none',
+					'outlineWidth' => '--gf-ctrl-outline-width-focus',
+					'outlineStyle' => '--gf-ctrl-outline-style',
+					'outlineColor' => '--gf-ctrl-outline-color-focus',
+				),
+				'.MenuAction'             => array(
+					'borderColor'   => 'transparent',
+					'borderWidth'   => '--gf-ctrl-border-width',
+					'borderStyle'   => '--gf-ctrl-border-style',
+					'outlineWidth'  => '--gf-ctrl-outline-width',
+					'outlineStyle'  => '--gf-ctrl-outline-style',
+					'outlineColor'  => '--gf-ctrl-outline-color',
+					'outlineOffset' => '--gf-ctrl-outline-offset',
+					'transition'    => '--gf-ctrl-transition',
+				),
+				'.MenuAction:focus'       => array(
+					'borderColor'  => '--gf-ctrl-border-color-focus',
+					'boxShadow'    => 'none',
+					'outlineWidth' => '--gf-ctrl-outline-width-focus',
+					'outlineStyle' => '--gf-ctrl-outline-style',
+					'outlineColor' => '--gf-ctrl-outline-color-focus',
+				),
+				'.Action'                 => array(
+					'borderColor'   => 'transparent',
+					'borderWidth'   => '--gf-ctrl-border-width',
+					'borderStyle'   => '--gf-ctrl-border-style',
+					'outlineWidth'  => '--gf-ctrl-outline-width',
+					'outlineStyle'  => '--gf-ctrl-outline-style',
+					'outlineColor'  => '--gf-ctrl-outline-color',
+					'outlineOffset' => '--gf-ctrl-outline-offset',
+					'transition'    => '--gf-ctrl-transition',
+				),
+				'.Action:focus'           => array(
+					'borderColor'  => '--gf-ctrl-border-color-focus',
+					'boxShadow'    => 'none',
+					'outlineWidth' => '--gf-ctrl-outline-width-focus',
+					'outlineStyle' => '--gf-ctrl-outline-style',
+					'outlineColor' => '--gf-ctrl-outline-color-focus',
+				),
+			);
+		} else {
+			$style_rules_additional = array(
+				'.Input:focus'         => array( 'boxShadow' => '--gf-ctrl-shadow-focus', ),
+				'.CodeInput:focus'     => array( 'boxShadow' => '--gf-ctrl-shadow-focus', ),
+				'.CheckboxInput:focus' => array( 'boxShadow' => '--gf-ctrl-shadow-focus', ),
+				'.Tab:focus'           => array( 'boxShadow' => '--gf-ctrl-shadow-focus', ),
+				'.Tab--selected:focus' => array( 'boxShadow' => '--gf-ctrl-shadow-focus', ),
+			);
+		}
+
+		$style_rules = array_merge_recursive( $style_rules, $style_rules_additional );
+
+		return array(
+			'labels'    => 'floating',
+			'theme'     => 'stripe',
+			'variables' => array(
+				'borderRadius'          => '--gf-ctrl-radius',
+				'colorBackground'       => '--gf-ctrl-bg-color',
+				'colorBackgroundText'   => '--gf-ctrl-color',
+				'colorIcon'             => '--gf-ctrl-color',
+				'colorIconCardCvc'      => '--gf-ctrl-color',
+				'colorIconCardCvcError' => '--gf-color-danger',
+				'colorIconCardError'    => '--gf-color-danger',
+				//'colorIconSelectArrow' => '--gf-color-in-ctrl-dark-lighter', not currently supported
+				'colorIconTab'          => '--gf-ctrl-btn-icon-color-secondary',
+				'colorIconTabHover'     => '--gf-ctrl-btn-icon-color-hover-secondary',
+				'colorIconTabSelected'  => '--gf-ctrl-btn-color-secondary',
+				'colorIconTabMore'      => '--gf-ctrl-btn-icon-color-secondary',
+				'colorIconTabMoreHover' => '--gf-ctrl-btn-icon-color-hover-secondary',
+				'colorIconMenu'         => '--gf-ctrl-color',
+				'colorPrimary'          => '--gf-color-primary',
+				'colorPrimaryText'      => '--gf-color-primary-contrast',
+				'colorDanger'           => '--gf-color-danger',
+				'colorDangerText'       => '--gf-color-danger-contrast',
+				'colorSuccess'          => '--gf-color-success',
+				'colorSuccessText'      => '--gf-color-success-contrast',
+				'colorText'             => '--gf-ctrl-color',
+				'colorTextPlaceholder'  => '--gf-ctrl-placeholder-color',
+				'colorTextSecondary'    => '--gf-ctrl-color',
+				'fontFamily'            => '--gf-font-family-base',
+				'fontSizeBase'          => '16px',
+				'fontSmooth'            => '--gf-ctrl-font-smoothing',
+				'spacingGridRow'        => '--gf-field-gap-y',
+				'spacingGridColumn'     => '--gf-field-gap-x',
+			),
+			'rules'     => $style_rules,
+		);
 	}
 
 	// # PLUGIN SETTINGS -----------------------------------------------------------------------------------------------
@@ -940,7 +1191,7 @@ class GFStripe extends GFPaymentAddOn {
 		?>
 		<li class="enable_multiple_payment_methods_setting field_setting">
 			<label for="rules" class="section_label">
-				<?php esc_html_e( 'Payment Methods', 'gravityformsstripe' ); ?>
+				<?php esc_html_e( 'Stripe API', 'gravityformsstripe' ); ?>
 				<?php gform_tooltip( 'form_field_enable_multiple_payment_methods' ); ?>
 			</label>
 			<?php
@@ -950,12 +1201,12 @@ class GFStripe extends GFPaymentAddOn {
 			<div>
 				<input type="checkbox" <?php echo $disabled; ?> id="field_enable_multiple_payment_methods" data-js="enable_multiple_payment_methods" onclick="SetFieldProperty('enableMultiplePaymentMethods', this.checked);" onkeypress="SetFieldProperty('enableMultiplePaymentMethods', this.checked);" />
 				<label for="field_enable_multiple_payment_methods" class="inline">
-					<?php esc_html_e( 'Enable additional payment methods', 'gravityformsstripe' ); ?>
+					<?php esc_html_e( "Use Stripe's Payment Element.", 'gravityformsstripe' ); ?>
 				</label>
 				<div id="field_multiple_payment_methods_description">
 					<?php
 					// translators: variables are the markup to generate a link.
-					printf( esc_html__( 'Available payment methods can be configured in your %1$sStripe Dashboard%2$s.', 'gravityformsstripe' ), '<a href="https://dashboard.stripe.com/settings/payment_methods" target="_blank">', '</a>' );
+					printf( esc_html__( 'The Payment Element is Stripe\'s latest payment widget. It includes support for %1$sadditional payment methods%2$s and other improvements.', 'gravityformsstripe' ), '<a href="https://dashboard.stripe.com/settings/payment_methods" target="_blank">', ' <span aria-hidden="true" class="gform-icon gform-icon--external-link"></span></a>' );
 					?>
 				</div>
 			</div>
@@ -1408,49 +1659,21 @@ class GFStripe extends GFPaymentAddOn {
 	 * @return string HTML formatted webhooks description.
 	 */
 	public function get_webhooks_section_description() {
-		$live_link = 'https://dashboard.stripe.com/workbench/webhooks/create';
-		$test_link = 'https://dashboard.stripe.com/test/workbench/webhooks/create';
 		ob_start();
 		?>
-		<a class="view-webhooks" href="javascript:void(0);" ><?php esc_html_e( 'View Instructions', 'gravityformsstripe' ); ?></a></p>
-
-		<div id="stripe-webhooks-instructions" style="display:none;">
-			<ol class="stripe-webhooks-instructions">
-				<li class='webhooks-live-instructions'>
-					<?php printf(
-						// Translators: Placeholders represent opening and closing link tags.
-						esc_html__( 'Log in to your %sStripe account Workbench%s and create a webhook endpoint.', 'gravityformsstripe' ),
-						'<a href="' . $live_link . '" target="_blank">',
-						'</a>'
-					); ?>
-				</li>
-				<li class='webhooks-test-instructions'>
-					<?php printf(
-						// Translators: Placeholders represent opening and closing link tags.
-						esc_html__( 'Log in to your %sStripe account Workbench%s and create a webhook endpoint.', 'gravityformsstripe' ),
-						'<a href="' . $test_link . '" target="_blank">',
-						'</a>'
-					); ?>
-				</li>
-				<li><?php esc_html_e( 'Under "Select events", select the latest API version.', 'gravityformsstripe' ); ?></li>
-				<li><?php esc_html_e( 'Select the checkbox for "Select all events" and click "Continue."', 'gravityformsstripe' ); ?></li>
-				<li>
-					<?php esc_html_e( 'Enter the following URL in the "Endpoint URL" field:', 'gravityformsstripe' ); ?>
-					<code><?php echo $this->get_webhook_url( $this->get_current_feed_id() ); ?></code>
-				</li>
-				<li><?php esc_html_e( 'Click the "Create destination" button to save the webhook.', 'gravityformsstripe' ); ?></li>
-				<li class="webhooks-live-instructions"><?php
-					echo esc_html_e( 'Under "Destination Details," click "Reveal" by "Signing Secret". Copy the signing secret and paste it into the "Live Signing Secret" Gravity Forms settings field.', 'gravityformsstripe' );
-					?>
-				</li>
-				<li class="webhooks-test-instructions"><?php
-					echo esc_html_e( 'Under "Destination Details," click "Reveal" by "Signing Secret". Copy the signing secret and paste it into the "Test Signing Secret" Gravity Forms settings field.', 'gravityformsstripe' );
-					?>
-				</li>
-			</ol>
-
-		</div>
-
+		<a href="https://docs.gravityforms.com/downloading-installing-the-stripe-add-on/#h-webhooks" target="_blank"><?php esc_html_e( 'View Webhooks Instructions', 'gravityformsstripe' ); ?></a></p>
+		<p><?php esc_html_e( 'Here is your Endpoint URL:', 'gravityformsstripe' ); ?>
+			<code><span data-copy="webhookUrl"><?php echo $this->get_webhook_url( $this->get_current_feed_id() ); ?></span></code>
+			<button
+				class="gform-button gform-button--size-xs gform-button--white gform-button--width-auto gform-button--active-type-loader gform-button--loader-after gform-button--icon-trailing gform-copy-text"
+				aria-label="<?php esc_attr_e( 'Copy Webhook URL', 'gravityformsstripe' ); ?>"
+			>
+				<span class="gform-button__text gform-button__text--inactive">
+					<?php esc_html_e( 'Copy URL', 'gravityformsstripe' ); ?>
+				</span>
+				<span class="gform-icon gform-icon--copy gform-button__icon"></span>
+			</button>
+		</p>
 		<?php
 		return ob_get_clean();
 	}
@@ -1547,11 +1770,15 @@ class GFStripe extends GFPaymentAddOn {
 
 				$html = '';
 				if ( ! $this->is_detail_page() && ! empty( $display_name ) ) {
-					$html .= '<p class="connected_to_stripe_text">' . esc_html__( 'Connected to Stripe as', 'gravityformsstripe' ) . ' <strong>' . $display_name . '</strong>.</p>';
+					$html .= sprintf('<p class="connected_to_stripe_text"><span class="gform-status-indicator gform-status-indicator--size-sm gform-status-indicator--theme-cosmos gform-status--active gform-status--no-icon gform-status--no-hover">' .
+						'<span class="gform-status-indicator-status gform-typography--weight-medium gform-typography--size-text-xs">%1$s: %2$s</span></span></p>',
+						esc_html__( 'Connected to Stripe as', 'gravityformsstripe' ),
+						esc_html( $display_name )
+					);
 				}
 				$html .= sprintf(
 					' <a href="#" class="button gform_stripe_deauth_button" data-fid="%2$s" data-id="%3$s" data-mode="%4$s">%1$s</a>',
-					esc_html__( 'Disconnect your Stripe account', 'gravityformsstripe' ),
+					esc_html__( 'Disconnect from Stripe', 'gravityformsstripe' ),
 					$this->get_current_feed_id(),
 					rgget( 'id' ),
 					$api_mode
@@ -1569,7 +1796,7 @@ class GFStripe extends GFPaymentAddOn {
 				$html .= '<p><label for="' . $api_mode . '_deauth_scope1"><input type="radio" name="deauth_scope" value="account" id="' . $api_mode . '_deauth_scope1">' . esc_html__( 'Disconnect all Gravity Forms sites connected to this Stripe account', 'gravityformsstripe' ) . '</label></p>';
 				$html .= sprintf(
 					'<p><a href="#" id="gform_stripe_deauth_button" class="button gform_stripe_deauth_button" data-fid="%2$s" data-id="%3$s" data-mode="%4$s">%1$s</a></p>',
-					esc_html__( 'Disconnect your Stripe account', 'gravityformsstripe' ),
+					esc_html__( 'Disconnect from Stripe', 'gravityformsstripe' ),
 					$this->get_current_feed_id(),
 					rgget( 'id' ),
 					$api_mode
@@ -1941,7 +2168,9 @@ class GFStripe extends GFPaymentAddOn {
 			}
 		}
 
-		return parent::get_payment_feed( $entry, $form );
+		$feed = parent::get_payment_feed( $entry, $form );
+
+		return rgar( $feed, 'addon_slug' ) === $this->_slug ? $feed : false;
 	}
 
 	/**
@@ -2893,7 +3122,6 @@ class GFStripe extends GFPaymentAddOn {
 		add_filter( 'gform_field_css_class', array( $this, 'stripe_card_field_css_class' ), 10, 3 );
 		add_filter( 'gform_submission_values_pre_save', array( $this, 'stripe_card_submission_value_pre_save' ), 10, 3 );
 		add_filter( 'gform_shortcode_stripe_customer_portal_link', array( $this->get_billing_portal_handler(), 'stripe_customer_portal_link_shortcode' ), 10, 3 );
-
 		// Supports frontend feeds.
 		$this->_supports_frontend_feeds = true;
 
@@ -2906,12 +3134,23 @@ class GFStripe extends GFPaymentAddOn {
 		if ( $this->is_stripe_checkout_enabled() ) {
 			// Use priority 50 because users may hook to `gform_after_submission` for other purposes so we run it later.
 			add_action( 'gform_after_submission', array( $this, 'stripe_checkout_redirect_scripts' ), 110, 2 );
+
+            // Stripe checkout doesn't yet support new AJAX submissions. For forms with a Stripe feed, we need to force POSTBACK if new AJAX is set.
+			add_filter( 'gform_form_args', function( $args ) {
+				$stripe_feed = $this->get_active_feeds( $args['form_id'] );
+				if( $stripe_feed && rgar( $args, 'submission_method' ) === GFFormDisplay::SUBMISSION_METHOD_AJAX ) {
+					$args['submission_method'] = GFFormDisplay::SUBMISSION_METHOD_POSTBACK;
+                }
+				return $args;
+			}, 1000 );
 		}
 
 		// Set UI prefixes depending on settings renderer availability.
 		$this->_has_settings_renderer  = $this->is_gravityforms_supported( '2.5-beta' );
 		$this->_input_prefix           = $this->_has_settings_renderer ? '_gform_setting' : '_gaddon_setting';
 		$this->_input_container_prefix = $this->_has_settings_renderer ? 'gform_setting_' : 'gaddon-setting-row-';
+
+		$this->register_services();
 
 		parent::init();
 
@@ -3118,9 +3357,19 @@ class GFStripe extends GFPaymentAddOn {
 	 * @return bool If the script should be enqueued.
 	 */
 	public function frontend_script_callback( $form ) {
-		// Starts from 2.6, CC field isn't required when Stripe Checkout enabled.
-		return $form && $this->has_feed( $form['id'] ) && ( ( ! $this->is_stripe_checkout_enabled() && ( $this->has_stripe_card_field( $form ) || $this->has_credit_card_field( $form ) ) ) );
 
+        // Refactored payment methods don't use the old Stripe JS.
+        if ( $this->is_refactored_payment_method( $form ) ) {
+            return false;
+        }
+
+        // If Stripe Checkout is enabled, we don't need to load the Stripe JS.
+        if ( $this->is_stripe_checkout_enabled() ) {
+            return false;
+        }
+
+        // Load JS if form has a Stripe feed and a Stripe card field.
+        return $form && $this->has_feed( $form['id'] ) && $this->has_stripe_card_field( $form );
 	}
 
 	/**
@@ -3150,37 +3399,6 @@ class GFStripe extends GFPaymentAddOn {
 	}
 
 	/**
-	 * Check if we should display the Stripe Elements JS.
-	 *
-	 * @deprecated 3.8
-	 *
-	 * @since  2.6
-	 *
-	 * @param array $form The form currently being processed.
-	 *
-	 * @return bool If the script should be enqueued.
-	 */
-	public function stripe_elements_callback( $form ) {
-		return $form && $this->has_feed( $form['id'] ) && $this->has_stripe_card_field( $form );
-	}
-
-	/**
-	 * Check if we should display the Stripe Checkout JS.
-	 *
-	 * @deprecated 3.0
-	 *
-	 * @since  2.6
-	 *
-	 * @param array $form The form currently being processed.
-	 *
-	 * @return bool If the script should be enqueued.
-	 */
-	public function stripe_checkout_callback( $form ) {
-		// When a form has Stripe feeds but without any CC field, we enqueue the Stripe Checkout script.
-		return $form && $this->has_feed( $form['id'] ) && ( ! $this->has_credit_card_field( $form ) && ! $this->has_stripe_card_field( $form ) );
-	}
-
-	/**
 	 * Check if the form has an active Stripe feed and Stripe Elements is enabled
 	 *
 	 * @since 2.6
@@ -3192,6 +3410,40 @@ class GFStripe extends GFPaymentAddOn {
 	 */
 	public function frontend_style_callback( $form ) {
 		return $form && $this->has_feed( $form['id'] ) && $this->has_stripe_card_field( $form );
+	}
+
+	/**
+	 * Determines if the card element is enabled for the provided form.
+	 *
+	 * @since 6.0.0
+	 *
+	 * @param array $form The current form.
+	 *
+	 * @return bool Returns true if the current form is configured to use the Stripe Card Element. Returns false otherwise.
+	 */
+	public function has_stripe_card_element($form ) {
+
+		$cc_field = $this->get_stripe_card_field( $form );
+		return $cc_field && ! rgobj( $cc_field, 'enableMultiplePaymentMethods' ) && $this->is_stripe_connect_enabled();
+	}
+
+	/**
+	 * Determines if the payment method configured for the provided form has been refactored and uses the new submission method and cleaner Stripe API integration.
+     * This method is temporary and will be removed after all payment methods have been refactored.
+	 *
+     * @since 6.0
+     *
+     * @param array $form The current form.
+	 *
+	 * @return bool Returns true if the payment method configured in the form has been refactored. Returns false otherwise.
+	 */
+	public function is_refactored_payment_method( $form ) {
+		if( $this->is_stripe_checkout_enabled() ) {
+			// Stripe Checkout doesn't need the new scripts.
+			return false;
+		};
+
+		return $this->has_stripe_card_element( $form );
 	}
 
 	/**
@@ -3555,6 +3807,101 @@ class GFStripe extends GFPaymentAddOn {
 			$form
 		);
 	}
+
+	// # STRIPE PAYMENT FLOW -------------------------------------------------------------------------------------------
+
+	/*
+	 * For refactored payment methods, bypass the standard Payment Add-On flow.
+	 * The authorize(), capture() and subscribe() methods won't get called.
+	 *
+	 * @since 6.0
+	 *
+	 * @param array $validation_result The results of the validation.
+	 * @param string $context The context in which the validation is being performed.
+	 */
+	public function validation( $validation_result )
+	{
+		// Refactored payment methods should bypass the standard Payment Add-On flow. (i.e. authorize(), capture() and subscribe() methods should be bypassed or not called)
+		if ( $this->is_refactored_payment_method( $validation_result['form'] ) ) {
+            // Set the payment gateway to this add-on. We are bypassing the payment add-on flow, so we need to set this manually.
+            $this->try_set_payment_gateway( $validation_result );
+            return $validation_result;
+		}
+
+        // Standard Payment Add-On flow.
+        return parent::validation( $validation_result );
+	}
+
+	/**
+	 * For refactored payment methods, bypass the standard Payment Add-On flow.
+	 * The authorize(), capture() and subscribe() methods won't get called.
+	 * Save the payment gateway in the entry metadata.
+	 *
+	 * @since  6.0
+	 * @param array $entry The entry object currently being processed.
+	 * @param array $form  The form object currently being processed.
+	 *
+	 * @return array $entry The entry object currently being processed.
+	 */
+	public function entry_post_save( $entry, $form ) {
+
+		// Refactored payment methods should bypass the standard Payment Add-On flow. (i.e. authorize(), capture() and subscribe() methods should be bypassed or not called)
+		if ( $this->is_refactored_payment_method( $form ) ) {
+
+			// Saving which gateway was used to process this entry. Since we are bypassing the payment add-on flow, we need to set this manually.
+			if ( $this->is_payment_gateway ) {
+				gform_update_meta( $entry['id'], 'payment_gateway', $this->get_slug() );
+			}
+			return $entry;
+		}
+
+		// Standard Payment Add-On flow.
+		return parent::entry_post_save( $entry, $form );
+	}
+
+	/**
+     * This method sets the $this->is_payment_gateway property to true if the current submission should be processed by this add-on.
+     * This is a copy of the first part of the validation() method of the Payment Add-On. We will look for ways to refactor this in the future.
+     *
+     * @since  6.0
+     *
+	 * @param array $validation_result The validation result parameter passed to the validation() method.
+	 * @return void
+	 */
+    private function try_set_payment_gateway( $validation_result ) {
+
+        // If the validation result is not valid, abort.
+	    if ( ! $validation_result['is_valid'] ) {
+		    return;
+	    }
+
+        // If the payment gateway is already set by another addon, abort.
+	    global $gf_payment_gateway;
+	    if ( $gf_payment_gateway && $gf_payment_gateway !== $this->get_slug() ) {
+		    $this->log_debug(__METHOD__ . '() Aborting. Submission already processed by ' . $gf_payment_gateway);
+		    return;
+	    }
+
+        // If there aren't any feeds to be processed by this add-on, abort.
+	    $form  = $validation_result['form'];
+	    $entry = GFFormsModel::get_current_lead( $form );
+	    $feed  = $this->get_payment_feed( $entry, $form );
+	    if ( ! $feed ) {
+		    return;
+	    }
+
+        // If the payment amount is not valid, abort.
+	    $submission_data = $this->get_submission_data( $feed, $form, $entry );
+	    if ( ! $this->is_valid_payment_amount( $submission_data, $feed, $form, $entry ) ) {
+		    $this->log_debug( __METHOD__ . '(): Aborting. Payment amount not valid for processing.' );
+		    return;
+	    }
+
+        // If all the checks passed, set the payment gateway to this add-on.
+	    $gf_payment_gateway       = $this->get_slug();
+	    $this->is_payment_gateway = true;
+    }
+	//------------------------------------------------------------------------------------------------------------------
 
 	// # STRIPE TRANSACTIONS -------------------------------------------------------------------------------------------
 	/**
@@ -5741,6 +6088,15 @@ class GFStripe extends GFPaymentAddOn {
 		return $event;
 	}
 
+	public function get_simulated_event( $response ) {
+		// Include sandbox Stripe API library.
+		$api = $this->include_stripe_api( 'test' );
+
+		// TODO: need to fix this
+		require_once( 'includes/api/model/class-event.php' );
+		return new \Gravity_Forms_Stripe\API\Model\Event( $response, $api );
+	}
+
 	/**
 	 * Get Stripe account display name.
 	 *
@@ -6071,314 +6427,347 @@ class GFStripe extends GFPaymentAddOn {
 			$this->log_debug( __METHOD__ . '() Webhook event details => ' . print_r( $log_details, true ) );
 		}
 
-		switch ( $type ) {
+		/**
+		 * Enable support for a custom webhook handler that will take priority over the default handler below.
+		 *
+		 * @since 6.0
+		 *
+		 * @param array         $action An associative array containing the event details.
+		 * @param \Stripe\Event $event  The Stripe event object for the webhook which was received.
+		 */
+		$action = apply_filters( 'gform_stripe_pre_webhook', $action, $event );
 
-			case 'charge.expired':
-			case 'charge.refunded':
-				// try payment intent first.
-				$action['transaction_id'] = rgars( $event, 'data/object/payment_intent' );
-				$entry_id                 = $this->get_entry_by_transaction_id( $action['transaction_id'] );
-				if ( ! $entry_id ) {
-					// try charge id.
-					$action['transaction_id'] = rgars( $event, 'data/object/id' );
-					$entry_id                 = $this->get_entry_by_transaction_id( $action['transaction_id'] );
-					if ( ! $entry_id ) {
-						return $this->get_entry_not_found_wp_error( 'transaction', $action, $event );
+		// If the custom webhook handler has returned an error, return it.
+		if( is_wp_error( $action ) ) {
+			return $action;
+		}
+
+		// If webhooks have not been processed in the gform_stripe_pre_webhook filter, process them here.
+		$is_webhook_processed = rgar( $action, 'entry_id' ) || rgar( $action, 'abort_callback' );
+		if ( ! $is_webhook_processed ) {
+
+			switch ( $type ) {
+
+				case 'charge.expired':
+				case 'charge.refunded':
+					// try payment intent first.
+					$action['transaction_id'] = rgars($event, 'data/object/payment_intent');
+					$entry_id = $this->get_entry_by_transaction_id($action['transaction_id']);
+					if (!$entry_id) {
+						// try charge id.
+						$action['transaction_id'] = rgars($event, 'data/object/id');
+						$entry_id = $this->get_entry_by_transaction_id($action['transaction_id']);
+						if (!$entry_id) {
+							return $this->get_entry_not_found_wp_error('transaction', $action, $event);
+						}
 					}
-				}
 
-				$entry = GFAPI::get_entry( $entry_id );
+					$entry = GFAPI::get_entry($entry_id);
 
-				$payment_status = rgar( $entry, 'payment_status' );
+					$payment_status = rgar($entry, 'payment_status');
 
-				// Don't process the webhook if the payment has already been refunded in the dashboard.
-				if ( $payment_status !== 'Refunded' ) {
-					if ( ! $this->is_valid_entry_for_callback( $entry ) ) {
-						return $this->get_wrong_feed_wp_error( $entry_id );
+					// Don't process the webhook if the payment has already been refunded in the dashboard.
+					if ($payment_status !== 'Refunded') {
+						if (!$this->is_valid_entry_for_callback($entry)) {
+							return $this->get_wrong_feed_wp_error($entry_id);
+						}
+
+						$action['entry_id'] = $entry_id;
+
+						if ($event->data->object->captured) {
+
+							$action['type'] = 'refund_payment';
+							$action['amount'] = $this->get_amount_import(
+								rgars($event, 'data/object/amount_refunded'),
+								$entry['currency']
+							);
+						} else {
+							$action['type'] = 'void_authorization';
+						}
+					}
+
+					break;
+
+				case 'charge.captured':
+					// Getting transaction ID. Use Payment Intent if one is set. Otherwhise use Charge ID.
+					$action['transaction_id'] = rgars($event, 'data/object/payment_intent') ? rgars($event, 'data/object/payment_intent') : rgars($event, 'data/object/id');
+					$entry_id = $this->get_entry_by_transaction_id($action['transaction_id']);
+
+					// Abort if entry can't be found.
+					if (!$entry_id) {
+						return $this->get_entry_not_found_wp_error('transaction', $action, $event);
+					}
+					$entry = GFAPI::get_entry($entry_id);
+
+					$is_processing = get_option("gform_stripe_capturing_{$action['transaction_id']}");
+
+					// Abort if transaction is not 'Authorized' or capture process is currently taking place.
+					if (rgar($entry, 'payment_status') !== 'Authorized' || $is_processing) {
+						$action['abort_callback'] = true;
+						break;
+					}
+
+					// Abort if entry doesn't match this callback.
+					if (!$this->is_valid_entry_for_callback($entry)) {
+						return $this->get_wrong_feed_wp_error($entry_id);
+					}
+
+					$checkout_fulfillment_result = $this->maybe_checkout_fulfillment($entry);
+					if (is_wp_error($checkout_fulfillment_result)) {
+						return $checkout_fulfillment_result;
+					}
+
+					// Completing payment. Marking entry as Paid.
+					$action['entry_id'] = $entry_id;
+					$action['type'] = 'complete_payment';
+					$action['amount'] = $this->get_amount_import(rgars($event, 'data/object/amount'), $entry['currency']);
+
+					break;
+
+				case 'customer.subscription.deleted':
+					$action['subscription_id'] = rgars($event, 'data/object/id');
+					$entry_id = $this->get_entry_by_transaction_id($action['subscription_id']);
+					if (!$entry_id) {
+						return $this->get_entry_not_found_wp_error('subscription', $action, $event);
+					}
+
+					$entry = GFAPI::get_entry($entry_id);
+
+					if (!$this->is_valid_entry_for_callback($entry)) {
+						return $this->get_wrong_feed_wp_error($entry_id);
 					}
 
 					$action['entry_id'] = $entry_id;
+					$action['type'] = 'cancel_subscription';
+					$action['amount'] = $this->get_amount_import(rgars($event, 'data/object/plan/amount'), $entry['currency']);
 
-					if ( $event->data->object->captured ) {
-
-						$action['type']   = 'refund_payment';
-						$action['amount'] = $this->get_amount_import(
-							rgars( $event, 'data/object/amount_refunded' ),
-							$entry['currency']
-						);
-					} else {
-						$action['type'] = 'void_authorization';
-					}
-				}
-
-				break;
-
-			case 'charge.captured':
-				// Getting transaction ID. Use Payment Intent if one is set. Otherwhise use Charge ID.
-				$action['transaction_id'] = rgars( $event, 'data/object/payment_intent' ) ? rgars( $event, 'data/object/payment_intent' ) : rgars( $event, 'data/object/id' );
-				$entry_id = $this->get_entry_by_transaction_id( $action['transaction_id'] );
-
-				// Abort if entry can't be found.
-				if ( ! $entry_id ) {
-					return $this->get_entry_not_found_wp_error( 'transaction', $action, $event );
-				}
-				$entry = GFAPI::get_entry( $entry_id );
-
-				$is_processing = get_option( "gform_stripe_capturing_{$action['transaction_id']}" );
-
-				// Abort if transaction is not 'Authorized' or capture process is currently taking place.
-				if ( rgar( $entry, 'payment_status' ) !== 'Authorized' || $is_processing ) {
-					$action['abort_callback'] = true;
 					break;
-				}
-
-				// Abort if entry doesn't match this callback.
-				if ( ! $this->is_valid_entry_for_callback( $entry ) ) {
-					return $this->get_wrong_feed_wp_error( $entry_id );
-				}
-
-				$checkout_fulfillment_result = $this->maybe_checkout_fulfillment( $entry );
-				if ( is_wp_error( $checkout_fulfillment_result ) ) {
-					return $checkout_fulfillment_result;
-				}
-
-				// Completing payment. Marking entry as Paid.
-				$action['entry_id'] = $entry_id;
-				$action['type']     = 'complete_payment';
-				$action['amount']   = $this->get_amount_import( rgars( $event, 'data/object/amount' ), $entry['currency'] );
-
-				break;
-
-			case 'customer.subscription.deleted':
-				$action['subscription_id'] = rgars( $event, 'data/object/id' );
-				$entry_id                  = $this->get_entry_by_transaction_id( $action['subscription_id'] );
-				if ( ! $entry_id ) {
-					return $this->get_entry_not_found_wp_error( 'subscription', $action, $event );
-				}
-
-				$entry = GFAPI::get_entry( $entry_id );
-
-				if ( ! $this->is_valid_entry_for_callback( $entry ) ) {
-					return $this->get_wrong_feed_wp_error( $entry_id );
-				}
-
-				$action['entry_id'] = $entry_id;
-				$action['type']     = 'cancel_subscription';
-				$action['amount']   = $this->get_amount_import( rgars( $event, 'data/object/plan/amount' ), $entry['currency'] );
-
-				break;
 
 			case 'invoice.payment_succeeded':
-				$subscription = $this->get_subscription_line_item( $event );
-				if ( ! $subscription ) {
-					return new WP_Error( 'invalid_request', sprintf( __( 'Subscription line item not found in request', 'gravityformsstripe' ) ) );
-				}
+					$subscription = $this->get_subscription_line_item( $event );
+					if ( ! $subscription ) {
 
-				$action['subscription_id'] = rgar( $subscription, 'subscription' );
-				$entry_id                  = $this->get_entry_by_transaction_id( $action['subscription_id'] );
-				if ( ! $entry_id ) {
-					return $this->get_entry_not_found_wp_error( 'subscription', $action, $event );
-				}
-
-				$entry = GFAPI::get_entry( $entry_id );
-				$form  = GFAPI::get_form( $entry['form_id'] );
-				if ( $entry['payment_status'] === 'Processing' && $this->is_payment_element_enabled( $form ) ) {
-					return $this->get_payment_element_handler()->complete_processing_entry( $entry, $action, $event );
-				}
-				if ( ! $this->is_valid_entry_for_callback( $entry ) ) {
-					return $this->get_wrong_feed_wp_error( $entry_id );
-				}
-
-				// If it's the first invoice and payment_status is active, it means the subscription has just started
-				// when checkout session completed. So don't set action to prevent duplicate notes.
-				$number = explode( '-', rgars( $event, 'data/object/number' ) );
-				if ( $this->is_stripe_checkout_enabled() && rgar( $entry, 'payment_status' ) === 'Active' && $number[1] === '0001' ) {
-					$action['abort_callback'] = true;
-				} else {
-					$payment_intent           = rgars( $event, 'data/object/payment_intent' );
-					$action['transaction_id'] = empty( $payment_intent ) ? rgars( $event, 'data/object/charge' ) : $payment_intent;
-					$action['entry_id']       = $entry_id;
-					$action['type']           = 'add_subscription_payment';
-					$action['amount']         = $this->get_amount_import( rgars( $event, 'data/object/amount_due' ), $entry['currency'] );
-					$action['note']           = '';
-
-					// Get starting balance, assume this balance represents a setup fee or trial.
-					$starting_balance = $this->get_amount_import( rgars( $event, 'data/object/starting_balance' ), $entry['currency'] );
-					if ( $starting_balance > 0 ) {
-						$action['note'] = $this->get_captured_payment_note( $action['entry_id'] ) . ' ';
+						// Try to get the subscription from parent/subscription_details ( New versions of Stripe API no longer have subscription line item in the invoice object ).
+						$subscription = rgars( $event, 'data/object/parent/subscription_details' );
+						if ( ! $subscription ) {
+							return new WP_Error('invalid_request', sprintf(__('Subscription line item not found in request', 'gravityformsstripe')));
+						}
 					}
 
-					$amount_formatted = GFCommon::to_money( $action['amount'], $entry['currency'] );
-					$action['note']  .= sprintf( __( 'Subscription payment has been paid. Amount: %s. Subscription Id: %s', 'gravityformsstripe' ), $amount_formatted, $action['subscription_id'] );
+					$action['subscription_id'] = rgar($subscription, 'subscription');
+					$entry_id = $this->get_entry_by_transaction_id($action['subscription_id']);
+					if (!$entry_id) {
+						return $this->get_entry_not_found_wp_error('subscription', $action, $event);
+					}
 
-					// Detect the 0002 invoice for subscriptions with trial just ended.
-					if ( $this->is_stripe_checkout_enabled() && rgar( $entry, 'payment_status' ) === 'Active' && $number[1] === '0002' ) {
+					$entry = GFAPI::get_entry($entry_id);
+					$form = GFAPI::get_form($entry['form_id']);
+					if ($entry['payment_status'] === 'Processing' && $this->is_payment_element_enabled($form)) {
+						return $this->get_payment_element_handler()->complete_processing_entry($entry, $action, $event);
+					}
+					if (!$this->is_valid_entry_for_callback($entry)) {
+						return $this->get_wrong_feed_wp_error($entry_id);
+					}
 
-						$result = $this->api->get_subscription( $action['subscription_id'] );
+					// If it's the first invoice and payment_status is active, it means the subscription has just started
+					// when checkout session completed. So don't set action to prevent duplicate notes.
+					$number = explode('-', rgars($event, 'data/object/number'));
+					if ($this->is_stripe_checkout_enabled() && rgar($entry, 'payment_status') === 'Active' && $number[1] === '0001') {
+						$action['abort_callback'] = true;
+					} else {
+						$payment_intent = rgars($event, 'data/object/payment_intent');
+						$action['transaction_id'] = empty($payment_intent) ? rgars($event, 'data/object/charge') : $payment_intent;
+						$action['entry_id'] = $entry_id;
+						$action['type'] = 'add_subscription_payment';
+						$action['amount'] = $this->get_amount_import(rgars($event, 'data/object/amount_due'), $entry['currency']);
+						$action['note'] = '';
 
-						if ( ! is_wp_error( $result ) ) {
-							$trial_end = rgar( $result, 'trial_end' );
-							// After the trial has ended, the invoice created right away will be #0002.
-							if ( $trial_end && $trial_end <= time() ) {
-								$form = GFAPI::get_form( $entry['form_id'] );
-								$feed = $this->get_payment_feed( $entry, $form );
+						// Get starting balance, assume this balance represents a setup fee or trial.
+						$starting_balance = $this->get_amount_import(rgars($event, 'data/object/starting_balance'), $entry['currency']);
+						if ($starting_balance > 0) {
+							$action['note'] = $this->get_captured_payment_note($action['entry_id']) . ' ';
+						}
 
-								// Get session.
-								$session_id = gform_get_meta( $entry_id, 'stripe_session_id' );
-								$result     = $this->api->get_checkout_session( $session_id );
+						$amount_formatted = GFCommon::to_money($action['amount'], $entry['currency']);
+						$action['note'] .= sprintf(__('Subscription payment has been paid. Amount: %s. Subscription Id: %s', 'gravityformsstripe'), $amount_formatted, $action['subscription_id']);
 
-								if ( ! is_wp_error( $result ) ) {
-									// fulfill delayed feeds.
-									$this->checkout_fulfillment( $result, $entry, $feed, $form );
+						// Detect the 0002 invoice for subscriptions with trial just ended.
+						if ($this->is_stripe_checkout_enabled() && rgar($entry, 'payment_status') === 'Active' && $number[1] === '0002') {
+
+							$result = $this->api->get_subscription($action['subscription_id']);
+
+							if (!is_wp_error($result)) {
+								$trial_end = rgar($result, 'trial_end');
+								// After the trial has ended, the invoice created right away will be #0002.
+								if ($trial_end && $trial_end <= time()) {
+									$form = GFAPI::get_form($entry['form_id']);
+									$feed = $this->get_payment_feed($entry, $form);
+
+									// Get session.
+									$session_id = gform_get_meta($entry_id, 'stripe_session_id');
+									$result = $this->api->get_checkout_session($session_id);
+
+									if (!is_wp_error($result)) {
+										// fulfill delayed feeds.
+										$this->checkout_fulfillment($result, $entry, $feed, $form);
+									}
 								}
 							}
-						}
 
-						if ( is_wp_error( $result ) ) {
-							$this->log_error( __METHOD__ . '(): A Stripe API error occurs; ' . $result->get_error_message() );
+							if (is_wp_error($result)) {
+								$this->log_error(__METHOD__ . '(): A Stripe API error occurs; ' . $result->get_error_message());
+							}
 						}
 					}
-				}
 
-				break;
+					break;
 
 			case 'invoice.payment_failed':
 				$subscription = $this->get_subscription_line_item( $event );
 				if ( ! $subscription ) {
-					return new WP_Error( 'invalid_request', sprintf( __( 'Subscription line item not found in request', 'gravityformsstripe' ) ) );
+
+					// Try to get the subscription from parent/subscription_details ( New versions of Stripe API no longer have subscription line item in the invoice object ).
+					$subscription = rgars( $event, 'data/object/parent/subscription_details' );
+					if ( ! $subscription ) {
+						return new WP_Error('invalid_request', sprintf(__('Subscription line item not found in request', 'gravityformsstripe')));
+					}
+					// Use amount_due since parent/subscription_details does not have amount.
+					$subscription['amount'] = rgars( $event, 'data/object/amount_due' );
 				}
 
-				$action['subscription_id'] = rgar( $subscription, 'subscription' );
-				$entry_id                  = $this->get_entry_by_transaction_id( $action['subscription_id'] );
-				if ( ! $entry_id ) {
-					return $this->get_entry_not_found_wp_error( 'subscription', $action, $event );
-				}
+					$action['subscription_id'] = rgar( $subscription, 'subscription');
+					$entry_id = $this->get_entry_by_transaction_id($action['subscription_id']);
+					if (!$entry_id) {
+						return $this->get_entry_not_found_wp_error('subscription', $action, $event);
+					}
 
-				$entry = GFAPI::get_entry( $entry_id );
+					$entry = GFAPI::get_entry($entry_id);
 
-				if ( ! $this->is_valid_entry_for_callback( $entry ) ) {
-					return $this->get_wrong_feed_wp_error( $entry_id );
-				}
+					if (!$this->is_valid_entry_for_callback($entry)) {
+						return $this->get_wrong_feed_wp_error($entry_id);
+					}
 
-				$action['type']     = 'fail_subscription_payment';
-				$action['amount']   = $this->get_amount_import( rgar( $subscription, 'amount' ), $entry['currency'] );
-				$action['entry_id'] = $this->get_entry_by_transaction_id( $action['subscription_id'] );
+					$action['type'] = 'fail_subscription_payment';
+					$action['amount'] = $this->get_amount_import(rgars($event, 'data/object/amount_due'), $entry['currency']);
+					$action['entry_id'] = $this->get_entry_by_transaction_id($action['subscription_id']);
 
-				break;
+					break;
 
-			case 'checkout.session.completed':
-			case 'checkout.session.async_payment_succeeded':
-				// Getting Stripe Session from event object.
-				$session_id = rgars( $event, 'data/object/id' );
-				$session    = $this->api->get_checkout_session( $session_id );
-				if ( is_wp_error( $session ) ) {
-					$this->log_error( __METHOD__ . '(): A Stripe API error occurs; ' . $session->get_error_message() );
+				case 'checkout.session.completed':
+				case 'checkout.session.async_payment_succeeded':
+					// Getting Stripe Session from event object.
+					$session_id = rgars($event, 'data/object/id');
+					$session = $this->api->get_checkout_session($session_id);
+					if (is_wp_error($session)) {
+						$this->log_error(__METHOD__ . '(): A Stripe API error occurs; ' . $session->get_error_message());
 
-					return new WP_Error( 'invalid_stripe_session', esc_html__( 'Invalid Checkout Session', 'gravityformsstripe' ) . ': ' . $session->get_error_message() );
-				}
+						return new WP_Error('invalid_stripe_session', esc_html__('Invalid Checkout Session', 'gravityformsstripe') . ': ' . $session->get_error_message());
+					}
 
-				// Getting entry associated with this Stripe Session.
-				$entry = $this->get_entry_by_session_id( $session_id, $action, $event );
-				if ( is_wp_error( $entry ) ) {
-					$this->log_error( __METHOD__ . '(): A Stripe API error occurs; ' . $entry->get_error_message() );
+					// Getting entry associated with this Stripe Session.
+					$entry = $this->get_entry_by_session_id($session_id, $action, $event);
+					if (is_wp_error($entry)) {
+						$this->log_error(__METHOD__ . '(): A Stripe API error occurs; ' . $entry->get_error_message());
 
-					return $entry;
-				}
+						return $entry;
+					}
 
-				if ( $this->should_complete_checkout_session( $session, $entry ) ) {
-					// Completing the checkout.
-					$form   = GFAPI::get_form( $entry['form_id'] );
-					$feed   = $this->get_payment_feed( $entry, $form );
-					$action = array_merge( $action, $this->complete_checkout_session( $session, $entry, $feed, $form ) );
-					$this->log_debug( __METHOD__ . "(): Stripe Checkout session " . $session_id . " will be completed by the webhook event {$type}." );
-				} else {
-					$this->log_debug( __METHOD__ . "(): Not completing the Stripe Checkout Session " . $session_id . " during the webhook event {$type}." );
-				}
-				break;
+					if ($this->should_complete_checkout_session($session, $entry)) {
+						// Completing the checkout.
+						$form = GFAPI::get_form($entry['form_id']);
+						$feed = $this->get_payment_feed($entry, $form);
+						$action = array_merge($action, $this->complete_checkout_session($session, $entry, $feed, $form));
+						$this->log_debug(__METHOD__ . "(): Stripe Checkout session " . $session_id . " will be completed by the webhook event {$type}.");
+					} else {
+						$this->log_debug(__METHOD__ . "(): Not completing the Stripe Checkout Session " . $session_id . " during the webhook event {$type}.");
+					}
+					break;
 
-			case 'checkout.session.async_payment_failed':
-				$session_id = rgars( $event, 'data/object/id' );
-				$session = $this->api->get_checkout_session( $session_id );
-				if ( is_wp_error( $session ) ) {
-					$this->log_error( __METHOD__ . '(): A Stripe API error occurs for session ' . $session_id . ' ' . $session->get_error_message() );
+				case 'checkout.session.async_payment_failed':
+					$session_id = rgars($event, 'data/object/id');
+					$session = $this->api->get_checkout_session($session_id);
+					if (is_wp_error($session)) {
+						$this->log_error(__METHOD__ . '(): A Stripe API error occurs for session ' . $session_id . ' ' . $session->get_error_message());
 
-					return new WP_Error( 'invalid_stripe_session', esc_html__( 'Invalid Checkout Session', 'gravityformsstripe' ) . ': ' . $session->get_error_message() );
-				}
+						return new WP_Error('invalid_stripe_session', esc_html__('Invalid Checkout Session', 'gravityformsstripe') . ': ' . $session->get_error_message());
+					}
 
-				$entry = $this->get_entry_by_session_id( $session_id, $action, $event );
-				if ( is_wp_error( $entry ) ) {
-					$this->log_error( __METHOD__ . '(): A Stripe API error occurs for session ' . $session_id . ' ' . $entry->get_error_message() );
+					$entry = $this->get_entry_by_session_id($session_id, $action, $event);
+					if (is_wp_error($entry)) {
+						$this->log_error(__METHOD__ . '(): A Stripe API error occurs for session ' . $session_id . ' ' . $entry->get_error_message());
 
-					return $entry;
-				}
+						return $entry;
+					}
 
-				$action['type']     = 'fail_payment';
-				$action['amount']   = $this->get_amount_import( rgars( $event, 'data/object/amount_total' ), $entry['currency'] );
-				$action['entry_id'] = $entry['id'];
-
-				$this->log_debug( __METHOD__ . "(): Stripe Checkout session ' . $session_id . ' async payment has failed. Webhook: {$type}." );
-
-				break;
-
-			case 'payment_intent.succeeded':
-				$payment_intent_id = rgars( $event, 'data/object/id' );
-				$entries = GFAPI::get_entries(
-					null,
-					array(
-						'field_filters' => array(
-							array(
-								'key'   => 'payment_element_intent_id',
-								'value' => $payment_intent_id,
-							),
-						),
-					)
-				);
-
-				if ( empty( $entries ) ) {
-					$action['abort_callback'] = true;
-
-				} elseif ( rgar( $entries[0], 'payment_status' ) !== 'Processing' ) {
-					// If the entry is not an asynchronous payment, webhook events should be ignored.
-
-					$this->log_debug( __METHOD__ . '(): This is not an async payment, aborting as it will be already handled by the direct flow.' );
-					$action['abort_callback'] = true;
-
-				} else {
-
-					$this->log_debug( __METHOD__ . '(): Current Entry Status:' . rgar( $entries[0], 'payment_status' ) );
-					$action = $this->get_payment_element_handler()->complete_processing_entry( $entries[0], $action, $event );
-				}
-
-				break;
-
-			case 'payment_intent.payment_failed':
-				$payment_intent_id = rgars( $event, 'data/object/id' );
-				$entries = GFAPI::get_entries(
-					null,
-					array(
-						'field_filters' => array(
-							array(
-								'key'   => 'payment_element_intent_id',
-								'value' => $payment_intent_id,
-							),
-						),
-					)
-				);
-
-				if ( empty( $entries ) ) {
-					$action['abort_callback'] = true;
-				} else {
-
-					$entry              = $entries[0];
-					$action['type']     = 'fail_payment';
-					$action['amount']   = $this->get_amount_import( rgars( $event, 'data/object/amount' ), $entry['currency'] );
+					$action['type'] = 'fail_payment';
+					$action['amount'] = $this->get_amount_import(rgars($event, 'data/object/amount_total'), $entry['currency']);
 					$action['entry_id'] = $entry['id'];
-				}
 
-				break;
-		}
+					$this->log_debug(__METHOD__ . "(): Stripe Checkout session ' . $session_id . ' async payment has failed. Webhook: {$type}.");
 
-		if ( has_filter( 'gform_stripe_webhook' ) ) {
+					break;
+
+				case 'payment_intent.succeeded':
+					$payment_intent_id = rgars($event, 'data/object/id');
+					$entries = GFAPI::get_entries(
+						null,
+						array(
+							'field_filters' => array(
+								array(
+									'key' => 'payment_element_intent_id',
+									'value' => $payment_intent_id,
+								),
+							),
+						)
+					);
+
+					if (empty($entries)) {
+						$action['abort_callback'] = true;
+
+					} elseif (rgar($entries[0], 'payment_status') !== 'Processing') {
+						// If the entry is not an asynchronous payment, webhook events should be ignored.
+
+						$this->log_debug(__METHOD__ . '(): This is not an async payment, aborting as it will be already handled by the direct flow.');
+						$action['abort_callback'] = true;
+
+					} else {
+
+						$this->log_debug(__METHOD__ . '(): Current Entry Status:' . rgar($entries[0], 'payment_status'));
+						$action = $this->get_payment_element_handler()->complete_processing_entry($entries[0], $action, $event);
+					}
+
+					break;
+
+				case 'payment_intent.payment_failed':
+					$payment_intent_id = rgars($event, 'data/object/id');
+					$entries = GFAPI::get_entries(
+						null,
+						array(
+							'field_filters' => array(
+								array(
+									'key' => 'payment_element_intent_id',
+									'value' => $payment_intent_id,
+								),
+							),
+						)
+					);
+
+					if (empty($entries)) {
+						$action['abort_callback'] = true;
+					} else {
+
+						$entry = $entries[0];
+						$action['type'] = 'fail_payment';
+						$action['amount'] = $this->get_amount_import(rgars($event, 'data/object/amount'), $entry['currency']);
+						$action['entry_id'] = $entry['id'];
+					}
+
+					break;
+			}
+
+        }
+
+        if ( has_filter( 'gform_stripe_webhook' ) ) {
 			$this->log_debug( __METHOD__ . '(): Executing functions hooked to gform_stripe_webhook.' );
 
 			/**
@@ -6447,11 +6836,12 @@ class GFStripe extends GFPaymentAddOn {
 	 * @return bool
 	 */
 	public function is_valid_entry_for_callback( $entry ) {
-		if ( empty( $_GET['fid'] ) ) {
+		$feed_id = $this->get_callback_feed_id();
+		if ( empty( $feed_id ) ) {
 			return true;
 		}
 
-		return rgar( $this->get_payment_feed( $entry ), 'id' ) === $_GET['fid'];
+		return rgar( $this->get_payment_feed( $entry ), 'id' ) === $feed_id;
 	}
 
 	/**
@@ -6538,17 +6928,22 @@ class GFStripe extends GFPaymentAddOn {
 		}
 
 		$mode            = rgempty( 'livemode', $response ) ? 'test' : 'live';
-		$feed_id         = intval( rgget( 'fid' ) );
-		$feed            = ( ! empty( $feed_id ) ) ? $this->get_feed( $feed_id ) : null;
-		$settings        = ( ! empty( $feed ) ) ? $feed['meta'] : null;
+		$feed_id         = $this->get_callback_feed_id();
+		$feed            = ! empty( $feed_id ) ? $this->get_feed( $feed_id ) : null;
+		$settings        = ! empty( $feed ) ? $feed['meta'] : null;
 		$endpoint_secret = $this->get_webhook_signing_secret( $mode, $settings );
 
 		$this->log_debug( __METHOD__ . sprintf( '(): Processing %s mode event%s.', $mode, $settings ? " for feed (#{$feed_id} - {$settings['feedName']})" : '' ) );
 
-		$event_id      = rgar( $response, 'id' );
-		$is_test_event = 'evt_00000000000000' === $event_id;
+		$event_id            = rgar( $response, 'id' );
+		$is_test_event       = 'evt_00000000000000' === $event_id;
+		$is_playwright_event = str_starts_with( $event_id, 'evt_playwright' ) && $mode === 'test';
 
-		if ( empty( $endpoint_secret ) && ! $is_test_event ) {
+
+		if ( $is_playwright_event ) {
+			$event = $this->get_simulated_event( $response );
+
+		} elseif ( empty( $endpoint_secret ) && ! $is_test_event ) {
 
 			// Use the legacy method for getting the event.
 			$event = $this->get_stripe_event( $event_id, $mode );
@@ -6576,6 +6971,32 @@ class GFStripe extends GFPaymentAddOn {
 		self::$webhook_event = $event;
 
 		return $event;
+	}
+
+	/**
+	 * Get the feed ID from the callback URL. Supports two URL formats: ?callback=gravityformstripe&fid=1234 and ?stripe_callback=1234
+	 *
+	 * @since 6.0
+	 *
+	 * @return int The feed ID.
+	 */
+	public function get_callback_feed_id() {
+		return rgget('fid') ? intval( rgget( 'fid' ) ) : intval( rgget( 'stripe_callback' ) );
+	}
+
+	/**
+	 * Check if the callback is valid. Supports two URL formats: ?callback=gravityformstripe&fid=1234 and ?stripe_callback=1234
+	 *
+	 * @since 6.0
+	 *
+	 * @return bool True if the callback is valid, false otherwise.
+	 */
+	public function is_callback_valid() {
+		if ( rgget( 'callback' ) == $this->get_slug() || isset( $_GET['stripe_callback'] ) ) {
+			return true;
+		}
+
+		return false;
 	}
 
 	/**
@@ -7666,163 +8087,11 @@ class GFStripe extends GFPaymentAddOn {
 	 * @param string $previous_version Previous version number.
 	 */
 	public function upgrade( $previous_version ) {
-
-		$this->handle_upgrade_3( $previous_version );
-		$this->handle_upgrade_3_2_3( $previous_version );
-		$this->handle_upgrade_3_3_3( $previous_version );
-
+        require_once plugin_dir_path( __FILE__ ) . '/includes/upgrade/class-gf-stripe-upgrade-handler.php';
+        $upgrade_handler = new GF_Stripe_Upgrade_Handler( $this );
+        $upgrade_handler->upgrade( $previous_version );
 	}
 
-	/**
-	 * Handle upgrading to 3.0; introduction of SCA.
-	 *
-	 * @since 3.2.3
-	 *
-	 * @param string $previous_version Previous version number.
-	 */
-	public function handle_upgrade_3( $previous_version ) {
-
-		// Determine if previous version is before SCA upgrade.
-		$previous_is_pre_sca = ! empty( $previous_version ) && version_compare( $previous_version, '3.0', '<' );
-
-		// If previous version is not before the SCA upgrade, exit.
-		if ( ! $previous_is_pre_sca ) {
-			return;
-		}
-
-		// Get checkout_method.
-		$checkout_method = $this->get_plugin_setting( 'checkout_method' );
-		if ( $checkout_method === 'stripe_checkout' ) {
-			// let users know they are SCA compliant because they use Checkout.
-			$message = sprintf(
-				esc_html__( '%1$sYour Gravity Forms Stripe Add-On has been updated to 3.0, and now supports Apple Pay and Strong Customer Authentication (SCA/PSD2).%2$s%3$sNOTE:%4$s Stripe has changed Stripe Checkout from a modal display to a full page, and we have altered some existing Stripe hooks. Carefully review %5$sthis guide%6$s to see if your setup may be affected.%7$s', 'gravityformsstripe' ),
-				'<p>',
-				'</p>',
-				'<p><b>',
-				'</b>',
-				'<a href="https://docs.gravityforms.com/changes-to-checkout-with-stripe-v3/" target="_blank">',
-				'</a>',
-				'</p>'
-			);
-
-		} else {
-			// Remind people to switch to Checkout for SCA.
-			$message = sprintf(
-				esc_html__( '%1$sYour Gravity Forms Stripe Add-On has been updated to 3.0, and now supports Apple Pay and Strong Customer Authentication (SCA/PSD2).%2$s%3$sNOTE:%4$s Apple Pay and SCA are only supported by the Stripe Checkout payment collection method. Refer to %5$sthis guide%6$s for more information on payment methods and SCA.%7$s', 'gravityformsstripe' ),
-				'<p>',
-				'</p>',
-				'<p><b>',
-				'</b>',
-				'<a href="https://docs.gravityforms.com/stripe-support-of-strong-customer-authentication/" target="_blank">',
-				'</a>',
-				'</p>'
-			);
-		}
-
-		// Add message.
-		GFCommon::add_dismissible_message( $message, 'gravityformsstripe_upgrade_30', 'warning', $this->_capabilities_form_settings, true, 'site-wide' );
-
-	}
-
-	/**
-	 * Handle upgrade to 3.2.3; deletes passwords that GF Stripe 3.2 prevented from being deleted.
-	 *
-	 * @since 3.2.3
-	 *
-	 * @param string $previous_version Previous version number.
-	 */
-	public function handle_upgrade_3_2_3( $previous_version ) {
-		global $wpdb;
-
-		if ( version_compare( $previous_version, '3.2.3', '>=' ) || version_compare( $previous_version, '3.2', '<' ) ) {
-			return;
-		}
-
-		$feeds           = $this->get_feeds();
-		$processed_forms = array();
-
-		foreach ( $feeds as $feed ) {
-
-			if ( in_array( $feed['form_id'], $processed_forms ) ) {
-				continue;
-			} else {
-				$processed_forms[] = $feed['form_id'];
-			}
-
-			$form            = GFAPI::get_form( $feed['form_id'] );
-			$password_fields = GFAPI::get_fields_by_type( $form, 'password' );
-			if ( empty( $password_fields ) ) {
-				continue;
-			}
-
-			$password_field_ids = array_map( 'intval', wp_list_pluck( $password_fields, 'id' ) );
-			$sql_field_ids      = implode( ',', $password_field_ids );
-			$form_id            = (int) $form['id'];
-
-			$sql = $wpdb->prepare( "
-				DELETE FROM {$wpdb->prefix}gf_entry_meta
-				WHERE form_id = %d
-				AND meta_key IN( {$sql_field_ids} )",
-				$form_id
-			);
-
-			$wpdb->query( $sql );
-
-			$result = $wpdb->query( $sql );
-
-			$this->log_debug( sprintf( '%s: Deleted %d passwords.', __FUNCTION__, (int) $result ) );
-
-		}
-
-	}
-
-	/**
-	 * Handle upgrading to 3.4; introduction of SCA in the Stripe Checkout and remove the CC field support for new installs.
-	 *
-	 * @since 3.4
-	 *
-	 * @param string $previous_version Previous version number.
-	 */
-	public function handle_upgrade_3_3_3( $previous_version ) {
-
-		// Determine if previous version is before v3.3.3.
-		$previous_is_pre_333 = ! empty( $previous_version ) && version_compare( $previous_version, '3.3.3', '<' );
-
-		// If previous version is not before the v3.3.3, exit.
-		if ( ! $previous_is_pre_333 ) {
-			return;
-		}
-
-		// Get checkout_method.
-		$checkout_method = $this->get_plugin_setting( 'checkout_method' );
-		if ( $checkout_method === 'stripe_elements' ) {
-			// let users know they are SCA compliant because they use Elements.
-			$message = sprintf(
-				esc_html__( '%1$sYour Gravity Forms Stripe Add-On has been updated to 3.4, and now supports Strong Customer Authentication (SCA/PSD2).%2$s%3$sRefer to %4$sthis guide%5$s for more information on payment methods and SCA.%6$s', 'gravityformsstripe' ),
-				'<p>',
-				'</p>',
-				'<p>',
-				'<a href="https://docs.gravityforms.com/stripe-support-of-strong-customer-authentication/" target="_blank">',
-				'</a>',
-				'</p>'
-			);
-		} elseif ( $checkout_method === 'credit_card' ) {
-			// let users know the Credit Card payment method has been deprecated.
-			$message = sprintf(
-				esc_html__( '%1$sYour Gravity Forms Stripe Add-On has been updated to 3.4, and it no longer supports the Gravity Forms Credit Card Field in new forms (current integrations can still work as usual).%2$s%3$sRefer to %4$sthis guide%5$s for more information about this change.%6$s', 'gravityformsstripe' ),
-				'<p>',
-				'</p>',
-				'<p>',
-				'<a href="https://docs.gravityforms.com/deprecation-of-the-gravity-forms-credit-card-field/" target="_blank">',
-				'</a>',
-				'</p>'
-			);
-		}
-
-		if ( isset( $message ) ) {
-			GFCommon::add_dismissible_message( $message, 'gravityformsstripe_upgrade_333', 'warning', $this->_capabilities_form_settings, true, 'site-wide' );
-		}
-	}
 
 	/**
 	 * Get post payment actions config.
@@ -7834,15 +8103,17 @@ class GFStripe extends GFPaymentAddOn {
 	 * @return array
 	 */
 	public function get_post_payment_actions_config( $feed_slug ) {
-		// Support post payment action only for Stripe Checkout.
-		if ( ! $this->is_stripe_checkout_enabled() || ( $this->has_stripe_card_field() || $this->has_credit_card_field( $this->get_current_form() ) ) ) {
-			return array();
+
+        // Support post payment actions for Stripe Checkout and for refactored payment methods.
+		if ( $this->is_stripe_checkout_enabled() || $this->is_refactored_payment_method( $this->get_current_form() ) ) {
+			return array(
+				'position' => 'before',
+				'setting'  => 'conditionalLogic',
+                'default_value' => '1',
+			);
 		}
 
-		return array(
-			'position' => 'before',
-			'setting'  => 'conditionalLogic',
-		);
+        return array();
 	}
 
 	/**
@@ -8478,4 +8749,38 @@ class GFStripe extends GFPaymentAddOn {
 		<?php
 	}
 
+
+	/**
+	 * Ensures that feeds are delayed only in supported contexts.
+	 *
+	 * This version of Stripe has an upgrade routine that sets the delayed feed flag for all forms with the new Stripe Element field.
+	 * This works well, but it also presents a risk that we could be in a situation where feeds are marked as delayed in contexts that do not support delayed feeds.
+	 * For example, if the Stripe field is changed to Payment Element after the upgrade.
+	 * This method returns the $is_delayed flag as false in those cases, ensuring that feeds will be delayed only when feed delay is supported.
+	 *
+	 * @param bool   $is_delayed Whether the feed is delayed.
+	 * @param array  $form       The current form being processed.
+	 * @param array  $entry      The current entry being processed.
+	 * @param string $slug       The add-on slug for the feed. i.e gravityformshubspot, gravityformsmailchimp
+	 *
+	 * @return bool             True to delay the feed, false to allow immediate processing.
+	 */
+	public function maybe_delay_feed_processing( $is_delayed, $form, $entry, $slug )
+	{
+		// If this is not a Stripe feed, abort
+		if ( ! $this->is_payment_gateway( $entry['id'] ) ) {
+			return $is_delayed;
+		}
+
+		// Delayed feed is supported by stripe checkout and Stripe Element only.
+		$is_delayed_feed_supported = $this->is_stripe_checkout_enabled() || $this->has_stripe_card_element( $form );
+
+		// If feed delay is not supported in this context, force it to be disabled (otherwiwse it will create problems).
+		if ( ! $is_delayed_feed_supported ) {
+			return false;
+		}
+
+		// Process feed normally.
+		return parent::maybe_delay_feed_processing( $is_delayed, $form, $entry, $slug );
+	}
 }

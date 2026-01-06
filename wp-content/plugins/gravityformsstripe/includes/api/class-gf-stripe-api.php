@@ -115,11 +115,11 @@ class GF_Stripe_API {
 
 		// Autoload Stripe SDK.
 		if ( ! class_exists( '\Stripe\Stripe' ) ) {
-			require_once $this->addon->get_base_path() . '/includes/autoload.php';
+			require_once $this->addon->get_base_path() . '/deprecated/includes/autoload.php';
 		}
 
 		// Include deprecated classes.
-		require_once $this->addon->get_base_path() . '/includes/deprecated.php';
+		require_once $this->addon->get_base_path() . '/deprecated/includes/deprecated.php';
 
 		// Set api key.
 		if ( ! empty( $api_key ) ) {
@@ -331,7 +331,7 @@ class GF_Stripe_API {
 		$response = $this->make_request( "payment_intents/{$id}", $options, 'GET', 200 );
 
 		if ( is_wp_error( $response ) ) {
-			return $response;
+			return $response->get_error_code() == '404' ? false : $response;
 		}
 
 		return new Model\PaymentIntent( $response, $this );
@@ -430,8 +430,29 @@ class GF_Stripe_API {
 		return is_wp_error( $response ) ? $response : new Model\PaymentIntent( $response, $this );
 	}
 
-	## CHARGES ----------------------------------------------------
+	/**
+	 * Get a Stripe Payment Method object by ID.
+	 *
+	 * @since 6.0
+	 *
+	 * @param string $id      The payment method ID.
+	 * @param array  $options Additional request options.
+	 *
+	 * @return false|WP_Error|Model\PaymentMethod Returns the PaymentMethod object if found. Returns false if not found. If there was an error retrieving the payment method, return a WP_Error.
+	 */
+	public function get_payment_method( $id, $options = array() ) {
+		require_once( 'model/class-paymentmethod.php' );
 
+		$response = $this->make_request( "payment_methods/{$id}", $options, 'GET', 200 );
+
+		if ( is_wp_error( $response ) ) {
+			return $response->get_error_code() == '404' ? false : $response;
+		}
+
+		return new Model\PaymentMethod( $response, $this );
+	}
+
+	## CHARGES ----------------------------------------------------
 
 	/**
 	 * Create a new charge.
@@ -565,6 +586,76 @@ class GF_Stripe_API {
 		return is_wp_error( $response ) ? $response : new Model\Plan( $response, $this );
 	}
 
+	/**
+	 * Create a new product.
+	 *
+	 * @since 5.5.0
+	 *
+	 * @param array $product_meta The product meta.
+	 *
+	 * @return Model\Product|WP_Error Returns the newly created Product object or a WP_Error.
+	 */
+	public function create_product( $product_meta ) {
+		require_once( 'model/class-product.php' );
+
+		$response = $this->make_request( 'products', $product_meta, 'POST', 200 );
+
+		return is_wp_error( $response ) ? $response : new Model\Product( $response, $this );
+	}
+
+	public function search_products_by_metadata( $key, $value, $limit = 100 ){
+		require_once('model/class-product.php');
+
+		// Try using Stripe's search API, but it if fails (it is not supported in India), then we will manually search the products.
+		$products = $this->search_products( array( 'query' => "active:'true' AND metadata['{$key}']:'{$value}'", 'limit' => $limit ) );
+		if ( ! is_wp_error( $products ) ) {
+			return $products;
+		}
+
+		$products       = array();
+		$starting_after = null;
+		do {
+			$args = array( 'limit' => 100, 'active' => 'true' );
+			if ( $starting_after ) {
+				$args['starting_after'] = $starting_after;
+			}
+
+			$response = $this->make_request( 'products', $args, 'GET', 200 );
+			if ( is_wp_error( $response ) ) {
+				return $response;
+			}
+
+			foreach ( $response['data'] as $product ) {
+				/// Check if the product has the desired metadata
+				if ( rgars( $product, "metadata/{$key}" ) === $value) {
+					$products[] = new Model\Product( $product, $this );
+				}
+			}
+
+			// Update pagination variables
+			$starting_after = $response['has_more'] ? $response['data'][ count( $response['data'] ) - 1 ]['id'] : null;
+
+		} while ( $starting_after && count( $products ) < $limit );
+
+		return $products;
+	}
+
+	private function search_products( $search ) {
+
+		require_once('model/class-product.php');
+
+		$response = $this->make_request( 'products/search', $search, 'GET', 200 );
+		if ( is_wp_error( $response ) ) {
+			return $response;
+		}
+
+		$products = array();
+		foreach ( $response['data'] as $product ) {
+			$products[] = new Model\Product( $product, $this );
+		}
+
+		return $products;
+	}
 
 	/**
 	 * Adjusts a customer's balance.
@@ -843,10 +934,10 @@ class GF_Stripe_API {
 	 *
 	 * @return Model\Subscription|WP_Error
 	 */
-	public function get_subscription( $id ) {
+	public function get_subscription( $id, $options = array() ) {
 		require_once( 'model/class-subscription.php' );
 
-		$response = $this->make_request( "subscriptions/{$id}", array(), 'GET', 200 );
+		$response = $this->make_request( "subscriptions/{$id}", $options, 'GET', 200 );
 
 		if ( is_wp_error( $response ) ) {
 			return $response->get_error_code() == '404' ? false : $response;
@@ -894,17 +985,17 @@ class GF_Stripe_API {
 	 * @since 3.5
 	 * @since 5.5.0 Parameter and return type changed to an object in the \Gravity_Forms\Stripe\API\Model namespace instead of the \Stripe namespace.
 	 *
-	 * @param Model\Subscription $subscription The subscription object.
+	 * @param Model\Subscription|string $subscription The subscription object or subscription Id to be deleted.
 	 *
 	 * @return Model\Subscription|WP_Error
 	 */
 	public function cancel_subscription( $subscription ) {
 		require_once( 'model/class-subscription.php' );
 
-		$response = $this->make_request( "subscriptions/{$subscription->id}", array(), 'DELETE', 200 );
+		$subscription_id = $subscription instanceof Model\Subscription ? $subscription->id : $subscription;
+		$response = $this->make_request( "subscriptions/{$subscription_id}", array(), 'DELETE', 200 );
 
 		return is_wp_error( $response ) ? $response : new Model\Subscription( $response, $this );
-
 	}
 
 	/**
@@ -920,7 +1011,7 @@ class GF_Stripe_API {
 	public function get_invoice( $id ) {
 		require_once( 'model/class-invoice.php' );
 
-		$response = $this->make_request( "invoices/{$id}", array(), 'GET', 200 );
+		$response = $this->make_request( "invoices/{$id}", array( 'expand' => array( 'payments' ) ), 'GET', 200 );
 
 		if ( is_wp_error( $response ) ) {
 			return $response->get_error_code() == '404' ? false : $response;

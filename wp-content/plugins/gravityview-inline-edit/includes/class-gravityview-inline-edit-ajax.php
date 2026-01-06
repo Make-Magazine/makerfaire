@@ -554,6 +554,52 @@ final class GravityView_Inline_Edit_AJAX {
 
 				$field_validate = $values_to_update;
 				break;
+			case 'survey':
+				$subtype = isset( $gf_field->inputType ) ? $gf_field->inputType : 'survey';
+				
+				if ( $subtype === 'checkbox' ) {
+					$choice_number = 1;
+					foreach ( $gf_field->choices as $choice ) {
+						// Skip numbers ending in 0 to avoid conflicts
+						if ( $choice_number % 10 === 0 ) {
+							++$choice_number;
+						}
+						
+						$_id = $field_id . '.' . $choice_number;
+						
+						// Uncheck if not in post_value array, check if in array
+						if ( ! in_array( $choice['value'], (array) $post_value ) && '' !== $entry[ $_id ] ) {
+							$values_to_update[ $_id ] = '';
+						}
+						
+						if ( in_array( $choice['value'], (array) $post_value ) && '' === $entry[ $_id ] ) {
+							$values_to_update[ $_id ] = $choice['value'];
+						}
+						
+						++$choice_number;
+					}
+					$field_validate = $values_to_update;
+				} elseif ( is_array( $post_value ) ) {
+					// Check if this is multi-row likert by looking for decimal points in keys
+					$first_key = key( $post_value );
+					if ( is_string( $first_key ) && strpos( $first_key, '.' ) !== false ) {
+						// Multi-row Likert: update each input; clear when not provided.
+						$expected_inputs = is_array( $gf_field->inputs ) ? wp_list_pluck( $gf_field->inputs, 'id' ) : array_keys( (array) $post_value );
+						foreach ( $expected_inputs as $expected_id ) {
+							$val                              = array_key_exists( $expected_id, $post_value ) ? $post_value[ $expected_id ] : '';
+							$values_to_update[ $expected_id ] = ( null === $val ? '' : $val );
+						}
+						$field_validate = $values_to_update;
+					} else {
+						$field_validate                = $post_value;
+						$values_to_update[ $field_id ] = $field_validate;
+					}
+				} else {
+					// Simple survey fields (rank, rating, radio, select): update single value
+					$field_validate                = $post_value;
+					$values_to_update[ $field_id ] = $field_validate;
+				}
+				break;
 			default:
 				$field_validate                = $post_value;
 				$values_to_update[ $field_id ] = $field_validate;

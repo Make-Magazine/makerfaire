@@ -16,12 +16,16 @@ class PaymentMethod extends Base {
 	 *
 	 * @since 5.5.2
 	 */
+	public $allow_redisplay;
+	public $billing_details;
 	public $card;
 	public $customer;
+	public $link;
 	public $livemode;
 	public $metadata;
+	public $us_bank_account;
+	public $wechat_pay;
 	public $type;
-	public $billing_details;
 
 	/**
 	 * Returns the API endpoint for this object.

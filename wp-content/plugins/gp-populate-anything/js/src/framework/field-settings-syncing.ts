@@ -64,6 +64,18 @@ export const subscribeStoreToFieldSettings = (store: UseBoundStore<any>) => {
 			store.getState().setField(field);
 		}
 	);
+
+	window.gform.addAction(
+		'gform_after_refresh_field_preview',
+		(fieldId: number) => {
+			if (fieldId) {
+				const field = window.GetFieldById(fieldId);
+				if (field) {
+					store.getState().setField(field);
+				}
+			}
+		}
+	);
 };
 
 export const subscribeFieldSettingsToStore = (

@@ -34,6 +34,7 @@ class Plan extends Base {
 	public $transform_usage;
 	public $trial_period_days;
 	public $usage_type;
+	public $meter;
 
 	/**
 	 * Returns the API endpoint for this object.

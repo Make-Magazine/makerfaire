@@ -1,3 +1,36 @@
+### 6.0.2 | 2025-12-11
+- Added the $is_payment property to the Stripe Field class.
+- Fixed a PHP fatal error that can occur when using the gform_stripe_customer_after_create hook with the Stripe Card Element.
+- Fixed an issue where the card details merge tags are not populated when using the Stripe Card Element.
+
+### 6.0.1.0 | 2025-11-17
+- Updated the add-on to use the new [versioning system](https://docs.gravityforms.com/version-numbering/).
+- Fixed an issue where the cardholder name and billing address fields are not being sent to Stripe as part of the payment method when using the Stripe Card Element.
+- Fixed an issue where the Stripe receipt email is not being sent when using the Card Element.
+
+### 6.0.0 | 2025-11-03
+- Added a confirmation to be displayed if the form submission times out while waiting for a Stripe Webhook to be received.
+- Updated the post payment action settings so that they are enabled by default when creating a Stripe feed.
+- Updated the Stripe Card Element field to use the new AJAX submission and improve the reliability of form submissions.
+- Updated the Stripe Card Element field to add a “Payment Processing” message to the submit button while payment is being processed.
+- Updated the Stripe Card Element field to track failed payments by creating an entry even when a payment fails.
+- Updated the Stripe Card Element field to add support for post payment actions, allowing add-on feeds to be fired only when payment succeeds.
+- Updated the Stripe Card Element so that it is properly displayed on the block editor pages.
+- Updated the Stripe Payment Element setting label and description to avoid confusion.
+- Updated Stripe to use the updated form Theme Framework implementation to focus state for accessibility from being box-shadow based to outline based.
+- Updated "Connected to Stripe as: account" UI to use the component library to ensure consistency with other add-ons.
+- Updated the webhooks instructions to reflect recent changes in Stripe's dashboard.
+- Updated the Payment Element field for ACH payments so that it does not allow bank details to be manually entered.
+- Fixed an issue with mapped subscription coupons that are incorrectly validated when using the Payment Element.
+- Fixed an issue that causes the Copy URL button to shift based on the length of the Endpoint URL in the settings page.
+- Fixed a PHP fatal error that can occur on submission of a multi-page form when using the Payment Element with GF 2.9.18+ and there is a single File Upload field with an uploaded file on an earlier page.
+- Fixed an issue with subscription coupons that causes the coupon to be applied twice when using the Card Element and mapping to a Coupon field.
+- Fixed an issue preventing subscription payments from being properly processed on Stripe's latest webhook API.
+- Fixed an issue for the Gravity Theme where credit card inputs are not getting a focus state outline for accessibility.
+- Fixed an issue where the subscription frequency isn't displayed correctly when using the customer billing portal shortcode.
+- Fixed an issue that could prevent users from updating an entry if the Stripe Add-On is active.
+- Removed ending space from the translatable string "Connected to Stripe as:" to improve translation.
+
 ### 5.9.0 | 2024-11-04
 - Updated the Stripe field configuration message to use the alert component for better UI and consistency.
 - Fixed dynamic object properties deprecation notices in PHP 8.2.

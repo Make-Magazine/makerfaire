@@ -31,6 +31,9 @@ class Product extends Base {
 	public $shippable;
 	public $tax_code;
 	public $unit_label;
+	public $attributes;
+	public $marketing_features;
+	public $type;
 
 	/**
 	 * Returns the API endpoint for this object.

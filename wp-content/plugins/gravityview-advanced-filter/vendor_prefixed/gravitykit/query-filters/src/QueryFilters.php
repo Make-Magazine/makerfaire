@@ -2,7 +2,7 @@
 /**
  * @license MIT
  *
- * Modified by gravitykit on 25-September-2025 using {@see https://github.com/BrianHenryIE/strauss}.
+ * Modified by gravitykit on 05-December-2025 using {@see https://github.com/BrianHenryIE/strauss}.
  */
 
 namespace GravityKit\AdvancedFilter\QueryFilters;

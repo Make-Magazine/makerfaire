@@ -125,7 +125,7 @@ window.GFStripeAdmin = null;
 
             this.maybeLockAccountSettings();
             this.bindWebhookAlert();
-            this.bindViewWebhookInstructions();
+            this.bindCopyText();
 
             this.bindRefund();
             this.bindCapture();
@@ -355,42 +355,25 @@ window.GFStripeAdmin = null;
                 }, 1000);
             }
         };
-        /**
-         * @function bindViewWebhooks
-         * @description Binds the view webhooks button to the viewWebhookInstructions function.
-         *
-         * @since 5.8.0
-         */
-        this.bindViewWebhookInstructions = function () {
-            const viewWebhooksButton = gform.utils.getNode('.view-webhooks', document, true);
-            if (!viewWebhooksButton) {
-                return;
-            }
 
-            viewWebhooksButton.addEventListener('click', this.viewWebhookInstructions);
-            viewWebhooksButton.addEventListener('keypress', this.viewWebhookInstructions);
-        };
-
-        /**
-         * @function viewWebhookInstructions
-         * @description Shows the webhook instructions for the current API mode.
-         *
-         * @since 5.8.0
-         */
-        this.viewWebhookInstructions = function () {
-            const liveModeRadioInput = gform.utils.getNode('#api_mode0', document, true);
-            const apiMode = liveModeRadioInput.checked ? 'live' : 'test';
-            let hideMode = apiMode === 'live' ? 'test' : 'live';
-            const webhookHiddenInstructions = gform.utils.getNodes(`.webhooks-${hideMode}-instructions`, true, document, true);
-            const webhooksDisplayedInstructions = gform.utils.getNodes(`.webhooks-${apiMode}-instructions`, true, document, true);
-            webhookHiddenInstructions.forEach(function (instructions) {
-                instructions.classList.add('hidden');
+        this.bindCopyText = function () {
+            document.querySelectorAll('.gform-copy-text').forEach(function (element) {
+                element.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    textToCopy = document.querySelector('span [data-copy="webhookUrl"]') ? document.querySelector('span [data-copy="webhookUrl"]').textContent : '';
+                    const temp = document.createElement('input');
+                    document.body.appendChild(temp);
+                    temp.value = textToCopy;
+                    temp.select();
+                    document.execCommand('copy');
+                    document.body.removeChild(temp);
+                    const buttonText = this.querySelector('.gform-button__text');
+                    if (buttonText) {
+                        buttonText.textContent = gforms_stripe_admin_strings.copied;
+                    }
+                    wp.a11y.speak(gforms_stripe_admin_strings.copied_to_clipboard, 'assertive');
+                });
             });
-            webhooksDisplayedInstructions.forEach(function (instructions) {
-                instructions.classList.remove('hidden');
-            });
-
-            tb_show('Webhook Instructions', '#TB_inline?width=500&inlineId=stripe-webhooks-instructions', '');
         };
 
         /**

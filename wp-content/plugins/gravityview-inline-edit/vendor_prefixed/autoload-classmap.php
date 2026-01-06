@@ -14,6 +14,7 @@ return array(
    'GravityKit\GravityEdit\Foundation\Translations\Framework' => $strauss_src . '/gravitykit/foundation/src/Translations/Framework.php',
    'GravityKit\GravityEdit\Foundation\Exceptions\BaseException' => $strauss_src . '/gravitykit/foundation/src/Exceptions/BaseException.php',
    'GravityKit\GravityEdit\Foundation\Exceptions\UserException' => $strauss_src . '/gravitykit/foundation/src/Exceptions/UserException.php',
+   'GravityKit\GravityEdit\Foundation\Exceptions\LockAcquisitionException' => $strauss_src . '/gravitykit/foundation/src/Exceptions/LockAcquisitionException.php',
    'GravityKit\GravityEdit\Foundation\Components\SecureDownload' => $strauss_src . '/gravitykit/foundation/src/Components/SecureDownload.php',
    'GravityKit\GravityEdit\Foundation\Components\NewsletterSignup' => $strauss_src . '/gravitykit/foundation/src/Components/NewsletterSignup.php',
    'GravityKit\GravityEdit\Foundation\Helpers\Arr' => $strauss_src . '/gravitykit/foundation/src/Helpers/Arr.php',

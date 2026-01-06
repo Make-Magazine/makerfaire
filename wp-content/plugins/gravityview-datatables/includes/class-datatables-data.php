@@ -346,6 +346,11 @@ class GV_Extension_DataTables_Data {
 			$mode = 'page';
 		}
 
+		// Set the pagenum in $_GET for the sequence field to work correctly with DataTables pagination.
+		if ( $offset > 0 && $atts['page_size'] > 0 && $atts['page_size'] !== PHP_INT_MAX ) {
+			$_GET['pagenum'] = intval( $offset / $atts['page_size'] ) + 1;
+		}
+
 		$view->settings->update( $atts );
 
 		// Force shortcode parametrization
@@ -915,7 +920,6 @@ class GV_Extension_DataTables_Data {
 			 * @param View $view The View
 			 */
 			$loading_text = apply_filters( 'gravityview_datatables_loading_text', esc_html__( 'Loading data&hellip;', 'gv-datatables' ), $view );
-			$loading_text = $loading_text ? '<div class="dataTables_processing_text">' . $loading_text . '</div>' : null;
 
 			// Otherwise, load default English text with filters.
 			$language = [
@@ -1227,8 +1231,15 @@ class GV_Extension_DataTables_Data {
 		$script_debug = ( defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ) ? '' : '.min';
 
 		// Conditionally enqueue Entry Notes scripts.
+		$has_workflow_approval_links = false;
+
 		if ( $gravityview instanceof Template_Context && $gravityview->view instanceof View ) {
 			foreach ( $gravityview->view->fields->by_position( 'directory_table-columns' )->by_visible()->all() as $field ) {
+				if ( 'workflow_approval_links' === $field->ID ) {
+					$has_workflow_approval_links = true;
+
+					break;
+				}
 				if ( 'notes' !== $field->type ) {
 					continue;
 				}
@@ -1260,6 +1271,11 @@ class GV_Extension_DataTables_Data {
 		 * Use your own DataTables stylesheet by using the `gravityview_datatables_style_src` filter
 		 */
 		wp_enqueue_style( 'gravityview_style_datatables_table' );
+
+		// Enqueue Gravity Flow styles if Workflow Approval Links field is present.
+		if ( $has_workflow_approval_links ) {
+			$this->enqueue_gravityflow_styles();
+		}
 
 		/**
 		 * Register the featured entries script so that if active, the Featured Entries extension can use it.
@@ -1375,6 +1391,52 @@ class GV_Extension_DataTables_Data {
 
 		return $settings;
 	}
+
+	/**
+	 * Enqueues Gravity Flow styles for Workflow Approval Links field.
+	 *
+	 * @since 3.7.0
+	 *
+	 * @return void
+	 */
+	private function enqueue_gravityflow_styles() {
+		$custom_css = '
+			.gv-datatables-container .flow_approval_links,
+			table.dataTable .flow_approval_links {
+				padding-right: 1em;
+			}
+			.gv-datatables-container .fa,
+			table.dataTable .fa {
+				display: inline-block;
+				font: normal normal normal 14px/1 GFFontAwesome;
+				font-size: inherit;
+				text-rendering: auto;
+				-webkit-font-smoothing: antialiased;
+			}
+			.gv-datatables-container .fa-check:before,
+			table.dataTable .fa-check:before {
+				content: "\f00c";
+				color: green;
+			}
+			.gv-datatables-container .fa-times:before,
+			table.dataTable .fa-times:before {
+				content: "\f00d";
+				color: red;
+			}
+		';
+
+		// Register our own style handle to ensure CSS is always output.
+		wp_register_style(
+			'gv-datatables-gravityflow-approval-links',
+			false, // No external file, inline only.
+			[], // No dependencies to avoid issues.
+			GV_Extension_DataTables::version
+		);
+
+		wp_add_inline_style( 'gv-datatables-gravityflow-approval-links', $custom_css );
+		wp_enqueue_style( 'gv-datatables-gravityflow-approval-links' );
+	}
+
 }
 
 new GV_Extension_DataTables_Data();

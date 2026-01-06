@@ -1,0 +1,256 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: GP File Upload Pro NL Translation\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2025-11-24 13:00+0000\n"
+"PO-Revision-Date: 2025-11-24 10:45-0500\n"
+"Last-Translator: \n"
+"Language-Team: Nederlands\n"
+"Language: nl_NL\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=n != 1;\n"
+"X-Generator: Poedit 3.8\n"
+"X-Loco-Version: 2.8.0; wp-6.8.3; php-8.3.20\n"
+
+#. Description of the plugin
+#: gp-file-upload-pro.php
+msgid "A professional file and image uploader that feels like magic."
+msgstr ""
+"Een professionele uploader voor bestanden en afbeeldingen die magisch aanvoelt."
+
+#: class-gp-file-upload-pro.php:452
+msgid ""
+"Allow the order of files to be modified using drag-and-drop sorting in the "
+"uploader area."
+msgstr ""
+"Toestaan dat de volgorde van bestanden wordt aangepast door slepen en"
+"neerzetten in het uploadgebied."
+
+#: class-gp-file-upload-pro.php:428 class-gp-file-upload-pro.php:476
+msgid "Aspect Ratio"
+msgstr "Beeldverhouding"
+
+#: class-gp-file-upload-pro.php:447
+msgid ""
+"Automatically crop images according to the specified constraints. Users may "
+"re-crop the image by clicking on the image thumbnail. Use the Require Crop "
+"setting to require the user to manually crop the image."
+msgstr ""
+"Afbeeldingen automatisch bijsnijden volgens de opgegeven beperkingen. "
+"Gebruikers kunnen de afbeelding opnieuw bijsnijden door op de miniatuur te "
+"klikken. Gebruik de instelling ‘Bijsnijden verplichten’ om de gebruiker "
+"te verplichten de afbeelding handmatig bij te snijden."
+
+#: class-gp-file-upload-pro.php:400
+msgid "Cancel"
+msgstr "Annuleren"
+
+#: class-gp-file-upload-pro.php:427
+msgid "Constraints"
+msgstr "Beperkingen"
+
+#: class-gp-file-upload-pro.php:401
+msgid "Crop"
+msgstr "Bijsnijden"
+
+#: class-gp-file-upload-pro.php:405
+msgid "Cropping"
+msgstr "Bezig met bijsnijden"
+
+#: class-gp-file-upload-pro.php:398
+msgid "Drop files here"
+msgstr "Sleep bestanden hiernaartoe"
+
+#: class-gp-file-upload-pro.php:406
+msgid "Editing"
+msgstr "Bewerken"
+
+#: class-gp-file-upload-pro.php:422 class-gp-file-upload-pro.php:446
+msgid "Enable Cropping"
+msgstr "Bijsnijden inschakelen"
+
+#: class-gp-file-upload-pro.php:424
+msgid "Enable File Upload Pro"
+msgstr "File Upload Pro inschakelen"
+
+#: class-gp-file-upload-pro.php:423 class-gp-file-upload-pro.php:451
+msgid "Enable Sorting"
+msgstr "Sorteren inschakelen"
+
+#: class-gp-file-upload-pro.php:431 class-gp-file-upload-pro.php:461
+msgid "Exact Dimensions"
+msgstr "Precieze afmetingen"
+
+#: class-gp-file-upload-pro.php:441
+msgid "File Upload Pro"
+msgstr "File Upload Pro"
+
+#. Plugin Name of the plugin
+#: gp-file-upload-pro.php
+msgid "GP File Upload Pro"
+msgstr "GP File Upload Pro"
+
+#. Author of the plugin
+#: gp-file-upload-pro.php
+msgid "Gravity Wiz"
+msgstr "Gravity Wiz"
+
+#: class-gp-file-upload-pro.php:442
+msgid ""
+"Greatly improve the uploading experience for your Gravity Forms File Upload "
+"fields."
+msgstr ""
+"Verbeter de uploadervaring voor je velden voor het uploaden van "
+"Gravity Forms-bestanden."
+
+#: class-gp-file-upload-pro.php:433
+msgid "Height"
+msgstr "Hoogte"
+
+#. Author URI of the plugin
+#: gp-file-upload-pro.php
+msgid "https://gravitywiz.com/"
+msgstr "https://gravitywiz.com/"
+
+#. Plugin URI of the plugin
+#: gp-file-upload-pro.php
+msgid "https://gravitywiz.com/documentation/gravity-forms-file-upload-pro/"
+msgstr "https://gravitywiz.com/documentation/gravity-forms-file-upload-pro/"
+
+#: class-gp-file-upload-pro.php:472
+msgid "Images will be downscaled to the maximum dimensions set below."
+msgstr ""
+"Afbeeldingen worden verkleind tot de hieronder ingestelde maximale "
+"afmetingen."
+
+#: class-gp-file-upload-pro.php:429
+msgid "Max Dimensions"
+msgstr "Max. afmetingen"
+
+#: class-gp-file-upload-pro.php:471
+msgid "Maximum Dimensions"
+msgstr "Maximale afmetingen"
+
+#: class-gp-file-upload-pro.php:430
+msgid "Min Dimensions"
+msgstr "Min. afmetingen"
+
+#: class-gp-file-upload-pro.php:466
+msgid "Minimum Dimensions"
+msgstr "Minimale afmetingen"
+
+#: class-gp-file-upload-pro.php:407 class-gp-file-upload-pro.php:408
+msgid "of"
+msgstr "van"
+
+#: class-gp-file-upload-pro.php:399
+msgid "or"
+msgstr "of"
+
+#: class-gp-file-upload-pro.php:426
+msgid "Require Crop"
+msgstr "Bijsnijden verplichten"
+
+#: class-gp-file-upload-pro.php:456
+msgid "Require Crop on Upload"
+msgstr "Bijsnijden verplichten bij uploaden"
+
+#: class-gp-file-upload-pro.php:467
+msgid ""
+"Require cropper to meet the minimum dimensions. If cropper is not used, file "
+"dimensions will be validated prior to upload."
+msgstr ""
+"Van de bijsnijder vereisen dat deze voldoet aan de minimale afmetingen. Als de bijsnijder "
+"niet wordt gebruikt, worden de afmetingen van de bestanden voor het uploaden gevalideerd."
+
+#: class-gp-file-upload-pro.php:462
+msgid ""
+"Require file to be upload with exact dimensions. These dimensions will be "
+"used as the minimum dimensions in the cropper and an aspect ratio will be "
+"derived from the dimensions. If an image exceeds the exact dimensions after "
+"cropping, it will be downscaled."
+msgstr ""
+"Vereisen dat het bestand wordt geüpload met de precieze afmetingen. Deze afmetingen "
+"worden gebruikt als de minimale afmetingen in de bijsnijder en er wordt een "
+"beeldverhouding van de afmetingen afgeleid. Als een afbeelding na het "
+"bijsnijden de precieze afmetingen overschrijdt, wordt deze verkleind."
+
+#: class-gp-file-upload-pro.php:457
+msgid ""
+"Require that images be cropped on upload by automatically opening the "
+"cropper. If the crop is canceled, the files are not uploaded."
+msgstr ""
+"Vereisen dat afbeeldingen bij het uploaden worden bijgesneden door automatisch "
+"de bijsnijder te openen. Als het bijsnijden wordt geannuleerd, worden de "
+"bestanden niet geüpload."
+
+#: class-gp-file-upload-pro.php:477
+msgid "Restrict cropper to aspect ratio."
+msgstr "De bijsnijder beperken tot de beeldverhouding."
+
+#: class-gp-file-upload-pro.php:404
+msgid "Rotate Left"
+msgstr "Naar links draaien"
+
+#: class-gp-file-upload-pro.php:403
+msgid "Rotate Right"
+msgstr "Naar rechts draaien"
+
+#: class-gp-file-upload-pro.php:402
+msgid "Save"
+msgstr "Opslaan"
+
+#: class-gp-file-upload-pro.php:397
+msgid "select files"
+msgstr "Bestanden selecteren"
+
+#: class-gp-file-upload-pro.php:409
+msgid ""
+"This image does not meet the minimum dimensions: {minWidth}x{minHeight}px."
+msgstr ""
+"Deze afbeelding voldoet niet aan de minimale afmetingen: {minWidth}"
+"x{minHeight}px."
+
+#: class-gp-file-upload-pro.php:411
+msgid "This image does not meet the minimum height: {minHeight}px."
+msgstr "Deze afbeelding voldoet niet aan de minimale hoogte: {minHeight}px."
+
+#: class-gp-file-upload-pro.php:410
+msgid "This image does not meet the minimum width: {minWidth}px."
+msgstr "Deze afbeelding voldoet niet aan de minimale breedte: {minWidth}px."
+
+#. translators: placeholder is URL to File Upload Pro FAQ
+#: class-gp-file-upload-pro.php:436
+msgid ""
+"This setting is required when File Upload Pro is enabled. <a href=\"%s\" "
+"target=\"_blank\">Learn more.</a>"
+msgstr ""
+"Deze instelling is vereist wanneer File Upload Pro is ingeschakeld. <a "
+"href=\"%s\" target=\"_blank\">Meer informatie.</a>"
+
+#: class-gp-file-upload-pro.php:432
+msgid "Width"
+msgstr "Breedte"
+
+#: class-gp-file-upload-pro.php:425
+msgid ""
+"You are about to enable File Upload Pro on a Single File Upload field.\n"
+"\n"
+"Completing this action will convert this field to a Multi-file Upload field. "
+"Entry data associated with this field will be converted into the multi-file "
+"upload format when the form is saved. This conversion cannot be undone.\n"
+"\n"
+"Would you like to enable File Upload Pro on this field?"
+msgstr ""
+"Je staat op het punt om File Upload Pro in te schakelen voor een veld voor "
+"het uploaden van één bestand.\n"
+"\n"
+"Als je deze actie voltooid, wordt dit veld omgezet naar een veld voor het "
+"uploaden van meerdere bestanden. De invoergegevens die aan dit veld zijn "
+"gekoppeld, worden bij het opslaan van het formulier omgezet naar het formaat "
+"voor het uploaden van meerdere bestanden. Deze conversie kan niet ongedaan "
+"worden gemaakt.\n"
+"\n"
+"Wil je File Upload Pro voor dit veld inschakelen?"

@@ -224,6 +224,20 @@
 				  
 				  
 				} );
+
+
+				// Fix for survey likert fields: After closing x-editable, remove GF Survey click handlers
+				// that prevent clicks on disabled radio buttons from initializing x-editable field
+				if ( $( this ).data( 'type' ) === 'survey' && $( this ).data( 'subtype' ) === 'likert' ) {
+					$( this ).on( 'hidden', function() {
+						// GF Survey's gsurveySetUpLikertFields() attaches click handlers to ALL likert tables on the page
+						// (not just the one being edited). These handlers return false for disabled inputs,
+						// preventing clicks from initializing x-editable. We need to remove them from all likert fields on the page.
+						$( 'table.gsurvey-likert td.gsurvey-likert-choice, table.gsurvey-likert input[type="radio"]' ).off( 'click' );
+					} );
+				}
+
+				
 			} );
 		};
 

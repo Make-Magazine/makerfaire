@@ -30,6 +30,7 @@ class SetupIntent extends Base {
 	public $automatic_payment_methods;
 	public $cancellation_reason;
 	public $flow_direction;
+	public $flow_directions;
 	public $last_setup_error;
 	public $latest_attempt;
 	public $mandate;

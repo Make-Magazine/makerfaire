@@ -4,6 +4,7 @@ namespace Gravity_Forms_Stripe\API\Model;
 
 require_once( 'class-base.php' );
 require_once( 'class-paymentintent.php' );
+require_once( 'class-invoicepayment.php' );
 
 /**
  * Object representing an Invoice.
@@ -17,45 +18,28 @@ class Invoice extends Base {
 	 *
 	 * @since 5.5.2
 	 */
-	public $application;
-	public $attempted;
-	public $charge;
-	public $currency;
-	public $custom_fields;
-	public $customer;
-	public $description;
-	public $discount;
-	public $discounts;
-	public $due_date;
-	public $footer;
-	public $lines;
-	public $livemode;
-	public $metadata;
-	public $number;
-	public $paid;
-	public $payment_intent;
-	public $quote;
-	public $receipt_number;
-	public $rendering;
-	public $statement_descriptor;
-	public $status;
-	public $subscription;
-	public $subtotal;
-	public $tax;
-	public $total;
 	public $account_country;
 	public $account_name;
 	public $account_tax_ids;
 	public $amount_due;
+	public $amount_overpaid;
 	public $amount_paid;
 	public $amount_remaining;
 	public $amount_shipping;
+	public $application;
 	public $application_fee_amount;
 	public $attempt_count;
+	public $attempted;
 	public $auto_advance;
 	public $automatic_tax;
+	public $automatically_finalizes_at;
+	public $billing;
 	public $billing_reason;
+	public $charge;
 	public $collection_method;
+	public $currency;
+	public $custom_fields;
+	public $customer;
 	public $customer_address;
 	public $customer_email;
 	public $customer_name;
@@ -63,37 +47,62 @@ class Invoice extends Base {
 	public $customer_shipping;
 	public $customer_tax_exempt;
 	public $customer_tax_ids;
+	public $days_until_due;
 	public $default_payment_method;
 	public $default_source;
 	public $default_tax_rates;
+	public $description;
+	public $discount;
+	public $discounts;
+	public $due_date;
 	public $effective_at;
 	public $ending_balance;
+	public $footer;
 	public $from_invoice;
 	public $hosted_invoice_url;
 	public $invoice_pdf;
 	public $issuer;
 	public $last_finalization_error;
 	public $latest_revision;
+	public $lines;
+	public $livemode;
+	public $metadata;
 	public $next_payment_attempt;
+	public $number;
 	public $on_behalf_of;
+	public $paid;
 	public $paid_out_of_band;
+	public $payment_intent;
 	public $payment_settings;
+	public $parent;
 	public $period_end;
 	public $period_start;
 	public $post_payment_credit_notes_amount;
 	public $pre_payment_credit_notes_amount;
+	public $quote;
+	public $receipt_number;
+	public $rendering;
 	public $rendering_options;
 	public $shipping_cost;
 	public $shipping_details;
 	public $starting_balance;
+	public $statement_descriptor;
+	public $status;
 	public $status_transitions;
+	public $subtotal;
+	public $subtotal_excluding_tax;
+	public $subscription;
 	public $subscription_details;
 	public $subscription_proration_date;
-	public $subtotal_excluding_tax;
+	public $tax;
+	public $tax_percent;
 	public $test_clock;
-	public $threshold_reason; 
+	public $threshold_reason;
+	public $total;
 	public $total_discount_amounts;
 	public $total_excluding_tax;
+	public $total_pretax_credit_amounts;
+	public $total_taxes;
 	public $total_tax_amounts;
 	public $transfer_data;
 	public $webhooks_delivered_at;
@@ -157,6 +166,7 @@ class Invoice extends Base {
 
 		return array(
 			'payment_intent' => '\Gravity_Forms_Stripe\API\Model\PaymentIntent',
+			'payments[]'     => '\Gravity_Forms_Stripe\API\Model\InvoicePayment',
 		);
 	}
 }

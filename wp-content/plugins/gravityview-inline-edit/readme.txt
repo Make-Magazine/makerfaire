@@ -1,7 +1,7 @@
 === GravityEdit ===
 Tags: gravity forms, inline edit, gravityview
 Requires at least: 5.1
-Tested up to: 6.8.3
+Tested up to: 6.9
 Contributors: The GravityKit Team
 License: GPL 2
 Requires PHP: 7.2.0
@@ -19,6 +19,16 @@ Inline Editing is a powerful way to quickly make changes to a form entry without
 3. Set your license key
 
 == Changelog ==
+
+= 2.7.0 on December 4, 2025 =
+
+This release adds the ability to edit survey responses.
+
+#### 🚀 Added
+* Support for editing Gravity Forms Survey Add-On fields (Likert, Rating, Rank, etc.)
+
+#### 🔧 Updated
+* [Foundation](https://www.gravitykit.com/foundation/) to version 1.7.0.
 
 = 2.6.0 on October 16, 2025 =
 

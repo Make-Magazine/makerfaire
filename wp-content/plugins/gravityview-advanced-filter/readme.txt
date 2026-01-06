@@ -1,7 +1,7 @@
 === GravityView - Advanced Filter Extension ===
 Tags: GravityView, Gravity Forms, filtering, conditional logic
 Requires at least: 4.4
-Tested up to: 6.8.2
+Tested up to: 6.9
 Contributors: GravityKit
 License: GPLv3 or later
 
@@ -14,6 +14,13 @@ Filter which entries are shown in a View based on their values.
 3. Follow the instructions
 
 == Changelog ==
+
+= 4.3.1 on December 4, 2025 =
+
+This update fixes special character handling in conditional logic filters.
+
+#### 🐛 Fixed
+* Conditional logic comparisons failing when choice-based field values contain special characters (e.g., `>`, `<`, `&`, quotes).
 
 = 4.3.0 on September 25, 2025 =
 

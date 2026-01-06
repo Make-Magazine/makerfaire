@@ -233,6 +233,11 @@ window.gvDTFixedHeaderColumns = window.gvDTFixedHeaderColumns || {};
 					data: options.ajax.data,
 				};
 
+				// Wrap the processing text in HTML if it exists
+				if ( options.language && options.language.processing ) {
+					options.language.processing = "<div class='dataTables_processing_text'>" + options.language.processing + "</div>";
+				}
+
 				options.buttons = gvDataTables.setButtons( options );
 
 				options.drawCallback = function ( data ) {
@@ -306,6 +311,12 @@ window.gvDTFixedHeaderColumns = window.gvDTFixedHeaderColumns || {};
 
 							if ( $row_field.length && $row_field.attr( 'href' ) !== undefined ) {
 								return $( row_field ).text();
+							}
+
+							// Check if row_field contains inline-editable spans (from GravityEdit)
+							// and extract just the text content for grouping
+							if ( $row_field.length && $row_field.hasClass && $row_field.attr( 'class' ) && $row_field.attr( 'class' ).includes( 'gv-inline-editable-field' ) ) {
+								return $row_field.text();
 							}
 
 							return row_field;
@@ -1127,18 +1138,17 @@ window.gvDTFixedHeaderColumns = window.gvDTFixedHeaderColumns || {};
 				if ( tableData.setUrlOnSearch ) {
 					const baseUrl = window.location.origin + window.location.pathname;
 					const queryString = $( this ).serialize();
-					const url = new URL( queryString ? `?${ queryString }` : baseUrl, baseUrl );
-					const params = new Map();
+					const url = new URL( baseUrl );
 
-					url.searchParams.forEach( ( value, key ) => {
-						if ( value !== '' && !params.has( key ) ) {
-							params.set( key, value );
-						}
-					} );
+					if ( queryString ) {
+						const formParams = new URLSearchParams( queryString );
 
-					url.search = '';
-
-					params.forEach( ( value, key ) => url.searchParams.append( key, value ) );
+						formParams.forEach( ( value, key ) => {
+							if ( value !== '' ) {
+								url.searchParams.append( key, value );
+							}
+						} );
+					}
 
 					if ( !tableData.getData ) {
 						url.searchParams.delete( 'mode' );

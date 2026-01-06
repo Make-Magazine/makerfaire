@@ -21,42 +21,44 @@ class PaymentIntent extends Base {
 	 * @since 5.5.2
 	 */
 	public $amount;
+	public $amount_capturable;
+	public $amount_details;
+	public $amount_received;
 	public $application;
+	public $application_fee_amount;
+	public $automatic_payment_methods;
 	public $capture_method;
+	public $canceled_at;
+	public $cancellation_reason;
+	public $charges;
 	public $client_secret;
+	public $confirmation_method;
 	public $currency;
 	public $customer;
 	public $description;
 	public $invoice;
+	public $last_payment_error;
+	public $latest_charge;
 	public $livemode;
 	public $metadata;
+	public $next_action;
+	public $on_behalf_of;
 	public $payment_method;
+	public $payment_method_configuration_details;
+	public $payment_method_options;
 	public $payment_method_types;
 	public $processing;
+	public $receipt_email;
 	public $review;
+	public $setup_future_usage;
 	public $shipping;
 	public $source;
 	public $statement_descriptor;
-	public $status;
-	public $amount_capturable;
-	public $amount_details;
-	public $amount_received;
-	public $application_fee_amount;
-	public $automatic_payment_methods;
-	public $canceled_at;
-	public $cancellation_reason;
-	public $confirmation_method;
-	public $last_payment_error;
-	public $latest_charge;
-	public $next_action;
-	public $on_behalf_of;
-	public $payment_method_configuration_details;
-	public $payment_method_options;
-	public $receipt_email;
-	public $setup_future_usage;
 	public $statement_descriptor_suffix;
+	public $status;
 	public $transfer_data;
 	public $transfer_group;
+	public $excluded_payment_method_types;
 
 
 	/**

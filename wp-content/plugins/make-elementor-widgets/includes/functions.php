@@ -203,7 +203,7 @@ function makewidget_rss_output($rss, $settings) {
 		}
 		echo "</li>";
     }
-	if ($carousel == 'yes') {
+	if ($carousel == 'yes' && $read_more != '') {
 		echo "<li class='rss-carousel-read-more'><a href='". $feed_link ."' target='_blank'>" . $read_more . "</a></li>";
 	}
     echo '</ul>';

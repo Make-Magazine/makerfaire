@@ -28,7 +28,13 @@ final class GravityView_Inline_Edit_Gravity_Forms extends GravityView_Inline_Edi
 
 		parent::add_hooks();
 
-		add_filter( 'gform_entries_field_value', array( $this, 'wrap_gravity_forms_field_value' ), 10, 4 );
+		/**
+		 * Wrap Gravity Forms field values with inline edit attributes.
+		 * 
+		 * Priority 11: Runs AFTER Survey Add-On's filter (priority 10) to prevent survey IDs 
+		 * from being corrupted by str_replace() when converting IDs to text for display.
+		 */
+		add_filter( 'gform_entries_field_value', array( $this, 'wrap_gravity_forms_field_value' ), 11, 4 );
 
 		add_action( 'gform_pre_entry_list', array( $this, 'maybe_enqueue_inline_edit_styles' ), 100 );
 		add_action( 'gform_pre_entry_list', array( $this, 'open_container_wrapper' ) );

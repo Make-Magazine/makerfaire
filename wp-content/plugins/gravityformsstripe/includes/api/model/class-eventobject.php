@@ -14,6 +14,23 @@ require_once( 'class-base.php' );
 class EventObject extends Base {
 
 	/**
+	 * Initialize properties that will be used throughout this class and link to the Stripe API.
+	 *
+	 * @since 6.0
+	 */
+	public $amount_paid;
+	public $amount_remaining;
+	public $attempt_count;
+	public $attempted;
+	public $charge;
+	public $currency;
+	public $default_payment_method;
+	public $paid;
+	public $status;
+	public $status_transitions;
+
+
+	/**
 	 * This method is not supported by this object
 	 *
 	 * @since 5.5.0

@@ -597,7 +597,14 @@ const ko = window.ko;
 						}
 
 						$( event.target ).addClass( 'gpnf-spinner' );
-						$button.click();
+						
+						const gfSubmissionHandler = window?.gform?.submission?.handleButtonClick;
+						if ( gfSubmissionHandler ) {
+							event.preventDefault();
+							gfSubmissionHandler( $button[0] );
+						} else {
+							$button.click();
+						}
 					} );
 
 					if ( isDisabled ) {

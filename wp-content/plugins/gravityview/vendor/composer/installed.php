@@ -3,7 +3,7 @@
         'name' => 'gravityview/gravityview',
         'pretty_version' => 'dev-main',
         'version' => 'dev-main',
-        'reference' => '6ac0935974887f9e862cd79660f675fb8a6184ec',
+        'reference' => 'dd94aa3c4d178affb1adc8d29d0309e160136e5f',
         'type' => 'wordpress-plugin',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
@@ -49,7 +49,7 @@
         'gravityview/gravityview' => array(
             'pretty_version' => 'dev-main',
             'version' => 'dev-main',
-            'reference' => '6ac0935974887f9e862cd79660f675fb8a6184ec',
+            'reference' => 'dd94aa3c4d178affb1adc8d29d0309e160136e5f',
             'type' => 'wordpress-plugin',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),

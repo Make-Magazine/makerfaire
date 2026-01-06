@@ -6,6 +6,8 @@ require_once( 'class-base.php' );
 require_once( 'class-customer.php' );
 require_once( 'class-invoice.php' );
 require_once( 'class-plan.php' );
+require_once( 'class-discount.php' );
+require_once( 'class-setupintent.php' );
 
 /**
  * Object representing a Subscription.
@@ -35,7 +37,7 @@ class Subscription extends Base {
 	public $status;
 	public $application_fee_percent;
 	public $automatic_tax;
-	public $billing_cycle_anchor_confiig;
+	public $billing_cycle_anchor_config;
 	public $billing_cycle_anchor;
 	public $billing_thresholds;
 	public $cancel_at;
@@ -48,6 +50,7 @@ class Subscription extends Base {
 	public $default_payment_method;
 	public $default_source;
 	public $default_tax_rates;
+	public $description;
 	public $ended_at;
 	public $invoice_settings;
 	public $latest_invoice;
@@ -58,6 +61,7 @@ class Subscription extends Base {
 	public $pending_invoice_item_interval;
 	public $pending_setup_intent;
 	public $pending_update;
+	public $plan;
 	public $test_clock;
 	public $transfer_data;
 	public $trial_end;
@@ -130,9 +134,11 @@ class Subscription extends Base {
 	public function get_nested_objects() {
 
 		return array(
-			'customer'       => '\Gravity_Forms_Stripe\API\Model\Customer',
-			'latest_invoice' => '\Gravity_Forms_Stripe\API\Model\Invoice',
-			'plan'           => '\Gravity_Forms_Stripe\API\Model\Plan',
+			'customer'             => '\Gravity_Forms_Stripe\API\Model\Customer',
+			'latest_invoice'       => '\Gravity_Forms_Stripe\API\Model\Invoice',
+			'plan'                 => '\Gravity_Forms_Stripe\API\Model\Plan',
+			'discounts[]'          => '\Gravity_Forms_Stripe\API\Model\Discount',
+			'pending_setup_intent' => '\Gravity_Forms_Stripe\API\Model\SetupIntent',
 		);
 	}
 }

@@ -2,7 +2,7 @@
 /**
  * @license MIT
  *
- * Modified by gravitykit on 25-September-2025 using {@see https://github.com/BrianHenryIE/strauss}.
+ * Modified by gravitykit on 05-December-2025 using {@see https://github.com/BrianHenryIE/strauss}.
  */
 
 namespace GravityKit\AdvancedFilter\QueryFilters\Repository;
@@ -90,11 +90,51 @@ final class DefaultRepository implements FormRepository, UserRepository {
 					$filter['form_id'] = $form_id;
 				}
 
+				if ( isset( $filter['filters'] ) && is_array( $filter['filters'] ) ) {
+					$filter['filters'] = self::ensure_form_id( $filter['filters'], $form_id );
+				}
+
 				return $filter;
 			},
 			$field_filters
 		);
 	}
+
+	/**
+	 * (Recursively) Replaces special characters on filter values.
+	 *
+	 * @since 2.8.0
+	 *
+	 * @param array $field_filters The field filters.
+	 *
+	 * @return array The updated filters.
+	 */
+	private static function fix_special_characters( array $field_filters ): array {
+		foreach ( $field_filters as &$field_filter ) {
+			// HTML-decode values returned by GFCommon::get_field_filter_settings().
+			if ( ! empty( $field_filter['values'] ) && is_array( $field_filter['values'] ) ) {
+				foreach ( $field_filter['values'] as $x => $choice ) {
+					foreach ( [ 'value', 'text', 'label' ] as $key ) {
+						if ( ! isset( $choice[ $key ] ) ) {
+							continue;
+						}
+
+						$field_filter['values'][ $x ][ $key ] = wp_specialchars_decode( $choice[ $key ], ENT_QUOTES );
+					}
+				}
+			}
+
+			// Recursively fix this for repeater fields.
+			if ( isset( $field_filter['filters'] ) && is_array( $field_filter['filters'] ) ) {
+				$field_filter['filters'] = self::fix_special_characters( $field_filter['filters'] );
+			}
+		}
+		// Clean up.
+		unset( $field_filter );
+
+		return $field_filters;
+	}
+
 
 	/**
 	 * Adds current user's role filter.
@@ -314,6 +354,7 @@ final class DefaultRepository implements FormRepository, UserRepository {
 		}
 
 		$field_filters   = GFCommon::get_field_filter_settings( $form );
+
 		$field_filters[] = [
 			'key'       => 'created_by_user_role',
 			'text'      => esc_html__( 'Created By User Role', 'gravityview-advanced-filter' ),
@@ -417,7 +458,11 @@ final class DefaultRepository implements FormRepository, UserRepository {
 			 *
 			 * @since 1.0.14
 			 */
-			if ( in_array( $filter['key'], $option_fields_ids ) && ! empty( $filter['values'] ) && is_array( $filter['values'] ) ) {
+			if (
+				in_array( $filter['key'], $option_fields_ids )
+				&& ! empty( $filter['values'] )
+				&& is_array( $filter['values'] )
+			) {
 				require_once( GFCommon::get_base_path() . '/currency.php' );
 				foreach ( $filter['values'] as $i => $value ) {
 					$filter['values'][ $i ] = $value['text'] . '|' . GFCommon::to_number( $value['price'] );
@@ -460,25 +505,8 @@ final class DefaultRepository implements FormRepository, UserRepository {
 				$filter['operators'][] = 'isnotempty';
 			}
 
-			if ( ! empty( $filter['filters'] ) ) {
-				foreach ( $filter['filters'] as $i => $data ) {
-					$filter['filters'][ $i ]['operators'] = self::add_proxy_operators( $data['operators'], $filter['key'] );
-				}
-			}
-
-			/**
-			 * Add extra operators for all fields except:
-			 * 1) those with predefined values
-			 * 2) Entry ID (it always exists)
-			 * 3) "any form field" ("is empty" does not work: https://github.com/gravityview/Advanced-Filter/issues/91)
-			 */
-			if (
-				isset( $filter['operators'] )
-				&& ! isset( $filter['values'] )
-				&& ! in_array( $filter['key'], [ 'entry_id', '0' ], false )
-			) {
-				$filter['operators'] = self::add_proxy_operators( $filter['operators'], $filter['key'] );
-			}
+			// Process filter operators (and nested filters recursively).
+			$filter = self::process_filter_operators( $filter );
 
 			// Add relative date choices to date fields.
 			if ( isset( $filter['cssClass'] ) && strpos( $filter['cssClass'], 'datepicker' ) !== false ) {
@@ -513,6 +541,7 @@ final class DefaultRepository implements FormRepository, UserRepository {
 		 */
 		$field_filters = (array) apply_filters( 'gk/query-filters/field-filters', $field_filters, $form_id );
 
+		$field_filters = self::fix_special_characters( $field_filters );
 		return self::ensure_form_id( $field_filters, $form_id );
 	}
 
@@ -545,6 +574,43 @@ final class DefaultRepository implements FormRepository, UserRepository {
 		}
 
 		return $user_role_choices;
+	}
+
+	/**
+	 * Processes filter operators and recursively handles nested filters.
+	 *
+	 * Adds proxy operators to a filter (if applicable) and recursively processes
+	 * any nested filters for Repeater fields and their sub-fields.
+	 *
+	 * @since 2.8.0
+	 *
+	 * @param array $filter Filter configuration with potential nesting.
+	 *
+	 * @return array The processed filter with updated operators at all nesting levels.
+	 */
+	private static function process_filter_operators( array $filter ): array {
+		// Recursively process nested filters.
+		if ( ! empty( $filter['filters'] ) && is_array( $filter['filters'] ) ) {
+			foreach ( $filter['filters'] as $i => $sub_filter ) {
+				$filter['filters'][ $i ] = self::process_filter_operators( $sub_filter );
+			}
+		}
+
+		/**
+		 * Add extra operators for all fields except:
+		 * 1) those with predefined values
+		 * 2) Entry ID (it always exists)
+		 * 3) "any form field" ("is empty" does not work: https://github.com/gravityview/Advanced-Filter/issues/91)
+		 */
+		if (
+			isset( $filter['operators'] )
+			&& ! isset( $filter['values'] )
+			&& ! in_array( $filter['key'], [ 'entry_id', '0' ], false )
+		) {
+			$filter['operators'] = self::add_proxy_operators( $filter['operators'], $filter['key'] );
+		}
+
+		return $filter;
 	}
 
 	/**

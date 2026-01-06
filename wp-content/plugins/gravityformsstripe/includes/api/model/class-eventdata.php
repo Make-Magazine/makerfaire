@@ -14,6 +14,13 @@ require_once( 'class-base.php' );
 class EventData extends Base {
 
 	/**
+	 * Initialize properties that will be used throughout this class and link to the Stripe API.
+	 *
+	 * @since 6.0
+	 */
+	public $previous_attributes;
+
+	/**
 	 * This method is not supported by this object
 	 *
 	 * @since 5.5.0

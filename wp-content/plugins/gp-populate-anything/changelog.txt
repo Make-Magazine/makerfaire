@@ -1,5 +1,15 @@
 # Changelog
 
+## 2.1.54 | December 10, 2025
+
+- Added experimental [`gppa_flatten_multi_dimensional_array_to_index_array`](https://gravitywiz.com/documentation/gppa_flatten_multi_dimensional_array_to_index_array) filter hook.
+- Fixed an issue where AJAX requests always targeted the apex domain.
+- Fixed issue where Populate Anything field settings would disappear when _Enable "other" choice_ or _Show values_ settings were toggled.
+
+## 2.1.53 | December 2, 2025
+
+- Fixed an issue where the selected values in a dynamically powered multi choice field disappear after validation when an error occurs elsewhere on the form.
+
 ## 2.1.52 | November 12, 2025
 
 - Fixed potential PHP warning with a List field on a form with Save & Continue active.

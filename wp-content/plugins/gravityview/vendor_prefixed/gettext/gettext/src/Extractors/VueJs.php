@@ -1,7 +1,7 @@
 <?php
 /** @noinspection PhpComposerExtensionStubsInspection *
  * @license MIT
- * Modified by gravityview on 17-November-2025 using {@see https://github.com/BrianHenryIE/strauss}.
+ * Modified by gravityview on 05-December-2025 using {@see https://github.com/BrianHenryIE/strauss}.
  */
 
 namespace GravityKit\GravityView\Foundation\ThirdParty\Gettext\Extractors;

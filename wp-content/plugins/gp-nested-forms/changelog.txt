@@ -1,6 +1,10 @@
 
 # Changelog
 
+## 1.2.17 | December 10, 2025
+
+- Fixed an issue where reCAPTCHA v3 failed on Nested Forms in Firefox.
+
 ## 1.2.16 | October 29, 2025
 
 - Improved compatibility with Gravity Forms 2.9.18+ file upload handling methods.

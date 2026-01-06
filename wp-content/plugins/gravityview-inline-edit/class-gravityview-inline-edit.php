@@ -219,6 +219,7 @@ final class GravityView_Inline_Edit {
 			'entry_tags',
 			'lookup',
 			'image_choice',
+			'survey',
 			'multi_choice'
 		);
 

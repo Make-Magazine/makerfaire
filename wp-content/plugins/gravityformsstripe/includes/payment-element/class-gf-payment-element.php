@@ -138,6 +138,11 @@ class GF_Stripe_Payment_Element {
 			$intent_information['capture_method'] = $this->addon->get_payment_element_capture_method( $form, $feed );
 		}
 
+		// Forces immediate verification for ACH payments by preventing customer from being able to manually enter their bank account details.
+		$intent_information['payment_method_options'] = array(
+			'us_bank_account' => array( 'verification_method' => 'instant' ),
+		);
+
 		/**
 		 * Allow the initial payment information used to render the payment element to be overridden.
 		 *
@@ -355,7 +360,7 @@ class GF_Stripe_Payment_Element {
 		$resume_token = rgget( 'resume_token' );
 		GFCommon::log_debug( __METHOD__ . '() - Getting draft for form : "' . rgar( $form, 'title' ) . '" (id: ' . rgar( $form, 'id' ) . ') , feed : "' . rgars( $feed, 'meta/feedName' ) . '" (id: ' . rgar( $feed, 'id' ) . '), tracking id: ' . $tracking_id . ', resume token: ' . $resume_token );
 		$draft      = GFFormsModel::get_draft_submission_values( $resume_token );
-		$submission = json_decode( rgar( $draft, 'submission' ), true );
+		$submission = ! empty( rgar( $draft, 'submission' ) ) ? json_decode( rgar( $draft, 'submission' ), true ) : null;
 
 		if ( ! $submission ) {
 			gf_stripe()->log_debug( __METHOD__ . '() - No submission found for resume token: ' . $resume_token . ', aborting submission for form : "' . rgar( $form, 'title' ) . '" (id: ' . rgar( $form, 'id' ) . ') , feed : "' . rgars( $feed, 'meta/feedName' ) . '" (id: ' . rgar( $feed, 'id' ) . '), tracking id: ' . $tracking_id );

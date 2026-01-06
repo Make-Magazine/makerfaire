@@ -12,7 +12,7 @@ Theme dependencies:
 - Gravity Forms Basic Theme: basic.css
 
 Gravity Forms is a Rocketgenius project
-copyright 2008-2024 Rocketgenius Inc.
+copyright 2008-2025 Rocketgenius Inc.
 https://www.rocketgenius.com
 this may not be re-distributed without the
 express written permission of the author.
@@ -33,13 +33,13 @@ AND ANY CHANGES MADE HERE WILL BE OVERWRITTEN.
 		padding: 10px 10px;
 	}
 
-.gravity-theme .StripeElement--focus, .gform_legacy_markup_wrapper .StripeElement--focus {
-		border: 2px solid #8bc1fc;
-	}
+.gravity-theme .gfield--type-stripe_creditcard-card .StripeElement.StripeElement--focus, .gravity-theme .gfield--type-stripe_creditcard-card .StripeElement.StripeElement--focus.StripeElement--invalid, .gform_legacy_markup_wrapper .gfield--type-stripe_creditcard-card .StripeElement.StripeElement--focus, .gform_legacy_markup_wrapper .gfield--type-stripe_creditcard-card .StripeElement.StripeElement--focus.StripeElement--invalid {
+			border-color: #204ce5;
+		}
 
-.gravity-theme .StripeElement--invalid, .gform_legacy_markup_wrapper .StripeElement--invalid {
-		border-color: #fa755a;
-	}
+.gravity-theme .gfield--type-stripe_creditcard-card .StripeElement.StripeElement--invalid, .gform_legacy_markup_wrapper .gfield--type-stripe_creditcard-card .StripeElement.StripeElement--invalid {
+			border-color: #c02b0a;
+		}
 
 .gravity-theme .StripeElement--webkit-autofill, .gform_legacy_markup_wrapper .StripeElement--webkit-autofill {
 		background-color: #fefde5 !important;
