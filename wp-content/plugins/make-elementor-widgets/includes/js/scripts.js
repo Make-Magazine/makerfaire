@@ -7,7 +7,7 @@ jQuery(document).ready(function(){
 		jQuery(this).parent().toggleClass( "open" );
 	});
 	// for rss carousel
-	if(jQuery(".rss-carousel-read-more").length) {
+	if(jQuery(".custom-rss-element.carousel").length) {
 		var slideBy = 'page';
 		if( /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ) {
 			slideBy = 1;
