@@ -1992,8 +1992,11 @@ var _default = exports["default"] = /*#__PURE__*/function (_elementorModules$Mod
   return (0, _createClass2.default)(_default, [{
     key: "onInit",
     value: function onInit() {
-      var _elementorCommon$conf, _elementorCommon$conf2;
+      var _elementorCommon$conf;
       this.config = _eventsConfig.default;
+      if (!this.canSendEvents()) {
+        return;
+      }
       _mixpanelBrowser.default.init((_elementorCommon$conf = elementorCommon.config.editor_events) === null || _elementorCommon$conf === void 0 ? void 0 : _elementorCommon$conf.token, {
         persistence: 'localStorage',
         autocapture: false,
@@ -2006,17 +2009,15 @@ var _default = exports["default"] = /*#__PURE__*/function (_elementorModules$Mod
           flags: 'https://api-eu.mixpanel.com'
         }
       });
-      if ((_elementorCommon$conf2 = elementorCommon.config.editor_events) !== null && _elementorCommon$conf2 !== void 0 && _elementorCommon$conf2.can_send_events) {
-        this.enableTracking();
-      }
+      this.enableTracking();
     }
   }, {
     key: "enableTracking",
     value: function enableTracking() {
-      var _elementorCommon$conf3;
-      var userId = (_elementorCommon$conf3 = elementorCommon.config.library_connect) === null || _elementorCommon$conf3 === void 0 ? void 0 : _elementorCommon$conf3.user_id;
+      var _elementorCommon$conf2;
+      var userId = (_elementorCommon$conf2 = elementorCommon.config.library_connect) === null || _elementorCommon$conf2 === void 0 ? void 0 : _elementorCommon$conf2.user_id;
       if (userId) {
-        var _elementorCommon$conf4;
+        var _elementorCommon$conf3;
         _mixpanelBrowser.default.identify(userId);
         _mixpanelBrowser.default.register({
           appType: 'Editor'
@@ -2024,7 +2025,7 @@ var _default = exports["default"] = /*#__PURE__*/function (_elementorModules$Mod
         _mixpanelBrowser.default.people.set_once({
           $user_id: userId,
           $last_login: new Date().toISOString(),
-          $plan_type: ((_elementorCommon$conf4 = elementorCommon.config.library_connect) === null || _elementorCommon$conf4 === void 0 ? void 0 : _elementorCommon$conf4.plan_type) || _tiers.TIERS.free
+          $plan_type: ((_elementorCommon$conf3 = elementorCommon.config.library_connect) === null || _elementorCommon$conf3 === void 0 ? void 0 : _elementorCommon$conf3.plan_type) || _tiers.TIERS.free
         });
       }
       this.trackingEnabled = true;
@@ -2032,32 +2033,31 @@ var _default = exports["default"] = /*#__PURE__*/function (_elementorModules$Mod
   }, {
     key: "dispatchEvent",
     value: function dispatchEvent(name, data) {
-      var _elementorCommon$conf5, _elementorCommon$conf6, _elementorCommon$conf7, _elementorCommon$conf8, _elementorCommon$conf9, _elementorCommon$conf0, _elementorCommon$conf1, _elementorCommon$conf10, _elementorCommon$conf11, _elementorCommon$conf12;
+      var _elementorCommon$conf4, _elementorCommon$conf5, _elementorCommon$conf6, _elementorCommon$conf7, _elementorCommon$conf8, _elementorCommon$conf9, _elementorCommon$conf0, _elementorCommon$conf1, _elementorCommon$conf10;
       var options = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
-      if (!((_elementorCommon$conf5 = elementorCommon.config.editor_events) !== null && _elementorCommon$conf5 !== void 0 && _elementorCommon$conf5.can_send_events)) {
+      if (!this.canSendEvents()) {
         return;
       }
       if (!this.trackingEnabled) {
         this.enableTracking();
       }
       var eventData = _objectSpread({
-        user_id: ((_elementorCommon$conf6 = elementorCommon.config.library_connect) === null || _elementorCommon$conf6 === void 0 ? void 0 : _elementorCommon$conf6.user_id) || null,
-        user_roles: ((_elementorCommon$conf7 = elementorCommon.config.library_connect) === null || _elementorCommon$conf7 === void 0 ? void 0 : _elementorCommon$conf7.user_roles) || [],
-        subscription_id: ((_elementorCommon$conf8 = elementorCommon.config.editor_events) === null || _elementorCommon$conf8 === void 0 ? void 0 : _elementorCommon$conf8.subscription_id) || null,
-        user_tier: ((_elementorCommon$conf9 = elementorCommon.config.library_connect) === null || _elementorCommon$conf9 === void 0 ? void 0 : _elementorCommon$conf9.current_access_tier) || null,
-        url: (_elementorCommon$conf0 = elementorCommon.config.editor_events) === null || _elementorCommon$conf0 === void 0 ? void 0 : _elementorCommon$conf0.site_url,
-        wp_version: (_elementorCommon$conf1 = elementorCommon.config.editor_events) === null || _elementorCommon$conf1 === void 0 ? void 0 : _elementorCommon$conf1.wp_version,
-        client_id: (_elementorCommon$conf10 = elementorCommon.config.editor_events) === null || _elementorCommon$conf10 === void 0 ? void 0 : _elementorCommon$conf10.site_key,
-        app_version: (_elementorCommon$conf11 = elementorCommon.config.editor_events) === null || _elementorCommon$conf11 === void 0 ? void 0 : _elementorCommon$conf11.elementor_version,
-        site_language: (_elementorCommon$conf12 = elementorCommon.config.editor_events) === null || _elementorCommon$conf12 === void 0 ? void 0 : _elementorCommon$conf12.site_language
+        user_id: ((_elementorCommon$conf4 = elementorCommon.config.library_connect) === null || _elementorCommon$conf4 === void 0 ? void 0 : _elementorCommon$conf4.user_id) || null,
+        user_roles: ((_elementorCommon$conf5 = elementorCommon.config.library_connect) === null || _elementorCommon$conf5 === void 0 ? void 0 : _elementorCommon$conf5.user_roles) || [],
+        subscription_id: ((_elementorCommon$conf6 = elementorCommon.config.editor_events) === null || _elementorCommon$conf6 === void 0 ? void 0 : _elementorCommon$conf6.subscription_id) || null,
+        user_tier: ((_elementorCommon$conf7 = elementorCommon.config.library_connect) === null || _elementorCommon$conf7 === void 0 ? void 0 : _elementorCommon$conf7.current_access_tier) || null,
+        url: (_elementorCommon$conf8 = elementorCommon.config.editor_events) === null || _elementorCommon$conf8 === void 0 ? void 0 : _elementorCommon$conf8.site_url,
+        wp_version: (_elementorCommon$conf9 = elementorCommon.config.editor_events) === null || _elementorCommon$conf9 === void 0 ? void 0 : _elementorCommon$conf9.wp_version,
+        client_id: (_elementorCommon$conf0 = elementorCommon.config.editor_events) === null || _elementorCommon$conf0 === void 0 ? void 0 : _elementorCommon$conf0.site_key,
+        app_version: (_elementorCommon$conf1 = elementorCommon.config.editor_events) === null || _elementorCommon$conf1 === void 0 ? void 0 : _elementorCommon$conf1.elementor_version,
+        site_language: (_elementorCommon$conf10 = elementorCommon.config.editor_events) === null || _elementorCommon$conf10 === void 0 ? void 0 : _elementorCommon$conf10.site_language
       }, data);
       _mixpanelBrowser.default.track(name, eventData, options);
     }
   }, {
     key: "startSessionRecording",
     value: function startSessionRecording() {
-      var _elementorCommon$conf13;
-      if (!((_elementorCommon$conf13 = elementorCommon.config.editor_events) !== null && _elementorCommon$conf13 !== void 0 && _elementorCommon$conf13.can_send_events) || this.isSessionRecordingInProgress()) {
+      if (!this.canSendEvents() || this.isSessionRecordingInProgress()) {
         return;
       }
       if (!this.trackingEnabled) {
@@ -2069,8 +2069,7 @@ var _default = exports["default"] = /*#__PURE__*/function (_elementorModules$Mod
   }, {
     key: "stopSessionRecording",
     value: function stopSessionRecording() {
-      var _elementorCommon$conf14;
-      if (!((_elementorCommon$conf14 = elementorCommon.config.editor_events) !== null && _elementorCommon$conf14 !== void 0 && _elementorCommon$conf14.can_send_events) || !this.isSessionRecordingInProgress()) {
+      if (!this.canSendEvents() || !this.isSessionRecordingInProgress()) {
         return;
       }
       _mixpanelBrowser.default.stop_session_recording();
@@ -2125,8 +2124,8 @@ var _default = exports["default"] = /*#__PURE__*/function (_elementorModules$Mod
     value: function () {
       var _getExperimentVariant = (0, _asyncToGenerator2.default)(/*#__PURE__*/_regenerator.default.mark(function _callee2(experimentName) {
         var defaultValue,
-          _elementorCommon$conf15,
-          _elementorCommon$conf16,
+          _elementorCommon$conf11,
+          _elementorCommon$conf12,
           isAbTestingEnabled,
           variant,
           _args2 = arguments,
@@ -2136,25 +2135,28 @@ var _default = exports["default"] = /*#__PURE__*/function (_elementorModules$Mod
             case 0:
               defaultValue = _args2.length > 1 && _args2[1] !== undefined ? _args2[1] : 'control';
               _context2.prev = 1;
-              isAbTestingEnabled = (_elementorCommon$conf15 = (_elementorCommon$conf16 = elementorCommon.config.editor_events) === null || _elementorCommon$conf16 === void 0 ? void 0 : _elementorCommon$conf16.flags_enabled) !== null && _elementorCommon$conf15 !== void 0 ? _elementorCommon$conf15 : false;
-              if (isAbTestingEnabled) {
+              if (this.canSendEvents()) {
                 _context2.next = 2;
                 break;
               }
               return _context2.abrupt("return", defaultValue);
             case 2:
-              if (_mixpanelBrowser.default) {
+              isAbTestingEnabled = (_elementorCommon$conf11 = (_elementorCommon$conf12 = elementorCommon.config.editor_events) === null || _elementorCommon$conf12 === void 0 ? void 0 : _elementorCommon$conf12.flags_enabled) !== null && _elementorCommon$conf11 !== void 0 ? _elementorCommon$conf11 : false;
+              if (isAbTestingEnabled) {
                 _context2.next = 3;
                 break;
               }
               return _context2.abrupt("return", defaultValue);
             case 3:
-              if (this.trackingEnabled) {
+              if (_mixpanelBrowser.default) {
                 _context2.next = 4;
                 break;
               }
               return _context2.abrupt("return", defaultValue);
             case 4:
+              if (!this.trackingEnabled) {
+                this.enableTracking();
+              }
               if (_mixpanelBrowser.default.flags) {
                 _context2.next = 5;
                 break;
@@ -2203,6 +2205,12 @@ var _default = exports["default"] = /*#__PURE__*/function (_elementorModules$Mod
         'Experiment name': experimentName,
         'Variant name': experimentVariant
       });
+    }
+  }, {
+    key: "canSendEvents",
+    value: function canSendEvents() {
+      var _elementorCommon;
+      return !!((_elementorCommon = elementorCommon) !== null && _elementorCommon !== void 0 && (_elementorCommon = _elementorCommon.config) !== null && _elementorCommon !== void 0 && (_elementorCommon = _elementorCommon.editor_events) !== null && _elementorCommon !== void 0 && _elementorCommon.can_send_events);
     }
   }]);
 }(elementorModules.Module);

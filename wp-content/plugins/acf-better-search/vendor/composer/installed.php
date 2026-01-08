@@ -3,7 +3,7 @@
         'name' => 'gbiorczyk/acf-better-search',
         'pretty_version' => 'dev-master',
         'version' => 'dev-master',
-        'reference' => '3f73a79a5d98d1c825a7abdafb5b0125e49a8a50',
+        'reference' => 'a35b61190c1964a9cd024d118452dabc6bd55744',
         'type' => 'library',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
@@ -13,7 +13,7 @@
         'gbiorczyk/acf-better-search' => array(
             'pretty_version' => 'dev-master',
             'version' => 'dev-master',
-            'reference' => '3f73a79a5d98d1c825a7abdafb5b0125e49a8a50',
+            'reference' => 'a35b61190c1964a9cd024d118452dabc6bd55744',
             'type' => 'library',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),

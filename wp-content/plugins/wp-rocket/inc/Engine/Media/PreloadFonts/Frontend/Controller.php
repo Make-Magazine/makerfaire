@@ -18,6 +18,13 @@ class Controller implements ControllerInterface {
 	use ElementTrait;
 
 	/**
+	 * Used for debugging head elements.
+	 *
+	 * @var string
+	 */
+	private $feature = 'preload_fonts';
+
+	/**
 	 * Options instance
 	 *
 	 * @var Options_Data
@@ -198,8 +205,8 @@ class Controller implements ControllerInterface {
 			return $html;
 		}
 
-		// One regex to skip scripts and remove any <link rel=preload as=font…> tag (entire line, including indentation and newline):.
-		$html = preg_replace(
+		// One regex to skip scripts and remove any <link rel=preload as=font…> tag (entire line, including indentation and newline).
+		$result = preg_replace(
 			'#<script\b[^>]*>[\s\S]*?<\/script\b[^>]*>(*SKIP)(*FAIL)'    // skip <script> blocks.
 			. '|^[ \t]*<link\b'                                           // OR match a <link at line start (with optional indent).
 			. '(?=[^>]*\brel\s*=\s*(["\']?)preload\1)'                 // lookahead rel=preload.
@@ -209,6 +216,10 @@ class Controller implements ControllerInterface {
 			$html
 		);
 
-		return $html;
+		if ( null === $result ) {
+			return $html;
+		}
+
+		return $result;
 	}
 }

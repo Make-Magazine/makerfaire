@@ -376,18 +376,21 @@
         },
         {
             "name": "wp-media/plugin-family",
-            "version": "v1.0.6",
-            "version_normalized": "1.0.6.0",
+            "version": "v1.0.8",
+            "version_normalized": "1.0.8.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/wp-media/plugin-family.git",
-                "reference": "ab5067661eef2d04f645d74de797ae2193d8c58f"
+                "reference": "b763b3338e19ca672c407213da4cd8739e9327c2"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/wp-media/plugin-family/zipball/ab5067661eef2d04f645d74de797ae2193d8c58f",
-                "reference": "ab5067661eef2d04f645d74de797ae2193d8c58f",
+                "url": "https://api.github.com/repos/wp-media/plugin-family/zipball/b763b3338e19ca672c407213da4cd8739e9327c2",
+                "reference": "b763b3338e19ca672c407213da4cd8739e9327c2",
                 "shasum": ""
+            },
+            "require": {
+                "wp-media/apply-filters-typed": "^1.0"
             },
             "require-dev": {
                 "dealerdirect/phpcodesniffer-composer-installer": "^0.7.0",
@@ -397,7 +400,7 @@
                 "wp-coding-standards/wpcs": "^3",
                 "wp-media/phpunit": "^3"
             },
-            "time": "2025-07-21T12:25:10+00:00",
+            "time": "2025-12-29T12:10:38+00:00",
             "type": "library",
             "installation-source": "dist",
             "autoload": {
@@ -419,7 +422,7 @@
             "description": "Organizes and displays WP Media plugin family across other members.",
             "support": {
                 "issues": "https://github.com/wp-media/plugin-family/issues",
-                "source": "https://github.com/wp-media/plugin-family/tree/v1.0.6"
+                "source": "https://github.com/wp-media/plugin-family/tree/v1.0.8"
             },
             "install-path": "../wp-media/plugin-family"
         },

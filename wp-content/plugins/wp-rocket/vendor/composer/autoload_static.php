@@ -4,7 +4,7 @@
 
 namespace Composer\Autoload;
 
-class ComposerStaticInitd9071964ee9e36aab6e5bb942f33cd66
+class ComposerStaticInitac97b725757d6d5697175fb8afd973a1
 {
     public static $files = array (
         'a4a119a56e50fbb293281d9a48007e0e' => __DIR__ . '/..' . '/symfony/polyfill-php80/bootstrap.php',
@@ -12,67 +12,67 @@ class ComposerStaticInitd9071964ee9e36aab6e5bb942f33cd66
     );
 
     public static $prefixLengthsPsr4 = array (
-        'v' => 
+        'v' =>
         array (
             'voku\\helper\\' => 12,
         ),
-        'W' => 
+        'W' =>
         array (
             'WP_Rocket\\' => 10,
             'WPMedia\\PluginFamily\\' => 21,
             'WPMedia\\Mixpanel\\' => 17,
             'WPMedia\\Cloudflare\\' => 19,
         ),
-        'S' => 
+        'S' =>
         array (
             'Symfony\\Polyfill\\Php80\\' => 23,
             'Symfony\\Component\\CssSelector\\' => 30,
         ),
-        'B' => 
+        'B' =>
         array (
             'BerlinDB\\' => 9,
         ),
     );
 
     public static $prefixDirsPsr4 = array (
-        'voku\\helper\\' => 
+        'voku\\helper\\' =>
         array (
             0 => __DIR__ . '/..' . '/voku/simple_html_dom/src/voku/helper',
         ),
-        'WP_Rocket\\' => 
+        'WP_Rocket\\' =>
         array (
             0 => __DIR__ . '/../..' . '/inc',
         ),
-        'WPMedia\\PluginFamily\\' => 
+        'WPMedia\\PluginFamily\\' =>
         array (
             0 => __DIR__ . '/..' . '/wp-media/plugin-family/src',
         ),
-        'WPMedia\\Mixpanel\\' => 
+        'WPMedia\\Mixpanel\\' =>
         array (
             0 => __DIR__ . '/..' . '/wp-media/wp-mixpanel/src',
         ),
-        'WPMedia\\Cloudflare\\' => 
+        'WPMedia\\Cloudflare\\' =>
         array (
             0 => __DIR__ . '/../..' . '/inc/Addon/Cloudflare',
         ),
-        'Symfony\\Polyfill\\Php80\\' => 
+        'Symfony\\Polyfill\\Php80\\' =>
         array (
             0 => __DIR__ . '/..' . '/symfony/polyfill-php80',
         ),
-        'Symfony\\Component\\CssSelector\\' => 
+        'Symfony\\Component\\CssSelector\\' =>
         array (
             0 => __DIR__ . '/..' . '/symfony/css-selector',
         ),
-        'BerlinDB\\' => 
+        'BerlinDB\\' =>
         array (
             0 => __DIR__ . '/..' . '/berlindb/core/src',
         ),
     );
 
     public static $prefixesPsr0 = array (
-        'C' => 
+        'C' =>
         array (
-            'CloudFlare\\' => 
+            'CloudFlare\\' =>
             array (
                 0 => __DIR__ . '/..' . '/cloudflare/cf-ip-rewrite/src',
             ),
@@ -469,8 +469,11 @@ class ComposerStaticInitd9071964ee9e36aab6e5bb942f33cd66
         'WP_Rocket\\Engine\\HealthCheck\\ServiceProvider' => __DIR__ . '/../..' . '/inc/Engine/HealthCheck/ServiceProvider.php',
         'WP_Rocket\\Engine\\Heartbeat\\HeartbeatSubscriber' => __DIR__ . '/../..' . '/inc/Engine/Heartbeat/HeartbeatSubscriber.php',
         'WP_Rocket\\Engine\\Heartbeat\\ServiceProvider' => __DIR__ . '/../..' . '/inc/Engine/Heartbeat/ServiceProvider.php',
+        'WP_Rocket\\Engine\\License\\API\\CustomerDataTrait' => __DIR__ . '/../..' . '/inc/Engine/License/API/CustomerDataTrait.php',
         'WP_Rocket\\Engine\\License\\API\\Pricing' => __DIR__ . '/../..' . '/inc/Engine/License/API/Pricing.php',
         'WP_Rocket\\Engine\\License\\API\\PricingClient' => __DIR__ . '/../..' . '/inc/Engine/License/API/PricingClient.php',
+        'WP_Rocket\\Engine\\License\\API\\RemoteSettings' => __DIR__ . '/../..' . '/inc/Engine/License/API/RemoteSettings.php',
+        'WP_Rocket\\Engine\\License\\API\\RemoteSettingsClient' => __DIR__ . '/../..' . '/inc/Engine/License/API/RemoteSettingsClient.php',
         'WP_Rocket\\Engine\\License\\API\\User' => __DIR__ . '/../..' . '/inc/Engine/License/API/User.php',
         'WP_Rocket\\Engine\\License\\API\\UserClient' => __DIR__ . '/../..' . '/inc/Engine/License/API/UserClient.php',
         'WP_Rocket\\Engine\\License\\Renewal' => __DIR__ . '/../..' . '/inc/Engine/License/Renewal.php',
@@ -770,6 +773,7 @@ class ComposerStaticInitd9071964ee9e36aab6e5bb942f33cd66
         'WP_Rocket\\ThirdParty\\Themes\\Bridge' => __DIR__ . '/../..' . '/inc/ThirdParty/Themes/Bridge.php',
         'WP_Rocket\\ThirdParty\\Themes\\Divi' => __DIR__ . '/../..' . '/inc/ThirdParty/Themes/Divi.php',
         'WP_Rocket\\ThirdParty\\Themes\\Flatsome' => __DIR__ . '/../..' . '/inc/ThirdParty/Themes/Flatsome.php',
+        'WP_Rocket\\ThirdParty\\Themes\\GeneratePress' => __DIR__ . '/../..' . '/inc/ThirdParty/Themes/GeneratePress.php',
         'WP_Rocket\\ThirdParty\\Themes\\Jevelin' => __DIR__ . '/../..' . '/inc/ThirdParty/Themes/Jevelin.php',
         'WP_Rocket\\ThirdParty\\Themes\\MinimalistBlogger' => __DIR__ . '/../..' . '/inc/ThirdParty/Themes/MinimalistBlogger.php',
         'WP_Rocket\\ThirdParty\\Themes\\Polygon' => __DIR__ . '/../..' . '/inc/ThirdParty/Themes/Polygon.php',
@@ -816,10 +820,10 @@ class ComposerStaticInitd9071964ee9e36aab6e5bb942f33cd66
     public static function getInitializer(ClassLoader $loader)
     {
         return \Closure::bind(function () use ($loader) {
-            $loader->prefixLengthsPsr4 = ComposerStaticInitd9071964ee9e36aab6e5bb942f33cd66::$prefixLengthsPsr4;
-            $loader->prefixDirsPsr4 = ComposerStaticInitd9071964ee9e36aab6e5bb942f33cd66::$prefixDirsPsr4;
-            $loader->prefixesPsr0 = ComposerStaticInitd9071964ee9e36aab6e5bb942f33cd66::$prefixesPsr0;
-            $loader->classMap = ComposerStaticInitd9071964ee9e36aab6e5bb942f33cd66::$classMap;
+            $loader->prefixLengthsPsr4 = ComposerStaticInitac97b725757d6d5697175fb8afd973a1::$prefixLengthsPsr4;
+            $loader->prefixDirsPsr4 = ComposerStaticInitac97b725757d6d5697175fb8afd973a1::$prefixDirsPsr4;
+            $loader->prefixesPsr0 = ComposerStaticInitac97b725757d6d5697175fb8afd973a1::$prefixesPsr0;
+            $loader->classMap = ComposerStaticInitac97b725757d6d5697175fb8afd973a1::$classMap;
 
         }, null, ClassLoader::class);
     }

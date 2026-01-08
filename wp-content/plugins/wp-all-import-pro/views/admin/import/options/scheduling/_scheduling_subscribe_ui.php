@@ -8,29 +8,14 @@
                                         No complicated cron jobs, no flakey wp-cron, and no more terminated imports, regardless of host. Set up your schedules right here in WP All Import, and we'll make sure they run.</span>
                             <div style="display: flex;">
                                 <div style="flex: 1; padding-right: 10px;" class="pricing-plans">
-                                    <h3>Pricing Plans</h3>
+                                    <h3>Pricing</h3>
                                     <label class="checked">
                                                 <span class="input-desc">
-                                                <input type="radio" name="pricing_plan" value="single_site" checked>
-                                                <span class="description">Single Site</span></span><span class="price-term"><span class="price">$19</span><span class="term">/mo</span></span>
-                                    </label>
-                                    <label>
-                                                <span class="input-desc">
-                                                <input type="radio" name="pricing_plan" value="three_sites">
-                                                <span class="description">Up to 3 Sites</span></span><span class="price-term"><span class="price">$29</span><span class="term">/mo</span></span>
-                                    </label>
-                                    <label>
-                                                <span class="input-desc">
-                                                <input type="radio" name="pricing_plan" value="ten_sites">
-                                                <span class="description">Up to 10 Sites</span></span><span class="price-term"><span class="price">$49</span><span class="term">/mo</span></span>
-                                    </label>
-                                    <label>
-                                                    <span class="input-desc">
-                                                    <input type="radio" name="pricing_plan" value="unlimited_sites">
-                                                    <span class="description">Unlimited Sites</span></span><span class="price-term"><span class="price">$99</span><span class="term">/mo</span></span>
+                                                <input type="radio" name="pricing_plan" value="unlimited_sites" checked>
+                                                <span class="description">Unlimited Sites</span></span><span class="price-term"><span class="price">$19</span><span class="term">/mo</span></span>
                                     </label>
                                     <div class="plans-include">
-                                        <h3>All Plans Include</h3>
+                                        <h3>Includes</h3>
                                         <ul>
                                             <li>Unlimited Scheduled Imports & Exports</li>
                                             <li>Unlimited Runs per Import & Export</li>
@@ -57,7 +42,7 @@
                                             <h4><?php _e('What do I get?', 'wp-all-import-pro'); ?></h4>
                                         </div>
                                         <div class="faq-answer" id="faq3" style="display: none;">
-                                            <span><?php _e('You\'ll receive a license key for Automatic Scheduling that you can use in WP All Import and WP All Export. You can set up as many imports and exports as you like on the number of sites you selected when subscribing.', 'wp-all-import-pro'); ?></span>
+                                            <span><?php _e('You\'ll receive a license key for Automatic Scheduling that you can use in WP All Import and WP All Export. You can set up as many imports and exports as you like on unlimited sites.', 'wp-all-import-pro'); ?></span>
 </div>
 <div class="faq-section collapsed-header closed" onclick="toggleSection('faq4')">
 	<h4><?php _e('What information is shared with Soflyy?', 'wp-all-import-pro'); ?></h4>

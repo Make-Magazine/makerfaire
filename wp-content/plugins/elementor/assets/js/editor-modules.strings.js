@@ -62,6 +62,7 @@ __( 'Container', 'elementor' );
 __( 'Clear', 'elementor' );
 __( 'Color Picker', 'elementor' );
 __( 'Create New Global Color', 'elementor' );
+__( 'Item', 'elementor' );
 __( 'Item #%s', 'elementor' );
 __( 'New Typography Setting', 'elementor' );
 __( 'Are you sure you want to create a new Global Font setting?', 'elementor' );
@@ -86,7 +87,6 @@ __( 'Please note that the same exact color already exists in your Global Colors 
 __( 'Are you sure you want to create a new Global Color?', 'elementor' );
 __( 'New Global Color', 'elementor' );
 __( 'Are you sure you want to create a new Global Color?', 'elementor' );
-__( 'Item', 'elementor' );
 __( 'Add new layout element', 'elementor' );
 __( 'Paste', 'elementor' );
 __( 'Paste from other site', 'elementor' );
@@ -157,9 +157,17 @@ __( 'Move', 'elementor' );
 __( 'Alternatively, you can move the templates.', 'elementor' );
 __( 'Copy templates to a different location', 'elementor' );
 __( 'Copy', 'elementor' );
+__( '%s name', 'elementor' );
+__( 'Type the page name here', 'elementor' );
+__( 'Give your template a name', 'elementor' );
 __( 'Save this %s to your library', 'elementor' );
+__( 'Where would you like to save this %s?', 'elementor' );
 __( 'Move your %s to a different location', 'elementor' );
+__( 'Where would you like to move this %s?', 'elementor' );
 __( 'Copy your %s to a different location', 'elementor' );
+__( 'Where would you like to cppy this %s?', 'elementor' );
+__( 'Where would you like to move selected templates?', 'elementor' );
+__( 'Where would you like to copy selected templates?', 'elementor' );
 __( 'Undo', 'elementor' );
 __( 'Rename "%1$s"', 'elementor' );
 __( 'Rename', 'elementor' );
@@ -321,7 +329,19 @@ __(
 
 		this.connectInfoTipDialog.getElements( 'header' ).remove();
 		this.connectInfoTipDialog.getElements( 'buttonsWrapper' ).remove();
+
+		this.addVariantClass( this.connectInfoTipDialog.getElements( 'widget' ) );
 		this.connectInfoTipDialog.show();
+	},
+
+	addVariantClass() {
+		return '';
+	},
+
+	hideConnectInfoTip() {
+		if ( this.connectInfoTipDialog ) {
+			this.connectInfoTipDialog.hide();
+		}
 	},
 
 	handleElementorConnect() {

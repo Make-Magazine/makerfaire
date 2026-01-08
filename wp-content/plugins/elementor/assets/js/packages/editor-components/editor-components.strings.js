@@ -8,7 +8,6 @@ __(
 							'elementor'
 						);
 __( 'Close', 'elementor' );
-__( 'Exit component editing mode', 'elementor' );
 __( 'Override Property', 'elementor' );
 __( 'Default', 'elementor' );
 __( 'Name', 'elementor' );
@@ -20,6 +19,7 @@ __( 'Update', 'elementor' );
 __( 'Enter value', 'elementor' );
 __( 'Overridable property', 'elementor' );
 __( 'Make prop overridable', 'elementor' );
+__( 'Exit component editing mode', 'elementor' );
 __( 'Component saved successfully as: %1$s (UID: %2$s)', 'elementor' );
 __( 'Failed to save component. Please try again.', 'elementor' );
 __( 'Save as a component', 'elementor' );

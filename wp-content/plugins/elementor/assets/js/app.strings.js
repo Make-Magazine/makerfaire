@@ -16,8 +16,8 @@ __( 'Select File', 'elementor' );
 __( 'Upgrade Now', 'elementor' );
 __( 'Loading', 'elementor' );
 __( 'Back to dashboard', 'elementor' );
-__( 'Elementor', 'elementor' );
 __( 'Close', 'elementor' );
+__( 'Elementor', 'elementor' );
 __( 'Header', 'elementor' );
 __( 'What is a Header Template?', 'elementor' );
 __( 'The header template allows you to easily design and edit custom WordPress headers so you are no longer constrained by your theme’s header design limitations.', 'elementor' );
@@ -646,9 +646,6 @@ __( 'Theme Style settings', 'elementor' );
 __( 'Layout Settings', 'elementor' );
 __( 'Lightbox Settings', 'elementor' );
 __( 'Background Settings', 'elementor' );
-__( 'Setting up your website template...', 'elementor' );
-__( 'This usually takes a few moments.', 'elementor' );
-__( "Don't close this window until the process is finished.", 'elementor' );
 __( 'Kit Info', 'elementor' );
 __( 'Import a Website Template', 'elementor' );
 __( 'What’s a Website Template?', 'elementor' );
@@ -664,6 +661,9 @@ __( ' Learn more about Website Kits', 'elementor' );
 __( 'How does exporting work?', 'elementor' );
 __( 'To turn your site into a Website Kit, select the templates, content, settings and plugins you want to include. Once it’s ready, you’ll get a .zip file that you can import to other sites.', 'elementor' );
 __( 'Learn More', 'elementor' );
+__( 'Setting up your website template...', 'elementor' );
+__( 'This usually takes a few moments.', 'elementor' );
+__( "Don't close this window until the process is finished.", 'elementor' );
 __( 'Custom Post Type', 'elementor' );
 __( 'Click to select custom post types', 'elementor' );
 __( 'No custom post types in your site...', 'elementor' );
@@ -719,19 +719,6 @@ __( 'Upgrade now', 'elementor' );
 __( 'Cancel', 'elementor' );
 __( 'Export as .zip', 'elementor' );
 __( 'Try Again', 'elementor' );
-__( 'Version' ) } ${ cellLinkProps.text }` } <Icon className="eicon-editor-external-link" />
-		</InlineLink>
-	);
-
-	const getHeaders = () => {
-		if ( ! withHeader ) {
-			return [];
-		}
-
-		const headers = [ 'Plugin Name', 'Version' ];
-
-		if ( withStatus ) {
-			headers.splice( 1, 0, 'Status' );
 __( 'Previous', 'elementor' );
 __( 'Next', 'elementor' );
 __( 'Learn More', 'elementor' );
@@ -793,6 +780,19 @@ __( 'You can find it in the My Website Templates tab.', 'elementor' );
 __( 'Once the download is complete, you can upload it to be used for other sites.', 'elementor' );
 __( 'Build sites faster with Website Templates.', 'elementor' );
 __( 'Is the automatic download not starting?', 'elementor' );
+__( 'Version' ) } ${ cellLinkProps.text }` } <Icon className="eicon-editor-external-link" />
+		</InlineLink>
+	);
+
+	const getHeaders = () => {
+		if ( ! withHeader ) {
+			return [];
+		}
+
+		const headers = [ 'Plugin Name', 'Version' ];
+
+		if ( withStatus ) {
+			headers.splice( 1, 0, 'Status' );
 __( 'Edit Template', 'elementor' );
 __( 'Imported', 'elementor' );
 __( 'Existing', 'elementor' );

@@ -1,10 +1,10 @@
 import colorStudio from '@automattic/color-studio';
-import { JetpackIcon } from '@automattic/jetpack-components';
+import JetpackLogo from '@automattic/jetpack-components/jetpack-logo';
 import { Button, ExternalLink } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import semver from 'semver';
-import type { CardItem, CardBuilderProps } from './types';
+import type { CardItem, CardBuilderProps } from './types.ts';
 
 const COLOR_JETPACK = colorStudio.colors[ 'Jetpack Green 40' ];
 
@@ -109,7 +109,7 @@ export function buildJetpackCrmCard( {
 		id: integration.id,
 		title: integration.title,
 		description: integration.subtitle,
-		icon: <JetpackIcon color={ COLOR_JETPACK } />,
+		icon: <JetpackLogo showText={ false } logoColor={ COLOR_JETPACK } />,
 		cardData: {
 			...integration,
 			isLoading: typeof integration.isInstalled === 'undefined',

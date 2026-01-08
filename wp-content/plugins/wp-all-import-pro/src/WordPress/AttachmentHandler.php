@@ -787,7 +787,7 @@ class AttachmentHandler{
 
 								$is_keep_existing_images = ( ! empty($this->articleData['ID']) and self::$importRecord->options['is_update_images'] and self::$importRecord->options['update_images_logic'] == "add_new" and self::$importRecord->options['update_all_data'] == "no" and $is_show_add_new_images);
 
-								if ( 'yes' === self::$importRecord->options[$this->option_slug . 'preload_images'] && 'yes' === self::$importRecord->options[$this->option_slug . 'download_images'] ) {
+								if ( isset(self::$importRecord->options[$this->option_slug . 'preload_images']) && 'yes' === self::$importRecord->options[$this->option_slug . 'preload_images'] && 'yes' === self::$importRecord->options[$this->option_slug . 'download_images'] ) {
 									// Only preload images if there are more than 2 for this record.
 									count($imgs) > 2 &&	$this->downloadAllImages($imgs);
 								}

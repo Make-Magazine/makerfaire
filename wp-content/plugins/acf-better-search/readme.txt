@@ -5,7 +5,7 @@ Tags: acf search, advanced custom fields, better search, extended search, search
 Requires at least: 5.0
 Tested up to: 6.9
 Requires PHP: 7.0
-Stable tag: 4.4.0
+Stable tag: 4.4.1
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -94,6 +94,9 @@ This is all very important to us and allows us to do even better things for you!
 1. Screenshot of the options panel
 
 == Changelog ==
+
+= 4.4.1 (2025-12-08) =
+* `[Added]` The home page of the plugin
 
 = 4.4.0 (2025-10-28) =
 * `[Added]` Support for WordPress 6.9

@@ -707,11 +707,7 @@
                 }
                 break;
             case 'unlimited_sites':
-                if(type === 'subscribe') {
-                    url = 'https://www.wpallimport.com/scheduling/unlimited-sites';
-                }else{
-                    url = 'https://www.wpallimport.com/scheduling/upgrade-unlimited-sites';
-                }
+                url = 'https://www.wpallimport.com/scheduling/unlimited-sites-9s9d82';
                 break;
             default:
                 break;

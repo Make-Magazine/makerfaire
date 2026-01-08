@@ -11,6 +11,7 @@ use WP_Rocket\Engine\Admin\RocketInsights\{
 	Queue\Queue,
 };
 use WP_Rocket\Admin\Options_Data;
+use WP_Rocket\Engine\License\Renewal;
 use WP_Rocket\Event_Management\Subscriber_Interface;
 use WP_Rocket\Logger\LoggerAware;
 use WP_Rocket\Logger\LoggerAwareInterface;
@@ -87,6 +88,13 @@ class Subscriber implements Subscriber_Interface, LoggerAwareInterface {
 	private $plan;
 
 	/**
+	 * Renewal instance.
+	 *
+	 * @var Renewal
+	 */
+	private $renewal;
+
+	/**
 	 * Constructor.
 	 *
 	 * @param Render       $render Render object.
@@ -98,6 +106,7 @@ class Subscriber implements Subscriber_Interface, LoggerAwareInterface {
 	 * @param Options_Data $options Options instance.
 	 * @param Manager      $manager Manager instance.
 	 * @param Plan         $plan Plan manager.
+	 * @param Renewal      $renewal Renewal instance.
 	 */
 	public function __construct(
 		Render $render,
@@ -108,7 +117,8 @@ class Subscriber implements Subscriber_Interface, LoggerAwareInterface {
 		GlobalScore $global_score,
 		Options_Data $options,
 		Manager $manager,
-		Plan $plan
+		Plan $plan,
+		Renewal $renewal
 	) {
 		$this->render       = $render;
 		$this->controller   = $controller;
@@ -119,6 +129,7 @@ class Subscriber implements Subscriber_Interface, LoggerAwareInterface {
 		$this->options      = $options;
 		$this->manager      = $manager;
 		$this->plan         = $plan;
+		$this->renewal      = $renewal;
 	}
 
 	/**
@@ -135,6 +146,7 @@ class Subscriber implements Subscriber_Interface, LoggerAwareInterface {
 			'admin_post_delete_rocket_insights_url' => 'delete_row',
 			'rocket_localize_admin_script'          => 'add_pending_ids',
 			'rocket_insights_credit_reset'          => 'reset_credit_monthly',
+			'rocket_insights_auto_add_homepage'     => 'maybe_add_homepage_automatically',
 			'rocket_rocket_insights_job_completed'  => [
 				[ 'validate_credit' ],
 				[ 'reset_global_score' ],
@@ -167,6 +179,7 @@ class Subscriber implements Subscriber_Interface, LoggerAwareInterface {
 				[ 'on_update_cancel_old_as_jobs', 10, 2 ],
 			],
 			'admin_notices'                         => 'maybe_display_rocket_insights_promotion_notice',
+			'rocket_rocket_insights_enabled'        => 'maybe_disable_for_reseller_or_non_live',
 			'rest_api_init'                         => [ 'register_routes' ],
 		];
 	}
@@ -230,10 +243,12 @@ class Subscriber implements Subscriber_Interface, LoggerAwareInterface {
 			return;
 		}
 
+		$this->schedule_auto_add_homepage_task();
+
 		if ( ! $this->context->is_free_user() ) {
 			$this->queue->cancel_credit_reset_job();
-
 			$this->schedule_retest_task();
+
 			return;
 		}
 
@@ -263,6 +278,59 @@ class Subscriber implements Subscriber_Interface, LoggerAwareInterface {
 	 */
 	private function cancel_retest_job() {
 		$this->queue->cancel_retest_job();
+	}
+
+	/**
+	 * Get the expiry interval for auto-add homepage feature.
+	 *
+	 * @since 3.20.3
+	 *
+	 * @return int Number of days before expiry, or 0 to disable.
+	 */
+	private function get_expiry_interval(): int {
+		/**
+		 * Filters the number of days before license expiry to automatically add homepage.
+		 *
+		 * @since 3.20.3
+		 *
+		 * @param int $interval Number of days before expiry. Set to 0 to disable auto-add.
+		 * @return int
+		 */
+		return (int) wpm_apply_filters_typed(
+			'integer',
+			'rocket_insights_add_homepage_expiry_interval',
+			1
+		);
+	}
+
+	/**
+	 * Schedule auto-add homepage task.
+	 *
+	 * Schedules the task only when:
+	 * - No URLs are tracked
+	 * - Feature is not disabled (interval > 0)
+	 *
+	 * @since 3.20.3
+	 *
+	 * @return void
+	 */
+	private function schedule_auto_add_homepage_task(): void {
+		$interval = $this->get_expiry_interval();
+
+		// Don't schedule if feature is disabled.
+		if ( empty( $interval ) ) {
+			$this->queue->cancel_auto_add_homepage_task();
+			return;
+		}
+
+		// Don't schedule if URLs already exist.
+		if ( 0 < $this->controller->get_total_url_count() ) {
+			$this->queue->cancel_auto_add_homepage_task();
+			return;
+		}
+
+		// Schedule the task.
+		$this->queue->schedule_auto_add_homepage_task();
 	}
 
 	/**
@@ -404,7 +472,7 @@ class Subscriber implements Subscriber_Interface, LoggerAwareInterface {
 		$this->plan->remove_customer_data_cache();
 		rocket_renew_box( 'insights_upgrade' );
 
-		wp_safe_redirect( admin_url( 'options-general.php?page=' . WP_ROCKET_PLUGIN_SLUG . '#rocket_insights' ) );
+		wp_safe_redirect( admin_url( 'options-general.php?page=' . WP_ROCKET_PLUGIN_SLUG . '&rocket_source=purchase_redirect#rocket_insights' ) );
 	}
 
 	/**
@@ -453,6 +521,52 @@ class Subscriber implements Subscriber_Interface, LoggerAwareInterface {
 	}
 
 	/**
+	 * Maybe add homepage automatically when license is expiring and no URLs are tracked.
+	 *
+	 * This method is called daily by the scheduled cron task. It checks if:
+	 * - Rocket Insights is enabled
+	 * - The feature is not disabled (interval > 0)
+	 * - No URLs are currently tracked
+	 * - License is expiring within the configured interval
+	 *
+	 * If all conditions are met, it adds the homepage and cancels the recurring task.
+	 *
+	 * @since 3.20.3
+	 *
+	 * @return void
+	 */
+	public function maybe_add_homepage_automatically(): void {
+		// Guard: Rocket Insights disabled.
+		if ( ! $this->context->is_allowed() ) {
+			$this->queue->cancel_auto_add_homepage_task();
+			return;
+		}
+
+		$interval = $this->get_expiry_interval();
+
+		// Guard: Feature disabled.
+		if ( 0 === $interval ) {
+			$this->queue->cancel_auto_add_homepage_task();
+			return;
+		}
+
+		// Guard: Already have URLs - cancel task.
+		if ( $this->controller->get_total_url_count() > 0 ) {
+			$this->queue->cancel_auto_add_homepage_task();
+			return;
+		}
+
+		// Guard: Not expiring soon.
+		if ( ! $this->renewal->is_expiring_in( $interval ) ) {
+			return;
+		}
+
+		// Add homepage and cancel future runs.
+		$this->controller->add_homepage( 'cron_update' );
+		$this->queue->cancel_auto_add_homepage_task();
+	}
+
+	/**
 	 * Retest all pages.
 	 *
 	 * @return void
@@ -465,6 +579,7 @@ class Subscriber implements Subscriber_Interface, LoggerAwareInterface {
 				[
 					'data'       => [
 						'is_retest' => true,
+						'source'    => 'performance monitoring',
 					],
 					'score'      => '',
 					'report_url' => '',
@@ -529,6 +644,11 @@ class Subscriber implements Subscriber_Interface, LoggerAwareInterface {
 	 * @return void
 	 */
 	public function maybe_display_rocket_insights_promotion_notice() {
+		// Hide Rocket Insights notice if the feature is disabled.
+		if ( ! $this->context->is_allowed() ) {
+			return;
+		}
+
 		if ( 0 < $this->controller->get_total_url_count() ) {
 			return;
 		}
@@ -544,14 +664,35 @@ class Subscriber implements Subscriber_Interface, LoggerAwareInterface {
 		}
 
 		$message = sprintf(
-			// translators: %1$s is WP Rocket plugin name.
-			__(
-				'<p><strong>New in %1$s: Meet Rocket Insights, your built-in performance tracking tool!</strong></p>
-				<p>Starting from %1$s 3.20, you can track your key pages’ performance directly from your dashboard and get in-depth insights.</p>
-				<p>🚀 Add your first page, run the test, and keep your site fast.</p>',
+		// translators: %1$s opening tag, %2$s is WP Rocket plugin name, %3$s closing tag.
+			esc_html__(
+				'%1$sNew in %2$s: Meet Rocket Insights, your built-in performance tracking tool!%3$s',
 				'rocket'
 			),
+			'<p><strong>',
 			rocket_get_constant( 'WP_ROCKET_PLUGIN_NAME' ),
+			'</strong></p>'
+		);
+
+		$message .= sprintf(
+		// translators: %1$s opening tag, %2$s is WP Rocket plugin name, %3$s closing tag.
+			esc_html__(
+				'%1$sStarting from %2$s 3.20, you can track your key pages’ performance directly from your dashboard and get in-depth insights.%3$s',
+				'rocket'
+			),
+			'<p>',
+			rocket_get_constant( 'WP_ROCKET_PLUGIN_NAME' ),
+			'</p>'
+		);
+
+		$message .= sprintf(
+		// translators: %1$s opening tag, %3$s closing tag.
+			esc_html__(
+				'%1$sAdd your first page, run the test, and keep your site fast.%2$s',
+				'rocket'
+			),
+			'<p>🚀',
+			'</p>'
 		);
 
 		rocket_notice_html(
@@ -563,5 +704,21 @@ class Subscriber implements Subscriber_Interface, LoggerAwareInterface {
 				'dismiss_button_class' => 'button button-primary',
 			]
 		);
+	}
+
+	/**
+	 * Filters the rocket_rocket_insights_enabled value to disable for resellers and non-live sites.
+	 *
+	 * @since 3.20.2
+	 *
+	 * @param bool $enabled Whether Rocket Insights is enabled.
+	 * @return bool
+	 */
+	public function maybe_disable_for_reseller_or_non_live( bool $enabled ): bool {
+		if ( ! $enabled ) {
+			return $enabled;
+		}
+
+		return ! $this->context->is_reseller_or_non_live();
 	}
 }

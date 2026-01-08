@@ -100,19 +100,6 @@ __( 'Custom Post Type', 'elementor' );
 __( 'Click to select custom post types', 'elementor' );
 __( 'No custom post types in your site...', 'elementor' );
 __( 'Add the custom posts types to export. The latest 20 items from each type will be included.', 'elementor' );
-__( 'Version' ) } ${ cellLinkProps.text }` } <Icon className="eicon-editor-external-link" />
-		</InlineLink>
-	);
-
-	const getHeaders = () => {
-		if ( ! withHeader ) {
-			return [];
-		}
-
-		const headers = [ 'Plugin Name', 'Version' ];
-
-		if ( withStatus ) {
-			headers.splice( 1, 0, 'Status' );
 __( 'Previous', 'elementor' );
 __( 'Next', 'elementor' );
 __( 'Learn More', 'elementor' );
@@ -174,6 +161,19 @@ __( 'You can find it in the My Website Templates tab.', 'elementor' );
 __( 'Once the download is complete, you can upload it to be used for other sites.', 'elementor' );
 __( 'Build sites faster with Website Templates.', 'elementor' );
 __( 'Is the automatic download not starting?', 'elementor' );
+__( 'Version' ) } ${ cellLinkProps.text }` } <Icon className="eicon-editor-external-link" />
+		</InlineLink>
+	);
+
+	const getHeaders = () => {
+		if ( ! withHeader ) {
+			return [];
+		}
+
+		const headers = [ 'Plugin Name', 'Version' ];
+
+		if ( withStatus ) {
+			headers.splice( 1, 0, 'Status' );
 __( 'Edit Template', 'elementor' );
 __( 'Imported', 'elementor' );
 __( 'Existing', 'elementor' );
@@ -183,10 +183,10 @@ __( 'Is your Elementor Pro ready?', 'elementor' );
 __( 'If you’ve purchased, installed & activated Elementor Pro, we can continue importing all the parts of this site.', 'elementor' );
 __( 'Yes', 'elementor' );
 __( 'Not yet', 'elementor' );
-__( 'Plugins to add:', 'elementor' );
-__( 'Missing Required Plugins:', 'elementor' );
 __( 'Previous', 'elementor' );
 __( 'Next', 'elementor' );
+__( 'Plugins to add:', 'elementor' );
+__( 'Missing Required Plugins:', 'elementor' );
 __( 'Plugins you already have:', 'elementor' );
 __( 'Previous', 'elementor' );
 __( 'Import', 'elementor' );

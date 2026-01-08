@@ -10,7 +10,7 @@ if (!defined('ABSPATH')) {
 if (!class_exists('Soflyy_Partner_Discount')) {
 
     class Soflyy_Partner_Discount {
-        const VERSION = '1.0.4';
+        const VERSION = '1.0.5';
         private $partners;
         private $css_variables;
         private $filters;
@@ -96,6 +96,7 @@ if (!class_exists('Soflyy_Partner_Discount')) {
         }
 
         public function render() {
+            self::enqueue_assets();
             ob_start();
             $partners = $this->partners;
             $css_variables_style = $this->generate_css_variables_style();
@@ -163,9 +164,6 @@ if (!class_exists('Soflyy_Partner_Discount')) {
             return ob_get_clean();
         }
     }
-
-    add_action('wp_enqueue_scripts', ['Soflyy_Partner_Discount', 'enqueue_assets']);
-    add_action('admin_enqueue_scripts', ['Soflyy_Partner_Discount', 'enqueue_assets']);
 
     function render_partner_discount_ui($partners = [], $css_variables = [], $filters = []) {
         $partner_ui = new Soflyy_Partner_Discount($partners, $css_variables, $filters);

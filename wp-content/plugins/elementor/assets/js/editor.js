@@ -8262,7 +8262,9 @@ Object.defineProperty(exports, "__esModule", ({
   value: true
 }));
 exports.EventManager = void 0;
+var _regenerator = _interopRequireDefault(__webpack_require__(/*! @babel/runtime/regenerator */ "../node_modules/@babel/runtime/regenerator/index.js"));
 var _defineProperty2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime/helpers/defineProperty */ "../node_modules/@babel/runtime/helpers/defineProperty.js"));
+var _asyncToGenerator2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime/helpers/asyncToGenerator */ "../node_modules/@babel/runtime/helpers/asyncToGenerator.js"));
 var _classCallCheck2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime/helpers/classCallCheck */ "../node_modules/@babel/runtime/helpers/classCallCheck.js"));
 var _createClass2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime/helpers/createClass */ "../node_modules/@babel/runtime/helpers/createClass.js"));
 function ownKeys(e, r) { var t = Object.keys(e); if (Object.getOwnPropertySymbols) { var o = Object.getOwnPropertySymbols(e); r && (o = o.filter(function (r) { return Object.getOwnPropertyDescriptor(e, r).enumerable; })), t.push.apply(t, o); } return t; }
@@ -8296,13 +8298,30 @@ var EventManager = exports.EventManager = /*#__PURE__*/function () {
   }
   return (0, _createClass2.default)(EventManager, [{
     key: "getExperimentVariant",
-    value: function getExperimentVariant(experimentName) {
-      var _elementorCommon, _elementorCommon2;
-      if (!((_elementorCommon = elementorCommon) !== null && _elementorCommon !== void 0 && _elementorCommon.eventsManager)) {
-        return 'control';
+    value: function () {
+      var _getExperimentVariant = (0, _asyncToGenerator2.default)(/*#__PURE__*/_regenerator.default.mark(function _callee(experimentName) {
+        var _elementorCommon, _elementorCommon2;
+        return _regenerator.default.wrap(function (_context) {
+          while (1) switch (_context.prev = _context.next) {
+            case 0:
+              if ((_elementorCommon = elementorCommon) !== null && _elementorCommon !== void 0 && _elementorCommon.eventsManager) {
+                _context.next = 1;
+                break;
+              }
+              return _context.abrupt("return", 'control');
+            case 1:
+              return _context.abrupt("return", ((_elementorCommon2 = elementorCommon) === null || _elementorCommon2 === void 0 || (_elementorCommon2 = _elementorCommon2.eventsManager) === null || _elementorCommon2 === void 0 ? void 0 : _elementorCommon2.getExperimentVariant(experimentName, 'control')) || 'control');
+            case 2:
+            case "end":
+              return _context.stop();
+          }
+        }, _callee);
+      }));
+      function getExperimentVariant(_x) {
+        return _getExperimentVariant.apply(this, arguments);
       }
-      return ((_elementorCommon2 = elementorCommon) === null || _elementorCommon2 === void 0 || (_elementorCommon2 = _elementorCommon2.eventsManager) === null || _elementorCommon2 === void 0 ? void 0 : _elementorCommon2.getExperimentVariant(experimentName, 'control')) || 'control';
-    }
+      return getExperimentVariant;
+    }()
   }, {
     key: "getSaveTemplateExperimentVariant",
     value: function getSaveTemplateExperimentVariant() {
@@ -8565,7 +8584,7 @@ var TemplateLibraryManager = function TemplateLibraryManager() {
         container: __('Container', 'elementor')
       }, elements), {}, (0, _defineProperty2.default)({}, elementor.config.document.type, elementor.config.document.panel.title));
       jQuery.each(translationMap, function (type, title) {
-        self.getDefaultTemplateTypeSafeData(title).then(function (defaultTemplateData) {
+        self.getDefaultTemplateTypeSafeData(title, type).then(function (defaultTemplateData) {
           var safeData = jQuery.extend(true, {}, data, defaultTemplateData);
           self.registerTemplateType(type, safeData);
         });
@@ -8646,47 +8665,78 @@ var TemplateLibraryManager = function TemplateLibraryManager() {
           description: __('Alternatively, you can copy the template.', 'elementor'),
           icon: '<i class="eicon-library-move" aria-hidden="true"></i>',
           canSaveToCloud: true,
-          saveBtnText: __('Move', 'elementor')
+          saveBtnText: __('Move', 'elementor'),
+          nameLabel: '',
+          namePlaceholder: ''
         },
         copyDialog: {
           description: __('Alternatively, you can move the template.', 'elementor'),
           icon: '<i class="eicon-library-copy" aria-hidden="true"></i>',
           canSaveToCloud: true,
-          saveBtnText: __('Copy', 'elementor')
+          saveBtnText: __('Copy', 'elementor'),
+          nameLabel: '',
+          namePlaceholder: ''
         },
         bulkMoveDialog: {
           description: __('Alternatively, you can copy the templates.', 'elementor'),
           title: __('Move templates to a different location', 'elementor'),
           icon: '<i class="eicon-library-move" aria-hidden="true"></i>',
           canSaveToCloud: true,
-          saveBtnText: __('Move', 'elementor')
+          saveBtnText: __('Move', 'elementor'),
+          nameLabel: '',
+          namePlaceholder: ''
         },
         bulkCopyDialog: {
           description: __('Alternatively, you can move the templates.', 'elementor'),
           title: __('Copy templates to a different location', 'elementor'),
           icon: '<i class="eicon-library-copy" aria-hidden="true"></i>',
           canSaveToCloud: true,
-          saveBtnText: __('Copy', 'elementor')
+          saveBtnText: __('Copy', 'elementor'),
+          nameLabel: '',
+          namePlaceholder: ''
         }
       };
     });
   };
-  this.getDefaultTemplateTypeSafeData = function (title) {
+  this.getDefaultTemplateTypeSafeData = function (title, type) {
     return this.eventManager.getSaveTemplateExperimentVariant().then(function (experimentVariant) {
       var _variantsConfig$exper2;
+      var isPageType = 'page' === type;
+
+      /* Translators: %s: Template type. */
+      var nameLabel = sprintf(__('%s name', 'elementor'), title);
+      var namePlaceholder = isPageType ? __('Type the page name here', 'elementor') : __('Give your template a name', 'elementor');
       return {
         saveDialog: {
-          description: (_variantsConfig$exper2 = variantsConfig[experimentVariant]) === null || _variantsConfig$exper2 === void 0 ? void 0 : _variantsConfig$exper2.saveDialogDescription,
+          description: ((_variantsConfig$exper2 = variantsConfig[experimentVariant]) === null || _variantsConfig$exper2 === void 0 ? void 0 : _variantsConfig$exper2.saveDialogDescription) || '',
           /* Translators: %s: Template type. */
-          title: sprintf(__('Save this %s to your library', 'elementor'), title)
+          title: sprintf(__('Save this %s to your library', 'elementor'), title),
+          nameLabel: nameLabel,
+          namePlaceholder: namePlaceholder,
+          /* Translators: %s: Template type. */
+          saveLocationLabel: sprintf(__('Where would you like to save this %s?', 'elementor'), title)
         },
         moveDialog: {
           /* Translators: %s: Template type. */
-          title: sprintf(__('Move your %s to a different location', 'elementor'), title)
+          title: sprintf(__('Move your %s to a different location', 'elementor'), title),
+          /* Translators: %s: Template type. */
+          saveLocationLabel: sprintf(__('Where would you like to move this %s?', 'elementor'), title),
+          nameLabel: nameLabel,
+          namePlaceholder: namePlaceholder
         },
         copyDialog: {
           /* Translators: %s: Template type. */
-          title: sprintf(__('Copy your %s to a different location', 'elementor'), title)
+          title: sprintf(__('Copy your %s to a different location', 'elementor'), title),
+          /* Translators: %s: Template type. */
+          saveLocationLabel: sprintf(__('Where would you like to cppy this %s?', 'elementor'), title),
+          nameLabel: nameLabel,
+          namePlaceholder: namePlaceholder
+        },
+        bulkMoveDialog: {
+          saveLocationLabel: __('Where would you like to move selected templates?', 'elementor')
+        },
+        bulkCopyDialog: {
+          saveLocationLabel: __('Where would you like to copy selected templates?', 'elementor')
         }
       };
     });
@@ -9972,6 +10022,9 @@ module.exports = elementorModules.common.views.modal.Layout.extend({
 /* provided dependency */ var __ = __webpack_require__(/*! @wordpress/i18n */ "@wordpress/i18n")["__"];
 
 
+var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault */ "../node_modules/@babel/runtime/helpers/interopRequireDefault.js");
+var _regenerator = _interopRequireDefault(__webpack_require__(/*! @babel/runtime/regenerator */ "../node_modules/@babel/runtime/regenerator/index.js"));
+var _asyncToGenerator2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime/helpers/asyncToGenerator */ "../node_modules/@babel/runtime/helpers/asyncToGenerator.js"));
 module.exports = Marionette.ItemView.extend({
   template: '#tmpl-elementor-template-library-connect-states',
   id: 'elementor-template-library-connect-states',
@@ -9981,7 +10034,8 @@ module.exports = Marionette.ItemView.extend({
     title: '.elementor-template-library-blank-title',
     message: '.elementor-template-library-blank-message',
     icon: '.elementor-template-library-blank-icon',
-    button: '.elementor-template-library-cloud-empty__button'
+    button: '.elementor-template-library-cloud-empty__button',
+    cloudBadge: '.elementor-template-library-connect-states-badge .source-option-badge.cloud-badge'
   },
   events: {
     'click @ui.selectSourceFilter': 'onSelectSourceFilterChange',
@@ -10027,10 +10081,37 @@ module.exports = Marionette.ItemView.extend({
     var _elementor$templates$;
     this.updateTemplateMarkup();
     this.handleElementorConnect();
+    this.handleCloudBadge();
     (_elementor$templates$ = elementor.templates.layout.getHeaderView()) === null || _elementor$templates$ === void 0 || (_elementor$templates$ = _elementor$templates$.tools) === null || _elementor$templates$ === void 0 || (_elementor$templates$ = _elementor$templates$.$el[0]) === null || _elementor$templates$ === void 0 || (_elementor$templates$ = _elementor$templates$.classList) === null || _elementor$templates$ === void 0 || _elementor$templates$.add('e-hidden-disabled');
     elementor.templates.eventManager.sendPageViewEvent({
       location: elementorCommon.eventsManager.config.secondaryLocations.templateLibrary.cloudTabUpgrade
     });
+  },
+  handleCloudBadge: function handleCloudBadge() {
+    var _this = this;
+    return (0, _asyncToGenerator2.default)(/*#__PURE__*/_regenerator.default.mark(function _callee() {
+      var _this$ui$cloudBadge;
+      var experimentVariant;
+      return _regenerator.default.wrap(function (_context) {
+        while (1) switch (_context.prev = _context.next) {
+          case 0:
+            if ((_this$ui$cloudBadge = _this.ui.cloudBadge) !== null && _this$ui$cloudBadge !== void 0 && _this$ui$cloudBadge.length) {
+              _context.next = 1;
+              break;
+            }
+            return _context.abrupt("return");
+          case 1:
+            _context.next = 2;
+            return elementor.templates.eventManager.getSaveTemplateExperimentVariant();
+          case 2:
+            experimentVariant = _context.sent;
+            _this.ui.cloudBadge.toggle('B' === experimentVariant);
+          case 3:
+          case "end":
+            return _context.stop();
+        }
+      }, _callee);
+    }))();
   },
   updateTemplateMarkup: function updateTemplateMarkup() {
     var modeStrings = this.modesStrings()[this.getCurrentMode()];
@@ -10552,8 +10633,17 @@ var TemplateLibrarySaveTemplateVariantBView = TemplateLibrarySaveTemplateView.ex
       'click @ui.selectFolderLink': 'onEllipsisIconClick',
       'mouseenter @ui.upgradeBadge': 'showInfoTip',
       'mouseenter @ui.cloudAccountBadge': 'showCloudAccountBadgeTooltip',
-      'mouseenter @ui.siteAccountBadge': 'showSiteAccountBadgeTooltip'
+      'mouseenter @ui.siteAccountBadge': 'showSiteAccountBadgeTooltip',
+      'mouseleave @ui.cloudAccountBadge': 'hideCloudAccountBadgeTooltip',
+      'mouseleave @ui.siteAccountBadge': 'hideSiteAccountBadgeTooltip',
+      'mouseleave @ui.upgradeBadge': 'hideInfoTip'
     });
+  },
+  getConnectInfoTipPosition: function getConnectInfoTipPosition() {
+    return 'top-50';
+  },
+  addVariantClass: function addVariantClass($widget) {
+    return $widget.addClass('variant-b');
   },
   showInfoTip: function showInfoTip() {
     if (this.infoTipDialog) {
@@ -10592,13 +10682,18 @@ var TemplateLibrarySaveTemplateVariantBView = TemplateLibrarySaveTemplateView.ex
       },
       position: {
         of: this.ui.cloudAccountBadge,
-        at: 'top-50'
+        at: 'top-55'
       }
     }).setMessage(message);
     this.cloudAccountBadgeDialog.getElements('widget').addClass('variant-b');
     this.cloudAccountBadgeDialog.getElements('header').remove();
     this.cloudAccountBadgeDialog.getElements('buttonsWrapper').remove();
     this.cloudAccountBadgeDialog.show();
+  },
+  hideCloudAccountBadgeTooltip: function hideCloudAccountBadgeTooltip() {
+    if (this.cloudAccountBadgeDialog) {
+      this.cloudAccountBadgeDialog.hide();
+    }
   },
   showSiteAccountBadgeTooltip: function showSiteAccountBadgeTooltip() {
     if (this.siteAccountBadgeDialog) {
@@ -10613,7 +10708,7 @@ var TemplateLibrarySaveTemplateVariantBView = TemplateLibrarySaveTemplateView.ex
       },
       position: {
         of: this.ui.siteAccountBadge,
-        at: 'top-50'
+        at: 'top-35'
       }
     }).setMessage(message);
     this.siteAccountBadgeDialog.getElements('widget').addClass('variant-b');
@@ -10621,6 +10716,11 @@ var TemplateLibrarySaveTemplateVariantBView = TemplateLibrarySaveTemplateView.ex
     this.siteAccountBadgeDialog.getElements('buttonsWrapper').remove();
     this.siteAccountBadgeDialog.show();
     this.sendCTBadgeEvent('site');
+  },
+  hideSiteAccountBadgeTooltip: function hideSiteAccountBadgeTooltip() {
+    if (this.siteAccountBadgeDialog) {
+      this.siteAccountBadgeDialog.hide();
+    }
   },
   sendCTBadgeEvent: function sendCTBadgeEvent(badgeType) {
     elementor.templates.eventManager.sendCTBadgeEvent({
@@ -10699,7 +10799,9 @@ var TemplateLibrarySaveTemplateView = Marionette.ItemView.extend({
       'click @ui.upgradeBadge': 'onUpgradeBadgeClicked',
       'change @ui.sourceSelectionCheckboxes': 'handleSourceSelectionChange',
       'mouseenter @ui.infoIcon': 'showInfoTip',
+      'mouseleave @ui.infoIcon': 'hideInfoTip',
       'mouseenter @ui.connectBadge': 'showConnectInfoTip',
+      'mouseleave @ui.connectBadge': 'hideConnectInfoTip',
       'input @ui.templateNameInput': 'onTemplateNameInputChange'
     };
   },
@@ -11198,6 +11300,14 @@ var TemplateLibrarySaveTemplateView = Marionette.ItemView.extend({
     this.infoTipDialog.getElements('header').remove();
     this.infoTipDialog.show();
   },
+  hideInfoTip: function hideInfoTip() {
+    if (this.infoTipDialog) {
+      this.infoTipDialog.hide();
+    }
+  },
+  getConnectInfoTipPosition: function getConnectInfoTipPosition() {
+    return 'top+80';
+  },
   showConnectInfoTip: function showConnectInfoTip() {
     if (this.connectInfoTipDialog) {
       this.connectInfoTipDialog.hide();
@@ -11210,12 +11320,21 @@ var TemplateLibrarySaveTemplateView = Marionette.ItemView.extend({
       },
       position: {
         of: this.ui.connectBadge,
-        at: 'top+80'
+        at: this.getConnectInfoTipPosition()
       }
     }).setMessage(__('To access the Cloud Templates Library you must have an active Elementor Pro subscription', 'elementor') + ' <i>' + __('and', 'elementor') + '</i> ' + __('connect your site.', 'elementor'));
     this.connectInfoTipDialog.getElements('header').remove();
     this.connectInfoTipDialog.getElements('buttonsWrapper').remove();
+    this.addVariantClass(this.connectInfoTipDialog.getElements('widget'));
     this.connectInfoTipDialog.show();
+  },
+  addVariantClass: function addVariantClass() {
+    return '';
+  },
+  hideConnectInfoTip: function hideConnectInfoTip() {
+    if (this.connectInfoTipDialog) {
+      this.connectInfoTipDialog.hide();
+    }
   },
   handleElementorConnect: function handleElementorConnect() {
     elementor.templates.eventManager.sendPageViewEvent({
@@ -11450,7 +11569,9 @@ var TemplateLibraryCollectionView = Marionette.CompositeView.extend({
     'click @ui.bulkCopy': 'onClickBulkCopy',
     'click @ui.quotaUpgrade': 'onQuotaUpgradeClicked',
     'mouseenter @ui.cloudBadge': 'showCloudBadgeTooltip',
-    'mouseenter @ui.siteBadge': 'showSiteBadgeTooltip'
+    'mouseenter @ui.siteBadge': 'showSiteBadgeTooltip',
+    'mouseleave @ui.cloudBadge': 'hideCloudBadgeTooltip',
+    'mouseleave @ui.siteBadge': 'hideSiteBadgeTooltip'
   },
   className: 'no-bulk-selections',
   resetQuotaBarStyles: function resetQuotaBarStyles() {
@@ -11982,6 +12103,11 @@ var TemplateLibraryCollectionView = Marionette.CompositeView.extend({
     this.cloudBadgeDialog.getElements('buttonsWrapper').remove();
     this.cloudBadgeDialog.show();
   },
+  hideCloudBadgeTooltip: function hideCloudBadgeTooltip() {
+    if (this.cloudBadgeDialog) {
+      this.cloudBadgeDialog.hide();
+    }
+  },
   showSiteBadgeTooltip: function showSiteBadgeTooltip() {
     if (this.siteBadgeDialog) {
       this.siteBadgeDialog.hide();
@@ -11995,13 +12121,18 @@ var TemplateLibraryCollectionView = Marionette.CompositeView.extend({
       },
       position: {
         of: this.ui.siteBadge,
-        at: 'top-50'
+        at: 'top-35'
       }
     }).setMessage(message);
     this.siteBadgeDialog.getElements('widget').addClass('variant-b');
     this.siteBadgeDialog.getElements('header').remove();
     this.siteBadgeDialog.getElements('buttonsWrapper').remove();
     this.siteBadgeDialog.show();
+  },
+  hideSiteBadgeTooltip: function hideSiteBadgeTooltip() {
+    if (this.siteBadgeDialog) {
+      this.siteBadgeDialog.hide();
+    }
   }
 });
 module.exports = TemplateLibraryCollectionView;
@@ -49149,11 +49280,12 @@ var TemplatesModule = exports["default"] = /*#__PURE__*/function (_elementorModu
   }, {
     key: "registerTemplateTypes",
     value: function registerTemplateTypes() {
-      var _elementor;
-      var templateTypesData = elementor.templates.getDefaultTemplateTypeData();
-      jQuery.each((_elementor = elementor) === null || _elementor === void 0 || (_elementor = _elementor.config) === null || _elementor === void 0 || (_elementor = _elementor.library) === null || _elementor === void 0 ? void 0 : _elementor.doc_types, function (type, title) {
-        var safeData = jQuery.extend(true, {}, templateTypesData, elementor.templates.getDefaultTemplateTypeSafeData(title));
-        elementor.templates.registerTemplateType(type, safeData);
+      elementor.templates.getDefaultTemplateTypeData().then(function (templateTypesData) {
+        var _elementor;
+        jQuery.each((_elementor = elementor) === null || _elementor === void 0 || (_elementor = _elementor.config) === null || _elementor === void 0 || (_elementor = _elementor.library) === null || _elementor === void 0 ? void 0 : _elementor.doc_types, function (type, title) {
+          var safeData = jQuery.extend(true, {}, templateTypesData, elementor.templates.getDefaultTemplateTypeSafeData(title));
+          elementor.templates.registerTemplateType(type, safeData);
+        });
       });
     }
   }]);

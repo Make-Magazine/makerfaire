@@ -5029,7 +5029,7 @@ body.e-is-device-mode:not(.elementor-device-desktop) #elementor-preview-responsi
 #elementor-template-library-modal .dialog-message {
   overflow-y: scroll;
 }
-#elementor-template-library-modal:has(#elementor-template-library-save-template) .dialog-message {
+#elementor-template-library-modal:has(#elementor-template-library-save-template) .dialog-message, #elementor-template-library-modal:has(#elementor-template-library-save-template-variant-b) .dialog-message {
   overflow-y: hidden;
 }
 #elementor-template-library-modal .e-back-to-editor {
@@ -5474,7 +5474,14 @@ body.e-is-device-mode:not(.elementor-device-desktop) #elementor-preview-responsi
   background-color: var(--e-a-bg-hover);
 }
 
-#elementor-template-library-toolbar .source-option-badge {
+#elementor-template-library-connect-states .elementor-template-library-filter-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+#elementor-template-library-toolbar .source-option-badge,
+.elementor-template-library-connect-states-badge .source-option-badge {
   display: flex;
   align-items: center;
   gap: 6px;
@@ -5484,23 +5491,30 @@ body.e-is-device-mode:not(.elementor-device-desktop) #elementor-preview-responsi
   font-size: 14px;
   font-weight: 500;
   white-space: nowrap;
+  margin-inline-start: auto;
+  margin-inline-end: 15px;
 }
-#elementor-template-library-toolbar .source-option-badge i {
+#elementor-template-library-toolbar .source-option-badge i,
+.elementor-template-library-connect-states-badge .source-option-badge i {
   margin: 0;
   font-size: 14px;
 }
-#elementor-template-library-toolbar .source-option-badge.cloud-badge {
+#elementor-template-library-toolbar .source-option-badge.cloud-badge,
+.elementor-template-library-connect-states-badge .source-option-badge.cloud-badge {
   background-color: var(--e-a-bg-info);
   color: var(--e-a-color-info);
 }
-#elementor-template-library-toolbar .source-option-badge.cloud-badge i {
+#elementor-template-library-toolbar .source-option-badge.cloud-badge i,
+.elementor-template-library-connect-states-badge .source-option-badge.cloud-badge i {
   color: var(--e-a-color-info);
 }
-#elementor-template-library-toolbar .source-option-badge.site-badge {
+#elementor-template-library-toolbar .source-option-badge.site-badge,
+.elementor-template-library-connect-states-badge .source-option-badge.site-badge {
   background-color: var(--e-a-bg-warning);
   color: var(--e-a-btn-bg-warning-hover);
 }
-#elementor-template-library-toolbar .source-option-badge.site-badge i {
+#elementor-template-library-toolbar .source-option-badge.site-badge i,
+.elementor-template-library-connect-states-badge .source-option-badge.site-badge i {
   color: var(--e-a-btn-bg-warning-hover);
 }
 
@@ -6297,6 +6311,9 @@ label.elementor-template-library-order-label:hover {
   line-height: normal;
   gap: 8px;
 }
+#elementor-template-library-save-template-form .cloud-library-form-inputs.variant-b .source-selections .source-selections-input:has(input[type=checkbox]:checked) {
+  border-color: var(--e-a-color-txt);
+}
 #elementor-template-library-save-template-form .cloud-library-form-inputs.variant-b .source-selections .source-selections-input.cloud, #elementor-template-library-save-template-form .cloud-library-form-inputs.variant-b .source-selections .source-selections-input.local {
   display: flex;
 }
@@ -6304,6 +6321,9 @@ label.elementor-template-library-order-label:hover {
   margin-inline-end: 0;
   flex-shrink: 0;
   position: relative;
+}
+#elementor-template-library-save-template-form .cloud-library-form-inputs.variant-b .source-selections .source-selections-input input[type=checkbox]:checked {
+  inset-block-start: 0;
 }
 #elementor-template-library-save-template-form .cloud-library-form-inputs.variant-b .source-selections .source-selections-input input[type=checkbox]::after {
   content: "";
@@ -6314,9 +6334,15 @@ label.elementor-template-library-order-label:hover {
   background-color: var(--e-a-border-color);
 }
 #elementor-template-library-save-template-form .cloud-library-form-inputs.variant-b .source-selections .source-selections-input > i:first-of-type {
+  margin-inline-start: 12px;
+  margin-inline-end: 4px;
+  font-size: 24px;
+  color: var(--e-a-color-txt);
+}
+#elementor-template-library-save-template-form .cloud-library-form-inputs.variant-b .source-selections .source-selections-input > svg:first-of-type {
   margin-inline-start: 8px;
   margin-inline-end: 0;
-  font-size: 18px;
+  font-size: 24px;
   color: var(--e-a-color-txt);
 }
 #elementor-template-library-save-template-form .cloud-library-form-inputs.variant-b .source-selections .source-selections-input label {
@@ -6384,11 +6410,11 @@ label.elementor-template-library-order-label:hover {
   margin-inline: 5px;
 }
 #elementor-template-library-save-template-form .cloud-library-form-inputs.variant-b .source-selections .source-selections-input .connect-badge a {
-  color: var(--e-a-color-primary-bold);
-  text-decoration: none;
+  color: var(--e-a-color-info);
+  text-decoration: underline;
 }
 #elementor-template-library-save-template-form .cloud-library-form-inputs.variant-b .source-selections .source-selections-input .connect-badge a:hover {
-  text-decoration: underline;
+  text-decoration: none;
 }
 #elementor-template-library-save-template-form .cloud-library-form-inputs.variant-b .source-selections .source-selections-input .account-badge {
   display: flex;
@@ -6442,7 +6468,8 @@ label.elementor-template-library-order-label:hover {
   font-size: 14px;
 }
 #elementor-template-library-save-template-form .cloud-library-form-inputs.variant-b .cloud-folder-selection-dropdown {
-  inset-block-start: 70px;
+  inset-block-start: 75px;
+  inset-inline-start: 230px;
 }
 #elementor-template-library-save-template-form .cloud-library-form-inputs.variant-b .source-selections-input.cloud:not(:has(.connect-badge)) .connect-badge {
   display: none;
@@ -6711,12 +6738,16 @@ label.elementor-template-library-order-label:hover {
 #elementor-library--connect_infotip__dialog .dialog-message {
   padding: 20px;
 }
-#elementor-library--connect_infotip__dialog:after {
+#elementor-library--connect_infotip__dialog:not(.variant-b):after {
   inset-block-end: 100%;
   border-block-end-color: var(--e-a-bg-default);
 }
 #elementor-library--connect_infotip__dialog.variant-b:after {
-  border-block-end-color: var(--e-a-bg-secondary);
+  border-block-start-color: var(--e-a-bg-secondary);
+  inset-block-start: 100%;
+}
+#elementor-library--connect_infotip__dialog.variant-b {
+  width: 265px;
 }
 
 #elementor-library--cloud-upgrade__dialog {

@@ -3,7 +3,7 @@
   Plugin Name: Embed Plus for YouTube Pro
   Plugin URI: https://www.embedplus.com/dashboard/pro-easy-video-analytics.aspx
   Description: YouTube Embed Plugin. Embed a YouTube channel gallery, playlist gallery, YouTube live stream. Lite embeds with defer JavaScript and facade options
-  Version: 14.2.3.2
+  Version: 14.2.4
   Author: Embed Plus for YouTube Team
   Author URI: https://www.embedplus.com
   Requires at least: 4.5
@@ -22,7 +22,7 @@ class YouTubePrefsPro
 
     public static $folder_name = 'youtube-embed-plus-pro';
     public static $curltimeout = 30;
-    public static $version = '14.2.3.2';
+    public static $version = '14.2.4';
     public static $opt_version = 'version';
     public static $opt_free_migrated = 'free_migrated';
     public static $optembedwidth = null;
@@ -45,6 +45,7 @@ class YouTubePrefsPro
     public static $opt_playsinline = 'playsinline';
     public static $opt_autohide = 'autohide';
     public static $opt_controls = 'controls';
+    public static $opt_disablekb = 'disablekb';
     public static $opt_theme = 'theme';
     public static $opt_color = 'color';
     public static $opt_listType = 'listType';
@@ -220,6 +221,7 @@ class YouTubePrefsPro
                 self::$opt_playsinline,
                 self::$opt_autohide,
                 self::$opt_controls,
+                self::$opt_disablekb,
                 self::$opt_hl,
                 self::$opt_theme,
                 self::$opt_color,
@@ -325,13 +327,18 @@ class YouTubePrefsPro
     {
         ob_start(); ?>
         <div class="epyt-livestream-advice">
-            <div class="epyt-livestream-advice-close">&times;</div>
+            <?php if ($is_embed)
+                {
+                    ?>
+                <div class="epyt-livestream-advice-close">&times;</div>
+                    <?php
+                } ?>
             <p>
                 <strong>Live stream not starting on time?</strong> Note the following:
             </p>
             <ul class="reglist">
                 <li>Google has unfortunately disabled the ability to instantly show the stream as soon as it starts. This plugin uses caching as a workaround, and will show the stream at a delay of at most 10-15 minutes. So, we recommend starting your stream 15 minutes ahead of schedule to ensure your visitors will see this stream come up at the expected time (feel free to just show your logo or even a blank/muted screen for these initial few minutes while visitors gather to watch).</li>
-                <li>If you have any additional caching plugins installed, you may also need to exclude <?php echo $is_embed ? 'this page' : 'the page the embed is on' ?> from their caching. Caching plugins sometimes prevent fresh livestream data from loading.</li>
+                <li>If you have any additional caching plugins installed, you may also need to exclude <?php echo $is_embed ? 'this page' : 'the page this embed is on' ?> from their caching. Caching plugins sometimes prevent fresh livestream data from loading.</li>
             </ul>
             <?php if ($is_embed)
             {
@@ -1491,7 +1498,7 @@ class YouTubePrefsPro
                                         </div>                                        
                                     </form>
                                     <?php echo $step1_livechannel_errors ? '<p class="orange bold">' . $step1_livechannel_errors . '</p>' : ''; ?>
-                                    <?php echo self::livestream_advice(true); ?>
+                                    <?php echo self::livestream_advice(false); ?>
                                 </div>
                             </div>
 
@@ -2221,6 +2228,7 @@ class YouTubePrefsPro
         $_migrate_youtube = 0;
         $_migrate_embedplusvideo = 0;
         $_controls = 1;
+        $_disablekb = 0;
         $_oldspacing = 1;
         $_frontend_only = 1;
         $_responsive = 0;
@@ -2353,6 +2361,7 @@ class YouTubePrefsPro
             $_migrate_embedplusvideo = self::tryget($arroptions, self::$opt_migrate_embedplusvideo, 0);
             $_controls = self::tryget($arroptions, self::$opt_controls, 1);
             $_controls = $_controls == 2 ? 1 : $_controls;
+            $_disablekb = self::tryget($arroptions, self::$opt_disablekb, 0);
             $_oldspacing = self::tryget($arroptions, self::$opt_oldspacing, 1);
             $_frontend_only = self::tryget($arroptions, self::$opt_frontend_only, $_frontend_only);
             $_responsive = self::tryget($arroptions, self::$opt_responsive, $_responsive);
@@ -2461,6 +2470,7 @@ class YouTubePrefsPro
             self::$opt_migrate_youtube => $_migrate_youtube,
             self::$opt_migrate_embedplusvideo => $_migrate_embedplusvideo,
             self::$opt_controls => $_controls,
+            self::$opt_disablekb => $_disablekb,
             self::$opt_oldspacing => $_oldspacing,
             self::$opt_frontend_only => $_frontend_only,
             self::$opt_responsive => $_responsive,
@@ -4848,7 +4858,7 @@ class YouTubePrefsPro
         $new_pointer_content = '<h3>' . __('New Update') . '</h3>'; // ooopointer
 
         $new_pointer_content .= '<p>'; // ooopointer
-        $new_pointer_content .= "This version fixes a referrer policy issue for some users in certain browsers for both free and pro users.";
+        $new_pointer_content .= "This version fixes a lightbox gallery issue for pro users, and allows you to disable keyboard controls for both free and pro users.";
         $new_pointer_content .= '</p>';
 
         return array(
@@ -5395,6 +5405,10 @@ class YouTubePrefsPro
                             <p>
                                 <input name="<?php echo self::$opt_controls; ?>" id="<?php echo self::$opt_controls; ?>" <?php checked($all[self::$opt_controls], 1); ?> type="checkbox" class="checkbox">
                                 <label for="<?php echo self::$opt_controls; ?>"><b class="chktitle">Show Controls:</b> Show the player's control bar. Unchecking this option creates a cleaner look but limits what your viewers can control (play position, volume, etc.).</label>
+                            </p>
+                            <p>
+                                <input name="<?php echo self::$opt_disablekb; ?>" id="<?php echo self::$opt_disablekb; ?>" <?php checked($all[self::$opt_disablekb], 1); ?> type="checkbox" class="checkbox">
+                                <label for="<?php echo self::$opt_disablekb; ?>"><b class="chktitle">Disable Keyboard Controls:</b> Prevent users from using keyboard controls (spacebar to play/pause, arrow keys to seek, etc.).</label>
                             </p>
                             <p>
                                 <input name="<?php echo self::$opt_defaultvol; ?>" id="<?php echo self::$opt_defaultvol; ?>" <?php checked($all[self::$opt_defaultvol], 1); ?> type="checkbox" class="checkbox">                        
@@ -6581,6 +6595,7 @@ class YouTubePrefsPro
                         _e("<li><strong>fs</strong> - Set this to 0 to hide the fullscreen button (or 1 to show it). <em>Example: http://www.youtube.com/watch?v=quwebVjAEJA<strong>&fs=0</strong></em> </li>");
                         _e("<li><strong>color</strong> - Set this to 'white' to make the player have a white progress bar (or 'red' for a red progress bar). <em>Example: http://www.youtube.com/watch?v=quwebVjAEJA<strong>&color=white</strong></em> </li>");
                         _e("<li><strong>controls</strong> - Set this to 0 to completely hide the video controls (or 1 to show it). <em>Example: http://www.youtube.com/watch?v=quwebVjAEJA<strong>&controls=0</strong></em> </li>");
+                        _e("<li><strong>disablekb</strong> - Set this to 1 to disable keyboard controls (or 0 to enable them). <em>Example: http://www.youtube.com/watch?v=quwebVjAEJA<strong>&disablekb=1</strong></em> </li>");
                         _e("<li><strong>playsinline</strong> - Set this to 1 to allow videos play inline with the page on iOS browsers. (Set to 0 to have iOS launch videos in fullscreen instead). <em>Example: http://www.youtube.com/watch?v=quwebVjAEJA<strong>&playsinline=1</strong></em> </li>");
                         _e("<li><strong>origin</strong> - Set this to 1 to add the 'origin' parameter for extra JavaScript security. <em>Example: http://www.youtube.com/watch?v=quwebVjAEJA<strong>&origin=1</strong></em> </li>");
                         _e('</ul>');
@@ -7272,6 +7287,7 @@ class YouTubePrefsPro
         $new_options[self::$opt_playsinline] = self::postchecked(self::$opt_playsinline) ? 1 : 0;
         $new_options[self::$opt_origin] = self::postchecked(self::$opt_origin) ? 1 : 0;
         $new_options[self::$opt_controls] = self::postchecked(self::$opt_controls) ? 1 : 0;
+        $new_options[self::$opt_disablekb] = self::postchecked(self::$opt_disablekb) ? 1 : 0;
         $new_options[self::$opt_color] = self::postchecked(self::$opt_color) ? 'red' : 'white';
         $new_options[self::$opt_nocookie] = self::postchecked(self::$opt_nocookie) ? 1 : 0;
         $new_options[self::$opt_gb_compat] = self::postchecked(self::$opt_gb_compat) ? 1 : 0;
@@ -7702,6 +7718,7 @@ class YouTubePrefsPro
             $input[self::$opt_responsive] = intval($input[self::$opt_responsive]);
             $input[self::$opt_responsive_all] = intval($input[self::$opt_responsive_all]);
             $input[self::$opt_defer_js] = intval($input[self::$opt_defer_js]);
+            $input[self::$opt_disablekb] = intval($input[self::$opt_disablekb]);
 
             $input[self::$opt_gallery_pagesize] = intval($input[self::$opt_gallery_pagesize]);
             $input[self::$opt_gallery_columns] = intval($input[self::$opt_gallery_columns]);
@@ -7738,6 +7755,7 @@ class YouTubePrefsPro
         $result = array();
         $default = array(
             self::$opt_rel => 1,
+            self::$opt_disablekb => 0,
             self::$opt_responsive => 0,
             self::$opt_responsive_all => 0,
             self::$opt_defer_js => 0,

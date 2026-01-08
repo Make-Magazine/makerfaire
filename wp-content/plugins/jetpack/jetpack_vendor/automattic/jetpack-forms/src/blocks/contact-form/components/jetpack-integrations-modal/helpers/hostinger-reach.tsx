@@ -6,10 +6,9 @@ import {
 } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
-import HostingerReachIcon from '../../../../../icons/hostinger-reach';
-import ConsentToggle from '../components/consent-toggle';
-import type { CardItem, CardBuilderProps } from './types';
-import type { Integration } from '../../../../../types';
+import HostingerReachIcon from '../../../../../icons/hostinger-reach.tsx';
+import type { CardItem, CardBuilderProps } from './types.ts';
+import type { Integration } from '../../../../../types/index.ts';
 
 export function buildHostingerReachCard( {
 	integration,
@@ -17,7 +16,9 @@ export function buildHostingerReachCard( {
 	context,
 	attributes,
 	setAttributes,
+	components,
 }: CardBuilderProps ): CardItem {
+	const ConsentToggle = components?.ConsentToggle;
 	const { isConnected = false, settingsUrl = '' } = integration || ( {} as Integration );
 	const enabledForForm = !! attributes?.hostingerReach?.enabledForForm;
 	const groupName = attributes?.hostingerReach?.groupName ?? '';
@@ -105,7 +106,7 @@ export function buildHostingerReachCard( {
 						/>
 					</div>
 				) }
-				{ context === 'block-editor' && <ConsentToggle /> }
+				{ context === 'block-editor' && ConsentToggle && <ConsentToggle /> }
 				<p className="integration-card__description">
 					<ExternalLink href={ settingsUrl }>
 						{ __( 'View Hostinger Reach dashboard', 'jetpack-forms' ) }

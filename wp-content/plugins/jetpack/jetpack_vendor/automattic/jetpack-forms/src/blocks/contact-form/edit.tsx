@@ -2,7 +2,7 @@
  * External dependencies
  */
 import { ThemeProvider } from '@automattic/jetpack-components';
-import { useModuleStatus } from '@automattic/jetpack-shared-extension-utils';
+import { useModuleStatus, hasFeatureFlag } from '@automattic/jetpack-shared-extension-utils';
 import {
 	URLInput,
 	InspectorAdvancedControls,
@@ -33,28 +33,29 @@ import clsx from 'clsx';
 /*
  * Internal dependencies
  */
-import useConfigValue from '../../hooks/use-config-value';
-import { store as singleStepStore } from '../../store/form-step-preview';
+import useConfigValue from '../../hooks/use-config-value.ts';
+import { store as singleStepStore } from '../../store/form-step-preview.js';
 import {
 	PREVIOUS_BUTTON_TEMPLATE,
 	NEXT_BUTTON_TEMPLATE,
 	NAVIGATION_TEMPLATE,
-} from '../form-step-navigation/edit';
-import StepControls from '../shared/components/form-step-controls';
-import JetpackManageResponsesSettings from '../shared/components/jetpack-manage-responses-settings';
-import { useFindBlockRecursively } from '../shared/hooks/use-find-block-recursively';
-import useFormSteps from '../shared/hooks/use-form-steps';
-import { SyncedAttributeProvider } from '../shared/hooks/use-synced-attributes';
-import { CORE_BLOCKS } from '../shared/util/constants';
-import { childBlocks } from './child-blocks';
-import { ContactFormPlaceholder } from './components/jetpack-contact-form-placeholder';
-import ContactFormSkeletonLoader from './components/jetpack-contact-form-skeleton-loader';
-import NotificationsSettings from './components/notifications-settings';
-import useFormBlockDefaults from './shared/hooks/use-form-block-defaults';
-import VariationPicker from './variation-picker';
+} from '../form-step-navigation/edit.js';
+import StepControls from '../shared/components/form-step-controls/index.js';
+import JetpackManageResponsesSettings from '../shared/components/jetpack-manage-responses-settings.js';
+import { useFindBlockRecursively } from '../shared/hooks/use-find-block-recursively.js';
+import useFormSteps from '../shared/hooks/use-form-steps.js';
+import { SyncedAttributeProvider } from '../shared/hooks/use-synced-attributes.js';
+import { CORE_BLOCKS } from '../shared/util/constants.js';
+import { childBlocks } from './child-blocks.js';
+import { ContactFormPlaceholder } from './components/jetpack-contact-form-placeholder.js';
+import ContactFormSkeletonLoader from './components/jetpack-contact-form-skeleton-loader.js';
+import NotificationsSettings from './components/notifications-settings.js';
+import WebhooksSettings from './components/webhooks-settings.js';
+import useFormBlockDefaults from './shared/hooks/use-form-block-defaults.js';
+import VariationPicker from './variation-picker.js';
 import './util/form-styles.js';
 
-const IntegrationControls = lazy( () => import( './components/jetpack-integration-controls' ) );
+const IntegrationControls = lazy( () => import( './components/jetpack-integration-controls.js' ) );
 
 // Transforms
 const FormTransitionState = {
@@ -118,6 +119,14 @@ type CustomThankyouType =
 	| 'message' // custom message
 	| 'redirect'; // redirect to a new URL
 
+type Webhook = {
+	webhook_id: string;
+	url: string;
+	format: 'urlencoded' | 'json';
+	method: 'POST' | 'GET' | 'PUT';
+	enabled: boolean;
+};
+
 type JetpackContactFormAttributes = {
 	to: string;
 	subject: string;
@@ -133,7 +142,9 @@ type JetpackContactFormAttributes = {
 	disableGoBack: boolean;
 	disableSummary: boolean;
 	notificationRecipients: string[];
+	webhooks: Webhook[];
 };
+
 type JetpackContactFormEditProps = {
 	name: string;
 	attributes: JetpackContactFormAttributes;
@@ -166,8 +177,11 @@ function JetpackContactFormEdit( {
 		disableGoBack,
 		disableSummary,
 		notificationRecipients,
+		webhooks,
 	} = attributes;
-	const showFormIntegrations = useConfigValue( 'isIntegrationsEnabled' );
+	const isIntegrationsEnabled = useConfigValue( 'isIntegrationsEnabled' );
+	const showWebhooks = useConfigValue( 'isWebhooksEnabled' ) && hasFeatureFlag( 'form-webhooks' );
+	const showBlockIntegrations = useConfigValue( 'showBlockIntegrations' );
 	const instanceId = useInstanceId( JetpackContactFormEdit );
 
 	// Backward compatibility for the deprecated customThankyou attribute.
@@ -197,10 +211,12 @@ function JetpackContactFormEdit( {
 		[ clientId, steps ]
 	);
 
-	const submitButton = useFindBlockRecursively(
-		clientId,
-		block => block.name === 'jetpack/button'
+	const findButtonsBlock = useCallback(
+		block => block.name === 'core/button' || block.name === 'jetpack/button',
+		[]
 	);
+
+	const submitButton = useFindBlockRecursively( clientId, findButtonsBlock );
 
 	const { postTitle, hasAnyInnerBlocks, postAuthorEmail, selectedBlockClientId, onlySubmitBlock } =
 		useSelect(
@@ -222,6 +238,11 @@ function JetpackContactFormEdit( {
 				const { getUser } = select( coreStore );
 				const innerBlocksData = getBlocks( clientId );
 
+				const isSingleButtonBlock =
+					innerBlocksData.length === 1 &&
+					( innerBlocksData[ 0 ].name === 'core/button' ||
+						innerBlocksData[ 0 ].name === 'jetpack/button' );
+
 				const title = getEditedPostAttribute( 'title' );
 				const authorId = getEditedPostAttribute( 'author' );
 				const authorEmail = authorId && getUser( authorId )?.email;
@@ -231,8 +252,7 @@ function JetpackContactFormEdit( {
 					hasAnyInnerBlocks: innerBlocksData.length > 0,
 					postAuthorEmail: authorEmail,
 					selectedBlockClientId: selectedStepBlockId,
-					onlySubmitBlock:
-						innerBlocksData.length === 1 && innerBlocksData[ 0 ].name === 'jetpack/button',
+					onlySubmitBlock: isSingleButtonBlock,
 				};
 			},
 			[ clientId ]
@@ -247,7 +267,7 @@ function JetpackContactFormEdit( {
 
 	const { isSingleStep, isFirstStep, isLastStep, currentStepClientId } = useSelect(
 		select => {
-			const { getCurrentStepInfo, isSingleStepMode } = select( singleStepStore );
+			const { getCurrentStepInfo, isSingleStepMode, getActiveStepId } = select( singleStepStore );
 
 			const info = getCurrentStepInfo( clientId, steps );
 
@@ -255,7 +275,7 @@ function JetpackContactFormEdit( {
 				isSingleStep: isSingleStepMode( clientId ),
 				isFirstStep: info ? info.isFirstStep : false,
 				isLastStep: info ? info.isLastStep : false,
-				currentStepClientId: info ? info.clientId : null,
+				currentStepClientId: getActiveStepId( clientId ),
 			};
 		},
 		[ clientId, steps ]
@@ -330,7 +350,7 @@ function JetpackContactFormEdit( {
 			// Find the submit button
 			const submitButtonIndex = currentInnerBlocks.findIndex(
 				block =>
-					block.name === 'jetpack/button' &&
+					( block.name === 'core/button' || block.name === 'jetpack/button' ) &&
 					( block.attributes?.customVariant === 'submit' || block.attributes?.element === 'button' )
 			);
 
@@ -465,7 +485,9 @@ function JetpackContactFormEdit( {
 
 		// Helper functions
 		const findButtonBlock = () => {
-			const buttonIndex = currentInnerBlocks.findIndex( block => block.name === 'jetpack/button' );
+			const buttonIndex = currentInnerBlocks.findIndex(
+				block => block.name === 'core/button' || block.name === 'jetpack/button'
+			);
 			return buttonIndex !== -1
 				? {
 						block: currentInnerBlocks[ buttonIndex ],
@@ -706,9 +728,10 @@ function JetpackContactFormEdit( {
 		// Ensure we have a submit button at the end of the form.
 		if ( ! finalSubmitButton ) {
 			// Create a fresh submit button if none was found.
-			finalSubmitButton = createBlock( 'jetpack/button', {
-				element: 'button',
+			finalSubmitButton = createBlock( 'core/button', {
 				text: __( 'Submit', 'jetpack-forms' ),
+				type: 'submit',
+				tagName: 'button',
 			} );
 		}
 
@@ -735,6 +758,17 @@ function JetpackContactFormEdit( {
 
 	const { setActiveStep } = useDispatch( singleStepStore );
 
+	useEffect( () => {
+		if (
+			variationName === 'multistep' &&
+			isSingleStep &&
+			steps.length > 0 &&
+			! currentStepClientId
+		) {
+			setActiveStep( clientId, steps[ 0 ].clientId );
+		}
+	}, [ variationName, isSingleStep, steps, currentStepClientId, clientId, setActiveStep ] );
+
 	// Find the selected block and its parent step block
 	const selectedBlock = useFindBlockRecursively(
 		selectedBlockClientId,
@@ -750,8 +784,12 @@ function JetpackContactFormEdit( {
 			return;
 		}
 
-		// If a block is selected, make sure it's in the current step
-		if ( selectedBlockClientId && stepBlock && stepBlock.clientId !== currentStepClientId ) {
+		if (
+			selectedBlockClientId &&
+			stepBlock &&
+			stepBlock.clientId !== currentStepClientId &&
+			currentStepClientId
+		) {
 			setActiveStep( clientId, stepBlock.clientId );
 		}
 	}, [
@@ -893,10 +931,23 @@ function JetpackContactFormEdit( {
 							setAttributes={ setAttributes }
 						/>
 					</PanelBody>
-					{ showFormIntegrations && (
+					{ isIntegrationsEnabled && showBlockIntegrations && (
 						<Suspense fallback={ <div /> }>
 							<IntegrationControls attributes={ attributes } setAttributes={ setAttributes } />
 						</Suspense>
+					) }
+					{ showWebhooks && (
+						<PanelBody
+							title={ __( 'Webhooks', 'jetpack-forms' ) }
+							className="jetpack-contact-form__panel"
+							initialOpen={ false }
+						>
+							<WebhooksSettings
+								webhooks={ webhooks }
+								setAttributes={ setAttributes }
+								clientId={ clientId }
+							/>
+						</PanelBody>
 					) }
 					<PanelBody
 						title={ __( 'Responses storage', 'jetpack-forms' ) }
@@ -922,9 +973,11 @@ function JetpackContactFormEdit( {
 						__nextHasNoMarginBottom={ true }
 						__next40pxDefaultSize={ true }
 					/>
-					<ExternalLink href="https://developer.mozilla.org/docs/Glossary/Accessible_name">
-						{ __( 'Read more.', 'jetpack-forms' ) }
-					</ExternalLink>
+					<p>
+						<ExternalLink href="https://developer.mozilla.org/docs/Glossary/Accessible_name">
+							{ __( 'Read more.', 'jetpack-forms' ) }
+						</ExternalLink>
+					</p>
 				</InspectorAdvancedControls>
 				<BlockContextProvider
 					value={ {

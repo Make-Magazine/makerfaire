@@ -10,6 +10,14 @@ function pmxi_wp_ajax_save_import_functions(){
 		exit( json_encode(array('html' => __('Security check', 'wp-all-import-pro'))) );
 	}
 
+	// Check if PHP execution is allowed (respects WordPress security constants)
+	if ( ! PMXI_Plugin::$is_php_allowed ) {
+		exit( json_encode(array(
+			'result' => false,
+			'msg' => __('The function editor has been disabled because both DISALLOW_FILE_EDIT and DISALLOW_FILE_MODS constants are set in your wp-config.php file.', 'wp-all-import-pro')
+		)) );
+	}
+
 	$uploads   = wp_upload_dir();
 	$functions = $uploads['basedir'] . DIRECTORY_SEPARATOR . WP_ALL_IMPORT_UPLOADS_BASE_DIRECTORY . DIRECTORY_SEPARATOR . 'functions.php';
 	$functions = apply_filters( 'import_functions_file_path', $functions );

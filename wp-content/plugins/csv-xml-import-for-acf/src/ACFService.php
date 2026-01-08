@@ -290,7 +290,7 @@ final class ACFService {
 		if ( $values ) {
 
 			// phpcs:ignore WordPress.DB.PreparedSQLPlaceholders.ReplacementsWrongNumber
-			if ( false === $wpdb->query( $wpdb->prepare( "INSERT INTO {$wpdb->term_relationships} (object_id, term_taxonomy_id, term_order) VALUES " . implode( ', ', array_fill( 0, count( $values ), "(%d, %d, %d)" ) ) . " ON DUPLICATE KEY UPDATE term_order = VALUES(term_order)", ...$values ) ) ) {
+			if ( false === $wpdb->query( $wpdb->prepare( "INSERT INTO {$wpdb->term_relationships} (object_id, term_taxonomy_id, term_order) VALUES " . implode( ', ', array_fill( 0, count( $term_ids ), "(%d, %d, %d)" ) ) . " ON DUPLICATE KEY UPDATE term_order = VALUES(term_order)", ...$values ) ) ) {
 				if ( $logger ) {
 					call_user_func( $logger, __( '<b>ERROR</b> Could not insert term relationship into the database', 'csv-xml-import-for-acf' ) . ': ' . esc_html( $wpdb->last_error ) );
 				}

@@ -2,6 +2,7 @@
 
 use PhpOffice\PhpSpreadsheet\IOFactory;
 use PhpOffice\PhpSpreadsheet\Reader\IReader;
+use PhpOffice\PhpSpreadsheet\Shared\Date as SpreadsheetDate;
 
 class PMXI_XLSParser{
 
@@ -121,10 +122,29 @@ class PMXI_XLSParser{
 				for ($col = 1; $col <= $highestColIndex; $col++) {
 					$cell = $worksheet->getCellByColumnAndRow($col, $row);
 					$formatCode = $cell->getStyle()->getNumberFormat()->getFormatCode();
+					$isDateTime = false;
+
+					try {
+						$isDateTime = SpreadsheetDate::isDateTime($cell);
+					} catch (Exception $e) {
+						$isDateTime = false;
+					}
 
 					// Check if the format code contains quotes (indicating text should be added to display)
 					// Excel custom formats use quotes to add literal text to the display
-					if (strpos($formatCode, '"') !== false && $formatCode !== 'General') {
+					if ($isDateTime) {
+						// Prefer a full timestamp when the underlying serial includes a time portion,
+						// because Excel can hide the time in display formats but keep it in the value.
+						$rawValue = $cell->getValue();
+						if (is_numeric($rawValue)) {
+							// Detect a time component using a small epsilon to account for float conversion.
+							$hasTimePart = abs($rawValue - floor($rawValue)) > 1e-9;
+							$dateTime = SpreadsheetDate::excelToDateTimeObject($rawValue);
+							$value = $dateTime->format($hasTimePart ? 'Y-m-d H:i:s' : 'Y-m-d');
+						} else {
+							$value = $cell->getFormattedValue();
+						}
+					} elseif (strpos($formatCode, '"') !== false && $formatCode !== 'General') {
 						// Use formatted value to preserve the quotes added by custom format
 						$value = $cell->getFormattedValue();
 					} else {

@@ -22,7 +22,7 @@ __( 'Cancel', 'elementor' );
 __( 'Importing...', 'elementor' );
 __( 'Submit & Deactivate', 'elementor' );
 __( 'Skip & Deactivate', 'elementor' );
-__( 'New Template', 'elementor' );
 __( 'New Floating Elements', 'elementor' );
+__( 'New Template', 'elementor' );
 __( 'Sign Up', 'elementor' );
 __( 'Don\'t Show Again', 'elementor' );

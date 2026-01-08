@@ -1,11 +1,11 @@
-=== Gum Addon for Elementor===
+=== Gum Addon for Elementor ===
 Contributors: celomitan
 Donate link: https://wordpressfoundation.org/donate/
 Tags: elementor, blog, slide, pricing, menu
 Requires at least: 6.0
-Tested up to: 6.6.2
+Tested up to: 6.9
 Requires PHP: 7.0
-Stable tag: 1.3.14
+Stable tag: 1.3.15
 License: GPLv3 or later
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
@@ -69,6 +69,12 @@ Not yet
 5. Three colors heading
 
 == Changelog ==
+= 1.3.15 =
+* Security issue fixing
+* Improvement: Adding canvas alignment ( circle pie chart )
+
+= 1.3.14 =
+* Naming issue fixing
 
 = 1.3.13 =
 * Bug Fixing:  author meta ( post grid widget ) 

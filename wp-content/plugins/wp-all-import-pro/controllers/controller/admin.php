@@ -67,7 +67,6 @@ abstract class PMXI_Controller_Admin extends PMXI_Controller {
 		wp_enqueue_style('pmxi-admin-style', WP_ALL_IMPORT_ROOT_URL . '/static/css/admin.css', array(), PMXI_VERSION);
 		wp_enqueue_style('pmxi-ftp-browser-style', WP_ALL_IMPORT_ROOT_URL . '/static/css/ftp-browser.css', array(), PMXI_VERSION);
         wp_enqueue_style('pmxi-scheduling-style', WP_ALL_IMPORT_ROOT_URL . '/static/css/scheduling.css', array(), PMXI_VERSION);
-		wp_enqueue_style('pmxi-admin-style-ie', WP_ALL_IMPORT_ROOT_URL . '/static/css/admin-ie.css', array(), PMXI_VERSION);
 		wp_enqueue_style('jquery-select2', WP_ALL_IMPORT_ROOT_URL . '/static/js/jquery/css/select2/select2.css', array(), PMXI_VERSION);
 		wp_enqueue_style('jquery-select2-ddslick-compat', WP_ALL_IMPORT_ROOT_URL . '/static/css/select2-v4-ddslick-compat.css', array('jquery-select2'), PMXI_VERSION);
         wp_enqueue_style('jquery-chosen', WP_ALL_IMPORT_ROOT_URL . '/static/js/jquery/css/chosen/chosen.css', array(), PMXI_VERSION);
@@ -76,7 +75,6 @@ abstract class PMXI_Controller_Admin extends PMXI_Controller {
 
         wp_enqueue_style('jquery-timepicker', WP_ALL_IMPORT_ROOT_URL . '/static/js/jquery/css/timepicker/jquery.timepicker.css', array(), PMXI_VERSION);
 
-		$wp_styles->add_data('pmxi-admin-style-ie', 'conditional', 'lte IE 7');
 		wp_enqueue_style('wp-pointer');
 
 		if ( version_compare(get_bloginfo('version'), '3.8-RC1') >= 0 ){

@@ -344,7 +344,9 @@ jQuery(document).ready(function($) {
 
 		modalIsOpen: false,
 		pendingCleanupPostIds: [],
+		isCleaningUp: false,
 
+		// Standard preloading state (works for all import types)
 		preloadQueue: [],
 		currentlyProcessing: null,
 		processingStates: {},
@@ -362,13 +364,7 @@ jQuery(document).ready(function($) {
 			this.bindEvents();
 			this.getImportId();
 			this.initializeTotalRecords();
-			this.detectProductImport();
 			this.setupHeartbeat();
-		},
-
-		detectProductImport: function() {
-			var customType = $('input[name="custom_type"]').val();
-			this.isProductImport = (customType === 'product');
 		},
 
 		getImportId: function() {
@@ -440,23 +436,97 @@ jQuery(document).ready(function($) {
 				});
 			}
 		},
-		
+
+		/**
+		 * Hide the sandbox/try demo banner inside preview iframes
+		 * This banner is an artifact of the /try demo environment and should not appear in previews
+		 *
+		 * The banner CSS adds specific spacing rules that need to be overridden:
+		 * - html.wp-toolbar { padding-top: 102px; } (banner 70px + admin bar 32px)
+		 * - body.admin-bar #wpadminbar { top: 70px !important; }
+		 * - body:not(.is-fullscreen-mode) .edit-post-layout { top: 102px; }
+		 * - body.is-fullscreen-mode .edit-post-layout { top: 70px; }
+		 * - .woocommerce-layout__header { padding-top: 70px; }
+		 * - body.woocommerce-admin-page #wpbody { margin-top: 60px !important; }
+		 */
+		hideSandboxBannerInIframe: function(iframe) {
+			try {
+				// Access the iframe's document
+				var iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
+
+				if (iframeDoc) {
+					// Find the sandbox banner
+					var banner = iframeDoc.getElementById('sandboxtry-global-top-banner');
+
+					// Only apply fixes if the banner actually exists
+					// This prevents breaking real sites that don't have the sandbox banner
+					if (banner) {
+						// Remove the banner entirely
+						if (banner.parentNode) {
+							banner.parentNode.removeChild(banner);
+						}
+
+						// Inject CSS to override all sandbox banner spacing rules
+						var style = iframeDoc.createElement('style');
+						style.textContent =
+							'/* Hide sandbox banner and remove all spacing added by sandbox CSS */' +
+							'#sandboxtry-global-top-banner { display: none !important; }' +
+							// Reset HTML padding (normally 102px for banner + admin bar, or 70px for banner only)
+							'html.wp-toolbar { padding-top: 32px !important; }' + // Keep 32px for admin bar on frontend
+							'html.wp-admin.wp-toolbar { padding-top: 0 !important; }' + // Remove all padding in admin
+							// Reset admin bar position (normally pushed down 70px for banner)
+							'body.admin-bar #wpadminbar { top: 0 !important; }' + // Admin bar at top (normal position)
+							// Reset block editor layout position (normally 102px or 70px depending on fullscreen)
+							'body:not(.is-fullscreen-mode) .edit-post-layout { top: 32px !important; }' +
+							'body.is-fullscreen-mode .edit-post-layout { top: 0 !important; }' +
+							// Reset WooCommerce header padding (normally 70px for banner)
+							'.woocommerce-layout__header { padding-top: 0 !important; }' +
+							// Reset WooCommerce body margin (normally 60px for banner)
+							'body.woocommerce-admin-page #wpbody { margin-top: 0 !important; }' +
+							// Additional resets for common WordPress admin elements
+							'body { padding-top: 0 !important; margin-top: 0 !important; }' +
+							'html { margin-top: 0 !important; }' +
+							'#wpcontent { padding-top: 0 !important; margin-top: 0 !important; }' +
+							'#wpbody { padding-top: 0 !important; }';
+
+						// Append to head if it exists, otherwise to body
+						if (iframeDoc.head) {
+							iframeDoc.head.appendChild(style);
+						} else if (iframeDoc.body) {
+							iframeDoc.body.appendChild(style);
+						}
+					}
+				}
+			} catch (e) {
+				// Silently fail if cross-origin restrictions prevent access
+				// This shouldn't happen since the iframe content is from the same WordPress site
+				// but we handle it gracefully just in case
+			}
+		},
+
+		/**
+		 * Disable WordPress's "unsaved changes" warning in the preview iframe
+		 *
+		 * WordPress shows a browser alert when users try to navigate away from admin pages
+		 * with unsaved changes. This is triggered by a beforeunload event listener.
+		 *
+		 * In the preview context, this alert is not relevant because:
+		 * 1. Preview records are temporary and changes don't need to be saved
+		 * 2. The alert disrupts the preview workflow
+		 * 3. Users expect to freely navigate between preview records without warnings
+		 *
+		 * This function disables the beforeunload event in the iframe by:
+		 * 1. Removing all existing beforeunload event listeners
+		 * 2. Preventing new beforeunload listeners from being added
+		 * 3. Disabling WordPress's autosave functionality that triggers the warning
+		 */
+
+
 		bindEvents: function() {
 			var self = this;
 
-			$('#wpai-preview-admin-iframe').on('load', function() {
-				if ($(this).attr('src') && $(this).attr('src') !== 'about:blank') {
-					$(this).siblings('.wpai-iframe-loading').fadeOut(200);
-					$(this).fadeIn(200);
-				}
-			});
-
-			$('#wpai-preview-frontend-iframe').on('load', function() {
-				if ($(this).attr('src') && $(this).attr('src') !== 'about:blank') {
-					$(this).siblings('.wpai-iframe-loading').fadeOut(200);
-					$(this).fadeIn(200);
-				}
-			});
+			// Attach iframe load handlers
+			this.attachIframeLoadHandlers();
 
 			$('#wpai-full-preview-btn').on('click', function(e) {
 				e.preventDefault();
@@ -526,6 +596,26 @@ jQuery(document).ready(function($) {
 						recordNum = self.totalRecords;
 					}
 
+					// Immediately remove and recreate iframes to clear old content instantly
+					// This prevents confusing display of old content while record number changes
+					var $adminContainer = $('#wpai-preview-admin-iframe').parent();
+					var $frontendContainer = $('#wpai-preview-frontend-iframe').parent();
+
+					// Remove old iframes
+					$('#wpai-preview-admin-iframe').remove();
+					$('#wpai-preview-frontend-iframe').remove();
+
+					// Create new blank iframes
+					$adminContainer.append('<iframe id="wpai-preview-admin-iframe" frameborder="0" style="display: none;"></iframe>');
+					$frontendContainer.append('<iframe id="wpai-preview-frontend-iframe" frameborder="0" style="display: none;"></iframe>');
+
+					// Re-attach load event handlers to new iframes
+					self.attachIframeLoadHandlers();
+
+					// Show loading indicators
+					$('.wpai-iframe-loading').show();
+					$('.wpai-loading-text').text('Loading preview...');
+
 					self.currentRecord = recordNum;
 					$(this).val(recordNum);
 					self.updateNavigationButtons();
@@ -548,6 +638,32 @@ jQuery(document).ready(function($) {
 		openModal: function() {
 			var self = this;
 
+			// If cleanup is in progress, wait for it to complete before opening
+			if (self.isCleaningUp) {
+				// Show loading state while waiting
+				$('#wpai-full-preview-modal').show();
+				$('#wpai-preview-admin-iframe').hide();
+				$('#wpai-preview-frontend-iframe').hide();
+				$('#wpai-preview-admin-iframe').siblings('.wpai-iframe-loading').show();
+				$('.wpai-loading-text').text('Preparing preview...');
+
+				// Check every 100ms if cleanup is complete
+				var checkCleanup = setInterval(function() {
+					if (!self.isCleaningUp) {
+						clearInterval(checkCleanup);
+						// Cleanup complete, proceed with opening
+						self.proceedWithOpen();
+					}
+				}, 100);
+				return;
+			}
+
+			self.proceedWithOpen();
+		},
+
+		proceedWithOpen: function() {
+			var self = this;
+
 			self.modalIsOpen = true;
 			self.pendingCleanupPostIds = [];
 			self.sessionTimedOut = false; // Track if session timed out
@@ -559,9 +675,21 @@ jQuery(document).ready(function($) {
 				self.registerPreviewSession(self.previewSessionId);
 			}
 
+			// Clear all previous content and notices
 			$('#wpai-preview-cleanup-notice').remove();
+			$('#wpai-preview-cleanup-overlay').remove();
 			$('#wpai-preview-notices').html('').hide();
 			$('#wpai-preview-notices-frontend').html('').hide();
+
+			// Clear iframes and show loading state
+			$('#wpai-preview-admin-iframe').attr('src', 'about:blank').hide();
+			$('#wpai-preview-frontend-iframe').attr('src', 'about:blank').hide();
+			$('#wpai-preview-admin-iframe').siblings('.wpai-iframe-loading').show();
+			$('#wpai-preview-frontend-iframe').siblings('.wpai-iframe-loading').show();
+
+			// Reset loading text to default
+			$('.wpai-loading-text').text('Loading preview...');
+			$('.wpai-preload-progress').hide();
 
 			// Always start on the admin view tab when opening modal
 			this.switchTab('admin');
@@ -592,25 +720,59 @@ jQuery(document).ready(function($) {
 			$('#wpai-full-preview-modal').fadeIn(200);
 			this.updateNavigationButtons();
 
-			if (self.previewSessionId) {
-				self.cleanupPreviousSession(function() {
+			// Load settings first to detect variable product imports
+			// Then start preview after both settings load AND cleanup completes
+			this.loadSettings(function() {
+				// Settings loaded, now cleanup and start preview
+				if (self.previewSessionId) {
+					self.cleanupPreviousSession(function() {
+						self.startPreviewAfterCleanup();
+					});
+				} else {
 					self.startPreviewAfterCleanup();
-				});
-			} else {
-				self.startPreviewAfterCleanup();
-			}
-
-			this.loadSettings();
+				}
+			});
 		},
 
 		startPreviewAfterCleanup: function() {
 			var self = this;
 
-			if (self.isProductImport && !self.initialPreloadComplete) {
-				self.startInitialPreload();
-			} else {
-				self.loadPreview();
-			}
+			// Load the first preview
+			self.loadPreview();
+		},
+
+		attachIframeLoadHandlers: function() {
+			var self = this;
+
+			$('#wpai-preview-admin-iframe').off('load').on('load', function() {
+				if ($(this).attr('src') && $(this).attr('src') !== 'about:blank') {
+					// Hide sandbox banner inside iframe (wrapped in try-catch to ensure loading indicator always hides)
+					try {
+						self.hideSandboxBannerInIframe(this);
+					} catch (e) {
+						// Silently fail - don't let banner hiding errors prevent iframe from showing
+					}
+
+					// Hide loading indicator now that iframe is fully loaded
+					// Note: iframe is already visible (shown immediately when src was set)
+					$(this).siblings('.wpai-iframe-loading').hide();
+				}
+			});
+
+			$('#wpai-preview-frontend-iframe').off('load').on('load', function() {
+				if ($(this).attr('src') && $(this).attr('src') !== 'about:blank') {
+					// Hide sandbox banner inside iframe (wrapped in try-catch to ensure loading indicator always hides)
+					try {
+						self.hideSandboxBannerInIframe(this);
+					} catch (e) {
+						// Silently fail - don't let banner hiding errors prevent iframe from showing
+					}
+
+					// Hide loading indicator now that iframe is fully loaded
+					// Note: iframe is already visible (shown immediately when src was set)
+					$(this).siblings('.wpai-iframe-loading').hide();
+				}
+			});
 		},
 
 		cleanupPreviousSession: function(callback) {
@@ -640,75 +802,62 @@ jQuery(document).ready(function($) {
 
 			self.modalIsOpen = false;
 
-			var finalizeClose = function() {
-				self.initialPreloadComplete = false;
-				self.initialPreloadInProgress = false;
-				self.waitingForInitialPreload = false;
 
-				self.preloadQueue = [];
-				self.processingStates = {};
-				self.isPreloading = false;
-				self.currentlyProcessing = null;
-				self.userRequestedRecord = null;
-				self.highestPreloadedBatch = 0;
+			self.preloadQueue = [];
+			self.processingStates = {};
+			self.isPreloading = false;
+			self.currentlyProcessing = null;
+			self.userRequestedRecord = null;
+			self.highestPreloadedBatch = 0;
 
-				$('#wpai-preview-notices').html('').hide();
-				$('#wpai-preview-notices-frontend').html('').hide();
-				$('#wpai-preview-cleanup-notice').remove();
-				$('#wpai-preview-cleanup-overlay').remove();
+			// Clear all preview content from iframes
+			$('#wpai-preview-admin-iframe').attr('src', 'about:blank').hide();
+			$('#wpai-preview-frontend-iframe').attr('src', 'about:blank').hide();
 
-				$('.wpai-preview-navigation').show();
+			// Show loading state in iframes to prevent flash of old content on reopen
+			$('#wpai-preview-admin-iframe').siblings('.wpai-iframe-loading').show();
+			$('#wpai-preview-frontend-iframe').siblings('.wpai-iframe-loading').show();
 
-				$(document).off('keydown.wpai-preview');
+			// Reset loading text to default
+			$('.wpai-loading-text').text('Loading preview...');
+			$('.wpai-preload-progress').hide();
 
-				$('#wpai-full-preview-modal').fadeOut(200);
-			};
+			// Clear all status messages
+			$('#wpai-preview-notices').html('').hide();
+			$('#wpai-preview-notices-frontend').html('').hide();
+			$('#wpai-preview-cleanup-notice').remove();
+			$('#wpai-preview-cleanup-overlay').remove();
 
-			// Add gray overlay to disable modal during cleanup
-			var $overlay = $('<div id="wpai-preview-cleanup-overlay" style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0, 0, 0, 0.3); z-index: 999;"></div>');
-			$('#wpai-full-preview-modal .wpai-full-preview-container').append($overlay);
+			// Reset to default tab (admin view)
+			self.switchTab('admin');
 
-			// Build cleanup notice with optional timeout message
-			var noticeHtml = '<div id="wpai-preview-cleanup-notice" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(255, 255, 255, 0.95); padding: 30px 40px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); z-index: 1000; text-align: center; min-width: 300px;">';
+			$('.wpai-preview-navigation').show();
 
-			// Add timeout warning if session expired
-			if (self.sessionTimedOut) {
-				noticeHtml += '<div style="margin-bottom: 20px; padding-bottom: 20px; border-bottom: 1px solid #ddd;">' +
-					'<div style="font-size: 14px; font-weight: 600; color: #d63638; margin-bottom: 6px;">Session Timed Out</div>' +
-					'<div style="font-size: 13px; color: #646970;">Your preview session expired due to inactivity.</div>' +
-					'</div>';
-			}
+			$(document).off('keydown.wpai-preview');
 
-			noticeHtml += '<div style="margin-bottom: 15px;">' +
-				'<span class="wpai-spinner" style="display: inline-block; width: 20px; height: 20px; border: 3px solid #f3f3f3; border-top: 3px solid #2271b1; border-radius: 50%; animation: wpai-spin 1s linear infinite;"></span>' +
-				'</div>' +
-				'<div style="font-size: 15px; font-weight: 500; color: #1d2327; margin-bottom: 8px;">Cleaning up preview records...</div>' +
-				'<div style="font-size: 13px; color: #646970;">Please wait while we delete the preview data.</div>' +
-				'</div>';
+			// Close modal immediately
+			$('#wpai-full-preview-modal').fadeOut(200);
 
-			var $cleanupNotice = $(noticeHtml);
-			$('#wpai-full-preview-modal .wpai-full-preview-container').append($cleanupNotice);
+			// Run cleanup in background after modal closes
+			self.runBackgroundCleanup();
+		},
 
+		runBackgroundCleanup: function() {
+			var self = this;
+
+			// Set cleanup flag to prevent race conditions
+			self.isCleaningUp = true;
+
+			// Delay cleanup by 1.5 seconds as before
 			setTimeout(function() {
 				if (self.previewSessionId) {
 					self.deleteAllPreviewRecordsForSession(function() {
 						if (self.pendingCleanupPostIds.length > 0) {
 							self.deleteSpecificPreviewPosts(self.pendingCleanupPostIds, function() {
-								self.previewCache = {};
-								self.createdPostIds = [];
-								self.pendingCleanupPostIds = [];
-								self.currentRecord = 1;
-								$('#wpai-preview-record-number').val(1);
-
-								finalizeClose();
+								self.finalizeBackgroundCleanup();
 							});
 						} else {
-							self.previewCache = {};
-							self.createdPostIds = [];
-							self.currentRecord = 1;
-							$('#wpai-preview-record-number').val(1);
-
-							finalizeClose();
+							self.finalizeBackgroundCleanup();
 						}
 					});
 				} else if (self.createdPostIds.length > 0 || self.pendingCleanupPostIds.length > 0) {
@@ -718,18 +867,26 @@ jQuery(document).ready(function($) {
 					});
 
 					self.deleteSpecificPreviewPosts(allPostIds, function() {
-						self.previewCache = {};
-						self.createdPostIds = [];
-						self.pendingCleanupPostIds = [];
-						self.currentRecord = 1;
-						$('#wpai-preview-record-number').val(1);
-
-						finalizeClose();
+						self.finalizeBackgroundCleanup();
 					});
 				} else {
-					finalizeClose();
+					self.finalizeBackgroundCleanup();
 				}
 			}, 1500);
+		},
+
+		finalizeBackgroundCleanup: function() {
+			var self = this;
+
+			// Clear all state
+			self.previewCache = {};
+			self.createdPostIds = [];
+			self.pendingCleanupPostIds = [];
+			self.currentRecord = 1;
+			$('#wpai-preview-record-number').val(1);
+
+			// Clear cleanup flag
+			self.isCleaningUp = false;
 		},
 		
 		switchTab: function(tab) {
@@ -741,6 +898,26 @@ jQuery(document).ready(function($) {
 		},
 		
 		navigateRecord: function(direction) {
+			// Immediately remove and recreate iframes to clear old content instantly
+			// This prevents confusing display of old content while record number changes
+			var $adminContainer = $('#wpai-preview-admin-iframe').parent();
+			var $frontendContainer = $('#wpai-preview-frontend-iframe').parent();
+
+			// Remove old iframes
+			$('#wpai-preview-admin-iframe').remove();
+			$('#wpai-preview-frontend-iframe').remove();
+
+			// Create new blank iframes
+			$adminContainer.append('<iframe id="wpai-preview-admin-iframe" frameborder="0" style="display: none;"></iframe>');
+			$frontendContainer.append('<iframe id="wpai-preview-frontend-iframe" frameborder="0" style="display: none;"></iframe>');
+
+			// Re-attach load event handlers to new iframes
+			this.attachIframeLoadHandlers();
+
+			// Show loading indicators
+			$('.wpai-iframe-loading').show();
+			$('.wpai-loading-text').text('Loading preview...');
+
 			this.currentRecord += direction;
 
 			if (this.currentRecord < 1) {
@@ -857,26 +1034,52 @@ jQuery(document).ready(function($) {
 				self.previewEditUrl = cached.edit_url;
 				self.previewViewUrl = cached.view_url;
 
-				// Show loading indicators and hide iframes
-				$('#wpai-preview-admin-iframe').hide().siblings('.wpai-iframe-loading').show();
-				$('#wpai-preview-frontend-iframe').hide().siblings('.wpai-iframe-loading').show();
+				// For cached records, load the iframes with the cached URLs
+				// Note: Iframes are already fresh (recreated in navigateRecord)
+
+				// Ensure loading indicators are visible
+				$('.wpai-iframe-loading').show();
 
 				// Reset loading text (in case it was changed during preload)
 				$('.wpai-loading-text').text('Loading preview...');
 				$('.wpai-preload-progress').hide();
 
-				// Add cache-busting parameter to force reload (handle ? vs &)
-				var addCacheBuster = function(url){
+				// Add preview mode indicator (no cache-busting for cached records)
+				// This allows browser to cache the iframe content
+				var addPreviewParam = function(url){
 					if (!url) return url;
 					var sep = url.indexOf('?') === -1 ? '?' : '&';
-					return url + sep + 'wpai_reload=' + Date.now();
+					return url + sep + 'wpai_preview=1';
 				};
-				var adminUrl = addCacheBuster(cached.edit_url);
-				var viewUrl = addCacheBuster(cached.view_url);
 
-				// Set iframe sources with cache buster
-				if (adminUrl) $('#wpai-preview-admin-iframe').attr('src', adminUrl);
-				if (viewUrl) $('#wpai-preview-frontend-iframe').attr('src', viewUrl);
+				// Set iframe sources with preview indicator (browser caching enabled)
+				// Keep loading indicator visible, iframe will be shown when it starts loading
+				if (cached.edit_url) {
+					var adminUrl = addPreviewParam(cached.edit_url);
+
+					// Set src and wait a brief moment for browser to start loading
+					$('#wpai-preview-admin-iframe').attr('src', adminUrl);
+
+					// Show iframe after very brief delay (allows browser to start rendering)
+					// Hide loading indicator so user sees progressive rendering
+					setTimeout(function() {
+						$('#wpai-preview-admin-iframe').show();
+						$('#wpai-preview-admin-iframe').siblings('.wpai-iframe-loading').hide();
+					}, 100);
+				}
+				if (cached.view_url) {
+					var frontendUrl = addPreviewParam(cached.view_url);
+
+					// Set src and wait a brief moment for browser to start loading
+					$('#wpai-preview-frontend-iframe').attr('src', frontendUrl);
+
+					// Show iframe after very brief delay (allows browser to start rendering)
+					// Hide loading indicator so user sees progressive rendering
+					setTimeout(function() {
+						$('#wpai-preview-frontend-iframe').show();
+						$('#wpai-preview-frontend-iframe').siblings('.wpai-iframe-loading').hide();
+					}, 100);
+				}
 
 				// Re-enable navigation since cached record is loaded
 				self.enableNavigation();
@@ -886,58 +1089,14 @@ jQuery(document).ready(function($) {
 
 			self.disableNavigation();
 
-			if (self.processingStates[self.currentRecord] === 'processing') {
-				$('#wpai-preview-admin-iframe').hide().siblings('.wpai-iframe-loading').show();
-				$('#wpai-preview-frontend-iframe').hide().siblings('.wpai-iframe-loading').show();
+			$('#wpai-preview-admin-iframe').show().siblings('.wpai-iframe-loading').show();
+			$('#wpai-preview-frontend-iframe').show().siblings('.wpai-iframe-loading').show();
 
-				if (self.isProductImport) {
-					$('.wpai-loading-text').text('Loading preview record...');
-					$('.wpai-preload-progress').show().text('Processing record ' + self.currentRecord + '...');
-				}
-
-				var checkInterval = setInterval(function() {
-					if (self.previewCache[self.currentRecord]) {
-						clearInterval(checkInterval);
-						clearTimeout(timeoutId);
-						self.loadPreview();
-					}
-				}, 500);
-
-				var timeoutId = setTimeout(function() {
-					clearInterval(checkInterval);
-					self.enableNavigation();
-					alert('Preview timed out. Please try again.');
-				}, 300000);
-
-				return;
+			// Sync TinyMCE editors before collecting form data
+			// This ensures drag-and-drop content in visual editors is captured
+			if (typeof tinyMCE != 'undefined') {
+				tinyMCE.triggerSave(false, false);
 			}
-
-			if (self.processingStates[self.currentRecord] === 'queued') {
-				self.userRequestedRecord = self.currentRecord;
-				self.processNextInQueue();
-
-				$('#wpai-preview-admin-iframe').hide().siblings('.wpai-iframe-loading').show();
-				$('#wpai-preview-frontend-iframe').hide().siblings('.wpai-iframe-loading').show();
-
-				var checkInterval = setInterval(function() {
-					if (self.previewCache[self.currentRecord]) {
-						clearInterval(checkInterval);
-						clearTimeout(timeoutId);
-						self.loadPreview();
-					}
-				}, 500);
-
-				var timeoutId = setTimeout(function() {
-					clearInterval(checkInterval);
-					self.enableNavigation();
-					alert('Preview timed out. Please try again.');
-				}, 300000);
-
-				return;
-			}
-
-			$('#wpai-preview-admin-iframe').hide().siblings('.wpai-iframe-loading').show();
-			$('#wpai-preview-frontend-iframe').hide().siblings('.wpai-iframe-loading').show();
 
 			$('.custom_type[rel=tax_mapping]').each(function(){
 				var values = new Array();
@@ -1033,6 +1192,7 @@ jQuery(document).ready(function($) {
 
 						self.showSkippedNotice(response.skip_reason || 'Record was skipped');
 
+						// Start preloading after first successful preview (only for record 1)
 						if (self.currentRecord === 1 && !self.isPreloading && self.totalRecords > 1) {
 							setTimeout(function() {
 								self.startPreloading();
@@ -1064,21 +1224,43 @@ jQuery(document).ready(function($) {
 							});
 						}
 
-						// Show loading indicators and hide iframes
-						$('#wpai-preview-admin-iframe').hide().siblings('.wpai-iframe-loading').show();
-						$('#wpai-preview-frontend-iframe').hide().siblings('.wpai-iframe-loading').show();
+						// Iframes are already fresh (recreated in navigateRecord)
+						// Ensure loading indicators are visible
+						$('.wpai-iframe-loading').show();
 
 						// Only update visible if this response matches the requested record
 						if (self.currentRecord === requestedRecord) {
 							var addCacheBuster = function(url){
 								if (!url) return url;
 								var sep = url.indexOf('?') === -1 ? '?' : '&';
-								return url + sep + 'wpai_reload=' + Date.now();
+								return url + sep + 'wpai_preview=1&wpai_reload=' + Date.now();
 							};
 							var adminUrl = addCacheBuster(response.edit_url);
 							var viewUrl = addCacheBuster(response.view_url || '');
-							if (adminUrl) $('#wpai-preview-admin-iframe').attr('src', adminUrl);
-							if (viewUrl) $('#wpai-preview-frontend-iframe').attr('src', viewUrl);
+
+							if (adminUrl) {
+								// Set src and wait a brief moment for browser to start loading
+								$('#wpai-preview-admin-iframe').attr('src', adminUrl);
+
+								// Show iframe after very brief delay (allows browser to start rendering)
+								// Hide loading indicator so user sees progressive rendering
+								setTimeout(function() {
+									$('#wpai-preview-admin-iframe').show();
+									$('#wpai-preview-admin-iframe').siblings('.wpai-iframe-loading').hide();
+								}, 100);
+							}
+
+							if (viewUrl) {
+								// Set src and wait a brief moment for browser to start loading
+								$('#wpai-preview-frontend-iframe').attr('src', viewUrl);
+
+								// Show iframe after very brief delay (allows browser to start rendering)
+								// Hide loading indicator so user sees progressive rendering
+								setTimeout(function() {
+									$('#wpai-preview-frontend-iframe').show();
+									$('#wpai-preview-frontend-iframe').siblings('.wpai-iframe-loading').hide();
+								}, 100);
+							}
 						}
 
 						// Start preloading after first successful preview (only for record 1)
@@ -1241,7 +1423,7 @@ jQuery(document).ready(function($) {
 			}
 		},
 
-		loadSettings: function() {
+		loadSettings: function(callback) {
 			var self = this;
 
 			var urlParams = new URLSearchParams(window.location.search);
@@ -1301,6 +1483,7 @@ jQuery(document).ready(function($) {
 							}
 						}
 
+					// Handle records to preload setting
 					$('.wpai-preview-records-to-preload').off('change').on('change', function() {
 						var value = parseInt($(this).val());
 						if (value >= 1 && value <= 100) {
@@ -1366,9 +1549,19 @@ jQuery(document).ready(function($) {
 						}
 						$('#wpai-preview-settings-content').html('<p style="color: #d63638; text-align: center; padding: 40px;">' + errorMsg + '</p>');
 					}
+
+					// Call callback after settings are loaded (success or failure)
+					if (callback && typeof callback === 'function') {
+						callback();
+					}
 				},
 				error: function(xhr, status, error) {
 					$('#wpai-preview-settings-content').html('<p style="color: #d63638; text-align: center; padding: 40px;">An error occurred while loading settings.</p>');
+
+					// Call callback even on error so preview doesn't hang
+					if (callback && typeof callback === 'function') {
+						callback();
+					}
 				}
 			});
 		},
@@ -1661,12 +1854,7 @@ jQuery(document).ready(function($) {
 				self.preloadQueue = [];
 				self.currentlyProcessing = null;
 				self.isPreloading = false;
-				self.highestPreloadedBatch = 0;
-
-				// Reset initial preload state
-				self.initialPreloadComplete = false;
-				self.initialPreloadInProgress = false;
-				self.waitingForInitialPreload = false;
+                self.highestPreloadedBatch = 0;
 
 				// Clear session ID so we get a fresh one
 				self.previewSessionId = null;
@@ -1679,12 +1867,8 @@ jQuery(document).ready(function($) {
 				// Switch to WP Admin View tab and trigger appropriate flow
 				self.switchTab('admin');
 
-				// For product imports, start initial preload before showing first preview
-				if (self.isProductImport) {
-					self.startInitialPreload();
-				} else {
-					self.loadPreview();
-				}
+				// Load the preview
+				self.loadPreview();
 
 				// Re-enable button after preview loads
 				setTimeout(function() {
@@ -1694,72 +1878,8 @@ jQuery(document).ready(function($) {
 		},
 
 		/**
-		 * Start initial preload for product imports
-		 * Waits for first batch to complete before showing preview
-		 */
-		startInitialPreload: function() {
-			var self = this;
-
-			// Mark that we're waiting for initial preload
-			self.waitingForInitialPreload = true;
-			self.initialPreloadInProgress = true;
-
-			// Disable navigation during initial preload
-			self.disableNavigation();
-
-			// Clear iframes and show loading state
-			$('#wpai-preview-admin-iframe').attr('src', '').hide();
-			$('#wpai-preview-frontend-iframe').attr('src', '').hide();
-			$('.wpai-iframe-loading').show();
-
-			// Update loading text
-			$('.wpai-loading-text').text('Preloading preview records...');
-			$('.wpai-preload-progress').show();
-			self.updatePreloadProgress();
-
-			// Load first batch
-			self.loadBatch(1);
-		},
-
-		/**
-		 * Update the preload progress display
-		 */
-		updatePreloadProgress: function() {
-			var self = this;
-
-			// Count completed records
-			var completedCount = 0;
-			var totalToPreload = Math.min(self.recordsToPreload, self.totalRecords);
-
-			for (var i = 1; i <= totalToPreload; i++) {
-				if (self.previewCache[i]) {
-					completedCount++;
-				}
-			}
-
-			// Update progress text
-			var progressText = completedCount + ' out of ' + totalToPreload + ' preview records preloaded';
-			$('.wpai-preload-progress').text(progressText);
-
-			// Check if initial preload is complete
-			if (completedCount >= totalToPreload && self.waitingForInitialPreload) {
-				self.initialPreloadComplete = true;
-				self.initialPreloadInProgress = false;
-				self.waitingForInitialPreload = false;
-
-				// Re-enable navigation
-				self.enableNavigation();
-
-				// Hide progress and show the first preview
-				$('.wpai-preload-progress').hide();
-				$('.wpai-loading-text').text('Loading preview...');
-				self.loadPreview();
-			}
-		},
-
-		/**
 		 * Start preloading records in the background
-		 * Loads batch 1 (records 1-10)
+		 * Loads batch 1 (records 1-10 by default, configurable via recordsToPreload)
 		 */
 		startPreloading: function() {
 			var self = this;
@@ -1769,7 +1889,7 @@ jQuery(document).ready(function($) {
 				return;
 			}
 
-			// Load first batch (records 1-10)
+			// Load first batch (records 1-10 by default)
 			self.loadBatch(1);
 		},
 
@@ -1916,15 +2036,19 @@ jQuery(document).ready(function($) {
 		},
 
 		/**
-		 * Load preview for a specific record number
+		 * Load preview for a specific record number (used by preloading)
 		 * @param {number} recordNum - Record number to load
 		 * @param {function} callback - Callback function(success)
 		 */
 		loadPreviewForRecord: function(recordNum, callback) {
 			var self = this;
 
+			// Sync TinyMCE editors before collecting form data
+			if (typeof tinyMCE != 'undefined') {
+				tinyMCE.triggerSave(false, false);
+			}
+
 			// Serialize taxonomy mappings before collecting form data
-			// This ensures checkbox states are properly captured in hidden fields
 			$('.custom_type[rel=tax_mapping]').each(function(){
 				var values = new Array();
 				$(this).find('.form-field').each(function(){
@@ -1951,22 +2075,17 @@ jQuery(document).ready(function($) {
 				}
 			}
 
-			// Get form data (use same selector as main loadPreview)
+			// Get form data
 			var formData = new FormData($('.wpallimport-template')[0]);
 
 			// Ensure unchecked checkboxes are included in FormData
-			// FormData doesn't include unchecked checkboxes, but the import system expects them
-			// For WooCommerce attributes, we need to ensure all checkbox arrays have values
 			var $form = $('.wpallimport-template');
 			var checkboxArrays = ['in_variations', 'is_visible', 'is_taxonomy', 'variable_in_variations', 'variable_is_visible', 'variable_is_taxonomy'];
 
 			checkboxArrays.forEach(function(name) {
 				var $checkboxes = $form.find('input[name="' + name + '[]"]');
 				if ($checkboxes.length > 0) {
-					// Remove any existing entries for this checkbox array
 					formData.delete(name + '[]');
-
-					// Add all checkboxes (checked = 1, unchecked = 0)
 					$checkboxes.each(function() {
 						formData.append(name + '[]', $(this).is(':checked') ? '1' : '0');
 					});
@@ -1977,15 +2096,12 @@ jQuery(document).ready(function($) {
 			formData.append('security', window.wp_all_import_security);
 			formData.append('preview_mode', 'specific');
 			formData.append('specific_record', recordNum);
-
-			// Use preview post status (empty string = use template value)
 			formData.append('post_status', this.previewPostStatus);
 
 			if (self.importId) {
 				formData.append('import_id', self.importId);
 			}
 
-			// Send session ID to protect records from cleanup
 			if (self.previewSessionId) {
 				formData.append('preview_session_id', self.previewSessionId);
 			}

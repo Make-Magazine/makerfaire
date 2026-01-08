@@ -17,8 +17,8 @@ __( '%s (%dpx and up)', 'elementor' );
 // translators: %s: Breakpoint label, %d: Breakpoint size.
 __( '%s (up to %dpx)', 'elementor' );
 __( 'Keyboard Shortcuts', 'elementor' );
-__( 'History', 'elementor' );
 __( 'Help Center', 'elementor' );
+__( 'History', 'elementor' );
 __( 'Finder', 'elementor' );
 __( 'Elements', 'elementor' );
 __( 'Widgets', 'elementor' );

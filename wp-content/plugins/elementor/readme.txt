@@ -4,7 +4,7 @@ Tags: page builder, editor, landing page, drag-and-drop, elementor,
 Requires at least: 6.7
 Tested up to: 6.9
 Requires PHP: 7.4
-Stable tag: 3.34.0
+Stable tag: 3.34.1
 Beta tag: 3.34.0-beta3
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
@@ -348,6 +348,15 @@ You can also add a new language via [translate.wordpress.org](https://go.element
 6. **Motion Effects** - Add entrance animations and transitions to any element in your website to captivate visitors.
 
 == Changelog ==
+
+= 3.34.1 - 2026-01-07 =
+
+* Fix: RTL issues in Icon Box widget ([#33963](https://github.com/elementor/elementor/issues/33963))
+* Fix: Incorrect `space_between_widgets` spacing in columns ([#34033](https://github.com/elementor/elementor/issues/34033))
+* Fix: User settings not applied correctly ([#34065](https://github.com/elementor/elementor/issues/34065))
+* Fix: Flex Grow is not applied correctly to child containers in the Flexbox element - Editor V4
+* Fix: Deleting a Tab breaks the content–tab relationship in Tabs element - Editor V4
+* Fix: Appearance badge in Site Templates is misaligned and not centered
 
 = 3.34.0 - 2025-12-22 =
 
