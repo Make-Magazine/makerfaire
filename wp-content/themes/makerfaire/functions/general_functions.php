@@ -142,7 +142,6 @@ function getYoutubeEmbedUrl( $url ) {
     if ( preg_match( '/[?&]list=([a-zA-Z0-9_-]+)/', $url, $matches ) ) {
         $playlist_id = $matches[1];
     }
-
     // Short URL (youtu.be)
     if ( preg_match( '/youtu\.be\/([a-zA-Z0-9_-]+)/', $url, $matches ) ) {
         $video_id = $matches[1];
@@ -157,7 +156,7 @@ function getYoutubeEmbedUrl( $url ) {
     }
     // Video embed
     if ( $video_id ) {
-        return 'https://www.youtube.com/embed/' . $video_id;
+        return 'https://www.youtube.com/embed/' . $video_id . "?test";
     }
     return null;
 }

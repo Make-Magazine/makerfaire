@@ -106,7 +106,7 @@ get_header();
 				<?php } else { 
 					$separator = ( strpos( $faire_video, '?' ) !== false ) ? '&' : '?';
 					$embed .= getYoutubeEmbedUrl($faire_video) . $separator . 'autoplay=1&mute=1'; ?>
-					<iframe width="560" height="315" src="<?php echo $embed; ?>" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+					<iframe width="560" height="315" src="<?php echo $embed; ?>" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
 				<?php } 
 			} else { ?>			
 				<img src="<?php echo get_the_post_thumbnail_url($faire_id, 'medium_large'); ?>" alt="Maker Faire <?php echo $faire_year . " " . $faire_name?> Featured Image" />
