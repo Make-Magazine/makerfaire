@@ -156,11 +156,11 @@
             $secondary_nav='secondary_universal_menu';
             if(is_object($post)) {                                                
                 $permalink = get_permalink($post);
-                if(stripos($faire_name, 'Bay Area') !== false ||
+                if(stripos($permalink, 'yearbook') !== false){
+                    $secondary_nav='yearbook_secondary_nav';
+                }elseif(stripos($faire_name, 'Bay Area') !== false ||
                    stripos($permalink,  'bay-area') !== false) {                
                     $secondary_nav='bay_area_secondary_nav';
-                }elseif(stripos($permalink, 'yearbook') !== false){
-                    $secondary_nav='yearbook_secondary_nav';
                 }
             } 
 
