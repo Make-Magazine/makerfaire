@@ -22,7 +22,7 @@ function makewidget_rss_output($rss, $settings) {
         'show_summary' => 0,
         'items' => 0,
     );
-    $args = $default_args;
+
     $items = (int) $settings['num_display']; // this is the number of items we show
 
     $classes = $settings['rss_class'];

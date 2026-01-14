@@ -285,13 +285,8 @@ class Elementor_makeCustomRss_Widget extends \Elementor\Widget_Base {
 		}
 
 		$rss = fetch_feed($url);
-		$desc = '';
 
 		if (!is_wp_error($rss)) {
-			$desc = esc_attr(strip_tags(@html_entity_decode($rss->get_description(), ENT_QUOTES, get_option('blog_charset'))));
-			if (empty($title)) {
-				$title = strip_tags($rss->get_title());
-			}
 			if (empty($link)) {
 				$link = strip_tags($rss->get_permalink());
 				while (stristr($link, 'http') != $link) {
@@ -299,15 +294,12 @@ class Elementor_makeCustomRss_Widget extends \Elementor\Widget_Base {
 				}
 			}
 		}
-
-		if (empty($title)) {
-			$title = !empty($desc) ? $desc : __('Unknown Feed');
+		if (!empty($title)) {
+			if ($link) {
+				$title = '<a target="_blank" class="rsswidget" href="' . esc_url($link) . '">' . $title . '</a>';
+			}
+			echo '<h4>'.$title.'</h4>';
 		}
-
-		if ($link) {
-			$title = '<a target="_blank" class="rsswidget" href="' . esc_url($link) . '">' . $title . '</a>';
-		}
-		echo '<h4>'.$title.'</h4>';
 
 		makewidget_rss_output($rss, $settings);
 

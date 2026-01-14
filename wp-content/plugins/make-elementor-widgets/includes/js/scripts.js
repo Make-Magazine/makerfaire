@@ -17,6 +17,8 @@ jQuery(document).ready(function(){
 			slideBy: slideBy,
 			//autoWidth:true,
 			nav:true,
+			autoplay: true,
+    		autoplayTimeout: 5000,
 			responsive:{
 				0:{
         			items:1,
