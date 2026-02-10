@@ -115,7 +115,7 @@ jQuery(document).ready(function () {
 					});
 				})
 				.catch(function (error) {
-					console.log("Error: " . error);
+					console.log("Error: " + error);
 					_self.$refs.loadingIndicator.classList.add("hidden");
 					_self.$refs.errorIndicator.classList.remove("hidden");
 				});
