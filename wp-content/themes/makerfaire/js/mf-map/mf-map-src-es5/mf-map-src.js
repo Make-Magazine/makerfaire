@@ -7,7 +7,7 @@ jQuery(document).ready(function () {
   var firstLoaded = true; // we only want to sort by date on the first load, otherwise keep their selected sorting order
   var typeFilters = ["Featured", "Flagship", "Mini", "School"];
   var urlParam = getUrlParam('categories');
-  var categories = urlParam ? urlParam.toLowerCase().split(',').map(function (s) {
+  var categories = urlParam ? urlParam.split(',').map(function (s) {
     return s.trim();
   }).filter(function (s) {
     return s !== "";
@@ -135,7 +135,8 @@ jQuery(document).ready(function () {
         if (category == "Mini") {
           category = "Community";
         }
-        if (!categories.includes(category)) {
+        if (!categories.includes(category.toLowerCase())) {
+          console.log("input#" + category);
           jQuery("input#" + category).click();
         }
       });

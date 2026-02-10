@@ -6,7 +6,7 @@ jQuery(document).ready(function () {
 	var typeFilters = ["Featured", "Flagship", "Mini", "School"];
 	var urlParam = getUrlParam('categories');
 
-	var categories = urlParam ? urlParam.toLowerCase().split(',').map(s => s.trim()).filter(s => s !== "") : [];
+	var categories = urlParam ? urlParam.split(',').map(s => s.trim()).filter(s => s !== "") : [];
 
 	Vue.use(VueTables.ClientTable);
 	Vue.use(VueTables.Event);
@@ -124,7 +124,8 @@ jQuery(document).ready(function () {
 			typeFilters.forEach(category => {
 				if(category == "Flagship") { category = "Global"; }
 				if(category == "Mini") { category = "Community"; }
-				if(!categories.includes(category)) {
+				if(!categories.includes(category.toLowerCase())) {
+					console.log("input#" + category);
 					jQuery("input#" + category).click();
 				}
 			});
