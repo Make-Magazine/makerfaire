@@ -1,13 +1,17 @@
 "use strict";
 
-var typeFilters = categories = [];
 jQuery(document).ready(function () {
   var currentDate = new Date();
   var firstDayOfYear = new Date(currentDate.getFullYear(), 0, 1); // January is month 0
 
   var firstLoaded = true; // we only want to sort by date on the first load, otherwise keep their selected sorting order
   var typeFilters = ["Featured", "Flagship", "Mini", "School"];
-  var categories = getUrlParam('categories').split(',');
+  var urlParam = getUrlParam('categories');
+  var categories = urlParam ? urlParam.toLowerCase().split(',').map(function (s) {
+    return s.trim();
+  }).filter(function (s) {
+    return s !== "";
+  }) : [];
   Vue.use(VueTables.ClientTable);
   Vue.use(VueTables.Event);
   var vm = new Vue({
@@ -121,6 +125,20 @@ jQuery(document).ready(function () {
         console.log("Error: " + error);
         _self.$refs.loadingIndicator.classList.add("hidden");
         _self.$refs.errorIndicator.classList.remove("hidden");
+      });
+    },
+    mounted: function mounted() {
+      typeFilters.forEach(function (category) {
+        if (category == "Flagship") {
+          category = "Global";
+        }
+        if (category == "Mini") {
+          category = "Community";
+        }
+        if (!categories.includes(category.toLowerCase())) {
+          console.log("input#" + category);
+          jQuery("input#" + category).click();
+        }
       });
     },
     updated: function updated() {
@@ -555,15 +573,6 @@ jQuery(document).ready(function () {
   });
 }); // end doc ready
 
-jQuery(window).load(function () {
-  typeFilters.forEach(function (category) {
-    console.log(category);
-    if (categories.includes(category.toLowerCase())) {
-      console.log("input#" + category);
-      jQuery("input#" + category).click();
-    }
-  });
-});
 function formatDate(date) {
   var theDate = new Date(date);
   var monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];

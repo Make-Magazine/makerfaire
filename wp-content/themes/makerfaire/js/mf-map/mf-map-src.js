@@ -1,12 +1,12 @@
-var typeFilters = categories = [];
-
 jQuery(document).ready(function () {
 	var currentDate = new Date();
 	var firstDayOfYear = new Date(currentDate.getFullYear(), 0, 1); // January is month 0
 
 	var firstLoaded = true; // we only want to sort by date on the first load, otherwise keep their selected sorting order
 	var typeFilters = ["Featured", "Flagship", "Mini", "School"];
-	var categories = getUrlParam('categories').split(',');
+	var urlParam = getUrlParam('categories');
+
+	var categories = urlParam ? urlParam.toLowerCase().split(',').map(s => s.trim()).filter(s => s !== "") : [];
 
 	Vue.use(VueTables.ClientTable);
 	Vue.use(VueTables.Event);
@@ -119,6 +119,16 @@ jQuery(document).ready(function () {
 					_self.$refs.loadingIndicator.classList.add("hidden");
 					_self.$refs.errorIndicator.classList.remove("hidden");
 				});
+		},
+		mounted: function() {
+			typeFilters.forEach(category => {
+				if(category == "Flagship") { category = "Global"; }
+				if(category == "Mini") { category = "Community"; }
+				if(!categories.includes(category.toLowerCase())) {
+					console.log("input#" + category);
+					jQuery("input#" + category).click();
+				}
+			});
 		},
 		updated: function () {
 			firstLoaded = false;
@@ -580,15 +590,6 @@ jQuery(document).ready(function () {
 	});
 }); // end doc ready
 
-jQuery(window).load(function () {
-	typeFilters.forEach(category => {
-		console.log(category);
-		if(categories.includes(category.toLowerCase())) {
-			console.log("input#" + category);
-			jQuery("input#" + category).click();
-		}
-	});
-});
 
 
 function formatDate(date) {
