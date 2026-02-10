@@ -117,7 +117,7 @@ jQuery(document).ready(function () {
 		},
 		mounted: function() {
 			var buttons = ["Global", "Featured", "Mini", "School"];
-			typeFilters.forEach(category => {
+			buttons.forEach(category => {
 				if(!categories.includes(category)) {
 					jQuery("input#" + category).click();
 				}
