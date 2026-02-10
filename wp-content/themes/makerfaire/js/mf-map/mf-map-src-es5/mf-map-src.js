@@ -123,18 +123,9 @@ jQuery(document).ready(function () {
       });
     },
     mounted: function mounted() {
-      console.log(categories);
-      console.log(typeFilters);
+      var buttons = ["Global", "Featured", "Mini", "School"];
       typeFilters.forEach(function (category) {
-        if (category == "Flagship") {
-          category = "Global";
-        }
-        if (category == "Mini") {
-          category = "Community";
-        }
-        console.log(category);
         if (!categories.includes(category)) {
-          console.log("input#" + category);
           jQuery("input#" + category).click();
         }
       });
