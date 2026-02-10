@@ -1,11 +1,13 @@
 "use strict";
 
+var typeFilters = categories = [];
 jQuery(document).ready(function () {
   var currentDate = new Date();
   var firstDayOfYear = new Date(currentDate.getFullYear(), 0, 1); // January is month 0
 
   var firstLoaded = true; // we only want to sort by date on the first load, otherwise keep their selected sorting order
   var typeFilters = ["Featured", "Flagship", "Mini", "School"];
+  var categories = getUrlParam('categories').split(',');
   Vue.use(VueTables.ClientTable);
   Vue.use(VueTables.Event);
   var vm = new Vue({
@@ -99,7 +101,8 @@ jQuery(document).ready(function () {
     },
     created: function created() {
       var _self = this;
-      axios.get('/query/?type=map').then(function (response) {
+      var apiurl = '/query/?type=map';
+      axios.get(apiurl).then(function (response) {
         _self.$refs.loadingIndicator.classList.add("hidden");
         _self.outputData = response.data.Locations;
         // convert start dt to numeric string for ease of ordering
@@ -109,6 +112,11 @@ jQuery(document).ready(function () {
         _self.detectBrowser();
         // _self.getLocation();
         _self.initMap();
+        typeFilters.forEach(function (category) {
+          if (categories.includes(toLowerCase(category))) {
+            jQuery;
+          }
+        });
       })["catch"](function (error) {
         console.log(error);
         _self.$refs.loadingIndicator.classList.add("hidden");
@@ -547,10 +555,14 @@ jQuery(document).ready(function () {
   });
 }); // end doc ready
 
-/*jQuery(window).load(function(){
-  jQuery("input#School").click();
-});*/
-
+jQuery(window).load(function () {
+  typeFilters.forEach(function (category) {
+    if (categories.includes(category.toLowerCase())) {
+      console.log("input#" + category);
+      jQuery("input#" + category).click();
+    }
+  });
+});
 function formatDate(date) {
   var theDate = new Date(date);
   var monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];

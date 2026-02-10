@@ -1,10 +1,12 @@
+var typeFilters = categories = [];
 
 jQuery(document).ready(function () {
 	var currentDate = new Date();
 	var firstDayOfYear = new Date(currentDate.getFullYear(), 0, 1); // January is month 0
 
 	var firstLoaded = true; // we only want to sort by date on the first load, otherwise keep their selected sorting order
-	var typeFilters = ["Featured", "Flagship", "Mini", "School"];	
+	var typeFilters = ["Featured", "Flagship", "Mini", "School"];
+	var categories = getUrlParam('categories').split(',');
 
 	Vue.use(VueTables.ClientTable);
 	Vue.use(VueTables.Event);
@@ -71,7 +73,7 @@ jQuery(document).ready(function () {
 				}
 			},
 			filterVal: '',
-			showAll: false,			
+			showAll: false,
 			currentLocation: false,
 			types: [
 				{ name: "Global", description: "Faires that pull in exhibitors from around the world" },
@@ -94,7 +96,8 @@ jQuery(document).ready(function () {
 
 		created: function () {
 			var _self = this;
-			axios.get('/query/?type=map')
+			var apiurl = '/query/?type=map';
+			axios.get(apiurl)
 				.then(function (response) {
 					_self.$refs.loadingIndicator.classList.add("hidden");
 					_self.outputData = response.data.Locations;
@@ -105,6 +108,11 @@ jQuery(document).ready(function () {
 					_self.detectBrowser();
 					// _self.getLocation();
 					_self.initMap();
+					typeFilters.forEach(category => {
+						if (categories.includes(toLowerCase(category))) {
+							jQuery
+						}
+					});
 				})
 				.catch(function (error) {
 					console.log(error);
@@ -134,13 +142,13 @@ jQuery(document).ready(function () {
 				if (firstLoaded == true) {
 					this.$refs.directoryGrid.setOrder('event_start_dt', 'asc');
 				}
-						
+
 				//set the years drop down
 				this.years = this.outputData
 					.map((item) => item.faire_year)
 					.filter((value, index, self) => self.indexOf(value) === index);
 				this.years = numRevSort(this.years);
-				
+
 				// filter out the past faires
 				this.tableData = this.outputData.filter(function (values) {
 					var endDate = new Date(values.event_end_dt);
@@ -475,14 +483,14 @@ jQuery(document).ready(function () {
 				this.addMarkers();
 			},
 			// year of faire filter
-			yearFilter: function (data) {				
+			yearFilter: function (data) {
 				var searchString = this.filterVal.toLowerCase(); // always remember the search string				
-				var selectedYear= data.target.value;
-				
-				this.tableData = this.outputData.filter(function (values) {										
+				var selectedYear = data.target.value;
+
+				this.tableData = this.outputData.filter(function (values) {
 					if (selectedYear == values.faire_year) {
 						return values;
-					}					
+					}
 				});
 
 				// there's gotta be a better way than just filtering by type and search terms again
@@ -572,9 +580,14 @@ jQuery(document).ready(function () {
 	});
 }); // end doc ready
 
-/*jQuery(window).load(function(){
-  jQuery("input#School").click();
-});*/
+jQuery(window).load(function () {
+	typeFilters.forEach(category => {
+		if(categories.includes(category.toLowerCase())) {
+			console.log("input#" + category);
+			jQuery("input#" + category).click();
+		}
+	});
+});
 
 
 function formatDate(date) {
@@ -599,6 +612,6 @@ function validateZipCode(elementValue) {
 }
 
 function numRevSort(arr) {
-	arr.sort((a,b)=>b-a);
+	arr.sort((a, b) => b - a);
 	return arr;
 }

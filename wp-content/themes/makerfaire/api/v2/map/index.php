@@ -17,6 +17,7 @@ $type = ( ! empty( $_REQUEST['type'] ) ? sanitize_text_field( $_REQUEST['type'] 
 $upcoming = ( ! empty( $_REQUEST['upcoming'] ) ? sanitize_text_field( $_REQUEST['upcoming'] ) : false );
 $number = ( ! empty( $_REQUEST['number'] ) ? sanitize_text_field( $_REQUEST['number'] ) : null );
 $categories = ( ! empty( $_REQUEST['categories'] ) ? sanitize_text_field( $_REQUEST['categories'] ) : '' );
+
 // add quotes around each faire type in the $categories string so that it will work with a mySQL IN statement
 $categories = str_replace(' ', '', $categories ?? '');
 $categories_string = '"' . str_replace(',', '","', $categories ?? '') . '"';
@@ -41,42 +42,67 @@ if ( $type == 'map' ) {
   // Init the entities header
   $venues = array();
 
-  $mysqli = new mysqli(DB_HOST,DB_USER,DB_PASSWORD, DB_NAME);
-  if ($mysqli->connect_errno) {
-    echo "Failed to connect to MySQL: (" . $mysqli->connect_errno . ") " . $mysqli->connect_error;
-  }
+  global $wpdb;
 
-  $select_query = "SELECT ID, faire_shortcode, faire_name, lat, lng, faire_year, event_type, event_dt, event_start_dt, event_end_dt, cfm_start_dt, cfm_end_dt, cfm_url, faire_url, ticket_site_url, free_event, venue_address_street, venue_address_city, venue_address_state, venue_address_country, venue_address_postal_code, venue_address_region, faire_image, states.state FROM `wp_mf_global_faire` left outer join states on state_code = venue_address_state";
+  $table = $wpdb->prefix . 'mf_global_faire';
 
-  $where = ' WHERE ';
+  $select_query = "SELECT 
+      ID, faire_shortcode, faire_name, lat, lng, faire_year, event_type, event_dt, 
+      event_start_dt, event_end_dt, cfm_start_dt, cfm_end_dt, cfm_url, faire_url, 
+      ticket_site_url, free_event, venue_address_street, venue_address_city, 
+      venue_address_state, venue_address_country, venue_address_postal_code, 
+      venue_address_region, faire_image, states.state
+  FROM {$table}
+  LEFT OUTER JOIN states ON state_code = venue_address_state";
+
+  $where = '';
   $order = '';
   $limit = '';
-  // if the api has an upcoming parameter set to true, we only want to return faire's past our current date
-  if($upcoming == true) {
-	  $where .= 'event_start_dt >= CURDATE()';
-	  $order .= '`wp_mf_global_faire`.`event_start_dt` ASC';
-	  // when categories are set, we are limiting the faire to the set types (e.g. Mini, Featured, Flagship or School)
-	  if(!empty($categories)) {
-		  $where .= ' AND ';
-	  }
-  }
-  // when categories are set, we are limiting the faire to the set types (e.g. Mini, Featured, Flagship or School)
-  if(!empty($categories)) {
-	  $where .= 'event_type IN ('.$categories_string.')';
-  }
-  // How many faires to return
-  if($number != null && is_numeric($number)) {
-	  $limit .= $number;
-  }
-  $select_query .= ($where!=' WHERE '?$where:'') . ($order!=''?' ORDER BY '.$order:'') . ($limit!=''?' LIMIT '.$limit:'');
 
-  $mysqli->query("SET NAMES 'utf8'");
-  $result = $mysqli->query ( $select_query );
+  // upcoming filter
+  if ($upcoming == true) {
+      $where .= ($where ? ' AND ' : ' WHERE ') . 'event_start_dt >= CURDATE()';
+      $order = 'event_start_dt ASC';
+  }
+
+  // category filter
+  if (!empty($categories)) {
+      $where .= ($where ? ' AND ' : ' WHERE ') . "event_type IN ($categories_string)";
+  }
+
+  // limit
+  if ($number != null && is_numeric($number)) {
+      $limit = intval($number);
+  }
+
+  $select_query .= $where;
+
+  if ($order) {
+      $select_query .= " ORDER BY $order";
+  }
+
+  if ($limit) {
+      $select_query .= " LIMIT $limit";
+  }
+
+  $rows = $wpdb->get_results($select_query, ARRAY_A);
+
+  if ($rows === null) {
+      status_header(500);
+      header('Content-Type: application/json; charset=utf-8');
+      echo json_encode([
+          'error' => 'db_query_failed',
+          'message' => $wpdb->last_error,
+          'query' => $select_query,
+      ]);
+      exit;
+  }
+
 
   $header = array(
     'header' => array(
       'version' => 2,
-      'results' => intval( $result->num_rows ),
+      'results' => count($rows),
     ),
   );
 
@@ -86,7 +112,7 @@ if ( $type == 'map' ) {
   $points = array();
 
   // Loop through the posts
-  while ( $row = $result->fetch_array(MYSQLI_ASSOC)  ) {
+  foreach ($rows as $row) {
     // Open the array.
     $point = array();
 
