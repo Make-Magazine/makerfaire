@@ -116,9 +116,14 @@ jQuery(document).ready(function () {
 				});
 		},
 		mounted: function() {
-			var buttons = ["Global", "Featured", "Mini", "School"];
+			// pre filter the map based on category. categories is from the categories query parameter
+			var buttons = ["Global", "Featured", "Community", "School"];
+			categories = categories.map(word => 
+				word.charAt(0).toUpperCase() + word.slice(1)
+			);
 			buttons.forEach(category => {
 				if(!categories.includes(category)) {
+					if(category == "Community") { category = "Mini"; }
 					jQuery("input#" + category).click();
 				}
 			});
