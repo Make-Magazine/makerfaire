@@ -121,10 +121,13 @@ jQuery(document).ready(function () {
 				});
 		},
 		mounted: function() {
+			console.log(categories);
+			console.log(typeFilters);
 			typeFilters.forEach(category => {
 				if(category == "Flagship") { category = "Global"; }
 				if(category == "Mini") { category = "Community"; }
-				if(!categories.includes(category.toLowerCase())) {
+				console.log(category);
+				if(!categories.includes(category)) {
 					console.log("input#" + category);
 					jQuery("input#" + category).click();
 				}

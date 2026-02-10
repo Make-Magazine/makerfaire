@@ -128,6 +128,8 @@ jQuery(document).ready(function () {
       });
     },
     mounted: function mounted() {
+      console.log(categories);
+      console.log(typeFilters);
       typeFilters.forEach(function (category) {
         if (category == "Flagship") {
           category = "Global";
@@ -135,7 +137,8 @@ jQuery(document).ready(function () {
         if (category == "Mini") {
           category = "Community";
         }
-        if (!categories.includes(category.toLowerCase())) {
+        console.log(category);
+        if (!categories.includes(category)) {
           console.log("input#" + category);
           jQuery("input#" + category).click();
         }
