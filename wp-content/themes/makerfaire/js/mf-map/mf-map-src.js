@@ -108,11 +108,6 @@ jQuery(document).ready(function () {
 					_self.detectBrowser();
 					// _self.getLocation();
 					_self.initMap();
-					typeFilters.forEach(category => {
-						if (categories.includes(toLowerCase(category))) {
-							jQuery
-						}
-					});
 				})
 				.catch(function (error) {
 					console.log("Error: " + error);

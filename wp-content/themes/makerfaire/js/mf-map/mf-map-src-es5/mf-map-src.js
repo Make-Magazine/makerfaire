@@ -116,11 +116,6 @@ jQuery(document).ready(function () {
         _self.detectBrowser();
         // _self.getLocation();
         _self.initMap();
-        typeFilters.forEach(function (category) {
-          if (categories.includes(toLowerCase(category))) {
-            jQuery;
-          }
-        });
       })["catch"](function (error) {
         console.log("Error: " + error);
         _self.$refs.loadingIndicator.classList.add("hidden");
