@@ -124,8 +124,7 @@ jQuery(document).ready(function () {
 			typeFilters.forEach(category => {
 				if(category == "Flagship") { category = "Global"; }
 				if(category == "Mini") { category = "Community"; }
-				if(!categories.includes(category.toLowerCase())) {
-					console.log("input#" + category);
+				if(!categories.includes(category)) {
 					jQuery("input#" + category).click();
 				}
 			});

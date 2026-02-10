@@ -135,8 +135,7 @@ jQuery(document).ready(function () {
         if (category == "Mini") {
           category = "Community";
         }
-        if (!categories.includes(category.toLowerCase())) {
-          console.log("input#" + category);
+        if (!categories.includes(category)) {
           jQuery("input#" + category).click();
         }
       });
