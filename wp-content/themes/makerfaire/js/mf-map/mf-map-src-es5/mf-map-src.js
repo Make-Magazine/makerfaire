@@ -7,7 +7,7 @@ jQuery(document).ready(function () {
 
   var firstLoaded = true; // we only want to sort by date on the first load, otherwise keep their selected sorting order
   var typeFilters = ["Featured", "Flagship", "Mini", "School"];
-  var categories = getUrlParam('categories');
+  var categories = getUrlParam('categories').split(',');
   Vue.use(VueTables.ClientTable);
   Vue.use(VueTables.Event);
   var vm = new Vue({
@@ -118,7 +118,7 @@ jQuery(document).ready(function () {
           }
         });
       })["catch"](function (error) {
-        console.log(error);
+        console.log("Error: ".error);
         _self.$refs.loadingIndicator.classList.add("hidden");
         _self.$refs.errorIndicator.classList.remove("hidden");
       });
@@ -557,6 +557,7 @@ jQuery(document).ready(function () {
 
 jQuery(window).load(function () {
   typeFilters.forEach(function (category) {
+    console.log(category);
     if (categories.includes(category.toLowerCase())) {
       console.log("input#" + category);
       jQuery("input#" + category).click();
