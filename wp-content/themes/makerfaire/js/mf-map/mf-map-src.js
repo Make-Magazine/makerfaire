@@ -157,8 +157,10 @@ jQuery(document).ready(function () {
 				//set the years drop down
 				const currentYear = new Date().getFullYear();
 				this.years = this.outputData
-					.map((item) => item.faire_year <= currentYear) // filter out future years
-					.filter((value, index, self) => self.indexOf(value) === index);
+					.map((item) => item.faire_year)
+					// Filter for uniqueness AND ensure the year is not in the future
+					.filter((value, index, self) => self.indexOf(value) === index && value <= currentYear);
+
 				this.years = numRevSort(this.years);
 
 				// filter out the past faires
