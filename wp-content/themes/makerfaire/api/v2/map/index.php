@@ -51,9 +51,19 @@ if ( $type == 'map' ) {
       event_start_dt, event_end_dt, cfm_start_dt, cfm_end_dt, cfm_url, faire_url, 
       ticket_site_url, free_event, venue_address_street, venue_address_city, 
       venue_address_state, venue_address_country, venue_address_postal_code, 
+      venue_address_region, faire_image
+  FROM {$table}";
+
+  /* Old code that translated states from abbreviations into long form 
+    $select_query = "SELECT 
+      ID, faire_shortcode, faire_name, lat, lng, faire_year, event_type, event_dt, 
+      event_start_dt, event_end_dt, cfm_start_dt, cfm_end_dt, cfm_url, faire_url, 
+      ticket_site_url, free_event, venue_address_street, venue_address_city, 
+      venue_address_state, venue_address_country, venue_address_postal_code, 
       venue_address_region, faire_image, states.state
   FROM {$table}
   LEFT OUTER JOIN states ON state_code = venue_address_state";
+  */
 
   $where = '';
   $order = '';
