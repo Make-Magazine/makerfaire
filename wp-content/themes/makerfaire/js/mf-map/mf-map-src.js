@@ -116,17 +116,20 @@ jQuery(document).ready(function () {
 				});
 		},
 		mounted: function() {
+			firstLoaded = true;
 			// pre filter the map based on category. categories is from the categories query parameter
 			var buttons = ["Global", "Featured", "Community", "School"];
 			categories = categories.map(word => 
 				word.charAt(0).toUpperCase() + word.slice(1)
 			);
-			buttons.forEach(category => {
-				if(!categories.includes(category)) {
-					if(category == "Community") { category = "Mini"; }
-					jQuery("input#" + category).click();
-				}
-			});
+			if(categories.length != 0) {
+				buttons.forEach(category => {
+					if(!categories.includes(category)) {
+						if(category == "Community") { category = "Mini"; }
+						jQuery("input#" + category).click();
+					}
+				});
+			}
 		},
 		updated: function () {
 			firstLoaded = false;
@@ -152,8 +155,9 @@ jQuery(document).ready(function () {
 				}
 
 				//set the years drop down
+				const currentYear = new Date().getFullYear();
 				this.years = this.outputData
-					.map((item) => item.faire_year)
+					.map((item) => item.faire_year <= currentYear) // filter out future years
 					.filter((value, index, self) => self.indexOf(value) === index);
 				this.years = numRevSort(this.years);
 
