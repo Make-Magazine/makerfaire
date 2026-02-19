@@ -644,3 +644,9 @@ function gf_wprocket()  {
 }
 add_action( 'gform_register_init_scripts', 'gf_wprocket', 9999, 0 );
 */
+
+function rocket_lrc_excluded_attributes( $exclusions ) {
+    $exclusions[] = 'class="universal-footer"';
+    return $exclusions;
+}
+add_filter( 'rocket_lrc_excluded_attributes', 'rocket_lrc_excluded_attributes' );
