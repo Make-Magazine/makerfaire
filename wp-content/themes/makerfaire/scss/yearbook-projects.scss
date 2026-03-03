@@ -79,6 +79,7 @@
 				.project-picture {
 					display: flex;
 					align-items: center;
+					justify-content: center;
 					img {
 						border-radius:10px;
 						overflow:hidden;
@@ -86,6 +87,9 @@
 						@media screen and (min-width: 982px) {
 							margin-left: 50px;
 						}
+					}
+					@media screen and (max-width:768px) {
+						margin-top: 15px;
 					}
 				}
 			}
