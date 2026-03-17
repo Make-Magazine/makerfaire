@@ -31,7 +31,7 @@ class GravityView_Plugin_Hooks_Gravity_Forms_Chained_Selects extends GravityView
 
 		add_filter( 'gravityview/search/searchable_fields', array( $this, 'modify_searchable_fields' ), 10, 2 );
 
-		add_filter( 'gravityview/search/searchable_fields/allowlist', array( $this, 'modify_searchable_fields_allowlist' ), 10, 3 );
+		add_filter( 'gk/gravityview/search/searchable-fields/allowed', array( $this, 'modify_searchable_fields_allowlist' ), 10, 3 );
 
 		add_filter( 'gravityview/search/input_labels', array( $this, 'add_input_label' ) );
 

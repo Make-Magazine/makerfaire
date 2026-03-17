@@ -37,8 +37,16 @@ class View_DataTable_Template extends View_Template {
 		$fields = $this->view->fields->by_position( 'directory_table-columns' );
 		$form   = $this->view->form;
 
+		$visible_field_ids = array();
+
 		/** @todo Add class filters from the old code. */
 		foreach ( $fields->by_visible()->all() as $field ) {
+
+			if ( 'custom' == $field->type ) {
+				$visible_field_ids[] = 'custom_' . $field->UID;
+			} else {
+				$visible_field_ids[] = $field->ID;
+			}
 
 			$column_label = apply_filters( 'gravityview/template/field_label', $field->get_label( $this->view, $form ), $field->as_configuration(), $form->form ? $form->form : null, null );
 
@@ -47,6 +55,33 @@ class View_DataTable_Template extends View_Template {
 				'{field_id}'  => esc_attr( $field->ID ),
 				'{css_class}' => gravityview_sanitize_html_class( $field->custom_class ),
 				'{width}'     => $field->width ? sprintf( ' style="width: %d%%"', $field->width ) : '',
+				'{label}'     => $column_label,
+			) );
+		}
+
+		// Add hidden column headers for sort fields that aren't in the visible columns.
+		$sort_field_setting = (array) $this->view->settings->get( 'sort_field', array() );
+
+		foreach ( $sort_field_setting as $sort_field ) {
+			if ( empty( $sort_field ) || in_array( $sort_field, $visible_field_ids ) ) {
+				continue;
+			}
+
+			// Create a field object for the hidden sort field.
+			$hidden_field = is_numeric( $sort_field )
+				? \GV\GF_Field::by_id( $this->view->form, $sort_field )
+				: \GV\Internal_Field::by_id( $sort_field );
+
+			if ( ! $hidden_field ) {
+				continue;
+			}
+
+			$column_label = apply_filters( 'gravityview/template/field_label', $hidden_field->get_label( $this->view, $form ), $hidden_field->as_configuration(), $form->form ? $form->form : null, null );
+
+			// Output hidden column header.
+			echo strtr( '<th id="gv-field-{form_id}-{field_id}" class="gv-field-{form_id}-{field_id} gv-hidden-sort-column" scope="col"><span class="gv-field-label">{label}</span></th>', array(
+				'{form_id}'   => esc_attr( $form->ID ),
+				'{field_id}'  => esc_attr( $sort_field ),
 				'{label}'     => $column_label,
 			) );
 		}
@@ -62,13 +97,13 @@ class View_DataTable_Template extends View_Template {
 	 */
 	public function the_entry( \GV\Entry $entry, $attributes ) {
 		/**
-		 * @filter `gravityview/entry/row/attributes` Filter the row attributes for the row in table view.
-		 *
-		 * @param array $attributes The HTML attributes.
-		 * @param \GV\Entry $entry The entry this is being called for.
-		 * @param \GV\View_Template This template.
+		 * Filter the row attributes for the row in table view.
 		 *
 		 * @since 2.0
+		 *
+		 * @param array             $attributes The HTML attributes.
+		 * @param \GV\Entry         $entry      The entry this is being called for.
+		 * @param \GV\View_Template $this       This template.
 		 */
 		$attributes = apply_filters( 'gravityview/entry/row/attributes', $attributes, $entry, $this );
 
@@ -104,14 +139,14 @@ class View_DataTable_Template extends View_Template {
 		);
 
 		/**
-		 * @filter `gravityview/entry/cell/attributes` Filter the row attributes for the row in table view.
-		 *
-		 * @param array $attributes The HTML attributes.
-		 * @param \GV\Field $field The field these attributes are for.
-		 * @param \GV\Entry $entry The entry this is being called for.
-		 * @param \GV\View_Template This template.
+		 * Filter the row attributes for the row in table view.
 		 *
 		 * @since 2.0
+		 *
+		 * @param array             $attributes The HTML attributes.
+		 * @param \GV\Field         $field      The field these attributes are for.
+		 * @param \GV\Entry         $entry      The entry this is being called for.
+		 * @param \GV\View_Template $this       This template.
 		 */
 		$attributes = apply_filters( 'gravityview/entry/cell/attributes', $attributes, $field, $entry, $this );
 

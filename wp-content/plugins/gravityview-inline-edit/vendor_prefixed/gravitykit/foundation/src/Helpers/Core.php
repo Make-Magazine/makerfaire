@@ -2,7 +2,7 @@
 /**
  * @license GPL-2.0-or-later
  *
- * Modified by __root__ on 05-December-2025 using Strauss.
+ * Modified using Strauss.
  * @see https://github.com/BrianHenryIE/strauss
  */
 
@@ -248,19 +248,21 @@ class Core {
 	 * @since 1.0.4 Moved from GravityKit\Foundation\Licenses\ProductManager to GravityKit\Foundation\Helpers\Core.
 	 * @since 1.2.0 Added $skip_cache parameter.
 	 * @since 1.2.12 Added $author_str & $return_multiple parameters.
+	 * @since 2.7.2 $text_domains now accepts an array in addition to a pipe-separated string.
 	 *
-	 * @param string $text_domains_str Text domain(s). Optionally pipe-separated (e.g. 'gravityview|gk-gravtiyview').
-	 * @param bool   $skip_cache       (optional) Whether to skip cache when getting plugins data. Default: false.
-	 * @param string $author_str       (optional) Plugins author(s). Optionally pipe-separated (e.g. 'GravityView|GravityKit|Katz Web Services, Inc.').
-	 * @param bool   $return_multiple  (optional) Whether to return multiple plugins that may share the same author/text domain. Default: false.
+	 * @param string|array $text_domains  Text domain(s). Either an array or a pipe-separated string (e.g. 'gravityview|gk-gravityview').
+	 * @param bool         $skip_cache    (optional) Whether to skip cache when getting plugins data. Default: false.
+	 * @param string       $author_str    (optional) Plugins author(s). Optionally pipe-separated (e.g. 'GravityView|GravityKit|Katz Web Services, Inc.').
+	 * @param bool         $return_multiple (optional) Whether to return multiple plugins that may share the same author/text domain. Default: false.
 	 *
 	 * @return array|null An array with plugin data, array of arrays with multiple plugins data, or null if not installed.
 	 */
-	public static function get_installed_plugin_by_text_domain( $text_domains_str, $skip_cache = false, $author_str = '', $return_multiple = false ) {
+	public static function get_installed_plugin_by_text_domain( $text_domains, $skip_cache = false, $author_str = '', $return_multiple = false ) {
 		$installed_plugins = self::get_installed_plugins( $skip_cache );
 
 		$plugins      = [];
-		$text_domains = explode( '|', strtolower( $text_domains_str ) );
+		$text_domains = is_array( $text_domains ) ? $text_domains : explode( '|', $text_domains );
+		$text_domains = array_map( 'strtolower', $text_domains );
 		$authors      = '' === $author_str ? [] : explode( '|', strtolower( $author_str ) );
 
 		foreach ( $installed_plugins as $plugin ) {

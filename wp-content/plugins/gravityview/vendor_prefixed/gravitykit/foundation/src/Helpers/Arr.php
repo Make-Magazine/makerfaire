@@ -2,7 +2,7 @@
 /**
  * @license GPL-2.0-or-later
  *
- * Modified by gravityview on 05-December-2025 using {@see https://github.com/BrianHenryIE/strauss}.
+ * Modified using {@see https://github.com/BrianHenryIE/strauss}.
  */
 
 namespace GravityKit\GravityView\Foundation\Helpers;
@@ -122,7 +122,7 @@ class Arr extends IlluminateArr {
 	 *
 	 * @since 1.0.0
 	 */
-	public static function first( $array, callable $callback = null, $default = null ) {
+	public static function first( $array, ?callable $callback = null, $default = null ) {
 		return parent::first( $array, $callback, $default );
 	}
 
@@ -167,7 +167,7 @@ class Arr extends IlluminateArr {
 	 *
 	 * @since 1.0.0
 	 */
-	public static function last( $array, callable $callback = null, $default = null ) {
+	public static function last( $array, ?callable $callback = null, $default = null ) {
 		return parent::last( $array, $callback, $default );
 	}
 

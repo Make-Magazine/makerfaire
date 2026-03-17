@@ -2,7 +2,7 @@
 /**
  * @license GPL-2.0-or-later
  *
- * Modified by __root__ on 05-December-2025 using Strauss.
+ * Modified using Strauss.
  * @see https://github.com/BrianHenryIE/strauss
  */
 
@@ -702,7 +702,10 @@ class ProductDependencyChecker {
 			$gk_product = Arr::first(
 				$this->products,
 				function ( $product ) use ( $text_domain ) {
-					return $product['text_domain'] === $text_domain;
+					// Match against text_domains (combined current + legacy) if available, falling back to text_domain.
+					$product_text_domains = $product['text_domains'] ?? [ $product['text_domain'] ];
+
+					return in_array( $text_domain, $product_text_domains, true );
 				}
 			);
 

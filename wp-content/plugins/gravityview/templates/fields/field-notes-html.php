@@ -30,16 +30,20 @@ require_once GFCommon::get_base_path() . '/entry_detail.php';
 /**
  * Print scripts and styles required for the Notes field.
  *
- * @see GravityView_Field_Notes::enqueue_scripts
  * @since 1.17
- * @since 2.0
- * @param \GV\Template_Context $gravityview The context.
+ * @since 2.0 Changed parameter to \GV\Template_Context.
+ *
+ * @see GravityView_Field_Notes::enqueue_scripts
+ *
+ * @param \GV\Template_Context $gravityview The template context.
  */
 do_action( 'gravityview/field/notes/scripts', $gravityview );
 
-$notes      = (array) GravityView_Entry_Notes::get_notes( $entry['id'] );
-$strings    = GravityView_Field_Notes::strings();
-$entry_slug = GravityView_API::get_entry_slug( $entry['id'], $entry );
+$notes              = (array) GravityView_Entry_Notes::get_notes( $entry['id'] );
+$exclude_note_types = \GV\Utils::get( $field_settings, 'exclude_note_types', [] );
+$notes              = GravityView_Field_Notes::filter_notes_by_type( $notes, $exclude_note_types );
+$strings            = GravityView_Field_Notes::strings();
+$entry_slug         = GravityView_API::get_entry_slug( $entry['id'], $entry );
 
 $show_add    = ! empty( $visibility_settings['add'] );
 $show_delete = ( ! empty( $visibility_settings['delete'] ) && GVCommon::has_cap( 'gravityview_delete_entry_notes' ) );

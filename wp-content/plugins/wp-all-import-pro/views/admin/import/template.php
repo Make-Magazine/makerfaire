@@ -1,6 +1,12 @@
 <h2 class="wpallimport-wp-notices"></h2>
 
-<form class="wpallimport-template <?php echo ! $this->isWizard ? 'edit' : '' ?> wpallimport-step-3" method="post">
+<?php
+// Build form classes
+$form_classes = 'wpallimport-template ' . ( ! $this->isWizard ? 'edit' : '' ) . ' wpallimport-step-3';
+$form_classes = apply_filters( 'pmxi_template_form_class', $form_classes, $this );
+?>
+
+<form class="<?php echo esc_attr( $form_classes ); ?>" method="post">
 
 	<!-- Hidden field for preview unique key override - updated by preview modal before refresh -->
 	<input type="hidden" name="wpai_preview_unique_key" id="wpai-preview-unique-key-hidden" value="" />
@@ -9,7 +15,7 @@
 		<div class="wpallimport-header">
 			<div class="wpallimport-logo"></div>
 			<div class="wpallimport-title">
-				<h2><?php _e('Drag & Drop', 'wp-all-import-pro'); ?></h2>
+				<h2><?php echo esc_html( apply_filters( 'pmxi_template_title', __('Drag & Drop', 'wp-all-import-pro'), $this ) ); ?></h2>
 			</div>
 			<div class="wpallimport-links">
 				<a href="http://www.wpallimport.com/support/" target="_blank"><?php _e('Support', 'wp-all-import-pro'); ?></a> | <a href="http://www.wpallimport.com/documentation/" target="_blank"><?php _e('Documentation', 'wp-all-import-pro'); ?></a>
@@ -18,8 +24,32 @@
 		<div class="clear"></div>
 	</div>
 
+	<?php
+	/**
+	 * Hook: pmxi_template_before_content
+	 *
+	 * Allows plugins to inject content before the template content.
+	 *
+	 * @param object $this The controller instance
+	 */
+	do_action( 'pmxi_template_before_content', $this );
+	?>
 
 
+
+	<?php
+	/**
+	 * Filter: pmxi_template_content_wrapper_style
+	 *
+	 * Allows plugins to set inline styles on the template content wrapper.
+	 * Used by the LLM Bridge plugin to hide content during AI configuration.
+	 *
+	 * @param string $style Inline style string (empty by default)
+	 * @param object $this The controller instance
+	 */
+	$wrapper_style = apply_filters( 'pmxi_template_content_wrapper_style', '', $this );
+	?>
+	<div class="wpai-normal-template-content" <?php echo !empty($wrapper_style) ? 'style="' . esc_attr($wrapper_style) . '"' : ''; ?>>
 
 	<?php $visible_sections = apply_filters('pmxi_visible_template_sections', array('caption', 'main', 'taxonomies', 'cf', 'featured', 'other', 'nested'), $post['custom_type']); ?>
 
@@ -259,6 +289,8 @@
 			<?php endif ?>
 		</tr>
 	</table>
+
+	</div><!-- .wpai-normal-template-content -->
 
 </form>
 

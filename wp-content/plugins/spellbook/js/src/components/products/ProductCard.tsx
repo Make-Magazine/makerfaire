@@ -114,6 +114,17 @@ const ProductCard = memo(<T extends BaseProduct>({ product }: ProductCardProps<T
 	const mutations = useProductMutations();
 	const { data: productDetails, isLoading: isLoadingDetails, refetch: fetchProductDetails } = useProductDetails(product.ID);
 
+	const settingsSrc = useMemo(() => {
+		const settingsUrl = new URL(window.location.href);
+		settingsUrl.hash = '';
+		settingsUrl.search = '';
+		settingsUrl.searchParams.set('page', 'gwp_perks');
+		settingsUrl.searchParams.set('view', 'perk_settings');
+		settingsUrl.searchParams.set('slug', product.plugin_file);
+
+		return `${settingsUrl.pathname}${settingsUrl.search}`;
+	}, [product.plugin_file]);
+
 	const handleChangelogClick = () => {
 		// Fetch product details if we don't have changelog data
 		if (!productDetails?.sections?.changelog) {
@@ -360,7 +371,7 @@ const ProductCard = memo(<T extends BaseProduct>({ product }: ProductCardProps<T
 					className="spellbook-modal spellbook-plugin-settings-modal"
 				>
 					<PluginSettingsFrame
-						src={`/wp-admin/admin.php?page=gwp_perks&view=perk_settings&slug=${product.plugin_file}`}
+						src={settingsSrc}
 					/>
 				</Modal>
 			)}

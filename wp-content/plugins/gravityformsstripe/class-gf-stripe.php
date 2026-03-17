@@ -56,7 +56,7 @@ class GFStripe extends GFPaymentAddOn {
 	 *
 	 * @var string $_min_gravityforms_version The minimum version required.
 	 */
-	protected $_min_gravityforms_version = '1.9.14.17';
+	protected $_min_gravityforms_version = '2.9.26';
 
 	/**
 	 * Defines the plugin slug.
@@ -518,6 +518,7 @@ class GFStripe extends GFPaymentAddOn {
 					'create_payment_intent_nonce'         => wp_create_nonce( 'gfstripe_create_payment_intent' ),
 					'create_subscription_nonce'           => wp_create_nonce( 'gfstripe_create_subscription' ),
 					'increase_error_count_nonce'          => wp_create_nonce( 'gfstripe_increase_error_count' ),
+					'update_entry_failed_nonce'           => wp_create_nonce( 'gfstripe_update_entry_failed' ),
 					'get_entry_nonce'                     => wp_create_nonce( 'gfstripe_get_entry' ),
 					'get_country_code_nonce'              => wp_create_nonce( 'gfstripe_get_country_code' ),
 					'handle_successful_entry_nonce'       => wp_create_nonce( 'gfstripe_handle_successful_entry' ),

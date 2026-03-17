@@ -1,7 +1,7 @@
 === GravityView - Advanced Filter Extension ===
 Tags: GravityView, Gravity Forms, filtering, conditional logic
 Requires at least: 4.4
-Tested up to: 6.9
+Tested up to: 6.9.1
 Contributors: GravityKit
 License: GPLv3 or later
 
@@ -14,6 +14,19 @@ Filter which entries are shown in a View based on their values.
 3. Follow the instructions
 
 == Changelog ==
+
+= 4.4.0 on February 19, 2026 =
+
+This release improves Repeater field support and SQLite compatibility, and fixes issues with dynamic field values and relative date filters.
+
+#### ✨ Improved
+* Nested field labels now include their parent field name for easier identification.
+* Compatibility with WordPress installations using SQLite.
+* Support for Repeater fields.
+
+#### 🐛 Fixed
+* Dynamically-added custom values in dropdown, checkbox, and radio fields not displaying correctly.
+* Relative date filters (e.g., "Today") using the `is` operator not matching same-day entries.
 
 = 4.3.1 on December 4, 2025 =
 

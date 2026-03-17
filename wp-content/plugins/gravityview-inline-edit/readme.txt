@@ -1,7 +1,7 @@
 === GravityEdit ===
 Tags: gravity forms, inline edit, gravityview
 Requires at least: 5.1
-Tested up to: 6.9
+Tested up to: 6.9.1
 Contributors: The GravityKit Team
 License: GPL 2
 Requires PHP: 7.2.0
@@ -19,6 +19,67 @@ Inline Editing is a powerful way to quickly make changes to a form entry without
 3. Set your license key
 
 == Changelog ==
+
+= 2.9.2 on March 5, 2026 =
+
+This release fixes inline editing of dynamically populated choice fields, such as those using GP Populate Anything.
+
+#### 🐛 Fixed
+* Multiple issues with inline editing of dynamically populated choice fields (e.g., via GP Populate Anything):
+  - Checkbox values were wiped or corrupted when saving;
+  - Editing an unrelated field in the same entry corrupted checkbox values;
+  - Choice labels were replaced with raw IDs/values after saving;
+  - Select fields displayed raw values instead of labels.
+
+= 2.9.1 on February 26, 2026 =
+
+This release fixes inline editing issues affecting Email and Dynamic Lookup fields.
+
+#### 🐛 Fixed
+* Inline editing always showing a "Your emails do not match" error for Email fields with confirmation enabled.
+* Dynamic Lookup field values not visually updating after inline editing until the page was refreshed.
+
+#### 🔧 Updated
+* [Foundation](https://www.gravitykit.com/foundation/) to version 1.11.0.
+
+= 2.9.0 on February 12, 2026 =
+
+This update lets you control whether DataTables refreshes after saving inline edits, and resolves issues with Single Entry lightbox, Custom Content field links, and session handling.
+
+#### 🚀 Added
+* View editor setting to control whether the DataTables table automatically refreshes after saving an inline edit.
+
+#### 🐛 Fixed
+* JavaScript error ("View ID is undefined when setting initial state") when viewing a single entry in a GravityView lightbox.
+* Links in Custom Content fields were not clickable when inline edit mode was active.
+* Inline edits failing silently when the user's session expired, causing changes to appear saved but revert on page reload.
+
+#### 💻 Developer Updates
+* Added `gk.datatables.inline-edit.refresh` JavaScript filter to override whether the DataTables table refreshes after an inline edit save.
+
+#### 🔧 Updated
+* [Foundation](https://www.gravitykit.com/foundation/) to version 1.10.0.
+
+= 2.8.0 on January 22, 2026 =
+
+This release improves the inline editing experience for DataTables users.
+
+#### ✨ Improved
+* Views using the [DataTables](https://www.gravitykit.com/products/datatables/) layout now refresh immediately after inline editing.
+
+#### 🔧 Updated
+* [Foundation](https://www.gravitykit.com/foundation/) to version 1.7.2.
+
+= 2.7.1 on January 15, 2026 =
+
+This update fixes incorrect display of the Image Choices field and Entry Tags field editing on the Entries page.
+
+#### 🐛 Fixed
+* Image Choices field incorrectly displaying images for choices with empty values.
+* [Gravity Forms Entry Tags](https://www.gravitykit.com/products/gravity-forms-entry-tags/) field editing not working on the Entries page.
+
+#### 🔧 Updated
+* [Foundation](https://www.gravitykit.com/foundation/) to version 1.7.1.
 
 = 2.7.0 on December 4, 2025 =
 

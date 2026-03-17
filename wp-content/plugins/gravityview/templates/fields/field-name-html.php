@@ -13,18 +13,35 @@ if ( ! isset( $gravityview ) || empty( $gravityview->template ) ) {
 	return;
 }
 
-$field_id      = $gravityview->field->ID;
-$field         = $gravityview->field->field;
-$display_value = $gravityview->display_value;
-$entry         = $gravityview->entry->as_entry();
+$field_id        = $gravityview->field->ID;
+$field           = $gravityview->field->field;
+$value           = $gravityview->value;
+$display_value   = $gravityview->display_value;
+$entry           = $gravityview->entry->as_entry();
+$field_settings  = $gravityview->field->as_configuration();
+$is_single_input = floor( $field_id ) !== floatval( $field_id );
 
-
-$field_settings = $gravityview->field->as_configuration();
-
-if ( floatval( $field_id ) != intval( $field_id ) ) {
+if ( $is_single_input ) {
+	// Single input (e.g., just First Name): get the specific entry value.
 	$display_value = esc_html( gravityview_get_field_value( $entry, $field_id, $display_value ) );
 } else {
-	$display_value = gravityview_get_field_value( $entry, $field_id, $display_value );
+	// Full name field: filter out hidden inputs based on GF field settings.
+	if ( is_array( $field->inputs ) ) {
+		foreach ( $field->inputs as $input ) {
+			if ( ! empty( $input['isHidden'] ) ) {
+				unset( $value[ "{$input['id']}" ] );
+			}
+		}
+	}
+
+	// GF 2.9.29+ expects the full entry array; older versions expect a currency string.
+	$entry_or_currency = version_compare( GFForms::$version, '2.9.28', '>' ) ? $entry : '';
+
+	$display_value = GFCommon::get_lead_field_display( $field, $value, $entry_or_currency, false, 'html' );
+
+	if ( empty( $display_value ) ) {
+		return;
+	}
 }
 
 if ( ! empty( $field_settings['show_as_initials'] ) ) {

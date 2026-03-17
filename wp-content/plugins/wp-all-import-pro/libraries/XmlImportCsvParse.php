@@ -1,5 +1,49 @@
 <?php
 
+/**
+ * Stream filter that normalizes line endings to \n.
+ *
+ * Replaces the deprecated auto_detect_line_endings INI setting by operating
+ * at the same stream layer. Handles \r\n (Windows), \r (old Mac), and \n (Unix).
+ */
+class PMXI_Line_Ending_Filter extends php_user_filter {
+
+    /** @var string Buffered trailing \r that might precede \n in the next chunk. */
+    private $carry = '';
+
+    public function filter( $in, $out, &$consumed, $closing ) {
+        while ( $bucket = stream_bucket_make_writeable( $in ) ) {
+            $data = $this->carry . $bucket->data;
+            $this->carry = '';
+
+            // Buffer a trailing \r — it might be the first half of \r\n split across chunks.
+            if ( ! $closing && strlen( $data ) > 0 && $data[ strlen( $data ) - 1 ] === "\r" ) {
+                $this->carry = "\r";
+                $data = substr( $data, 0, -1 );
+            }
+
+            // \r\n → \n first, then remaining standalone \r → \n.
+            $bucket->data = str_replace( array( "\r\n", "\r" ), "\n", $data );
+            $consumed += $bucket->datalen;
+            stream_bucket_append( $out, $bucket );
+        }
+
+        // Flush any buffered \r at end-of-stream.
+        if ( $closing && $this->carry !== '' ) {
+            $bucket = stream_bucket_new( $this->stream, "\n" );
+            stream_bucket_append( $out, $bucket );
+            $this->carry = '';
+        }
+
+        return PSFS_PASS_ON;
+    }
+}
+
+// Register once when the file is loaded.
+if ( ! in_array( 'pmxi_line_ending', stream_get_filters(), true ) ) {
+    stream_filter_register( 'pmxi_line_ending', 'PMXI_Line_Ending_Filter' );
+}
+
 class PMXI_CsvParser
 {
     public
@@ -102,9 +146,6 @@ class PMXI_CsvParser
         if (!empty($options['xml_path'])) $this->xml_path = $options['xml_path'];
 
         @ini_set( "display_errors", 0);
-        if (version_compare(phpversion(), '8.1', '<')) {
-            @ini_set( 'auto_detect_line_endings', true );
-        }
 
         $file_params = self::analyse_file($options['filename'], 1);
 
@@ -936,9 +977,6 @@ class PMXI_CsvParser
     }
 
     function toXML( $fixBrokenSymbols = false ){
-        // Temporarily suppress deprecation warnings.
-        $currentErrorReporting = error_reporting();
-        error_reporting($currentErrorReporting & ~E_DEPRECATED);
 
         $c = 0;
         $d = ( "" != $this->delimiter ) ? $this->delimiter : $this->settings['delimiter'];
@@ -958,11 +996,8 @@ class PMXI_CsvParser
 
         if ($is_html) return;
 
-        // TODO: replace when PHP 9 releases
-        $originalAutoDetectLineEndings = @ini_get('auto_detect_line_endings'); // phpcs:ignore WordPress.PHP.NoSilencedErrors.Discouraged
-        @ini_set('auto_detect_line_endings', true); // phpcs:ignore WordPress.PHP.NoSilencedErrors.Discouraged
-
         $res = fopen($this->_filename, 'rb');
+        stream_filter_append( $res, 'pmxi_line_ending' );
 
         $xmlWriter = new XMLWriter();
         $xmlWriter->openURI($this->xml_path);
@@ -1065,12 +1100,6 @@ class PMXI_CsvParser
         fclose($res);
         $xmlWriter->endElement();
         $xmlWriter->flush(TRUE);
-
-        // TODO: replace when PHP 9 releases
-        @ini_set('auto_detect_line_endings', $originalAutoDetectLineEndings); // phpcs:ignore WordPress.PHP.NoSilencedErrors.Discouraged
-
-        // Restore original error reporting level.
-        error_reporting($currentErrorReporting);
 
         return TRUE;
     }

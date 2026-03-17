@@ -65,7 +65,17 @@ class GPMultiPageNavigation {
 			pagesVisited.add(currentPageIndex);
 			this.setPagesVisitedHiddenInput(pagesVisited);
 
-			this.pagesVisited.forEach((pageId) => {
+			// Validate all pages in the range (including missing ones).
+			const pagesToValidate = [];
+			if (this.pagesVisited.size > 0) {
+				const minPage = Math.min(...Array.from(this.pagesVisited));
+				const maxPage = Math.max(...Array.from(this.pagesVisited));
+				for (let pageId = minPage; pageId <= maxPage; pageId++) {
+					pagesToValidate.push(pageId);
+				}
+			}
+
+			pagesToValidate.forEach((pageId) => {
 				this.pageValidity[pageId] = gppt.validatePage(pageId);
 			});
 		});

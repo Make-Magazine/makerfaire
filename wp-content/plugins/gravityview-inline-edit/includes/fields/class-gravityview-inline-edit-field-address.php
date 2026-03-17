@@ -92,7 +92,7 @@ class GravityView_Inline_Edit_Field_Address extends GravityView_Inline_Edit_Fiel
 	 *
 	 * @return array
 	 */
-	public function _get_inline_edit_extra_data( $gf_field, $entry ) {
+	protected function get_inline_edit_extra_data( $gf_field, $entry ) {
 
 		$address = array();
 

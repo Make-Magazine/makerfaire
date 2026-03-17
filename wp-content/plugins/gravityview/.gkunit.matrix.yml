@@ -1,0 +1,11 @@
+php:
+  - '7.4'
+  - '8.2'
+
+db:
+  - mysql:8.0
+
+overrides:
+  '7.4':
+    db:
+      - mysql:5.7

@@ -8,7 +8,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  *
- * Modified by __root__ on 05-December-2025 using Strauss.
+ * Modified using Strauss.
  * @see https://github.com/BrianHenryIE/strauss
  */
 
@@ -756,7 +756,7 @@ class Response
      *
      * @final since version 3.2
      */
-    public function setExpires(\DateTime $date = null)
+    public function setExpires(?\DateTime $date = null)
     {
         if (null === $date) {
             $this->headers->remove('Expires');
@@ -916,7 +916,7 @@ class Response
      *
      * @final since version 3.2
      */
-    public function setLastModified(\DateTime $date = null)
+    public function setLastModified(?\DateTime $date = null)
     {
         if (null === $date) {
             $this->headers->remove('Last-Modified');

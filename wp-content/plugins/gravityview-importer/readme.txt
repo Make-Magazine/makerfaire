@@ -1,7 +1,7 @@
 === GravityImport ===
 Tags: gravitykit, gravityview, gravity forms, import
-Requires at least: 5.0
-Tested up to: 6.8.2
+Requires at least: 6.2
+Tested up to: 6.9.4
 Stable tag: trunk
 Contributors: The GravityKit Team
 License: GPL 3 or higher
@@ -21,12 +21,74 @@ Easily import Gravity Forms entries from a CSV file. Learn more on [gravitykit.c
 
 == Changelog ==
 
+= 2.9.0 on March 12, 2026 =
+
+This update adds background import processing, introduces the ability to retry failed records without re-importing successful ones, improves memory handling during imports, and fixes issues with cancelled import reporting and conditional logic settings.
+
+#### 🚀 Added
+* Background import processing:
+  - Imports now run in the background — you can close the browser tab and return later;
+  - A live progress notice appears across the WordPress admin with a link back to the import page;
+  - Pause, resume, and cancel controls are available on the import page.
+* Failed record recovery:
+  - Retry only the rows that failed — using the same field mapping or an updated one;
+  - Download failed rows as a CSV, including a column explaining why each row failed.
+
+#### ✨ Improved
+* Better memory handling when processing imports with many failed records.
+
+#### 🐛 Fixed
+* Conditional logic settings from a previous import no longer carry over when the option is disabled on the Configure step.
+* Cancelled imports now correctly report skipped and errored rows in the summary.
+
+#### 🔧 Updated
+* [Foundation](https://www.gravitykit.com/foundation/) to version 1.12.0.
+
+= 2.8.1 on February 26, 2026 =
+
+This hotfix restores the missing "Ignore Field Conditional Logic" toggle in the Configure step.
+
+#### 🐛 Fixed
+* "Ignore Field Conditional Logic" toggle not appearing in the Configure step, causing imported field values to be cleared when conditional logic conditions were not met by the CSV data.
+
+#### 🔧 Updated
+* [Foundation](https://www.gravitykit.com/foundation/) to version 1.11.0.
+
+= 2.8.0 on February 5, 2026 =
+
+This update completely redesigns the field mapping experience with a new vertical layout, adds pre-import data validation, includes numerous usability and accessibility improvements, and fixes a fatal error when importing List field data on PHP 8+.
+
+#### 🚀 Added
+* Redesigned field mapping interface with a vertical layout that's easier to scan and work with, especially for CSVs with many columns.
+* Pre-import validation warnings that highlight potential data issues like invalid emails, non-numeric values, or unrecognized date/time formats before importing.
+* Checkboxes to quickly select or deselect which columns to import, with a header checkbox to select or deselect all.
+* Auto-map button to reset field mappings to auto-detected values, with a confirmation dialog to prevent accidental resets.
+* Cell-level validation highlighting in the data preview, making it easier to spot exactly which values need attention.
+* Inline column name editing for renaming CSV column headers before importing.
+
+#### ✨ Improved
+* Validation now checks up to 50 rows of data (previously 10), giving a more accurate picture of potential issues before importing.
+* Date and time formats are now auto-detected from CSV data instead of requiring manual selection.
+* Datetime values with milliseconds (e.g., `2024-12-01 00:43:21.000`) are now parsed correctly.
+* Smarter field matching means fewer manual adjustments when mapping CSV columns to form fields.
+* Entry Notes now requires exact column name matches, preventing accidental mapping of unrelated columns.
+* Better keyboard navigation: use Tab to move between fields, Enter to confirm selections, and Escape to cancel edits.
+* Improved screen reader support and accessibility throughout the import interface.
+* Better support for right-to-left (RTL) languages.
+* The "Ignore Field Conditional Logic" option now only appears when the form actually has conditional logic.
+
+#### 🐛 Fixed
+* Fatal error when importing List field data on PHP 8+.
+
+#### 🔧 Updated
+* [Foundation](https://www.gravitykit.com/foundation/) to version 1.9.0.
+
 = 2.7.0 on September 11, 2025 =
 
 This update improves GravityView's Approval Status field imports and fixes PHP-related issues.
 
 #### ✨ Improved
-* Importing GravityView’s Approval Status values now works with both text labels ("Approved", "Disapproved", "Unapproved") and their numeric equivalents (1, 2, 3).
+* Importing GravityView's Approval Status values now works with both text labels ("Approved", "Disapproved", "Unapproved") and their numeric equivalents (1, 2, 3).
 
 #### 🐛 Fixed
 * PHP 8.1+ warnings and `intl` extension conflict on some hosts.

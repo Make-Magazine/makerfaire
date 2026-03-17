@@ -1,5 +1,38 @@
 # Changelog
 
+## 2.1.61 | March 11, 2026
+
+- Fixed an issue where undefined choice values triggered PHP deprecation notices and warnings.
+
+## 2.1.60 | February 27, 2026
+
+- Fixed upgrade version check for permissive LMT sanitization option.
+
+## 2.1.59 | February 25, 2026
+
+- Fixed an issue with Live Merge Tags on conditionally hidden phone fields.
+- Fixed an issue where Live Merge Tags could potentially cause a fatal error when checking address fields on GravityView.
+- Improved security of how HTML is handled in Live Merge Tags. Instead of running through `wp_kses_post`, `wp_kses` is used with a default of _no_ allowed tags. The old behavior will remain in place for existing Populate Anything installations for backwards compatibility. We recommend adding [`gppa_use_permissive_lmt_sanitization`](https://gravitywiz.com/documentation/gppa_use_permissive_lmt_sanitization) via `add_filter( 'gppa_use_permissive_lmt_sanitization', '__return_false' );` to switch to the stricter HTML stripping. You may configure allowed tags and attributes with [`gppa_lmt_kses_allowed_html`](https://gravitywiz.com/documentation/gppa_lmt_kses_allowed_html).
+
+## 2.1.58 | February 18, 2026
+
+- Added support to Object Types for allowing filtering on Boolean values.
+- Fixed an issue where runtime cache clearing did not reset merge tag and template caches.
+- Fixed an issue where Image Choice and Multiple Choice fields were not populating their values properly with GPPA.
+
+## 2.1.57 | February 4, 2026
+
+- Fixed an issue where Live Merge Tags did not copy the default selected value from one dropdown to another when the source dropdown had a default value set.
+
+## 2.1.56 | January 14, 2026
+
+- Added support for merge tags (including modifiers and multiple tags) in filter Custom Values.
+- Added support for additional string-based comparison operators when filtering the User object type by role.
+
+## 2.1.55 | January 7, 2026
+
+- Fixed an issue where AJAX field updates could fail with undefined product_meta.
+
 ## 2.1.54 | December 10, 2025
 
 - Added experimental [`gppa_flatten_multi_dimensional_array_to_index_array`](https://gravitywiz.com/documentation/gppa_flatten_multi_dimensional_array_to_index_array) filter hook.

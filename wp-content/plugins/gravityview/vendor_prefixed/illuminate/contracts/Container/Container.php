@@ -2,7 +2,7 @@
 /**
  * @license MIT
  *
- * Modified by gravityview on 05-December-2025 using {@see https://github.com/BrianHenryIE/strauss}.
+ * Modified using {@see https://github.com/BrianHenryIE/strauss}.
  */
 
 namespace GravityKit\GravityView\Foundation\ThirdParty\Illuminate\Contracts\Container;
@@ -143,7 +143,7 @@ interface Container
      * @param  \Closure|null  $callback
      * @return void
      */
-    public function resolving($abstract, Closure $callback = null);
+    public function resolving($abstract, ?Closure $callback = null);
 
     /**
      * Register a new after resolving callback.
@@ -152,5 +152,5 @@ interface Container
      * @param  \Closure|null  $callback
      * @return void
      */
-    public function afterResolving($abstract, Closure $callback = null);
+    public function afterResolving($abstract, ?Closure $callback = null);
 }

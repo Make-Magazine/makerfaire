@@ -1,6 +1,28 @@
 
 # Changelog
 
+## 1.2.22 | March 11, 2026
+
+- Updated French translations. Credit: Sébastien Canat.
+
+## 1.2.21 | February 25, 2026
+
+- Fixed an issue where Advanced Phone Field validation could fail on child entries when a {Parent} merge tag resolved to an empty value.
+- Fixed a potential fatal error when used in conjunction with GravityRevisions.
+- Fixed an issue where the modal did not become scrollable after GP Populate Anything live merge tags expanded field content.
+
+## 1.2.20 | February 18, 2026
+
+- Fixed an issue where orphaned child entries displayed a clickable parent entry hash that linked to a non-existent entry.
+
+## 1.2.19 | February 4, 2026
+
+- Added accessibility improvements to Nested Entries table headers.
+
+## 1.2.18 | January 21, 2026
+
+- Fixed an issue where a re-initialized Nested Forms instance could lose its view model.
+
 ## 1.2.17 | December 10, 2025
 
 - Fixed an issue where reCAPTCHA v3 failed on Nested Forms in Firefox.

@@ -2,7 +2,7 @@
 /**
  * @license MIT
  *
- * Modified by __root__ on 05-December-2025 using Strauss.
+ * Modified using Strauss.
  * @see https://github.com/BrianHenryIE/strauss
  */
 
@@ -144,7 +144,7 @@ interface Container
      * @param  \Closure|null  $callback
      * @return void
      */
-    public function resolving($abstract, Closure $callback = null);
+    public function resolving($abstract, ?Closure $callback = null);
 
     /**
      * Register a new after resolving callback.
@@ -153,5 +153,5 @@ interface Container
      * @param  \Closure|null  $callback
      * @return void
      */
-    public function afterResolving($abstract, Closure $callback = null);
+    public function afterResolving($abstract, ?Closure $callback = null);
 }

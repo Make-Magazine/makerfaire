@@ -1,5 +1,18 @@
-<?php gravityview_before(); ?>
+<?php
+/**
+ * @deprecated This template file is deprecated
+ */
+gravityview_before(); ?>
 <div id="gv-datatables-<?php echo $this->view_id; ?>" class="<?php gv_container_class('gv-datatables-container'); ?>">
+<?php
+/**
+ * Filter the CSS class for the DataTables table element
+ *
+ * @since 1.0
+ *
+ * @param string $class The CSS class for the table.
+ */
+?>
 <table data-viewid="<?php echo $this->view_id; ?>" class="gv-datatables <?php echo esc_attr( apply_filters('gravityview_datatables_table_class', 'display dataTable') ); ?>">
 	<thead>
 		<?php gravityview_header(); ?>

@@ -2,7 +2,7 @@
 /**
  * @license GPL-2.0-or-later
  *
- * Modified by __root__ on 05-December-2025 using Strauss.
+ * Modified using Strauss.
  * @see https://github.com/BrianHenryIE/strauss
  */
 
@@ -26,15 +26,6 @@ class SecureDownload {
 	 * @var string
 	 */
 	const ID = 'secure_download';
-
-	/**
-	 * Ajax action name.
-	 *
-	 * @since 1.3.0
-	 *
-	 * @var string
-	 */
-	const AJAX_ACTION = 'gk_download';
 
 	/**
 	 * Rewrite endpoint.
@@ -191,6 +182,29 @@ class SecureDownload {
 	}
 
 	/**
+	 * Gets the download endpoint.
+	 *
+	 * @since TBD
+	 *
+	 * @return string The download endpoint.
+	 */
+	public function get_endpoint() {
+		/**
+		 * Filters the secure download endpoint.
+		 *
+		 * Allows customizing the URL path used for secure downloads.
+		 * Default is 'gk-download', resulting in URLs like /gk-download/{token}/.
+		 *
+		 * Important: changing this requires flushing rewrite rules.
+		 *
+		 * @since TBD
+		 *
+		 * @param string $endpoint The download endpoint. Default 'gk-download'.
+		 */
+		return apply_filters( 'gk/foundation/secure-download/endpoint', self::REWRITE_ENDPOINT );
+	}
+
+	/**
 	 * Initializes the component.
 	 *
 	 * @since 1.3.0
@@ -198,12 +212,69 @@ class SecureDownload {
 	 * @return void
 	 */
 	public function init() {
-		add_action( 'wp_ajax_' . self::AJAX_ACTION, array( $this, 'handle_download_request' ) );
-		add_action( 'wp_ajax_nopriv_' . self::AJAX_ACTION, array( $this, 'handle_download_request' ) );
-
+		add_action( 'init', array( $this, 'maybe_process_download_early' ), 0 );
 		add_action( 'init', array( $this, 'register_rewrite_rules' ) );
 		add_filter( 'query_vars', array( $this, 'add_query_vars' ) );
 		add_action( 'template_redirect', array( $this, 'handle_rewrite_request' ) );
+	}
+
+	/**
+	 * Processes download requests early in the WordPress lifecycle.
+	 *
+	 * This method hooks at 'init' priority 0 to handle secure downloads before
+	 * WordPress fully loads, significantly improving performance for small/medium files.
+	 * By exiting early, we skip theme loading, widget initialization, and other
+	 * unnecessary overhead for file downloads.
+	 *
+	 * @since TBD
+	 *
+	 * @return void
+	 */
+	public function maybe_process_download_early() {
+		$token = $this->extract_token_from_request();
+
+		if ( empty( $token ) ) {
+			return;
+		}
+
+		$this->handle_download_request( $token );
+	}
+
+	/**
+	 * Extracts the download token from the current request.
+	 *
+	 * Checks multiple sources in order of priority:
+	 * 1. URL path matching the rewrite endpoint pattern
+	 * 2. Query parameter 'gk_download_token'
+	 *
+	 * @since TBD
+	 *
+	 * @return string|null The token if found, null otherwise.
+	 */
+	private function extract_token_from_request() {
+		// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotValidated
+		$request_uri = isset( $_SERVER['REQUEST_URI'] ) ? wp_unslash( $_SERVER['REQUEST_URI'] ) : '';
+
+		$endpoint = $this->get_endpoint();
+
+		// Fast bailout - skip regex on requests that can't be downloads.
+		if ( strpos( $request_uri, '/' . $endpoint . '/' ) === false && ! isset( $_GET['gk_download_token'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+			return null;
+		}
+
+		// Check for rewrite URL pattern.
+		$pattern = '#/' . preg_quote( $endpoint, '#' ) . '/([^/\?]+)/?#';
+
+		if ( preg_match( $pattern, $request_uri, $matches ) ) {
+			return sanitize_text_field( rawurldecode( $matches[1] ) );
+		}
+
+		// Fallback: check for direct query parameter.
+		if ( isset( $_GET['gk_download_token'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+			return sanitize_text_field( wp_unslash( $_GET['gk_download_token'] ) ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		}
+
+		return null;
 	}
 
 	/**
@@ -226,10 +297,11 @@ class SecureDownload {
 	 *
 	 * @since 1.3.0
 	 *
-	 * @param string $file_path The absolute path to the file.
+	 * @param string $file_path The absolute path to the file, or a remote URL when source_type is 'remote'.
 	 * @param array  $args {
 	 *     Optional arguments for the download URL.
 	 *
+	 *     @type string       $source_type         Source type: 'local' (default), or 'remote' for remote URLs. URLs require explicit 'remote' value.
 	 *     @type int          $expires_in          Time in seconds until the link expires. Default 3600 (1 hour). Set to 0 for no expiration.
 	 *     @type int          $limit               Maximum number of downloads allowed. 0 = unlimited. Default 0.
 	 *     @type array        $capabilities        Array of capabilities required to download. Default empty.
@@ -239,6 +311,7 @@ class SecureDownload {
 	 *     @type array        $meta                Additional metadata to include in the token. Default empty.
 	 *     @type string       $filename            Custom filename to use when downloading. Default is the original filename.
 	 *     @type int          $cache_duration      Cache duration in seconds. 0 = no cache (private), > 0 = specific duration. If not set, auto-detects based on file type.
+	 *     @type string       $disposition         Content disposition: 'inline' (default) or 'attachment'. Inline displays in browser and preserves filename for "Save As"; attachment forces download.
 	 * }
 	 *
 	 * @return array {
@@ -248,10 +321,11 @@ class SecureDownload {
 	 *     @type string $id  Short hash identifier for the token (first 12 chars).
 	 * }
 	 *
-	 * @throws Exception If the file path is invalid or encryption fails.
+	 * @throws Exception If the file path is invalid, URL validation fails, or encryption fails.
 	 */
 	public function generate_download_url( $file_path, $args = [] ) {
 		$defaults = [
+			'source_type'  => 'local',
 			'expires_in'   => self::DEFAULT_EXPIRATION,
 			'limit'        => 0,
 			'capabilities' => [],
@@ -260,23 +334,84 @@ class SecureDownload {
 			'track'        => false,
 			'meta'         => [],
 			'filename'     => '',
+			'disposition'  => 'inline',
 		];
 
 		$args = wp_parse_args( $args, $defaults );
 
-		// Basic security check for directory traversal attempts.
-		if ( strpos( $file_path, '..' ) !== false ) {
-			throw new Exception( esc_html__( 'Invalid file path provided.', 'gk-gravityedit' ) );
+		$source_type = $args['source_type'];
+
+		$is_url = preg_match( '#^https?://#i', $file_path );
+
+		// Fail-fast: URL detected but source_type not explicitly 'remote'.
+		if ( $is_url && 'remote' !== $source_type ) {
+			throw new Exception(
+				esc_html__(
+					"URLs require source_type='remote'. Pass ['source_type' => 'remote'] to confirm remote URL handling.",
+					'gk-gravityedit'
+				)
+			);
 		}
 
-		// Convert relative path to absolute.
-		if ( substr( $file_path, 0, 1 ) !== '/' ) {
-			$file_path = ABSPATH . ltrim( $file_path, '/' );
-		}
+		// Handle remote URLs explicitly (source_type='remote').
+		$remote_source = null;
 
-		// Verify file exists.
-		if ( ! file_exists( $file_path ) ) {
-			throw new Exception( esc_html__( 'File not found.', 'gk-gravityedit' ) );
+		if ( 'remote' === $source_type ) {
+			// Validate URL format.
+			if ( ! $is_url ) {
+				throw new Exception( esc_html__( 'Invalid URL format for remote source.', 'gk-gravityedit' ) );
+			}
+
+			// Build remote source config (same structure as filter-based approach).
+			$remote_source = [
+				'url' => $file_path,
+			];
+
+			// Extract filename.
+			if ( ! empty( $args['filename'] ) ) {
+				$remote_source['filename'] = basename( $args['filename'] );
+			} else {
+				$url_path                  = wp_parse_url( $file_path, PHP_URL_PATH );
+				$remote_source['filename'] = $url_path ? basename( $url_path ) : 'download';
+			}
+
+			// Skip local file checks - proceed directly to token generation.
+		} else {
+			// Local file handling (unchanged default behavior).
+
+			// Basic security check for directory traversal attempts.
+			if ( strpos( $file_path, '..' ) !== false ) {
+				throw new Exception( esc_html__( 'Invalid file path provided.', 'gk-gravityedit' ) );
+			}
+
+			// Convert relative path to absolute.
+			if ( substr( $file_path, 0, 1 ) !== '/' ) {
+				$file_path = ABSPATH . ltrim( $file_path, '/' );
+			}
+
+			// Verify file exists or allow remote source via filter (virtual path support).
+			if ( ! file_exists( $file_path ) ) {
+				/**
+				 * Allows serving files from remote URLs when local file doesn't exist.
+				 *
+				 * Return an array with remote source configuration to enable remote downloads.
+				 * The array should contain:
+				 * - 'url' (required): The remote URL to download from.
+				 * - 'filename' (optional): Custom filename to use for download.
+				 * - 'size' (optional): File size in bytes for Content-Length header.
+				 *
+				 * @since TBD
+				 *
+				 * @param array|false $remote_source Remote source config or false to fail. Default false.
+				 * @param string      $file_path     The original file path that wasn't found.
+				 * @param array       $args          The arguments passed to generate_download_url.
+				 */
+				$remote_source = apply_filters( 'gk/foundation/secure-download/remote-source', false, $file_path, $args );
+
+				if ( ! $remote_source || ! is_array( $remote_source ) || empty( $remote_source['url'] ) ) {
+					throw new Exception( esc_html__( 'File not found.', 'gk-gravityedit' ) );
+				}
+			}
 		}
 
 		// Normalize IP and user restrictions to arrays.
@@ -287,21 +422,75 @@ class SecureDownload {
 			$args['users'] = [ $args['users'] ];
 		}
 
-		// Create token data.
-		$token_data = [
-			'file'         => $file_path,
-			'expires'      => $args['expires_in'] > 0 ? time() + $args['expires_in'] : 0,
-			'limit'        => $args['limit'],
-			'capabilities' => $args['capabilities'],
-			'ips'          => $args['ips'],
-			'users'        => $args['users'],
-			'track'        => $args['track'],
-			'meta'         => $args['meta'],
-			'filename'     => $args['filename'],
-		];
+		// Calculate expiration timestamp.
+		// Positive: expires in N seconds from now.
+		// Negative: already expired N seconds ago (useful for testing).
+		// Zero: no expiration.
+		if ( $args['expires_in'] > 0 ) {
+			$expires = time() + $args['expires_in'];
+		} elseif ( $args['expires_in'] < 0 ) {
+			$expires = time() + $args['expires_in']; // Results in past timestamp.
+		} else {
+			$expires = 0; // No expiration.
+		}
+
+		// Create token data with only non-default values to minimize token size.
+		$token_data = array_filter(
+			[
+				'file'         => $file_path,
+				'expires'      => $expires,
+				'limit'        => $args['limit'],
+				'capabilities' => $args['capabilities'],
+				'ips'          => $args['ips'],
+				'users'        => $args['users'],
+				'track'        => $args['track'],
+				'meta'         => $args['meta'],
+				'filename'     => $args['filename'],
+			],
+			function ( $value, $key ) {
+				// 'file' is always required.
+				if ( 'file' === $key ) {
+					return true;
+				}
+
+				// Numeric fields: include only if > 0.
+				if ( in_array( $key, [ 'expires', 'limit' ], true ) ) {
+					return $value > 0;
+				}
+
+				// Everything else: include if not empty.
+				return ! empty( $value );
+			},
+			ARRAY_FILTER_USE_BOTH
+		);
 
 		if ( isset( $args['cache_duration'] ) ) {
 			$token_data['cache_duration'] = $args['cache_duration'];
+		}
+
+		// Store disposition only if 'attachment' (since 'inline' is the default) to minimize token size.
+		if ( 'attachment' === $args['disposition'] ) {
+			$token_data['disposition'] = 'attachment';
+		}
+
+		// Add remote source data if file is served from remote URL.
+		if ( $remote_source ) {
+			$token_data['remote_url'] = $remote_source['url'];
+
+			// Add source_type metadata for logging/policy (only for direct URL mode).
+			if ( 'remote' === $source_type ) {
+				$token_data['source_type'] = 'remote';
+			}
+
+			// Override filename if provided by remote source.
+			if ( ! empty( $remote_source['filename'] ) && empty( $args['filename'] ) ) {
+				$token_data['filename'] = $remote_source['filename'];
+			}
+
+			// Store remote file size if provided.
+			if ( isset( $remote_source['size'] ) ) {
+				$token_data['remote_size'] = (int) $remote_source['size'];
+			}
 		}
 
 		/**
@@ -337,13 +526,12 @@ class SecureDownload {
 			$token_data['token_id'] = $token_id;
 		}
 
-		$download_url = add_query_arg(
-			[
-				'action' => self::AJAX_ACTION,
-				'token'  => $token,
-			],
-			admin_url( 'admin-ajax.php' )
-		);
+		// Use pretty URL if permalinks are enabled, otherwise fall back to query parameter.
+		if ( get_option( 'permalink_structure' ) ) {
+			$download_url = home_url( $this->get_endpoint() . '/' . rawurlencode( $token ) . '/' );
+		} else {
+			$download_url = add_query_arg( 'gk_download_token', rawurlencode( $token ), home_url() );
+		}
 
 		$result = [
 			'url' => $download_url,
@@ -354,19 +542,19 @@ class SecureDownload {
 	}
 
 	/**
-	 * Handles the download request via Ajax.
+	 * Handles the download request.
 	 *
 	 * @since 1.3.0
+	 * @since TBD Make the method private and add $token parameter.
 	 *
-	 * @throws Exception If token is invalid or file access is denied.
+	 * @param string $token The download token.
+	 *
+	 * @phpcs:disable Squiz.Commenting.FunctionCommentThrowTag.Missing -- Exceptions are caught internally.
 	 *
 	 * @return void
 	 */
-	public function handle_download_request() {
+	private function handle_download_request( $token ) {
 		try {
-			// We don't need to check for nonce here since the token is already encrypted and validated.
-			$token = isset( $_REQUEST['token'] ) ? sanitize_text_field( $_REQUEST['token'] ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
-
 			if ( empty( $token ) ) {
 				throw new Exception( esc_html__( 'No download token provided.', 'gk-gravityedit' ), 400 );
 			}
@@ -642,9 +830,12 @@ class SecureDownload {
 			$headers['Content-Range'] = "bytes $range_start-$range_end/$file_size";
 		}
 
+		// Determine content disposition: 'inline' (default) or 'attachment' if explicitly set.
+		$disposition = isset( $token_data['disposition'] ) && 'attachment' === $token_data['disposition'] ? 'attachment' : 'inline';
+
 		// Basic download headers with UTF-8 filename support.
 		$headers['Content-Type']        = $mime_type;
-		$headers['Content-Disposition'] = 'attachment; filename="' . rawurlencode( $file_name ) . '"; filename*=UTF-8\'\'' . rawurlencode( $file_name );
+		$headers['Content-Disposition'] = $disposition . '; filename="' . rawurlencode( $file_name ) . '"; filename*=UTF-8\'\'' . rawurlencode( $file_name );
 		$headers['Content-Length']      = (string) ( $range_end - $range_start + 1 );
 		$headers['Accept-Ranges']       = 'bytes';
 
@@ -658,6 +849,15 @@ class SecureDownload {
 			$cache_duration = $this->get_default_cache_duration( $file_path );
 		} else {
 			$cache_duration = $token_data['cache_duration'];
+		}
+
+		// Restrict caching for tokens with limits or expiration to ensure enforcement.
+		if ( ! empty( $token_data['limit'] ) ) {
+			// Limited downloads must never be cached.
+			$cache_duration = 0;
+		} elseif ( ! empty( $token_data['expires'] ) && $token_data['expires'] > 0 ) {
+			// Cache duration must not exceed token expiration time.
+			$cache_duration = min( $cache_duration, max( 0, $token_data['expires'] - time() ) );
 		}
 
 		if ( $cache_duration > 0 ) {
@@ -737,6 +937,13 @@ class SecureDownload {
 	 * @return void
 	 */
 	public function stream_file( $file_path, $token_data = [] ) {
+		// Check if this is a remote URL download.
+		if ( ! empty( $token_data['remote_url'] ) ) {
+			$this->stream_remote_file( $token_data['remote_url'], $token_data );
+
+			return;
+		}
+
 		// Clean any output buffers.
 		while ( ob_get_level() ) {
 			ob_end_clean();
@@ -903,7 +1110,6 @@ class SecureDownload {
 			// Check for client disconnect after each chunk for better resource management.
 			if ( connection_aborted() ) {
 				fclose( $handle );
-
 				exit;
 			}
 
@@ -917,9 +1123,161 @@ class SecureDownload {
 		flush();
 
 		fclose( $handle );
+
 		// phpcs:enable WordPress.WP.AlternativeFunctions.file_system_read_fopen
 		// phpcs:enable WordPress.WP.AlternativeFunctions.file_system_read_fread
 		// phpcs:enable WordPress.WP.AlternativeFunctions.file_system_read_fclose
+	}
+
+	/**
+	 * Streams a remote file to the browser using temp file for scalability.
+	 *
+	 * @since TBD
+	 *
+	 * @param string $url        The remote URL to stream.
+	 * @param array  $token_data The token data containing filename and other settings.
+	 *
+	 * @return void
+	 */
+	private function stream_remote_file( $url, $token_data = [] ) {
+		// Create temp file for streaming with entropy in prefix to prevent predictability.
+		// Use native tempnam() since wp_tempnam() is only available in admin context.
+		$tmp_file = tempnam( sys_get_temp_dir(), 'gksd_' . wp_rand() . '_' );
+
+		/**
+		 * Filters the number of redirects to follow for remote downloads.
+		 *
+		 * @since TBD
+		 *
+		 * @param int    $redirection Number of redirects to follow. Default 0 (safest).
+		 * @param string $url         The remote URL.
+		 * @param array  $token_data  The token data.
+		 */
+		$redirection = apply_filters(
+			'gk/foundation/secure-download/remote-redirection',
+			0, // Default: no redirects (safest).
+			$url,
+			$token_data
+		);
+
+		/**
+		 * Filters the remote request args.
+		 *
+		 * @since TBD
+		 *
+		 * @param array  $args       Request arguments for wp_safe_remote_get().
+		 * @param string $url        The remote URL.
+		 * @param array  $token_data The token data.
+		 */
+		$request_args = apply_filters(
+			'gk/foundation/secure-download/remote-request-args',
+			[
+				'timeout'     => 300,
+				'sslverify'   => true,
+				'stream'      => true,
+				'filename'    => $tmp_file,
+				'redirection' => $redirection,
+			],
+			$url,
+			$token_data
+		);
+
+		$response = wp_safe_remote_get( $url, $request_args );
+
+		if ( is_wp_error( $response ) ) {
+			// phpcs:ignore WordPress.PHP.NoSilencedErrors.Discouraged -- File may not exist.
+			@unlink( $tmp_file );
+
+			wp_die(
+				esc_html(
+					strtr(
+						// translators: [error] is replaced with the error message.
+						__( 'Remote file fetch failed: [error]', 'gk-gravityedit' ),
+						[ '[error]' => $response->get_error_message() ]
+					)
+				),
+				500
+			);
+		}
+
+		$status = wp_remote_retrieve_response_code( $response );
+
+		if ( $status < 200 || $status >= 400 ) {
+			// phpcs:ignore WordPress.PHP.NoSilencedErrors.Discouraged -- File may not exist.
+			@unlink( $tmp_file );
+
+			$http_status = ( $status >= 400 && $status < 500 ) ? 404 : 500;
+			wp_die( esc_html__( 'Remote file not available.', 'gk-gravityedit' ), (int) $http_status );
+		}
+
+		// Validate file size to prevent disk exhaustion attacks.
+		$file_size = filesize( $tmp_file );
+
+		if ( false === $file_size ) {
+			// phpcs:ignore WordPress.PHP.NoSilencedErrors.Discouraged -- File may not exist.
+			@unlink( $tmp_file );
+
+			wp_die( esc_html__( 'Failed to read downloaded file.', 'gk-gravityedit' ), 500 );
+		}
+
+		/**
+		 * Filters the maximum allowed remote file size.
+		 *
+		 * @since TBD
+		 *
+		 * @param int    $max_size   Maximum file size in bytes. Default 104857600 (100MB).
+		 * @param string $url        The remote URL.
+		 * @param array  $token_data The token data.
+		 */
+		$max_size = apply_filters( 'gk/foundation/secure-download/max-remote-size', 100 * 1024 * 1024, $url, $token_data );
+
+		if ( $file_size > $max_size ) {
+			// phpcs:ignore WordPress.PHP.NoSilencedErrors.Discouraged -- File may not exist.
+			@unlink( $tmp_file );
+
+			wp_die(
+				esc_html(
+					strtr(
+						// translators: [actual_size] and [max_size] are replaced with file sizes.
+						__( 'Remote file too large ([actual_size]). Maximum allowed: [max_size].', 'gk-gravityedit' ),
+						[
+							'[actual_size]' => size_format( $file_size ),
+							'[max_size]'    => size_format( $max_size ),
+						]
+					)
+				),
+				413 // Payload Too Large.
+			);
+		}
+
+		// Register cleanup to run regardless of how script exits.
+		register_shutdown_function(
+			function () use ( $tmp_file ) {
+				if ( file_exists( $tmp_file ) ) {
+					// phpcs:ignore WordPress.PHP.NoSilencedErrors.Discouraged -- Best effort cleanup.
+					@unlink( $tmp_file );
+				}
+			}
+		);
+
+		// Determine filename.
+		$filename = '';
+
+		if ( ! empty( $token_data['filename'] ) ) {
+			$filename = $token_data['filename'];
+		} else {
+			// Try to extract filename from URL.
+			$url_path = wp_parse_url( $url, PHP_URL_PATH );
+			$filename = $url_path ? basename( $url_path ) : 'download';
+		}
+
+		// Stream as local file. Unset remote_url to prevent recursion back to this method.
+		unset( $token_data['remote_url'] );
+
+		$token_data['file']     = $tmp_file;
+		$token_data['filename'] = $filename;
+
+		$this->stream_file( $tmp_file, $token_data );
 	}
 
 	/**
@@ -1315,7 +1673,7 @@ class SecureDownload {
 	 */
 	public function register_rewrite_rules() {
 		add_rewrite_rule(
-			'^' . self::REWRITE_ENDPOINT . '/([^/]+)/?$',
+			'^' . $this->get_endpoint() . '/([^/]+)/?$',
 			'index.php?gk_download_token=$matches[1]',
 			'top'
 		);
@@ -1347,9 +1705,7 @@ class SecureDownload {
 		$token = get_query_var( 'gk_download_token' );
 
 		if ( ! empty( $token ) ) {
-			$_REQUEST['token'] = $token;
-
-			$this->handle_download_request();
+			$this->handle_download_request( $token );
 		}
 	}
 
@@ -1389,4 +1745,5 @@ class SecureDownload {
 
 		return $ip;
 	}
+
 }

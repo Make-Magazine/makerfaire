@@ -1863,7 +1863,7 @@ class GFFormsModel {
 				 */
 
 			if ( has_action( 'gform_delete_lead' ) ) {
-				trigger_error( 'The gform_delete_lead action is deprecated and will be removed in 3.0. Use gform_delete_entry instead.', E_USER_DEPRECATED );
+				trigger_error( 'The gform_delete_lead action is deprecated and will be removed in 3.0. Use gform_delete_entry instead.', E_USER_DEPRECATED ); // phpcs:ignore QITStandard.PHP.DebugCode.DebugFunctionFound
 			}
 				do_action( 'gform_delete_lead', $entry_id );
 
@@ -2097,7 +2097,7 @@ class GFFormsModel {
          */
 
 		if ( has_action( 'gform_after_duplicate_form' ) ) {
-			trigger_error( 'The gform_after_duplicate_form action is deprecated and will be removed in 3.0. Use gform_post_form_duplicated instead.', E_USER_DEPRECATED );
+			trigger_error( 'The gform_after_duplicate_form action is deprecated and will be removed in 3.0. Use gform_post_form_duplicated instead.', E_USER_DEPRECATED ); // phpcs:ignore QITStandard.PHP.DebugCode.DebugFunctionFound
 		}
         do_action( 'gform_after_duplicate_form', $form_id, $new_id );
 
@@ -2810,7 +2810,7 @@ class GFFormsModel {
 		 */
 
 		if ( has_action( 'gform_delete_lead' ) ) {
-			trigger_error( 'The gform_delete_lead action is deprecated and will be removed in version 3.0. Use gform_delete_entry instead.', E_USER_DEPRECATED );
+			trigger_error( 'The gform_delete_lead action is deprecated and will be removed in version 3.0. Use gform_delete_entry instead.', E_USER_DEPRECATED ); // phpcs:ignore QITStandard.PHP.DebugCode.DebugFunctionFound
 		}
 		do_action( 'gform_delete_lead', $entry_id );
 
@@ -3124,7 +3124,7 @@ class GFFormsModel {
 			 * @param array $form The form currently being processed.
 			 *
 			 */
-			$currency = gf_apply_filters( array( 'gform_currency_pre_save_entry', $form['id'] ), GFCommon::get_currency(), $form );
+			$currency = gf_apply_filters( array( 'gform_currency_pre_save_entry', $form['id'] ), GFCommon::get_submission_currency(), $form );
 
 			$ip        = rgars( $form, 'personalData/preventIP' ) ? '' : self::get_ip();
 			$source_id = self::get_source_id( $form );
@@ -3535,7 +3535,7 @@ class GFFormsModel {
 		 * @param array $form The form currently being processed.
 		 *
 		 */
-		$lead['currency'] = gf_apply_filters( array( 'gform_currency_pre_save_entry', $form_id ), GFCommon::get_currency(), $form );
+		$lead['currency'] = gf_apply_filters( array( 'gform_currency_pre_save_entry', $form_id ), GFCommon::get_submission_currency(), $form );
 
 		foreach ( $form['fields'] as $field ) {
 			/* @var $field GF_Field */
@@ -3812,17 +3812,36 @@ class GFFormsModel {
 	 * Determines if the submit button was supposed to be hidden by conditional logic. This function helps ensure that
 	 *  the form doesn't get submitted when the submit button is hidden by conditional logic.
 	 *
-	 * @param $form The Form object
+	 * @param array $form The Form object
 	 *
 	 * @return bool Returns true if the submit button is hidden by conditional logic, false otherwise.
 	 */
 	public static function is_submit_button_hidden( $form ) {
-
-		if( ! isset( $form['button']['conditionalLogic'] ) ){
+		if ( ! isset( $form['button']['conditionalLogic'] ) ) {
 			return false;
 		}
 
 		$is_visible = self::evaluate_conditional_logic( $form, $form['button']['conditionalLogic'], array() );
+
+		return ! $is_visible;
+	}
+
+	/**
+	 * Determines if the next button was supposed to be hidden by conditional logic.
+	 *
+	 * @since 2.9.25
+	 *
+	 * @param GF_Field $field The page field containing the next button logic.
+	 * @param array    $form  The current form.
+	 *
+	 * @return bool
+	 */
+	public static function is_next_button_hidden( $field, $form ) {
+		if ( ! $field instanceof GF_Field_Page || ! rgars( $field->nextButton, 'conditionalLogic/enabled' ) ) {
+			return false;
+		}
+
+		$is_visible = self::evaluate_conditional_logic( $form, $field->nextButton['conditionalLogic'], array() );
 
 		return ! $is_visible;
 	}
@@ -5238,7 +5257,7 @@ class GFFormsModel {
 					$field = RGFormsModel::get_field( $form, $image['field_id'] );
 					if ( $field->postFeaturedImage ) {
 						$result = set_post_thumbnail( $post_id, $media_id );
-						GFCommon::log_debug( __METHOD__ . '(): Setting the featured image. Result from set_post_thumbnail(): ' . var_export( $result, 1 ) );
+						GFCommon::log_debug( __METHOD__ . '(): Setting the featured image. Result from set_post_thumbnail(): ' . var_export( $result, 1 ) ); // phpcs:ignore QITStandard.PHP.DebugCode.DebugFunctionFound
 					}
 				}
 			}
@@ -5592,7 +5611,7 @@ class GFFormsModel {
 					if ( intval( $current_field->meta_key ) == $sub_field->id && ! isset( $current_field->update ) ) {
 						$current_field->delete = true;
 						$result = self::queue_batch_field_operation( $form, $lead, $sub_field, $current_field->id, $current_field->meta_key, '', $current_field->item_index );
-						GFCommon::log_debug( __METHOD__ . "(): Deleting: {$field->label}(#{$sub_field->id}{$current_field->item_index} - {$field->type}). Result: " . var_export( $result, 1 ) );
+						GFCommon::log_debug( __METHOD__ . "(): Deleting: {$field->label}(#{$sub_field->id}{$current_field->item_index} - {$field->type}). Result: " . var_export( $result, 1 ) ); // phpcs:ignore QITStandard.PHP.DebugCode.DebugFunctionFound
 					}
 				}
 			}
@@ -5668,7 +5687,7 @@ class GFFormsModel {
 
 				$lead_detail_id               = self::get_lead_detail_id( $current_fields, $input_id, $new_item_index );
 				$result                       = self::queue_batch_field_operation( $form, $lead, $field, $lead_detail_id, $input_id, $v, $new_item_index );
-				GFCommon::log_debug( __METHOD__ . "(): Saving: {$field->label}(#{$input_id}{$item_index} - {$field->type}). Result: " . var_export( $result, 1 ) );
+				GFCommon::log_debug( __METHOD__ . "(): Saving: {$field->label}(#{$input_id}{$item_index} - {$field->type}). Result: " . var_export( $result, 1 ) ); // phpcs:ignore QITStandard.PHP.DebugCode.DebugFunctionFound
 				foreach ( $current_fields as $current_field ) {
 					if ( (string) $current_field->meta_key === (string) $input_id && $current_field->item_index == $new_item_index ) {
 						$current_field->update = true;
@@ -7159,7 +7178,7 @@ class GFFormsModel {
 	public static function get_field( $form_or_id, $field_id ) {
 		$form = is_numeric( $form_or_id ) ? self::get_form_meta( $form_or_id ) : $form_or_id;
 
-		if ( ! isset( $form['fields'] ) || ! isset( $form['id'] ) || ! is_array( $form['fields'] ) ) {
+		if ( ! isset( $form['fields'] ) || ! isset( $form['id'] ) || ! is_array( $form['fields'] ) || empty( $field_id ) ) {
 			return null;
 		}
 

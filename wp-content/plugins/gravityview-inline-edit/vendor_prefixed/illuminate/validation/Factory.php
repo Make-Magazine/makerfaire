@@ -2,7 +2,7 @@
 /**
  * @license MIT
  *
- * Modified by __root__ on 05-December-2025 using Strauss.
+ * Modified using Strauss.
  * @see https://github.com/BrianHenryIE/strauss
  */
 
@@ -86,7 +86,7 @@ class Factory implements FactoryContract
      * @param  \GravityKit\GravityEdit\Foundation\ThirdParty\Illuminate\Contracts\Container\Container  $container
      * @return void
      */
-    public function __construct(Translator $translator, Container $container = null)
+    public function __construct(Translator $translator, ?Container $container = null)
     {
         $this->container = $container;
         $this->translator = $translator;

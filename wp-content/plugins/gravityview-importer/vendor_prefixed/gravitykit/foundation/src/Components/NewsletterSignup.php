@@ -2,7 +2,7 @@
 /**
  * @license GPL-2.0-or-later
  *
- * Modified by The GravityKit Team on 11-September-2025 using Strauss.
+ * Modified using Strauss.
  * @see https://github.com/BrianHenryIE/strauss
  */
 
@@ -103,7 +103,7 @@ final class NewsletterSignup {
 	 *
 	 * @return self
 	 */
-	public static function get_instance( StateManager $state_manager = null ): self {
+	public static function get_instance( ?StateManager $state_manager = null ): self {
 		if ( null === self::$_instance ) {
 			$endpoint = defined( 'GK_FOUNDATION_NEWSLETTER_SIGNUP_FORM_ENDPOINT' )
 				? GK_FOUNDATION_NEWSLETTER_SIGNUP_FORM_ENDPOINT

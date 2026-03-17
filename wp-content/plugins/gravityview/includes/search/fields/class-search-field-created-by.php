@@ -3,6 +3,8 @@
 namespace GV\Search\Fields;
 
 use GFFormsModel;
+use GV\Search\Querying\Search_Filter;
+use GV\View;
 use GVCommon;
 
 /**
@@ -93,7 +95,7 @@ final class Search_Field_Created_By extends Search_Field_Choices {
 			 *
 			 * @since 2.3
 			 *
-			 * @param string[in,out] The text. Default: $user->display_name
+			 * @param string The text. Default: $user->display_name
 			 * @param \WP_User      $user The user.
 			 * @param \GV\View|null $view The view.
 			 */
@@ -129,5 +131,37 @@ final class Search_Field_Created_By extends Search_Field_Choices {
 				$form_id
 			)
 		);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 *
+	 * @since $ver$
+	 */
+	public function adjust_filter( Search_Filter $filter, ?View $view = null ): Search_Filter {
+		$filter = parent::adjust_filter( $filter, $view )->with_operator( '=', [ '=' ] );
+
+		if ( ! $filter->has_value() ) {
+			return $filter;
+		}
+
+		$value = $filter->value();
+
+		if ( is_array( $value ) ) {
+			$filter = $filter->with_operator( 'in', [ 'in' ] );
+			$value  = array_map(
+				static fn( $val ) => is_numeric( $val ) ? absint( $val ) : $val,
+				$value
+			);
+
+			return $filter->with_value( $value );
+		}
+
+		if ( $filter->has_value() && is_numeric( $filter->value() ) ) {
+			// Ensure an integer value.
+			$filter = $filter->with_value( absint( $filter->value() ) );
+		}
+
+		return $filter;
 	}
 }

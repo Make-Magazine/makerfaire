@@ -1,6 +1,10 @@
 
 # Changelog
 
+## 1.4.95 | February 25, 2026
+
+- Fixed infinite recurssions when conditional logic triggers repeated copy operations to target fields.
+
 ## 1.4.94 | October 15, 2025
 
 - Fixed issue where values would not copy to fields inside a conditionally hidden Section.

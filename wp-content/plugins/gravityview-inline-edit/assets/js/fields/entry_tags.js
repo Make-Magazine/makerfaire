@@ -38,7 +38,6 @@
 				return;
 			}
 
-
 			if ( 'string' === typeof value ) {
 				value = JSON.parse(value);
 			}
@@ -51,8 +50,6 @@
 			} );
 
 			$el.html(value_html);
-			
-			
 		},
 
 
@@ -62,6 +59,12 @@
 			}
 			return JSON.stringify(str);
         },
+
+
+		input2value: function () {
+			// We are using javascript value instead of jQuery value because we are overriding the jQuery val function in the main entry tags to make it work with conditional logic.
+			return this.$input[0].value;
+		},
 
 
 		/**

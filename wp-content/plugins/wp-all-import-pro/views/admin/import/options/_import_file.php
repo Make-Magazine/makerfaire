@@ -58,12 +58,12 @@
 							</a>
 						</div>
 
-						<input type="hidden" value="<?php echo $post['type']; ?>" name="new_type"/>
+						<input type="hidden" value="<?php echo esc_attr($post['type']); ?>" name="new_type"/>
 
 						<div class="wpallimport-upload-type-container" rel="upload_type">
 							<div id="plupload-ui" class="wpallimport-file-type-options">
 					            <div>
-					                <input type="hidden" name="filepath" value="<?php if ('upload' == $import->type) echo $import->path; ?>" id="filepath"/>
+					                <input type="hidden" name="filepath" value="<?php if ('upload' == $import->type) echo esc_attr($import->path); ?>" id="filepath"/>
 					                <a id="select-files" href="javascript:void(0);"/><?php _e('Click here to select file from your computer...', 'wp-all-import-pro'); ?></a>
 					                <div id="progressbar" class="wpallimport-progressbar">
 					                	<?php if ('upload' == $import->type) _e( '<span>Upload Complete</span> - '.basename($import->path).' 100%', 'wp-all-import-pro'); ?>

@@ -1,0 +1,273 @@
+<?php
+
+namespace GV\Search\Querying\Visitors;
+
+use GV\Logger;
+use GV\Search\Querying\Search_Filter;
+use GV\Search\Querying\Search_Filter_Visitor;
+use GV\View;
+
+/**
+ * Converts a {@see Search_Request} into various filter options.
+ *
+ * @since $ver$
+ */
+final class Search_Criteria_Visitor extends Abstract_Search_Filter_Visitor {
+	/**
+	 * The search criteria object.
+	 *
+	 * @since $ver$
+	 *
+	 * @var array
+	 */
+	private array $search_criteria;
+
+	/**
+	 * The search mode.
+	 *
+	 * @since $ver$
+	 *
+	 * @var string
+	 */
+	private string $mode;
+
+	/**
+	 * Creates the visitor.
+	 *
+	 * @since $ver$
+	 *
+	 * @param View|null   $view            The View.
+	 * @param string      $mode            The search mode.
+	 * @param array       $search_criteria The initial search criteria.
+	 * @param Logger|null $logger          The logger.
+	 */
+	public function __construct(
+		?View $view = null,
+		string $mode = Search_Filter::MODE_OR,
+		array $search_criteria = [],
+		?Logger $logger = null
+	) {
+		parent::__construct( $view, $logger );
+
+		$this->search_criteria = $search_criteria;
+		$this->mode            = $mode;
+	}
+
+	/**
+	 * Retrieves the search mode from the provided data array.
+	 *
+	 * @since $ver$
+	 *
+	 * @return "any"|"all" The search mode.
+	 */
+	public function get_mode(): string {
+		$mode = Search_Filter::MODE_AND === $this->mode ? 'all' : 'any';
+
+		/**
+		 * @deprecated $ver$ Use `gk/gravityview/search/criteria/mode`.
+		 */
+		$mode = apply_filters_deprecated(
+			'gravityview/search/mode',
+			[ $mode ],
+			'$ver$',
+			'gk/gravityview/search/criteria/mode'
+		);
+
+		/**
+		 * Modifies the search criteria mode.
+		 *
+		 * @since  $ver$
+		 *
+		 * @param string $mode Search mode (`any` vs `all`).
+		 */
+		$mode = strtolower( apply_filters( 'gk/gravityview/search/criteria/mode', $mode ) );
+
+		return in_array( $mode, [ 'any', 'all' ], true ) ? $mode : 'any';
+	}
+
+	/**
+	 * Handles a single filter and adds it to the search criteria.
+	 *
+	 * @since $ver$
+	 *
+	 * @param Search_Filter $filter The filter data.
+	 */
+	private function handle_filter( Search_Filter $filter ): void {
+		$filter = $this->maybe_trim_value( $filter );
+
+		if ( ! $filter->has_value() && $this->should_ignore_empty_values( $filter ) ) {
+			$this->logger->debug( 'Ignoring empty filter value for "{key}".', [ 'key' => $filter->key() ] );
+
+			return;
+		}
+
+		// We handle the date range differently because it is outside the `field_filters`.
+		if ( 'entry_date' === $filter->key() ) {
+			$this->handle_date_range( $filter );
+
+			return;
+		}
+
+		$this->handle_field( $filter );
+	}
+
+	/**
+	 * Handles a form field filter.
+	 *
+	 * @since $ver$
+	 *
+	 * @param Search_Filter $filter The filter.
+	 */
+	private function handle_field( Search_Filter $filter ): void {
+		// Adjust the filter through the search field.
+		$filter = $this->adjust_filter( $filter );
+		if ( ! $filter ) {
+			return;
+		}
+
+		$operator = $this->resolve_operator( $filter );
+
+		$field_filter = [
+			'key'      => $filter->key(),
+			'value'    => $filter->value(),
+			'operator' => $operator,
+		];
+
+		if ( $filter->is_numeric() ) {
+			$field_filter['is_numeric'] = true;
+		}
+
+		if ( $filter->is_required() ) {
+			$field_filter['required'] = true;
+		}
+
+		$form_id = $filter->form_id();
+		if ( $form_id && ! empty( $filter->key() ) ) {
+			// Don't set the form ID for global search.
+			$field_filter['form_id'] = $form_id;
+		}
+
+		$this->search_criteria['field_filters'][] = $field_filter;
+	}
+
+	/**
+	 * Handles an `entry_date` filter.
+	 *
+	 * @since $ver$
+	 *
+	 * @param Search_Filter $search_filter The search filter.
+	 */
+	private function handle_date_range( Search_Filter $search_filter ): void {
+		[ $start, $end ] = $this->resolve_date_range( $search_filter );
+
+		if ( $start ) {
+			$this->search_criteria['start_date'] = $start->format( 'Y-m-d H:i:s' );
+		}
+
+		if ( $end ) {
+			$this->search_criteria['end_date'] = $end->format( 'Y-m-d H:i:s' );
+		}
+	}
+
+	/**
+	 * Handles a group filter.
+	 *
+	 * @since $ver$
+	 *
+	 * @param Search_Filter $filter The group filter.
+	 */
+	private function handle_group( Search_Filter $filter ): void {
+		/**
+		 * If range type, set search mode to AND.
+		 * Note: this will change the behavior for additional search filters as well.
+		 *
+		 * We are keeping this for backwards compatibility. When moving to Query Filters, this won't be a problem.
+		 */
+		if ( $this->is_range_search( $filter ) ) {
+			$this->logger->debug( 'Switched mode to AND ("all") due to range search.' );
+
+			$this->mode = Search_Filter::MODE_AND;
+		}
+	}
+
+	/**
+	 * {@inheritDoc}
+	 *
+	 * @since $ver$
+	 */
+	public function visit( Search_Filter $search_filter ): void {
+		if ( $search_filter->is_group() ) {
+			$this->handle_group( $search_filter );
+
+			return;
+		}
+
+		if ( ! $this->is_searchable_field( $search_filter->key(), $search_filter->form_id() ) ) {
+			$this->logger->debug(
+				'Field "{key}" is not searchable on form {form_id}.',
+				[
+					'key'     => $search_filter->key(),
+					'form_id' => (int) $search_filter->form_id(),
+				]
+			);
+
+			return;
+		}
+
+		$this->handle_filter( $search_filter );
+	}
+
+	/**
+	 * Returns the search criteria.
+	 *
+	 * @since $ver$
+	 *
+	 * @return array The search criteria.
+	 */
+	public function get_criteria(): array {
+		$criteria = $this->search_criteria;
+		unset( $criteria['field_filters']['mode'] );
+
+		$criteria['field_filters'] = array_merge( [ 'mode' => $this->get_mode() ], $criteria['field_filters'] ?? [] );
+
+		return $criteria;
+	}
+
+	/**
+	 * Returns whether the filter(group) is a range filter.
+	 *
+	 * @since $ver$
+	 *
+	 * @param Search_Filter $filter The filter to test.
+	 *
+	 * @return bool Whether the filter is a range filter.
+	 */
+	private function is_range_search( Search_Filter $filter ): bool {
+		if (
+			$filter->is_group()
+			&& Search_Filter::MODE_AND === $filter->mode()
+			&& count( $filter->conditions() ) > 1
+		) {
+			foreach ( $filter->conditions() as $condition ) {
+				if ( $this->is_range_search( $condition ) ) {
+					return true;
+				}
+			}
+
+			return false;
+		}
+
+		return in_array( $filter->operator(), [ '>=', '<=', '>', '<' ], true );
+	}
+
+	/**
+	 * Returns the order in which the visitor needs to be applied.
+	 *
+	 * @since $ver$
+	 *
+	 * @return string The visitor order.
+	 */
+	public function get_order(): string {
+		return Search_Filter_Visitor::ORDER_PRE;
+	}
+}

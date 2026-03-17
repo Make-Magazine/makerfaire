@@ -2,7 +2,7 @@
 /**
  * @license MIT
  *
- * Modified by gravitykit on 05-December-2025 using {@see https://github.com/BrianHenryIE/strauss}.
+ * Modified by gravitykit on 20-February-2026 using {@see https://github.com/BrianHenryIE/strauss}.
  */
 
 namespace GravityKit\AdvancedFilter\QueryFilters\Filter\Visitor;
@@ -97,7 +97,7 @@ final class ProcessMergeTagsVisitor implements EntryAwareFilterVisitor {
 	 * When a filter value becomes empty after merge tag processing (e.g., {user:*} for logged-out users),
 	 * contains-type operators should treat this as "no match" rather than "match everything".
 	 *
-	 * @since $ver$
+	 * @since 2.7.0
 	 *
 	 * @param Filter $filter          The filter to check.
 	 * @param array  $original_values The original filter values before processing.
@@ -144,7 +144,7 @@ final class ProcessMergeTagsVisitor implements EntryAwareFilterVisitor {
 	/**
 	 * Checks if a value is effectively empty.
 	 *
-	 * @since $ver$
+	 * @since 2.7.0
 	 *
 	 * @param mixed $value The value to check.
 	 *
@@ -164,7 +164,7 @@ final class ProcessMergeTagsVisitor implements EntryAwareFilterVisitor {
 	/**
 	 * Checks if an operator is a contains-type operator that should not match when value is empty.
 	 *
-	 * @since $ver$
+	 * @since 2.7.0
 	 *
 	 * @param string $operator The operator to check.
 	 *

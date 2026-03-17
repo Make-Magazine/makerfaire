@@ -2,6 +2,9 @@
 
 namespace GV\Search\Fields;
 
+use GV\Search\Querying\Search_Filter;
+use GV\View;
+
 /**
  * Represents a search field that searches on entry ID.
  *
@@ -52,5 +55,16 @@ final class Search_Field_Entry_ID extends Search_Field {
 	 */
 	protected function get_input_name(): string {
 		return 'gv_id';
+	}
+
+	/**
+	 * {@inheritDoc}
+	 *
+	 * @since $ver$
+	 */
+	public function adjust_filter( Search_Filter $filter, ?View $view = null ): Search_Filter {
+		return parent::adjust_filter( $filter, $view )
+		             ->with_operator( '=', [ '=' ] )
+		             ->with_key( 'id' );
 	}
 }

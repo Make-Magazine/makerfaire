@@ -76,7 +76,8 @@
 				selected_choices = [];
 
 			$.each( sourceData, function ( index, choice ) {
-				if ( choice.hasOwnProperty( 'value' ) && value.indexOf( choice.value ) !== -1 ) {
+				// Skip choices with empty values - they match any string with indexOf('').
+				if ( choice.hasOwnProperty( 'value' ) && choice.value !== '' && value.indexOf( choice.value ) !== -1 ) {
 					selected_choices.push( choice );
 				}
 			} );

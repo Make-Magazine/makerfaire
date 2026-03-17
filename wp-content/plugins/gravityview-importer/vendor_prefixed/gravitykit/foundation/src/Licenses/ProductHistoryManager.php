@@ -2,7 +2,7 @@
 /**
  * @license GPL-2.0-or-later
  *
- * Modified by The GravityKit Team on 11-September-2025 using Strauss.
+ * Modified using Strauss.
  * @see https://github.com/BrianHenryIE/strauss
  */
 
@@ -195,11 +195,18 @@ class ProductHistoryManager {
 
 		$text_domain = $upgrader->new_plugin_data['TextDomain'] ?? null;
 
-		if ( ! isset( $products[ $text_domain ] ) ) {
-			return;
-		};
+		$product = Arr::first(
+			$products,
+			function ( $product ) use ( $text_domain ) {
+				return in_array( $text_domain, $product['text_domains'], true );
+			}
+		);
 
-		$this->update_product_history( 'install', $products[ $text_domain ] );
+		if ( ! $product ) {
+			return;
+		}
+
+		$this->update_product_history( 'install', $product );
 	}
 
 	/**

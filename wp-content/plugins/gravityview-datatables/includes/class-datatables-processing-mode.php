@@ -120,12 +120,13 @@ class GV_Extension_DataTables_Processing_Mode extends GV_DataTables_Extension {
 	    ] );
 
 	    /**
-	     * @filter `gravityview/datatables/output` Filter the output returned from the AJAX request
-	     * @since  2.3
+	     * Filter the output returned from the AJAX request
 	     *
-	     * @param array                $output
-	     * @param \GV\View             $view
-	     * @param \GV\Entry_Collection $entries
+	     * @since 2.3
+	     *
+	     * @param array                $dt_config The DataTables configuration array.
+	     * @param \GV\View             $view      The View object.
+	     * @param \GV\Entry_Collection $entries   The entries collection.
 	     */
 	    $dt_config = apply_filters( 'gravityview/datatables/output', $dt_config, $view, $entries );
 
@@ -146,6 +147,9 @@ class GV_Extension_DataTables_Processing_Mode extends GV_DataTables_Extension {
 	 */
 	public function update_config_with_shadow_data( $dt_config, $view, $entries ) {
 		$fields = $view->fields->by_position( 'directory_table-columns' )->by_visible()->all();
+
+		// Get the actual column count from data array (includes hidden sort fields).
+		$total_columns = ! empty( $dt_config['data'][0] ) ? count( $dt_config['data'][0] ) : count( $fields );
 
 		$date_fields                         = [ 'date', 'date_created', 'date_updated', 'payment_date' ];
 		$field_types_with_special_processing = array_merge( $date_fields, [ 'email' ] );
@@ -172,7 +176,7 @@ class GV_Extension_DataTables_Processing_Mode extends GV_DataTables_Extension {
 			// with the original data value that has HTML markup stripped. This is done to reduce
 			// the size of the shadow object by including only the necessary data that requires
 			// special handling in the backend as done below.
-			$shadow_data_row = array_fill( 0, count( $fields ), '' );
+			$shadow_data_row = array_fill( 0, $total_columns, '' );
 
 			foreach ( $columns_to_process as $column_index => $field ) {
 				if ( ! array_key_exists( $field['id'], $entry ) ) {

@@ -2,7 +2,7 @@
 /**
  * @license MIT
  *
- * Modified by __root__ on 05-December-2025 using Strauss.
+ * Modified using Strauss.
  * @see https://github.com/BrianHenryIE/strauss
  */
 
@@ -15,7 +15,7 @@ namespace GravityKit\GravityEdit\Foundation\ThirdParty\Illuminate\Support\Facade
  * @method static bool isDownForMaintenance()
  * @method static void registerConfiguredProviders()
  * @method static \GravityKit\GravityEdit\Foundation\ThirdParty\Illuminate\Support\ServiceProvider register(\GravityKit\GravityEdit\Foundation\ThirdParty\Illuminate\Support\ServiceProvider|string $provider, array $options = [], bool $force = false)
- * @method static void registerDeferredProvider(string $provider, string $service = null)
+ * @method static void registerDeferredProvider(string $provider, ?string $service = null)
  * @method static void boot()
  * @method static void booting(mixed $callback)
  * @method static void booted(mixed $callback)

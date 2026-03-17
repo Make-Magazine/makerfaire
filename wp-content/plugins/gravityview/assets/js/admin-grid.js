@@ -22,7 +22,7 @@
 						const name = $( this ).attr( 'name' );
 						$( this ).attr( 'name', name.replace( '[' + sender_area + '_', '[' + receiver_area + '_' ) );
 					} );
-				}
+			}
 			};
 
 			let connectWith = $( grid ).closest( '.gv-grid' ).data( 'grid-connect' );
@@ -67,6 +67,54 @@
 				$row.remove();
 				$( document.body ).trigger( 'gravityview/row-removed', $row );
 			} );
+		} );
+
+		// Open the row settings dialog when clicking the gear icon.
+		$( document ).on( 'click', '.gv-grid-row-settings-toggle', function () {
+			const $row = $( this ).closest( '.gv-grid-row' );
+			const $dialog = $row.find( '.gv-row-settings-dialog' ).first();
+
+			if ( $dialog.length && window?.gvAdminActions?.showDialog ) {
+				const buttons = [
+					{
+						text: gvGlobals.label_close,
+						class: 'button button-link',
+						click: function () {
+							$( this ).dialog( 'close' );
+						}
+					}
+				];
+
+				window.gvAdminActions.showDialog( $dialog, buttons );
+			}
+		} );
+
+		// Validate duplicate Custom HTML IDs across rows.
+		$( document ).on( 'input', '.gv-row-settings-dialog input[name$="[custom_id]"]', function () {
+			const $input = $( this );
+			const value = $input.val().trim();
+			const $container = $input.closest( '.gv-setting-container' );
+
+			$container.find( '.gv-row-id-duplicate-warning' ).remove();
+
+			if ( ! value ) {
+				return;
+			}
+
+			const isDuplicate = $( '.gv-row-settings-dialog input[name$="[custom_id]"]' )
+				.not( this )
+				.filter( function () {
+					return $( this ).val().trim() === value;
+				} )
+				.length > 0;
+
+			if ( isDuplicate ) {
+				$container.append(
+					'<span class="gv-row-id-duplicate-warning" style="color: #d63638; display: block; margin-top: 4px;">'
+					+ gvGlobals.label_duplicate_row_id
+					+ '</span>'
+				);
+			}
 		} );
 
 		$( document )

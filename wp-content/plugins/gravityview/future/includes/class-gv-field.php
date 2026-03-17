@@ -217,8 +217,10 @@ class Field extends \stdClass {
 		/**
 		 * Filter the field class about to be created from the configuration.
 		 *
-		 * @param string $field_class The field class about to be used.
-		 * @param array $configuration The configuration as per \GV\Field::as_configuration()
+		 * @since 2.0
+		 *
+		 * @param string $field_class   The field class about to be used.
+		 * @param array  $configuration The configuration as per \GV\Field::as_configuration().
 		 */
 		$field_class = apply_filters( 'gravityview/field/class', $field_class, $configuration );
 
@@ -278,6 +280,7 @@ class Field extends \stdClass {
 		$this->cap           = '1' == $configuration['only_loggedin'] ? $configuration['only_loggedin_cap'] : '';
 		$this->search_filter = '1' == $configuration['search_filter'];
 		$this->show_as_link  = '1' == $configuration['show_as_link'];
+		$this->new_window    = ! empty( $configuration['new_window'] );
 
 		/** Shared among all field types (sort of). */
 		$shared_configuration_keys = array(
@@ -364,11 +367,13 @@ class Field extends \stdClass {
 			/**
 			 * Override the displayed value here.
 			 *
-			 * @param string $value The value.
-			 * @param \GV\Field The field we're doing this for.
-			 * @param \GV\View $view The view for this context if applicable.
-			 * @param \GV\Source $source The source (form) for this context if applicable.
-			 * @param \GV\Entry $entry The entry for this context if applicable.
+			 * @since 2.0
+			 *
+			 * @param string      $value   The value.
+			 * @param \GV\Field   $field   The field we're doing this for.
+			 * @param \GV\View    $view    The view for this context if applicable.
+			 * @param \GV\Source  $source  The source (form) for this context if applicable.
+			 * @param \GV\Entry   $entry   The entry for this context if applicable.
 			 * @param \GV\Request $request The request for this context if applicable.
 			 */
 			$value = apply_filters( "gravityview/field/{$this->type}/value", $value, $this, $view, $source, $entry, $request );
@@ -377,11 +382,13 @@ class Field extends \stdClass {
 		/**
 		 * Override the displayed value here.
 		 *
-		 * @param string $value The value.
-		 * @param \GV\Field The field we're doing this for.
-		 * @param \GV\View $view The view for this context if applicable.
-		 * @param \GV\Source $source The source (form) for this context if applicable.
-		 * @param \GV\Entry $entry The entry for this context if applicable.
+		 * @since 2.0
+		 *
+		 * @param string      $value   The value.
+		 * @param \GV\Field   $field   The field we're doing this for.
+		 * @param \GV\View    $view    The view for this context if applicable.
+		 * @param \GV\Source  $source  The source (form) for this context if applicable.
+		 * @param \GV\Entry   $entry   The entry for this context if applicable.
 		 * @param \GV\Request $request The request for this context if applicable.
 		 */
 		return apply_filters( 'gravityview/field/value', $value, $this, $view, $source, $entry, $request );
@@ -399,9 +406,11 @@ class Field extends \stdClass {
 		/**
 		 * Should this field be visible?
 		 *
-		 * @param boolean $visible Visible or not, defaults to the set field capability requirement if defined.
-		 * @param \GV\Field $field The field we're looking at.
-		 * @param \GV\View|null A context view. Since @develop
+		 * @since 2.0
+		 *
+		 * @param boolean       $visible Visible or not, defaults to the set field capability requirement if defined.
+		 * @param \GV\Field     $field   The field we're looking at.
+		 * @param \GV\View|null $view    A context view.
 		 */
 		return apply_filters( 'gravityview/field/is_visible', ( ! $this->cap || \GVCommon::has_cap( $this->cap ) ), $this, $view );
 	}
@@ -436,5 +445,45 @@ class Field extends \stdClass {
 			default:
 				return isset( $this->configuration[ $key ] );
 		}
+	}
+
+	/**
+	 * Returns all the ancestors for this field, in order from root to this field.
+	 *
+	 * Note: this is for fields that are nested, like repeater fields.
+	 *
+	 * @since 2.51.0
+	 *
+	 * @return int[] The ancestor IDs.
+	 */
+	public function get_ancestors_ids(): array {
+		// A regular field has no ancestors.
+		return [];
+	}
+
+	/**
+	 * Returns the results this field will produce on the entry.
+	 *
+	 * Note: This means that the field is present inside a repeater field, for example. It does not mean the field has
+	 * multiple values, like a checkbox.
+	 *
+	 * @since 2.51.0
+	 *
+	 * @param View|null    $view    The View object.
+	 * @param Source|null  $source  The Source object.
+	 * @param Entry|null   $entry   The entry object.
+	 * @param Request|null $request The Request object.
+	 * @param string       $index   The nesting index. For example '0', '0.0', '0.1' ,'1.0', '0.0.1', etc.
+	 *
+	 * @return array The results per index. If no index is provided, returns *all* results.
+	 */
+	public function get_results(
+		?View $view = null,
+		?Source $source = null,
+		?Entry $entry = null,
+		?Request $request = null,
+		string $index = ''
+	): array {
+		return [];
 	}
 }

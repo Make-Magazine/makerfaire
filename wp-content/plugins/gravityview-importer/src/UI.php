@@ -64,9 +64,9 @@ class UI {
 		$this->plugin_version = $plugin_version;
 
 		/**
-		 * @filter `gravityview/import/capabilities` Filter to control plugin's minimum access rights
+		 * Filter to control plugin's minimum access rights
 		 *
-		 * @param  [in,out] array Array of WP caps required to view the Import Entries screen (default: `[ "manage_options", "gravityforms_import_entries" ]`)
+		 * @param array Array of WP caps required to view the Import Entries screen (default: `[ "manage_options", "gravityforms_import_entries" ]`)
 		 */
 		$this->_capabilities = apply_filters( 'gravityview/import/capabilities', $this->_capabilities );
 
@@ -118,7 +118,7 @@ class UI {
 		return array(
 			'app'                => array(
 				'previous_import_detected' => esc_html__( 'It appears that you never finished importing %s that you started on %s. Do you want to resume import or start a new import?', 'gk-gravityimport' ),
-				'resume'                   => esc_html__( 'Resume', 'gk-gravityimport', 'gk-gravityimport' ),
+				'resume'                   => esc_html__( 'Resume', 'gk-gravityimport' ),
 				'start_new'                => esc_html__( 'Start New Import', 'gk-gravityimport' ),
 			),
 			'modal'              => array(
@@ -174,9 +174,9 @@ class UI {
 				'row_x_of_y'                                   => esc_html_x( 'row %s of %s', '%s are replaced with current and tota parsed row count', 'gk-gravityimport' ),
 				'failed_to_process_import_data'                => esc_html__( 'We were unable to process your import data.', 'gk-gravityimport' ),
 				'map_columns_to_fields'                        => esc_html_x( 'Map CSV columns to %s form fields', '%s is replaced with form name', 'gk-gravityimport' ),
-				'map_columns_to_fields_desc'                   => esc_html__( 'You can skip columns by selecting "Do Not Import". To create a new form field, select "Add Form Field".', 'gk-gravityimport' ),
+				'map_columns_to_fields_desc'                   => esc_html__( 'Use checkboxes to select columns to import. Click the gear icon to configure complex field mappings. To add new form fields, select "Add Form Field".', 'gk-gravityimport' ),
 				'create_fields_and_map_columns_to_fields'      => esc_html_x( 'Create a form named %s.', '%s is replaced with form name', 'gk-gravityimport' ),
-				'create_fields_and_map_columns_to_fields_desc' => esc_html__( 'Choose which CSV columns will be turned into form fields. Set the field type to match the data.', 'gk-gravityimport' ),
+				'create_fields_and_map_columns_to_fields_desc' => esc_html__( 'Check the columns to import. Click column names to customize labels. Use the gear icon to configure complex fields with multiple inputs (like Address or Name).', 'gk-gravityimport' ),
 				'select_form_field'                            => esc_html__( 'Select Form Field', 'gk-gravityimport' ),
 				'import_to'                                    => esc_html__( 'Import to&hellip;', 'gk-gravityimport' ),
 				'duplicate_column_field'                       => esc_html__( 'This field is already assigned to another column. Do you want to re-assign it?', 'gk-gravityimport' ),
@@ -207,8 +207,71 @@ class UI {
 				'field_properties'                             => esc_html__( 'Open field properties', 'gk-gravityimport' ),
 				'column_label'                                 => esc_html_x( 'Column', 'Multi-column list column label', 'gk-gravityimport' ),
 				'any_choice'                                   => esc_html_x( 'Any Choice', 'Used for a checkbox field to indicate that any choice can be selected', 'gk-gravityimport' ),
-				'unmap_all_fields_warning'                     => esc_html__( 'This action cannot be undone and fields will have to be remapped. Do you want to continue?', 'gk-gravityimport' ),
-				'unmap_all_fields'                             => esc_html__( 'Unmap All Fields', 'gk-gravityimport' ),
+				'auto_map_fields'                              => esc_html__( 'Auto-map', 'gk-gravityimport' ),
+				'auto_map_fields_desc'                         => esc_html__( 'Reset all mappings to auto-detected values', 'gk-gravityimport' ),
+				'auto_map_fields_warning'                      => esc_html__( 'This will reset all field mappings to auto-detected values. Any manual changes will be lost. Do you want to continue?', 'gk-gravityimport' ),
+				'show_all_columns'                             => esc_html__( 'Show All Columns', 'gk-gravityimport' ),
+				'show_errors'                                  => esc_html__( 'Show Errors', 'gk-gravityimport' ),
+				'show_error_singular'                          => esc_html__( 'Show %d Error', 'gk-gravityimport' ),
+				'show_errors_plural'                           => esc_html__( 'Show %d Errors', 'gk-gravityimport' ),
+				'fix_error_before_continuing'                  => esc_html__( 'Fix 1 error before continuing', 'gk-gravityimport' ),
+				'fix_errors_before_continuing'                 => esc_html__( 'Fix %d errors before continuing', 'gk-gravityimport' ),
+				'duplicate_field_error'                        => esc_html__( 'Duplicate field mapping', 'gk-gravityimport' ),
+				'invalid_date_format_error'                    => esc_html__( 'Invalid date format', 'gk-gravityimport' ),
+				'invalid_json_list_error'                      => esc_html__( 'Invalid JSON for list field', 'gk-gravityimport' ),
+				'invalid_json_notes_error'                     => esc_html__( 'Invalid JSON for entry notes', 'gk-gravityimport' ),
+				'error_summary_title'                          => esc_html__( '%d columns have errors that need to be fixed:', 'gk-gravityimport' ),
+				'error_summary_title_singular'                 => esc_html__( '1 column has an error that needs to be fixed:', 'gk-gravityimport' ),
+				'view_error_details'                           => esc_html__( 'View details', 'gk-gravityimport' ),
+				'unmap_duplicate'                              => esc_html__( 'Unmap duplicate', 'gk-gravityimport' ),
+				'expand_for_details'                           => esc_html__( 'Expand for details', 'gk-gravityimport' ),
+				'collapse_details'                             => esc_html__( 'Collapse details', 'gk-gravityimport' ),
+				'bypass_errors_checkbox'                       => esc_html__( 'Continue anyway (errors may cause import issues)', 'gk-gravityimport' ),
+				'bypass_errors_warning'                        => esc_html__( 'Some rows may not import correctly', 'gk-gravityimport' ),
+				// Improved error reporting strings
+				'validation_error_found'                       => esc_html__( 'Validation Error Found', 'gk-gravityimport' ),
+				'validation_errors_found'                      => esc_html__( '%d Validation Errors Found', 'gk-gravityimport' ),
+				'fix_errors_message'                           => esc_html__( 'Please fix the following errors before continuing with the import:', 'gk-gravityimport' ),
+				'exclude_values_hint'                          => esc_html__( 'In the next step, you can exclude specific values from being imported.', 'gk-gravityimport' ),
+				'duplicate_errors_title'                       => esc_html__( 'Duplicate Field Mappings', 'gk-gravityimport' ),
+				'duplicate_errors_desc'                        => esc_html__( 'Each form field can only be mapped once. Remove duplicate mappings to continue.', 'gk-gravityimport' ),
+				'date_errors_title'                            => esc_html__( 'Invalid Date Format', 'gk-gravityimport' ),
+				'date_errors_desc'                             => esc_html__( 'Date columns must match the expected format (e.g., YYYY-MM-DD).', 'gk-gravityimport' ),
+				'time_errors_title'                            => esc_html__( 'Invalid Time Format', 'gk-gravityimport' ),
+				'time_errors_desc'                             => esc_html__( 'Time columns must match the expected format (e.g., HH:MM or HH:MM AM/PM).', 'gk-gravityimport' ),
+				'error_invalid_time'                           => esc_html__( 'Invalid Time', 'gk-gravityimport' ),
+				'list_errors_title'                            => esc_html__( 'Invalid List Format', 'gk-gravityimport' ),
+				'list_errors_desc'                             => esc_html__( 'List data must be properly formatted JSON arrays.', 'gk-gravityimport' ),
+				'notes_errors_title'                           => esc_html__( 'Invalid Notes Format', 'gk-gravityimport' ),
+				'notes_errors_desc'                            => esc_html__( 'Notes must be in a valid format for import.', 'gk-gravityimport' ),
+				'email_rejected_warning'                       => esc_html__( '%d email(s) will be rejected by Gravity Forms (e.g., %s)', 'gk-gravityimport' ),
+				'email_rejected_patterns_info'                 => esc_html__( 'Gravity Forms rejects emails matching these patterns: %s', 'gk-gravityimport' ),
+				'email_rejected_title'                         => esc_html__( 'Email Will Be Rejected', 'gk-gravityimport' ),
+				'number_invalid_warning'                       => esc_html__( 'Invalid Number Value', 'gk-gravityimport' ),
+				'number_invalid_details'                       => esc_html__( 'Non-numeric values will fail to import.', 'gk-gravityimport' ),
+				'number_invalid_title'                         => esc_html__( 'Invalid Number Value', 'gk-gravityimport' ),
+				'column_name_header'                           => esc_html__( 'Column', 'gk-gravityimport' ),
+				'sample_value_header'                          => esc_html__( 'Sample Failing Value', 'gk-gravityimport' ),
+				'affected_rows_header'                         => esc_html__( 'Affected Preview Rows', 'gk-gravityimport' ),
+				'of_total'                                     => esc_html_x( 'of', 'X of Y rows', 'gk-gravityimport' ),
+				'unmap_field'                                  => esc_html__( 'Unmap', 'gk-gravityimport' ),
+				'unmap_all_duplicates'                         => esc_html__( 'Unmap All Duplicates', 'gk-gravityimport' ),
+				'show_error_columns'                           => esc_html__( 'Show Only Columns With Errors', 'gk-gravityimport' ),
+				'bypass_errors_title'                          => esc_html__( 'Advanced: Continue with errors', 'gk-gravityimport' ),
+				'bypass_errors_desc'                           => esc_html__( 'Only use this if you understand the risks. Data may be lost or incorrectly imported.', 'gk-gravityimport' ),
+				'bypass_warning_what_could_happen'             => esc_html__( 'What could happen:', 'gk-gravityimport' ),
+				'bypass_warning_rows_skipped'                  => esc_html__( 'Rows with errors may be skipped', 'gk-gravityimport' ),
+				'bypass_warning_empty_fields'                  => esc_html__( 'Fields with invalid data may be left empty', 'gk-gravityimport' ),
+				'bypass_warning_format_mismatch'               => esc_html__( 'Some values may not match expected formats', 'gk-gravityimport' ),
+				'bypass_warning_footer'                        => esc_html__( 'The next step has options to handle errors during import, including Conditional Import to filter which rows are processed.', 'gk-gravityimport' ),
+				// Vertical layout strings
+				'field_mapping'                                => esc_html_x( 'Field Mapping', 'Table column header for field selector', 'gk-gravityimport' ),
+				'csv_header'                                   => esc_html_x( 'CSV Header', 'Table column header showing CSV column name', 'gk-gravityimport' ),
+				'preview_row'                                  => esc_html_x( 'Row', 'Prefix for preview row columns (Row 1, Row 2, etc.)', 'gk-gravityimport' ),
+				'show_less_preview'                            => esc_html__( 'Show Less', 'gk-gravityimport' ),
+				'show_more_preview'                            => esc_html__( 'Show More Preview', 'gk-gravityimport' ),
+				'showing_rows'                                 => esc_html_x( 'Showing', 'Prefix for row count indicator (Showing X of Y rows)', 'gk-gravityimport' ),
+				'rows'                                         => esc_html_x( 'rows', 'Suffix for row count indicator (Showing X of Y rows)', 'gk-gravityimport' ),
 			),
 			'multi_input_fields' => array(
 				'field_contains_multiple_inputs' => esc_html_x( 'The %s field type contains multiple inputs that can be mapped to your import data.', '%s is replaced by GF field type', 'gk-gravityimport' ),
@@ -232,6 +295,7 @@ class UI {
 			),
 			'date_format_filter' => array(
 				'column_contains_date'           => esc_html__( 'This column contains a date.', 'gk-gravityimport' ),
+				'invalid_date_details'           => esc_html__( 'Value could not be parsed as a date.', 'gk-gravityimport' ),
 				'date_recognized'                => esc_html_x( 'We recognized %s as %s. If this is incorrect, please select one of the available formats or specify your own:', '%s are replaced with column value and default date format, respectively', 'gk-gravityimport' ),
 				'date_unrecognized'              => esc_html_x( "We couldn't recognize %s using the default %s format. Please select one of the other possible formats or specify your own:", '%s values are replaced with shortcodes used for date formatting', 'gk-gravityimport' ),
 				'custom_format_hint'             => esc_html_x( 'Use %s for day, %s for month, %s for year, %s for time, %s to skip a single character, and %s to skip multiple characters. Day, month, and year are all required by Gravity Forms.', '%s are replaced with day (DD), month (MM) and year (YYYY) abbreviations', 'gk-gravityimport' ),
@@ -249,6 +313,7 @@ class UI {
 			),
 			'time_format_filter' => array(
 				'column_contains_time'           => esc_html__( 'This column contains a time value.', 'gk-gravityimport' ),
+				'invalid_time_details'           => esc_html__( 'Value could not be parsed as a time.', 'gk-gravityimport' ),
 				'time_recognized'                => esc_html_x( 'We recognized %s as %s. If this is incorrect, please select one of the available formats or specify your own:', '%s are replaced with column value and default time format, respectively', 'gk-gravityimport' ),
 				'time_unrecognized'              => esc_html_x( "We couldn't recognize %s using the default %s format. Please select one of the other possible formats or specify your own:", '%s are replaced with column value and default time format, respectively', 'gk-gravityimport' ),
 				'custom_format_hint'             => esc_html_x( 'Use %s for hour, %s for minute, %s for time period, %s to skip a single character and %s to skip multiple characters', '%s values are replaced with shortcodes used for time formatting', 'gk-gravityimport' ),
@@ -264,11 +329,13 @@ class UI {
 				'ss'                             => esc_html_x( 'ss', 'Time format - second', 'gk-gravityimport' ),
 			),
 			'entry_notes_filter' => array(
-				'invalid_notes' => esc_html__( 'Entry notes not recognized', 'gk-gravityimport' ),
+				'invalid_notes'         => esc_html__( 'Entry notes not recognized', 'gk-gravityimport' ),
+				'invalid_notes_details' => esc_html__( 'Value is not valid JSON for entry notes.', 'gk-gravityimport' ),
 				'found_x_notes' => esc_html_x( '%s entry note(s)', '%s is replaced with the number of recognized entry notes', 'gk-gravityimport' ),
 			),
 			'list_json_filter'   => array(
 				'invalid_list'         => esc_html__( 'List data not recognized', 'gk-gravityimport' ),
+				'invalid_list_details' => esc_html__( 'Value is not valid JSON for a list field.', 'gk-gravityimport' ),
 				'found_x_columns_rows' => esc_html_x( '%s column(s); %s row(s)', '%s are replaced with the number of detected list columns and rows, respectively', 'gk-gravityimport' ),
 				'found_x_rows'         => esc_html_x( '%s row(s)', '%s is replaced with the number of detected list rows', 'gk-gravityimport' ),
 			),
@@ -332,8 +399,28 @@ class UI {
 			'import_data'        => array(
 				'preparing_to_import'              => esc_html__( 'Preparing to import your data.', 'gk-gravityimport' ),
 				'importing_data'                   => esc_html__( 'Please wait while we import your data.', 'gk-gravityimport' ),
-				'do_not_navigate'                  => esc_html__( 'Do not navigate away from this page.', 'gk-gravityimport' ),
+				'importing_to_form'                => esc_html_x( 'Importing entries to %s', '%s is replaced with form name', 'gk-gravityimport' ),
+				'import_complete'                  => esc_html__( 'Import Complete', 'gk-gravityimport' ),
+				'import_complete_with_errors'      => esc_html__( 'Import Finished with Errors', 'gk-gravityimport' ),
+				'import_failed'                    => esc_html__( 'Import Failed', 'gk-gravityimport' ),
+				'all_entries_imported'             => esc_html__( 'All [count] entries were imported successfully to [link][form][/link].', 'gk-gravityimport' ),
+				'all_entries_imported_no_form'     => esc_html__( 'All [count] entries were imported successfully.', 'gk-gravityimport' ),
+				'all_entries_rejected'             => esc_html__( 'All [count] entries were rejected due to errors ([link]view log[/link] | [link]download[/link]).', 'gk-gravityimport' ),
+				'import_context'                   => esc_html__( '[file] into [form].', 'gk-gravityimport' ),
+				'preparing_import'                 => esc_html__( 'Preparing to import…', 'gk-gravityimport' ),
+			'do_not_navigate'                  => esc_html__( 'Do not navigate away from this page.', 'gk-gravityimport' ),
+				'background_import_message'        => esc_html__( 'You can safely navigate away. The import will continue in the background.', 'gk-gravityimport' ),
+				'cancel_import'                    => esc_html__( 'Cancel Import', 'gk-gravityimport' ),
+				'import_cancelled'                 => esc_html__( 'Import has been cancelled.', 'gk-gravityimport' ),
+				'pause_import'                     => esc_html__( 'Pause Import', 'gk-gravityimport' ),
+				'import_paused'                    => esc_html__( 'Import has been paused.', 'gk-gravityimport' ),
+				'import_paused_to_form'            => esc_html_x( 'Import to %s has been paused.', '%s is replaced with form name', 'gk-gravityimport' ),
+				'resuming_import'                  => esc_html__( 'Resuming import…', 'gk-gravityimport' ),
+				'resuming_import_to_form'          => esc_html_x( 'Resuming import to %s', '%s is replaced with form name', 'gk-gravityimport' ),
+				'resume_import'                    => esc_html__( 'Resume Import', 'gk-gravityimport' ),
 				'failed_to_import_data'            => esc_html__( 'We were unable to import your data.', 'gk-gravityimport' ),
+				'import_incomplete'                => esc_html__( 'Import Incomplete', 'gk-gravityimport' ),
+				'loading_error_details'            => esc_html__( 'Loading error details…', 'gk-gravityimport' ),
 				'processed_x_of_y_records'         => esc_html_x( 'Processed %s of %s records', '%s are replaced with current and total record count, respectively', 'gk-gravityimport' ),
 				'import_finished'                  => esc_html__( 'Import has finished.', 'gk-gravityimport' ),
 				'import_finished_with_errors'      => esc_html__( 'Import has finished with errors.', 'gk-gravityimport' ),
@@ -350,7 +437,9 @@ class UI {
 				'and'                              => esc_html__( 'and', 'gk-gravityimport' ),
 				'imported'                         => esc_html_x( 'imported', 'Row status', 'gk-gravityimport' ),
 				'skipped'                          => esc_html_x( 'skipped', 'Row status', 'gk-gravityimport' ),
-				'rejected'                         => esc_html_x( 'rejected due to an error ([link]view log[/link])', 'Row status', 'gk-gravityimport' ),
+				'rejected'                         => esc_html_x( 'rejected due to an error ([link]view log[/link] | [link]download[/link])', 'Row status', 'gk-gravityimport' ),
+				'retry_failed_records'             => esc_html_x( 'Retry %s Failed Records', '%s is replaced with the number of failed records', 'gk-gravityimport' ),
+				'remap_retry_failed_records'       => esc_html_x( 'Remap & Retry %s Failed Records', '%s is replaced with the number of failed records', 'gk-gravityimport' ),
 				'updated'                          => esc_html_x( 'updated', 'Row status', 'gk-gravityimport' ),
 			),
 			'network_errors'     => array(
@@ -376,6 +465,7 @@ class UI {
 				'change_source'                => esc_html_x( 'Change Source', 'Change selected import source (CSV, FTP, Google Sheets, etc.)', 'gk-gravityimport' ),
 				'change_field_mapping'         => esc_html_x( 'Change Field Mapping', 'Change form field mapping', 'gk-gravityimport' ),
 				'field_label_not_available'    => esc_html__( 'Field Label Not Available', 'gk-gravityimport' ),
+				'start_new_import'             => esc_html__( 'Start New Import', 'gk-gravityimport' ),
 			),
 		);
 	}
@@ -395,26 +485,35 @@ class UI {
 		$locale = strpos( $locale, 'pt-PT' ) !== false ? 'pt-PT' : $locale; // Possibly convert 'pt_PT_ao90' to 'pt_PT' as the former is not recognized by JS
 
 		$options = array(
-			'ajax_nonce'                => wp_create_nonce( self::NONCE_HANDLE ),
-			'api_nonce'                 => wp_create_nonce( 'wp_rest' ),
-			'action_csv_upload'         => self::AJAX_ACTION_CSV_UPLOAD,
-			'action_form_data'          => self::AJAX_ACTION_FORM_DATA,
-			'action_add_form_field'     => self::AJAX_ACTION_ADD_FORM_FIELD,
-			'localization'              => self::strings(),
-			'locale'                    => $locale,
-			'forms'                     => $this->get_forms(),
-			'field_types'               => $this->get_available_field_types(),
-			'api_url'                   => get_rest_url( null, Core::rest_namespace ),
-			'gf_entries_url'            => menu_page_url( 'gf_entries', false ),
-			'entry_revisions_installed' => defined( 'GV_ENTRY_REVISIONS_VERSION' ),
-			'last_batch'                => $this->get_last_batch(),
-			'beacon'                    => array(
+			'ajax_nonce'                   => wp_create_nonce( self::NONCE_HANDLE ),
+			'api_nonce'                    => wp_create_nonce( 'wp_rest' ),
+			'action_csv_upload'            => self::AJAX_ACTION_CSV_UPLOAD,
+			'action_form_data'             => self::AJAX_ACTION_FORM_DATA,
+			'action_add_form_field'        => self::AJAX_ACTION_ADD_FORM_FIELD,
+			'localization'                 => self::strings(),
+			'locale'                       => $locale,
+			'forms'                        => $this->get_forms(),
+			'field_types'                  => $this->get_available_field_types(),
+			'api_url'                      => get_rest_url( null, Core::rest_namespace ),
+			'gf_entries_url'               => menu_page_url( 'gf_entries', false ),
+			'entry_revisions_installed'    => defined( 'GV_ENTRY_REVISIONS_VERSION' ),
+			'last_batch'                   => $this->get_last_batch(),
+			'background_import'            => BackgroundProcessor::get_instance()->get_active_import(),
+			'scheduler_available'          => BackgroundProcessor::is_available(),
+			'rejectable_email_patterns'    => $this->get_rejectable_email_patterns(),
+			'beacon'                       => array(
 				'suggestions' => $this->get_helpscout_beacon_suggestions(),
 			),
 		);
 
-		wp_enqueue_script( self::ASSETS_HANDLE, plugins_url( 'assets/js/gravityview-import-entries.js', GV_IMPORT_ENTRIES_FILE ), array( 'wp-element' ), $this->plugin_version, true );
-		wp_enqueue_style( self::ASSETS_HANDLE, plugins_url( 'assets/css/gravityview-import-entries.css', GV_IMPORT_ENTRIES_FILE ), array(), $this->plugin_version );
+		$js_file  = plugin_dir_path( GV_IMPORT_ENTRIES_FILE ) . 'assets/js/gravityview-import-entries.js';
+		$css_file = plugin_dir_path( GV_IMPORT_ENTRIES_FILE ) . 'assets/css/gravityview-import-entries.css';
+
+		$js_version  = file_exists( $js_file ) ? filemtime( $js_file ) : GV_IMPORT_ENTRIES_VERSION;
+		$css_version = file_exists( $css_file ) ? filemtime( $css_file ) : GV_IMPORT_ENTRIES_VERSION;
+
+		wp_enqueue_script( self::ASSETS_HANDLE, plugins_url( 'assets/js/gravityview-import-entries.js', GV_IMPORT_ENTRIES_FILE ), array( 'wp-element', 'lodash' ), $js_version, true );
+		wp_enqueue_style( self::ASSETS_HANDLE, plugins_url( 'assets/css/gravityview-import-entries.css', GV_IMPORT_ENTRIES_FILE ), array(), $css_version );
 		wp_localize_script( self::ASSETS_HANDLE, 'GV_IMPORT_ENTRIES', $options );
 	}
 
@@ -486,6 +585,46 @@ class UI {
 				),
 			),
 		);
+	}
+
+	/**
+	 * Get the list of email patterns that Gravity Forms will reject.
+	 *
+	 * Uses Gravity Forms' GF_Field_Email::is_email_rejected() logic via a test field
+	 * to get the patterns that will be rejected during import.
+	 *
+	 * @since 2.8.0
+	 *
+	 * @return array Array of email patterns that will be rejected (e.g., '@example.com', '@domain.com').
+	 */
+	public function get_rejectable_email_patterns() {
+		// Default patterns that GF rejects (from GF_Field_Email::is_email_rejected)
+		$rejectable_values = array(
+			'@domain.com',
+			'@example.com',
+		);
+
+		/**
+		 * Filters the list of rejectable email patterns used for pre-import validation.
+		 *
+		 * This filter allows customization of the email patterns that will trigger
+		 * warnings during import preview.
+		 *
+		 * Note: During actual import, Gravity Forms uses the `gform_email_field_rejectable_values`
+		 * filter which may have form/field-specific customizations. This filter provides
+		 * a way to customize the pre-import warning to match your GF configuration.
+		 *
+		 * @since 2.8.0
+		 *
+		 * @param array $rejectable_values Array of email patterns to reject (e.g., '@example.com').
+		 */
+		$rejectable_values = apply_filters( 'gk/gravityimport/rejectable-email-patterns', $rejectable_values );
+
+		if ( empty( $rejectable_values ) || ! is_array( $rejectable_values ) ) {
+			return array();
+		}
+
+		return array_values( array_unique( array_filter( $rejectable_values ) ) );
 	}
 
 	/**
@@ -611,7 +750,7 @@ class UI {
 				continue;
 			}
 
-			if ( in_array( $field->type, array( 'option', 'total', 'shipping', 'quantity', 'product', 'price' ) ) ) {
+			if ( in_array( $field->type, array( 'option', 'total', 'shipping', 'quantity', 'product', 'price', 'hiddenproduct', 'donation' ) ) ) {
 				$product_fields[ $field->type ] = array(
 					'id'        => $field->type,
 					'parent_id' => 'product_fields',
@@ -775,12 +914,13 @@ class UI {
 
 			$field_label               = $field->get_field_label( false, null );
 			$form_fields[ $field->id ] = array(
-				'label'    => $field_label,
-				'type'     => $field->type,
-				'id'       => $field->id,
-				'order'    => $order,
-				'required' => $field->isRequired,
-				'default'  => $field->defaultValue !== '',
+				'label'            => $field_label,
+				'type'             => $field->type,
+				'id'               => $field->id,
+				'order'            => $order,
+				'required'         => $field->isRequired,
+				'default'          => '' !== $field->defaultValue,
+				'conditionalLogic' => $field->conditionalLogic,
 			);
 
 			if ( 'list' === $field->type && ! empty( $field->choices ) ) {
@@ -1011,6 +1151,28 @@ class UI {
 			array( $this, 'render_screen' )
 		);
 
+		add_action(
+			'admin_enqueue_scripts',
+			function () {
+				remove_all_actions( 'admin_notices' );
+				remove_all_actions( 'all_admin_notices' );
+			}
+		);
+
+		add_action(
+			'admin_enqueue_scripts',
+			function () {
+				remove_all_filters( 'update_footer' );
+			}
+		);
+
+		add_filter(
+			'admin_footer_text',
+			function () {
+				return '';
+			}
+		);
+
 	}
 
 	/**
@@ -1023,7 +1185,7 @@ class UI {
 	public function render_screen() {
 
 		/**
-		 * @deprecated Renamed to `gravityview/import/ui/before`
+		 * @deprecated 2.4 Use `gravityview/import/ui/before` instead.
 		 */
 		do_action( 'gravityview-import/before-import' );
 
@@ -1033,6 +1195,18 @@ class UI {
 		<div class="wrap">
 			<span id="gk-logo">GravityKit</span>
 			<div id="gv-import-entries">
+				<style>
+					/* Hide the error message initially, show after 5 seconds if React hasn't loaded */
+					#gv-import-entries > .error {
+						opacity: 0;
+						visibility: hidden;
+						animation: showScriptError 0s forwards;
+						animation-delay: 5s;
+					}
+					@keyframes showScriptError {
+						to { opacity: 1; visibility: visible; }
+					}
+				</style>
 				<div class="error inline"><p><?php
 						printf( esc_html__( 'Required scripts aren\'t loading properly. %s', '%s is replaced with "Please contact support" link.', 'gk-gravityimport' ),
 							sprintf( '<a href="mailto:support@gravitykit.com">%s</a>', esc_html__( 'Please contact support.', 'gk-gravityimport' ) )
@@ -1056,7 +1230,7 @@ class UI {
 		<?php
 
 		/**
-		 * @deprecated Renamed to `gravityview/import/ui/after`
+		 * @deprecated 2.4 Use `gravityview/import/ui/after` instead.
 		 */
 		do_action( 'gravityview-import/after-import' );
 

@@ -7,6 +7,7 @@ use GFFormsModel;
 use GravityView_Widget_Search;
 use GV\Context;
 use GV\Grid;
+use GV\Search\Querying\Search_Filter;
 use GV\Search\Search_Field_Collection;
 use GV\View;
 
@@ -106,6 +107,7 @@ abstract class Search_Field extends \GravityView_Admin_View_Item {
 	 * @var string
 	 */
 	protected string $UID = '';
+
 
 	/**
 	 * A list of default settings keys.
@@ -487,6 +489,20 @@ abstract class Search_Field extends \GravityView_Admin_View_Item {
 	}
 
 	/**
+	 * Adjusts the Search Filter based on the search field configuration.
+	 *
+	 * @since $ver$
+	 *
+	 * @param Search_Filter $filter The original search filter.
+	 * @param ?View $view The View.
+	 *
+	 * @return Search_Filter The adjusted search filter.
+	 */
+	public function adjust_filter( Search_Filter $filter, ?View $view = null ): Search_Filter {
+		return $filter;
+	}
+
+	/**
 	 * @inheritDoc
 	 * @since 2.42
 	 */
@@ -801,7 +817,7 @@ abstract class Search_Field extends \GravityView_Admin_View_Item {
 		];
 
 		/**
-		 * @filter `gk/gravityview/search/field/allowed_sections` Modifies the sections where the field is allowed to be used.
+		 * Modifies the sections where the field is allowed to be used.
 		 *
 		 * @since 2.42
 		 *

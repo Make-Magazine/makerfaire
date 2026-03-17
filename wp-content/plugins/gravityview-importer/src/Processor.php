@@ -54,17 +54,37 @@ class Processor {
 		) );
 
 		/**
-		 * @filter `gravityview/import/processor/args` Filter the processor arguments.
+		 * Filters the processor arguments before the import processor is initialized.
 		 *
-		 * @param  [in,out] array $args The arguments.
+		 * Use this filter to modify timeout, memory limits, batch ID, or other processor settings
+		 * before the import process begins.
+		 *
+		 * @since 2.0
+		 *
+		 * @param array $args {
+		 *     Processor arguments.
+		 *
+		 *     @type string|null $batch_id   The batch ID to process. Default null.
+		 *     @type int         $time       Start time as Unix timestamp. Default current time.
+		 *     @type int         $timeout    Maximum seconds to process before suspending. Default from Server::get_timeout().
+		 *     @type int         $memory     Maximum memory in bytes. Default from Server::get_memory_limit().
+		 *     @type int         $count      Maximum rows to process per run. Default 0 (unlimited).
+		 *     @type int         $countout   Internal counter for processed rows. Default 0.
+		 *     @type string|null $breakpoint Status to break on during run. Default null.
+		 * }
 		 */
 		$this->args = apply_filters( 'gravityview/import/processor/args', $args );
 
 		/**
-		 * @action `gravityview/import/processor/init` Processor is ready to be run.
+		 * Fires when the import processor has been initialized and is ready to run.
 		 *
-		 * @param \GravityKit\GravityImport\Processor $processor The processor.
-		 * @param array                        $args      The args.
+		 * Use this action to perform setup tasks before the import process begins,
+		 * such as logging, adding additional filters, or preparing external resources.
+		 *
+		 * @since 2.0
+		 *
+		 * @param \GravityKit\GravityImport\Processor $processor The initialized processor instance.
+		 * @param array                               $args      The processor arguments before filtering.
 		 */
 		do_action( 'gravityview/import/processor/init', $this, $args );
 	}
@@ -106,10 +126,15 @@ class Processor {
 		}
 
 		/**
-		 * @filter `gravityview/import/run/batch` Alter the batch before it's being run.
+		 * Filters the batch data before processing begins.
 		 *
-		 * @param  [in,out] array $batch The batch.
-		 * @param \GravityKit\GravityImport\Processor The processor.
+		 * Use this filter to modify batch settings, add custom flags, or alter
+		 * the import configuration before the processor starts running.
+		 *
+		 * @since 2.0
+		 *
+		 * @param array                               $batch     The batch data array containing import configuration.
+		 * @param \GravityKit\GravityImport\Processor $processor The processor instance.
 		 */
 		$batch = apply_filters( 'gravityview/import/run/batch', $batch, $this );
 
@@ -119,7 +144,7 @@ class Processor {
 		if ( in_array( $batch['status'], $schema['properties']['status']['extra']['stop'] ) ) {
 			$batch['error'] = $error = __( 'Batch is in stop state. Running no longer possible.', 'gk-gravityimport' );
 			Batch::update( $batch );
-			return new \WP_Error( 'gravityview/import/errors/invalid_state', $error );
+			return new \WP_Error( 'gravityview/import/errors/invalid_state', $error, array( 'status' => 409 ) );
 		}
 
 		if ( ! $this->has_resources() ) {
@@ -260,10 +285,15 @@ class Processor {
 	 */
 	public function has_resources() {
 		/**
-		 * @filter `gravityview/import/has_resources` Whether the current processor has resources or not.
+		 * Filters whether the processor has sufficient resources to continue processing.
 		 *
-		 * @param  [in,out] null|boolean True or false when overriding. Default: null, use default logic.
-		 * @param \GravityKit\GravityImport\Processor The processor.
+		 * Use this filter to override the default memory and timeout checks,
+		 * or to implement custom resource checking logic.
+		 *
+		 * @since 2.0
+		 *
+		 * @param bool|null                           $has_resources True to continue, false to stop, null to use default logic.
+		 * @param \GravityKit\GravityImport\Processor $processor     The processor instance.
 		 */
 		if ( ! is_null( $result = apply_filters( 'gravityview/import/has_resources', null, $this ) ) ) {
 			return $result;
@@ -355,6 +385,10 @@ class Processor {
 	 * @return \WP_Error|array A batch or an error.
 	 */
 	public function handle_parsing( $batch ) {
+		// Enable auto-detection of line endings to handle Mac-style CR-only line endings
+		// Suppress deprecation warning in PHP 8.1+ (where line endings are auto-detected)
+		@ini_set( 'auto_detect_line_endings', true );
+
 		if ( is_wp_error( $error = $this->_handle_check_status( __FUNCTION__, $batch ) ) ) {
 			return $error;
 		}
@@ -396,18 +430,29 @@ class Processor {
 		);
 
 		/**
-		 * @filter `gravityview/import/parse/excerpt` The excerpt size.
+		 * Filters the number of rows to analyze during the parsing phase.
 		 *
-		 * @param  [in,out] int  The size of the exerpt in rows. Includes headers. Default: 20
-		 * @param array $batch The batch.
+		 * The excerpt size determines how many rows are scanned to detect
+		 * column types and build field mapping hints during the parsing phase.
+		 *
+		 * @since 2.0
+		 * @since 2.6.1 Increased default from 20 to 51 to show 50 data rows in preview (plus 1 header row).
+		 *
+		 * @param int   $excerpt_size The number of rows to analyze. Includes headers. Default 51.
+		 * @param array $batch        The batch data.
 		 */
-		$excerpt_size = apply_filters( 'gravityview/import/parse/excerpt', 20, $batch );
+		$excerpt_size = apply_filters( 'gravityview/import/parse/excerpt', 51, $batch );
 
 		/**
 		 * Set the number of lines in the source.
 		 */
 		if ( empty( $batch['progress']['total'] ) ) {
 			$csv = fopen( $batch['source'], 'r' );
+
+			if ( ! $csv ) {
+				return new \WP_Error( 'gravityview/import/errors/cannot_open_csv', __( 'Failed to open CSV file for processing.', 'gk-gravityimport' ) );
+			}
+
 			while ( fgetcsv( $csv ) !== false ) {
 				$batch['progress']['total']++;
 			}
@@ -427,16 +472,27 @@ class Processor {
 			$number++;
 
 			/**
-			 * @deprecated Use `gravityview/import/process/row` instead.
+			 * Fires when a CSV row is being processed during the parsing phase.
+			 *
+			 * @since      1.0
+			 * @deprecated 2.0 Use `gravityview/import/process/row` instead.
+			 *
+			 * @param array $row    The row data as an array of column values.
+			 * @param int   $number The row number (starts from 1 with headers).
 			 */
 			do_action( 'gravityview-importer/process-row', $row, $number );
 
 			/**
-			 * @action `gravityview/import/process/row` This row is being processed.
+			 * Fires when a CSV row is being processed during the parsing phase.
 			 *
-			 * @param array $row    The row.
-			 * @param int   $number The row number (starts from 1, the headers).
-			 * @param array $batch  The batch.
+			 * Use this action to perform custom operations on each row during parsing,
+			 * such as logging, validation, or custom field mapping.
+			 *
+			 * @since 2.0
+			 *
+			 * @param array $row    The row data as an array of column values.
+			 * @param int   $number The row number (starts from 1 with headers).
+			 * @param array $batch  The batch data.
 			 */
 			do_action( 'gravityview/import/process/row', $row, $number, $batch );
 
@@ -460,7 +516,7 @@ class Processor {
 			/**
 			 * Record the excerpt.
 			 */
-			if ( count( $batch['meta']['excerpt'] ) <= $excerpt_size ) {
+			if ( count( $batch['meta']['excerpt'] ) < $excerpt_size ) {
 				if ( json_encode( $row ) ) {
 					$batch['meta']['excerpt'][] = $row;
 				} // Otherwise this is broken, unencodeable UTF8 ;(
@@ -498,8 +554,13 @@ class Processor {
 
 						/**
 						 * The note field.
+						 * Only match exact "notes" or "entry notes" - partial matches like "Analyst Notes" should not map to Entry Notes
 						 */
-						if ( strpos( $column_name, Core::strtolower( __( 'Notes', 'gk-gravityimport' ) ) ) !== false ) {
+						$notes_exact_matches = array(
+							Core::strtolower( __( 'Notes', 'gk-gravityimport' ) ),
+							Core::strtolower( __( 'Entry Notes', 'gk-gravityimport' ) ),
+						);
+						if ( in_array( $column_name, $notes_exact_matches, true ) ) {
 							$columns[ $i ] = array(
 								'title' => $column,
 								'field' => 'notes',
@@ -515,19 +576,6 @@ class Processor {
 							strpos( $column_name, Core::strtolower( trim( $user_id_parts[0] ) ) ) !== false
 							|| strpos( $column_name, Core::strtolower( trim( $user_id_parts[1], ' )' ) ) ) !== false ) {
 							continue; // Do not autosuggest the User ID column
-						}
-
-						/**
-						 * IP Address.
-						 */
-						if (
-							strpos( $column_name, Core::strtolower( __( 'User IP', 'gk-gravityimport' ) ) ) !== false
-							|| strpos( $column_name, Core::strtolower( __( 'IP Address', 'gk-gravityimport' ) ) ) !== false ) {
-							$columns[ $i ] = array(
-								'title' => $column,
-								'field' => 'ip',
-							);
-							continue;
 						}
 
 						/**
@@ -609,25 +657,6 @@ class Processor {
 								}
 							}
 						}
-
-						/**
-						 * Figure out the meta maps.
-						 */
-						$meta_hints = array(
-							__( 'Latitude', 'gravityview-maps', 'gk-gravityimport' )  => 'long',
-							__( 'Longitude', 'gravityview-maps', 'gk-gravityimport' ) => 'lat',
-							__( 'Approval Status', 'gk-gravityimport' )               => 'is_approved',
-						);
-
-						foreach ( $meta_hints as $meta_hint => $meta_key ) {
-							if ( strpos( $column_name, Core::strtolower( $meta_hint ) ) !== false ) {
-								$columns[ $i ] = array(
-									'title' => $column,
-									'field' => $meta_key,
-								);
-								continue 2;
-							}
-						}
 					}
 				}
 
@@ -660,8 +689,13 @@ class Processor {
 
 						/**
 						 * The note field.
+						 * Only match exact "notes" or "entry notes" - partial matches like "Analyst Notes" should not map to Entry Notes
 						 */
-						if ( strpos( $column_name, Core::strtolower( __( 'Notes', 'gk-gravityimport' ) ) ) !== false ) {
+						$notes_exact_matches = array(
+							Core::strtolower( __( 'Notes', 'gk-gravityimport' ) ),
+							Core::strtolower( __( 'Entry Notes', 'gk-gravityimport' ) ),
+						);
+						if ( in_array( $column_name, $notes_exact_matches, true ) ) {
 							$columns[ $i ] = array(
 								'title' => $column,
 								'field' => 'notes',
@@ -685,15 +719,18 @@ class Processor {
 
 						foreach ( $typemap as $keyword => $type ) {
 
-							// Match exact matches and complete words (not just a string match like "app" => "apple")
-							$pattern = '/(\b|^)' . $keyword . '(?=\s|$)/ism';
+							// Match exact matches and complete words (not just a string match like "app" => "apple").
+							// Normalize column name to handle underscores, parentheses, and other separators.
+							$normalized = preg_replace( '/[^a-z0-9]+/i', ' ', $column_name );
+							$escaped    = preg_quote( $keyword, '/' );
+							$pattern    = '/(^|[^a-z0-9])' . $escaped . '(?=[^a-z0-9]|$)/i';
 
-							if ( preg_match( $pattern, $column_name ) ) {
+							if ( preg_match( $pattern, $normalized ) ) {
 								$columns[ $i ] = array(
 									'title' => $column,
 									'field' => $type,
 								);
-								continue;
+								continue 2;
 							}
 						}
 					}
@@ -797,7 +834,8 @@ class Processor {
 			if ( $e->getMessage() === 'breakpoint' ) {
 				return Batch::update( $batch );
 			}
-			throw $e; // propagate in other cases
+
+			return new \WP_Error( 'gravityview/import/errors/csv_error', $e->getMessage() );
 		}
 
 		unset( $batch['meta']['_columns'], $batch['meta']['_headers'], $batch['meta']['_resume'] );
@@ -874,7 +912,7 @@ class Processor {
 		do_action( "gravityview/import/process/{$batch['status']}", $batch = Batch::update( $batch ) );
 
 		/**
-		 * @deprecated Use `gravityview/import/process/parsed`.
+		 * @deprecated 2.0 Use `gravityview/import/process/parsed` instead.
 		 */
 		do_action( 'gravityview-importer/end-of-file' );
 
@@ -899,12 +937,14 @@ class Processor {
 		if ( $processing = $wpdb->get_var( $wpdb->prepare( "SELECT COUNT(id) FROM {$tables['rows']} WHERE batch_id = %d AND status = 'processing'", $batch['id'] ) ) ) {
 
 			/**
-			 * @filter `gravityview/import/halt/timeout` The amount of patience before the batch
+			 * The amount of patience before the batch
 			 *                                           enters an error an error state on frozen
 			 *                                           row processing.
 			 *
-			 * @param  [in,out] int   $timeout             The amount of time to wait before erroring.
-			 * @param array $batch The batch.
+			 * @since 2.0
+			 *
+			 * @param int   $timeout The amount of time to wait before erroring.
+			 * @param array $batch   The batch.
 			 */
 			$timeout = apply_filters( 'gravityview/import/halt/timeout', 10, $batch );
 
@@ -918,12 +958,14 @@ class Processor {
 			}
 
 			/**
-			 * @filter `gravityview/import/halt/sleep` The time to sleep before trying to halt again.
+			 * The time to sleep before trying to halt again.
 			 *
-			 * @param  [in,out] int $sleep               The amount of time to wait before trying again.
-			 *                                         Defaults to 1 if there are enough resources to continue.
-			 *                                         0 if there are none.
-			 * @param array $batch                     The batch.
+			 * @since 2.0
+			 *
+			 * @param int   $sleep The amount of time to wait before trying again.
+			 *                     Defaults to 1 if there are enough resources to continue.
+			 *                     0 if there are none.
+			 * @param array $batch The batch.
 			 */
 			sleep( $sleep = apply_filters( 'gravityview/import/halt/sleep', $this->has_resources() ? 1 : 0, $batch ) );
 
@@ -952,13 +994,14 @@ class Processor {
 
 
 		/**
-		 * @deprecated Filter from Version 1.x
+		 * @deprecated 2.0 Use `gravityview/import/unstrict` instead.
 		 */
 		$allow_mismatched_rows = apply_filters( 'gravityview-importer/unstrict', true );
 
 		/**
-		 * @filter `gravityview/import/unstrict` Whether to allow importing rows that aren't the same size as expected
-		 * @since  2.0 Changed default to true
+		 * Whether to allow importing rows that aren't the same size as expected
+		 *
+		 * @since 2.0 Changed default to true
 		 *
 		 * @param bool  $allow_mismatched_rows Default: true
 		 * @param array $batch                 The batch
@@ -983,9 +1026,18 @@ class Processor {
 	 * @return \Goodby\CSV\Import\Standard\Lexer
 	 */
 	public function get_lexer_for( $batch, $class = null ) {
+		// Enable auto-detection of line endings to handle Mac-style CR-only line endings
+		// Suppress deprecation warning in PHP 8.1+ (where line endings are auto-detected)
+		@ini_set( 'auto_detect_line_endings', true );
+
 		$config = new LexerConfig();
 
 		$headers = fopen( $batch['source'], 'rb' );
+
+		if ( ! $headers ) {
+			throw new \Exception( __( 'Failed to open CSV file for delimiter detection.', 'gk-gravityimport' ) );
+		}
+
 		while ( ! $header = fgets( $headers ) ) {
 		}
 		/** Rid us of empty new lines. */
@@ -997,12 +1049,12 @@ class Processor {
 		}
 
 		/**
-		 * @deprecated Use `gravityview/import/config` below.
+		 * @deprecated 2.0 Use `gravityview/import/config` instead.
 		 */
 		do_action( 'gravityview-importer/config', $config );
 
 		/**
-		 * @action `gravityview/import/config` Configure the import format.
+		 * Configure the import format.
 		 * Used to set exotic formats, escapes, etc.
 		 *
 		 * @param Goodby\CSV\Import\Standard\Lexer\Config $config The config object.
@@ -1139,10 +1191,12 @@ class Processor {
 			);
 
 			/**
-			 * @filter `gravityview/import/fields/multi-input` A list of multi-input fields. Here for forward patching purposes.
+			 * A list of multi-input fields. Here for forward patching purposes.
 			 *
-			 * @param  [in,out] string[] A list of field types that are multi-input.
-			 * @param array The batch.
+			 * @since 2.0
+			 *
+			 * @param string[] $multiinput_fields A list of field types that are multi-input.
+			 * @param array    $batch             The batch.
 			 */
 			$multiinput_fields = apply_filters( 'gravityview/import/fields/multi-input', $multiinput_fields, $batch );
 
@@ -1234,8 +1288,7 @@ class Processor {
 							/**
 							 * Maybe JSON or PHP serialized?
 							 */
-							$result = $wpdb->get_col( $wpdb->prepare( "SELECT data FROM {$tables['rows']} WHERE batch_id = %d;", $batch['id'] ) );
-							$data   = array_filter( array_unique( wp_list_pluck( array_map( 'json_decode', $result ), $column['column'] ) ) );
+							$data = $this->get_column_choices( $batch['id'], $column['column'], $tables );
 
 							foreach ( $data as $d ) {
 								if (
@@ -1265,11 +1318,7 @@ class Processor {
 					}
 
 					if ( in_array( $type, array( 'radio', 'select' ) ) ) {
-						/**
-						 * Fetch all the unique values.
-						 */
-						$result  = $wpdb->get_col( $wpdb->prepare( "SELECT data FROM {$tables['rows']} WHERE batch_id = %d;", $batch['id'] ) );
-						$choices = array_unique( wp_list_pluck( array_map( 'json_decode', $result ), $column['column'] ) );
+						$choices = $this->get_column_choices( $batch['id'], $column['column'], $tables );
 
 						$fields[ $field_key ]->choices = array();
 
@@ -1282,19 +1331,17 @@ class Processor {
 					}
 
 					if ( 'multiselect' === $type ) {
-						/**
-						 * Fetch all the unique values.
-						 */
-						$result  = $wpdb->get_col( $wpdb->prepare( "SELECT data FROM {$tables['rows']} WHERE batch_id = %d;", $batch['id'] ) );
-						$choices = array_unique( wp_list_pluck( array_map( 'json_decode', $result ), $column['column'] ) );
+						$choices = $this->get_column_choices( $batch['id'], $column['column'], $tables );
 
 						/**
-						 * @filter `gravityview/import/column/multiselect/delimiter` The delimiter for multiselect fields.
+						 * The delimiter for multiselect fields.
 						 *
-						 * @param  [in,out] string    $delimiter The delimiter. Default: comma.
-						 * @param \GF_Field $field  The multiselect field.
-						 * @param array     $column The column that is being processed.
-						 * @param array     $batch  The batch.
+						 * @since 2.0
+						 *
+						 * @param string    $delimiter The delimiter. Default: comma.
+						 * @param \GF_Field $field     The multiselect field.
+						 * @param array     $column    The column that is being processed.
+						 * @param array     $batch     The batch.
 						 */
 						$delimiter = apply_filters( 'gravityview/import/column/multiselect/delimiter', ',', $fields[ $field_key ], $column, $batch );
 
@@ -1320,21 +1367,19 @@ class Processor {
 					if ( 'poll' === $type ) {
 						$fields[ $field_key ]['poll_field_type'] = isset( $column['meta']['type'] ) ? $column['meta']['type'] : 'radio';
 
-						/**
-						 * Fetch all the unique values.
-						 */
-						$result  = $wpdb->get_col( $wpdb->prepare( "SELECT data FROM {$tables['rows']} WHERE batch_id = %d;", $batch['id'] ) );
-						$choices = array_unique( wp_list_pluck( array_map( 'json_decode', $result ), $column['column'] ) );
+						$choices = $this->get_column_choices( $batch['id'], $column['column'], $tables );
 
 						$fields[ $field_key ]->choices = array();
 
 						/**
-						 * @filter `gravityview/import/column/checkbox/unchecked` The delimiter for multiselect fields.
+						 * The unchecked values for checkbox fields.
 						 *
-						 * @param  [in,out] string    $unchecked The unchecked values.
-						 * @param \GF_Field $field  The checkbox field.
-						 * @param array     $column The column that is being processed.
-						 * @param array     $batch  The batch.
+						 * @since 2.0
+						 *
+						 * @param string[]  $unchecked The unchecked values.
+						 * @param \GF_Field $field     The checkbox field.
+						 * @param array     $column    The column that is being processed.
+						 * @param array     $batch     The batch.
 						 */
 						$unchecked = apply_filters( 'gravityview/import/column/checkbox/unchecked', $this->default_false_values, $fields[ $field_key ], $column, $batch );
 
@@ -1519,7 +1564,7 @@ class Processor {
 				$batch['status'] = 'done';
 
 				/**
-				 * @action `gravityview/import/process/$status` Callback on batch status updates.
+				 * Callback on batch status updates.
 				 *
 				 * @param array $batch The batch.
 				 */
@@ -1545,7 +1590,7 @@ class Processor {
 				$wpdb->update( $tables['rows'], array( 'status' => 'skipped', 'entry_id' => 0 ), array( 'id' => $row->id ) );
 
 				/**
-				 * @action `gravityview/import/process/row/skipped` This row is skipped due to conditional logic.
+				 * This row is skipped due to conditional logic.
 				 *
 				 * @param object $row   The row.
 				 * @param array  $batch The batch.
@@ -1626,9 +1671,9 @@ class Processor {
 				$field->allowsPrepopulate = true;
 
 				/**
-				 * @filter `gravityview/import/field/unrequire` Allow setting the isRequired property of this field to false.
+				 * Allow setting the isRequired property of this field to false.
 				 *
-				 * @param  [in,out] bool      $unrequire Allow unrequire? Default: true.
+				 * @param bool      $unrequire Allow unrequire? Default: true.
 				 * @param \GF_Field $field The field.
 				 * @param array     $batch The batch.
 				 */
@@ -1673,16 +1718,18 @@ class Processor {
 							}, $field->choices );
 
 							/**
-							 * @deprecated Use `gravityview/import/column/radio/strict` instead.
+							 * @deprecated 2.0 Use `gravityview/import/column/radio/strict` instead.
 							 */
 							$strict_radio_choices = apply_filters( 'gravityview-importer/strict-mode', apply_filters( 'gravityview-importer/strict-mode/radio-choices', true ) );
 
 							/**
-							 * @filter `gravityview/import/column/radio/strict` Suppress strict radio value validation.
+							 * Suppress strict radio value validation.
 							 *
-							 * @param  [in,out] string    $validate Validate. Default: true.
-							 * @param \GF_Field $field The radio field.
-							 * @param array     $batch The batch.
+							 * @since 2.0
+							 *
+							 * @param bool      $validate Validate. Default: true.
+							 * @param \GF_Field $field    The radio field.
+							 * @param array     $batch    The batch.
 							 */
 							if ( ! in_array( $value, $values ) && apply_filters( 'gravityview/import/column/radio/strict', $strict_radio_choices, $field, $batch ) ) {
 								$result['is_valid'] = false;
@@ -1709,11 +1756,13 @@ class Processor {
 						}, $field->choices );
 
 						/**
-						 * @filter `gravityview/import/column/select/strict` Suppress strict select value validation.
+						 * Suppress strict select value validation.
 						 *
-						 * @param  [in,out] string    $validate Validate. Default: true.
-						 * @param \GF_Field $field The select field.
-						 * @param array     $batch The batch.
+						 * @since 2.0
+						 *
+						 * @param bool      $validate Validate. Default: true.
+						 * @param \GF_Field $field    The select field.
+						 * @param array     $batch    The batch.
 						 */
 						if ( ! in_array( $value, $values ) && apply_filters( 'gravityview/import/column/select/strict', true, $field, $batch ) ) {
 							$result['is_valid'] = false;
@@ -1811,11 +1860,13 @@ class Processor {
 							$values = array_unique( array_filter( $values ) );
 
 							/**
-							 * @filter `gravityview/import/column/multiselect/strict` Suppress strict multiselect value validation.
+							 * Suppress strict multiselect value validation.
 							 *
-							 * @param  [in,out] string    $validate Validate. Default: true.
-							 * @param \GF_Field $field The multiselect field.
-							 * @param array     $batch The batch.
+							 * @since 2.0
+							 *
+							 * @param bool      $validate Validate. Default: true.
+							 * @param \GF_Field $field    The multiselect field.
+							 * @param array     $batch    The batch.
 							 */
 							if ( array_diff( array_filter( $value ), $values ) && apply_filters( 'gravityview/import/column/multiselect/strict', true, $field, $batch ) ) {
 								$result['is_valid'] = false;
@@ -1919,11 +1970,13 @@ class Processor {
 					}
 
 					/**
-					 * @filter `gravityview/import/column/data` Allow the transformation of data for a column.
+					 * Allow the transformation of data for a column.
 					 *
-					 * @param  [in,out] string $data   The cell data.
-					 * @param array $column The column schema definition.
-					 * @param array $batch  The batch.
+					 * @since 2.0
+					 *
+					 * @param string $data   The cell data.
+					 * @param array  $column The column schema definition.
+					 * @param array  $batch  The batch.
 					 */
 					$row->data[ $column['column'] ] = apply_filters( 'gravityview/import/column/data', $row->data[ $column['column'] ], $column, $batch );
 
@@ -1967,11 +2020,13 @@ class Processor {
 				}
 
 				/**
-				 * @filter `gravityview/import/column/data` Allow the transformation of data for a column.
+				 * Allow the transformation of data for a column.
 				 *
-				 * @param  [in,out] string $data   The cell data.
-				 * @param array $column The column schema definition.
-				 * @param array $batch  The batch.
+				 * @since 2.0
+				 *
+				 * @param string $data   The cell data.
+				 * @param array  $column The column schema definition.
+				 * @param array  $batch  The batch.
 				 */
 				$row->data[ $column['column'] ] = apply_filters( 'gravityview/import/column/data', $row->data[ $column['column'] ], $column, $batch );
 
@@ -1997,9 +2052,11 @@ class Processor {
 
 							foreach ( $urls as $url ) {
 								/**
-								 * @filter `gravityview/import/column/file/source` Path to local file that can be moved to uploads.
+								 * Path to local file that can be moved to uploads.
 								 *
-								 * @param  [in,out] string    $source The local file path, that can be moved.
+								 * @since 2.0
+								 *
+								 * @param string    $source The local file path, that can be moved.
 								 * @param string    $url    The current cell value.
 								 * @param \GF_Field $field  The upload field.
 								 * @param array     $column The column that is being processed.
@@ -2036,9 +2093,11 @@ class Processor {
 								}
 
 								/**
-								 * @filter `gravityview/import/column/file/name` The name of the file.
+								 * The name of the file.
 								 *
-								 * @param  [in,out] string    $name   The name of the file.
+								 * @since 2.0
+								 *
+								 * @param string    $name   The name of the file.
 								 * @param string    $url    The current cell value.
 								 * @param \GF_Field $field  The upload field.
 								 * @param array     $column The column that is being processed.
@@ -2108,12 +2167,14 @@ class Processor {
 						switch ( $input_id ):
 							case '1':
 								/**
-								 * @filter `gravityview/import/column/consent/checked` The text for which the field is considered checked.
+								 * The text for which the field is considered checked.
 								 *
-								 * @param  [in,out] string    $checked The checked text. Default: Checked in the current locale.
-								 * @param \GF_Field $field  The consent field.
-								 * @param array     $column The column that is being processed.
-								 * @param array     $batch  The batch.
+								 * @since 2.0
+								 *
+								 * @param string    $checked The checked text. Default: Checked in the current locale.
+								 * @param \GF_Field $field   The consent field.
+								 * @param array     $column  The column that is being processed.
+								 * @param array     $batch   The batch.
 								 */
 								$checked = apply_filters( 'gravityview/import/column/consent/checked', __( 'Checked', 'gk-gravityimport' ), $field, $column, $batch );
 								if ( $is_checked = ( $row->data[ $column['column'] ] === $checked ) ) {
@@ -2221,9 +2282,11 @@ class Processor {
 						wp_mkdir_p( $signatures_dir = \GFSignature::get_signatures_folder() );
 
 						/**
-						 * @filter `gravityview/import/column/signature/name` The name of the signature file.
+						 * The name of the signature file.
 						 *
-						 * @param  [in,out] string    $name   The name of the file.
+						 * @since 2.0
+						 *
+						 * @param string    $name   The name of the file.
 						 * @param string    $url    The current cell value.
 						 * @param \GF_Field $field  The signature field.
 						 * @param array     $column The column that is being processed.
@@ -2251,9 +2314,11 @@ class Processor {
 						}
 
 						/**
-						 * @filter `gravityview/import/column/signature/source` Path to local file that can be moved to signatures.
+						 * Path to local file that can be moved to signatures.
 						 *
-						 * @param  [in,out] string    $source The local file path, that can be moved.
+						 * @since 2.0
+						 *
+						 * @param string    $source The local file path, that can be moved.
 						 * @param string    $url    The current cell value.
 						 * @param \GF_Field $field  The signature field.
 						 * @param array     $column The column that is being processed.
@@ -2497,16 +2562,18 @@ class Processor {
 						$use_default = isset( $column['flags'] ) && in_array( 'default', $column['flags'] );
 
 						/**
-						 * @deprecated Use `gravityview/import/column/default`
+						 * @deprecated 2.0 Use `gravityview/import/column/default` instead.
 						 */
 						$use_default = apply_filters( 'gravityview-importer/use-default-value', $use_default );
 
 						/**
-						 * @filter `gravityview/import/column/default` Whether to use the default field value on an empty cell or not.
+						 * Whether to use the default field value on an empty cell or not.
 						 *
-						 * @param  [in,out] array $use_default Use or not. Default: the value of the `default` column flat (usually false).
-						 * @param array $column The column.
-						 * @param array $batch  The batch.
+						 * @since 2.0
+						 *
+						 * @param bool  $use_default Use or not. Default: the value of the `default` column flat (usually false).
+						 * @param array $column      The column.
+						 * @param array $batch       The batch.
 						 */
 						$use_default = apply_filters( 'gravityview/import/column/default', $use_default, $column, $batch );
 
@@ -2665,9 +2732,11 @@ class Processor {
 			 */
 			add_filter( 'gform_validation', $global_validation_callback = function ( $validation_result ) use ( $batch, $row ) {
 				/**
-				 * @filter `gravityview/import/entry/validate` Suppress global validation.
+				 * Suppress global validation.
 				 *
-				 * @param  [in,out] boolean $validate          Whether to validate or not. Default: true; validate.
+				 * @since 2.0
+				 *
+				 * @param bool   $validate          Whether to validate or not. Default: true; validate.
 				 * @param array  $validation_result The current validation result.
 				 * @param object $row               The row.
 				 * @param array  $batch             The batch.
@@ -2683,9 +2752,9 @@ class Processor {
 			foreach ( $form['fields'] as &$field ) {
 				add_filter( 'gform_field_validation', $global_field_validation_callbacks[] = function ( $validation_result, $value, $form, $the_field ) use ( $batch, $row ) {
 					/**
-					 * @filter `gravityview/import/entry/validate` Suppress global validation.
+					 * Suppress global validation.
 					 *
-					 * @param  [in,out] boolean $validate          Whether to validate or not. Default: true; validate.
+					 * @param boolean $validate          Whether to validate or not. Default: true; validate.
 					 * @param array  $validation_result The current validation result.
 					 * @param object $row               The row.
 					 * @param array  $batch             The batch.
@@ -2704,6 +2773,17 @@ class Processor {
 			\GFFormDisplay::$submission = null;
 
 			$_POST['gform_uploaded_files'] = json_encode( $_POST['gform_uploaded_files'] );
+
+			// Encode List field arrays to JSON strings (GF expects JSON from browser submissions).
+			// Only encode if GF will decode: is_administrative() && allowsPrepopulate.
+			foreach ( $form['fields'] as $field ) {
+				if ( 'list' === $field->type && $field->is_administrative() && $field->allowsPrepopulate ) {
+					$input_name = 'input_' . $field->id;
+					if ( isset( $_POST[ $input_name ] ) && is_array( $_POST[ $input_name ] ) ) {
+						$_POST[ $input_name ] = json_encode( $_POST[ $input_name ] );
+					}
+				}
+			}
 
 			/**
 			 * @todo make sure anything that's not been submitted in patch-mode stays there
@@ -2839,17 +2919,19 @@ class Processor {
 
 			if ( ! $has_user_agent ) {
 				/**
-				 * @filter `gravityview-import/user-agent` Deprecated. Use `gravityview/import/user-agent`
+				 * @deprecated 2.0 Use `gravityview/import/user-agent` instead.
 				 */
 				$update_entry_properties['user_agent'] = apply_filters( 'gravityview-import/user-agent', __( 'GravityView Import', 'gk-gravityimport' ) );
 
 				/**
-				 * @filter `gravityview/import/user-agent` Set a missing User-Agent string for an entry.
+				 * Set a missing User-Agent string for an entry.
 				 *
-				 * @param  [in,out] string $user_agen The User-Agent. Default: "GravityView Import"
-				 * @param array $entry The entry.
-				 * @param array $batch The batch.
-				 * @param array $data  The row data.
+				 * @since 2.0
+				 *
+				 * @param string $user_agent The User-Agent. Default: "GravityView Import"
+				 * @param array  $entry      The entry.
+				 * @param array  $batch      The batch.
+				 * @param array  $data       The row data.
 				 */
 				$update_entry_properties['user_agent'] = apply_filters( 'gravityview/import/user-agent', $update_entry_properties['user_agent'], $entry, $batch, $row->data );
 			}
@@ -2882,12 +2964,14 @@ class Processor {
 			}
 
 			/**
-			 * @filter `gravityview/import/column/notes/user` Override the note user.
+			 * Override the note user.
 			 *
-			 * @param  [in,out] \WP_User  $user   The default user. Default: current user.
-			 * @param object $note  The note.
-			 * @param array  $entry The entry.
-			 * @param array  $batch The batch.
+			 * @since 2.0
+			 *
+			 * @param \WP_User $user  The default user. Default: current user.
+			 * @param object   $note  The note.
+			 * @param array    $entry The entry.
+			 * @param array    $batch The batch.
 			 */
 			$user = apply_filters( 'gravityview/import/column/notes/user', $user, $note, $entry, $batch );
 
@@ -2918,10 +3002,10 @@ class Processor {
 			/**
 			 * @deprecated Use `gravityview/import/entry/updated`
 			 */
-			do_action( 'gravityview-importer/after-update', $entry );
+			do_action_deprecated( 'gravityview-importer/after-update', array( $entry ), '2.0.0', 'gravityview/import/entry/updated' );
 
 			/**
-			 * @action `gravityview/import/entry/updated` An entry has been updated.
+			 * An entry has been updated.
 			 *
 			 * @param array $entry     The entry.
 			 * @param array $old_entry The entry.
@@ -2930,12 +3014,12 @@ class Processor {
 			do_action( 'gravityview/import/entry/updated', $entry, $old_entry, $batch );
 		} else {
 			/**
-			 * @deprecated Use `gravityview/import/entry/created`
+			 * @deprecated 2.0 Use `gravityview/import/entry/created` instead.
 			 */
 			do_action( 'gravityview-importer/after-add', $entry );
 
 			/**
-			 * @action `gravityview/import/entry/created` A new entry has been created.
+			 * A new entry has been created.
 			 *
 			 * @param array $entry The entry.
 			 * @param array $batch The batch.
@@ -3023,7 +3107,7 @@ class Processor {
 	public function _handle_check_status( $function, $batch ) {
 		$status = str_replace( 'handle_', '', $function );
 		if ( ! is_array( $batch ) || empty( $batch['status'] ) || $batch['status'] != $status ) {
-			return new \WP_Error( 'gravityview/import/errors/invalid_state', sprintf( __( 'Batch is not in "%s" state, wrong handler called.', 'gk-gravityimport' ), $status ) );
+			return new \WP_Error( 'gravityview/import/errors/invalid_state', sprintf( __( 'Batch is not in "%s" state, wrong handler called.', 'gk-gravityimport' ), $status ), array( 'status' => 409 ) );
 		}
 	}
 
@@ -3201,6 +3285,42 @@ class Processor {
 	}
 
 	/**
+	 * Extracts unique values for a specific column from batch row data.
+	 *
+	 * Caches the row data per batch to avoid repeated large queries.
+	 * Limited to 5000 rows to prevent memory exhaustion on large imports.
+	 *
+	 * @since 2.9.0
+	 *
+	 * @param int   $batch_id     The batch ID.
+	 * @param int   $column_index The column index to extract values from.
+	 * @param array $tables       Database table names.
+	 *
+	 * @return array Unique values found in the specified column.
+	 */
+	private function get_column_choices( $batch_id, $column_index, $tables ) {
+		global $wpdb;
+
+		static $cache = array();
+
+		$cache_key = (string) $batch_id;
+
+		if ( ! isset( $cache[ $cache_key ] ) ) {
+			$result = $wpdb->get_col( $wpdb->prepare(
+				"SELECT data FROM {$tables['rows']} WHERE batch_id = %d LIMIT 5000",
+				$batch_id
+			) );
+
+			$cache[ $cache_key ] = array_map( 'json_decode', $result );
+
+			// Free the raw result set from memory.
+			$wpdb->last_result = array();
+		}
+
+		return array_filter( array_unique( wp_list_pluck( $cache[ $cache_key ], $column_index ) ), 'strlen' );
+	}
+
+	/**
 	 * Handle errors when a row can't be processed.
 	 *
 	 * @since 2.2.3
@@ -3219,7 +3339,7 @@ class Processor {
 		$wpdb->update( $tables['rows'], array( 'status' => 'error', 'error' => $error ), array( 'id' => $row->id ) );
 
 		/**
-		 * @action `gravityview/import/process/row/error` This row has errored for some reason.
+		 * This row has errored for some reason.
 		 *
 		 * @param object $row   The row object in the database.
 		 * @param string $error The error.
@@ -3243,94 +3363,285 @@ class Processor {
 	 * Get the field type mapping for auto-detecting field types based on column names.
 	 *
 	 * Returns an array of keywords and their corresponding field types.
+	 * Organized by use case for better maintainability.
 	 * More specific keywords are prioritized at the top, with catchall patterns at the bottom.
 	 *
 	 * @param array $column The column header.
 	 * @param array $batch The batch.
 	 *
-	 * @since 2.7.0
-	 *
-	 * @return array An associative array of keyword => field type mappings, ordered by priority (more specific keywords are prioritized at the top, with catchall patterns at the bottom).
+	 * @return array An associative array of keyword => field type mappings, ordered by priority.
 	 */
 	private function get_field_typemap( $column, $batch ) {
-		$typemap = [
+		// Static cache for the base typemap to avoid repeated translation lookups.
+		static $base_typemap_cache = null;
+
+		if ( $base_typemap_cache ) {
+			/** This filter is documented below. */
+			return apply_filters( 'gravityview/import/parse/typemap', $base_typemap_cache, $column, $batch );
+		}
+
+		$base_typemap_cache = [
+			// === ENTRY PROPERTIES ===
+			_x( 'entry id', 'Typemap keyword. Part of a word that matches the name of an entry property. Has to be lowercase.', 'gk-gravityimport' )        => 'id',
+			_x( 'entry date', 'Typemap keyword. Part of a word that matches the name of an entry property. Has to be lowercase.', 'gk-gravityimport' )      => 'date_created',
+			_x( 'ip address', 'Typemap keyword. Part of a word that matches the name of an entry property. Has to be lowercase.', 'gk-gravityimport' )      => 'ip',
+			_x( 'user ip', 'Typemap keyword. Part of a word that matches the name of an entry property. Has to be lowercase.', 'gk-gravityimport' )         => 'ip',
+			_x( 'approval status', 'Typemap keyword. Part of a word that matches the name of an entry property. Has to be lowercase.', 'gk-gravityimport' ) => 'is_approved',
+			_x( 'user agent', 'Typemap keyword. Part of a word that matches the name of an entry property. Has to be lowercase.', 'gk-gravityimport' )      => 'user_agent',
+			_x( 'post id', 'Typemap keyword. Part of a word that matches the name of an entry property. Has to be lowercase.', 'gk-gravityimport' )         => 'post_id',
+			_x( 'payment status', 'Typemap keyword. Part of a word that matches the name of an entry property. Has to be lowercase.', 'gk-gravityimport' )  => 'payment_status',
+			_x( 'payment date', 'Typemap keyword. Part of a word that matches the name of an entry property. Has to be lowercase.', 'gk-gravityimport' )    => 'payment_date',
+			_x( 'payment amount', 'Typemap keyword. Part of a word that matches the name of an entry property. Has to be lowercase.', 'gk-gravityimport' )  => 'payment_amount',
+			_x( 'transaction id', 'Typemap keyword. Part of a word that matches the name of an entry property. Has to be lowercase.', 'gk-gravityimport' )  => 'transaction_id',
+			_x( 'source url', 'Typemap keyword. Part of a word that matches the name of an entry property. Has to be lowercase.', 'gk-gravityimport' )      => 'source_url',
+			_x( 'date created', 'Typemap keyword. Part of a word that matches the name of an entry property. Has to be lowercase.', 'gk-gravityimport' )    => 'date_created',
+			_x( 'date updated', 'Typemap keyword. Part of a word that matches the name of an entry property. Has to be lowercase.', 'gk-gravityimport' )    => 'date_updated',
+
+			// Additional entry properties from database schema
+			_x( 'is starred', 'Typemap keyword. Part of a word that matches the name of an entry property. Has to be lowercase.', 'gk-gravityimport' )       => 'is_starred',
+			_x( 'starred', 'Typemap keyword. Part of a word that matches the name of an entry property. Has to be lowercase.', 'gk-gravityimport' )          => 'is_starred',
+			_x( 'is read', 'Typemap keyword. Part of a word that matches the name of an entry property. Has to be lowercase.', 'gk-gravityimport' )          => 'is_read',
+			_x( 'read', 'Typemap keyword. Part of a word that matches the name of an entry property. Has to be lowercase.', 'gk-gravityimport' )             => 'is_read',
+			_x( 'currency', 'Typemap keyword. Part of a word that matches the name of an entry property. Has to be lowercase.', 'gk-gravityimport' )         => 'currency',
+			_x( 'payment method', 'Typemap keyword. Part of a word that matches the name of an entry property. Has to be lowercase.', 'gk-gravityimport' )   => 'payment_method',
+			_x( 'is fulfilled', 'Typemap keyword. Part of a word that matches the name of an entry property. Has to be lowercase.', 'gk-gravityimport' )     => 'is_fulfilled',
+			_x( 'fulfilled', 'Typemap keyword. Part of a word that matches the name of an entry property. Has to be lowercase.', 'gk-gravityimport' )        => 'is_fulfilled',
+			_x( 'created by', 'Typemap keyword. Part of a word that matches the name of an entry property. Has to be lowercase.', 'gk-gravityimport' )       => 'created_by',
+			_x( 'user id', 'Typemap keyword. Part of a word that matches the name of an entry property. Has to be lowercase.', 'gk-gravityimport' )          => 'created_by',
+			_x( 'transaction type', 'Typemap keyword. Part of a word that matches the name of an entry property. Has to be lowercase.', 'gk-gravityimport' ) => 'transaction_type',
+			_x( 'entry status', 'Typemap keyword. Part of a word that matches the name of an entry property. Has to be lowercase.', 'gk-gravityimport' )     => 'status',
+			_x( 'source id', 'Typemap keyword. Part of a word that matches the name of an entry property. Has to be lowercase.', 'gk-gravityimport' )        => 'source_id',
+
+			// === GRAVITYVIEW ENTRY META ===
+			_x( 'longitude', 'Typemap keyword. Part of a word that matches an entry property. Has to be lowercase.', 'gk-gravityimport' )                              => 'long',
+			_x( 'latitude', 'Typemap keyword. Part of a word that matches an entry property. Has to be lowercase.', 'gk-gravityimport' )                               => 'lat',
+			_x( 'gravityview_ratings_star', 'Typemap keyword. Part of a word that matches a number field. Has to be lowercase.', 'gk-gravityimport' )                  => 'number',
+			_x( 'gravityview_ratings_stars', 'Typemap keyword. Part of a word that matches a number field. Has to be lowercase.', 'gk-gravityimport' )                 => 'number',
+			_x( 'gravityview_ratings_total', 'Typemap keyword. Part of a word that matches a number field. Has to be lowercase.', 'gk-gravityimport' )                 => 'number',
+			_x( 'gravityview_ratings_vote', 'Typemap keyword. Part of a word that matches a number field. Has to be lowercase.', 'gk-gravityimport' )                  => 'number',
+			_x( 'gravityview_ratings_votes', 'Typemap keyword. Part of a word that matches a number field. Has to be lowercase.', 'gk-gravityimport' )                 => 'number',
+			_x( 'is_approved', 'Typemap keyword. Part of a word that matches an entry property. Has to be lowercase.', 'gk-gravityimport' )                            => 'number',
+			_x( 'workflow_current_status_timestamp', 'Typemap keyword. Part of a word that matches an entry property. Has to be lowercase.', 'gk-gravityimport' )     => 'number',
+			_x( 'submission speed', 'Typemap keyword. Part of a word that matches a number field. Has to be lowercase.', 'gk-gravityimport' )                          => 'number',
+
+			// === CONTACT INFORMATION ===
 			_x( 'email', 'Typemap keyword. Part of a word that matches an email field. Has to be lowercase. Set to ### if does not apply.', 'gk-gravityimport' ) => 'email',
 
+			// Professional Contact
+			_x( 'company', 'Typemap keyword. Part of a word that matches a text field. Has to be lowercase.', 'gk-gravityimport' ) => 'text',
+			_x( 'organization', 'Typemap keyword. Part of a word that matches a text field. Has to be lowercase.', 'gk-gravityimport' ) => 'text',
+			_x( 'business', 'Typemap keyword. Part of a word that matches a text field. Has to be lowercase.', 'gk-gravityimport' ) => 'text',
+			_x( 'employer', 'Typemap keyword. Part of a word that matches a text field. Has to be lowercase.', 'gk-gravityimport' ) => 'text',
+			_x( 'job', 'Typemap keyword. Part of a word that matches a text field. Has to be lowercase.', 'gk-gravityimport' ) => 'text',
+			_x( 'position', 'Typemap keyword. Part of a word that matches a text field. Has to be lowercase.', 'gk-gravityimport' ) => 'text',
+			_x( 'department', 'Typemap keyword. Part of a word that matches a text field. Has to be lowercase.', 'gk-gravityimport' ) => 'text',
+
+			// Social Media
+			_x( 'twitter', 'Typemap keyword. Part of a word that matches a text field. Has to be lowercase.', 'gk-gravityimport' ) => 'text',
+			_x( 'linkedin', 'Typemap keyword. Part of a word that matches a text field. Has to be lowercase.', 'gk-gravityimport' ) => 'text',
+			_x( 'facebook', 'Typemap keyword. Part of a word that matches a text field. Has to be lowercase.', 'gk-gravityimport' ) => 'text',
+			_x( 'instagram', 'Typemap keyword. Part of a word that matches a text field. Has to be lowercase.', 'gk-gravityimport' ) => 'text',
+			_x( 'username', 'Typemap keyword. Part of a word that matches a text field. Has to be lowercase.', 'gk-gravityimport' ) => 'text',
+
+			// === PHONE FIELDS ===
 			_x( 'fax', 'Typemap keyword. Part of a word that matches a phone field. Has to be lowercase. Set to ### if does not apply.', 'gk-gravityimport' )       => 'phone',
 			_x( 'mobile', 'Typemap keyword. Part of a word that matches a phone field. Has to be lowercase. Set to ### if does not apply.', 'gk-gravityimport' )    => 'phone',
 			_x( 'phone', 'Typemap keyword. Part of a word that matches a phone field. Has to be lowercase. Set to ### if does not apply.', 'gk-gravityimport' )     => 'phone',
 			_x( 'telephone', 'Typemap keyword. Part of a word that matches a phone field. Has to be lowercase. Set to ### if does not apply.', 'gk-gravityimport' ) => 'phone',
 			_x( 'cell', 'Typemap keyword. Part of a word that matches a phone field. Has to be lowercase. Set to ### if does not apply.', 'gk-gravityimport' )      => 'phone',
+			_x( 'whatsapp', 'Typemap keyword. Part of a word that matches a phone field. Has to be lowercase.', 'gk-gravityimport' ) => 'phone',
 
+			// === FINANCIAL & E-COMMERCE ===
+			_x( 'price', 'Typemap keyword. Part of a word that matches a number field. Has to be lowercase.', 'gk-gravityimport' ) => 'number',
+			_x( 'cost', 'Typemap keyword. Part of a word that matches a number field. Has to be lowercase.', 'gk-gravityimport' ) => 'number',
+			_x( 'amount', 'Typemap keyword. Part of a word that matches a number field. Has to be lowercase.', 'gk-gravityimport' ) => 'number',
+			_x( 'payment', 'Typemap keyword. Part of a word that matches a number field. Has to be lowercase.', 'gk-gravityimport' ) => 'number',
+			_x( 'fee', 'Typemap keyword. Part of a word that matches a number field. Has to be lowercase.', 'gk-gravityimport' ) => 'number',
+			_x( 'budget', 'Typemap keyword. Part of a word that matches a number field. Has to be lowercase.', 'gk-gravityimport' ) => 'number',
+			_x( 'salary', 'Typemap keyword. Part of a word that matches a number field. Has to be lowercase.', 'gk-gravityimport' ) => 'number',
+			_x( 'revenue', 'Typemap keyword. Part of a word that matches a number field. Has to be lowercase.', 'gk-gravityimport' ) => 'number',
+			_x( 'discount', 'Typemap keyword. Part of a word that matches a number field. Has to be lowercase.', 'gk-gravityimport' ) => 'number',
+			_x( 'quantity', 'Typemap keyword. Part of a word that matches a number field. Has to be lowercase.', 'gk-gravityimport' ) => 'number',
+			_x( 'qty', 'Typemap keyword. Part of a word that matches a number field. Has to be lowercase.', 'gk-gravityimport' ) => 'number',
+			_x( 'total', 'Typemap keyword. Part of a word that matches a total field. Has to be lowercase.', 'gk-gravityimport' ) => 'total',
+
+			// Product/Order Information
+			_x( 'sku', 'Typemap keyword. Part of a word that matches a text field. Has to be lowercase.', 'gk-gravityimport' ) => 'text',
+			_x( 'product', 'Typemap keyword. Part of a word that matches a text field. Has to be lowercase.', 'gk-gravityimport' ) => 'text',
+			_x( 'item', 'Typemap keyword. Part of a word that matches a text field. Has to be lowercase.', 'gk-gravityimport' ) => 'text',
+			_x( 'order', 'Typemap keyword. Part of a word that matches a text field. Has to be lowercase.', 'gk-gravityimport' ) => 'text',
+			_x( 'invoice', 'Typemap keyword. Part of a word that matches a text field. Has to be lowercase.', 'gk-gravityimport' ) => 'text',
+			_x( 'coupon', 'Typemap keyword. Part of a word that matches a text field. Has to be lowercase.', 'gk-gravityimport' ) => 'text',
+
+			// === NUMBER FIELDS ===
 			_x( 'number', 'Typemap keyword. Part of a word that matches a number field. Has to be lowercase.', 'gk-gravityimport' ) => 'number',
-			_x( 'month', 'Typemap keyword. Part of a word that matches a number field. Has to be lowercase.', 'gk-gravityimport' )  => 'number',
 			_x( 'year', 'Typemap keyword. Part of a word that matches a number field. Has to be lowercase.', 'gk-gravityimport' )   => 'number',
 			_x( 'count', 'Typemap keyword. Part of a word that matches a number field. Has to be lowercase.', 'gk-gravityimport' )  => 'number',
+			_x( 'age', 'Typemap keyword. Part of a word that matches a number field. Has to be lowercase.', 'gk-gravityimport' ) => 'number',
+			_x( 'weight', 'Typemap keyword. Part of a word that matches a number field. Has to be lowercase.', 'gk-gravityimport' ) => 'number',
+			_x( 'height', 'Typemap keyword. Part of a word that matches a number field. Has to be lowercase.', 'gk-gravityimport' ) => 'number',
+			_x( 'score', 'Typemap keyword. Part of a word that matches a number field. Has to be lowercase.', 'gk-gravityimport' ) => 'number',
+			_x( 'rating', 'Typemap keyword. Part of a word that matches a number field. Has to be lowercase.', 'gk-gravityimport' ) => 'number',
+			_x( 'rank', 'Typemap keyword. Part of a word that matches a number field. Has to be lowercase.', 'gk-gravityimport' ) => 'number',
+			_x( 'gpa', 'Typemap keyword. Part of a word that matches a number field. Has to be lowercase.', 'gk-gravityimport' ) => 'number',
+			_x( 'pin', 'Typemap keyword. Part of a word that matches a number field. Has to be lowercase.', 'gk-gravityimport' ) => 'number',
 
+			// === FILE UPLOAD & MEDIA ===
 			_x( 'file', 'Typemap keyword. Part of a word that matches a file field. Has to be lowercase.', 'gk-gravityimport' ) => 'fileupload',
+			_x( 'upload', 'Typemap keyword. Part of a word that matches a file field. Has to be lowercase.', 'gk-gravityimport' ) => 'fileupload',
+			_x( 'attachment', 'Typemap keyword. Part of a word that matches a file field. Has to be lowercase.', 'gk-gravityimport' ) => 'fileupload',
+			_x( 'document', 'Typemap keyword. Part of a word that matches a file field. Has to be lowercase.', 'gk-gravityimport' ) => 'fileupload',
+			_x( 'pdf', 'Typemap keyword. Part of a word that matches a file field. Has to be lowercase.', 'gk-gravityimport' ) => 'fileupload',
+			_x( 'image', 'Typemap keyword. Part of a word that matches a file field. Has to be lowercase.', 'gk-gravityimport' ) => 'fileupload',
+			_x( 'photo', 'Typemap keyword. Part of a word that matches a file field. Has to be lowercase.', 'gk-gravityimport' ) => 'fileupload',
+			_x( 'picture', 'Typemap keyword. Part of a word that matches a file field. Has to be lowercase.', 'gk-gravityimport' ) => 'fileupload',
+			_x( 'resume', 'Typemap keyword. Part of a word that matches a file field. Has to be lowercase.', 'gk-gravityimport' ) => 'fileupload',
+			_x( 'cv', 'Typemap keyword. Part of a word that matches a file field. Has to be lowercase.', 'gk-gravityimport' ) => 'fileupload',
+			_x( 'portfolio', 'Typemap keyword. Part of a word that matches a file field. Has to be lowercase.', 'gk-gravityimport' ) => 'fileupload',
+			_x( 'signature', 'Typemap keyword. Part of a word that matches a signature field. Has to be lowercase.', 'gk-gravityimport' ) => 'signature',
 
+			// === URL/WEBSITE FIELDS ===
 			_x( 'website', 'Typemap keyword. Part of a word that matches a URL field. Has to be lowercase.', 'gk-gravityimport' )                            => 'website',
 			_x( 'site', 'Typemap keyword. Part of a word that matches a URL field. Has to be lowercase. Set to ### if does not apply.', 'gk-gravityimport' ) => 'website',
 			_x( 'url', 'Typemap keyword. Part of a word that matches a URL field. Has to be lowercase. Set to ### if does not apply.', 'gk-gravityimport' )  => 'website',
+			_x( 'link', 'Typemap keyword. Part of a word that matches a URL field. Has to be lowercase.', 'gk-gravityimport' ) => 'website',
 
+			// === TEXTAREA FIELDS ===
 			_x( 'bio', 'Typemap keyword. Part of a word that matches a textarea field. Has to be lowercase. Set to ### if does not apply.', 'gk-gravityimport' ) => 'textarea',
+			_x( 'description', 'Typemap keyword. Part of a word that matches a textarea field. Has to be lowercase.', 'gk-gravityimport' ) => 'textarea',
+			_x( 'comment', 'Typemap keyword. Part of a word that matches a textarea field. Has to be lowercase.', 'gk-gravityimport' ) => 'textarea',
+			_x( 'comments', 'Typemap keyword. Part of a word that matches a textarea field. Has to be lowercase.', 'gk-gravityimport' ) => 'textarea',
+			_x( 'message', 'Typemap keyword. Part of a word that matches a textarea field. Has to be lowercase.', 'gk-gravityimport' ) => 'textarea',
+			_x( 'note', 'Typemap keyword. Part of a word that matches a textarea field. Has to be lowercase.', 'gk-gravityimport' ) => 'textarea',
+			_x( 'notes', 'Typemap keyword. Part of a word that matches a textarea field. Has to be lowercase.', 'gk-gravityimport' ) => 'textarea',
+			_x( 'feedback', 'Typemap keyword. Part of a word that matches a textarea field. Has to be lowercase.', 'gk-gravityimport' ) => 'textarea',
+			_x( 'review', 'Typemap keyword. Part of a word that matches a textarea field. Has to be lowercase.', 'gk-gravityimport' ) => 'textarea',
+			_x( 'testimonial', 'Typemap keyword. Part of a word that matches a textarea field. Has to be lowercase.', 'gk-gravityimport' ) => 'textarea',
+			_x( 'question', 'Typemap keyword. Part of a word that matches a textarea field. Has to be lowercase.', 'gk-gravityimport' ) => 'textarea',
+			_x( 'answer', 'Typemap keyword. Part of a word that matches a textarea field. Has to be lowercase.', 'gk-gravityimport' ) => 'textarea',
+			_x( 'summary', 'Typemap keyword. Part of a word that matches a textarea field. Has to be lowercase.', 'gk-gravityimport' ) => 'textarea',
+			_x( 'details', 'Typemap keyword. Part of a word that matches a textarea field. Has to be lowercase.', 'gk-gravityimport' ) => 'textarea',
+			_x( 'inquiry', 'Typemap keyword. Part of a word that matches a textarea field. Has to be lowercase.', 'gk-gravityimport' ) => 'textarea',
+			_x( 'request', 'Typemap keyword. Part of a word that matches a textarea field. Has to be lowercase.', 'gk-gravityimport' ) => 'textarea',
+			_x( 'reason', 'Typemap keyword. Part of a word that matches a textarea field. Has to be lowercase.', 'gk-gravityimport' ) => 'textarea',
+			_x( 'suggestion', 'Typemap keyword. Part of a word that matches a textarea field. Has to be lowercase.', 'gk-gravityimport' ) => 'textarea',
+			_x( 'experience', 'Typemap keyword. Part of a word that matches a textarea field. Has to be lowercase.', 'gk-gravityimport' ) => 'textarea',
 
+			// === DATE & TIME FIELDS ===
 			_x( 'date', 'Typemap keyword. Part of a word that matches a date field. Has to be lowercase.', 'gk-gravityimport' )        => 'date',
 			_x( 'birthday', 'Typemap keyword. Part of a word that matches a date field. Has to be lowercase.', 'gk-gravityimport' )    => 'date',
 			_x( 'anniversary', 'Typemap keyword. Part of a word that matches a date field. Has to be lowercase.', 'gk-gravityimport' ) => 'date',
+			_x( 'dob', 'Typemap keyword. Part of a word that matches a date field. Has to be lowercase.', 'gk-gravityimport' ) => 'date',
+			_x( 'birth', 'Typemap keyword. Part of a word that matches a date field. Has to be lowercase.', 'gk-gravityimport' ) => 'date',
+			_x( 'deadline', 'Typemap keyword. Part of a word that matches a date field. Has to be lowercase.', 'gk-gravityimport' ) => 'date',
+			_x( 'due', 'Typemap keyword. Part of a word that matches a date field. Has to be lowercase.', 'gk-gravityimport' ) => 'date',
+			_x( 'expiry', 'Typemap keyword. Part of a word that matches a date field. Has to be lowercase.', 'gk-gravityimport' ) => 'date',
+			_x( 'expire', 'Typemap keyword. Part of a word that matches a date field. Has to be lowercase.', 'gk-gravityimport' ) => 'date',
+			_x( 'start', 'Typemap keyword. Part of a word that matches a date field. Has to be lowercase.', 'gk-gravityimport' ) => 'date',
+			_x( 'end', 'Typemap keyword. Part of a word that matches a date field. Has to be lowercase.', 'gk-gravityimport' ) => 'date',
+			_x( 'graduation', 'Typemap keyword. Part of a word that matches a date field. Has to be lowercase.', 'gk-gravityimport' ) => 'date',
 
+			_x( 'timestamp', 'Typemap keyword. Part of a word that matches a date field. Has to be lowercase.', 'gk-gravityimport' ) => 'date',
 			_x( 'time', 'Typemap keyword. Part of a word that matches a time field. Has to be lowercase.', 'gk-gravityimport' )  => 'time',
 			_x( 'hour', 'Typemap keyword. Part of a word that matches a time field. Has to be lowercase.', 'gk-gravityimport' )  => 'time',
 			_x( 'hours', 'Typemap keyword. Part of a word that matches a time field. Has to be lowercase.', 'gk-gravityimport' ) => 'time',
+			_x( 'duration', 'Typemap keyword. Part of a word that matches a time field. Has to be lowercase.', 'gk-gravityimport' ) => 'time',
 
+			// === SELECTION FIELDS ===
+			_x( 'gender', 'Typemap keyword. Part of a word that matches a radio field. Has to be lowercase.', 'gk-gravityimport' ) => 'radio',
+			_x( 'sex', 'Typemap keyword. Part of a word that matches a radio field. Has to be lowercase.', 'gk-gravityimport' ) => 'radio',
+			_x( 'choice', 'Typemap keyword. Part of a word that matches a radio field. Has to be lowercase.', 'gk-gravityimport' ) => 'radio',
+			_x( 'option', 'Typemap keyword. Part of a word that matches a radio field. Has to be lowercase.', 'gk-gravityimport' ) => 'radio',
+			_x( 'satisfaction', 'Typemap keyword. Part of a word that matches a radio field. Has to be lowercase.', 'gk-gravityimport' ) => 'radio',
+
+			_x( 'select', 'Typemap keyword. Part of a word that matches a select field. Has to be lowercase.', 'gk-gravityimport' ) => 'select',
+			_x( 'choose', 'Typemap keyword. Part of a word that matches a select field. Has to be lowercase.', 'gk-gravityimport' ) => 'select',
+			_x( 'category', 'Typemap keyword. Part of a word that matches a select field. Has to be lowercase.', 'gk-gravityimport' ) => 'select',
+			_x( 'type', 'Typemap keyword. Part of a word that matches a select field. Has to be lowercase.', 'gk-gravityimport' ) => 'select',
+			_x( 'status', 'Typemap keyword. Part of a word that matches a select field. Has to be lowercase.', 'gk-gravityimport' ) => 'select',
+			_x( 'priority', 'Typemap keyword. Part of a word that matches a select field. Has to be lowercase.', 'gk-gravityimport' ) => 'select',
+			_x( 'level', 'Typemap keyword. Part of a word that matches a select field. Has to be lowercase.', 'gk-gravityimport' ) => 'select',
+			_x( 'grade', 'Typemap keyword. Part of a word that matches a select field. Has to be lowercase.', 'gk-gravityimport' ) => 'select',
+			_x( 'degree', 'Typemap keyword. Part of a word that matches a select field. Has to be lowercase.', 'gk-gravityimport' ) => 'select',
+			_x( 'nationality', 'Typemap keyword. Part of a word that matches a select field. Has to be lowercase.', 'gk-gravityimport' ) => 'select',
+			_x( 'language', 'Typemap keyword. Part of a word that matches a select field. Has to be lowercase.', 'gk-gravityimport' ) => 'select',
+			_x( 'timezone', 'Typemap keyword. Part of a word that matches a select field. Has to be lowercase.', 'gk-gravityimport' ) => 'select',
+
+			_x( 'tag', 'Typemap keyword. Part of a word that matches a multiselect field. Has to be lowercase.', 'gk-gravityimport' ) => 'multiselect',
+			_x( 'tags', 'Typemap keyword. Part of a word that matches a multiselect field. Has to be lowercase.', 'gk-gravityimport' ) => 'multiselect',
+
+			// === CHECKBOX FIELDS ===
+			_x( 'check', 'Typemap keyword. Part of a word that matches a checkbox field. Has to be lowercase.', 'gk-gravityimport' ) => 'checkbox',
+			_x( 'confirm', 'Typemap keyword. Part of a word that matches a checkbox field. Has to be lowercase.', 'gk-gravityimport' ) => 'checkbox',
+			_x( 'acknowledge', 'Typemap keyword. Part of a word that matches a checkbox field. Has to be lowercase.', 'gk-gravityimport' ) => 'checkbox',
+			_x( 'verify', 'Typemap keyword. Part of a word that matches a checkbox field. Has to be lowercase.', 'gk-gravityimport' ) => 'checkbox',
+
+			// === CONSENT & LEGAL FIELDS ===
+			_x( 'consent', 'Typemap keyword. Part of a word that matches a consent field. Has to be lowercase.', 'gk-gravityimport' ) => 'consent',
+			_x( 'agree', 'Typemap keyword. Part of a word that matches a consent field. Has to be lowercase.', 'gk-gravityimport' ) => 'consent',
+			_x( 'accept', 'Typemap keyword. Part of a word that matches a consent field. Has to be lowercase.', 'gk-gravityimport' ) => 'consent',
+			_x( 'subscribe', 'Typemap keyword. Part of a word that matches a consent field. Has to be lowercase.', 'gk-gravityimport' ) => 'consent',
+			_x( 'terms', 'Typemap keyword. Part of a word that matches a consent field. Has to be lowercase.', 'gk-gravityimport' ) => 'consent',
+			_x( 'privacy', 'Typemap keyword. Part of a word that matches a consent field. Has to be lowercase.', 'gk-gravityimport' ) => 'consent',
+			_x( 'gdpr', 'Typemap keyword. Part of a word that matches a consent field. Has to be lowercase.', 'gk-gravityimport' ) => 'consent',
+			_x( 'newsletter', 'Typemap keyword. Part of a word that matches a consent field. Has to be lowercase.', 'gk-gravityimport' ) => 'consent',
+			_x( 'marketing', 'Typemap keyword. Part of a word that matches a consent field. Has to be lowercase.', 'gk-gravityimport' ) => 'consent',
+			_x( 'opt', 'Typemap keyword. Part of a word that matches a consent field. Has to be lowercase.', 'gk-gravityimport' ) => 'consent',
+
+			// === HIDDEN & SYSTEM FIELDS ===
 			_x( 'hidden', 'Typemap keyword. Part of a word that matches a hidden field. Has to be lowercase.', 'gk-gravityimport' ) => 'hidden',
+			_x( 'session', 'Typemap keyword. Part of a word that matches a hidden field. Has to be lowercase.', 'gk-gravityimport' ) => 'hidden',
+			_x( 'tracking', 'Typemap keyword. Part of a word that matches a hidden field. Has to be lowercase.', 'gk-gravityimport' ) => 'hidden',
+			_x( 'utm', 'Typemap keyword. Part of a word that matches a hidden field. Has to be lowercase.', 'gk-gravityimport' ) => 'hidden',
+			_x( 'referrer', 'Typemap keyword. Part of a word that matches a hidden field. Has to be lowercase.', 'gk-gravityimport' ) => 'hidden',
+			_x( 'source', 'Typemap keyword. Part of a word that matches a hidden field. Has to be lowercase.', 'gk-gravityimport' ) => 'hidden',
+			_x( 'campaign', 'Typemap keyword. Part of a word that matches a hidden field. Has to be lowercase.', 'gk-gravityimport' ) => 'hidden',
 
-			_x( 'total', 'Typemap keyword. Part of a word that matches a total field. Has to be lowercase.', 'gk-gravityimport' ) => 'total',
-
-			_x( 'consent', 'Typemap keyword. Part of a word that matches a consent field. Has to be lowercase.', 'gk-gravityimport' )                                    => 'consent',
-
-			// Put generic first, so more specific can override
-			_x( 'name', 'Typemap keyword. Part of a word that matches a name field. Has to be lowercase.', 'gk-gravityimport' )                                          => 'name.3',
+			// === NAME FIELDS ===
+			// Put more specific patterns first to ensure they match before generic ones
 			_x( 'prefix', 'Typemap keyword. Part of a word that matches a name field. Has to be lowercase.', 'gk-gravityimport' )                                        => 'name.2',
 			_x( 'title', 'Typemap keyword. Part of a word that matches a name field. Has to be lowercase.', 'gk-gravityimport' )                                         => 'name.2',
 			_x( 'first', 'Typemap keyword. Part of a word that matches a name field. Has to be lowercase.', 'gk-gravityimport' )                                         => 'name.3',
+			_x( 'middle', 'Typemap keyword. Part of a word that matches a name field. Has to be lowercase.', 'gk-gravityimport' )                                        => 'name.4',
 			_x( 'last', 'Typemap keyword. Part of a word that matches a name field. Has to be lowercase.', 'gk-gravityimport' )                                          => 'name.6',
 			_x( 'suffix', 'Typemap keyword. Part of a word that matches a name field. Has to be lowercase.', 'gk-gravityimport' )                                        => 'name.8',
+			_x( 'spouse', 'Typemap keyword. Part of a word that matches a name field. Has to be lowercase.', 'gk-gravityimport' )                                        => 'name.3',
+			_x( 'name', 'Typemap keyword. Part of a word that matches a name field. Has to be lowercase.', 'gk-gravityimport' )                                          => 'name.3',
 
-			// Put generic first, so more specific can override
-			_x( 'address', 'Typemap keyword. Part of a word that matches an address field. Has to be lowercase.', 'gk-gravityimport' )                                   => 'address.1',
-			_x( 'street', 'Typemap keyword. Part of a word that matches an address field. Has to be lowercase.', 'gk-gravityimport' )                                    => 'address.1',
+			// === ADDRESS FIELDS ===
+			// Put more specific patterns first to ensure they match before generic ones
 			_x( 'street address', 'Typemap keyword. Part of a word that matches an address field. Has to be lowercase.', 'gk-gravityimport' )                            => 'address.1',
+			_x( 'mailing address', 'Typemap keyword. Part of a word that matches an address field. Has to be lowercase.', 'gk-gravityimport' )                           => 'address.1',
 			_x( 'address 2', 'Typemap keyword. Part of a word that matches an address field. Has to be lowercase.', 'gk-gravityimport' )                                 => 'address.2',
 			_x( 'line 2', 'Typemap keyword. Part of a word that matches an address field. Has to be lowercase.', 'gk-gravityimport' )                                    => 'address.2',
+			_x( 'suite', 'Typemap keyword. Part of a word that matches an address field. Has to be lowercase.', 'gk-gravityimport' )                                     => 'address.2',
+			_x( 'unit', 'Typemap keyword. Part of a word that matches an address field. Has to be lowercase.', 'gk-gravityimport' )                                      => 'address.2',
+			_x( 'apartment', 'Typemap keyword. Part of a word that matches an address field. Has to be lowercase.', 'gk-gravityimport' )                                 => 'address.2',
+			_x( 'street', 'Typemap keyword. Part of a word that matches an address field. Has to be lowercase.', 'gk-gravityimport' )                                    => 'address.1',
 			_x( 'mailing', 'Typemap keyword. Part of a word that matches an address field. Has to be lowercase.', 'gk-gravityimport' )                                   => 'address.1',
-			_x( 'mailing address', 'Typemap keyword. Part of a word that matches an address field. Has to be lowercase.', 'gk-gravityimport' )                           => 'address.1',
+			_x( 'address', 'Typemap keyword. Part of a word that matches an address field. Has to be lowercase.', 'gk-gravityimport' )                                   => 'address.1',
 			_x( 'city', 'Typemap keyword. Part of a word that matches an address field. Has to be lowercase.', 'gk-gravityimport' )                                      => 'address.3',
 			_x( 'state', 'Typemap keyword. Part of a word that matches an address field. Has to be lowercase. Set to ### if does not apply.', 'gk-gravityimport' )       => 'address.4',
 			_x( 'province', 'Typemap keyword. Part of a word that matches an address field. Has to be lowercase. Set to ### if does not apply.', 'gk-gravityimport' )    => 'address.4',
 			_x( 'region', 'Typemap keyword. Part of a word that matches an address field. Has to be lowercase. Set to ### if does not apply.', 'gk-gravityimport' )      => 'address.4',
-			_x( 'zip', 'Typemap keyword. Part of a word that matches an address field. Has to be lowercase. Set to ### if does not apply.', 'gk-gravityimport' )         => 'address.5',
+			_x( 'county', 'Typemap keyword. Part of a word that matches an address field. Has to be lowercase.', 'gk-gravityimport' )                                    => 'address.4',
+			_x( 'district', 'Typemap keyword. Part of a word that matches an address field. Has to be lowercase.', 'gk-gravityimport' )                                 => 'address.4',
 			_x( 'postal code', 'Typemap keyword. Part of a word that matches an address field. Has to be lowercase. Set to ### if does not apply.', 'gk-gravityimport' ) => 'address.5',
+			_x( 'zip code', 'Typemap keyword. Part of a word that matches an address field. Has to be lowercase. Set to ### if does not apply.', 'gk-gravityimport' )    => 'address.5',
+			_x( 'postcode', 'Typemap keyword. Part of a word that matches an address field. Has to be lowercase.', 'gk-gravityimport' )                                  => 'address.5',
+			_x( 'zip', 'Typemap keyword. Part of a word that matches an address field. Has to be lowercase. Set to ### if does not apply.', 'gk-gravityimport' )         => 'address.5',
 			_x( 'country', 'Typemap keyword. Part of a word that matches an address field. Has to be lowercase.', 'gk-gravityimport' )                                   => 'address.6',
-
-			_x( 'longitude', 'Typemap keyword. Part of a word that matches an entry property. Has to be lowercase.', 'gk-gravityimport' )                   => 'address.long',
-			_x( 'latitude', 'Typemap keyword. Part of a word that matches an entry property. Has to be lowercase.', 'gk-gravityimport' )                    => 'address.lat',
-			_x( 'entry id', 'Typemap keyword. Part of a word that matches the name of an entry property. Has to be lowercase.', 'gk-gravityimport' )        => 'id',
-			_x( 'entry date', 'Typemap keyword. Part of a word that matches the name of an entry property. Has to be lowercase.', 'gk-gravityimport' )      => 'date_created',
-			_x( 'user ip', 'Typemap keyword. Part of a word that matches the name of an entry property. Has to be lowercase.', 'gk-gravityimport' )         => 'ip',
-			_x( 'ip address', 'Typemap keyword. Part of a word that matches the name of an entry property. Has to be lowercase.', 'gk-gravityimport' )      => 'ip',
-			_x( 'approval status', 'Typemap keyword. Part of a word that matches the name of an entry property. Has to be lowercase.', 'gk-gravityimport' ) => 'is_approved',
 		];
 
 		/**
-		 * @filter `gravityview/import/parse/typemap` The typemap for new form fields.
+		 * The typemap for new form fields.
 		 *
-		 * @param  [in,out] array An associative array of search string => type.
-		 * @param string $column The column header.
-		 * @param array  $batch  The batch.
+		 * @since 2.0
+		 *
+		 * @param array  $typemap An associative array of search string => type.
+		 * @param string $column  The column header.
+		 * @param array  $batch   The batch.
 		 */
-		$typemap = apply_filters( 'gravityview/import/parse/typemap', $typemap, $column, $batch );
-
-		return $typemap;
+		return apply_filters( 'gravityview/import/parse/typemap', $base_typemap_cache, $column, $batch );
 	}
 }

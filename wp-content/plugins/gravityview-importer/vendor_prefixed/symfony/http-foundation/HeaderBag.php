@@ -8,7 +8,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  *
- * Modified by The GravityKit Team on 11-September-2025 using Strauss.
+ * Modified using Strauss.
  * @see https://github.com/BrianHenryIE/strauss
  */
 
@@ -221,7 +221,7 @@ class HeaderBag implements \IteratorAggregate, \Countable
      *
      * @throws \RuntimeException When the HTTP header is not parseable
      */
-    public function getDate($key, \DateTime $default = null)
+    public function getDate($key, ?\DateTime $default = null)
     {
         if (null === $value = $this->get($key)) {
             return $default;

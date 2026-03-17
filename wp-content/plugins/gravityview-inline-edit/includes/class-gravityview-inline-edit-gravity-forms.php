@@ -201,6 +201,17 @@ final class GravityView_Inline_Edit_Gravity_Forms extends GravityView_Inline_Edi
 			return;
 		}
 
+		/**
+		 * Enqueue styles for inline edit
+		 *
+		 * @since 1.0
+		 *
+		 * @param array $args {
+		 *     Arguments for enqueuing styles
+		 *
+		 *     @type int $form_id The Form ID being displayed
+		 * }
+		 */
 		do_action( 'gravityview-inline-edit/enqueue-styles', compact( 'form_id' ) );
 	}
 
@@ -282,6 +293,17 @@ final class GravityView_Inline_Edit_Gravity_Forms extends GravityView_Inline_Edi
 			return;
 		}
 
+		/**
+		 * Enqueue scripts for inline edit
+		 *
+		 * @since 1.0
+		 *
+		 * @param array $args {
+		 *     Arguments for enqueuing scripts
+		 *
+		 *     @type int $form_id The Form ID being displayed
+		 * }
+		 */
 		do_action( 'gravityview-inline-edit/enqueue-scripts', compact( 'form_id' ) );
 	}
 

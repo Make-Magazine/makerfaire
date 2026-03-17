@@ -332,7 +332,8 @@ if ( ! empty($post_taxonomies)):
                                     </div>
 	                                <?php if ($private_ctx): ?>
                                         <div class="input">
-                                            <input type="checkbox" id="show_hidden_ctx"/>
+                                            <input type="hidden" name="show_hidden_ctx" value="0"/>
+                                            <input type="checkbox" id="show_hidden_ctx" name="show_hidden_ctx" value="1" <?php echo !empty($post['show_hidden_ctx']) ? 'checked="checked"' : ''; ?>/>
                                             <label for="show_hidden_ctx"><?php _e('Show "private" taxonomies', 'wp-all-import-pro'); ?></label>
                                         </div>
 	                                <?php endif;?>

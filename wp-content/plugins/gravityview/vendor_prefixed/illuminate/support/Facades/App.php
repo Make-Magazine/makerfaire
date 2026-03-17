@@ -2,7 +2,7 @@
 /**
  * @license MIT
  *
- * Modified by gravityview on 05-December-2025 using {@see https://github.com/BrianHenryIE/strauss}.
+ * Modified using {@see https://github.com/BrianHenryIE/strauss}.
  */
 
 namespace GravityKit\GravityView\Foundation\ThirdParty\Illuminate\Support\Facades;
@@ -14,7 +14,7 @@ namespace GravityKit\GravityView\Foundation\ThirdParty\Illuminate\Support\Facade
  * @method static bool isDownForMaintenance()
  * @method static void registerConfiguredProviders()
  * @method static \GravityKit\GravityView\Foundation\ThirdParty\Illuminate\Support\ServiceProvider register(\GravityKit\GravityView\Foundation\ThirdParty\Illuminate\Support\ServiceProvider|string $provider, array $options = [], bool $force = false)
- * @method static void registerDeferredProvider(string $provider, string $service = null)
+ * @method static void registerDeferredProvider(string $provider, ?string $service = null)
  * @method static void boot()
  * @method static void booting(mixed $callback)
  * @method static void booted(mixed $callback)

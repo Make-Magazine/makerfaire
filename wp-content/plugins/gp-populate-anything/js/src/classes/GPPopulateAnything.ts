@@ -58,6 +58,8 @@ export default class GPPopulateAnything {
 		[fieldIds: string]: JQuery.jqXHR;
 	} = {};
 
+	private productMetaConfigPromise?: JQueryPromise<void>;
+
 	// Note: This is used to store the last input ID that was changed.
 	private lastInputId: string | undefined;
 
@@ -550,14 +552,37 @@ export default class GPPopulateAnything {
 
 			$form.removeClass('gppa-queued');
 
-			return this.batchedAjax(
-				$form,
-				dependentFieldsToLoad,
-				triggerInputIds
+			return this.ensureProductMetaConfigLoaded().then(() =>
+				this.batchedAjax($form, dependentFieldsToLoad, triggerInputIds)
 			);
 		},
 		250
 	);
+
+	private ensureProductMetaConfigLoaded(): JQueryPromise<void> {
+		if (this.productMetaConfigPromise) {
+			return this.productMetaConfigPromise;
+		}
+
+		const deferred = $.Deferred<void>();
+		const hasProductMeta = !!window.gform_theme_config?.common?.form
+			?.product_meta?.[this.formId];
+		const getFormConfig = window.gform?.config?.getFormConfig;
+
+		if (hasProductMeta || typeof getFormConfig !== 'function') {
+			deferred.resolve();
+		} else {
+			getFormConfig(
+				'gform_theme_config/common/form/product_meta',
+				this.formId
+			)
+				.then(() => deferred.resolve())
+				.catch(() => deferred.resolve());
+		}
+
+		this.productMetaConfigPromise = deferred.promise();
+		return this.productMetaConfigPromise;
+	}
 
 	bindNestedForms() {
 		for (const prop in window) {

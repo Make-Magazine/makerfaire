@@ -76,6 +76,21 @@
 		flex-direction: row;
 		align-items: center;
 	}
+
+	// SelectWoo dropdown height to match form inputs.
+	.ginput_container .select2-container .select2-selection--single,
+	.ginput_container .select2-container--default .select2-selection--single .select2-selection__arrow {
+		height: 40px;
+	}
+
+	.ginput_container .select2-container--default .select2-selection--single .select2-selection__rendered {
+		line-height: 40px;
+	}
+
+	// Default progress bar fill when no style is chosen.
+	.gf_progressbar_percentage {
+		background-color: var(--gf-field-pg-prog-bar-bg-color-blue, #204ce5);
+	}
 }
 
 @media only screen and (max-width: 400px) {

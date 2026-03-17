@@ -53,6 +53,17 @@ class PMXI_Admin_Import extends PMXI_Controller_Admin {
 		// step #2: element selection
 		$this->data['dom'] = $dom = new DOMDocument('1.0', (PMXI_Plugin::$session->encoding ?? ''));
 		$this->data['update_previous'] = $update_previous = new PMXI_Import_Record();
+
+		// Load update_previous from session if it exists (needed for LLM mode and normal wizard flow)
+		if (!empty(PMXI_Plugin::$session->update_previous)) {
+			$update_previous->getById(PMXI_Plugin::$session->update_previous);
+		}
+
+		// Allow add-ons to bypass step ready check (e.g., for LLM auto-configuration)
+		// Filter receives: $bypass (bool), $action (string), $update_previous (PMXI_Import_Record)
+		if (apply_filters('pmxi_step_ready_bypass', false, $action, $update_previous)) {
+			return true;
+		}
 		$old = libxml_use_internal_errors(true);
 
 		$xml = $this->get_xml();
@@ -138,6 +149,7 @@ class PMXI_Admin_Import extends PMXI_Controller_Admin {
 			'downloaded' => '',
 			'auto_generate' => 0,
 			'go_to_create_filters' => 0,
+			'autoconfigure' => 0,
 			'template' => false	,
             'taxonomy_type' => ''
 		);
@@ -281,7 +293,7 @@ class PMXI_Admin_Import extends PMXI_Controller_Admin {
 
 			@set_time_limit(0);
 			$deligate = $this->input->get('deligate', false);
-			$redirect_to_template = empty($post['go_to_create_filters']);
+			$redirect_to_template = empty($post['go_to_create_filters']) && empty($post['autoconfigure']);
 			$importRecord = new PMXI_Import_Record();
 
 			switch ( $deligate ) {
@@ -296,7 +308,10 @@ class PMXI_Admin_Import extends PMXI_Controller_Admin {
 						))->save();
 						$post['is_update_previous'] = 1;
 						$post['update_previous'] = $importRecord->id;
-						$redirect_to_template = true;
+						// Only redirect to template if not using auto configuration
+						if (empty($post['autoconfigure'])) {
+							$redirect_to_template = true;
+						}
 					}
 
 					if ( $importRecord->isEmpty() ){
@@ -444,22 +459,73 @@ class PMXI_Admin_Import extends PMXI_Controller_Admin {
 					PMXI_Plugin::$session->set( $key, $value );
 				}
 
-				$update_previous = new PMXI_Import_Record();
-				if ($post['is_update_previous'] and ! $update_previous->getById($post['update_previous'])->isEmpty()) {
-					PMXI_Plugin::$session->set('update_previous', $update_previous->id);
-					PMXI_Plugin::$session->set('xpath', $update_previous->xpath);
-					PMXI_Plugin::$session->set('options', $update_previous->options);
-				} else {
-					PMXI_Plugin::$session->set('update_previous', '');
+				// Don't clear update_previous if we're in autoconfigure mode
+				// The import will be created below and update_previous will be set there
+				if (empty($post['autoconfigure'])) {
+					$update_previous = new PMXI_Import_Record();
+					if ($post['is_update_previous'] and ! $update_previous->getById($post['update_previous'])->isEmpty()) {
+						PMXI_Plugin::$session->set('update_previous', $update_previous->id);
+						PMXI_Plugin::$session->set('xpath', $update_previous->xpath);
+						PMXI_Plugin::$session->set('options', $update_previous->options);
+					} else {
+						PMXI_Plugin::$session->set('update_previous', '');
+					}
 				}
 
 				PMXI_Plugin::$session->save_data();
 
 				$xml = $this->get_xml();
 
+
 				if ( empty($xml) ) {
 					$this->errors->add('upload-validation', __('Please confirm you are importing a valid feed.<br/> Often, feed providers distribute feeds with invalid data, improperly wrapped HTML, line breaks where they should not be, faulty character encodings, syntax errors in the XML, and other issues.<br/><br/>WP All Import has checks in place to automatically fix some of the most common problems, but we can’t catch every single one.<br/><br/>It is also possible that there is a bug in WP All Import, and the problem is not with the feed.<br/><br/>If you need assistance, please contact support – <a href="mailto:support@wpallimport.com">support@wpallimport.com</a> – with your XML/CSV file. We will identify the problem and release a bug fix if necessary.', 'wp-all-import-pro'));
 					$this->data['upload_validation'] = true;
+				} elseif( !empty($post['autoconfigure']) ) {
+					// For LLM auto-configuration, create a temporary import record
+					// This is needed for the session token and REST API
+					$import = new PMXI_Import_Record();
+
+					// Check if we're updating an existing import
+					if ($post['is_update_previous'] and ! empty($post['update_previous'])) {
+						$import->getById($post['update_previous']);
+					}
+
+					// If this is a new import, create a minimal record
+					if ($import->isEmpty()) {
+						// Get root element from session (set during upload)
+						$root_element = !empty(PMXI_Plugin::$session->source['root_element'])
+							? PMXI_Plugin::$session->source['root_element']
+							: 'node';
+
+						// Use the same naming convention as normal imports: basename of the file path
+						$import_name = basename(PMXI_Plugin::$session->filePath);
+
+						$import->set(array(
+							'name' => $import_name,
+							'friendly_name' => $import_name,
+							'type' => 'upload',
+							'path' => PMXI_Plugin::$session->filePath,
+							'root_element' => $root_element,
+							'xpath' => '/' . $root_element,
+							'options' => array(),
+							'count' => 0,
+							'registered_on' => date('Y-m-d H:i:s'),
+						))->save();
+
+						// Save import ID to session AND $this->data to keep everything consistent
+						// This follows the standard WP All Import pattern
+						PMXI_Plugin::$session->set('import_id', $import->id);
+						PMXI_Plugin::$session->set('update_previous', $import->id);
+						PMXI_Plugin::$session->save_data();
+
+						// Also set $this->data['update_previous'] so it's available throughout the request
+						$this->data['update_previous'] = $import;
+					}
+
+					// Redirect to Step 3 (template) with LLM mode flag
+					$redirect_url = add_query_arg(array('action' => 'template', 'llm_mode' => '1'), $this->baseUrl);
+					$redirect_url = apply_filters( 'pmxi_before_import_redirect', $redirect_url, $post, 'autoconfigure' );
+					wp_redirect(esc_url_raw($redirect_url)); die();
 				} elseif( $post['auto_generate'] ) {
 					wp_redirect(esc_url_raw(add_query_arg('action', 'options', $this->baseUrl))); die();
 				} elseif( $redirect_to_template ) {
@@ -481,6 +547,8 @@ class PMXI_Admin_Import extends PMXI_Controller_Admin {
         }
 		$this->render();
 	}
+
+
 
 	/**
 	 * Step #2: Choose elements
@@ -1429,7 +1497,7 @@ class PMXI_Admin_Import extends PMXI_Controller_Admin {
 	 */
 	public function template() {
 
-		$template = new PMXI_Template_Record();
+			$template = new PMXI_Template_Record();
 
 		$default = PMXI_Plugin::get_default_import_options();
 
@@ -1721,8 +1789,9 @@ class PMXI_Admin_Import extends PMXI_Controller_Admin {
                         $DefaultOptions = array();
                         $DefaultOptions['tmp_unique_key'] = $this->findUniqueKey();
 
-
-                        if(!PMXI_Plugin::$session->get('update_previous')) {
+                        // Check if import already exists (loaded in _step_ready from session)
+                        // Use $this->data['update_previous'] which is the standard WP All Import pattern
+                        if(empty($this->data['update_previous']) || $this->data['update_previous']->isEmpty()) {
                             $import = new PMXI_Import_Record();
 
                             // Check if alternative Excel processing was used during upload
@@ -1742,7 +1811,7 @@ class PMXI_Admin_Import extends PMXI_Controller_Admin {
                                     'count' => PMXI_Plugin::$session->count,
                                     'friendly_name' => wp_all_import_clear_xss(PMXI_Plugin::$session->options['friendly_name']),
                                     'feed_type' => PMXI_Plugin::$session->feed_type,
-                                    'parent_import_id' => ($this->data['update_previous']->isEmpty()) ? PMXI_Plugin::$session->parent_import_id : $this->data['update_previous']->parent_import_id,
+                                    'parent_import_id' => (!empty($this->data['update_previous']) && !$this->data['update_previous']->isEmpty()) ? $this->data['update_previous']->parent_import_id : PMXI_Plugin::$session->parent_import_id,
                                     'queue_chunk_number' => 0,
                                     'triggered' => 0,
                                     'processing' => 0,
@@ -1750,6 +1819,10 @@ class PMXI_Admin_Import extends PMXI_Controller_Admin {
                                     'iteration' => (!empty($import->iteration)) ? $import->iteration : 0
                                 )
                             )->save();
+
+                            // Hook: Import record is fully configured with file, xpath, root_element
+                            // Extensions can use this to pre-process file structure, warm caches, etc.
+                            do_action( 'pmxi_import_file_ready', $import->id, PMXI_Plugin::$session->filePath, $import );
 
                             $history_file = new PMXI_File_Record();
                             $history_file->set(array(
@@ -1765,9 +1838,30 @@ class PMXI_Admin_Import extends PMXI_Controller_Admin {
                             PMXI_Plugin::$session->set('import_id', $import->id);
                             PMXI_Plugin::$session->set('import', $import);
                             PMXI_Plugin::$session->save_data();
+                        } else {
+                            // Import already exists (e.g., created in LLM mode), just update its options
+                            $import = $this->data['update_previous'];
+
+                            if (!$import->isEmpty()) {
+                                // Merge new options with existing options
+                                // The session was updated with LLM-configured values when populateTemplateFields() ran
+                                // So the session now has the correct unique_key and other LLM values
+                                $import_options = $DefaultOptions + PMXI_Plugin::$session->options;
+
+                                $import->set(array('options' => $import_options))->update();
+                            }
                         }
 
-						wp_redirect(esc_url_raw(add_query_arg('action', 'options', $this->baseUrl))); die();
+						// Check if auto_run flag is set (for LLM auto-configuration)
+						$auto_run = $this->input->post('auto_run') == 1;
+						if ($auto_run) {
+							// Skip options page and go straight to confirm with auto_run flag
+							$redirect_url = add_query_arg(array('action' => 'confirm', 'auto_run' => 1), $this->baseUrl);
+						} else {
+							$redirect_url = add_query_arg('action', 'options', $this->baseUrl);
+						}
+						$redirect_url = apply_filters( 'pmxi_template_redirect_url', $redirect_url, $auto_run );
+						wp_redirect(esc_url_raw($redirect_url)); die();
 
 					} else {
                         $xpath = $this->input->post('xpath');
@@ -1775,6 +1869,11 @@ class PMXI_Admin_Import extends PMXI_Controller_Admin {
                             $this->data['import']->set(['xpath' => $xpath]);
                         }
 						$this->data['import']->set(array( 'options' => $post, 'settings_update_on' => date('Y-m-d H:i:s')))->update();
+
+						// Hook: Import template updated with file, xpath, root_element
+						$file_path = wp_all_import_get_absolute_path( $this->data['import']->path );
+						do_action( 'pmxi_import_file_ready', $this->data['import']->id, $file_path, $this->data['import'] );
+
 						$args = array(
 							'page' => 'pmxi-admin-manage',
 							'pmxi_nt' => urlencode(__('Template updated', 'wp-all-import-pro'))
@@ -2362,7 +2461,15 @@ class PMXI_Admin_Import extends PMXI_Controller_Admin {
 					}
 
 					if ( ! $this->input->post('save_only')) {
-						wp_redirect(esc_url_raw(add_query_arg('action', 'confirm', $this->baseUrl))); die();
+						// Check if auto_run flag is set (for LLM auto-configuration)
+						$auto_run = $this->input->post('auto_run') == 1;
+						$redirect_args = array('action' => 'confirm');
+						if ($auto_run) {
+							$redirect_args['auto_run'] = 1;
+						}
+						$redirect_url = add_query_arg($redirect_args, $this->baseUrl);
+						$redirect_url = apply_filters( 'pmxi_options_redirect_url', $redirect_url, $auto_run );
+						wp_redirect(esc_url_raw($redirect_url)); die();
 					} else {
 						$import = $this->data['update_previous'];
 						$is_update = ! $import->isEmpty();
@@ -2598,6 +2705,15 @@ class PMXI_Admin_Import extends PMXI_Controller_Admin {
 		}
 
 		$this->data['post'] =& $DefaultOptions;
+
+		// Check if auto_run parameter is set (for LLM auto-configuration)
+		$auto_run = $this->input->get('auto_run', 0);
+		$auto_run = apply_filters( 'pmxi_confirm_auto_run', $auto_run );
+
+		if ($auto_run == 1 && ! $this->errors->get_error_codes()) {
+			// Skip confirmation page and go straight to process
+			wp_redirect(esc_url_raw(add_query_arg('action', 'process', $this->baseUrl))); die();
+		}
 
 		if ($this->input->post('is_confirmed')) {
 

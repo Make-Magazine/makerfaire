@@ -107,9 +107,9 @@ class GV_Extension_DataTables_Admin {
 		/**
 		 * Hook: gravityview_dt_default_settings.
 		 *
-		 * @action gravityview_dt_default_settings
-		 * @hooked GV_DataTables_Extension::defaults - 10
-		 * @param array $defaults Empty array of settings, to be filled-in by DT extensions
+		 * @since 1.0
+		 *
+		 * @param array $defaults Empty array of settings, to be filled-in by DT extensions.
 		 */
 		$defaults = apply_filters( 'gravityview_dt_default_settings', array() );
 
@@ -118,9 +118,10 @@ class GV_Extension_DataTables_Admin {
 		/**
 		 * Hook: gravityview_datatables_settings_row.
 		 *
-		 * @action gravityview_datatables_settings_row
-		 * @hooked GV_DataTables_Extension::settings_row - 10
-		 * @param array $ds DataTables settings stored in `_gravityview_datatables_settings` postmeta
+		 * @since 1.0
+		 *
+		 * @param array   $ds   DataTables settings stored in `_gravityview_datatables_settings` postmeta.
+		 * @param WP_Post $post The View post object.
 		 */
 		do_action( 'gravityview_datatables_settings_row', $ds, $post );
 	}
@@ -180,6 +181,7 @@ class GV_Extension_DataTables_Admin {
 
 		wp_localize_script( 'gravityview_datatables_admin', 'GV_DataTables_Admin', [
 			'internal_fields' => wp_list_pluck( GravityView_Fields::get_all( 'gravityview' ), 'name' ),
+			'field_used_in_sort' => __( 'This field is currently used in the Sort & Filter settings. Removing it will reset the sort configuration. Are you sure you want to continue?', 'gv-datatables' ),
 		] );
 	}
 

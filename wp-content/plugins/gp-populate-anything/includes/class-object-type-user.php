@@ -17,6 +17,21 @@ class GPPA_Object_Type_User extends GPPA_Object_Type {
 	}
 
 	/**
+	 * Get supported operators specifically for user roles.
+	 * Role data is stored as serialized arrays, so only certain operators make sense.
+	 *
+	 * @return array Array of supported operators for role filtering.
+	 */
+	public function get_role_supported_operators() {
+		return array(
+			'is',
+			'isnot',
+			'contains',
+			'does_not_contain',
+		);
+	}
+
+	/**
 	 * Extract unique identifier for a given user.
 	 *
 	 * @param WP_User|null $object
@@ -144,13 +159,16 @@ class GPPA_Object_Type_User extends GPPA_Object_Type {
 		// phpcs:ignore WordPress.PHP.DontExtract.extract_extract
 		extract( $args );
 
-		$meta_value = $this->get_sql_value( 'contains', '"' . $filter_value . '"' );
+		$blog_id          = get_current_blog_id();
+		$capabilities_key = $wpdb->get_blog_prefix( $blog_id ) . 'capabilities';
 
-		$blog_id  = get_current_blog_id();
-		$operator = rgar( $filter, 'operator' ) === 'isnot' ? 'NOT LIKE' : 'LIKE';
+		// Get role-specific SQL operator and value for serialized data
+		$meta_operator      = $this->get_role_sql_operator( $filter['operator'] );
+		$meta_value         = $this->get_role_sql_value( $filter['operator'], $filter_value );
+		$meta_specification = $this->get_role_value_specification( $filter_value, $filter['operator'], $meta_operator );
 
-		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
-		$where = $wpdb->prepare( "( {$wpdb->usermeta}.meta_key = %s AND {$wpdb->usermeta}.meta_value {$operator} %s )", $wpdb->get_blog_prefix( $blog_id ) . 'capabilities', $meta_value );
+		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.ReplacementsWrongNumber
+		$where = $wpdb->prepare( "( {$wpdb->usermeta}.meta_key = %s AND {$wpdb->usermeta}.meta_value {$meta_operator} {$meta_specification} )", $capabilities_key, $meta_value );
 
 		$query_builder_args['where'][ $filter_group_index ][] = $where;
 
@@ -164,6 +182,70 @@ class GPPA_Object_Type_User extends GPPA_Object_Type {
 		);
 
 		return $query_builder_args;
+
+	}
+
+	/**
+	 * Get SQL operator for role filtering with serialized data.
+	 *
+	 * @param string $operator The filter operator.
+	 * @return string The SQL operator.
+	 */
+	public function get_role_sql_operator( $operator ) {
+
+		switch ( $operator ) {
+			case 'is':
+			case 'contains':
+				return 'LIKE';
+			case 'isnot':
+			case 'does_not_contain':
+				return 'NOT LIKE';
+			default:
+				// For unsupported operators, fall back to LIKE to prevent breaking
+				return 'LIKE';
+		}
+
+	}
+
+	/**
+	 * Get SQL value for role filtering with serialized data.
+	 *
+	 * @param string $operator The filter operator.
+	 * @param mixed  $value    The filter value.
+	 * @return string The SQL value.
+	 */
+	public function get_role_sql_value( $operator, $value ) {
+
+		global $wpdb;
+
+		switch ( $operator ) {
+			case 'is':
+			case 'isnot':
+			case 'contains':
+			case 'does_not_contain':
+				// For role data, we need to search within the serialized array
+				// WordPress stores roles like: a:1:{s:13:"administrator";b:1;}
+				return '%' . $wpdb->esc_like( $value ) . '%';
+
+			default:
+				// For unsupported operators, fall back to wildcard search
+				return '%' . $wpdb->esc_like( $value ) . '%';
+		}
+
+	}
+
+	/**
+	 * Get value specification for role filtering.
+	 *
+	 * @param mixed  $value        The filter value.
+	 * @param string $operator     The filter operator.
+	 * @param string $sql_operator The SQL operator.
+	 * @return string The value specification.
+	 */
+	public function get_role_value_specification( $value, $operator, $sql_operator ) {
+
+		// For role filtering, we always use string placeholders since we're doing LIKE operations
+		return '%s';
 
 	}
 
@@ -300,10 +382,8 @@ class GPPA_Object_Type_User extends GPPA_Object_Type {
 					'label'     => esc_html__( 'Role', 'gp-populate-anything' ),
 					'value'     => 'roles',
 					'callable'  => array( $this, 'get_user_roles' ),
-					'operators' => array(
-						'is',
-						'isnot',
-					),
+					'args'      => array( $wpdb->users, 'roles' ),
+					'operators' => $this->get_role_supported_operators(),
 				),
 			),
 			$this->get_buddypress_xprofile_properties(),

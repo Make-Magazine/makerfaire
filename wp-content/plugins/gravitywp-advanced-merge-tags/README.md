@@ -67,6 +67,8 @@ Example:
 ## Merge Tag modifiers with attributes
 #### gwp_get_matched_entry_value
 This modifier can be used to retrieve values from entries from another form, based on a shared value.
+Optional attributes:
+- format (optional, default = false): When true, format the matched value like a regular Gravity Forms merge tag.
 
 Examples:
 {Textfield:1:gwp_get_matched_entry_value form_id="2" match_id='1' return_id=2}
@@ -80,6 +82,10 @@ Examples:
 {Textfield:1:gwp_get_matched_entry_value form_id="2" match_id='1' return_id=2 sort_order=asc offset=1}
 
 -> with offset=1: returns the second oldest entry value.<br>
+
+{Textfield:1:gwp_get_matched_entry_value form_id="2" match_id='1' return_id=2 format=true}
+
+-> returns the formatted value (e.g., choice labels, currency).
 
 #### gwp_count_matched_entries
 This modifier can be used to count entries from another form, based on a shared value with optional extra filters.

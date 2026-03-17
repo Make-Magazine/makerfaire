@@ -3,20 +3,20 @@
 /**
  * Handles custom hooks for Gravity Wiz's Gravity Forms Nested Forms.
  *
- * @since $ver$
+ * @since 2.23.0
  */
 final class GravityView_Plugin_Hooks_Gravity_Perks_Nested_Forms extends GravityView_Plugin_and_Theme_Hooks {
 	/**
 	 * @inheritDoc
 	 *
-	 * @since $ver$
+	 * @since 2.23.0
 	 */
 	protected $class_name = GPNF_Parent_Merge_Tag::class;
 
 	/**
 	 * @inheritDoc
 	 *
-	 * @since $ver$
+	 * @since 2.23.0
 	 */
 	protected function add_hooks() {
 		parent::add_hooks();
@@ -44,7 +44,7 @@ final class GravityView_Plugin_Hooks_Gravity_Perks_Nested_Forms extends GravityV
 	/**
 	 * Adds GP Nested Forms merge tags for GravityView.
 	 *
-	 * @since $ver$
+	 * @since 2.23.0
 	 *
 	 * @return bool
 	 */
@@ -65,7 +65,7 @@ final class GravityView_Plugin_Hooks_Gravity_Perks_Nested_Forms extends GravityV
 	/**
 	 * Adds custom merge tags for parent and child form/entry IDs.
 	 *
-	 * @since $ver$
+	 * @since 2.23.0
 	 *
 	 * @param array $tags The registered tags.
 	 *
@@ -91,7 +91,7 @@ final class GravityView_Plugin_Hooks_Gravity_Perks_Nested_Forms extends GravityV
 	/**
 	 * Adds fields to GravityView.
 	 *
-	 * @since $ver$
+	 * @since 2.23.0
 	 *
 	 * @param array        $fields The fields.
 	 * @param string|array $form   The form reference.

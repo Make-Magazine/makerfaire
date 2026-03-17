@@ -634,6 +634,18 @@ class GravityWP_Advanced_Merge_Tags extends GFAddOn {
 	}
 
 	/**
+	 * Get the regex pattern for matching Advanced Merge Tag modifiers.
+	 *
+	 * @since 1.0
+	 *
+	 * @return string Regex pattern.
+	 */
+	public static function get_modifier_regex() {
+		$gwp_atts_cs_modifiers = implode( '|', self::get_supported_modifiers() );
+		return sprintf( '/{[^{}]*?:(\\d+(\\.\\d+)?):((%s).*?)}/mi', $gwp_atts_cs_modifiers );
+	}
+
+	/**
 	 * Get supported advanced mergetags (with arguments).
 	 *
 	 * @since 1.0
@@ -655,8 +667,58 @@ class GravityWP_Advanced_Merge_Tags extends GFAddOn {
 			'gwp_post_id',
 			'gwp_user',
 			'gwp_get_matched_entry_value',
+			'gwp_count_matched_entries',
 			'gwp_calculate',
 		);
+	}
+
+	/**
+	 * Get the regex pattern for matching Advanced Merge Tags with attributes.
+	 *
+	 * @since 1.0
+	 *
+	 * @param string $merge_tag Merge tag name.
+	 *
+	 * @return string Regex pattern.
+	 */
+	public static function get_advanced_mergetag_regex( $merge_tag ) {
+		if ( $merge_tag === 'gwp_calculate' ) {
+			// Use an experimental pattern that can capture nested {} characters.
+			return sprintf( '/{%s((?:[^{}]|\\{[^{}]*\\})*)\\}/ism', $merge_tag );
+		}
+
+		return sprintf( '/{%s(.*?)}/ism', $merge_tag );
+	}
+
+	/**
+	 * Match Advanced Merge Tag modifiers in text.
+	 *
+	 * @since 1.0
+	 *
+	 * @param string $text The text to scan.
+	 *
+	 * @return array Matches in PREG_SET_ORDER format.
+	 */
+	public static function match_advanced_mergetag_modifiers( $text ) {
+		$regex = self::get_modifier_regex();
+		preg_match_all( $regex, $text, $matches, PREG_SET_ORDER );
+		return $matches;
+	}
+
+	/**
+	 * Match Advanced Merge Tags in text for a specific merge tag.
+	 *
+	 * @since 1.0
+	 *
+	 * @param string $text      The text to scan.
+	 * @param string $merge_tag The merge tag name.
+	 *
+	 * @return array Matches in PREG_SET_ORDER format.
+	 */
+	public static function match_advanced_mergetags( $text, $merge_tag ) {
+		$regex = self::get_advanced_mergetag_regex( $merge_tag );
+		preg_match_all( $regex, $text, $matches, PREG_SET_ORDER );
+		return $matches;
 	}
 
 	/**
@@ -694,61 +756,55 @@ class GravityWP_Advanced_Merge_Tags extends GFAddOn {
 			return $text;
 		}
 
-		$atts_cs_modifiers_regex = '/{[^{}]*?:(\d+(\.\d+)?):((%s).*?)}/mi';
-		$gwp_atts_cs_modifiers   = self::get_supported_modifiers();
-		$matches                 = array();
-
 		// Check for a GravityWP case sensitive modifiers and execute the corresponding function.
-		foreach ( $gwp_atts_cs_modifiers as $gwp_atts_cs_modifier ) {
-			preg_match_all( sprintf( $atts_cs_modifiers_regex, $gwp_atts_cs_modifier ), $text, $matches, PREG_SET_ORDER );
+		$matches = self::match_advanced_mergetag_modifiers( $text );
 
-			foreach ( $matches as $match ) {
-				$input_id = $match[1];
+		foreach ( $matches as $match ) {
+			$input_id = $match[1];
 
-				/**
-				 * START part 1 of GFCommon::replace_field_variable()
-				 * Basic checks, get lead value (raw entry value).
-				 */
-				$field = GFFormsModel::get_field( $form, $input_id );
+			/**
+			 * START part 1 of GFCommon::replace_field_variable()
+			 * Basic checks, get lead value (raw entry value).
+			 */
+			$field = GFFormsModel::get_field( $form, $input_id );
 
-				// If field is not in the form, don't replace the merge tag.
-				if ( ! $field ) {
-					continue;
-				}
-
-				if ( ! $field instanceof GF_Field ) {
-					$field = GF_Fields::create( $field );
-				}
-
-				// Get field value from lead.
-				$value     = GFFormsModel::get_lead_field_value( $entry, $field );
-				$raw_value = $value;
-
-				// If values are in an array we are dealing with a field with multiple inputs.
-				if ( is_array( $value ) ) {
-					$value = rgar( $value, $input_id );
-				}
-				/**
-				 * END part 1 of GFCommon::replace_field_variable()
-				 */
-
-				// Separate default GF modifiers from AMT modifiers.
-				$modifier_atts        = self::parse_mergetag_atts( html_entity_decode( $match[3], ENT_QUOTES, 'UTF-8' ) ); // decode html quotes, when combined with GPPA nested mergetags are sometimes passed like "gwp_replace search=&quot; &quot; replace=&quot;-&quot; modifier1=&#039;gwp_case to=lower&#039;".
-				$sep_gwp_gf_modifiers = explode( ':', $modifier_atts[0] );
-				$modifier_atts[0]     = $sep_gwp_gf_modifiers[0];
-				$modifier             = ! empty( $sep_gwp_gf_modifiers[1] ) ? $sep_gwp_gf_modifiers[1] : '';
-
-				// execute part 2 of GFCommon::replace_field_variable().
-				self::gf_replace_field_variable_part2( $value, $input_id, $entry, $form, $modifier, $raw_value, $field, $url_encode, $esc_html, $format, $nl2br );
-
-				// Proces AMT modifiers. NOTE: gf_replace_field_variable_part3() is executed here.
-				self::process_amt_modifiers( $replace, $match[4], $value, $input_id, $modifier_atts, $field, $raw_value, $form, $entry, $url_encode, $esc_html, $format, $nl2br );
-
-				// Part 4 of GFCommon::replace_field_variable(): Clear merge tag modifiers from the field object.
-				$field->set_modifiers( array() );
-
-				$text = str_replace( $match[0], $replace, $text );
+			// If field is not in the form, don't replace the merge tag.
+			if ( ! $field ) {
+				continue;
 			}
+
+			if ( ! $field instanceof GF_Field ) {
+				$field = GF_Fields::create( $field );
+			}
+
+			// Get field value from lead.
+			$value     = GFFormsModel::get_lead_field_value( $entry, $field );
+			$raw_value = $value;
+
+			// If values are in an array we are dealing with a field with multiple inputs.
+			if ( is_array( $value ) ) {
+				$value = rgar( $value, $input_id );
+			}
+			/**
+			 * END part 1 of GFCommon::replace_field_variable()
+			 */
+
+			// Separate default GF modifiers from AMT modifiers.
+			$modifier_atts        = self::parse_mergetag_atts( html_entity_decode( $match[3], ENT_QUOTES, 'UTF-8' ) ); // decode html quotes, when combined with GPPA nested mergetags are sometimes passed like "gwp_replace search=&quot; &quot; replace=&quot;-&quot; modifier1=&#039;gwp_case to=lower&#039;".
+			$sep_gwp_gf_modifiers = explode( ':', $modifier_atts[0] );
+			$modifier_atts[0]     = $sep_gwp_gf_modifiers[0];
+			$modifier             = ! empty( $sep_gwp_gf_modifiers[1] ) ? $sep_gwp_gf_modifiers[1] : '';
+
+			// execute part 2 of GFCommon::replace_field_variable().
+			self::gf_replace_field_variable_part2( $value, $input_id, $entry, $form, $modifier, $raw_value, $field, $url_encode, $esc_html, $format, $nl2br );
+
+			// Proces AMT modifiers. NOTE: gf_replace_field_variable_part3() is executed here.
+			self::process_amt_modifiers( $replace, $match[4], $value, $input_id, $modifier_atts, $field, $raw_value, $form, $entry, $url_encode, $esc_html, $format, $nl2br );
+
+			// Part 4 of GFCommon::replace_field_variable(): Clear merge tag modifiers from the field object.
+			$field->set_modifiers( array() );
+
+			$text = str_replace( $match[0], $replace, $text );
 		}
 
 		return $text;
@@ -780,7 +836,7 @@ class GravityWP_Advanced_Merge_Tags extends GFAddOn {
 		$method = 'modifier_' . $amt_modifier;
 		if ( method_exists( gravitywp_advanced_merge_tags(), $method ) ) {
 
-			$replace = self::$method( $value, $input_id, $modifier_atts, $field, $raw_value, $format, $form, $entry );
+			$replace = self::$method( $value, $input_id, $modifier_atts, $field, $raw_value, $format, $form, $entry, $url_encode, $esc_html, $nl2br );
 
 			$replace = self::gwp_process_nested_modifiers( $modifier_atts, $replace, $input_id, $field, $raw_value, $format, $form, $entry );
 
@@ -965,19 +1021,12 @@ class GravityWP_Advanced_Merge_Tags extends GFAddOn {
 		/**
 		 * Advanced Merge Tags with attributes
 		 */
-		$atts_merge_tags_regex = '/{%s(.*?)}/ism'; // Regex pattern for Advanced Mergetags.
 		$gwp_atts_merge_tags   = self::get_supported_advanced_mergetags();
 
 		/* process Merge Tags with attributes */
 		foreach ( $gwp_atts_merge_tags as $gwp_atts_merge_tag ) {
 
-			if ( $gwp_atts_merge_tag === 'gwp_calculate' ) {
-				// use an experimental pattern that can capture nested {} characters.
-				preg_match_all( sprintf( '/{%s((?:[^{}]|\{[^{}]*\})*)\}/ism', $gwp_atts_merge_tag ), $text, $matches, PREG_SET_ORDER );
-			} else {
-				// use default, battle tested, pattern.
-				preg_match_all( sprintf( $atts_merge_tags_regex, $gwp_atts_merge_tag ), $text, $matches, PREG_SET_ORDER );
-			}
+			$matches = self::match_advanced_mergetags( $text, $gwp_atts_merge_tag );
 
 			$method = 'mergetag_' . $gwp_atts_merge_tag;
 
@@ -1237,7 +1286,9 @@ class GravityWP_Advanced_Merge_Tags extends GFAddOn {
 	/**
 	 * Process gwp_reverse modifier
 	 *
-	 * Reverses a string.
+	 * Reverses a string. Uses a multibyte-safe approach via preg_split
+	 * to correctly handle accented characters, emojis, and other
+	 * multi-byte UTF-8 characters.
 	 *
 	 * @since 1.0
 	 *
@@ -1251,7 +1302,13 @@ class GravityWP_Advanced_Merge_Tags extends GFAddOn {
 	 * @return string  Returns the reversed $value.
 	 */
 	public static function modifier_gwp_reverse( $value, $merge_tag, $modifier_atts, $field, $raw_value, $format ) {
-		return (string) strrev( $value );
+		$characters = preg_split( '//u', $value, -1, PREG_SPLIT_NO_EMPTY );
+
+		if ( false === $characters ) {
+			return (string) strrev( $value );
+		}
+
+		return implode( '', array_reverse( $characters ) );
 	}
 
 	/**
@@ -1416,7 +1473,7 @@ class GravityWP_Advanced_Merge_Tags extends GFAddOn {
 	 *
 	 * @return string If succesfull return the specified matched entry value, otherwise return '' or error;
 	 */
-	public static function modifier_gwp_get_matched_entry_value( $value, $merge_tag, $modifier_atts, $field, $raw_value, $format, $form, $entry ) {
+	public static function modifier_gwp_get_matched_entry_value( $value, $merge_tag, $modifier_atts, $field, $raw_value, $format, $form, $entry, &$url_encode, &$esc_html, &$nl2br ) {
 
 		$atts = shortcode_atts(
 			array(
@@ -1426,6 +1483,7 @@ class GravityWP_Advanced_Merge_Tags extends GFAddOn {
 				'return_id'  => null,   // Entry property value to return.
 				'sort_order' => 'desc', // Define sort order of the matched entries.
 				'offset'     => '0',    // Define which matched entry to get.
+				'format'     => 'false', // Whether to format the matched value like a regular merge tag.
 			),
 			$modifier_atts
 		);
@@ -1457,7 +1515,36 @@ class GravityWP_Advanced_Merge_Tags extends GFAddOn {
 
 		// return value or property of the entry which matches all criteria.
 		if ( ! empty( $entry_array ) ) {
-			return self::get_allowed_field_value( absint( $atts['form_id'] ), $entry_array[0], $atts['return_id'] );
+			$return_value = self::get_allowed_field_value( absint( $atts['form_id'] ), $entry_array[0], $atts['return_id'] );
+
+			// Format the value.
+			if ( $atts['format'] === 'true' ) {
+				if ( is_numeric( $atts['return_id'] ) ) {
+					$matched_form = GFAPI::get_form( $atts['form_id'] );
+					$return_field = GFAPI::get_field( $matched_form, (int) $atts['return_id'] );
+					if ( $return_field instanceof GF_Field ) {
+						$input_id = $atts['return_id'];
+
+						$return_value = $return_field->get_value_merge_tag( $return_value, $input_id, $entry_array[0], $matched_form, '', $return_value, $url_encode = false, $esc_html = false, $format, $nl2br = false );
+
+						if ( $return_field->type === 'textarea' && $return_field->useRichTextEditor ) {
+							// set referenced variables for proper formatting in GFCommon::format_variable_value() when the field is a Rich Text Editor, which does its own formatting and should not be altered by GFCommon::format_variable_value().
+							$esc_html     = false;
+							$nl2br        = false;
+							$return_value = wp_kses_post( $return_value );
+						}
+					} else {
+						gravitywp_advanced_merge_tags()->log_debug( __METHOD__ . '(): Could not format matched entry value, field not found. Form ID: ' . $atts['form_id'] . ', Field ID: ' . $atts['return_id'] );
+					}
+				} else {
+					// @todo: Consider supporting format entry properties like date_created, date_updated, etc.
+					gravitywp_advanced_merge_tags()->log_debug( __METHOD__ . '(): Formatting of entry properties is not (yet) supported . Property: ' . $atts['return_id'] );
+				}
+			} elseif ( $atts['format'] === 'currency' || $atts['format'] === 'decimal_dot' || $atts['format'] === 'decimal_comma' ) {
+				$return_value = GFCommon::format_number( $return_value, $atts['format'], rgar( $entry, 'currency' ), true );
+			}
+
+			return $return_value;
 		} else {
 			return '';
 		}
@@ -1578,11 +1665,11 @@ class GravityWP_Advanced_Merge_Tags extends GFAddOn {
 	 *
 	 * @return string
 	 */
-	public static function mergetag_gwp_get_matched_entry_value( $mergetag_atts, $form, $entry, $url_encode, $esc_html, $nl2br, $format ) {
+	public static function mergetag_gwp_get_matched_entry_value( $mergetag_atts, $form, $entry, &$url_encode, &$esc_html, &$nl2br, &$format ) {
 		$value = $mergetag_atts['value'] ?? '';
 
 		if ( ! $value ) {
-			return gravitywp_advanced_merge_tags()->gwp_error_handler( esc_html__( 'missing value paramater', 'gravitywpadvancedmergetags' ), __METHOD__, print_r( $mergetag_atts, true ) );
+			return gravitywp_advanced_merge_tags()->gwp_error_handler( esc_html__( 'missing value parameter', 'gravitywpadvancedmergetags' ), __METHOD__, print_r( $mergetag_atts, true ) );
 		}
 
 		// execute gwp_get_matched_entry_value modifier.
@@ -1595,6 +1682,60 @@ class GravityWP_Advanced_Merge_Tags extends GFAddOn {
 			$field = new GF_Field( array( 'type' => 'entry_property' ) );
 		}
 		// prevent double nl2br and esc_html in $this->process_amt_modifiers. $this->gwp_process_mergetags() will format the output.
+		$nl2br2      = false;
+		$esc_html2   = false;
+		$url_encode2 = false;
+		self::process_amt_modifiers( $value, $modifier_atts[0], $value, $input_id, $modifier_atts, $field, $value, $form, $entry, $url_encode2, $esc_html2, $format, $nl2br2 );
+
+		$return_field = GFAPI::get_field( $mergetag_atts['form_id'], (int) $mergetag_atts['return_id'] );
+		if ( $return_field instanceof GF_Field && rgar( $mergetag_atts, 'format' ) === 'true' ) {
+			// set referenced variables for proper formatting in GFCommon::format_variable_value() when the field is a Rich Text Editor, which does its own formatting and should not be altered by GFCommon::format_variable_value().
+			if ( $return_field->type === 'textarea' && $return_field->useRichTextEditor ) {
+				$esc_html = false;
+				$nl2br    = false;
+				// sanitize the output.
+				$value = wp_kses_post( $value );
+			}
+		}
+
+		return $value;
+	}
+
+	/**
+	 * Process gwp_count_matched_entries Merge Tag.
+	 *
+	 * Counts matching entries for the provided value.
+	 *
+	 * @since 1.0
+	 *
+	 * @param array<mixed> $mergetag_atts Contains the Merge Tags attributes.
+	 * @param array<mixed> $form The form array.
+	 * @param array<mixed> $entry The entry array.
+	 * @param bool         $url_encode Whether to URL encode the output.
+	 * @param bool         $esc_html Whether to escape HTML entities in the output.
+	 * @param bool         $nl2br Whether to convert newlines to HTML line breaks in the output.
+	 * @param string       $format The format of the output.
+	 *
+	 * @return string
+	 */
+	public static function mergetag_gwp_count_matched_entries( $mergetag_atts, $form, $entry, $url_encode, $esc_html, $nl2br, $format ) {
+		$value = $mergetag_atts['value'] ?? '';
+
+		if ( ! $value ) {
+			return gravitywp_advanced_merge_tags()->gwp_error_handler( esc_html__( 'missing value parameter', 'gravitywpadvancedmergetags' ), __METHOD__, print_r( $mergetag_atts, true ) );
+		}
+
+		// Execute gwp_count_matched_entries modifier.
+		$modifier_atts    = $mergetag_atts;
+		$modifier_atts[0] = 'gwp_count_matched_entries';
+		$input_id         = '';
+		$field            = GFAPI::get_field( $form, $input_id );
+		if ( ! is_a( $field, 'GF_Field' ) ) {
+			// Mock a field object.
+			$field = new GF_Field( array( 'type' => 'entry_property' ) );
+		}
+
+		// Prevent double nl2br and esc_html in process_amt_modifiers.
 		$nl2br2      = false;
 		$esc_html2   = false;
 		$url_encode2 = false;

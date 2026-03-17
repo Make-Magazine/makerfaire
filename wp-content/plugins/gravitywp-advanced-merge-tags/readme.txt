@@ -2,9 +2,9 @@
 Contributors: gravitywp
 Tags: gravity forms, gravityforms, mergetags, merge tags
 Requires at least: 3.0.1
-Tested up to: 6.7
+Tested up to: 6.9
 Requires PHP: 7.0
-Stable tag: 1.9.4
+Stable tag: 1.9.6
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -30,6 +30,14 @@ This plugin provides advanced functionality to the default Gravity Forms Number 
 Upload the plugin files to the `/wp-content/plugins/gravitywp-advanced-merge-tags` directory, or install the plugin through the WordPress plugins screen directly.
 
 == Changelog ==
+= 1.9.6 =
+- Added support returning formatted rich text in the gwp_get_matched_entry_value merge tag / modifier.
+- Fixed gwp_reverse to correctly handle multibyte characters (accented letters, emojis, CJK characters) by using a UTF-8-aware reversal instead of byte-level strrev.
+- Refactor merge tag formatting check to use rgar for better attribute retrieval
+
+= 1.9.5 =
+- Added the format parameter to the gwp_get_matched_entry_value merge tag and modifier, which allows for formatting of the matched entry value.
+- Fixed a bug in pattern matching with nested modifiers.
 
 = 1.9.4 =
 - Added 'raw', 'number_format' and 'thousand_sep' parameters for gwp_sum_matched_entries_values modifier to allow for different formatting and for use with gwp_calculate.

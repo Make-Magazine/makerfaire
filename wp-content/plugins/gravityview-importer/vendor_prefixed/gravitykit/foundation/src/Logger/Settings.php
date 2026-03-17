@@ -2,7 +2,7 @@
 /**
  * @license GPL-2.0-or-later
  *
- * Modified by The GravityKit Team on 11-September-2025 using Strauss.
+ * Modified using Strauss.
  * @see https://github.com/BrianHenryIE/strauss
  */
 
@@ -1308,13 +1308,26 @@ CSS;
 			}
 		}
 
-		// Only proceed if logger was enabled with file type.
+		// Only proceed if logger was previously enabled with file type.
 		if ( empty( $current_settings['logger'] ) || 'file' !== $current_settings['logger_type'] ) {
 			return $new_settings;
 		}
 
-		// If logger remains enabled with file type, no cleanup needed.
-		if ( ! empty( $new_settings['logger'] ) && 'file' === $new_settings['logger_type'] ) {
+		// Check if we need to clean up log files.
+		$should_cleanup = false;
+
+		// The logger setting is always present (checkbox value: '0' or '1').
+		$logger_disabled = ! isset( $new_settings['logger'] ) || '0' === $new_settings['logger'] || ! $new_settings['logger'];
+
+		if ( $logger_disabled ) {
+			// Logger is being disabled.
+			$should_cleanup = true;
+		} elseif ( isset( $new_settings['logger'] ) && $new_settings['logger'] && 'file' !== $new_settings['logger_type'] ) {
+			// Logger remains enabled but type changed from 'file'.
+			$should_cleanup = true;
+		}
+
+		if ( ! $should_cleanup ) {
 			return $new_settings;
 		}
 

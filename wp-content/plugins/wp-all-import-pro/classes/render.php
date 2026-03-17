@@ -26,7 +26,7 @@ if ( ! class_exists('PMXI_Render')){
 			// reaching this point means we didn't find anything among current element children, so recursively ask children to find something in them
 			foreach ($el->childNodes as $child) {
 				if ($child instanceof DOMElement) {
-					$result = slef::xml_find_repeating($child, $path . '/');
+					$result = self::xml_find_repeating($child, $path . '/');
 					if ($result) {
 						return $result;
 					}

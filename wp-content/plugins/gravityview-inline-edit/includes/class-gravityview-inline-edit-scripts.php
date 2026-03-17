@@ -164,20 +164,24 @@ final class GravityView_Inline_Edit_Scripts {
 		);
 
 		/**
-		 * @filter `gravityview-inline-edit/js-settings` Modify the settings passed to the x-editable script
+		 * Modify the settings passed to the x-editable script
 		 *
 		 * @since 1.0
-		 * @since 1.3 Added $item_id
+		 * @since 1.3 Added $item_id parameter
+		 *
+		 * @link https://docs.gravitykit.com/article/418-inline-edit-enable-editing
 		 *
 		 * @param array $js_settings {
-		 *  @type string $mode Editing mode. Options: "popup" or "inline" [Default: "popup"]
-		 *  @type string $buttons HTML of the Update/Cancel buttons {@see GravityView_Inline_Edit::get_buttons_template}
-		 *  @type string $container When using `popup` $mode, jQuery selector used to attach the popup container [Default: "body"]
-		 *  @type string|bool $showbuttons Where to show buttons. Form without buttons is auto-submitted. Options are "top", "bottom", "left", "right", or false. [Default: "bottom"]
-		 *  @type string $onblur Action when user clicks outside the inline edit form container. Options are "cancel", "submit", "ignore". Setting ignore allows to have several containers open. [Default: "cancel"]
-		 *  @type bool|string $showinputs jQuery selectors for which inputs to show without clicking. NOTE: `onblur` must be set to "ignore" {@see https://docs.gravitykit.com/article/418-inline-edit-enable-editing}
+		 *     JavaScript settings for inline edit
+		 *
+		 *     @type string      $mode Editing mode. Options: "popup" or "inline". Default: "popup"
+		 *     @type string      $buttons HTML of the Update/Cancel buttons
+		 *     @type string      $container When using `popup` $mode, jQuery selector used to attach the popup container. Default: "body"
+		 *     @type string|bool $showbuttons Where to show buttons. Form without buttons is auto-submitted. Options are "top", "bottom", "left", "right", or false. Default: "bottom"
+		 *     @type string      $onblur Action when user clicks outside the inline edit form container. Options are "cancel", "submit", "ignore". Setting ignore allows to have several containers open. Default: "cancel"
+		 *     @type bool|string $showinputs jQuery selectors for which inputs to show without clicking. NOTE: `onblur` must be set to "ignore".
 		 * }
-		 * @param array $item_id Array with [form_id] key set for Form ID, or [view_id] key set for View ID currently being displayed
+		 * @param array $item_id Array with 'form_id' key set for Form ID, or 'view_id' key set for View ID currently being displayed
 		 */
 		$js_settings = apply_filters( 'gravityview-inline-edit/js-settings', $js_settings, $item_id );
 
@@ -274,7 +278,7 @@ final class GravityView_Inline_Edit_Scripts {
 			);
 
 			if ( 'entry_tags' === $custom_field && !is_admin() && defined('GK_ENTRY_TAGS_URL') ) {
-				
+
 				wp_enqueue_script( 'tagify',GK_ENTRY_TAGS_URL.'assets/tagify/jQuery.tagify.min.js',array('jquery'),GravityView_Inline_Edit::get_version(),true );
 				wp_enqueue_script( 'gktag_public',GK_ENTRY_TAGS_URL.'assets/public.js',array( 'jquery', 'tagify'),GravityView_Inline_Edit::get_version(),true );
 				wp_enqueue_script( 'random_color',GK_ENTRY_TAGS_URL.'assets/randomColor.min.js',array(),GravityView_Inline_Edit::get_version(),true );
@@ -286,7 +290,7 @@ final class GravityView_Inline_Edit_Scripts {
 					)
 				);
 
-				
+
 				wp_enqueue_style('gktag_public',GK_ENTRY_TAGS_URL.'assets/public.css');
 				wp_enqueue_style('gktag_preview',GK_ENTRY_TAGS_URL.'assets/preview.css');
 				wp_enqueue_style('tagify',GK_ENTRY_TAGS_URL.'assets/tagify/tagify.css');
@@ -441,13 +445,13 @@ final class GravityView_Inline_Edit_Scripts {
 		}
 
 		/**
-		 * @filter `gravityview-inline-edit/jquery-ui-theme` Modify the jQuery UI theme to use, if jQuery UI editor style is active
+		 * Modify the jQuery UI theme to use, if jQuery UI editor style is active
 		 *
 		 * @since 1.0
 		 *
-		 * @param string $jquery_ui_theme Name of jQuery UI theme to use. Default: "base"
-		 *
 		 * @see http://jqueryui.com/themeroller/#themeGallery for examples
+		 *
+		 * @param string $jquery_ui_theme Name of jQuery UI theme to use. Default: "base"
 		 */
 		$jquery_ui_theme = apply_filters( 'gravityview-inline-edit/jquery-ui-theme', 'base' );
 
@@ -489,7 +493,7 @@ final class GravityView_Inline_Edit_Scripts {
 		$registered_styles['gv-inline-edit-jquery-ui'] = wp_register_style( 'gv-inline-edit-jquery-ui', GRAVITYVIEW_INLINE_URL . 'bower_components/jquery-ui/themes/' . $jquery_ui_theme . '/jquery-ui' . $script_debug . '.css' );
 
 		/**
-		 * @filter `gravityview-inline-edit/poshytip-theme` Modify the Poshytip theme to use, if jQuery editor style is active
+		 * Modify the Poshytip theme to use, if jQuery editor style is active
 		 *
 		 * @since 1.0
 		 *

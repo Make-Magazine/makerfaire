@@ -25,10 +25,12 @@ require_once GFCommon::get_base_path() . '/entry_detail.php';
  */
 do_action( 'gravityview/field/notes/scripts' );
 
-$entry      = $gravityview_view->getCurrentEntry();
-$notes      = (array) GravityView_Entry_Notes::get_notes( $entry['id'] );
-$strings    = GravityView_Field_Notes::strings();
-$entry_slug = GravityView_API::get_entry_slug( $entry['id'], $entry );
+$entry              = $gravityview_view->getCurrentEntry();
+$notes              = (array) GravityView_Entry_Notes::get_notes( $entry['id'] );
+$exclude_note_types = $gravityview_view->getCurrentFieldSetting( 'exclude_note_types' );
+$notes              = GravityView_Field_Notes::filter_notes_by_type( $notes, $exclude_note_types );
+$strings            = GravityView_Field_Notes::strings();
+$entry_slug         = GravityView_API::get_entry_slug( $entry['id'], $entry );
 
 $show_add    = ! empty( $visibility_settings['add'] );
 $show_delete = ( ! empty( $visibility_settings['delete'] ) && GVCommon::has_cap( 'gravityview_delete_entry_notes' ) );

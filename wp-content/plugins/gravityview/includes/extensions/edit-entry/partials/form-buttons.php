@@ -71,22 +71,31 @@ if ( 'gform_next_button' === current_filter() ) {
 	$cancel_tabindex = GFCommon::get_tabindex();
 	$cancel_label    = GFCommon::replace_variables( $labels['cancel'], $object->form, $object->entry );
 
-	// If the entry has been edited, history.back() will keep pointing to the Edit Entry screen. Go back before editing, please!
-	// On first visit, will be history.go(-1) because (0 + 1 * -1).
-	// After updating twice, history.go(-3) because (2 + 1 * -1)
-	$update_count = (int) \GV\Utils::_POST( 'update_count', 0 );
+	$update_count  = (int) \GV\Utils::_POST( 'update_count', 0 );
+	$is_paged_form = $object->show_previous_button || $object->show_next_button;
+
+	// On paged forms, navigate directly to the single entry page. On single-page forms, use browser history.
+	if ( $is_paged_form ) {
+		$default_cancel_js = "window.location.href = '" . esc_js( $back_link ) . "'; return false;";
+	} else {
+		// If the entry has been edited, history.back() will keep pointing to the Edit Entry screen. Go back before editing, please!
+		// On first visit, will be history.go(-1) because (0 + 1 * -1).
+		// After updating twice, history.go(-3) because (2 + 1 * -1).
+		$default_cancel_js = 'history.go(' . ( $update_count + 1 ) * -1 . '); return false;';
+	}
 
 	/**
-	 * altogether, return an empty string.
-     *
+	 * Modify the JavaScript code that runs when the Cancel button is clicked.
+	 *
 	 * @since 2.13.4
-	 * @param string $back_link Existing "back" of the Cancel link.
-	 * @param array $form The Gravity Forms form.
-	 * @param array $entry The Gravity Forms entry.
-	 * @param int $view_id The current View ID.
-	 * @param int $update_count The number of pages to go back based on the # of updates to the edited form.
+	 *
+	 * @param string $cancel_onclick_js The JavaScript to execute on Cancel button click.
+	 * @param array  $form              The Gravity Forms form.
+	 * @param array  $entry             The Gravity Forms entry.
+	 * @param int    $view_id           The current View ID.
+	 * @param int    $update_count      The number of pages to go back based on the # of updates to the edited form.
 	 */
-	$cancel_onclick_js = apply_filters( 'gravityview/edit_entry/cancel_onclick', 'history.go(' . ( $update_count + 1 ) * -1 . '); return false;', $object->form, $object->entry, $object->view_id, $update_count );
+	$cancel_onclick_js = apply_filters( 'gravityview/edit_entry/cancel_onclick', $default_cancel_js, $object->form, $object->entry, $object->view_id, $update_count );
 
 	$cancel_onclick = empty( $cancel_onclick_js ) ? '' : 'onclick="' . esc_attr( $cancel_onclick_js ) . '"';
 	?>

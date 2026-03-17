@@ -2,7 +2,7 @@
 /**
  * @license GPL-2.0-or-later
  *
- * Modified by gravityview on 05-December-2025 using {@see https://github.com/BrianHenryIE/strauss}.
+ * Modified using {@see https://github.com/BrianHenryIE/strauss}.
  */
 
 namespace GravityKit\GravityView\Foundation\Licenses;
@@ -194,11 +194,18 @@ class ProductHistoryManager {
 
 		$text_domain = $upgrader->new_plugin_data['TextDomain'] ?? null;
 
-		if ( ! isset( $products[ $text_domain ] ) ) {
-			return;
-		};
+		$product = Arr::first(
+			$products,
+			function ( $product ) use ( $text_domain ) {
+				return in_array( $text_domain, $product['text_domains'], true );
+			}
+		);
 
-		$this->update_product_history( 'install', $products[ $text_domain ] );
+		if ( ! $product ) {
+			return;
+		}
+
+		$this->update_product_history( 'install', $product );
 	}
 
 	/**

@@ -359,6 +359,44 @@ window.gvDTFixedHeaderColumns = window.gvDTFixedHeaderColumns || {};
 					};
 				} );
 
+				// Implement state key management to invalidate cache when settings change.
+				if ( options.stateSave && options.stateKey ) {
+					const stateKey = options.stateKey;
+					const baseStateKey = 'DataTables_' + $( this ).attr( 'data-viewid' );
+					
+					options.stateSaveCallback = function ( settings, data ) {
+						try {
+							localStorage.setItem( baseStateKey + '_' + stateKey, JSON.stringify( data ) );
+						} catch ( ex ) {
+							// Fail silently if localStorage is not available.
+						}
+					};
+
+					options.stateLoadCallback = function ( settings ) {
+						try {
+							return JSON.parse( localStorage.getItem( baseStateKey + '_' + stateKey ) );
+						} catch ( ex ) {
+							return null;
+						}
+					};
+
+					// Clean up old state keys to prevent localStorage bloat.
+					try {
+						const keysToRemove = [];
+
+						for ( let i = 0; i < localStorage.length; i++ ) {
+							const key = localStorage.key( i );
+							if ( key && key.startsWith( baseStateKey + '_' ) && key !== baseStateKey + '_' + stateKey ) {
+								keysToRemove.push( key );
+							}
+						}
+
+						keysToRemove.forEach( key => localStorage.removeItem( key ) );
+					} catch ( ex ) {
+						// Fail silently.
+					}
+				}
+
 				if ( options.ajax ) {
 					// Handle empty server response.
 					options.ajax = $.extend( {}, options.ajax, {

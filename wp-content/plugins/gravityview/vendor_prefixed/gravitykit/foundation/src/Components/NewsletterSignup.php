@@ -2,7 +2,7 @@
 /**
  * @license GPL-2.0-or-later
  *
- * Modified by gravityview on 05-December-2025 using {@see https://github.com/BrianHenryIE/strauss}.
+ * Modified using {@see https://github.com/BrianHenryIE/strauss}.
  */
 
 namespace GravityKit\GravityView\Foundation\Components;
@@ -102,7 +102,7 @@ final class NewsletterSignup {
 	 *
 	 * @return self
 	 */
-	public static function get_instance( StateManager $state_manager = null ): self {
+	public static function get_instance( ?StateManager $state_manager = null ): self {
 		if ( null === self::$_instance ) {
 			$endpoint = defined( 'GK_FOUNDATION_NEWSLETTER_SIGNUP_FORM_ENDPOINT' )
 				? GK_FOUNDATION_NEWSLETTER_SIGNUP_FORM_ENDPOINT

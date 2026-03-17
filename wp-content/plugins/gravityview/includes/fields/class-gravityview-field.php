@@ -229,7 +229,10 @@ abstract class GravityView_Field {
 
 		// If the field exists and is a GF_Field, return the icon.
 		if ( $gf_field && $gf_field instanceof GF_Field ) {
-			return $gf_field->get_form_editor_field_icon();
+			$icon = $gf_field->get_form_editor_field_icon();
+			if ( 'gform-icon--cog' !== $icon ) {
+				return $icon;
+			}
 		}
 
 		return $this->icon;
@@ -293,6 +296,10 @@ abstract class GravityView_Field {
 	 * @return string Original text if {_custom_merge_tag} isn't found. Otherwise, replaced text.
 	 */
 	public function _filter_gform_replace_merge_tags( $text, $form = array(), $entry = array(), $url_encode = false, $esc_html = false ) {
+
+		if ( ! is_string( $text ) ) {
+			return $text;
+		}
 
 		// Is there is field merge tag? Strip whitespace off the ned, too.
 		preg_match_all( '/{' . preg_quote( $this->_custom_merge_tag, '/' ) . ':?(.*?)(?:\s)?}/ism', $text, $matches, PREG_SET_ORDER );
@@ -489,9 +496,13 @@ abstract class GravityView_Field {
 				'label'    => __( 'Override Date Format', 'gk-gravityview' ),
 				'desc'     => sprintf( __( 'Define how the date is displayed (using %1$sthe PHP date format%2$s)', 'gk-gravityview' ), '<a href="https://wordpress.org/support/article/formatting-date-and-time/" rel="external">', '</a>' ),
 				/**
-				 * Override the date format with a [PHP date format](https://codex.wordpress.org/Formatting_Date_and_Time).
+				 * Override the date format with a PHP date format.
 				 *
-				 * @param null|string $date_format Date Format (default: null)
+				 * @since 1.0-beta
+				 *
+				 * @see https://wordpress.org/support/article/formatting-date-and-time/
+				 *
+				 * @param string|null $date_format Date format string. Default: null.
 				 */
 				'value'    => apply_filters( 'gravityview_date_format', null ),
 				'class'    => 'code widefat',
@@ -517,7 +528,9 @@ abstract class GravityView_Field {
 		/**
 		 * Modify the settings that a field supports.
 		 *
-		 * @param array $options Options multidimensional array with each key being the input name, with each array setting having `type`, `label`, `desc` and `value` (default values) keys
+		 * @since 1.0.7-beta
+		 *
+		 * @param array $options Multidimensional array with each key being the input name. Each array setting has `type`, `label`, `desc` and `value` (default values) keys.
 		 */
 		return apply_filters( 'gravityview_field_support_options', $options );
 	}

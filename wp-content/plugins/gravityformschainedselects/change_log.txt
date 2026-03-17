@@ -1,3 +1,9 @@
+### 1.8.1 | 2026-01-08
+- Updated Chained Select inputs to display sub-labels for accessibility and better usability.
+- Fixed an issue where Chained Selects icon is not displayed on Uninstall screen.
+- Fixed an issue where the Chained Selects add-on incorrectly calls the feed add-on class.
+
+
 ### 1.8.0 | 2025-02-06
 - Updated assets to include minified and non-minified versions.
 - Fixed an issue where the field preview in the form editor is displaying incorrectly.

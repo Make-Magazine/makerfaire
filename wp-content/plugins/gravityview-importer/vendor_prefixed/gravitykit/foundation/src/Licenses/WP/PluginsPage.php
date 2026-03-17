@@ -2,7 +2,7 @@
 /**
  * @license GPL-2.0-or-later
  *
- * Modified by The GravityKit Team on 11-September-2025 using Strauss.
+ * Modified using Strauss.
  * @see https://github.com/BrianHenryIE/strauss
  */
 
@@ -539,7 +539,7 @@ JS;
 			$product = Arr::first(
 				$products,
 				function ( $product ) use ( $plugin_data ) {
-					return $product['text_domain'] === $plugin_data['TextDomain'];
+					return in_array( $plugin_data['TextDomain'], $product['text_domains'], true );
 				}
 			);
 

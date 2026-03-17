@@ -2,7 +2,7 @@
 /**
  * @license MIT
  *
- * Modified by gravityview on 05-December-2025 using {@see https://github.com/BrianHenryIE/strauss}.
+ * Modified using {@see https://github.com/BrianHenryIE/strauss}.
  */
 
 namespace GravityKit\GravityView\Foundation\ThirdParty\Illuminate\Support\Facades;
@@ -10,7 +10,7 @@ namespace GravityKit\GravityView\Foundation\ThirdParty\Illuminate\Support\Facade
 use GravityKit\GravityView\Foundation\ThirdParty\Illuminate\Contracts\Console\Kernel as ConsoleKernelContract;
 
 /**
- * @method static int handle(\Symfony\Component\Console\Input\InputInterface $input, \Symfony\Component\Console\Output\OutputInterface $output = null)
+ * @method static int handle(\Symfony\Component\Console\Input\InputInterface $input, ?\Symfony\Component\Console\Output\OutputInterface $output = null)
  * @method static int call(string $command, array $parameters = [])
  * @method static int queue(string $command, array $parameters = [])
  * @method static array all()

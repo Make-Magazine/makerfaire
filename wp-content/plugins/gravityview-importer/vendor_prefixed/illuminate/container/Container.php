@@ -2,7 +2,7 @@
 /**
  * @license MIT
  *
- * Modified by The GravityKit Team on 11-September-2025 using Strauss.
+ * Modified using Strauss.
  * @see https://github.com/BrianHenryIE/strauss
  */
 
@@ -923,7 +923,7 @@ class Container implements ArrayAccess, ContainerContract
      * @param  \Closure|null  $callback
      * @return void
      */
-    public function resolving($abstract, Closure $callback = null)
+    public function resolving($abstract, ?Closure $callback = null)
     {
         if (is_string($abstract)) {
             $abstract = $this->getAlias($abstract);
@@ -943,7 +943,7 @@ class Container implements ArrayAccess, ContainerContract
      * @param  \Closure|null $callback
      * @return void
      */
-    public function afterResolving($abstract, Closure $callback = null)
+    public function afterResolving($abstract, ?Closure $callback = null)
     {
         if (is_string($abstract)) {
             $abstract = $this->getAlias($abstract);
@@ -1151,7 +1151,7 @@ class Container implements ArrayAccess, ContainerContract
      * @param  \GravityKit\GravityImport\Foundation\ThirdParty\Illuminate\Contracts\Container\Container|null  $container
      * @return static
      */
-    public static function setInstance(ContainerContract $container = null)
+    public static function setInstance(?ContainerContract $container = null)
     {
         return static::$instance = $container;
     }

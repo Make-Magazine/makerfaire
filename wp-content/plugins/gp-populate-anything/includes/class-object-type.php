@@ -11,6 +11,8 @@ abstract class GPPA_Object_Type {
 	 */
 	public $supports_null_filter_value = false;
 
+	public $supports_bool_filter_values = false;
+
 	/**
 	 * @param array{
 	 *      populate: string,
@@ -115,6 +117,7 @@ abstract class GPPA_Object_Type {
 		add_filter( 'gppa_replace_filter_value_variables_' . $this->id, array( $this, 'parse_date_in_filter_value' ), 10, 7 );
 		add_filter( 'gppa_replace_filter_value_variables_' . $this->id, array( $this, 'replace_special_values' ), 10 );
 		add_filter( 'gppa_replace_filter_value_variables_' . $this->id, array( $this, 'clean_numbers' ), 10 );
+		add_filter( 'gppa_replace_filter_value_variables_' . $this->id, array( $this, 'resolve_filter_merge_tags' ), 12, 7 );
 
 		add_filter( 'gppa_object_type_query_' . $this->id, array( $this, 'add_limit_to_query' ), 10, 2 );
 		add_filter( 'gppa_object_type_query_' . $this->id, array( $this, 'maybe_add_offset_to_query' ), 10, 2 );
@@ -233,15 +236,16 @@ abstract class GPPA_Object_Type {
 	public function to_simple_array() {
 
 		$output = array(
-			'id'                      => $this->id,
-			'label'                   => $this->get_label(),
-			'properties'              => array(),
-			'groups'                  => $this->get_groups(),
-			'templates'               => $this->get_default_templates(),
-			'restricted'              => $this->is_restricted(),
-			'supportsNullFilterValue' => $this->supports_null_filter_value,
-			'optionGroupId'           => $this->get_option_group_id(),
-			'optionGroupLabel'        => $this->get_option_group_label(),
+			'id'                       => $this->id,
+			'label'                    => $this->get_label(),
+			'properties'               => array(),
+			'groups'                   => $this->get_groups(),
+			'templates'                => $this->get_default_templates(),
+			'restricted'               => $this->is_restricted(),
+			'supportsNullFilterValue'  => $this->supports_null_filter_value,
+			'supportsBoolFilterValues' => $this->supports_bool_filter_values,
+			'optionGroupId'            => $this->get_option_group_id(),
+			'optionGroupLabel'         => $this->get_option_group_label(),
 		);
 
 		if ( $this->get_primary_property() ) {
@@ -371,6 +375,16 @@ abstract class GPPA_Object_Type {
 				return apply_filters( 'gppa_special_value_no_result', -1, $value, $special_value );
 			case 'null':
 				return null;
+			case 'boolean':
+				if ( $special_value_parts[1] === 'true' ) {
+					return true;
+				}
+
+				if ( $special_value_parts[1] === 'false' ) {
+					return false;
+				}
+
+				return apply_filters( 'gppa_special_value_no_result', -1, $value, $special_value );
 		}
 
 		/**
@@ -386,6 +400,10 @@ abstract class GPPA_Object_Type {
 			return $value;
 		}
 
+		if ( $this->supports_bool_filter_values && is_bool( $value ) ) {
+			return $value;
+		}
+
 		if ( GFCommon::is_numeric( $value, 'decimal_dot' ) ) {
 			return GFCommon::clean_number( $value, 'decimal_dot' );
 		}
@@ -395,6 +413,53 @@ abstract class GPPA_Object_Type {
 		}
 
 		return $value;
+	}
+
+	/**
+	 * Expand filter values so merge tags resolve before querying.
+	 *
+	 * @param mixed          $value                   Raw filter value.
+	 * @param array|null     $field_values            Posted field values to use as entry context.
+	 * @param mixed          $primary_property_value  Object-type primary property.
+	 * @param array          $filter                  Filter configuration.
+	 * @param array|null     $ordering                Ordering configuration.
+	 * @param GF_Field|array $field                   Field being populated.
+	 * @param array          $property                Property definition.
+	 *
+	 * @return mixed
+	 */
+	public function resolve_filter_merge_tags( $value, $field_values, $primary_property_value, $filter, $ordering, $field, $property ) {
+		if ( ! is_string( $value ) || strpos( $value, '{' ) === false ) {
+			return $value;
+		}
+
+		$populate_anything = gp_populate_anything();
+
+		if ( ! $populate_anything || ! $populate_anything->live_merge_tags ) {
+			return $value;
+		}
+
+		$form_id = is_object( $field ) && isset( $field->formId ) ? $field->formId : rgar( $field, 'formId' );
+		$form    = $form_id ? GFAPI::get_form( $form_id ) : null;
+
+		if ( ! $form ) {
+			return $value;
+		}
+
+		$entry_values = is_array( $field_values ) ? $field_values : array();
+
+		// Filter values are admin-configured, so allow resolving all LMTs without nonce checks.
+		$allow_all_callback = static function() {
+			return true;
+		};
+
+		add_filter( 'gppa_allow_all_lmts_' . $form['id'], $allow_all_callback, 99 );
+
+		try {
+			return $populate_anything->live_merge_tags->get_live_merge_tag_value( $value, $form, $entry_values );
+		} finally {
+			remove_filter( 'gppa_allow_all_lmts_' . $form['id'], $allow_all_callback, 99 );
+		}
 	}
 
 	/**

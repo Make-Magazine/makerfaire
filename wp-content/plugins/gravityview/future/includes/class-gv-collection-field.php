@@ -107,27 +107,31 @@ class Field_Collection extends Collection implements Collection_Position_Aware {
 	}
 
 	/**
-	 * Parse a configuration array into a Field_Collection.
+	 * Parses a configuration array into a Field_Collection.
 	 *
-	 * @param array $configuration The configuration, structured like so:
+	 * <code>
+	 * $configuration = [
+	 *     'directory_table-columns' => [
+	 *         '5372653f25d44' => [
+	 *             'id'            => '1',
+	 *             'label'         => 'Name',
+	 *             'show_label'    => '1',
+	 *             'custom_label'  => '',
+	 *             'custom_class'  => '',
+	 *             'only_loggedin' => '0',
+	 *         ],
+	 *     ],
+	 *     'single_table-columns' => [ ... ],
+	 * ];
+	 * $fields = \GV\Field_Collection::from_configuration( $configuration );
+	 * </code>
 	 *
-	 * array(
+	 * @since 2.0
 	 *
-	 *  [other zones]
+	 * @see \GV\Field::as_configuration() For the complete field configuration structure.
 	 *
-	 *  'directory_list-title' => array(
-	 *
-	 *      [other fields]
-	 *
-	 *      '5372653f25d44' => array(
-	 *          @see \GV\Field::as_configuration() for structure
-	 *      )
-	 *
-	 *      [other fields]
-	 *  )
-	 *
-	 *  [other zones]
-	 * )
+	 * @param array $configuration Multidimensional array keyed by zone position (e.g., 'directory_table-columns'),
+	 *                             with each zone containing field configurations keyed by unique field UID.
 	 *
 	 * @return \GV\Field_Collection A collection of fields.
 	 */

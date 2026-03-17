@@ -8,7 +8,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  *
- * Modified by __root__ on 05-December-2025 using Strauss.
+ * Modified using Strauss.
  * @see https://github.com/BrianHenryIE/strauss
  */
 
@@ -143,7 +143,7 @@ class FilterHandler extends AbstractHandler
      *
      * @return HandlerInterface
      */
-    public function getHandler(array $record = null)
+    public function getHandler(?array $record = null)
     {
         if (!$this->handler instanceof HandlerInterface) {
             $this->handler = call_user_func($this->handler, $record, $this);

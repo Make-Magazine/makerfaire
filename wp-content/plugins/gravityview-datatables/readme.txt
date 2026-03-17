@@ -16,6 +16,20 @@ Display entries in a dynamic table powered by DataTables & GravityView.
 
 == Changelog ==
 
+= 3.7.2 on January 22, 2026 =
+
+This update fixes shortcode search attributes not being applied.
+
+#### 🐛 Fixed
+* The `search_field` and `search_operator` attributes were being ignored when embedding a DataTables View via shortcode.
+
+= 3.7.1 on January 15, 2026 =
+
+This hotfix resolves an issue with sorting when the sort field is not visible in the table.
+
+#### 🐛 Fixed
+* Sorting now works correctly when the sort field configured in View Settings is not a visible column in the DataTables table.
+
 = 3.7.0 on December 4, 2025 =
 
 This release adds support for Gravity Flow Workflow Approval Links field and fixes several display and functionality issues.

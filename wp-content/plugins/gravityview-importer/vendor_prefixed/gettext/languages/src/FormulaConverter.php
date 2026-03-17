@@ -2,7 +2,7 @@
 /**
  * @license MIT
  *
- * Modified by The GravityKit Team on 11-September-2025 using Strauss.
+ * Modified using Strauss.
  * @see https://github.com/BrianHenryIE/strauss
  */
 
@@ -140,7 +140,7 @@ class FormulaConverter
                                 $chunk = "({$what} == {$from} || {$what} == {$to})";
                                 break;
                             case '!=':
-                                $chunk = "{$what} != {$from} && {$what} == {$to}";
+                                $chunk = "{$what} != {$from} && {$what} != {$to}";
                                 break;
                         }
                     } else {

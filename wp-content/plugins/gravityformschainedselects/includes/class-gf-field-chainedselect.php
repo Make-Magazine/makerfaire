@@ -580,11 +580,10 @@ class GF_Chained_Field_Select extends GF_Field {
 	}
 
 	public function get_form_editor_inline_script_on_page_render() {
-
 	    $set_default_values = sprintf( '
             function SetDefaultValues_%1$s( field ) {
                 field.choices = gformChainedSelectData.defaultChoices;
-                field.inputs  = GFCSAdmin.getDefaultInputs( field );
+                field.inputs = GFCSAdmin.getDefaultInputs( field );
                 field.chainedSelectsAlignment = "horizontal";  
                 field.chainedSelectsHideInactive = false;
                 return field;
@@ -623,56 +622,59 @@ class GF_Chained_Field_Select extends GF_Field {
 	}
 
 	public function get_field_input( $form, $value = '', $entry = null ) {
-
-	    if ( $this->is_entry_detail() ) {
-			return $this->get_entry_detail_field_input( $form, $value, $entry );
-		} else if( $this->is_form_editor() ) {
-	        // don't populate drop downs with choices in form editor to improve performance
-		    $markup = '';
-		    foreach ( $this->inputs as $index => $input ) {
-			    $html_id = sprintf( 'input_%d_%s', $form['id'], str_replace( '.', '_', $input['id'] ) );
-				$class = 'horizontal' == $this->chainedSelectsAlignment ? 'gform-grid-col--size-auto' : '';
-			    $markup .= sprintf(
-				    "<span id='%s' class='gform-grid-col %s'>
-                        <select name='input_%s' id='%s' disabled='disabled'>
-                            <option value=''>%s</option>
-                        </select>
-                    </span>",
-				    $html_id . '_container', $class, $input['id'], $html_id, $input['label']
-			    );
-            }
-            return "<div class='ginput_container ginput_complex gform-grid-row ginput_chained_selects_container {$this->chainedSelectsAlignment}'>{$markup}</div>";
-        }
-
-		$form_id         = $form['id'];
 		$is_entry_detail = $this->is_entry_detail();
 		$is_form_editor  = $this->is_form_editor();
 
+		if ( $is_entry_detail ) {
+			return $this->get_entry_detail_field_input( $form, $value, $entry );
+		}
+
+		$form_id  = $form['id'];
 		$id       = $this->id;
 		$field_id = $is_entry_detail || $is_form_editor || $form_id == 0 ? "input_$id" : 'input_' . $form_id . "_$id";
-		$logic_event   = gf_chained_selects()->is_gravityforms_supported( '2.4.15.5' ) ? '' : sprintf( 'onchange="gf_input_change( this, %d, %d );"', $form_id, $this->id );
+
 		$disabled_attr = $is_form_editor ? 'disabled="disabled"' : '';
+
+		$form_sub_label_placement  = rgar( $form, 'subLabelPlacement' );
+		$field_sub_label_placement = $this->subLabelPlacement;
+		$is_sub_label_above        = $field_sub_label_placement == 'above' || ( empty( $field_sub_label_placement ) && $form_sub_label_placement == 'above' );
+		$sub_label_class           = $field_sub_label_placement == 'hidden_label' ? 'hidden_sub_label screen-reader-text' : '';
+
+		$logic_event = gf_chained_selects()->is_gravityforms_supported( '2.4.15.5' ) ? '' : sprintf( 'onchange="gf_input_change( this, %d, %d );"', $form_id, $id );
+
 		$markup = '';
 
 		foreach ( $this->inputs as $index => $input ) {
-			$html_id   = sprintf( 'input_%d_%s', $form_id, str_replace( '.', '_', $input['id'] ) );
-			$css_class = $this->has_no_options( $value, $input ) ? 'gf_no_options' : '';
-			$css_class .= 'horizontal' == $this->chainedSelectsAlignment ? 'gform-grid-col--size-auto' : '';
-			$tabindex  = $this->get_tabindex();
-			$atts      = array( $logic_event, $tabindex, $disabled_attr );
-			$input_markup = sprintf(
-					"<select name='input_%s' id='%s' class='%s' %s>%s</select>",
-					$input['id'], $html_id, $css_class, implode( ' ', $atts ), $this->get_choices( $value, $input )
+			$html_id         = sprintf( 'input_%d_%s', $form_id, str_replace( '.', '_', $input['id'] ) );
+			$css_class       = $this->has_no_options( $value, $input ) ? 'gf_no_options' : '';
+			$css_class       .= 'horizontal' == $this->chainedSelectsAlignment ? 'gform-grid-col--size-auto' : '';
+			$tabindex        = $this->get_tabindex();
+            $aria_attributes = $this->get_aria_attributes( $value, $index + 1 );
+            $atts            = array( $logic_event, $tabindex, $disabled_attr, $aria_attributes );
+
+			$input_sub_label = sprintf( '<label for="%1$s" id="%1$s_label" class="gform-field-label gform-field-label--type-sub %2$s">%3$s</label>', $html_id, $sub_label_class, $input['label'] );
+			$input_choices   = $is_form_editor ? sprintf( '<option value="" selected="selected" class="gf_placeholder">%s</option>', $input['label'] ) : $this->get_choices( $value, $input );
+			$input_markup    = sprintf(
+					'%s<select name="input_%s" id="%s" class="%s" %s>%s</select>%s',
+					$is_sub_label_above ? $input_sub_label : '',
+					$input['id'],
+					$html_id,
+					$css_class,
+					implode( ' ', $atts ),
+					$input_choices,
+					! $is_sub_label_above ? $input_sub_label : ''
 			);
 			$input_container_markup = sprintf(
-					"<span id='%s' class='%s gform-grid-col'>
-					%s
-				</span>",
-					$html_id . '_container', $css_class, $input_markup
+					"<span id='%s' class='%s gform-grid-col'>%s</span>",
+					$html_id . '_container',
+					$css_class,
+					$input_markup
 			);
+
 			$markup .= $input_container_markup;
 		}
 		$markup .= '<span class="gf_chain_complete" style="display:none;">&nbsp;</span>';
+
 		$field_html_id = sprintf( 'input_%d_%d', $form_id, $this->id );
 		$class_suffix  = $is_entry_detail ? '_admin' : '';
 		$classes   = array(
@@ -682,7 +684,8 @@ class GF_Chained_Field_Select extends GF_Field {
 				'ginput_chained_selects_container'
 		);
 		$css_class = esc_attr( trim( implode( ' ', $classes ) ) );
-		$markup = sprintf( "<div class='ginput_container ginput_complex gform-grid-row %s' id='%s'>%s</div>", $css_class, $field_html_id, $markup );
+
+        $markup = sprintf( "<div class='ginput_container ginput_complex gform-grid-row %s' id='%s'>%s</div>", $css_class, $field_html_id, $markup );
 
 		return $markup;
 	}

@@ -907,10 +907,16 @@ class GWAPI {
 
 		$item_name   = self::$product_config[ $product_type ]['item_name'];
 
+		$transient_key = 'gwapi_license_data_' . $product_type;
+
+		if ( is_multisite() ) {
+			$transient_key = $transient_key . '_' . get_current_blog_id();
+		}
+
 		return $this->request( array(
 			'action'     => 'check_license',
 			'method'     => 'POST',
-			'transient'  => 'gwapi_license_data_' . $product_type,
+			'transient'  => $transient_key,
 			'flush'      => $flush,
 			'cache'      => true,
 			'callback'   => function( $response ) use ( $product_type ) {

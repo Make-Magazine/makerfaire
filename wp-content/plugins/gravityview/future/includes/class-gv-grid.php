@@ -118,6 +118,33 @@ final class Grid {
 	}
 
 	/**
+	 * Extracts the row UID from a row configuration.
+	 *
+	 * @since 2.54.0
+	 *
+	 * @param array $row The row configuration (columns => areas).
+	 *
+	 * @return string The row UID, or empty string if not found.
+	 */
+	public static function extract_row_uid( array $row ): string {
+		$first_col = reset( $row );
+
+		if ( ! is_array( $first_col ) ) {
+			return '';
+		}
+
+		$first_area = reset( $first_col );
+
+		if ( ! is_array( $first_area ) ) {
+			return '';
+		}
+
+		$parts = explode( '::', $first_area['areaid'] ?? '' );
+
+		return $parts[2] ?? '';
+	}
+
+	/**
 	 * Returns all registered row types.
 	 *
 	 * @since 2.31.0

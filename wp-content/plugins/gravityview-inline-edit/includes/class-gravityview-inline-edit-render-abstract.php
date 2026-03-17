@@ -148,6 +148,11 @@ abstract class GravityView_Inline_Edit_Render {
 				return $output;
 			}
 
+			// Custom Content fields: dim when inline edit is active, but don't block link clicks.
+			if ( 'custom' === $input_type ) {
+				return '<div class="gv-inline-editable-disabled gv-inline-editable-custom">' . $output . '</div>';
+			}
+
 			return '<div class="gv-inline-editable-disabled editable-disabled">' . $output . '</div>';
 		}
 
@@ -179,41 +184,41 @@ abstract class GravityView_Inline_Edit_Render {
 		}
 
 		/**
-		 * @filter `gravityview-inline-edit/wrapper-attributes` Modify the attributes being added to an inline editable wrapper HTML tag
+		 * Modify the attributes being added to an inline editable wrapper HTML tag
 		 *
 		 * @since 1.0
-		 * @since 1.4 added $output parameter.
-		 * @since 1.6 added $field_settings parameter.
-		 * @since 2.0 added $context parameter.
+		 * @since 1.4 Added $output parameter
+		 * @since 1.6 Added $field_settings parameter
+		 * @since 2.0 Added $context parameter
 		 *
-		 * @param array $wrapper_attributes The attributes of the container <div> or <span>.
-		 * @param string $field_input_type The field input type.
-		 * @param int $field_id The field ID.
-		 * @param array $entry The entry.
-		 * @param array $form The current Form.
-		 * @param GF_Field $gf_field Gravity Forms field object.
-		 * @param string $output The original field value HTML.
-		 * @param array $field_settings GravityView field settings array.
-		 * @param null|\GV\Template_Context $context The GravityView Template Context, if available.
+		 * @param array                      $wrapper_attributes The attributes of the container <div> or <span>
+		 * @param string                     $field_input_type The field input type
+		 * @param int                        $field_id The field ID
+		 * @param array                      $entry The entry
+		 * @param array                      $form The current form
+		 * @param GF_Field                   $gf_field Gravity Forms field object
+		 * @param string                     $output The original field value HTML
+		 * @param array                      $field_settings GravityView field settings array
+		 * @param null|\GV\Template_Context $context The GravityView Template Context, if available
 		 */
 		$wrapper_attributes = apply_filters( 'gravityview-inline-edit/wrapper-attributes', $wrapper_attributes, $input_type, $gf_field_id, $entry, $form, $gf_field, $output, $field_settings, $context );
 
 		/**
-		 * @filter `gravityview-inline-edit/{$input_type}-wrapper-attributes` Modify the attributes being added to an inline editable link for a specific input type
+		 * Modify the attributes being added to an inline editable link for a specific input type
 		 *
 		 * @since 1.0
-		 * @since 1.6 added $output and $field_settings parameter.
-		 * @since 2.0 added $context parameter.
+		 * @since 1.6 Added $output and $field_settings parameters
+		 * @since 2.0 Added $context parameter
 		 *
-		 * @param array $wrapper_attributes The attributes of the container <div> or <span>.
-		 * @param string $field_input_type The field input type.
-		 * @param int $field_id The field ID.
-		 * @param array $entry The entry.
-		 * @param array $form The current Form.
-		 * @param GF_Field $gf_field Gravity Forms field object. Is an instance of GF_Field.
-		 * @param string $output The original field value HTML.
-		 * @param array $field_settings GravityView field settings array.
-		 * @param null|\GV\Template_Context $context The GravityView Template Context, if available.
+		 * @param array                      $wrapper_attributes The attributes of the container <div> or <span>
+		 * @param string                     $field_input_type The field input type
+		 * @param int                        $field_id The field ID
+		 * @param array                      $entry The entry
+		 * @param array                      $form The current form
+		 * @param GF_Field                   $gf_field Gravity Forms field object
+		 * @param string                     $output The original field value HTML
+		 * @param array                      $field_settings GravityView field settings array
+		 * @param null|\GV\Template_Context $context The GravityView Template Context, if available
 		 */
 		$wrapper_attributes = apply_filters( "gravityview-inline-edit/{$input_type}-wrapper-attributes", $wrapper_attributes, $input_type, $gf_field_id, $entry, $form, $gf_field, $output, $field_settings, $context );
 
@@ -267,11 +272,17 @@ abstract class GravityView_Inline_Edit_Render {
 		);
 
 		/**
-		 * @filter `gravityview-inline-edit/toggle-labels` Modify the text displayed on inline edit buttons
+		 * Modify the text displayed on inline edit buttons
 		 *
 		 * @since 1.0
 		 *
-		 * @param array $labels The default labels (using `toggle`, `disabled`, `enabled` keys)
+		 * @param array $labels {
+		 *     The default button labels
+		 *
+		 *     @type string $toggle Label for toggle button
+		 *     @type string $disabled Label when inline edit is disabled
+		 *     @type string $enabled Label when inline edit is enabled
+		 * }
 		 */
 		$labels = apply_filters( 'gravityview-inline-edit/toggle-labels', $labels );
 

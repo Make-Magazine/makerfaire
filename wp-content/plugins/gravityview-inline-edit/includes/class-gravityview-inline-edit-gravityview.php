@@ -67,6 +67,10 @@ final class GravityView_Inline_Edit_GravityView extends GravityView_Inline_Edit_
 
 		add_filter( 'gravityview/datatables/output', array( $this, 'modify_datatables_output' ), 10, 2 );
 
+		add_filter( 'gravityview_dt_default_settings', array( $this, 'add_datatables_default_settings' ) );
+		add_action( 'gravityview_datatables_settings_row', array( $this, 'render_datatables_settings_row' ) );
+		add_filter( 'gravityview_datatables_js_options', array( $this, 'add_inline_edit_refresh_option' ), 10, 2 );
+
 		add_filter( 'gravityview_template_field_options', array( $this, 'add_inline_edit_option' ), 10, 6 );
 
 		add_filter( 'gravityview/admin/indicator_icons', array( $this, 'add_inline_edit_icon' ), 10, 2 );
@@ -179,6 +183,13 @@ final class GravityView_Inline_Edit_GravityView extends GravityView_Inline_Edit_
 	function add_to_blocklist( $update_result, $entry ) {
 
 		if ( $update_result && ! is_wp_error( $update_result ) ) {
+			/**
+			 * Clear the cache for an entry
+			 *
+			 * @since 1.0
+			 *
+			 * @param int $entry_id The ID of the entry to clear cache for
+			 */
 			do_action( 'gravityview_clear_entry_cache', $entry['id'] );
 		}
 
@@ -345,6 +356,17 @@ final class GravityView_Inline_Edit_GravityView extends GravityView_Inline_Edit_
 			return;
 		}
 
+		/**
+		 * Enqueue styles for inline edit
+		 *
+		 * @since 1.0
+		 *
+		 * @param array $args {
+		 *     Arguments for enqueuing styles
+		 *
+		 *     @type int $view_id The View ID being displayed
+		 * }
+		 */
 		do_action( 'gravityview-inline-edit/enqueue-styles', compact( 'view_id' ) );
 	}
 
@@ -369,6 +391,17 @@ final class GravityView_Inline_Edit_GravityView extends GravityView_Inline_Edit_
 			return;
 		}
 
+		/**
+		 * Enqueue scripts for inline edit
+		 *
+		 * @since 1.0
+		 *
+		 * @param array $args {
+		 *     Arguments for enqueuing scripts
+		 *
+		 *     @type int $view_id The View ID being displayed
+		 * }
+		 */
 		do_action( 'gravityview-inline-edit/enqueue-scripts', compact( 'view_id' ) );
 	}
 
@@ -562,6 +595,10 @@ final class GravityView_Inline_Edit_GravityView extends GravityView_Inline_Edit_
 			return $css_class;
 		}
 
+		if ( ! $context instanceof \GV\Template_Context || ! $this->can_edit_any_entries( $context->view->ID ) ) {
+			return $css_class;
+		}
+
 		return $css_class . ' gv-inline-editable-view';
 	}
 
@@ -632,6 +669,68 @@ final class GravityView_Inline_Edit_GravityView extends GravityView_Inline_Edit_
 		);
 
 		return $gv_settings;
+	}
+
+	/**
+	 * Adds the default setting for the inline edit refresh option.
+	 *
+	 * @since 2.9.0
+	 *
+	 * @param array $settings DataTables default settings.
+	 *
+	 * @return array Modified settings with inline_edit_refresh default.
+	 */
+	public function add_datatables_default_settings( $settings ) {
+		$settings['inline_edit_refresh'] = true;
+
+		return $settings;
+	}
+
+	/**
+	 * Renders the inline edit refresh setting row in the DataTables settings metabox.
+	 *
+	 * @since 2.9.0
+	 *
+	 * @param array $ds DataTables settings merged with defaults.
+	 *
+	 * @return void
+	 */
+	public function render_datatables_settings_row( $ds ) {
+		?>
+		<table class="form-table">
+			<caption><?php esc_html_e( 'Inline Edit', 'gk-gravityedit' ); ?></caption>
+			<tr valign="top">
+				<td colspan="2">
+					<?php
+						echo GravityView_Render_Settings::render_field_option( 'datatables_settings[inline_edit_refresh]', array(
+							'label' => __( 'Refresh Table After Inline Edit', 'gk-gravityedit' ),
+							'desc'  => esc_html__( 'Automatically refresh the table after saving an inline edit. Only applies to server-side processing; client-side tables always refresh.', 'gk-gravityedit' ),
+							'type'  => 'checkbox',
+							'value' => 1,
+						), $ds['inline_edit_refresh'] );
+					?>
+				</td>
+			</tr>
+		</table>
+		<?php
+	}
+
+	/**
+	 * Adds the inline edit refresh option to the DataTables JS configuration.
+	 *
+	 * @since 2.9.0
+	 *
+	 * @param array $dt_config The DataTables JS configuration.
+	 * @param int   $view_id   The View ID.
+	 *
+	 * @return array Modified configuration with inlineEditRefresh option.
+	 */
+	public function add_inline_edit_refresh_option( $dt_config, $view_id ) {
+		$settings = get_post_meta( $view_id, '_gravityview_datatables_settings', true );
+
+		$dt_config['inlineEditRefresh'] = ! array_key_exists( 'inline_edit_refresh', (array) $settings ) || ! empty( $settings['inline_edit_refresh'] );
+
+		return $dt_config;
 	}
 
 	/**

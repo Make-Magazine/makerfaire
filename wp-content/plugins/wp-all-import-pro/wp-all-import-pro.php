@@ -3,7 +3,7 @@
 Plugin Name: WP All Import Pro
 Plugin URI: http://www.wpallimport.com/
 Description: The most powerful solution for importing XML and CSV files to WordPress. Import to Posts, Pages, and Custom Post Types. Support for imports that run on a schedule, ability to update existing imports, and much more.
-Version: 5.0.3
+Version: 5.0.4
 Requires PHP: 7.4
 Author: Soflyy
 */
@@ -26,7 +26,7 @@ if ( is_plugin_active('wp-all-import/plugin.php') ){
     /**
      *
      */
-    define('PMXI_VERSION', '5.0.3');
+    define('PMXI_VERSION', '5.0.4');
     /**
      *
      */
@@ -397,10 +397,12 @@ if ( is_plugin_active('wp-all-import/plugin.php') ){
          */
         public function isAdminDashboardOrCronImport() {
             // Load libraries only on admin dashboard or cron import.
-            if (is_admin() || isset($_GET['import_key']) || isset($_GET['action']) || isset($_GET['check_connection']) || defined('PHPUNIT_WPALLIMPORT_TESTSUITE') || $this->isCli()) {
-                return TRUE;
-            }
-            return FALSE;
+            $is_admin_or_cron = is_admin() || isset($_GET['import_key']) || isset($_GET['action']) || isset($_GET['check_connection']) || defined('PHPUNIT_WPALLIMPORT_TESTSUITE') || $this->isCli();
+            
+            // Allow plugins to force loading (e.g., for REST API requests)
+            $result = apply_filters('pmxi_is_admin_dashboard_or_cron_import', $is_admin_or_cron);
+
+            return $result;
         }
 
         /**
@@ -801,15 +803,15 @@ if ( is_plugin_active('wp-all-import/plugin.php') ){
 						add_action('admin_notices', [$reviewsUI, 'render']);
 
 						if ($this->_admin_current_screen->is_ajax) { // ajax request
-							$controller->$action();
+							$controller->$actionName();
 							do_action('pmxi_action_after');
 							wp_die(); // stop processing since we want to output only what controller is randered, nothing in addition
 						} elseif ( ! $controller->isInline) {
 							@ob_start();
-							$controller->$action();
+							$controller->$actionName();
 							self::$buffer = @ob_get_clean();
 						} else {
-							self::$buffer_callback = array($controller, $action);
+							self::$buffer_callback = array($controller, $actionName);
 						}
 
 					}
@@ -1537,6 +1539,7 @@ if ( is_plugin_active('wp-all-import/plugin.php') ){
 				'is_update_post_format' => 1,
 				'update_categories_logic' => 'full_update',
                 'do_not_create_terms' => 0,
+				'show_hidden_ctx' => 0,
 				'taxonomies_list' => array(),
 				'taxonomies_only_list' => array(),
 				'taxonomies_except_list' => array(),
@@ -1819,6 +1822,5 @@ if ( is_plugin_active('wp-all-import/plugin.php') ){
 
 	add_action( 'plugins_loaded', 'wp_all_import_pro_updater', 0 );
 
+	\Wpai\WordPress\RegenerateImages::setup();
 }
-
-\Wpai\WordPress\RegenerateImages::setup();

@@ -20,11 +20,11 @@
 		<thead>
 		<tr>
 			<?php foreach ( $nested_fields as $nested_field ) : ?>
-				<th class="gpnf-field-<?php echo $nested_field['id']; ?>">
+				<th scope="col" class="gpnf-field-<?php echo $nested_field['id']; ?>">
 					<?php echo GFCommon::get_label( $nested_field ); ?>
 				</th>
 			<?php endforeach; ?>
-			<th class="gpnf-row-actions"><span class="screen-reader-text"><?php esc_html_e( 'Actions', 'gp-nested-forms' ); ?></span></th>
+			<th scope="col" class="gpnf-row-actions"><span class="screen-reader-text"><?php esc_html_e( 'Actions', 'gp-nested-forms' ); ?></span></th>
 		</tr>
 		</thead>
 

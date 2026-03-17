@@ -2,7 +2,7 @@
 /**
  * @license GPL-2.0-or-later
  *
- * Modified by The GravityKit Team on 11-September-2025 using Strauss.
+ * Modified using Strauss.
  * @see https://github.com/BrianHenryIE/strauss
  */
 
@@ -36,6 +36,15 @@ class StoredNotice extends Notice implements StoredNoticeInterface {
 	 * @var string
 	 */
 	private const DEFAULT_SCOPE = 'global';
+
+	/**
+	 * Default capability required for global dismissal.
+	 *
+	 * @since 1.4.0
+	 *
+	 * @var string
+	 */
+	private const DEFAULT_GLOBAL_DISMISS_CAPABILITY = 'manage_options';
 
 	/**
 	 * Live notice – default polling interval (seconds).
@@ -246,9 +255,15 @@ class StoredNotice extends Notice implements StoredNoticeInterface {
 			// Normalize the response to ensure all expected fields exist.
 			$response = array_merge( $context, $response );
 
-			$this->data['live']['progress'] = null !== $response['progress']
-				? $this->clamp_progress( $response['progress'] )
-				: null;
+			// Handle progress: false disables the progress bar; numeric values are clamped 0-100.
+			if ( isset( $response['progress'] ) && false === $response['progress'] ) {
+				$this->data['live']['progress']      = null;
+				$this->data['live']['show_progress'] = false;
+			} elseif ( null !== $response['progress'] ) {
+				$this->data['live']['progress'] = $this->clamp_progress( $response['progress'] );
+			} else {
+				$this->data['live']['progress'] = null;
+			}
 
 			if ( is_string( $response['message'] ) ) {
 				$this->data['message'] = self::sanitize_message( $response['message'] );
@@ -256,6 +271,23 @@ class StoredNotice extends Notice implements StoredNoticeInterface {
 
 			if ( is_array( $response['extra'] ) ) {
 				$this->data['extra'] = $response['extra'];
+			}
+
+			// Allow the callback to change the notice severity (e.g., info → error).
+			$valid_severities = [ 'error', 'warning', 'success', 'info' ];
+
+			if ( isset( $response['severity'] ) && in_array( $response['severity'], $valid_severities, true ) ) {
+				$this->data['severity'] = $response['severity'];
+			}
+
+			// Allow the callback to explicitly show/hide the progress bar.
+			if ( isset( $response['show_progress'] ) && is_bool( $response['show_progress'] ) ) {
+				$this->data['live']['show_progress'] = $response['show_progress'];
+			}
+
+			// Allow the callback to signal polling should stop.
+			if ( ! empty( $response['disable_polling'] ) ) {
+				$this->data['live']['disable_polling'] = true;
 			}
 
 			// Handle auto-dismissal.
@@ -330,6 +362,55 @@ class StoredNotice extends Notice implements StoredNoticeInterface {
 			}
 		}
 
+		// Add globally dismissible flag if applicable and user has capability.
+		if ( $this->is_globally_dismissible() ) {
+			$required_caps  = $this->get_global_dismiss_capability();
+			$has_capability = false;
+
+			// Check if user has any of the required capabilities.
+			if ( is_array( $required_caps ) ) {
+				foreach ( $required_caps as $cap ) {
+					if ( current_user_can( $cap ) ) {
+						$has_capability = true;
+						break;
+					}
+				}
+			} else {
+				$has_capability = current_user_can( $required_caps );
+			}
+
+			if ( $has_capability ) {
+				$payload['globally_dismissible']      = true;
+				$payload['global_dismiss_capability'] = $required_caps;
+			}
+		}
+
 		return $payload;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 *
+	 * @since 1.4.0
+	 */
+	public function is_globally_dismissible(): bool {
+		return ! empty( $this->data['globally_dismissible'] );
+	}
+
+	/**
+	 * {@inheritDoc}
+	 *
+	 * @since 1.4.0
+	 */
+	public function get_global_dismiss_capability() {
+		$caps = $this->data['global_dismiss_capability'] ?? self::DEFAULT_GLOBAL_DISMISS_CAPABILITY;
+
+		// Cast single value to array and filter out empty strings.
+		if ( is_array( $caps ) ) {
+			/** @phpstan-ignore-next-line */
+			return array_values( array_filter( $caps, 'strlen' ) );
+		}
+
+		return $caps;
 	}
 }

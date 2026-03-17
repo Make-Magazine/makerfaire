@@ -3,12 +3,17 @@
 namespace GV\Search\Fields;
 
 use GF_Field;
+use GF_Field_Repeater;
 use GF_Query_Column;
 use GFAPI;
 use GFCommon;
 use GFFormsModel;
+use GravityView_Field_Repeater;
 use GravityView_Fields;
 use GravityView_Widget_Search;
+use GV\Search\Querying\Search_Filter;
+use GV\Search\Search_Policy;
+use GV\View;
 
 /**
  * Represents a search field based on a Gravity Forms Field.
@@ -182,18 +187,24 @@ final class Search_Field_Gravity_Forms extends Search_Field_Choices {
 	 */
 	private function get_field_icon(): string {
 		// Use Gravity Forms' field icon if available.
-		$field = $this->get_gf_field();
+		$gf_field = $this->get_gf_field();
 
-		if ( $field ) {
+		$icon = null;
+		if ( $gf_field ) {
 			// GF 2.9+.
-			if ( method_exists( $field, 'get_form_editor_field_type_icon' ) ) {
-				return $field->get_form_editor_field_type_icon();
+			if ( method_exists( $gf_field, 'get_form_editor_field_type_icon' ) ) {
+				$icon = $gf_field->get_form_editor_field_type_icon();
 			}
 
-			if ( method_exists( $field, 'get_form_editor_field_icon' ) ) {
+			if ( method_exists( $gf_field, 'get_form_editor_field_icon' ) ) {
 				// GF 2.5+.
-				return $field->get_form_editor_field_icon();
+				$icon = $gf_field->get_form_editor_field_icon();
 			}
+		}
+
+		// We won't stand for the cog icon by default.
+		if ( $icon && ! in_array( $icon, [ 'dashicons-admin-generic', 'gform-icon--cog' ], true ) ) {
+			return $icon;
 		}
 
 		// Use GravityView's field icon next, if available.
@@ -204,8 +215,13 @@ final class Search_Field_Gravity_Forms extends Search_Field_Choices {
 		}
 
 		$type = $this->get_field_id();
+		if ( is_numeric( $type ) && $gf_field instanceof GF_Field ) {
+			$type = $gf_field->get_input_type();
+		}
 
 		switch ( $type ) {
+			case 'repeater':
+				return 'dashicons-controls-repeat';
 			case 'geolocation':
 				return 'dashicons-admin-site';
 			default:
@@ -287,16 +303,47 @@ final class Search_Field_Gravity_Forms extends Search_Field_Choices {
 	}
 
 	/**
+	 * @inheritDoc
+	 *
+	 * @since 2.51.0
+	 */
+	protected function is_parent(): bool {
+		$field = $this->get_gf_field();
+		if ( ! $field ) {
+			return false;
+		}
+
+		return ( ( false === strpos( $field->id, '.' ) && $field->get_entry_inputs() ) || ( $field->fields ?? null ) );
+	}
+
+	/**
+	 * @inheritDoc
+	 *
+	 * @since 2.51.0
+	 */
+	protected function get_nesting_level(): int {
+		$field = $this->get_gf_field();
+		if ( ! $field ) {
+			return parent::get_nesting_level();
+		}
+
+		$parents = GravityView_Field_Repeater::get_repeater_field_ids( $field->formId ?? 0 );
+		$level   = count( $parents[ $field->id ] ?? [] );
+
+		return $level ? $level : parent::get_nesting_level();
+	}
+
+	/**
 	 * Whether this field has a parent.
 	 *
 	 * @since 2.42
 	 *
 	 * @return bool
 	 */
-	private function is_child(): bool {
+	protected function is_child(): bool {
 		$field = $this->get_gf_field();
 		if ( ! $field ) {
-			return false;
+			return parent::is_child();
 		}
 
 		return ( $field->parent ?? null ) instanceof GF_Field;
@@ -316,7 +363,7 @@ final class Search_Field_Gravity_Forms extends Search_Field_Choices {
 	}
 
 	/**
-	 * @inheritDoc@
+	 * @inheritDoc
 	 * @since 2.42
 	 */
 	protected function get_choices(): array {
@@ -486,5 +533,439 @@ final class Search_Field_Gravity_Forms extends Search_Field_Choices {
 		}
 
 		return $data;
+	}
+
+	/**
+	 * Adjusts the filter based on the field type.
+	 *
+	 * @since $ver$
+	 *
+	 * @param Search_Filter $filter The filter to adjust.
+	 *
+	 * @return Search_Filter The adjusted filter.
+	 */
+	public function adjust_filter( Search_Filter $filter, ?View $view = null ): Search_Filter {
+		$filter = parent::adjust_filter( $filter, $view );
+
+		$gf_field   = $this->get_gf_field();
+		$field_type = $gf_field->type ?? $filter->key();
+
+		if ( \GFCommon::is_product_field( $field_type ) ) {
+			return $this->adjust_numeric_filter( $filter );
+		}
+
+		switch ( $field_type ) {
+			case 'select':
+			case 'workflow_user':
+			case 'radio':
+				return $this->adjust_select_filter( $filter );
+
+			case 'post_category':
+				return $this->adjust_post_category_filter( $filter );
+
+			case 'multiselect':
+			case 'workflow_multi_user':
+				return $this->adjust_multiselect_filter( $filter );
+
+			case 'checkbox':
+				return $this->adjust_checkbox_filter( $filter );
+
+			case 'name':
+				return $this->adjust_word_split_filter( $filter );
+
+			case 'address':
+				return $this->adjust_address_filter( $filter );
+
+			case 'payment_date':
+			case 'date':
+				return $this->adjust_date_filter( $filter );
+
+			case 'number':
+				return $this->adjust_number_filter( $filter );
+
+			case 'quantity':
+			case 'product':
+			case 'total':
+				return $this->adjust_numeric_filter( $filter );
+
+			default:
+				return $filter;
+		}
+	}
+
+	/**
+	 * Adjusts a filter for select-type fields.
+	 *
+	 * @since $ver$
+	 *
+	 * @param Search_Filter $filter The filter to adjust.
+	 *
+	 * @return Search_Filter The adjusted filter.
+	 */
+	private function adjust_select_filter( Search_Filter $filter ): Search_Filter {
+		return $filter->with_operator( $filter->operator(), [ 'is' ] );
+	}
+
+	/**
+	 * Adjusts a filter for multiselect-type fields.
+	 *
+	 * @since $ver$
+	 *
+	 * @param Search_Filter $filter The filter to adjust.
+	 *
+	 * @return Search_Filter The adjusted filter.
+	 */
+	private function adjust_multiselect_filter( Search_Filter $filter ): Search_Filter {
+		$value = $filter->value();
+		if ( ! is_array( $value ) ) {
+			return $filter->with_operator( $filter->operator(), [ 'contains' ] );
+		}
+
+		$conditions = array_map(
+			static fn( $val ): Search_Filter => $filter
+				->with_value( $val )
+				->with_operator( $filter->operator(), [ 'contains' ] ),
+			$value
+		);
+
+		return Search_Filter::or( ...$conditions );
+	}
+
+	/**
+	 * Adjusts a filter for checkbox-type fields.
+	 *
+	 * @since $ver$
+	 *
+	 * @param Search_Filter $filter The filter to adjust.
+	 *
+	 * @return Search_Filter The adjusted filter.
+	 */
+	private function adjust_checkbox_filter( Search_Filter $filter ): Search_Filter {
+		$field_id = $filter->key();
+		$value    = $filter->value();
+		$gf_field = $this->get_gf_field();
+
+		// Handle single checkbox input (e.g., field 1.1).
+		$inputs  = (array) ( $gf_field->inputs ?? [] );
+		$choices = (array) ( $gf_field->choices ?? [] );
+
+		if (
+			false !== strpos( $field_id, '.' )
+			&& ! empty( $inputs )
+			&& ! empty( $choices )
+		) {
+			foreach ( $inputs as $k => $input ) {
+				if ( ( $input['id'] ?? '' ) === $field_id ) {
+					return $filter
+						->with_value( $choices[ $k ]['value'] ?? $value )
+						->with_operator( $filter->operator(), [ 'is' ] );
+				}
+			}
+		}
+
+		// Handle array of checkbox values.
+		if ( ! is_array( $value ) ) {
+			return $filter->with_operator( $filter->operator(), [ 'is' ] );
+		}
+
+		$conditions = array_map(
+			static fn( $val ): Search_Filter => $filter
+				->with_value( $val )
+				->with_operator( $filter->operator(), [ 'is' ] ),
+			$value
+		);
+
+		return Search_Filter::or( ...$conditions );
+	}
+
+	/**
+	 * Adjusts a filter by splitting multi-word values into separate "contains" conditions.
+	 *
+	 * Used by name, address, and other text fields where word-by-word matching is beneficial.
+	 *
+	 * @since $ver$
+	 *
+	 * @param Search_Filter $filter The filter to adjust.
+	 *
+	 * @return Search_Filter The adjusted filter.
+	 */
+	private function adjust_word_split_filter( Search_Filter $filter ): Search_Filter {
+		$field_id = $filter->key();
+		$value    = $filter->value();
+
+		// Only split words for full field (no dot in ID).
+		if ( ! is_string( $value ) || false !== strpos( $field_id, '.' ) ) {
+			return $filter;
+		}
+
+		$words = explode( ' ', $value );
+		$words = array_filter( $words, static fn( $word ): bool => ! empty( $word ) && strlen( $word ) > 1 );
+
+		if ( count( $words ) <= 1 ) {
+			return $filter;
+		}
+
+		$conditions = array_map(
+			static fn( $word ): Search_Filter => $filter
+				->with_value( $word )
+				->with_operator( 'contains', [ 'contains' ] ),
+			$words
+		);
+
+		return Search_Filter::and( ...$conditions );
+	}
+
+	/**
+	 * Adjusts a filter for address-type fields.
+	 *
+	 * @since $ver$
+	 *
+	 * @param Search_Filter $filter The filter to adjust.
+	 *
+	 * @return Search_Filter The adjusted filter.
+	 */
+	private function adjust_address_filter( Search_Filter $filter ): Search_Filter {
+		$field_id   = $filter->key();
+		$input_type = $this->get_input_type();
+
+		// Check if this is a State/Province subfield (input 4) with a dropdown.
+		$exploded = explode( '.', $field_id );
+		$input_id = (int) ( $exploded[1] ?? 0 );
+
+		if ( 4 === $input_id && ! in_array( $input_type, [ 'text', 'search', 'input_text' ], true ) ) {
+			// Dropdown State/Province uses exact match.
+			return $filter->with_operator( $filter->operator(), [ 'is' ] );
+		}
+
+		// For full address field only (no dot in ID), split words.
+		return $this->adjust_word_split_filter( $filter );
+	}
+
+	/**
+	 * Adjusts a filter for date-type fields.
+	 *
+	 * @since $ver$
+	 *
+	 * @param Search_Filter $filter The filter to adjust.
+	 *
+	 * @return Search_Filter The adjusted filter.
+	 */
+	private function adjust_date_filter( Search_Filter $filter ): Search_Filter {
+		$value       = $filter->value();
+		$operator    = $filter->operator();
+		$date_format = Search_Policy::get_date_php_format();
+
+		// Handle date range (array with start/end).
+		if ( is_array( $value ) ) {
+			$conditions = [];
+
+			$start = $value['start'] ?? null;
+			$end   = $value['end'] ?? null;
+
+			if ( ! empty( $start ) ) {
+				$start        = GravityView_Widget_Search::get_formatted_date( $start, 'Y-m-d', $date_format );
+				$conditions[] = $filter
+					->with_value( $start )
+					->with_operator( '>=', [ '>=' ] );
+			}
+
+			if ( ! empty( $end ) ) {
+				$end          = GravityView_Widget_Search::get_formatted_date( $end, 'Y-m-d', $date_format );
+				$conditions[] = $filter
+					->with_value( $end )
+					->with_operator( '<=', [ '<=' ] );
+			}
+
+			if ( empty( $conditions ) ) {
+				return $filter;
+			}
+
+			return Search_Filter::and( ...$conditions );
+		}
+
+		$formatted_date = GravityView_Widget_Search::get_formatted_date( $value, 'Y-m-d', $date_format );
+		if ( ! empty( $formatted_date ) && $value !== $formatted_date ) {
+			$filter = $filter->with_value( $formatted_date );
+		}
+
+		// Preserve range operators if already set (from group processing).
+		if ( in_array( $operator, [ '>=', '<=' ], true ) ) {
+			return $filter->with_operator( $operator, [ $operator ] );
+		}
+
+		if ( 'payment_date' === $filter->key() ) {
+			return $filter->with_operator( 'contains', [ 'contains' ] );
+		}
+
+		// Single date value uses 'is' operator.
+		return $filter->with_operator( $operator, [ 'is' ] );
+	}
+
+	/**
+	 * Adjusts a filter for number-type fields.
+	 *
+	 * @since $ver$
+	 *
+	 * @param Search_Filter $filter The filter to adjust.
+	 *
+	 * @return Search_Filter The adjusted filter.
+	 */
+	private function adjust_number_filter( Search_Filter $filter ): Search_Filter {
+		// GF_Query casts Number field values to decimal, which may return unexpected result when the value is blank.
+		if ( ! $filter->has_value() ) {
+			$filter = $filter->with_value( '-' . PHP_INT_MAX );
+		}
+
+		return $this->adjust_numeric_filter( $filter );
+	}
+
+	/**
+	 * Adjusts a filter for numeric fields.
+	 *
+	 * @since $ver$
+	 *
+	 * @param Search_Filter $filter The filter to adjust.
+	 *
+	 * @return Search_Filter The adjusted filter.
+	 */
+	private function adjust_numeric_filter( Search_Filter $filter ): Search_Filter {
+		$value = $filter->value();
+
+		// Handle number range (array with min/max).
+		if ( ! is_array( $value ) ) {
+			return $filter;
+		}
+
+		$min = $value['min'] ?? null;
+		$max = $value['max'] ?? null;
+
+		if (
+			( null !== $min && ! is_numeric( $min ) )
+			|| ( null !== $max && ! is_numeric( $max ) )
+		) {
+			// Invalid values.
+			return $filter->with_value( null );
+		}
+
+		// Reverse if min > max.
+		if ( is_numeric( $min ) && is_numeric( $max ) && $min > $max ) {
+			[ $min, $max ] = [ $max, $min ];
+		}
+
+		$conditions = [];
+
+		if ( is_numeric( $min ) ) {
+			$conditions[] = $filter
+				->with_value( $min )
+				->with_operator( '>=', [ '>=' ] )
+				->with_numeric( true );
+		}
+
+		if ( is_numeric( $max ) ) {
+			$conditions[] = $filter
+				->with_value( $max )
+				->with_operator( '<=', [ '<=' ] )
+				->with_numeric( true );
+		}
+
+		if ( empty( $conditions ) ) {
+			return $filter;
+		}
+
+		return Search_Filter::and( ...$conditions );
+	}
+
+	/**
+	 * Adjusts a filter for post_category fields.
+	 *
+	 * @since $ver$
+	 *
+	 * @param Search_Filter $filter The filter to adjust.
+	 *
+	 * @return Search_Filter The adjusted filter.
+	 */
+	private function adjust_post_category_filter( Search_Filter $filter ): Search_Filter {
+		$value = $filter->value();
+		if ( ! is_array( $value ) ) {
+			$value = [ $value ];
+		}
+
+		$conditions = [];
+		foreach ( $value as $val ) {
+			$cat = get_term( $val, 'category' );
+			if ( ! $cat ) {
+				continue;
+			}
+
+			$conditions[] = $filter
+				->with_value( esc_attr( $cat->name ) . ':' . $val )
+				->with_operator( $filter->operator(), [ 'is' ] );
+		}
+
+		$count = count( $conditions );
+
+		if ( 0 === $count ) {
+			return $filter;
+		}
+
+		if ( 1 === $count ) {
+			return $conditions[0];
+		}
+
+		return Search_Filter::or( ...$conditions );
+	}
+
+	/**
+	 * Adjusts a filter for repeater fields.
+	 *
+	 * @since $ver$
+	 *
+	 * @param Search_Filter $filter The filter to adjust.
+	 *
+	 * @return Search_Filter The adjusted filter.
+	 */
+	private function adjust_repeater_filter( Search_Filter $filter ): Search_Filter {
+		$field = $this->get_gf_field();
+		if ( ! $field ) {
+			return $filter;
+		}
+
+		$filters = $this->get_nested_fields_filters( $filter, $field );
+		if ( ! $filters ) {
+			// Remove the filter.
+			return $filter->with_value( '' );
+		}
+
+		return Search_Filter::or( ...$filters );
+	}
+
+	/**
+	 * Returns the nested field IDs of fields that have values.
+	 *
+	 * @since $ver$
+	 *
+	 * @param Search_Filter $filter The source filter.
+	 * @param GF_Field      $field  The field to retrieve the nested field IDs for.
+	 *
+	 * @return Search_Filter[] The nested field ID's.
+	 */
+	private function get_nested_fields_filters( Search_Filter $filter, GF_Field $field ): array {
+		$result = [];
+		foreach ( $field->fields ?? [] as $sub_field ) {
+			if ( ! $sub_field instanceof GF_Field_Repeater ) {
+				$result[] = [
+					$filter
+						->with_key( $sub_field->id )
+						->with_field_id( $sub_field->id )
+						->with_form_id( $field->formId ),
+				];
+
+				continue;
+			}
+
+			$result[] = $this->get_nested_fields_filters( $filter, $sub_field );
+		}
+
+		return array_merge( [], ...$result );
 	}
 }

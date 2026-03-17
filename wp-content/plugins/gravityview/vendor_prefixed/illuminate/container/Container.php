@@ -2,7 +2,7 @@
 /**
  * @license MIT
  *
- * Modified by gravityview on 05-December-2025 using {@see https://github.com/BrianHenryIE/strauss}.
+ * Modified using {@see https://github.com/BrianHenryIE/strauss}.
  */
 
 namespace GravityKit\GravityView\Foundation\ThirdParty\Illuminate\Container;
@@ -922,7 +922,7 @@ class Container implements ArrayAccess, ContainerContract
      * @param  \Closure|null  $callback
      * @return void
      */
-    public function resolving($abstract, Closure $callback = null)
+    public function resolving($abstract, ?Closure $callback = null)
     {
         if (is_string($abstract)) {
             $abstract = $this->getAlias($abstract);
@@ -942,7 +942,7 @@ class Container implements ArrayAccess, ContainerContract
      * @param  \Closure|null $callback
      * @return void
      */
-    public function afterResolving($abstract, Closure $callback = null)
+    public function afterResolving($abstract, ?Closure $callback = null)
     {
         if (is_string($abstract)) {
             $abstract = $this->getAlias($abstract);
@@ -1150,7 +1150,7 @@ class Container implements ArrayAccess, ContainerContract
      * @param  \GravityKit\GravityView\Foundation\ThirdParty\Illuminate\Contracts\Container\Container|null  $container
      * @return static
      */
-    public static function setInstance(ContainerContract $container = null)
+    public static function setInstance(?ContainerContract $container = null)
     {
         return static::$instance = $container;
     }

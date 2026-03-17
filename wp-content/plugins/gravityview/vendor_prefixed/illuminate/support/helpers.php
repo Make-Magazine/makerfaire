@@ -1,11 +1,9 @@
 <?php
-
 namespace GravityKit\GravityView\Foundation\ThirdParty\Illuminate\Support;
-
 /**
  * @license MIT
  *
- * Modified by gravityview on 05-December-2025 using {@see https://github.com/BrianHenryIE/strauss}.
+ * Modified using {@see https://github.com/BrianHenryIE/strauss}.
  */
 
 use GravityKit\GravityView\Foundation\ThirdParty\Illuminate\Support\Arr;
@@ -116,7 +114,7 @@ if (! function_exists('array_first')) {
      * @param  mixed  $default
      * @return mixed
      */
-    function array_first($array, callable $callback = null, $default = null)
+    function array_first($array, ?callable $callback = null, $default = null)
     {
         return Arr::first($array, $callback, $default);
     }
@@ -188,7 +186,7 @@ if (! function_exists('array_last')) {
      * @param  mixed  $default
      * @return mixed
      */
-    function array_last($array, callable $callback = null, $default = null)
+    function array_last($array, ?callable $callback = null, $default = null)
     {
         return Arr::last($array, $callback, $default);
     }

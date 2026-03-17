@@ -41,6 +41,24 @@ class GravityView_Inline_Edit_Field_Checkbox extends GravityView_Inline_Edit_Fie
 	}
 
 	/**
+	 * Return the display value for live update after save.
+	 *
+	 * Passes use_text=true to get_value_export() so that choice labels are returned
+	 * instead of raw values. This matters for dynamically populated fields (e.g., via
+	 * GP Populate Anything) where the stored value (a post ID) differs from the label.
+	 *
+	 * @since 2.9.2
+	 *
+	 * @param GF_Field_Checkbox $gf_field Field data.
+	 * @param array             $entry    Entry data.
+	 *
+	 * @return array
+	 */
+	protected function get_inline_edit_extra_data( $gf_field, $entry ) {
+		return array( 'display_value' => $gf_field->get_value_export( $entry, '', true ) );
+	}
+
+	/**
 	 * Get the value used in Inline Edit `data-value` attribute
 	 *
 	 * @param GF_Field_Checkbox $gf_field

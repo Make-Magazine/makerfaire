@@ -277,8 +277,12 @@ const ko = window.ko;
 			/**
 			 * If VM already exists, reset the observable array as rebinding can cause issues.
 			 */
-			if (ko.dataFor(self.$fieldContainer[0])) {
-				ko.dataFor(self.$fieldContainer[0]).entries(self.prepareEntriesForKnockout(self.entries));
+			var existingViewModel = ko.dataFor( self.$fieldContainer[0] );
+			if ( existingViewModel ) {
+				if ( typeof existingViewModel.entries === 'function' ) {
+					existingViewModel.entries( self.prepareEntriesForKnockout( self.entries ) );
+				}
+				self.viewModel = existingViewModel;
 				return;
 			}
 
@@ -294,18 +298,8 @@ const ko = window.ko;
 				.attr( 'disabled', false );
 
 			// Setup Knockout to handle our Nested Form field entries.
-			self.viewModel = new EntriesModel(self.prepareEntriesForKnockout(self.entries), self);
+			self.setViewModel(new EntriesModel(self.prepareEntriesForKnockout(self.entries), self));
 			self.addRowIdComputedToEntries( self.viewModel.entries );
-
-			/**
-			 * Filter the Knockout view model for the Nested Form field.
-			 *
-			 * @param {object} 			viewModel 	The Knockout view model for the Nested Form field.
-			 * @param {GPNestedForms} 	gpnf      	Current instance of the GPNestedForms object.
-			 *
-			 * @since 1.1.51
-			 */
-			self.viewModel = gform.applyFilters( 'gpnf_view_model', self.viewModel, self );
 
 			// Ensure the element exists, otherwise Knockout will throw an error.
 			if ( self.$fieldContainer.length === 0 ) {
@@ -315,6 +309,18 @@ const ko = window.ko;
 
 			ko.applyBindings(self.viewModel, self.$fieldContainer[0]);
 		};
+
+		self.setViewModel = function(viewModel: typeof EntriesModel) {
+			/**
+			 * Filter the Knockout view model for the Nested Form field.
+			 *
+			 * @param {object} 			viewModel 	The Knockout view model for the Nested Form field.
+			 * @param {GPNestedForms} 	gpnf      	Current instance of the GPNestedForms object.
+			 *
+			 * @since 1.1.51
+			 */
+			self.viewModel = gform.applyFilters( 'gpnf_view_model', viewModel, self );
+		}
 
 		self.initCalculations = function() {
 
@@ -597,7 +603,7 @@ const ko = window.ko;
 						}
 
 						$( event.target ).addClass( 'gpnf-spinner' );
-						
+
 						const gfSubmissionHandler = window?.gform?.submission?.handleButtonClick;
 						if ( gfSubmissionHandler ) {
 							event.preventDefault();
@@ -743,6 +749,17 @@ const ko = window.ko;
 		};
 
 		self.bindResizeEvents = function() {
+			var checkModalOverflow = function() {
+				requestAnimationFrame( () => {
+					self.modal.checkOverflow();
+				} );
+			};
+
+			var checkModalOverflowForNestedForm = function( formId ) {
+				if ( self.nestedFormId == formId ) {
+					checkModalOverflow();
+				}
+			};
 
 			$( document ).on( `gpnf_post_render.${self.getNamespace()}`, function() {
 				/*
@@ -750,21 +767,25 @@ const ko = window.ko;
 				 * GPLD inline datepicker.
 				 */
 				setTimeout(() => {
-					self.modal.checkOverflow();
+					checkModalOverflow();
 				}, 0);
 			} );
 
 			$( document ).on( `gform_post_conditional_logic.${self.getNamespace()}`, function( event, formId ) {
-				if ( self.nestedFormId == formId ) {
-					self.modal.checkOverflow();
-				}
+				checkModalOverflowForNestedForm( formId );
+			} );
+
+			$( document ).on( `gppa_updated_batch_fields.${self.getNamespace()}`, function( event, formId ) {
+				checkModalOverflowForNestedForm( formId );
+			} );
+
+			$( document ).on( `gppa_merge_tag_values_replaced.${self.getNamespace()}`, function( event, formId ) {
+				checkModalOverflowForNestedForm( formId );
 			} );
 
 			gform.addFilter('gform_file_upload_markup', function( html, file, up, strings, imagesUrl, response ) {
 				// hijack the filter to also resize the modal when a preview is added.
-				requestAnimationFrame(() => {
-					self.modal.checkOverflow();
-				});
+				checkModalOverflow();
 
 				return html;
 			});
@@ -1235,6 +1256,28 @@ const ko = window.ko;
 				 * so when editing or if a validation error comes up, there
 				 * aren't fields still showing {Parent} merge tags.
 				 */
+				function syncAdvancedPhoneFieldHiddenInput(el, inputValue) {
+					if ( inputValue !== '' ) {
+						return;
+					}
+
+					var $el = $( el );
+					var rawInputId = $el.prop( 'id' );
+
+					if ( typeof rawInputId !== 'string' || rawInputId.slice( -4 ) !== '_raw' ) {
+						return;
+					}
+
+					var hiddenInputId = rawInputId.replace( /_raw$/, '' );
+					var $hiddenInput = $el.siblings( '#' + hiddenInputId + '[type="hidden"]' );
+
+					if ( ! $hiddenInput.length ) {
+						return;
+					}
+
+					$hiddenInput.val( '' ).change();
+				}
+
 				function clearEmptyParentMergeTags(el) {
 					var $el = $(el);
 					value = $el.val();
@@ -1247,6 +1290,7 @@ const ko = window.ko;
 						}
 
 						$el.val( value ).change().trigger("chosen:updated");
+						syncAdvancedPhoneFieldHiddenInput( el, value );
 					}
 				}
 
@@ -1340,6 +1384,7 @@ const ko = window.ko;
 				}
 
 				value = value.trim();
+				syncAdvancedPhoneFieldHiddenInput( this, value );
 
 				var currentValue = $( this ).val();
 

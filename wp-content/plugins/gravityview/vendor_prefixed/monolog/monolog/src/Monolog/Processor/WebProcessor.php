@@ -8,7 +8,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  *
- * Modified by gravityview on 05-December-2025 using {@see https://github.com/BrianHenryIE/strauss}.
+ * Modified using {@see https://github.com/BrianHenryIE/strauss}.
  */
 
 namespace GravityKit\GravityView\Foundation\ThirdParty\Monolog\Processor;
@@ -44,7 +44,7 @@ class WebProcessor implements ProcessorInterface
      * @param array|\ArrayAccess $serverData  Array or object w/ ArrayAccess that provides access to the $_SERVER data
      * @param array|null         $extraFields Field names and the related key inside $serverData to be added. If not provided it defaults to: url, ip, http_method, server, referrer
      */
-    public function __construct($serverData = null, array $extraFields = null)
+    public function __construct($serverData = null, ?array $extraFields = null)
     {
         if (null === $serverData) {
             $this->serverData = &$_SERVER;

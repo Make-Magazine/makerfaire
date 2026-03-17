@@ -259,14 +259,27 @@ class GP_Nested_Forms extends GP_Plugin {
 
 	public function tooltips( $tooltips ) {
 
-		$template = '<h6>%s</h6> %s';
+		$template        = '<h6>%s</h6> %s';
+		$learn_more_link = sprintf(
+			'<a href="%1$s" target="_blank" rel="noopener noreferrer">%2$s</a>',
+			esc_url( 'https://gravitywiz.com/documentation/gravity-forms-nested-forms/#what-happens-to-child-entries-when-the-parent-entry-is-never-submitted' ),
+			esc_html__( 'Learn more', 'gp-nested-forms' )
+		);
 
-		$tooltips['gpnf_form']               = sprintf( $template, __( 'Nested Form', 'gp-nested-forms' ), __( 'Select the form that should be used to create nested entries for this form.', 'gp-nested-forms' ) );
-		$tooltips['gpnf_fields']             = sprintf( $template, __( 'Summary Fields', 'gp-nested-forms' ), __( 'Select which fields from the nested entry will display in table on the current form. This does not affect which fields will appear in the modal.', 'gp-nested-forms' ) );
-		$tooltips['gpnf_entry_labels']       = sprintf( $template, __( 'Entry Labels', 'gp-nested-forms' ), __( 'Specify a singular and plural label with which entries submitted via this field will be labeled (i.e. "employee", "employees").', 'gp-nested-forms' ) );
-		$tooltips['gpnf_entry_limits']       = sprintf( $template, __( 'Entry Limits', 'gp-nested-forms' ), __( 'Specify the minimum and maximum number of entries that can be submitted for this field.', 'gp-nested-forms' ) );
-		$tooltips['gpnf_feed_processing']    = sprintf( $template, __( 'Feed Processing', 'gp-nested-forms' ), __( 'By default, any Gravity Forms add-on feeds will be processed immediately when the nested form is submitted. Use this option to delay feed processing for entries submitted via the nested form until after the parent form is submitted. <br><br>For example, if you have a User Registration feed configured for the nested form, you may not want the users to actually be registered until the parent form is submitted.', 'gp-nested-forms' ) );
-		$tooltips['gpnf_modal_header_color'] = sprintf( $template, __( 'Modal Color', 'gp-nested-forms' ), __( 'Select a color which will be used to set the background color of the nested form modal header and navigational buttons.', 'gp-nested-forms' ) );
+		$tooltips['gpnf_form']                 = sprintf( $template, __( 'Nested Form', 'gp-nested-forms' ), __( 'Select the form that should be used to create nested entries for this form.', 'gp-nested-forms' ) );
+		$tooltips['gpnf_fields']               = sprintf( $template, __( 'Summary Fields', 'gp-nested-forms' ), __( 'Select which fields from the nested entry will display in table on the current form. This does not affect which fields will appear in the modal.', 'gp-nested-forms' ) );
+		$tooltips['gpnf_entry_labels']         = sprintf( $template, __( 'Entry Labels', 'gp-nested-forms' ), __( 'Specify a singular and plural label with which entries submitted via this field will be labeled (i.e. "employee", "employees").', 'gp-nested-forms' ) );
+		$tooltips['gpnf_entry_limits']         = sprintf( $template, __( 'Entry Limits', 'gp-nested-forms' ), __( 'Specify the minimum and maximum number of entries that can be submitted for this field.', 'gp-nested-forms' ) );
+		$tooltips['gpnf_feed_processing']      = sprintf( $template, __( 'Feed Processing', 'gp-nested-forms' ), __( 'By default, any Gravity Forms add-on feeds will be processed immediately when the nested form is submitted. Use this option to delay feed processing for entries submitted via the nested form until after the parent form is submitted. <br><br>For example, if you have a User Registration feed configured for the nested form, you may not want the users to actually be registered until the parent form is submitted.', 'gp-nested-forms' ) );
+		$tooltips['gpnf_modal_header_color']   = sprintf( $template, __( 'Modal Color', 'gp-nested-forms' ), __( 'Select a color which will be used to set the background color of the nested form modal header and navigational buttons.', 'gp-nested-forms' ) );
+		$tooltips['gpnf_orphaned_child_entry'] = sprintf(
+			$template,
+			__( 'Orphaned Child Entry', 'gp-nested-forms' ),
+			sprintf(
+				__( 'This child entry does not have a numeric parent entry ID yet because the parent form has not been submitted. %s', 'gp-nested-forms' ),
+				$learn_more_link
+			)
+		);
 
 		return $tooltips;
 	}
@@ -587,28 +600,37 @@ class GP_Nested_Forms extends GP_Plugin {
 		$parent_form_id  = rgar( $entry, 'gpnf_entry_parent_form' );
 
 		if ( $parent_entry_id && $parent_form_id ) {
-			$parent_entry_url = add_query_arg(
-				array(
-					'page' => 'gf_entries',
-					'view' => 'entry',
-					'id'   => $parent_form_id,
-					'lid'  => $parent_entry_id,
-				),
-				admin_url( 'admin.php' )
-			);
+			$parent_entry_url = '';
+			$default_template = '%1$s: %2$s';
+			$orphan_note      = '';
+
+			if ( is_numeric( $parent_entry_id ) ) {
+				$parent_entry_url = add_query_arg(
+					array(
+						'page' => 'gf_entries',
+						'view' => 'entry',
+						'id'   => $parent_form_id,
+						'lid'  => $parent_entry_id,
+					),
+					admin_url( 'admin.php' )
+				);
+				$default_template = '%1$s: <a href="%3$s">%2$s</a>';
+			} else {
+				$orphan_note = gform_tooltip( 'gpnf_orphaned_child_entry', null, true );
+			}
 
 			/**
 			 * Filters the template used to render the parent entry link.
 			 *
-			 * @param string $template         The format string used to generate the parent entry link.
-			 * @param string $label            The label for the parent entry (default: "Parent Entry").
-			 * @param int    $parent_entry_id  The ID of the parent entry.
-			 * @param string $parent_entry_url The URL of the parent entry detail view.
+			 * @param string $template            The format string used to generate the parent entry link.
+			 * @param string $label               The label for the parent entry (default: "Parent Entry").
+			 * @param int|string $parent_entry_id The ID of the parent entry or temporary parent hash.
+			 * @param string $parent_entry_url    The URL of the parent entry detail view.
 			 * @since 1.2.4
 			 */
 			$gpnf_parent_entry_link_template = apply_filters(
 				'gpnf_parent_entry_link_template',
-				'%1$s: <a href="%3$s">%2$s</a>',
+				$default_template,
 				'Parent Entry',
 				$parent_entry_id,
 				$parent_entry_url
@@ -620,6 +642,10 @@ class GP_Nested_Forms extends GP_Plugin {
 				esc_html( $parent_entry_id ), // Parent entry ID
 				esc_url( $parent_entry_url ) // URL
 			);
+
+			if ( $orphan_note ) {
+				echo $orphan_note;
+			}
 		}
 	}
 

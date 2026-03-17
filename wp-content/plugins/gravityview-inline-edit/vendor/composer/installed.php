@@ -3,7 +3,7 @@
         'name' => '__root__',
         'pretty_version' => 'dev-main',
         'version' => 'dev-main',
-        'reference' => '413a41a90b48685ca9575f0712666d8d07d1a84c',
+        'reference' => '866408ca85015e779b7b38e8c59fdef72fbd2561',
         'type' => 'library',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
@@ -13,7 +13,7 @@
         '__root__' => array(
             'pretty_version' => 'dev-main',
             'version' => 'dev-main',
-            'reference' => '413a41a90b48685ca9575f0712666d8d07d1a84c',
+            'reference' => '866408ca85015e779b7b38e8c59fdef72fbd2561',
             'type' => 'library',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),
@@ -49,7 +49,7 @@
         'gravitykit/foundation' => array(
             'pretty_version' => 'dev-main',
             'version' => 'dev-main',
-            'reference' => 'b291b630b00f923f97ca3374f008ffe1868d2eba',
+            'reference' => '1382f84f115bc6e28d7c8e4cce1082cc425a1475',
             'type' => 'library',
             'install_path' => __DIR__ . '/../gravitykit/foundation',
             'aliases' => array(),

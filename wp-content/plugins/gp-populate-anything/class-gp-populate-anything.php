@@ -23,6 +23,7 @@ class GP_Populate_Anything extends GP_Plugin {
 
 	protected $_field_choices_cache = array();
 
+	protected $_process_template_cache = array();
 
 	/**
 	 * Marks which scripts/styles have been localized to avoid localizing multiple times with Gravity Forms' scripts
@@ -363,6 +364,18 @@ class GP_Populate_Anything extends GP_Plugin {
 	}
 
 	/**
+	 * Get field types that are multi choice and image choice fields.
+	 *
+	 * @return array
+	 */
+	public static function get_multi_choice_field_types() {
+		return array(
+			'multi_choice',
+			'image_choice',
+		);
+	}
+
+	/**
 	 * Check if the Multiple Choice and Image Choice fields are multi selectable choice field or not.
 	 *
 	 * `Multiple Choice` and `Image Choice` fields with the 'checkbox' input type are treated as multi selectable fields.
@@ -412,6 +425,17 @@ class GP_Populate_Anything extends GP_Plugin {
 
 		/* Un-Privileged */
 		add_action( 'wp_ajax_nopriv_gppa_get_batch_field_html', array( $this, 'ajax_get_batch_field_html' ) );
+
+	}
+
+	public function upgrade( $previous_version ) {
+		if ( ! $previous_version ) {
+			return;
+		}
+
+		if ( version_compare( $previous_version, '2.1.59', '<=' ) ) {
+			add_option( 'gppa_use_permissive_lmt_sanitization', true );
+		}
 
 	}
 
@@ -513,6 +537,7 @@ class GP_Populate_Anything extends GP_Plugin {
 				'defaultOperators'                => $this->get_default_operators(),
 				'interpretedMultiInputFieldTypes' => self::get_interpreted_multi_input_field_types(),
 				'multiSelectableChoiceFieldTypes' => self::get_multi_selectable_choice_field_types(),
+				'multiChoiceFieldTypes'           => self::get_multi_choice_field_types(),
 				'gfBaseUrl'                       => GFCommon::get_base_url(),
 				'nonce'                           => wp_create_nonce( 'gppa' ),
 				'isSuperAdmin'                    => is_super_admin(),
@@ -779,6 +804,17 @@ class GP_Populate_Anything extends GP_Plugin {
 							$dependent_fields = $field_matches[1];
 						}
 					}
+
+					// Remove any gf_custom: prefix before scanning for merge tag references.
+					$filter_value_for_dependency = $this->extract_custom_value( rgar( $filter, 'value' ) );
+					$merge_tag_dependencies      = $this->get_merge_tag_field_ids( $filter_value_for_dependency );
+
+					if ( ! empty( $merge_tag_dependencies ) ) {
+						$dependent_fields = array_merge( $dependent_fields, $merge_tag_dependencies );
+					}
+
+					// Prevent duplicate dependency rows for the same field.
+					$dependent_fields = array_unique( $dependent_fields );
 
 					if ( empty( $dependent_fields ) ) {
 						continue;
@@ -1238,7 +1274,7 @@ class GP_Populate_Anything extends GP_Plugin {
 	 */
 	public function process_template( $field, $template_name, $object, $populate, $objects, $template = null ) {
 
-		static $_cache;
+		$_cache = &$this->_process_template_cache;
 
 		/*
 		 * Return null if the object is empty.
@@ -1694,23 +1730,43 @@ class GP_Populate_Anything extends GP_Plugin {
 		}
 
 		foreach ( $filter_groups as $filter_group_index => $filters ) {
-			$dependent_fields[ $filter_group_index ] = array();
+			$group_dependencies = array();
 
 			foreach ( $filters as $filter ) {
-				$filter_value = rgar( $filter, 'value' );
+				$filter_value_raw = rgar( $filter, 'value' );
 
-				if ( preg_match_all( '/{\w+:gf_field_(\d+)}/', $filter_value, $field_matches ) ) {
-					if ( ! empty( $field_matches[1] ) ) {
-						$dependent_fields[ $filter_group_index ] = array_merge( $dependent_fields[ $filter_group_index ], $field_matches[1] );
-					}
-				} elseif ( strpos( $filter_value, 'gf_field:' ) === 0 ) {
-					$dependent_fields[ $filter_group_index ][] = str_replace( 'gf_field:', '', $filter_value );
+				if ( $filter_value_raw === null ) {
+					continue;
+				}
+
+				$filter_dependencies    = array();
+				$filter_value_exploded  = explode( ':', $filter_value_raw );
+				$filter_value_extracted = $this->extract_custom_value( $filter_value_raw );
+
+				if ( $filter_value_exploded[0] === 'gf_field' && isset( $filter_value_exploded[1] ) ) {
+					$filter_dependencies[] = $filter_value_exploded[1];
+				}
+
+				if ( preg_match_all( '/{\w+:gf_field_(\d+)}/', $filter_value_raw, $gf_field_matches ) && ! empty( $gf_field_matches[1] ) ) {
+					$filter_dependencies = array_merge( $filter_dependencies, $gf_field_matches[1] );
+				}
+
+				$standard_tag_dependencies = $this->get_merge_tag_field_ids( $filter_value_extracted );
+
+				if ( ! empty( $standard_tag_dependencies ) ) {
+					$filter_dependencies = array_merge( $filter_dependencies, $standard_tag_dependencies );
+				}
+
+				if ( ! empty( $filter_dependencies ) ) {
+					$group_dependencies = array_merge( $group_dependencies, $filter_dependencies );
 				}
 			}
 
-			if ( ! count( $dependent_fields[ $filter_group_index ] ) ) {
-				unset( $dependent_fields[ $filter_group_index ] );
+			if ( empty( $group_dependencies ) ) {
+				continue;
 			}
+
+			$dependent_fields[ $filter_group_index ] = array_values( array_unique( $group_dependencies ) );
 		}
 
 		return $dependent_fields;
@@ -1856,6 +1912,43 @@ class GP_Populate_Anything extends GP_Plugin {
 
 	public function extract_custom_value( $value ) {
 		return preg_replace( '/^gf_custom:?/', '', $value );
+	}
+
+	/**
+	 * Retrieve GF field IDs referenced via merge tags in a string.
+	 *
+	 * @param mixed $value Raw filter value.
+	 *
+	 * @return array
+	 */
+	public function get_merge_tag_field_ids( $value ) {
+
+		if ( ! is_string( $value ) || strpos( $value, '{' ) === false ) {
+			return array();
+		}
+
+		if ( ! $this->live_merge_tags || ! isset( $this->live_merge_tags->merge_tag_regex ) ) {
+			return array();
+		}
+
+		preg_match_all( $this->live_merge_tags->merge_tag_regex, $value, $merge_tag_matches, PREG_SET_ORDER );
+
+		if ( empty( $merge_tag_matches ) ) {
+			return array();
+		}
+
+		$field_ids = array();
+
+		foreach ( $merge_tag_matches as $merge_tag_match ) {
+			if ( ! isset( $merge_tag_match[3] ) || $merge_tag_match[3] === '' ) {
+				continue;
+			}
+
+			$field_ids[] = $merge_tag_match[3];
+		}
+
+		return $field_ids;
+
 	}
 
 	/**
@@ -2095,8 +2188,10 @@ class GP_Populate_Anything extends GP_Plugin {
 	 * @return void
 	 */
 	public function clear_runtime_caches() {
-		$this->_field_choices_cache = array();
-		$this->_field_objects_cache = array();
+		$this->_field_choices_cache    = array();
+		$this->_field_objects_cache    = array();
+		$this->gf_merge_tags_cache     = array();
+		$this->_process_template_cache = array();
 	}
 
 	/**
@@ -4132,7 +4227,12 @@ class GP_Populate_Anything extends GP_Plugin {
 			$hydrated_field        = $this->populate_field( $field, $form, $field_values, $entry, $force_use_field_value );
 			$hydrated_value        = $hydrated_field['field_value'];
 
-			if ( $this->is_field_dynamically_populated( $field ) ) {
+			$default_values      = is_array( $field->defaultValue ) ? $field->defaultValue : array( $field->defaultValue );
+			$has_live_merge_tags = ! empty( array_filter( $default_values, function( $val ) {
+				return is_string( $val ) && $this->live_merge_tags->has_live_merge_tag( $val );
+			} ) );
+
+			if ( $this->is_field_dynamically_populated( $field ) || $has_live_merge_tags ) {
 				$field = $hydrated_field['field'];
 
 				if ( $hydrate_values ) {
@@ -4972,7 +5072,7 @@ class GP_Populate_Anything extends GP_Plugin {
 			// See: PR#248
 			if ( rgar( $field, 'choices' ) ) {
 				foreach ( $field->choices as $choice ) {
-					if ( preg_match( '/@{[^}]+}/', $choice['value'] ) ) {
+					if ( preg_match( '/@{[^}]+}/', isset( $choice['value'] ) ? $choice['value'] : '' ) ) {
 						$field->validateState = false;
 						break;
 					}

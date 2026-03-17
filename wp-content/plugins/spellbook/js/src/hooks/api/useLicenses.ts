@@ -11,7 +11,7 @@ export const useAllLicenses = () => {
 		queryKey: ['licenses'],
 		queryFn: async ({ signal }) => {
 			const licenses = await apiFetch<Record<LicensedProductType, LicenseData>>({
-				path: `/gwiz/v1/license${forceLicenseRefresh ? '?force=1' : ''}`,
+				path: `/gwiz/v1/license/${forceLicenseRefresh ? '?force=1' : ''}`,
 				signal
 			});
 

@@ -2,7 +2,7 @@
 /**
  * @license GPL-2.0-or-later
  *
- * Modified by The GravityKit Team on 11-September-2025 using Strauss.
+ * Modified using Strauss.
  * @see https://github.com/BrianHenryIE/strauss
  */
 
@@ -302,16 +302,15 @@ final class NoticeRenderer {
 				display: flex;
 				gap: 16px;
 				align-items: center;
+				height: 100%;
 			}
 			.gk-skeleton-text {
 				flex: 1;
+				display: flex;
+				align-items: center;
 			}
 			.gk-skeleton-line {
 				height: 12px;
-				margin-bottom: 8px;
-			}
-			.gk-skeleton-line:last-child {
-				margin-bottom: 0;
 			}
 			.gk-skeleton-icon {
 				width: 28px;

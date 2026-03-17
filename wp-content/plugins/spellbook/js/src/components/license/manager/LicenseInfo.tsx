@@ -18,7 +18,7 @@ const LicenseInfo = ({ license, type }: LicenseInfoProps) => {
 					<Text size="text-sm" color="comet">Perks</Text>
 					<Text size="text-sm" weight="medium">
 						{Object.entries(license.registered_products).length}/
-						{license.type.toLowerCase() === 'pro' ? '∞' : '1'}
+						{!license.registered_products_limit ? '∞' : license.registered_products_limit}
 					</Text>
 				</div>
 			);
@@ -30,7 +30,7 @@ const LicenseInfo = ({ license, type }: LicenseInfoProps) => {
 					<Text size="text-sm" color="comet">Connections</Text>
 					<Text size="text-sm" weight="medium">
 						{Object.entries(license.registered_products).length}/
-						{license.type.toLowerCase() === 'pro' ? '∞' : '1'}
+						{!license.registered_products_limit ? '∞' : license.registered_products_limit}
 					</Text>
 				</div>
 			);

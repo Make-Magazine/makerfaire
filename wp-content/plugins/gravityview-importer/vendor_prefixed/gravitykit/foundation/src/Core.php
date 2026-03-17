@@ -2,7 +2,7 @@
 /**
  * @license GPL-2.0-or-later
  *
- * Modified by The GravityKit Team on 11-September-2025 using Strauss.
+ * Modified using Strauss.
  * @see https://github.com/BrianHenryIE/strauss
  */
 
@@ -13,6 +13,7 @@ use GravityKit\GravityImport\Foundation\Components\SecureDownload;
 use GravityKit\GravityImport\Foundation\Integrations\GravityForms;
 use GravityKit\GravityImport\Foundation\Integrations\HelpScout;
 use GravityKit\GravityImport\Foundation\Integrations\TrustedLogin;
+use GravityKit\GravityImport\Foundation\Scheduler\Overview\JobOverview;
 use GravityKit\GravityImport\Foundation\WP\AdminMenu;
 use GravityKit\GravityImport\Foundation\Logger\Framework as LoggerFramework;
 use GravityKit\GravityImport\Foundation\WP\AjaxRouter;
@@ -26,6 +27,8 @@ use GravityKit\GravityImport\Foundation\Helpers\Core as CoreHelpers;
 use GravityKit\GravityImport\Foundation\Helpers\Arr;
 use GravityKit\GravityImport\Foundation\WP\RESTController;
 use GravityKit\GravityImport\Foundation\Notices\NoticeManager as Notices;
+use GravityKit\GravityImport\Foundation\Settings\WPDebugSettings;
+use GravityKit\GravityImport\Foundation\Scheduler\JobScheduler;
 
 /**
  * Core class that initializes Foundation.
@@ -36,7 +39,7 @@ use GravityKit\GravityImport\Foundation\Notices\NoticeManager as Notices;
  * @method static TrustedLogin trustedlogin()
  * @method static HelpScout helpscout()
  * @method static GravityForms gravityforms()
- * @method static LoggerFramework logger( string $logger_name = null, string $logger_title = null )
+ * @method static LoggerFramework logger(?string $logger_name = null, ?string $logger_title = null )
  * @method static SettingsFramework settings()
  * @method static LicensesFramework licenses()
  * @method static TranslationsFramework translations()
@@ -44,9 +47,11 @@ use GravityKit\GravityImport\Foundation\Notices\NoticeManager as Notices;
  * @method static PluginActivationHandler plugin_activation_handler()
  * @method static Notices notices()
  * @method static SecureDownload secure_download()
+ * @method static JobScheduler scheduler()
+ * @method static JobOverview job_overview()
  */
 class Core {
-	const VERSION = '1.3.1';
+	const VERSION = '1.12.0';
 
 	const ID = 'gk_foundation';
 
@@ -183,6 +188,104 @@ class Core {
 			},
 			self::INIT_PRIORITY
 		);
+
+		/**
+		 * Safety net: retry initialization if the primary callback was skipped.
+		 *
+		 * A WordPress core bug in WP_Hook::resort_active_iterations() can cause
+		 * the plugins_loaded callback above to be silently skipped when another
+		 * plugin removes itself from plugins_loaded during iteration.
+		 *
+		 * @since 1.11.0
+		 *
+		 * @see https://core.trac.wordpress.org/ticket/64653
+		 */
+		add_action(
+			'plugins_loaded',
+			function () {
+				if ( class_exists( 'GravityKitFoundation' ) ) {
+					return;
+				}
+
+				$gk_foundation = apply_filters( 'gk/foundation/get-instance', null );
+
+				if ( ! $gk_foundation ) {
+					return;
+				}
+
+				$gk_foundation->init();
+			},
+			PHP_INT_MAX
+		);
+
+		/**
+		 * Show admin notice if Foundation is still missing after the safety net.
+		 *
+		 * @since 1.11.0
+		 */
+		add_action(
+			'plugins_loaded',
+			static function () {
+				if ( class_exists( 'GravityKitFoundation' ) ) {
+					return;
+				}
+
+				if ( did_action( 'gk/foundation/load-failure-notice' ) ) {
+					return;
+				}
+
+				do_action( 'gk/foundation/load-failure-notice' );
+
+				$gk_foundation = apply_filters( 'gk/foundation/get-instance', null );
+
+				if ( ! $gk_foundation || ! is_callable( [ $gk_foundation, 'get_registered_plugins' ] ) ) {
+					return;
+				}
+
+				$product_names = [];
+
+				/** @phpstan-ignore-next-line */
+				foreach ( $gk_foundation->get_registered_plugins() as $file => $data ) {
+					$plugin_data     = CoreHelpers::get_plugin_data( $file );
+					$product_names[] = $plugin_data['Name'] ?? $data['text_domain'];
+				}
+
+				$count = count( $product_names );
+				$list  = implode( ', ', $product_names );
+
+				// translators: [plugins] is replaced with a list of plugin names.
+				$message = strtr(
+					_n(
+						'[plugins] did not load correctly. Please deactivate and reactivate it to resolve this issue.',
+						'[plugins] did not load correctly. Please deactivate and reactivate them to resolve this issue.',
+						$count,
+						'gk-gravityimport'
+					),
+					[ '[plugins]' => '<strong>' . esc_html( $list ) . '</strong>' ]
+				);
+
+				$support_link = '<a href="https://www.gravitykit.com/support/" target="_blank" rel="noopener noreferrer">'
+					. esc_html__( 'contact support', 'gk-gravityimport' ) . '</a>';
+
+				// translators: [link] is replaced with a support link.
+				$message .= ' ' . strtr(
+					esc_html__( 'If the problem persists, [link].', 'gk-gravityimport' ),
+					[ '[link]' => $support_link ]
+				);
+
+				Notices::get_instance()->add_runtime(
+					[
+						'namespace'    => 'gk-foundation',
+						'slug'         => 'foundation-load-failure',
+						'message'      => $message,
+						'severity'     => 'error',
+						'dismissible'  => false,
+						'capabilities' => [ 'manage_options' ],
+					]
+				);
+			},
+			PHP_INT_MAX
+		);
 	}
 
 	/**
@@ -197,6 +300,12 @@ class Core {
 	 * @return void
 	 */
 	public static function register( $plugin_file, $arguments = [] ) {
+		// Action Scheduler must be loaded early, before 'plugins_loaded' priority 0.
+		// Composer's files autoload handles this for standalone Foundation, but
+		// consuming plugins using Strauss may strip the files entry. This
+		// require_once is a no-op if Loader.php was already autoloaded.
+		require_once __DIR__ . '/Scheduler/Loader.php';
+
 		if ( wp_doing_ajax() &&
 		     ( LicensesFramework::AJAX_ROUTER === ( $_REQUEST['ajaxRouter'] ?? '' ) ) && // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 		     CoreHelpers::version_compare( $_REQUEST['frontendFoundationVersion'] ?? 0, self::VERSION, '<' ) // phpcs:ignore WordPress.Security.NonceVerification.Recommended
@@ -325,6 +434,8 @@ class Core {
 			'helpscout'       => HelpScout::get_instance(),
 			'gravityforms'    => GravityForms::get_instance(),
 			'secure_download' => SecureDownload::get_instance(),
+			'scheduler'       => JobScheduler::get_instance(),
+			'job_overview'    => JobOverview::get_instance(),
 		];
 
 		foreach ( $this->_components as $instance ) {
@@ -344,6 +455,8 @@ class Core {
 			add_action( 'admin_enqueue_scripts', [ $this, 'inline_scripts_and_styles' ], 20 );
 
 			add_action( 'admin_footer', [ $this, 'show_loaded_by_message_on_admin_pages' ] );
+
+			$this->detect_namespace_conflict();
 		}
 
 		class_alias( __CLASS__, 'GravityKitFoundation' );
@@ -368,9 +481,11 @@ class Core {
 	 * @return void
 	 */
 	public function configure_settings() {
+		new WPDebugSettings();
+
 		add_filter(
 			'gk/foundation/settings/data/plugins',
-			function ( $plugins ) {
+			function ( $plugins, $payload = [] ) {
 				$gk_settings = $this->settings()->get_plugin_settings( self::ID );
 
 				// If multisite and not the main site, get default settings from the main site.
@@ -387,6 +502,9 @@ class Core {
 					'support_email'           => get_bloginfo( 'admin_email' ),
 					'support_port'            => 1,
 					'no_conflict_mode'        => 1,
+					'background_processing'   => 1,
+					'show_background_jobs'    => 0,
+					'scheduler_loopback_url'  => '',
 					'powered_by'              => 0,
 					'beta'                    => 0,
 				];
@@ -568,6 +686,48 @@ HTML;
 						'title'       => esc_html__( 'Enable No-Conflict Mode', 'gk-gravityimport' ),
 						'description' => esc_html__( 'No-conflict mode prevents extraneous scripts and styles from being printed on GravityKit admin pages, reducing conflicts with other plugins and themes.', 'gk-gravityimport' ),
 					],
+					[
+						'id'          => 'background_processing',
+						'type'        => 'checkbox',
+						'value'       => Arr::get( $gk_settings, 'background_processing', $default_settings['background_processing'] ),
+						'title'       => esc_html__( 'Enable Background Processing', 'gk-gravityimport' ),
+						'description' => strtr(
+                            esc_html_x(
+                                'Allow GravityKit products to [url]process jobs in the background[/url]. Disable to stop background jobs from running.',
+                                'Placeholders inside [] are not to be translated.',
+                                'gk-gravityimport'
+                            ),
+                            [
+								'[url]'  => '<a class="underline" href="https://docs.gravitykit.com/article/2150-background-processing" rel="noopener noreferrer" target="_blank">',
+								'[/url]' => '<span class="screen-reader-text"> ' . esc_html__( '(This link opens in a new window.)', 'gk-gravityimport' ) . '</span></a>',
+                            ]
+                        ),
+					],
+					[
+						'id'          => 'show_background_jobs',
+						'type'        => 'checkbox',
+						'value'       => Arr::get( $gk_settings, 'show_background_jobs', $default_settings['show_background_jobs'] ),
+						'title'       => esc_html__( 'Show Background Jobs', 'gk-gravityimport' ),
+						'description' => esc_html__( 'Show the Background Jobs page in the GravityKit menu, where you can view jobs and their execution status.', 'gk-gravityimport' ),
+						'requires'    => [
+							'id'       => 'background_processing',
+							'operator' => '=',
+							'value'    => '1',
+						],
+					],
+					[
+						'id'          => 'scheduler_loopback_url',
+						'type'        => 'text',
+						'value'       => Arr::get( $gk_settings, 'scheduler_loopback_url', $default_settings['scheduler_loopback_url'] ),
+						'title'       => esc_html__( 'Loopback URL Override', 'gk-gravityimport' ),
+						'description' => esc_html__( 'Override the base URL used for internal HTTP requests. Leave empty to use the site URL. Only change this if background jobs fail because the server cannot reach itself.', 'gk-gravityimport' ),
+						'placeholder' => 'https://example.com',
+						'requires'    => [
+							'id'       => 'background_processing',
+							'operator' => '=',
+							'value'    => '1',
+						],
+					],
 				];
 
 				$all_settings = [
@@ -599,13 +759,17 @@ HTML;
 				 * @filter gk/foundation/settings
 				 *
 				 * @since  1.0.0
+				 * @since  1.6.0 Added $payload parameter.
 				 *
 				 * @param array $all_settings GravityKit general settings.
+				 * @param array $payload      Request payload, if this is an Ajax request.
 				 */
-				$all_settings = apply_filters( 'gk/foundation/settings', $all_settings );
+				$all_settings = apply_filters( 'gk/foundation/settings', $all_settings, $payload );
 
 				return array_merge( $plugins, $all_settings );
-			}
+			},
+			10,
+			2
 		);
 	}
 
@@ -883,5 +1047,75 @@ HTML;
 		) ?: [ '0' ];
 
 		return max( $foundation_versions );
+	}
+
+	/**
+	 * Detects and registers notices for namespace conflicts.
+	 *
+	 * This detects when a plugin has both vendor/ and vendor_prefixed/ Foundation copies,
+	 * which can cause conflicts when the standalone Foundation plugin is active.
+	 *
+	 * Only runs when the standalone Foundation plugin (gk-foundation) is the one that loaded.
+	 *
+	 * @since 1.6.0
+	 *
+	 * @return void
+	 */
+	private function detect_namespace_conflict() {
+		$foundation_source = Arr::first(
+			$this->_registered_plugins,
+			function ( $plugin ) {
+				return $plugin['loads_foundation'];
+			}
+		);
+
+		if ( ! $foundation_source || 'gk-foundation' !== $foundation_source['text_domain'] ) {
+			return;
+		}
+
+		$conflicting_plugins = [];
+
+		// Check each registered plugin for namespace conflicts.
+		foreach ( $this->_registered_plugins as $plugin_file => $plugin_data ) {
+			// Skip if this is the current plugin that loaded Foundation.
+			if ( $plugin_data['loads_foundation'] ) {
+				continue;
+			}
+
+			$plugin_dir = dirname( $plugin_file );
+
+			// Check if plugin has non-namespaced Foundation in vendor/.
+			$vendor_foundation = $plugin_dir . '/vendor/gravitykit/foundation/src/Core.php';
+
+			if ( file_exists( $vendor_foundation ) ) {
+				$plugin_name           = CoreHelpers::get_plugin_data( $plugin_file )['Name'] ?? $plugin_data['text_domain'];
+				$conflicting_plugins[] = esc_html( $plugin_name );
+			}
+		}
+
+		if ( empty( $conflicting_plugins ) ) {
+			return;
+		}
+
+		$this->notices()->add_runtime(
+			[
+				'namespace'    => 'gk-foundation',
+				'slug'         => 'namespace-conflicts',
+				'message'      => strtr(
+					// translators: [plugins] is replaced with a list of plugin names.
+					_n(
+						'[plugins] contains both namespaced and non-namespaced Foundation, which may cause conflicts with the standalone Foundation plugin.',
+						'[plugins] contain both namespaced and non-namespaced Foundation, which may cause conflicts with the standalone Foundation plugin.',
+						count( $conflicting_plugins ),
+						'gk-gravityimport'
+					),
+					[ '[plugins]' => '<strong>' . implode( ', ', $conflicting_plugins ) . '</strong>' ]
+				),
+				'severity'     => 'warning',
+				'context'      => 'all',
+				'dismissible'  => false,
+				'capabilities' => [ 'manage_options' ],
+			]
+		);
 	}
 }

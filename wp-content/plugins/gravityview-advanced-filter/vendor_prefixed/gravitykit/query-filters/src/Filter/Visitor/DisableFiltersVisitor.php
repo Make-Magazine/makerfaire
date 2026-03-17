@@ -2,7 +2,7 @@
 /**
  * @license MIT
  *
- * Modified by gravitykit on 05-December-2025 using {@see https://github.com/BrianHenryIE/strauss}.
+ * Modified by gravitykit on 20-February-2026 using {@see https://github.com/BrianHenryIE/strauss}.
  */
 
 namespace GravityKit\AdvancedFilter\QueryFilters\Filter\Visitor;
@@ -30,7 +30,7 @@ final class DisableFiltersVisitor implements FilterVisitor {
      * To disable a group, you add the group number. To disable a field, provide the field number inside the group.
      * For example: `['2', '3.4']` would disable the second group completely and the 4th field in the 3rd group.
      *
-	 * @filter `gk/query-filters/filter/disable-filters` Add disabled filters.
+	 * Add disabled filters.
      *
 	 * @since 2.0.0
 	 */

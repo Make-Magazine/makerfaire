@@ -176,6 +176,10 @@ class GV_Extension_DataTables_RowGroup extends GV_DataTables_Extension {
 		/**
 		 * Include RowGroup core script (DT plugin)
 		 * Use your own DataTables core script by using the `gravityview_dt_rowgroup_script_src` filter
+		 *
+		 * @since 1.0
+		 *
+		 * @param string $script_src The URL to the RowGroup script file.
 		 */
 		wp_enqueue_script( 'gv-dt-rowgroup', apply_filters( 'gravityview_dt_rowgroup_script_src', $script_path . 'dataTables.rowGroup' . $script_debug . '.js' ), array(
 			'jquery',
@@ -184,6 +188,10 @@ class GV_Extension_DataTables_RowGroup extends GV_DataTables_Extension {
 
 		/**
 		 * Use your own RowGroup stylesheet by using the `gravityview_dt_rowgroup_style_src` filter
+		 *
+		 * @since 1.0
+		 *
+		 * @param string $style_src The URL to the RowGroup stylesheet file.
 		 */
 		wp_enqueue_style( 'gv-dt_rowgroup_style', apply_filters( 'gravityview_dt_rowgroup_style_src', $style_path . 'rowGroup.dataTables.css' ), array( 'gravityview_style_datatables_table' ), GV_Extension_DataTables::version );
 

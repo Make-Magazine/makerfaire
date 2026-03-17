@@ -176,8 +176,8 @@ class PMXI_Addon_View {
     public static function create(
         string $addonId,
         string $type,
-        string $subtype = null,
-        string $groupId = null
+        ?string $subtype = null,
+        ?string $groupId = null
     ) {
         return new self( $addonId, $type, $subtype, $groupId );
     }

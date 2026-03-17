@@ -263,10 +263,11 @@ function GravityView_API_field_label( $form, $field_settings, $entry, $force_sho
 		 * Modify field label output.
 		 *
 		 * @since 1.7
-		 * @param string $label Field label HTML
-		 * @param array $field GravityView field array
-		 * @param array $form Gravity Forms form array
-		 * @param array $entry Gravity Forms entry array
+		 *
+		 * @param string $label          Field label HTML.
+		 * @param array  $field_settings GravityView field array.
+		 * @param array  $form           Gravity Forms form array.
+		 * @param array  $entry          Gravity Forms entry array.
 		 */
 		$label = apply_filters( 'gravityview/template/field_label', $label, $field_settings, $form, $entry );
 
@@ -743,6 +744,8 @@ final class Legacy_Context {
 	 * @return void
 	 */
 	public static function reset() {
+		self::$stack = array();
+
 		\GravityView_View::$instance      = null;
 		\GravityView_frontend::$instance  = null;
 		\GravityView_View_Data::$instance = null;

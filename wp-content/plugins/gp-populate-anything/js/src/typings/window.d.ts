@@ -38,6 +38,7 @@ declare global {
 			label: string
 		}
 		supportsNullFilterValue?: boolean
+		supportsBoolFilterValues?: boolean
 		optionGroupId?: string
 		optionGroupLabel?: string
 	}
@@ -56,6 +57,7 @@ declare global {
 			isSuperAdmin: boolean
 			interpretedMultiInputFieldTypes: string[]
 			multiSelectableChoiceFieldTypes: string[]
+			multiChoiceFieldTypes: string[]
 			strings: {
 				[key: string]: string
 			}

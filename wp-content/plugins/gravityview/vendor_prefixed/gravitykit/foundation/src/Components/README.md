@@ -8,8 +8,10 @@ A collection of reusable components that extend Foundation's functionality.
   - [Features](#features)
   - [How It Works](#how-it-works)
   - [Basic Usage](#basic-usage)
+  - [Remote URL Downloads](#remote-url-downloads)
   - [Advanced Usage](#advanced-usage)
   - [Parameters](#parameters)
+  - [Token Structure](#token-structure)
   - [User Access Control](#user-access-control)
   - [Hooks](#hooks)
   - [Detailed Hook Documentation](#detailed-hook-documentation)
@@ -40,6 +42,11 @@ The `SecureDownload` component provides a secure way to download files from Word
   - Range request support for resumable downloads
   - HEAD request support for download managers and CDNs
 
+- **Remote URL support**:
+  - Serve files from remote URLs
+  - Configurable max file size (default 100MB)
+  - Automatic temp file cleanup
+
 ### How It Works
 
 1. **Token Generation**:
@@ -49,6 +56,7 @@ The `SecureDownload` component provides a secure way to download files from Word
    - Returns a URL with the encrypted token and a short ID for reference
 
 2. **Download Process**:
+   - Downloads are processed early at `init` (priority 0) for better performance, skipping unnecessary WordPress overhead
    - Token is decrypted and validated when accessed
    - Various security checks are performed (expiration, user, IP, etc.)
    - File is read and streamed in chunks to the browser
@@ -67,7 +75,7 @@ $result = $secure_download->generate_download_url('/path/to/file.pdf');
 
 // Returns:
 // [
-//     'url' => 'https://site.com/wp-admin/admin-ajax.php?action=gk_download&token=...',
+//     'url' => 'https://site.com/gk-download/{token}/',
 //     'id'  => 'abc123def456' // Short identifier
 // ]
 ```
@@ -158,6 +166,49 @@ $result = $secure_download->generate_download_url('/path/to/report.pdf', [
 ]);
 ```
 
+### Remote URL Downloads
+
+Serve files from remote URLs while maintaining all SecureDownload features.
+
+#### Generate a download link for a remote URL
+```php
+// Remote URLs require explicit source_type (fail-fast security)
+$result = $secure_download->generate_download_url('https://s3.amazonaws.com/bucket/file.pdf', [
+    'source_type' => 'remote',
+    'expires_in'  => 3600,
+]);
+
+// Without source_type, URLs throw an exception (prevents accidental remote fetches)
+$result = $secure_download->generate_download_url('https://example.com/file.pdf'); // THROWS!
+```
+
+#### Remote URL with custom filename
+```php
+$result = $secure_download->generate_download_url('https://cdn.example.com/assets/doc-v2.pdf', [
+    'source_type' => 'remote',
+    'filename'    => 'User-Guide.pdf',
+    'expires_in'  => 86400,
+]);
+```
+
+#### Virtual paths with filter
+```php
+// Map virtual paths to remote URLs via filter
+add_filter('gk/foundation/secure-download/remote-source', function($remote, $file_path, $args) {
+    if (strpos($file_path, '/s3/') === 0) {
+        $key = substr($file_path, 4);
+        return [
+            'url'      => 'https://my-bucket.s3.amazonaws.com/' . $key,
+            'filename' => basename($key),
+        ];
+    }
+    return $remote;
+}, 10, 3);
+
+// Then use virtual paths
+$result = $secure_download->generate_download_url('/s3/documents/report.pdf');
+```
+
 ### Advanced Usage
 
 #### Simple tracking with the `track` parameter
@@ -241,6 +292,29 @@ The `generate_download_url()` method accepts the following parameters:
 | `meta` | array | `[]` | Additional metadata to include in the token |
 | `filename` | string | `''` | Custom filename to use when downloading (empty string uses original filename) |
 | `cache_duration` | int | (not set) | Cache duration in seconds. `0` = no cache (private), `> 0` = specific duration. If not set, auto-detects based on file type |
+| `source_type` | string | `''` | Set to `'remote'` when passing a URL instead of a file path. Required for URLs (fail-fast security) |
+
+### Token Structure
+
+The following properties are encrypted into the download token:
+
+| Property | Type | Description |
+|----------|------|-------------|
+| `file` | string | File path or virtual path |
+| `expires` | int | Expiration timestamp (0 = no expiration) |
+| `limit` | int | Download limit (0 = unlimited) |
+| `capabilities` | array | Required capabilities |
+| `ips` | array | Allowed IP addresses |
+| `users` | array | Allowed user IDs |
+| `track` | bool\|array | Tracking settings |
+| `meta` | array | Custom metadata |
+| `filename` | string | Custom download filename |
+| `cache_duration` | int | Cache duration (if set) |
+| `remote_url` | string | Remote URL (if remote source) |
+| `source_type` | string | Source type (if `'remote'`) |
+| `remote_size` | int | Remote file size (if provided) |
+
+Use the `gk/foundation/secure-download/token-data` filter to add or modify properties before encryption.
 
 ### User Access Control
 
@@ -256,6 +330,7 @@ When tracking is enabled (via the `track` parameter), the system automatically r
 
 #### Filters
 
+- `gk/foundation/secure-download/endpoint` - Customize the download URL endpoint (default: `gk-download`)
 - `gk/foundation/secure-download/token-data` - Modify token data before encryption
 - `gk/foundation/secure-download/validate-token` - Modify token validation result
 - `gk/foundation/secure-download/history-record` - Modify history data for the download
@@ -264,6 +339,10 @@ When tracking is enabled (via the `track` parameter), the system automatically r
 - `gk/foundation/secure-download/error-response` - Customize error handling and messages
 - `gk/foundation/secure-download/history-length` - Control the maximum number of history entries per token
 - `gk/foundation/secure-download/headers` - Modify HTTP headers sent during file download
+- `gk/foundation/secure-download/remote-source` - Provide remote URL for virtual/non-existent paths
+- `gk/foundation/secure-download/max-remote-size` - Limit maximum remote file size (default 100MB)
+- `gk/foundation/secure-download/remote-redirection` - Control redirect following for remote downloads
+- `gk/foundation/secure-download/remote-request-args` - Customize remote fetch request arguments
 
 #### Actions
 
@@ -275,6 +354,21 @@ When tracking is enabled (via the `track` parameter), the system automatically r
 ### Detailed Hook Documentation
 
 #### Filters
+
+##### `gk/foundation/secure-download/endpoint`
+Customize the download URL endpoint. The default endpoint is `gk-download`, resulting in URLs like `/gk-download/{token}/`.
+
+```php
+// Change the download endpoint to a custom path.
+add_filter('gk/foundation/secure-download/endpoint', function($endpoint) {
+    return 'my-downloads'; // URLs will be /my-downloads/{token}/
+});
+```
+
+**Parameters:**
+- `$endpoint` (string) - The download endpoint. Default: `gk-download`.
+
+**Note:** After changing the endpoint, you may need to flush rewrite rules for the `template_redirect` fallback to work. The early processing at `init` works immediately without flushing.
 
 ##### `gk/foundation/secure-download/token-data`
 Modify token data before encryption.
@@ -533,6 +627,86 @@ add_filter('gk/foundation/secure-download/headers', function($headers, $context)
 - `Content-Security-Policy` - Set to "default-src 'none';" for security
 - `Cache-Control` - Auto-detected based on file type (e.g., images: 3 months, PDFs: 1 month, HTML: 1 week)
 - `Content-Range` - Only present for partial content responses
+
+##### `gk/foundation/secure-download/remote-source`
+Provide a remote URL for virtual or non-existent file paths. Fired when a local file doesn't exist.
+
+```php
+add_filter('gk/foundation/secure-download/remote-source', function($remote_source, $file_path, $args) {
+    // Map /s3/ paths to S3 URLs
+    if (strpos($file_path, '/s3/') === 0) {
+        $key = substr($file_path, 4);
+        return [
+            'url'      => 'https://my-bucket.s3.amazonaws.com/' . $key,
+            'filename' => basename($key),
+        ];
+    }
+    return $remote_source;
+}, 10, 3);
+```
+
+**Parameters:**
+- `$remote_source` (array|false) - Remote source config or false to fail.
+- `$file_path` (string) - The original file path that wasn't found.
+- `$args` (array) - The arguments passed to `generate_download_url()`.
+
+**Return:** Array with `url` (required), `filename` (optional), `size` (optional), or false to fail.
+
+##### `gk/foundation/secure-download/max-remote-size`
+Limit the maximum file size for remote downloads. Default is 100MB.
+
+```php
+add_filter('gk/foundation/secure-download/max-remote-size', function($max_size, $url, $token_data) {
+    // Allow larger files for admin users
+    if (current_user_can('manage_options')) {
+        return 500 * 1024 * 1024; // 500MB
+    }
+    return $max_size;
+}, 10, 3);
+```
+
+**Parameters:**
+- `$max_size` (int) - Maximum file size in bytes. Default 104857600 (100MB).
+- `$url` (string) - The remote URL.
+- `$token_data` (array) - The token data.
+
+##### `gk/foundation/secure-download/remote-redirection`
+Control redirect following for remote downloads. Default is 0 (no redirects) for security.
+
+```php
+add_filter('gk/foundation/secure-download/remote-redirection', function($redirection, $url, $token_data) {
+    // Allow redirects for S3 URLs
+    if (strpos($url, 's3.amazonaws.com') !== false) {
+        return 3;
+    }
+    return $redirection;
+}, 10, 3);
+```
+
+**Parameters:**
+- `$redirection` (int) - Number of redirects to follow. Default 0.
+- `$url` (string) - The remote URL.
+- `$token_data` (array) - The token data.
+
+##### `gk/foundation/secure-download/remote-request-args`
+Customize the request arguments for remote file fetching.
+
+```php
+add_filter('gk/foundation/secure-download/remote-request-args', function($args, $url, $token_data) {
+    // Add authentication header
+    if (strpos($url, 'api.example.com') !== false) {
+        $args['headers'] = [
+            'Authorization' => 'Bearer ' . get_option('api_token'),
+        ];
+    }
+    return $args;
+}, 10, 3);
+```
+
+**Parameters:**
+- `$args` (array) - Request arguments for `wp_safe_remote_get()`.
+- `$url` (string) - The remote URL.
+- `$token_data` (array) - The token data.
 
 #### Actions
 

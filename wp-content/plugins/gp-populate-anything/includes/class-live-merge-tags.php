@@ -85,11 +85,13 @@ class GP_Populate_Anything_Live_Merge_Tags {
 		add_filter( 'gpnf_all_entries_nested_entry_markup', array( $this, 'replace_live_merge_tags_gpnf_all_entries' ), 10, 5 );
 
 		/**
-		 * Security
+		 * Sanitize Live Merge Tag value, depending on settings.
+		 * This helps prevent XSS attacks via Live Merge Tags.
 		 */
-		// Prevent things like <script> from being output in Live Merge Tags to protect against XSS.
-		// @todo this is stripping things like background-repeat from CSS.
-		add_filter( 'gppa_live_merge_tag_value', 'wp_kses_post' );
+		add_filter(
+			'gppa_live_merge_tag_value',
+			$this->use_permissive_lmt_sanitization() ? 'wp_kses_post' : array( $this, 'sanitize_live_merge_tag_value' )
+		);
 
 		/**
 		 * Prevent replacement of Live Merge Tags in Preview Submission.
@@ -859,6 +861,61 @@ class GP_Populate_Anything_Live_Merge_Tags {
 
 		return $form_string;
 
+	}
+
+	/**
+	 * Sanitize Live Merge Tag value, depending on settings.
+	 *
+	 * @param $value
+	 *
+	 * @return string
+	 */
+	public function sanitize_live_merge_tag_value( $value ) {
+
+		// Default to no tags allowed for security
+		$allowed = array();
+
+		/**
+		 * Filter the allowed HTML tags for Live Merge Tag values.
+		 *
+		 * By default, no HTML tags are allowed. Use this filter to opt in to specific tags.
+		 *
+		 * @param array $allowed Allowed HTML tags and attributes.
+		 * @param mixed $value   The Live Merge Tag value being sanitized.
+		 *
+		 * @example Modify the allowed HTML tags to include <a> and <strong> tags.
+		 * add_filter( 'gppa_lmt_kses_allowed_html', function( $allowed, $value ) {
+		 *     $allowed = array( 'a', 'strong' );
+		 *     return $allowed;
+		 * }, 10, 2 );
+		 *
+		 * @since 2.1.54
+		 *
+		 */
+		$allowed = apply_filters( 'gppa_lmt_kses_allowed_html', $allowed, $value );
+
+		return wp_kses( $value, $allowed );
+
+	}
+
+	public function use_permissive_lmt_sanitization() {
+
+		$option_value = (bool) get_option( 'gppa_use_permissive_lmt_sanitization' );
+
+		/**
+		 * Filter to determine if live merge tag sanitization should be used.
+		 *
+		 * @since 2.1.54
+		 *
+		 * @param bool $sanitize Should live merge tag sanitization be used.
+		 */
+		$sanitize = (bool) apply_filters( 'gppa_use_permissive_lmt_sanitization', $option_value );
+
+		if ( $sanitize !== $option_value ) {
+			update_option( 'gppa_use_permissive_lmt_sanitization', $sanitize );
+		}
+
+		return $sanitize;
 	}
 
 	/**

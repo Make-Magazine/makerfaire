@@ -185,9 +185,11 @@
 				});
 
 				fieldsToProcess.forEach( function ( fieldId ) {
-					var fieldSettings = self.getFieldSettings( fieldId );
+					// Only process fields that have copy operations directly defined on them
+					// Don't process target fields that become visible - this prevents infinite loops
+					var fieldSettings = typeof self.fields[ fieldId ] !== 'undefined' ? self.fields[ fieldId ] : [];
 
-					if ( ! fieldSettings ) {
+					if ( ! fieldSettings || fieldSettings.length === 0 ) {
 						return;
 					}
 

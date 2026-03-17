@@ -1,6 +1,10 @@
 
 # Changelog
 
+## 1.3.22 | February 4, 2026
+
+- Fixed an issue where spanned checkbox limits were not re-applied after conditional logic ran.
+
 ## 1.3.21 | October 2, 2025
 
 - Added support for Gravity Forms 2.9 Multi Choice and Image Choice fields.

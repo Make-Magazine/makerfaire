@@ -798,11 +798,30 @@ function wpai_execute_unified_preview($preview_data, $file_path, $records_to_imp
                 'skipped' => $import->skipped
             );
 
+            // Save original session values before preview import modifies them
+            // The process() method sets session->import_id to the preview import's ID,
+            // which breaks subsequent operations that expect the original import ID
+            $original_session_import_id = null;
+            $original_session_file_path = null;
+            if (!empty(PMXI_Plugin::$session)) {
+                $original_session_import_id = PMXI_Plugin::$session->import_id;
+                $original_session_file_path = PMXI_Plugin::$session->filePath;
+            }
+
             do_action('pmxi_before_xml_import', $import->id);
 
             $import->process($feed, $debug_logger, 1, false, '/pmxi_records', $found_records);
 
             do_action('pmxi_after_xml_import', $import->id, $import);
+
+            // Restore original session values after preview import completes
+            if (!empty(PMXI_Plugin::$session) && $original_session_import_id !== null) {
+                PMXI_Plugin::$session->import_id = $original_session_import_id;
+                if ($original_session_file_path !== null) {
+                    PMXI_Plugin::$session->filePath = $original_session_file_path;
+                }
+                PMXI_Plugin::$session->save_data();
+            }
 
             if (!$use_custom_fields_for_marking && isset($preview_marker_hook)) {
                 remove_action('pmxi_saved_post', $preview_marker_hook, 10);

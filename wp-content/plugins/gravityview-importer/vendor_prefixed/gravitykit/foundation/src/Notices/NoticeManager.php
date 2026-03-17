@@ -2,7 +2,7 @@
 /**
  * @license GPL-2.0-or-later
  *
- * Modified by The GravityKit Team on 11-September-2025 using Strauss.
+ * Modified using Strauss.
  * @see https://github.com/BrianHenryIE/strauss
  */
 
@@ -150,7 +150,6 @@ final class NoticeManager {
 
 			return $notice;
 		} catch ( Throwable $e ) {
-			Logger::get_instance()->error( 'add_runtime() failed: ' . $e->getMessage(), [ 'definition' => $data ] );
 			return null;
 		}
 	}
@@ -206,8 +205,6 @@ final class NoticeManager {
 
 			return $notice;
 		} catch ( Throwable $e ) {
-			Logger::get_instance()->error( 'add_stored() failed: ' . $e->getMessage(), [ 'definition' => $data ] );
-
 			return null;
 		}
 	}
@@ -274,6 +271,27 @@ final class NoticeManager {
 		}
 
 		return $this->stored_notices[ $notice_id ] ?? null;
+	}
+
+	/**
+	 * Removes a stored notice from persistent storage.
+	 *
+	 * Deletes the notice from both global options and all user meta where it may
+	 * be stored. Also clears the internal cache so the notice is no longer returned
+	 * by get_active() or get_notice().
+	 *
+	 * @since 1.12.0
+	 *
+	 * @param string $notice_id Notice ID (namespace/slug).
+	 *
+	 * @throws NoticeException When removal fails.
+	 *
+	 * @return void
+	 */
+	public function remove( string $notice_id ): void {
+		$this->repository->remove( $notice_id );
+
+		$this->flush_cache();
 	}
 
 	/**
@@ -537,10 +555,6 @@ final class NoticeManager {
 
 		foreach ( $notices as $notice ) {
 			if ( $notice instanceof StoredNotice ) {
-				if ( isset( $this->stored_notices[ $notice->get_id() ] ) ) {
-					continue;
-				}
-
 				// Trigger live updates only for notices that weren't added during this request.
 				$notice->apply_live_updates( $this->repository );
 			}

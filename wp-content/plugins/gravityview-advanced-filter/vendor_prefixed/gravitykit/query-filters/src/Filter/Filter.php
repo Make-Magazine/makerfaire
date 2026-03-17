@@ -2,7 +2,7 @@
 /**
  * @license MIT
  *
- * Modified by gravitykit on 05-December-2025 using {@see https://github.com/BrianHenryIE/strauss}.
+ * Modified by gravitykit on 20-February-2026 using {@see https://github.com/BrianHenryIE/strauss}.
  */
 
 namespace GravityKit\AdvancedFilter\QueryFilters\Filter;
@@ -15,8 +15,6 @@ use RuntimeException;
  * Entity that represents a single Filter.
  *
  * @since 2.0.0
- *
- * @todo  To filter Multiple Forms we need an optional form_id.
  */
 final class Filter {
 	const MODE_AND = 'and';
@@ -46,7 +44,7 @@ final class Filter {
 	/**
 	 * The form ID.
 	 *
-	 * @since $ver$
+	 * @since 2.7.0
 	 *
 	 * @var int|null
 	 */
@@ -496,7 +494,7 @@ final class Filter {
 	/**
 	 * Returns the form ID.
 	 *
-	 * @since $ver$
+	 * @since 2.7.0
 	 *
 	 * @return int The form ID, or 0 if not provided.
 	 */

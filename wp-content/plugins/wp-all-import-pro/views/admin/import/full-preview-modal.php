@@ -1162,6 +1162,7 @@ jQuery(document).ready(function($) {
 				data: formData,
 				processData: false,
 				contentType: false,
+				dataType: 'json',
 				success: function(response) {
 					if (!self.modalIsOpen) {
 						if (response.post_id) {
@@ -2112,6 +2113,7 @@ jQuery(document).ready(function($) {
 				data: formData,
 				processData: false,
 				contentType: false,
+				dataType: 'json',
 				timeout: 300000, // 5 minute timeout
 				success: function(response) {
 					// If modal is closed, track these post IDs for cleanup but don't cache

@@ -3,14 +3,14 @@ Contributors: spivurno,claygriffiths,bradvin,wpsmith
 Donate link: http://gravitywiz.com/
 Tags: form,forms,gravity,gravity form,gravity forms,CPT,custom post types,custom post type,taxonomy,taxonomies
 Requires at least: 3.0.1
-Tested up to: 6.0.2
-Stable tag: 3.1.16
+Tested up to: 6.9.1
+Stable tag: 3.1.30
 
 Map your Gravity-Forms-generated posts to a custom post type and/or custom taxonomies.
 
 = Introduction =
 
-This plugin is an add-on for [Gravity Forms](http://gravityforms.com). Make sure you visit [GravityWiz.com](http://gravitywiz.com/blog/) for more **free** Gravity Forms resources. And if you're looking to the largest collection of Gravity Forms plugins, check out [Gravity Perks](http://gravityperks.com).
+This plugin is an add-on for [Gravity Forms](http://gravityforms.com). Make sure you visit [GravityWiz.com](http://gravitywiz.com/plugins/) for more **free** Gravity Forms resources. And if you're looking to the largest collection of Gravity Forms plugins, check out [Gravity Perks](http://gravityperks.com).
 
 = Description =
 
@@ -80,6 +80,10 @@ When populating a Drop Down field with a post type, you may wish to set the sele
 7. Setting: Mapping a Single Line Text field to a taxonomy (and enabling Enhanced UI)
 
 == Changelog ==
+
+= 3.1.30 =
+* Fixed a PHP notice that occurred when field had no choices set.
+* Updated "Tested up to" tag to 6.9.1.
 
 = 3.1.29 =
 * Fixed PHP warning.

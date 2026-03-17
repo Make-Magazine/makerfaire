@@ -33,7 +33,7 @@ class GravityView_Inline_Edit_Field_EntryTags extends GravityView_Inline_Edit_Fi
 	 */
 	public function modify_inline_edit_attributes( $wrapper_attributes, $field_input_type, $field_id, $entry, $current_form, $gf_field ) {
 
-		if ( ! class_exists( 'EntryTagField' ) ) {
+		if ( ! class_exists( EntryTagField::class ) ) {
 			return $wrapper_attributes;
 		}
 

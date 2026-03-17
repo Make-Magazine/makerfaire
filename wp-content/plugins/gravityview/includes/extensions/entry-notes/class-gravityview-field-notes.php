@@ -54,6 +54,7 @@ class GravityView_Field_Notes extends GravityView_Field {
 		self::$path = plugin_dir_path( __FILE__ );
 		self::$file = __FILE__;
 
+		$this->label      = esc_html__( 'Entry Notes', 'gk-gravityview' );
 		$this->doing_ajax = defined( 'DOING_AJAX' ) && DOING_AJAX;
 
 		$this->add_hooks();
@@ -451,7 +452,7 @@ class GravityView_Field_Notes extends GravityView_Field {
 	 *
 	 * @return void
 	 */
-	public function process_delete_notes( $data ) {
+	private function process_delete_notes( $data ) {
 
 		$valid   = wp_verify_nonce( $data['gv_delete_notes'], 'gv_delete_notes_' . $data['entry-slug'] );
 		$has_cap = GVCommon::has_cap( 'gravityview_delete_entry_notes' );
@@ -499,12 +500,23 @@ class GravityView_Field_Notes extends GravityView_Field {
 
 		unset( $field_options['show_as_link'] );
 
+		// Get dynamic note types for this form.
+		$note_types        = self::get_note_types_for_form( $form_id );
+		$note_type_options = [];
+
+		foreach ( $note_types as $note_type ) {
+			$note_type_options[ $note_type ] = self::get_note_type_label( $note_type );
+		}
+
+		// Sort alphabetically by translated label.
+		asort( $note_type_options );
+
 		$notes_options = [
 			'notes' => [
-				'type'    => 'checkboxes',
-				'label'   => __( 'Note Settings', 'gk-gravityview' ),
-				'desc'    => sprintf( _x( 'Only users with specific capabilities will be able to view, add and delete notes. %1$sRead more%2$s.', '%s is opening and closing HTML link', 'gk-gravityview' ), '<a href="https://docs.gravitykit.com/article/311-gravityview-capabilities">', '</a>' ),
-				'options' => [
+				'type'              => 'checkboxes',
+				'label'             => __( 'Note Settings', 'gk-gravityview' ),
+				'desc'              => sprintf( _x( 'Only users with specific capabilities will be able to view, add and delete notes. %1$sRead more%2$s.', '%s is opening and closing HTML link', 'gk-gravityview' ), '<a href="https://docs.gravitykit.com/article/311-gravityview-capabilities">', '</a>' ),
+				'options'           => [
 					'view'           => [
 						'label' => __( 'Display notes?', 'gk-gravityview' ),
 					],
@@ -523,15 +535,180 @@ class GravityView_Field_Notes extends GravityView_Field {
 						'label' => __( 'Allow deleting notes?', 'gk-gravityview' ),
 					],
 				],
-				'value'   => [
+				'value'             => [
 					'view'  => 1,
 					'add'   => 1,
 					'email' => 1,
 				],
+				'after'             => ! empty( $note_type_options ) ? [ $this, 'render_exclude_note_types' ] : null,
+				'note_type_options' => $note_type_options,
 			],
 		];
 
 		return $notes_options + $field_options;
+	}
+
+	/**
+	 * Renders the exclude note types multiselect inside the notes checkboxes fieldset.
+	 *
+	 * @since 2.53.0
+	 *
+	 * @param GravityView_FieldType $field_type The field type instance.
+	 *
+	 * @return void
+	 */
+	public function render_exclude_note_types( $field_type ) {
+		$field_config      = $field_type->get_field();
+		$note_type_options = isset( $field_config['note_type_options'] ) ? $field_config['note_type_options'] : [];
+
+		if ( empty( $note_type_options ) ) {
+			return;
+		}
+
+		$field_name = $field_type->get_name();
+		$base_name  = str_replace( '[notes]', '[exclude_note_types]', $field_name );
+		$base_id    = 'gv_exclude_note_types_' . wp_generate_password( 8, false );
+
+		// Get the saved value from the full current settings (exclude_note_types is a sibling to notes).
+		$current_settings = isset( $field_config['current_settings'] ) ? $field_config['current_settings'] : [];
+		$current_value    = \GV\Utils::get( $current_settings, 'exclude_note_types', [] );
+
+		if ( ! is_array( $current_value ) ) {
+			$current_value = [];
+		}
+
+		?>
+		<li>
+			<label><?php esc_html_e( 'Note types to exclude from display:', 'gk-gravityview' ); ?></label>
+		</li>
+		<?php foreach ( $note_type_options as $value => $label ) : ?>
+			<?php $checkbox_id = $base_id . '_' . sanitize_key( $value ); ?>
+			<li class="gv-sub-setting">
+				<label for="<?php echo esc_attr( $checkbox_id ); ?>">
+					<input type="checkbox" name="<?php echo esc_attr( $base_name ); ?>[]" id="<?php echo esc_attr( $checkbox_id ); ?>" value="<?php echo esc_attr( $value ); ?>" <?php checked( in_array( $value, $current_value, true ), true ); ?> />
+					<?php echo esc_html( $label ); ?>
+				</label>
+			</li>
+		<?php endforeach; ?>
+		<?php
+	}
+
+	/**
+	 * Gets human-readable label for a note type.
+	 *
+	 * @since 2.53.0
+	 *
+	 * @param string $note_type The note type slug.
+	 *
+	 * @return string Human-readable label.
+	 */
+	private static function get_note_type_label( $note_type ) {
+		$known_labels = [
+			'user'                    => __( 'Admin notes', 'gk-gravityview' ),
+			'gravityview/field/notes' => __( 'Frontend notes', 'gk-gravityview' ),
+			'notification'            => __( 'Email notification log', 'gk-gravityview' ),
+			'gravityview'             => __( 'GravityView system log', 'gk-gravityview' ),
+			'note'                    => __( 'Other notes', 'gk-gravityview' ),
+		];
+
+		/**
+		 * Modifies the labels displayed for note types in the field settings.
+		 *
+		 * @since 2.53.0
+		 *
+		 * @param array $known_labels Associative array of note type slugs to human-readable labels.
+		 */
+		$known_labels = apply_filters( 'gk/gravityview/field/notes/type-labels', $known_labels );
+
+		if ( isset( $known_labels[ $note_type ] ) ) {
+			return $known_labels[ $note_type ];
+		}
+
+		// Fallback: convert slug to readable label.
+		return ucfirst( str_replace( [ '-', '_', '/' ], ' ', $note_type ) );
+	}
+
+	/**
+	 * Gets unique note types for a given form.
+	 *
+	 * Combines known/default note types with any additional types found in the
+	 * database for entries associated with the specified form.
+	 *
+	 * @since 2.53.0
+	 *
+	 * @param int $form_id The form ID.
+	 *
+	 * @return array Array of unique note type slugs.
+	 */
+	private static function get_note_types_for_form( $form_id ) {
+		global $wpdb;
+
+		// Start with known/default note types so they're always available.
+		$known_types = [
+			'user',
+			'notification',
+			'gravityview',
+			'gravityview/field/notes',
+			'note',
+		];
+
+		/**
+		 * Modifies the default note types shown in the field settings.
+		 *
+		 * @since 2.53.0
+		 *
+		 * @param array $known_types Array of known note type slugs.
+		 * @param int   $form_id     The form ID.
+		 */
+		$known_types = apply_filters( 'gk/gravityview/field/notes/default-types', $known_types, $form_id );
+
+		if ( empty( $form_id ) ) {
+			return $known_types;
+		}
+
+		$entry_table = GFFormsModel::get_entry_table_name();
+		$notes_table = GFFormsModel::get_entry_notes_table_name();
+
+		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Table names are from GF API.
+		$query = $wpdb->prepare(
+			"SELECT DISTINCT n.note_type
+			 FROM {$notes_table} n
+			 INNER JOIN {$entry_table} e ON n.entry_id = e.id
+			 WHERE e.form_id = %d AND n.note_type IS NOT NULL AND n.note_type != ''
+			 ORDER BY n.note_type ASC",
+			$form_id
+		);
+
+		$db_types = $wpdb->get_col( $query );
+
+		// Merge known types with database types, preserving uniqueness.
+		$all_types = array_unique( array_merge( $known_types, $db_types ?: [] ) );
+
+		sort( $all_types );
+
+		return $all_types;
+	}
+
+	/**
+	 * Filters notes by excluding specified note types.
+	 *
+	 * @since 2.53.0
+	 *
+	 * @param array $notes              Array of note objects.
+	 * @param array $exclude_note_types Array of note types to exclude. Accepts multiselect format ['type1', 'type2'].
+	 *
+	 * @return array Filtered array of note objects.
+	 */
+	public static function filter_notes_by_type( $notes, $exclude_note_types ) {
+		$excluded = array_filter( (array) $exclude_note_types );
+
+		if ( empty( $excluded ) || ! is_array( $notes ) ) {
+			return $notes;
+		}
+
+		return array_filter( $notes, function ( $note ) use ( $excluded ) {
+			return ! in_array( $note->note_type, $excluded, true );
+		} );
 	}
 
 	/**
@@ -626,9 +803,9 @@ class GravityView_Field_Notes extends GravityView_Field {
 		 * @since 1.17
 		 * @since 2.0
 		 *
-		 * @param object               $note         Note object with id, user_id, date_created, value, note_type, user_name, user_email vars
+		 * @param array                $note_content Array of note content that will be replaced in template files.
+		 * @param object               $note         Note object with id, user_id, date_created, value, note_type, user_name, user_email vars.
 		 * @param boolean              $show_delete  True: Notes are editable. False: no editing notes.
-		 * @param array                $note_content Array of note content that will be replaced in template files
 		 * @param \GV\Template_Context $context      The context.
 		 */
 		$note_content = apply_filters( 'gravityview/field/notes/content', $note_content, $note, $show_delete, $context );

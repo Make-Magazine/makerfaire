@@ -33,8 +33,11 @@ class GravityView_DataTables_Template extends GravityView_Template {
 				'logo' => plugins_url('assets/images/logo-datatables.png', GV_DT_FILE ),
 
 				/**
-				 * @filter `gravityview_datatables_style_src` Override the GravityView datatables.css CSS file and provide your own
-				 * @param string $css_source URL to the datatables.css file
+				 * Override the GravityView datatables.css CSS file and provide your own
+				 *
+				 * @since 1.0
+				 *
+				 * @param string $css_source URL to the datatables.css file.
 				 */
 				'css_source' => apply_filters( 'gravityview_datatables_style_src', plugins_url( 'assets/css/datatables.css', GV_DT_FILE ) ),
 			);

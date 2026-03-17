@@ -1,5 +1,8 @@
 <?php
+
 namespace GV;
+
+use GV\Search\Querying\Search_Request;
 
 /** If this file is called directly, abort. */
 if ( ! defined( 'GRAVITYVIEW_DIR' ) ) {
@@ -12,7 +15,11 @@ if ( ! defined( 'GRAVITYVIEW_DIR' ) ) {
  * Knows more about the request than anyone else.
  */
 abstract class Request {
-
+	/**
+	 * Class constructor.
+	 *
+	 * @since 2.0
+	 */
 	public function __construct() {}
 
 	/**
@@ -23,14 +30,13 @@ abstract class Request {
 	 * @return bool Yes or no.
 	 */
 	public function is_renderable() {
-
 		$is_renderable = in_array(
 			get_class( $this ),
-			array(
+			[
 				'GV\Frontend_Request',
 				'GV\Mock_Request',
 				'GV\REST\Request',
-			),
+			],
 			true
 		);
 
@@ -38,8 +44,9 @@ abstract class Request {
 		 * Is this request renderable?
 		 *
 		 * @since 2.5.2
-		 * @param boolean $is_renderable Huh?
-		 * @param \GV\Request $this This.
+		 *
+		 * @param bool     $is_renderable Whether the request is renderable.
+		 * @param \GV\Request $request       The Request object.
 		 */
 		return apply_filters( 'gravityview/request/is_renderable', $is_renderable, $this );
 	}
@@ -219,13 +226,12 @@ abstract class Request {
 
 		/**
 		 * Checks whether we're currently on the Edit Entry screen.
+		 *
 		 * The Edit Entry functionality overrides this value.
 		 *
-		 * @filter `gravityview_is_edit_entry`
+		 * @since 2.0-beta.2
 		 *
-		 * @since v2.0-beta.2
-		 *
-		 * @param boolean $is_edit_entry
+		 * @param bool $is_edit_entry Whether the current request is an Edit Entry request. Default: false.
 		 */
 		if ( $entry && apply_filters( 'gravityview_is_edit_entry', false ) ) {
 			if ( $entry->is_multi() ) {
@@ -241,70 +247,19 @@ abstract class Request {
 	/**
 	 * Checks whether this an entry search request.
 	 *
-	 * @api
 	 * @since 2.0
-	 * @todo implementation
 	 *
 	 * @return boolean True if this is a search request.
+	 *
+	 * @api
 	 */
 	public function is_search() {
-
-		$search_method = apply_filters( 'gravityview/search/method', 'get' );
-
-		if ( 'post' === $search_method ) {
-			$get = $_POST;
-		} else {
-			$get = $_GET;
-		}
-
-		unset( $get['mode'] );
-
-		$get = array_filter( (array) $get, 'gravityview_is_not_empty_string' );
-
-		if ( $this->_has_field_key( $get ) ) {
-			return true;
-		}
-
-		return isset( $get['gv_search'] ) || isset( $get['gv_start'] ) || isset( $get['gv_end'] ) || isset( $get['gv_by'] ) || isset( $get['gv_id'] );
-	}
-
-	/**
-	 * Calculate whether the $_REQUEST has a GravityView field
-	 *
-	 * @internal
-	 * @todo Roll into the future Search refactor
-	 *
-	 * @since 2.0.7
-	 *
-	 * @param array $get $_POST or $_GET array
-	 *
-	 * @return bool True: GravityView-formatted field detected; False: not detected
-	 */
-	private function _has_field_key( $get ) {
-
-		$has_field_key = false;
-
-		$fields = \GravityView_Fields::get_all();
-
-		$meta = array();
-		foreach ( $fields as $field ) {
-			if ( empty( $field->_gf_field_class_name ) ) {
-				$meta[] = preg_quote( $field->name );
-			}
-		}
-
-		foreach ( $get as $key => $value ) {
-			if ( preg_match( '/^(filter|input)_(([0-9_]+)|' . implode( '|', $meta ) . ')$/sm', $key ) ) {
-				$has_field_key = true;
-				break;
-			}
-		}
-
-		return $has_field_key;
+		return Search_Request::is_search_request( $this );
 	}
 }
 
 /** Load implementations. */
+require gravityview()->plugin->dir( 'future/includes/class-gv-request-cli.php' );
 require gravityview()->plugin->dir( 'future/includes/class-gv-request-frontend.php' );
 require gravityview()->plugin->dir( 'future/includes/class-gv-request-admin.php' );
 require gravityview()->plugin->dir( 'future/includes/rest/class-gv-request-rest.php' );

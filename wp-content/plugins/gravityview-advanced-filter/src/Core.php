@@ -263,10 +263,14 @@ HTML;
 		);
 
 		/**
-		 * @filter `gk/advanced-filters/filters` The filters to be applied to the query.
+		 * The filters to be applied to the query.
 		 *
-		 * @param  [in,out] array $filters The filter set.
-		 * @param View $view The View.
+		 * @since 3.0.0
+		 *
+		 * @param array $filters The filter set.
+		 * @param \GV\View $view The View instance.
+		 *
+		 * @return array Modified filter set.
 		 */
 		$filters = apply_filters( 'gk/advanced-filters/filters', $filters, $view );
 		if ( ! $filters ) {
@@ -363,7 +367,17 @@ HTML;
 			            'conditions'              => rgar( $filter_settings, 'init_filter_vars', [] ),
 			            'target_element_selector' => '#entry_filters',
 			            'variable_name'           => 'gkQueryFilters_advanced_filters',
-			            'max_nesting_level'       => apply_filters( 'gk/advanced-filters/max-nesting-level', 3, $form ),
+						/**
+						 * Modify the maximum nesting level for advanced filters.
+						 *
+						 * @since 4.0.0
+						 *
+						 * @param int $max_level Maximum nesting level. Default 3.
+						 * @param array $form The Gravity Forms form array.
+						 *
+						 * @return int Modified maximum nesting level.
+						 */
+						'max_nesting_level'       => apply_filters( 'gk/advanced-filters/max-nesting-level', 3, $form ),
 		            ] );
 
 		wp_enqueue_script( 'gravityview_adv_filter_admin', plugins_url( 'assets/js/advanced-filter.js', GRAVITYKIT_ADVANCED_FILTER_PLUGIN_FILE ), [ 'jquery' ], $this->_version );
@@ -547,10 +561,14 @@ HTML;
 		);
 
 		/**
-		 * @filter `gk/advanced-filters/field/value/empty` What to display when this field is empty.
+		 * What to display when this field is empty.
 		 *
-		 * @param string           $value   The value to display (Default: empty string)
-		 * @param Template_Context $context The template context this is being called from.
+		 * @since 3.0.0
+		 *
+		 * @param string $value The value to display. Default: empty string.
+		 * @param \GV\Template_Context $context The template context this is being called from.
+		 *
+		 * @return string Modified value to display when field is empty.
 		 */
 		return apply_filters( 'gk/advanced-filters/field/value/empty', $conditional_logic_fail_output, $context );
 	}

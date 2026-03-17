@@ -2,7 +2,7 @@
 /**
  * @license GPL-2.0-or-later
  *
- * Modified by gravityview on 05-December-2025 using {@see https://github.com/BrianHenryIE/strauss}.
+ * Modified using {@see https://github.com/BrianHenryIE/strauss}.
  */
 
 namespace GravityKit\GravityView\Foundation\Licenses;
@@ -24,10 +24,6 @@ class ProductManager {
 	const EDD_PRODUCTS_API_ENDPOINT = 'https://www.gravitykit.com/edd-api/products/';
 
 	const EDD_PRODUCTS_API_VERSION = 3;
-
-	const EDD_PRODUCTS_API_KEY = 'e4c7321c4dcf342c9cb078e27bf4ba97'; // Public key.
-
-	const EDD_PRODUCTS_API_TOKEN = 'e031fd350b03bc223b10f04d8b5dde42'; // Public token.
 
 	const PRODUCTS_DATA_CACHE_ID = Framework::ID . '/products/' . Core::VERSION;
 
@@ -188,12 +184,14 @@ class ProductManager {
 	 * Returns the first product found based on an Ajax router request payload.
 	 *
 	 * @since $ver$
+	 * @since 2.7.2 Renamed from get_first_project_by_payload() & added $products_data_args parameter.
 	 *
-	 * @param array $payload The payload.
+	 * @param array $payload            The payload.
+	 * @param array $products_data_args Optional. Arguments to pass to get_products_data().
 	 *
 	 * @return array|null The product object.
 	 */
-	private function get_first_project_by_payload( array $payload ): ?array {
+	private function get_first_product_by_payload( array $payload, array $products_data_args = [] ): ?array {
 		$text_domains = array_filter( explode( '|', $payload['text_domain'] ?? '' ) );
 
 		if ( ! $text_domains ) {
@@ -201,11 +199,11 @@ class ProductManager {
 		}
 
 		$product = Arr::first(
-            $this->get_products_data(),
-            static function ( array $product ) use ( $text_domains ) {
-				return in_array( $product['text_domain'], $text_domains, true );
+			$this->get_products_data( $products_data_args ),
+			static function ( array $product ) use ( $text_domains ) {
+				return (bool) array_intersect( $text_domains, $product['text_domains'] );
 			}
-        );
+		);
 
 		return $product;
 	}
@@ -235,7 +233,7 @@ class ProductManager {
 			throw new Exception( esc_html__( 'You do not have a permission to perform this action.', 'gk-gravityview' ) );
 		}
 
-		$product = $this->get_first_project_by_payload( $payload );
+		$product = $this->get_first_product_by_payload( $payload );
 
 		if ( ! $product ) {
 			throw new Exception(
@@ -248,7 +246,8 @@ class ProductManager {
 
 		$this->install_product( $product );
 
-		$product = Arr::get( $this->get_products_data( [ 'skip_request_cache' => true ] ), $product['text_domain'] );
+		// Re-fetch product after install to get updated installation status.
+		$product = $this->get_first_product_by_payload( $payload, [ 'skip_request_cache' => true ] );
 
 		$activation_error = null;
 
@@ -378,7 +377,7 @@ class ProductManager {
 			throw new Exception( esc_html__( 'You do not have a permission to perform this action.', 'gk-gravityview' ) );
 		}
 
-		$product = $this->get_first_project_by_payload( $payload );
+		$product = $this->get_first_product_by_payload( $payload );
 
 		if ( ! $product ) {
 			throw new Exception(
@@ -510,7 +509,7 @@ class ProductManager {
 			throw new Exception( esc_html__( 'You do not have a permission to perform this action.', 'gk-gravityview' ) );
 		}
 
-		$product = $this->get_first_project_by_payload( $payload );
+		$product = $this->get_first_product_by_payload( $payload );
 
 		if ( ! $product ) {
 			throw new Exception(
@@ -593,7 +592,7 @@ class ProductManager {
 			throw new Exception( esc_html__( 'You do not have a permission to perform this action.', 'gk-gravityview' ) );
 		}
 
-		$product = $this->get_first_project_by_payload( $payload ) ?? CoreHelpers::get_installed_plugin_by_text_domain( $payload['text_domain'] );
+		$product = $this->get_first_product_by_payload( $payload ) ?? CoreHelpers::get_installed_plugin_by_text_domain( $payload['text_domain'] );
 
 		if ( ! $product ) {
 			throw new Exception(
@@ -676,7 +675,7 @@ class ProductManager {
 			throw new Exception( esc_html__( 'You do not have a permission to perform this action.', 'gk-gravityview' ) );
 		}
 
-		$product = $this->get_first_project_by_payload( $payload );
+		$product = $this->get_first_product_by_payload( $payload );
 
 		if ( ! $product ) {
 			throw new Exception(
@@ -955,8 +954,6 @@ class ProductManager {
 		$response = Helpers::query_api(
 			self::EDD_PRODUCTS_API_ENDPOINT,
 			[
-				'key'         => self::EDD_PRODUCTS_API_KEY,
-				'token'       => self::EDD_PRODUCTS_API_TOKEN,
 				'api_version' => self::EDD_PRODUCTS_API_VERSION,
 				'bust_cache'  => time(),
 			]
@@ -1102,6 +1099,7 @@ class ProductManager {
 			'plugin_file',
 			'dependencies',
 			'text_domain_legacy',
+			'text_domains',
 			'modified_date',
 			'icons',
 			'banners',
@@ -1229,7 +1227,7 @@ class ProductManager {
 		if ( $installed_plugins_hash === $products['installed_plugins_hash'] && $licenses_hash === $products['licenses_hash'] ) {
 			$_cached_products_data = $products['normalized'];
 
-			return $_cached_products_data;
+			return 'text_domain' === $args['key_by'] ? $_cached_products_data : $this->key_products_by_property( $_cached_products_data, $args['key_by'] );
 		} else {
 			$products['installed_plugins_hash'] = $installed_plugins_hash;
 			$products['licenses_hash']          = $licenses_hash;
@@ -1249,7 +1247,7 @@ class ProductManager {
 				continue;
 			}
 
-			$installed_product = CoreHelpers::get_installed_plugin_by_text_domain( implode( '|', [ $product['text_domain'], $product['text_domain_legacy'] ] ) );
+			$installed_product = CoreHelpers::get_installed_plugin_by_text_domain( $product['text_domains'] );
 
 			/**
 			 * Sets link to the product settings page.
@@ -1446,6 +1444,7 @@ class ProductManager {
 			'category_order'       => '',          // String. Product category slug: $product['info']['category_order'].
 			'text_domain'          => '',          // String. Product text domain: $product['info']['text_domain'].
 			'text_domain_legacy'   => '',          // String. Product legacy text domain(s) separated by a pipe: $product['info']['text_domain_legacy'].
+			'text_domains'         => [],          // Array. Combined text domains (current + legacy) for lookup/matching.
 			'has_admin_menu'       => false,       // Boolean. Whether the product has an admin menu: $product['info']['has_admin_menu'].
 			'hidden'               => false,       // Boolean. Whether the product should be hidden from the UI: $product['info']['hidden'].
 			'free'                 => false,       // Boolean. Whether the product is free: $product['info']['free'].
@@ -1520,6 +1519,18 @@ class ProductManager {
 		$normalized_data['checked_dependencies'] = $product['checked_dependencies'] ?? $this->get_product_schema()['checked_dependencies'];
 		$normalized_data['required_by']          = $product['required_by'] ?? $this->get_product_schema()['required_by'];
 		$normalized_data['licenses']             = $product['licenses'] ?? $this->get_product_schema()['licenses'];
+
+		// Combine current and legacy text domains to match products that may have changed their text domain.
+		$normalized_data['text_domains'] = array_values(
+			array_unique(
+				array_filter(
+					array_merge(
+						[ $normalized_data['text_domain'] ],
+						array_filter( explode( '|', $normalized_data['text_domain_legacy'] ?? '' ) )
+					)
+				)
+			)
+		);
 
 		return $normalized_data;
 	}

@@ -99,10 +99,12 @@ class GV_Extension_DataTables_Buttons extends GV_DataTables_Extension {
 		);
 
 		/**
-         * @filter `gravityview_datatables_button_labels` Modify labels buttons
-         * @param array $button_labels Array of button types and their associated labels
-         * @param string $context Where the labels are being shown. Allows for modifying the label for the View Settings vs frontend (default: "admin")
+		 * Modify labels buttons
+		 *
 		 * @since 2.4
+		 *
+		 * @param array  $button_labels Array of button types and their associated labels.
+		 * @param string $context       Where the labels are being shown. Allows for modifying the label for the View Settings vs frontend (default: "admin").
 		 */
 		$button_labels = apply_filters( 'gravityview_datatables_button_labels', $button_labels, $context );
 
@@ -148,7 +150,7 @@ class GV_Extension_DataTables_Buttons extends GV_DataTables_Extension {
 		);
 
 		/**
-		 * @filter `gravityview_dt_buttons_script_src` Use your own DataTables Buttons core script
+		 * Use your own DataTables Buttons core script
 		 * @since 2.0
 		 * @param string $script_url The JS script url for Buttons
 		 */
@@ -169,7 +171,7 @@ class GV_Extension_DataTables_Buttons extends GV_DataTables_Extension {
         );
 
 		/**
-		 * @filter `gravityview_dt_buttons_style_src` Use your own Buttons stylesheet
+		 * Use your own Buttons stylesheet
 		 * @since  2.0
 		 *
 		 * @param string $styles_url The CSS url for Buttons
@@ -214,10 +216,13 @@ class GV_Extension_DataTables_Buttons extends GV_DataTables_Extension {
 					);
 
 					/**
-					 * @filter `gravityview/datatables/button` or `gravityview/datatables/button_{type}` customise the button export options ( `type` is 'pdf', 'csv', 'excel', 'colvis' )
+					 * Customise the button export options ( `type` is 'pdf', 'csv', 'excel', 'colvis' ).
+					 *
 					 * @since 2.0
-					 * @param array $button_config Associative array of button options (mandatory 'extend' and 'text' (e.g. add pdf orientation with 'orientation' => 'landscape' )
-					 * @param int $view_id View ID
+					 *
+					 * @param array  $button_config Associative array of button options (mandatory 'extend' and 'text' (e.g. add pdf orientation with 'orientation' => 'landscape' ).
+					 * @param string $button        The button type.
+					 * @param int    $view_id       View ID.
 					 */
 					$button_config = apply_filters( 'gravityview/datatables/button', apply_filters( 'gravityview/datatables/button_'.$button, $button_config, $view_id ), $button, $view_id );
 

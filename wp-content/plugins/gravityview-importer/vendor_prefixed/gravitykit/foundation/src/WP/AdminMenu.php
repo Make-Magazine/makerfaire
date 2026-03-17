@@ -2,7 +2,7 @@
 /**
  * @license GPL-2.0-or-later
  *
- * Modified by The GravityKit Team on 11-September-2025 using Strauss.
+ * Modified using Strauss.
  * @see https://github.com/BrianHenryIE/strauss
  */
 
@@ -162,7 +162,7 @@ class AdminMenu {
 				 */
 				$badge_count = (int) apply_filters( "gk/foundation/admin-menu/submenu/{$submenu_item['id']}/counter", 0 );
 
-				if ( Arr::get( $submenu, 'hide' ) ) {
+				if ( Arr::get( $submenu_item, 'hide' ) ) {
 					$badge_count = 0;
 				}
 
@@ -201,6 +201,20 @@ class AdminMenu {
 		$menu_temp_position = (float) base_convert( substr( md5( self::WP_ADMIN_MENU_SLUG ), -4 ), 16, 10 ) * 0.00001; // Taken from WP's add_menu_page() code.
 		$gk_settings        = SettingsFramework::get_instance()->get_plugin_settings( Core::ID );
 
+		$saved_menu_position = self::get_menu_position_by_id( $gk_settings['top_level_menu_position'] ?? '' );
+
+		// If saved menu position doesn't exist, fall back to a sensible default.
+		if ( null === $saved_menu_position ) {
+			if ( CoreHelpers::is_network_admin() ) {
+				// Network admin: after Plugins (position 20).
+				$saved_menu_position = self::get_menu_position_by_id( 'plugins.php' );
+			} elseif ( class_exists( 'GFForms' ) ) {
+				$saved_menu_position = apply_filters( 'gform_menu_position', '16.9' );
+			} else {
+				$saved_menu_position = self::get_menu_position_by_id( 'upload.php' );
+			}
+		}
+
 		/**
 		 * Controls the position after which the top-level GravityKit admin menu will be added.
 		 *
@@ -208,11 +222,11 @@ class AdminMenu {
 		 *
 		 * @since  1.0.0
 		 *
-		 * @param int|string|null $menu_position Default: position of the Gravity Forms menu (16.9) or Dashboard (2).
+		 * @param int|string|null $menu_position Default: position of the Gravity Forms menu (16.9) or Media.
 		 */
 		$menu_position = apply_filters(
 			'gk/foundation/admin-menu/position',
-			self::get_menu_position_by_id( $gk_settings['top_level_menu_position'] ?? '' )
+			$saved_menu_position
 		);
 
 		add_menu_page(

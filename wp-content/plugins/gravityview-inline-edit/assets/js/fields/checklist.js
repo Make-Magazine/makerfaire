@@ -119,10 +119,10 @@
 				$.each( checked, function ( i, v ) {
 					var text = '';
 
-					if ( 'label' === choiceDisplay ){
-						text = escape ? $.fn.editableutils.escape( v.text ) : v.text;
-					} else {
+					if ( 'value' === choiceDisplay ) {
 						text = escape ? $.fn.editableutils.escape( v.value ) : v.value;
+					} else {
+						text = escape ? $.fn.editableutils.escape( v.text ) : v.text;
 					}
 
 					if ( ! isEntryView ) {

@@ -134,7 +134,7 @@ abstract class GravityView_Inline_Edit_Field {
 		if ( $this->standard_live_update ) {
 
 			$value = method_exists( $this, '_get_inline_edit_value' ) ? $this->_get_inline_edit_value( $gf_field, $entry ) : rgar( $entry, $gf_field->id );
-			$data  = method_exists( $this, '_get_inline_edit_extra_data' ) ? $this->_get_inline_edit_extra_data( $gf_field, $entry ) : array( 'display_value' => $gf_field->get_value_export( $entry ) );
+			$data  = method_exists( $this, 'get_inline_edit_extra_data' ) ? $this->get_inline_edit_extra_data( $gf_field, $entry ) : array( 'display_value' => $gf_field->get_value_export( $entry ) );
 
 			$return = array(
 				array(

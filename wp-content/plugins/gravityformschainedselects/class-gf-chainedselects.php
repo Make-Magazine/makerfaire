@@ -2,12 +2,12 @@
 
 defined( 'ABSPATH' ) || die();
 
-GFForms::include_feed_addon_framework();
+GFForms::include_addon_framework();
 
 class GFChainedSelects extends GFAddOn {
 
 	protected $_version = GF_CHAINEDSELECTS_VERSION;
-	protected $_min_gravityforms_version = '2.2.2';
+	protected $_min_gravityforms_version = '2.8.0';
 	protected $_slug = 'gravityformschainedselects';
 	protected $_path = 'gravityformschainedselects/chainedselects.php';
 	protected $_full_path = __FILE__;
@@ -159,6 +159,17 @@ class GFChainedSelects extends GFAddOn {
 		}
 
 		return array_merge( parent::styles(), $styles );
+	}
+
+	/**
+	 * Return the plugin's icon for the plugin/form settings menu.
+	 *
+	 * @since 1.9
+	 *
+	 * @return string
+	 */
+	public function get_menu_icon() {
+		return 'gform-icon--chained-selects';
 	}
 
 	/**

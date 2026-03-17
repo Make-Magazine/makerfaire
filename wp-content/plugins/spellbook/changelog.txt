@@ -1,6 +1,21 @@
 
 # Changelog
 
+## 3.0.20 | February 25, 2026
+
+- Updated license REST endpoint calls to include trailing slash to help prevent 301 redirects for certain server setups.
+- Fixed issue with license info boxes not showing the correct registration limit in certain situations.
+- Fixed an issue where the perk settings modal used a hardcoded /wp-admin iframe URL, causing 404s on subdirectory installs.
+
+## 3.0.19 | February 18, 2026
+
+- Added some `:sparkles:` to the Spellbook menu item.
+
+## 3.0.18 | February 4, 2026
+
+- Fixed an issue where GC Google Sheets would display as "Not Installed" after successful installation due to legacy naming mismatches between GP and GC file paths.
+- Fixed an issue where multisite sub-sites could appear activated while remaining unactivated due to network‑wide license caching.
+
 ## 3.0.17 | November 11, 2025
 
 - Added support for the new [Wiz Bundle](https://gravitywiz.com/wiz-bundle).

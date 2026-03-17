@@ -59,9 +59,10 @@ class GravityView_Field_Hidden extends GravityView_Field {
 				 * Convert Hidden fields into Text fields on Edit Entry.
 				 *
 				 * @since 1.22.6
-				 * @since 2.7 Changed default value to `false` from `true`
-				 * @param bool $reveal_hidden_field True: Convert the hidden field to text; False: Leave hidden
-				 * @param GF_Field_Hidden $field The field in question
+				 * @since 2.7 Changed default value to `false` from `true`.
+				 *
+				 * @param bool            $reveal_hidden_field True: Convert the hidden field to text; False: Leave hidden.
+				 * @param GF_Field_Hidden $field               The field in question.
 				 */
 				$reveal_hidden_field = apply_filters( 'gravityview/edit_entry/reveal_hidden_field', false, $field );
 
@@ -72,8 +73,9 @@ class GravityView_Field_Hidden extends GravityView_Field {
 				// Replace GF_Field_Hidden with GF_Field_Text, copying all the data from $field
 				$field = new GF_Field_Text( $field );
 
-				// Everything is copied from $field, so we need to manually set the type
-				$field->type = 'text';
+				// Everything is copied from $field, so we need to manually set the type and inputType.
+				$field->type      = 'text';
+				$field->inputType = 'text';
 			}
 		}
 

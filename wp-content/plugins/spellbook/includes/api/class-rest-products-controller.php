@@ -304,6 +304,13 @@ class GravityPerks_REST_Products_Controller extends WP_REST_Controller {
 			return $product;
 		}
 
+		// Fix GC Google Sheets naming if we have GP slug but GC files are installed, switch to the GC slug.
+		if ( $request['id'] === 'gp-google-sheets' && GWPerk::is_installed( 'gc-google-sheets/gc-google-sheets.php' ) ) {
+			$product->slug        = 'gc-google-sheets';
+			$product->plugin_file = 'gc-google-sheets/gc-google-sheets.php';
+			$product->plugin      = 'gc-google-sheets/gc-google-sheets.php';
+		}
+
 		return rest_ensure_response( $this->prepare_product_for_response( $product, $request ) );
 	}
 
@@ -663,6 +670,13 @@ class GravityPerks_REST_Products_Controller extends WP_REST_Controller {
 		foreach ( $products as $product ) {
 			if ( in_array( $product->slug, $excluded_slugs, true ) ) {
 				continue;
+			}
+
+			// Fix GC Google Sheets naming if we have GP slug but GC files are installed, switch to the GC slug.
+			if ( $product->slug === 'gp-google-sheets' && GWPerk::is_installed( 'gc-google-sheets/gc-google-sheets.php' ) ) {
+				$product->slug        = 'gc-google-sheets';
+				$product->plugin_file = 'gc-google-sheets/gc-google-sheets.php';
+				$product->plugin      = 'gc-google-sheets/gc-google-sheets.php';
 			}
 
 			$products_data[] = $this->prepare_product_for_response( $product, $request );

@@ -2,7 +2,7 @@
 /**
  * @license GPL-2.0-or-later
  *
- * Modified by gravityview on 05-December-2025 using {@see https://github.com/BrianHenryIE/strauss}.
+ * Modified using {@see https://github.com/BrianHenryIE/strauss}.
  */
 
 namespace GravityKit\GravityView\Foundation\Licenses\WP;
@@ -538,7 +538,7 @@ JS;
 			$product = Arr::first(
 				$products,
 				function ( $product ) use ( $plugin_data ) {
-					return $product['text_domain'] === $plugin_data['TextDomain'];
+					return in_array( $plugin_data['TextDomain'], $product['text_domains'], true );
 				}
 			);
 

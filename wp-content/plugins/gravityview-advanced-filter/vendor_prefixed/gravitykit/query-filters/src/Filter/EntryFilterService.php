@@ -2,7 +2,7 @@
 /**
  * @license MIT
  *
- * Modified by gravitykit on 05-December-2025 using {@see https://github.com/BrianHenryIE/strauss}.
+ * Modified by gravitykit on 20-February-2026 using {@see https://github.com/BrianHenryIE/strauss}.
  */
 
 namespace GravityKit\AdvancedFilter\QueryFilters\Filter;
@@ -130,6 +130,13 @@ final class EntryFilterService {
 			|| ProcessDateVisitor::is_native_date_filter( $filter )
 		) {
 			try {
+				// For 'is' and 'isnot' operators, strip the time component so that
+				// relative dates like "today" match entries from any time that day.
+				if ( in_array( $filter->operator(), [ 'is', 'isnot' ], true ) ) {
+					$filter_value = ( new DateTimeImmutable( (string) $filter_value ) )->format( 'Y-m-d' );
+					$entry_value  = ( new DateTimeImmutable( (string) $entry_value ) )->format( 'Y-m-d' );
+				}
+
 				$filter_value = $this->convert_date_to_timestamp( (string) $filter_value );
 				$entry_value  = $this->convert_date_to_timestamp( (string) $entry_value );
 			} catch ( Exception $e ) {

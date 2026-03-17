@@ -2,7 +2,7 @@
 /**
  * @license MIT
  *
- * Modified by gravityview on 05-December-2025 using {@see https://github.com/BrianHenryIE/strauss}.
+ * Modified using {@see https://github.com/BrianHenryIE/strauss}.
  */
 
 namespace GravityKit\GravityView\Foundation\ThirdParty\Illuminate\Validation;
@@ -85,7 +85,7 @@ class Factory implements FactoryContract
      * @param  \GravityKit\GravityView\Foundation\ThirdParty\Illuminate\Contracts\Container\Container  $container
      * @return void
      */
-    public function __construct(Translator $translator, Container $container = null)
+    public function __construct(Translator $translator, ?Container $container = null)
     {
         $this->container = $container;
         $this->translator = $translator;

@@ -2,17 +2,15 @@
 /**
  * @license GPL-2.0-or-later
  *
- * Modified by The GravityKit Team on 11-September-2025 using Strauss.
+ * Modified using Strauss.
  * @see https://github.com/BrianHenryIE/strauss
  */
 
 namespace GravityKit\GravityImport\Foundation\CLI\Commands;
 
 use GravityKit\GravityImport\Foundation\CLI\AbstractCommand;
-use GravityKitFoundation;
+use GravityKit\GravityImport\Foundation\Core as GravityKitFoundation;
 use WP_CLI;
-use WP_CLI_Command;
-use function WP_CLI\Utils\format_items;
 
 /**
  * Manage GravityKit products and licenses.

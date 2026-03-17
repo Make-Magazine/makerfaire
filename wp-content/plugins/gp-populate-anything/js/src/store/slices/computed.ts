@@ -235,6 +235,18 @@ export const createComputedSlice: StateCreator<
 				});
 			}
 
+			if (get().computed.objectTypeInstance?.supportsBoolFilterValues) {
+				specialValues.push({
+					label: 'TRUE',
+					value: 'special_value:boolean:true',
+				});
+
+				specialValues.push({
+					label: 'FALSE',
+					value: 'special_value:boolean:false',
+				});
+			}
+
 			return window.gform.applyFilters(
 				'gppa_filter_special_values',
 				specialValues,
@@ -530,6 +542,9 @@ export const createComputedSlice: StateCreator<
 						) &&
 						!window.GPPA_ADMIN.multiSelectableChoiceFieldTypes.includes(
 							get().field!.inputType
+						) &&
+						!window.GPPA_ADMIN.multiChoiceFieldTypes.includes(
+							get().field!.type
 						)
 					) {
 						for (const input of get().field!.inputs) {

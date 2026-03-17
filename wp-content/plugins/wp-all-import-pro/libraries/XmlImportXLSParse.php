@@ -121,6 +121,18 @@ class PMXI_XLSParser{
 				$rowData = array();
 				for ($col = 1; $col <= $highestColIndex; $col++) {
 					$cell = $worksheet->getCellByColumnAndRow($col, $row);
+					$isFormula = $cell->isFormula();
+					$rawValue = $cell->getValue();
+
+					if ($isFormula) {
+						try {
+							$rawValue = $cell->getCalculatedValue();
+						} catch (\Throwable $calculationError) {
+							$fallbackValue = method_exists($cell, 'getOldCalculatedValue') ? $cell->getOldCalculatedValue() : null;
+							$rawValue = $fallbackValue !== null ? $fallbackValue : $rawValue;
+						}
+					}
+
 					$formatCode = $cell->getStyle()->getNumberFormat()->getFormatCode();
 					$isDateTime = false;
 
@@ -135,7 +147,6 @@ class PMXI_XLSParser{
 					if ($isDateTime) {
 						// Prefer a full timestamp when the underlying serial includes a time portion,
 						// because Excel can hide the time in display formats but keep it in the value.
-						$rawValue = $cell->getValue();
 						if (is_numeric($rawValue)) {
 							// Detect a time component using a small epsilon to account for float conversion.
 							$hasTimePart = abs($rawValue - floor($rawValue)) > 1e-9;
@@ -149,12 +160,12 @@ class PMXI_XLSParser{
 						$value = $cell->getFormattedValue();
 					} else {
 						// Use raw value for normal cells
-						$value = $cell->getValue();
+						$value = $rawValue;
 					}
 
 					$rowData[] = $value;
 				}
-				fputcsv($csvHandle, $rowData, $spreadsheetDelimiter, '"');
+				fputcsv($csvHandle, $rowData, $spreadsheetDelimiter, '"', '\\');
 			}
 
 			fclose($csvHandle);

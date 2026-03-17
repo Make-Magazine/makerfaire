@@ -209,23 +209,39 @@
 	var $wpAllImportDrag = null;
 	var $wpAllImportOriginalColor = '';
 
+	function wpaiInsertAtCursor($input, newValue) {
+		var el = $input[0];
+		if (!el || typeof newValue === 'undefined') {
+			return;
+		}
+
+		if (typeof el.selectionStart === 'number' && typeof el.selectionEnd === 'number') {
+			var start = el.selectionStart;
+			var end = el.selectionEnd;
+			var value = $input.val();
+			$input.val(value.substring(0, start) + newValue + value.substring(end));
+			var newPos = start + newValue.length;
+			el.selectionStart = el.selectionEnd = newPos;
+		} else {
+			$input.val($input.val() + newValue);
+		}
+	}
+
 	function wpaiMakeDroppable(){
 		let $targets = $('input, textarea');
 
 		$targets.on('click', function (e) {
 			if (!$wpAllImportDrag) return;
 
-			let oldValue = $(this).val();
 			let newValue = $wpAllImportDrag.data('xpath');
-			$(this).val(oldValue + newValue);
+			wpaiInsertAtCursor($(this), newValue);
 
 			$wpAllImportDrag.css('color', $wpAllImportOriginalColor).css('font-weight', 'bold');
 			$wpAllImportDrag = null;
 		}).droppable({
 			drop: function (event, ui) {
-				let oldValue = $(this).val();
 				let newValue = ui.draggable.data('xpath') || '';
-				$(this).val(oldValue + newValue);
+				wpaiInsertAtCursor($(this), newValue);
 			},
 			greedy: true,
 			tolerance: 'touch',
@@ -250,12 +266,12 @@
 			if (tinymceIframe.length === 0) {
 				return null;
 			}
-			var iframeOffset = tinymceIframe.offset();
+			var iframeRect = tinymceIframe[0].getBoundingClientRect();
 			return {
-				top: iframeOffset.top - $(window).scrollTop(),
-				left: iframeOffset.left - $(window).scrollLeft(),
-				bottom: iframeOffset.top + tinymceIframe.height() - $(window).scrollTop(),
-				right: iframeOffset.left + tinymceIframe.width() - $(window).scrollLeft()
+				top: iframeRect.top,
+				left: iframeRect.left,
+				bottom: iframeRect.bottom,
+				right: iframeRect.right
 			};
 		}
 
@@ -303,9 +319,50 @@
 					event.clientY >= dropArea.top &&
 					event.clientY <= dropArea.bottom
 				) {
-					ed.setContent(
-						ed.getContent() + $(this).data('xpath')
-					);
+					var clientX = event.clientX;
+					var clientY = event.clientY;
+					if (typeof clientX === 'undefined' && event.originalEvent) {
+						clientX = event.originalEvent.clientX;
+					}
+					if (typeof clientY === 'undefined' && event.originalEvent) {
+						clientY = event.originalEvent.clientY;
+					}
+					if (typeof clientX === 'undefined' && ui && ui.offset) {
+						clientX = ui.offset.left - $(window).scrollLeft();
+					}
+					if (typeof clientY === 'undefined' && ui && ui.offset) {
+						clientY = ui.offset.top - $(window).scrollTop();
+					}
+					var dropX = clientX - dropArea.left;
+					var dropY = clientY - dropArea.top;
+					var doc = ed.getDoc();
+					var range = null;
+					var target = null;
+
+					if (doc) {
+						if (doc.caretRangeFromPoint) {
+							range = doc.caretRangeFromPoint(dropX, dropY);
+						} else if (doc.caretPositionFromPoint) {
+							var pos = doc.caretPositionFromPoint(dropX, dropY);
+							if (pos) {
+								range = doc.createRange();
+								range.setStart(pos.offsetNode, pos.offset);
+								range.collapse(true);
+							}
+						}
+
+						if (!range && doc.elementFromPoint) {
+							target = doc.elementFromPoint(dropX, dropY);
+						}
+					}
+
+					ed.focus();
+					if (range) {
+						ed.selection.setRng(range);
+					} else if (target && ed.selection && typeof ed.selection.setCursorLocation === 'function') {
+						ed.selection.setCursorLocation(target, 0);
+					}
+					ed.execCommand('mceInsertContent', false, $(this).data('xpath') || '');
 				}
 				// Clean up proxy and show the helper again
 				proxy.remove();
@@ -335,9 +392,8 @@
 		$parent.on('click', 'input, textarea', function (e) {
 			if (!$wpAllImportDrag) return;
 
-			let oldValue = $(this).val();
 			let newValue = $wpAllImportDrag.data('xpath') || '';
-			$(this).val(oldValue + newValue);
+			wpaiInsertAtCursor($(this), newValue);
 
 			$wpAllImportDrag.css('color', $wpAllImportOriginalColor).css('font-weight', 'bold');
 			$wpAllImportDrag = null;
@@ -358,9 +414,8 @@
 					let inputName = $(this).data('input-name');
 					// Select only the closest sibling input/textarea with provided name
 					let $inputOrTextarea = $(this).siblings("input[name='" + inputName + "'], textarea[name='" + inputName + "']").first();
-					let oldValue = $inputOrTextarea.val();
 					let newValue = ui.draggable.data('xpath') || '';
-					$inputOrTextarea.val(oldValue + newValue);
+					wpaiInsertAtCursor($inputOrTextarea, newValue);
 				}
 			});
 		});
@@ -2082,7 +2137,11 @@
 		});
 
 		// Taxonnomies
-		$form.find('#show_hidden_ctx').on('click', function(){
+		const $showHiddenCtx = $form.find('#show_hidden_ctx');
+		if ($showHiddenCtx.is(':checked')) {
+			$form.find('tr.private_ctx').show();
+		}
+		$showHiddenCtx.on('click', function(){
 			$form.find('tr.private_ctx').toggle();
 		});
 

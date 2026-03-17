@@ -72,11 +72,12 @@ class GravityView_Admin_ApproveEntries {
 	public function filter_links_entry_list( $filter_links = array(), $form = array(), $include_counts = true ) {
 
 		/**
-		 * @filter `gravityview/approve_entries/show_filter_links_entry_list` Disable filter links.
+		 * Disable filter links.
 		 *
 		 * @since 1.17.1
-		 * @param bool $show_filter_links True: show the "approved"/"disapproved" filter links. False: hide them.
-		 * @param array $form GF Form object of current form
+		 *
+		 * @param bool  $show_filter_links True: show the "approved"/"disapproved" filter links. False: hide them.
+		 * @param array $form              GF Form object of current form.
 		 */
 		$show_filter_links = apply_filters( 'gravityview/approve_entries/show_filter_links_entry_list', true, $form );
 
@@ -110,36 +111,34 @@ class GravityView_Admin_ApproveEntries {
 			)
 		);
 
-		add_filter( 'gform_gf_query_sql', function ( $sql ) use ( $form ) {
-			$entry_meta_table = GFFormsModel::get_entry_meta_table_name();
+		add_filter(
+			'gform_gf_query_sql',
+			static function ( $sql ) {
+				$entry_meta_table = GFFormsModel::get_entry_meta_table_name();
 
-			// Detect the placeholder that indicates we should use the custom SQL query.
-			if ( false === strpos( $sql['where'], '__filter_unapproved' ) ) {
-				return $sql;
-			}
+				// Detect the placeholder that indicates we should use the custom SQL query.
+				if ( false === strpos( $sql['where'], '__filter_unapproved' ) ) {
+					return $sql;
+				}
 
-			$form_id           = (int) $form['id'];
-			$unapproved_status = (int) GravityView_Entry_Approval_Status::UNAPPROVED;
+				$unapproved_status = (int) GravityView_Entry_Approval_Status::UNAPPROVED;
 
-			$additional_joins = "
+				$additional_joins = "
 				LEFT JOIN `{$entry_meta_table}` AS `gv_approval`
 				ON (`gv_approval`.`entry_id` = `t1`.`id` AND `gv_approval`.`meta_key` = 'is_approved')
 				LEFT JOIN `{$entry_meta_table}` AS `gv_partial`
 				ON (`gv_partial`.`entry_id` = `t1`.`id` AND `gv_partial`.`meta_key` = 'partial_entry_percent')
 			";
 
-			// Append our JOINs to the existing ones. The existing JOINs (like o2 for sorting) will remain intact.
-			$sql['join'] = $sql['join'] . $additional_joins;
+				// Append our JOINs to the existing ones. The existing JOINs (like o2 for sorting) will remain intact.
+				$sql['join'] .= $additional_joins;
 
-			// And now we add the custom SQL for the unapproved status being set to 3 or empty.
-			// The existing WHERE clause is overwritten, but it wasn't complex.
-			// We are replacing `AND (`m3`.`meta_key` = 'is_approved' AND `m3`.`meta_value` = '__filter_unapproved')`.
-			$sql['where'] = "
-				WHERE (
-				`t1`.`form_id` IN ('{$form_id}')
-				AND (
-					`t1`.`status` = 'active'
-					AND (
+				// Replace the `is_approved` / `__filter_unapproved` meta query with our custom logic.
+				// We are replacing `(`m3`.`meta_key` = 'is_approved' AND `m3`.`meta_value` = '__filter_unapproved')`.
+				$sql['where'] = preg_replace(
+					'/\(`(m\d+)`\.`meta_key`\s*=\s*\'is_approved\'\s+AND\s+`\1`\.`meta_value`\s*=\s*\'__filter_unapproved\'\)/',
+					"(
+					(
 						`gv_approval`.`meta_value` IS NULL
 						OR `gv_approval`.`meta_value` = '{$unapproved_status}'
 						OR `gv_approval`.`meta_value` = ''
@@ -148,12 +147,13 @@ class GravityView_Admin_ApproveEntries {
 						`gv_partial`.`meta_value` IS NULL
 						OR `gv_partial`.`meta_value` = ''
 					)
-				)
-			)
-			";
+				)",
+					$sql['where']
+				);
 
-			return $sql;
-		} );
+				return $sql;
+			}
+		);
 
 		$approved_count = $disapproved_count = $unapproved_count = 0;
 
@@ -522,7 +522,8 @@ class GravityView_Admin_ApproveEntries {
 		 * Return true to hide reject/approve if there are no connected Views.
 		 *
 		 * @since 1.7.2
-		 * @param boolean $hide_if_no_connections
+		 *
+		 * @param bool $hide_if_no_connections Whether to hide the approval column when no Views are connected.
 		 */
 		$hide_if_no_connections = apply_filters( 'gravityview/approve_entries/hide-if-no-connections', false );
 
@@ -538,8 +539,10 @@ class GravityView_Admin_ApproveEntries {
 		/**
 		 * Override whether the column is shown.
 		 *
-		 * @param boolean $show_approve_column Whether the column will be shown
-		 * @param int $form_id The ID of the Gravity Forms form for which entries are being shown
+		 * @since 1.7.2
+		 *
+		 * @param bool $show_approve_column Whether the column will be shown.
+		 * @param int  $form_id             The ID of the Gravity Forms form for which entries are being shown.
 		 */
 		$show_approve_column = apply_filters( 'gravityview/approve_entries/show-column', $show_approve_column, $form_id );
 

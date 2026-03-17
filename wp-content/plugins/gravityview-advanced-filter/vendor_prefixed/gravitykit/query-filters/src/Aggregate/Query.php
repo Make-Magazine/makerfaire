@@ -2,7 +2,7 @@
 /**
  * @license MIT
  *
- * Modified by gravitykit on 05-December-2025 using {@see https://github.com/BrianHenryIE/strauss}.
+ * Modified by gravitykit on 20-February-2026 using {@see https://github.com/BrianHenryIE/strauss}.
  */
 
 namespace GravityKit\AdvancedFilter\QueryFilters\Aggregate;
@@ -212,7 +212,7 @@ final class Query {
 	 * @since 2.4.0
 	 *
 	 * @param int|null $decimals The number of decimals.
-	 * @param int|null $digits The total number of digits.
+	 * @param int|null $digits   The total number of digits.
 	 *
 	 * @return self
 	 */
@@ -799,6 +799,10 @@ final class Query {
 	 * @return bool
 	 */
 	private function supports_json_table(): bool {
+		if ( self::is_sqlite_db() ) {
+			return false;
+		}
+
 		return version_compare(
 			self::db_version(),
 			self::is_maria_db() ? '10.6.0' : '8.0.0',
@@ -814,10 +818,16 @@ final class Query {
 	 * @return bool
 	 */
 	public static function supports_timezones(): bool {
-		if ( ! isset( self::$supports_timezones ) ) {
-			global $wpdb;
-			self::$supports_timezones = '1' === $wpdb->get_var( "SELECT CONVERT_TZ('2025-01-01 12:00:00', 'GMT', 'America/New_York') = '2025-01-01 07:00:00';" );
+		if ( isset( self::$supports_timezones ) ) {
+			return self::$supports_timezones;
 		}
+
+		if ( self::is_sqlite_db() ) {
+			return self::$supports_timezones ??= false;
+		}
+
+		global $wpdb;
+		self::$supports_timezones = '1' === $wpdb->get_var( "SELECT CONVERT_TZ('2025-01-01 12:00:00', 'GMT', 'America/New_York') = '2025-01-01 07:00:00';" );
 
 		return self::$supports_timezones;
 	}
@@ -847,6 +857,17 @@ final class Query {
 	 */
 	private static function is_maria_db(): bool {
 		return stripos( self::get_db_version_info(), 'mariadb' ) !== false;
+	}
+
+	/**
+	 * Returns whether the current database is SQLite.
+	 *
+	 * @since 2.8.1
+	 *
+	 * @return bool
+	 */
+	private static function is_sqlite_db(): bool {
+		return defined( 'DB_ENGINE' ) && 'sqlite' === DB_ENGINE;
 	}
 
 	/**

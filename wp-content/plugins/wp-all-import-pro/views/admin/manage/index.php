@@ -323,8 +323,8 @@ $columns = apply_filters('pmxi_manage_imports_columns', $columns);
 												default:
 													$custom_type = wp_all_import_custom_type( $item['options']['custom_type'] );
 													if ( ! empty($custom_type) ) {
-														$custom_type->label = $custom_type->labels->name;
-														$custom_type->singular_label = $custom_type->labels->singular_name;
+														$custom_type->label = isset($custom_type->labels->name) ? $custom_type->labels->name : $item['options']['custom_type'];
+														$custom_type->singular_label = isset($custom_type->labels->singular_name) ? $custom_type->labels->singular_name : $custom_type->label;
 													}
 													break;
 											}

@@ -2,7 +2,7 @@
 /**
  * @license GPL-2.0-or-later
  *
- * Modified by gravityview on 05-December-2025 using {@see https://github.com/BrianHenryIE/strauss}.
+ * Modified using {@see https://github.com/BrianHenryIE/strauss}.
  */
 
 namespace GravityKit\GravityView\Foundation\Settings;
@@ -363,7 +363,7 @@ class WPDebugSettings {
 			return '';
 		}
 
-		$constants = [ 'WP_DEBUG', 'WP_DEBUG_LOG' ];
+		$constants = [ 'WP_DEBUG', 'WP_DEBUG_DISPLAY', 'WP_DEBUG_LOG' ];
 
 		foreach ( $constants as $constant ) {
 			/**
@@ -421,6 +421,7 @@ class WPDebugSettings {
 		$constants_block  = "\n";
 		$constants_block .= self::BLOCK_BEGIN . "\n";
 		$constants_block .= "define( 'WP_DEBUG', true ); // " . self::MARKER_ADDED . "\n";
+		$constants_block .= "define( 'WP_DEBUG_DISPLAY', false ); // " . self::MARKER_ADDED . "\n";
 		$constants_block .= "define( 'WP_DEBUG_LOG', '" . addslashes( $log_path ) . "' ); // " . self::MARKER_ADDED . "\n";
 		$constants_block .= self::BLOCK_END . "\n\n";
 

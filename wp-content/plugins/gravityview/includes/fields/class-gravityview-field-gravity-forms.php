@@ -143,12 +143,21 @@ class GravityView_Field_Gravity_Forms extends GravityView_Field {
 			}
 		}
 
+		// Force init scripts inline so modify_form_content() can update JS references to match modified element IDs.
+		add_filter( 'gform_init_scripts_footer', '__return_false', PHP_INT_MAX );
 		$rendered_form = gravity_form( $embed_form_id, ! empty( $title ), ! empty( $description ), false, $field_values_array, $ajax, 0, false );
+		remove_filter( 'gform_init_scripts_footer', '__return_false', PHP_INT_MAX );
 
 		GFFormDisplay::$submission = $_submission;
 		$_POST                     = $_post;
 
-		$rendered_form = self::modify_form_content( $rendered_form, (int) $embed_form_id, (int) $view_form['id'], (int) $view_entry['id'] );
+		// In single-entry context, preserve the original form ID so that CSS selectors and
+		// third-party add-ons (e.g., gc-openai) that reference the form by its original ID
+		// continue to work. In directory context, assign unique IDs to prevent DOM collisions
+		// and spinner/confirmation cross-talk between per-row form instances.
+		$form_count = gravityview()->request->is_entry() ? (int) $embed_form_id : null;
+
+		$rendered_form = self::modify_form_content( $rendered_form, (int) $embed_form_id, (int) $view_form['id'], (int) $view_entry['id'], $form_count );
 
 		echo $rendered_form;
 	}
@@ -203,7 +212,7 @@ class GravityView_Field_Gravity_Forms extends GravityView_Field {
 		if ( $view_form_id && $view_entry_id ) {
 			// Add hidden fields that let us later identify the parent (View) form and entry.
 			$content = preg_replace(
-				'/(<input[^>]*name=\'gform_field_values\'[^>]*?>)(?=[^<]*<)/',
+				'/(<input\b[^>]*\bname=(["\'])gform_field_values\2[^>]*>)(?=[^<]*<)/',
 				<<<HTML
 					$1
 					<input type="hidden" name="gk_parent_entry_id" value="{$view_entry_id}">
@@ -217,19 +226,24 @@ HTML
 
 		// Set unique ID for iframe that handles GF's form Ajax logic, which allows us to have multiple forms on the same page.
 		$strings_to_replace = array(
-			"gform_ajax_frame_{$form_id}"               => "gform_ajax_frame_{$unique_id}",
-			"gform_wrapper_{$form_id}"                  => "gform_wrapper_{$unique_id}",
-			"gform_confirmation_wrapper_{$form_id}"     => "gform_confirmation_wrapper_{$unique_id}",
-			"gforms_confirmation_message_{$form_id}"    => "gforms_confirmation_message_{$unique_id}",
-			"gform_confirmation_message_{$form_id}"     => "gform_confirmation_message_{$unique_id}",
-			"gformInitSpinner( {$form_id},"             => "gformInitSpinner( {$unique_id},",
-			"trigger('gform_page_loaded', [{$form_id}"  => "trigger('gform_page_loaded', [{$unique_id}",
-			"'gform_confirmation_loaded', [{$form_id}]" => "'gform_confirmation_loaded', [{$unique_id}]",
-			"gform_submit_button_{$form_id}"            => "gform_submit_button_{$unique_id}",
-			"gf_submitting_{$form_id}"                  => "gf_submitting_{$unique_id}",
-			"gform_{$form_id}"                          => "gform_{$unique_id}",
-			"gform_{$form_id}_validation_container"     => "gform_{$unique_id}_validation_container",
-			"validation_message_{$form_id}"             => "validation_message_{$unique_id}",
+			"gform_ajax_frame_{$form_id}"                     => "gform_ajax_frame_{$unique_id}",
+			"gform_wrapper_{$form_id}"                        => "gform_wrapper_{$unique_id}",
+			"gform_confirmation_wrapper_{$form_id}"           => "gform_confirmation_wrapper_{$unique_id}",
+			"gforms_confirmation_message_{$form_id}"          => "gforms_confirmation_message_{$unique_id}",
+			"gform_confirmation_message_{$form_id}"           => "gform_confirmation_message_{$unique_id}",
+			"gformInitSpinner( {$form_id},"                   => "gformInitSpinner( {$unique_id},",
+			"trigger('gform_page_loaded', [{$form_id}"        => "trigger('gform_page_loaded', [{$unique_id}",
+			"'gform_confirmation_loaded', [{$form_id}]"       => "'gform_confirmation_loaded', [{$unique_id}]",
+			"gform_submit_button_{$form_id}"                  => "gform_submit_button_{$unique_id}",
+			"gform_{$form_id}"                                => "gform_{$unique_id}",
+			"gform_{$form_id}_validation_container"           => "gform_{$unique_id}_validation_container",
+			"validation_message_{$form_id}"                   => "validation_message_{$unique_id}",
+			"gf_apply_rules({$form_id},"                      => "gf_apply_rules({$unique_id},",
+			"gf_form_conditional_logic'][{$form_id}]"         => "gf_form_conditional_logic'][{$unique_id}]",
+			"input_{$form_id}_"                               => "input_{$unique_id}_",
+			"field_{$form_id}_"                               => "field_{$unique_id}_",
+			"label_{$form_id}_"                               => "label_{$unique_id}_",
+			"choice_{$form_id}_"                              => "choice_{$unique_id}_",
 		);
 
 		$content = str_replace( array_keys( $strings_to_replace ), array_values( $strings_to_replace ), $content );

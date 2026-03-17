@@ -2,7 +2,7 @@
 /**
  * @license MIT
  *
- * Modified by gravitykit on 05-December-2025 using {@see https://github.com/BrianHenryIE/strauss}.
+ * Modified by gravitykit on 20-February-2026 using {@see https://github.com/BrianHenryIE/strauss}.
  */
 
 namespace GravityKit\AdvancedFilter\QueryFilters;
@@ -198,8 +198,6 @@ class QueryFilters {
 	 * @since  2.0.0
 	 *
 	 * @return FilterVisitor[] The visitors.
-	 *
-	 * @filter `gk/query-filters/filter/visitors` The filters to be applied to the query.
 	 */
 	private function get_filter_visitors(): array {
 		$visitors = [
@@ -212,9 +210,15 @@ class QueryFilters {
 			new ProcessFieldTypeVisitor( $this->repository, $this->form ),
 		];
 
+		/**
+		 * Modifies the filters to be applied to the query.
+		 *
+		 * @param FilterVisitor[] $visitors The visitors.
+		 * @param int $form_id The form ID.
+		 */
 		$visitors = apply_filters( 'gk/query-filters/filter/visitors', $visitors, $this->form );
 
-		return array_filter( $visitors, function ( $visitor ): bool {
+		return array_filter( $visitors, static function ( $visitor ): bool {
 			return $visitor instanceof FilterVisitor;
 		} );
 	}
@@ -235,13 +239,11 @@ class QueryFilters {
 	/**
 	 * Returns the forms for the Query filters.
 	 *
-	 * @since  $ver$
+	 * @since  2.7.0
 	 *
 	 * @param int|null $form_id The form ID.
 	 *
 	 * @return array{id:string, title:string}[] The forms.
-	 *
-	 * @filter `gk/query-filters/forms` Modify the forms.*
 	 *
 	 * @internal
 	 */
@@ -273,7 +275,7 @@ class QueryFilters {
 	 */
 	private function get_translations(): array {
 		/**
-		 * @filter `gk/query-filters/translations` Modify default translation strings.
+		 * Modify default translation strings.
 		 *
 		 * @since  1.0
 		 *
@@ -335,6 +337,7 @@ class QueryFilters {
 			'entry_properties'              => esc_html__( 'Entry Properties', 'gravityview-advanced-filter' ),
 			'non_field_data'                => esc_html__( 'Non-Field Data', 'gravityview-advanced-filter' ),
 			'select_field'                  => esc_html__( 'Select Field', 'gravityview-advanced-filter' ),
+			'select_operator'               => esc_html__( 'Select Operator', 'gravityview-advanced-filter' ),
 			'select_form'                   => esc_html__( 'Select Form', 'gravityview-advanced-filter' ),
 			'field_not_available'           => esc_html__(
 				'Form field ID #%d is no longer available. Please remove this condition.',

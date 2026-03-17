@@ -144,8 +144,11 @@ class Batch {
 		$args['id'] = $id;
 
 		/**
-		 * @filter `gravityview/import/batch/create` A batch is being created.
-		 * @param array[in,out] $batch The batch.
+		 * A batch is being created.
+		 *
+		 * @since 2.0
+		 *
+		 * @param array $batch The batch.
 		 */
 		$args = apply_filters( 'gravityview/import/batch/create', $args );
 
@@ -154,7 +157,10 @@ class Batch {
 		$batch = self::update( $args );
 
 		/**
-		 * @filter `gravityview/import/batch/created` A batch has been created.
+		 * A batch has been created.
+		 *
+		 * @since 2.0
+		 *
 		 * @param array $batch The batch.
 		 */
 		do_action( 'gravityview/import/batch/created', $batch );
@@ -172,7 +178,7 @@ class Batch {
 	public static function update( $batch ) {
 		$schema = gv_import_entries_get_batch_json_schema();
 
-		if ( ! Batch::get( $batch['id'] ) ) {
+		if ( ! get_post( $batch['id'] ) ) {
 			return new \WP_Error( 'gravityview/import/errors/fatal', __( 'Could not save batch in database.', 'gk-gravityimport' ) );
 		}
 
@@ -207,16 +213,17 @@ class Batch {
 		$schema = gv_import_entries_get_batch_json_schema();
 
 		$defaults = array(
-			'id'          => null,
-			'status'      => null,
-			'schema'      => array(),
-			'form_id'     => null,
-			'form_title'  => '',
-			'feeds'       => array(),
-			'conditions'  => array(),
-			'source'      => null,
-			'flags'       => array(),
-			'meta'        => array(
+			'id'                => null,
+			'status'            => null,
+			'schema'            => array(),
+			'form_id'           => null,
+			'form_title'        => '',
+			'feeds'             => array(),
+			'conditions'        => array(),
+			'source'            => null,
+			'original_filename' => '',
+			'flags'             => array(),
+			'meta'              => array(
 				'rows'    => 0,
 				'columns' => array(),
 				'excerpt' => array(),
@@ -260,11 +267,11 @@ class Batch {
 				}
 
 				if ( $form ) {
-					if ( in_array( $rule['field'], $seen_fields ) ) {
+					if ( isset( $seen_fields[ $rule['field'] ] ) ) {
 						// Duplicate field sinks are not allowed.
-						return new \WP_Error( 'gravityview/import/errors/invalid_rule', sprintf( __( 'Rule %d duplicate field mismatch.', 'gk-gravityimport' ), $id ), array( 'rule' => $rule ) );
+						return self::get_duplicate_field_error( $rule, $seen_fields[ $rule['field'] ], $form );
 					}
-					$seen_fields[] = $rule['field'];
+					$seen_fields[ $rule['field'] ] = $rule;
 				}
 			}
 		}
@@ -349,28 +356,28 @@ class Batch {
 		$is_meta = ! empty( $rule['meta']['is_meta'] );
 
 		if ( ! is_numeric( $rule['column'] ) || $rule['column'] < 0 ) {
-			return new \WP_Error( 'gravityview/import/errors/invalid_rule', sprintf( __( 'Rule %d invalid column number.', 'gk-gravityimport' ), $id ) );
+			return new \WP_Error( 'gravityview/import/errors/invalid_rule', sprintf( __( 'Rule %d invalid column number.', 'gk-gravityimport' ), $id ), array( 'status' => 400 ) );
 		}
 
 		if ( ! $rule['field'] ) {
-			return new \WP_Error( 'gravityview/import/errors/invalid_rule', sprintf( __( 'Rule %d field cannot be empty.', 'gk-gravityimport' ), $id ) );
+			return new \WP_Error( 'gravityview/import/errors/invalid_rule', sprintf( __( 'Rule %d field cannot be empty.', 'gk-gravityimport' ), $id ), array( 'status' => 400 ) );
 		}
 
 		if ( ! $is_meta && $form ) {
 			if ( is_numeric( $rule['field'] ) ) {
 				if ( ! $field = \GFFormsModel::get_field( $form, $rule['field'] ) ) {
-					return new \WP_Error( 'gravityview/import/errors/invalid_rule', sprintf( __( 'Rule %d invalid field ID for form.', 'gk-gravityimport' ), $id ) );
+					return new \WP_Error( 'gravityview/import/errors/invalid_rule', sprintf( __( 'Rule %d invalid field ID for form.', 'gk-gravityimport' ), $id ), array( 'status' => 400 ) );
 				}
 
 				if ( intval( $rule['field'] ) != $rule['field'] ) {
 					if ( ! $field['inputs'] || ! in_array( $rule['field'], wp_list_pluck( $field['inputs'], 'id' ) ) ) {
-						return new \WP_Error( 'gravityview/import/errors/invalid_rule', sprintf( __( 'Rule %d invalid field ID for form.', 'gk-gravityimport' ), $id ) );
+						return new \WP_Error( 'gravityview/import/errors/invalid_rule', sprintf( __( 'Rule %d invalid field ID for form.', 'gk-gravityimport' ), $id ), array( 'status' => 400 ) );
 					}
 				}
 			} else if ( 'notes' === $rule['field'] ) {
 				// All good, we know thy secret type.
 			} else if ( ! in_array( $rule['field'], \GFFormsModel::get_lead_db_columns() ) ) {
-				return new \WP_Error( 'gravityview/import/errors/invalid_rule', sprintf( __( 'Rule %d invalid field ID for form.', 'gk-gravityimport' ), $id ) );
+				return new \WP_Error( 'gravityview/import/errors/invalid_rule', sprintf( __( 'Rule %d invalid field ID for form.', 'gk-gravityimport' ), $id ), array( 'status' => 400 ) );
 			}
 		} else if ( ! $is_meta ) {
 			/**
@@ -380,7 +387,7 @@ class Batch {
 			$type = current( explode( '[', $type ) );
 
 			if ( ! Core::is_entry_column( $rule['field'] ) && ! \GF_Fields::exists( $type ) ) {
-				return new \WP_Error( 'gravityview/import/errors/invalid_rule', sprintf( __( 'Rule %d unknown field type.', 'gk-gravityimport' ), $id ) );
+				return new \WP_Error( 'gravityview/import/errors/invalid_rule', sprintf( __( 'Rule %d unknown field type.', 'gk-gravityimport' ), $id ), array( 'status' => 400 ) );
 			}
 		}
 
@@ -388,13 +395,13 @@ class Batch {
 
 		foreach ( (array)$rule['flags'] as $flag ) {
 			if ( ! in_array( $flag, $allowed = $schema['definitions']['rule']['properties']['flags']['anyOf'] ) ) {
-				return new \WP_Error( 'gravityview/import/errors/invalid_rule', sprintf( __( 'Rule %d unknown flag. Allowed: %s', 'gk-gravityimport' ), $id, implode( ' ', $allowed ) ) );
+				return new \WP_Error( 'gravityview/import/errors/invalid_rule', sprintf( __( 'Rule %d unknown flag. Allowed: %s', 'gk-gravityimport' ), $id, implode( ' ', $allowed ) ), array( 'status' => 400 ) );
 			}
 		}
 
 		foreach ( (array)$rule['meta'] as $meta => $_ ) {
 			if ( ! in_array( $meta, $allowed = array_keys( $schema['definitions']['rule']['properties']['meta']['properties'] ) ) ) {
-				return new \WP_Error( 'gravityview/import/errors/invalid_rule', sprintf( __( 'Rule %d unknown meta. Allowed: %s', 'gk-gravityimport' ), $id, implode( ' ', $allowed ) ) );
+				return new \WP_Error( 'gravityview/import/errors/invalid_rule', sprintf( __( 'Rule %d unknown meta. Allowed: %s', 'gk-gravityimport' ), $id, implode( ' ', $allowed ) ), array( 'status' => 400 ) );
 			}
 		}
 
@@ -513,6 +520,56 @@ class Batch {
 		return true;
 	}
 
+
+	/**
+	 * Stores the Scheduler job ID for a batch.
+	 *
+	 * @since 2.9.0
+	 *
+	 * @param int $batch_id The batch ID.
+	 * @param int $job_id   The Scheduler job ID.
+	 */
+	public static function set_job_id( $batch_id, $job_id ) {
+		update_post_meta( $batch_id, '_scheduler_job_id', (int) $job_id );
+	}
+
+	/**
+	 * Retrieves the Scheduler job ID for a batch.
+	 *
+	 * @since 2.9.0
+	 *
+	 * @param int $batch_id The batch ID.
+	 *
+	 * @return int The Scheduler job ID, or 0 if not set.
+	 */
+	public static function get_job_id( $batch_id ) {
+		return (int) get_post_meta( $batch_id, '_scheduler_job_id', true );
+	}
+
+	/**
+	 * Stores the original uploaded filename for a batch.
+	 *
+	 * @since 2.9.0
+	 *
+	 * @param int    $batch_id The batch ID.
+	 * @param string $filename The original filename.
+	 */
+	public static function set_original_filename( $batch_id, $filename ) {
+		update_post_meta( $batch_id, '_original_filename', $filename );
+	}
+
+	/**
+	 * Retrieves the original uploaded filename for a batch.
+	 *
+	 * @since 2.9.0
+	 *
+	 * @param int $batch_id The batch ID.
+	 *
+	 * @return string The original filename, or empty string if not set.
+	 */
+	public static function get_original_filename( $batch_id ) {
+		return (string) get_post_meta( $batch_id, '_original_filename', true );
+	}
 
 	/**
 	 * Get a batch by ID.
@@ -675,11 +732,12 @@ class Batch {
 			'updated'     => $post->updated,
 			'schema'      => $post->schema ? : array(),
 			'form_id'     => $post->form_id ? : null,
-			'form_title'  => !empty($post->form_title) ? $post->form_title : '',
+			'form_title'  => self::resolve_form_title( $post ),
 			'feeds'       => $post->feeds ? : array(),
 			'conditions'  => $post->conditions? : array(),
-			'source'      => $post->source,
-			'flags'       => $post->flags ? : array(),
+			'source'            => $post->source,
+			'original_filename' => self::get_original_filename( $post->ID ),
+			'flags'             => $post->flags ? : array(),
 			'meta'        => $post->meta ? : array(
 				'total'   => 0,
 				'rows'    => 0,
@@ -687,6 +745,37 @@ class Batch {
 				'excerpt' => array(),
 			)
 		);
+	}
+
+	/**
+	 * Resolves the form title for a batch post.
+	 *
+	 * Falls back to the Gravity Forms API if the batch doesn't have a stored title.
+	 *
+	 * @since 2.9.0
+	 *
+	 * @param \WP_Post $post The batch post object.
+	 *
+	 * @return string The form title, or empty string if unavailable.
+	 */
+	private static function resolve_form_title( $post ) {
+		if ( ! empty( $post->form_title ) ) {
+			return $post->form_title;
+		}
+
+		$form_id = $post->form_id ? : null;
+
+		if ( ! $form_id || ! class_exists( '\GFAPI' ) ) {
+			return '';
+		}
+
+		$form = \GFAPI::get_form( $form_id );
+
+		if ( ! $form || is_wp_error( $form ) ) {
+			return '';
+		}
+
+		return $form['title'] ?? '';
 	}
 
 	/**
@@ -715,6 +804,125 @@ class Batch {
 
 			return $r;
 		}, $rows );
+	}
+
+	/**
+	 * Yields row errors in memory-safe chunks using a generator.
+	 *
+	 * Unlike get_row_errors(), this method never loads all failed rows into memory at once.
+	 * Each chunk is fetched, yielded row-by-row, then freed before the next chunk is fetched.
+	 *
+	 * @since 2.9.0
+	 *
+	 * @param int $batch_id   The batch ID.
+	 * @param int $chunk_size Number of rows to fetch per database query. Default: 500.
+	 *
+	 * @return \Generator Yields associative arrays with 'number', 'data', and 'error' keys.
+	 */
+	public static function stream_row_errors( $batch_id, $chunk_size = 500 ) {
+		global $wpdb;
+
+		$batch = Batch::get( $batch_id );
+
+		if ( ! $batch ) {
+			return;
+		}
+
+		$tables = gv_import_entries_get_db_tables();
+
+		$total = (int) $wpdb->get_var( $wpdb->prepare(
+			"SELECT COUNT(*) FROM {$tables['rows']} WHERE batch_id = %d AND status = 'error'",
+			$batch['id']
+		) );
+
+		if ( 0 === $total ) {
+			return;
+		}
+
+		$offset = 0;
+
+		while ( $offset < $total ) {
+			$rows = $wpdb->get_results( $wpdb->prepare(
+				"SELECT number, data, error FROM {$tables['rows']} WHERE batch_id = %d AND status = 'error' ORDER BY number ASC LIMIT %d OFFSET %d",
+				$batch['id'],
+				$chunk_size,
+				$offset
+			), ARRAY_A );
+
+			if ( empty( $rows ) ) {
+				break;
+			}
+
+			foreach ( $rows as $row ) {
+				$row['number'] = (int) $row['number'];
+				$row['data'] = json_decode( $row['data'] );
+
+				yield $row;
+			}
+
+			// Free memory from the last query result.
+			$wpdb->last_result = array();
+
+			$offset += $chunk_size;
+		}
+	}
+
+	/**
+	 * Returns a single page of row errors with pagination metadata.
+	 *
+	 * @since 2.9.0
+	 *
+	 * @param int $batch_id The batch ID.
+	 * @param int $page     The page number (1-based). Default: 1.
+	 * @param int $per_page Number of rows per page. Default: 100.
+	 *
+	 * @return array {
+	 *     @type array $rows        Array of row error arrays with 'number', 'data', and 'error' keys.
+	 *     @type int   $total       Total number of error rows.
+	 *     @type int   $total_pages Total number of pages.
+	 * }
+	 */
+	public static function get_row_errors_paginated( $batch_id, $page = 1, $per_page = 100 ) {
+		global $wpdb;
+
+		$batch = Batch::get( $batch_id );
+
+		if ( ! $batch ) {
+			return array(
+				'rows'        => array(),
+				'total'       => 0,
+				'total_pages' => 0,
+			);
+		}
+
+		$tables = gv_import_entries_get_db_tables();
+
+		$total = (int) $wpdb->get_var( $wpdb->prepare(
+			"SELECT COUNT(*) FROM {$tables['rows']} WHERE batch_id = %d AND status = 'error'",
+			$batch['id']
+		) );
+
+		$offset = ( $page - 1 ) * $per_page;
+
+		$rows = $wpdb->get_results( $wpdb->prepare(
+			"SELECT number, data, error FROM {$tables['rows']} WHERE batch_id = %d AND status = 'error' ORDER BY number ASC LIMIT %d OFFSET %d",
+			$batch['id'],
+			$per_page,
+			$offset
+		), ARRAY_A );
+
+		$rows = array_map( function ( $row ) {
+			$row['number'] = (int) $row['number'];
+			$row['data'] = json_decode( $row['data'] );
+
+			return $row;
+		}, $rows );
+
+		return array(
+			'rows'        => $rows,
+			'total'       => $total,
+			'total_pages' => (int) ceil( $total / $per_page ),
+		);
 	}
 
 	/**
@@ -799,5 +1007,41 @@ class Batch {
 		endswitch;
 
 		return false;
+	}
+
+	/**
+	 * Generate a descriptive error message for duplicate field mapping.
+	 *
+	 * @param array $rule The rule attempting to map to the field.
+	 * @param array $existing_rule The rule already mapped to the field.
+	 * @param array $form The Gravity Forms form array.
+	 *
+	 * @return \WP_Error
+	 */
+	private static function get_duplicate_field_error( $rule, $existing_rule, $form ) {
+		$field_label = $rule['field'];
+		
+		// Try to get a more descriptive field label
+		if ( is_numeric( $rule['field'] ) ) {
+			$field = \GFFormsModel::get_field( $form, $rule['field'] );
+			if ( $field && ! empty( $field->label ) ) {
+				$field_label = sprintf( '"%s" (ID: %s)', $field->label, $rule['field'] );
+			}
+		} elseif ( ! empty( $rule['meta'] ) && ! empty( $rule['meta']['is_meta'] ) ) {
+			$field_label = sprintf( 'meta field "%s"', $rule['field'] );
+		}
+		
+		$error_message = sprintf( 
+			__( 'Field %s cannot be mapped to multiple columns. It is already mapped to column %d and cannot also be mapped to column %d.', 'gk-gravityimport' ), 
+			$field_label,
+			$existing_rule['column'] + 1, // Add 1 for user-friendly column numbering
+			$rule['column'] + 1 // Add 1 for user-friendly column numbering
+		);
+		
+		return new \WP_Error( 'gravityview/import/errors/invalid_rule', $error_message, array( 
+			'rule' => $rule, 
+			'existing_rule' => $existing_rule,
+			'status' => 400 
+		) );
 	}
 }

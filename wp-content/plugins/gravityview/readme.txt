@@ -1,7 +1,7 @@
 === GravityView ===
 Tags: gravity forms, directory, gravity forms directory
 Requires at least: 4.7
-Tested up to: 6.9
+Tested up to: 6.9.1
 Requires PHP: 7.4.0
 Stable tag: trunk
 Contributors: The GravityKit Team
@@ -20,6 +20,142 @@ Beautifully display your Gravity Forms entries. Learn more on [gravitykit.com](h
 3. Follow the instructions
 
 == Changelog ==
+
+= 2.54.2 on February 26, 2026 =
+
+This update fixes search issues affecting Multi Select fields and URL parameter filtering.
+
+#### 🐛 Fixed
+* Search not returning results for Multi Select fields.
+* URL search parameters not filtering results when the Search Bar is configured with only the "Search Everything" field.
+
+= 2.54.1 on February 19, 2026 =
+
+This release resolves third-party plugin compatibility issues, Gravity Forms field rendering in Single Entry, and Custom Content field label handling in the View editor.
+
+#### 🐛 Fixed
+* The Gravity Forms field did not render correctly in Single Entry, causing broken CSS styling, form feeds, and third-party integration issues.
+* Sorting a View by column broke page styles when PDF for GravityView download links were present.
+* Admin Labels set on Custom Content fields were replaced by Custom Labels after saving the View.
+* Fatal error caused by a third-party plugin conflict that prevented GravityView from loading.
+
+#### 🔧 Updated
+* [Foundation](https://www.gravitykit.com/foundation/) to version 1.11.0.
+
+= 2.54 on February 12, 2026 =
+
+This update gives you more styling control over rows in the Layout Builder template and addresses issues affecting Edit Entry, Gravity PDF, and View widgets.
+
+#### 🚀 Added
+* Ability to configure custom CSS classes and HTML IDs for Layout Builder row wrapper elements in the View editor.
+
+#### 🐛 Fixed
+* Fatal errors in various scenarios:
+  - On PHP 8+ when editing an entry with the Created By field in the edit layout and the form's honeypot enabled;
+  - On the Edit Entry page with multi-column List fields caused by certain plugins;
+  - When Gravity PDF generates a PDF for forms with Quiz fields.
+* View widgets (e.g., Search Bar, Page Links) rendering multiple times on pages that also contain a GravityView Search sidebar widget.
+* Embedded View in a Custom Content field not rendering inside lightbox Single Entry, showing "You are not allowed to view this content" instead.
+
+#### 💻 Developer Updates
+* Added `gravityview/template/layout-builder/row/attributes` filter to modify the HTML attributes of Layout Builder rows.
+
+#### 🔧 Updated
+* [Foundation](https://www.gravitykit.com/foundation/) to version 1.10.0.
+
+= 2.53 on February 5, 2026 =
+
+This release introduces the ability to filter Entry Notes by type, resolves multiple Edit Entry issues including hidden fields, List fields, and multi-page navigation, and fixes File Upload secure links forcing downloads instead of opening in the browser.
+
+#### 🚀 Added
+* Entry Notes field setting to filter displayed note types, such as hiding notification confirmations while showing only user notes.
+
+#### 🐛 Fixed
+* Hidden fields not appearing on the Edit Entry page when the `gravityview/edit_entry/reveal_hidden_field` filter returns `true`.
+* Multi-column List fields with data on the Edit Entry page no longer display serialized array data when revealed via conditional logic.
+* Edit Entry Next/Previous buttons not navigating to the correct page on multi-page forms.
+* The "Unapproved" entries filter preventing other plugins from modifying the entry query.
+* Layout Builder template now has distinct CSS classes for Single Entry (`gv-layout-builder-single-container`) and Multiple Entries (`gv-layout-builder-multiple-container`) views, matching the pattern used by Table and List templates.
+* File Upload field secure download links now open files (PDFs, images, etc.) in the browser instead of forcing a download.
+
+#### 💻 Developer Updates
+* Added `gk/gravityview/field/notes/type-labels` filter to modify the labels displayed for note types in the Entry Notes field settings.
+* Added `gk/gravityview/field/notes/default-types` filter to modify the default note types available in the Entry Notes field settings.
+
+#### 🔧 Updated
+* [Foundation](https://www.gravitykit.com/foundation/) to version 1.9.0.
+
+= 2.52 on January 29, 2026 =
+
+This release improves File Upload field secure download links, fixes a compatibility issue with the Gravity Forms Populate Anything plugin, and resolves issues with the Gravity Forms field and View filtering.
+
+#### ✨ Improved
+* File Upload fields now generate cleaner, more flexible secure download links.
+
+#### 🐛 Fixed
+* Inconsistent behavior between View filtering using URL parameters and Search Widget configuration.
+* Choice fields (e.g., Select, Radio) populated by the Gravity Forms Populate Anything plugin now display labels instead of raw values when "Show Label" is enabled.
+* Gravity Forms field issues:
+  - Embedded forms with conditional logic were not rendered.
+  - Successful form resubmission after initial validation failure would fail with "Another submission is already in progress" error.
+
+#### 🔧 Updated
+* [Foundation](https://www.gravitykit.com/foundation/) to version 1.8.0.
+
+= 2.51 on January 22, 2026 =
+
+This release adds support for Gravity Forms Repeater fields and resolves issues with field visibility, embedded Views, and Image Choices field display.
+
+#### 🚀 Added
+* Support for Gravity Forms Repeater fields, including nested data display in Table and List Views, Search Bar integration, and configurable display limits.
+
+#### 🐛 Fixed
+* View cache not clearing after editing entries via GravityView Edit Entry.
+* Field visibility settings were not being respected by the Layout Builder template.
+* Embedded Views (via the `[gravityview]` shortcode or GravityView View field) were not rendering correctly when displayed within a Single Entry layout on pages with multiple Views.
+* Image Choices field displayed the same image for all choices when each choice was added as a separate field in a View.
+
+#### 🔧 Updated
+* [Foundation](https://www.gravitykit.com/foundation/) to version 1.7.2.
+
+= 2.50.1 on January 15, 2026 =
+
+This release fixes Search Bar settings modal display issues and a conflict with plugins using Laravel components, and adds new filters for entry deletion and edit locking control.
+
+#### 🐛 Fixed
+* Search Bar Settings modal Close button not visible and dialog appearing behind the admin bar on smaller viewports.
+* Conflict with plugins that use Laravel/Illuminate components.
+
+#### 💻 Developer Updates
+* Added `gk/gravityview/delete-entry/can-delete` filter to control whether a user can delete an entry.
+* Added `gk/gravityview/edit-entry/lock-dialog/show-request-control` filter to control visibility of the Request Control button in the entry lock dialog.
+
+= 2.50 on January 8, 2026 =
+
+This release improves error messaging for administrators, adds custom CSS/JavaScript placeholders for View-specific styling, and fixes Edit Entry functionality, REST API access handling, PHP 8.4 compatibility issues, and more.
+
+#### ✨ Improved
+* Administrators now see detailed, actionable error messages when Views or entries cannot be displayed, instead of the generic "You are not allowed to view this content." message.
+* Custom CSS and JavaScript settings now support placeholders that are automatically replaced with View-specific values. This makes it easy to write custom styles that apply to a single View without affecting others on the same page. [Read about the new placeholders](https://docs.gravitykit.com/article/246-adding-custom-css-to-your-website#:~:text=Available%20placeholders).
+* The "Created By" field on the Edit Entry page now includes AJAX-powered search, making it easy to find and select users.
+
+#### 🐛 Fixed
+* JavaScript error breaking Edit Entry functionality when forms use conditional logic on buttons.
+* Unnecessary database queries running on every page load when GravityView caching was disabled, potentially causing performance issues.
+* Multi-column List fields on the Edit Entry page displayed serialized array data (e.g., `a:1:{i:0;s:0:"";}`) instead of remaining empty when revealed via conditional logic.
+* REST API requests for single entries now properly respect View settings like "Prevent Direct Access" and REST API restrictions.
+* PHP 8.4 implicit nullable parameter deprecation warnings.
+* Name field now respects hidden input settings configured in Gravity Forms (e.g., hiding Prefix, Middle Name or Suffix).
+* Some hooks were not removed when switching lightbox provider.
+* Merge tag picker not appearing in the View editor when Yoast SEO Premium is active.
+
+#### 🔧 Updated
+* [Foundation](https://www.gravitykit.com/foundation/) to version 1.7.1.
+
+#### 💻 Developer Updates
+* Added `gk/gravityview/custom-code/placeholders` filter to modify or add custom placeholders for the Custom CSS and JavaScript settings.
+* The `VIEW_SELECTOR` placeholder is hard-coded to `.gv-container.gv-container-{view id}`. If you have removed those classes by using the `gravityview/render/container/class` filter, the `VIEW_SELECTOR` placeholder will not work as expected; use the `VIEW_ID` placeholder instead.
+* View Custom CSS and JavaScript is now output only once per View, even when the same View is embedded multiple times on a page.
 
 = 2.49 on December 5, 2025 =
 
@@ -94,7 +230,16 @@ This release addresses multiple issues impacting search fields, Edit Entry behav
 * [Foundation](https://www.gravitykit.com/foundation/) to version 1.6.2.
 
 #### 💻 Developer Updates
-* Added `gk/gravityview/view_collection/from_post/views` filter to allow code to add Views to the Collection that are not found by the default logic, or modify the View Collection before it is returned.
+* Added `gk/gravityview/view_collection/from_post/views` filter to allow code to add Views to the Collection that are not found by the default logic,  or modify the View Collection before it is returned.
+* Improved error message handling with centralized `GravityView_Error_Messages` class:
+  - Error messages now differentiate between administrators (actionable links) and regular users (generic messages) to prevent information disclosure.
+  - Entry permission checks moved to `GV\Entry::check_access()` for better encapsulation.
+  - All error codes standardized to `snake_case` for consistency with WordPress core conventions.
+* Enhanced security of error messages by properly escaping all translatable strings using `esc_html__()` and `wp_kses_post()`.
+* Improved code quality and type safety:
+  - Removed redundant `as_entry()` conversions where objects are already `GV\Entry` instances.
+  - Added safe array access using `GV\Utils::get()` to prevent undefined index errors.
+  - Fixed type confusion between `GV\Entry` objects and raw entry arrays.
 
 = 2.48.1 on October 9, 2025 =
 

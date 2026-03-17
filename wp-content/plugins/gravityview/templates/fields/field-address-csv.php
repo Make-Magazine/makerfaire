@@ -36,7 +36,10 @@ if ( ! $is_single_input ) {
 	/**
 	 * Use Gravity Forms' method to get the full address.
 	 */
-	$value_with_newline = GFCommon::get_lead_field_display( $field, $value, '', false, 'text' );
+	// GF 2.9.29+ expects the full entry array; older versions expect a currency string.
+	$entry_or_currency = version_compare( GFForms::$version, '2.9.28', '>' ) ? $entry : '';
+
+	$value_with_newline = GFCommon::get_lead_field_display( $field, $value, $entry_or_currency, false, 'text' );
 
 	remove_filter( 'gform_disable_address_map_link', '__return_true' );
 
@@ -49,9 +52,10 @@ if ( ! $is_single_input ) {
 	/**
 	 * The address parts delimiter.
 	 *
-	 * @since develop
-	 * @param string The delimiter. Default: newline
-	 * @param \GV\Template_Context The context.
+	 * @since 2.4
+	 *
+	 * @param string               $delimiter   The delimiter. Default: newline.
+	 * @param \GV\Template_Context $gravityview The template context.
 	 */
 	$delimiter = apply_filters( 'gravityview/template/field/address/csv/delimiter', "\n", $gravityview );
 

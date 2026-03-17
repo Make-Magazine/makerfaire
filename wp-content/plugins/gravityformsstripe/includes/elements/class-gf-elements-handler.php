@@ -241,6 +241,30 @@ class Experimental_GF_Elements_Handler {
 	}
 
 	/**
+	 * AJAX action to mark an entry as failed.
+	 *
+	 * @since 6.0.3
+	 */
+	public function ajax_update_entry_failed() {
+		check_ajax_referer( 'gfstripe_update_entry_failed', 'nonce' );
+
+		$entry_id       = intval( rgpost( 'entry_id' ) );
+		$error_message  = esc_html__( 'Payment has failed. Error message: ', 'gravityformsstripe' ) . sanitize_text_field( rgpost( 'error_message' ) );
+
+		// Getting entry.
+		$entry = \GFAPI::get_entry( $entry_id );
+		if ( is_wp_error( $entry ) ) {
+			wp_send_json_error( array( 'message' => $entry->get_error_messages() ) );
+		}
+
+		// Marking entry as failed.
+		$this->addon->fail_payment( $entry, array( 'entry_id' => $entry['id'], 'note' => $error_message ) );
+
+		// Sending success reponse
+		wp_send_json_success();
+	}
+
+	/**
 	 * Links failed entries with successfull entries via entry meta and entry notes.
 	 *
 	 * @since 6.0

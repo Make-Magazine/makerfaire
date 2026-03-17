@@ -150,6 +150,20 @@ abstract class Logger /** @todo extends GravityKit\GravityView\Foundation\ThirdP
 
 		return $message;
 	}
+
+	/**
+	 * Logs with an arbitrary level using `do_action` and our
+	 *  old action handlers.
+	 *
+	 * $context['data'] will be passed to the action.
+	 *
+	 * @param mixed  $level   The log level.
+	 * @param string $message The message to log.
+	 * @param array  $context The context.
+	 *
+	 * @return void
+	 */
+	abstract protected function log( $level, $message, $context );
 }
 
 /** Load implementations. */

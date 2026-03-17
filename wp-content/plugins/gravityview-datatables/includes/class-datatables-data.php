@@ -265,7 +265,9 @@ class GV_Extension_DataTables_Data {
 		}
 
 		/**
-		 * @filter `gravityview/datatables/json/header/content_length` Enable or disable the Content-Length header on the AJAX JSON response
+		 * Enable or disable the Content-Length header on the AJAX JSON response
+		 *
+		 * @since 2.0
 		 *
 		 * @param boolean $has_content_length true by default
 		 */
@@ -353,10 +355,10 @@ class GV_Extension_DataTables_Data {
 
 		$view->settings->update( $atts );
 
-		// Force shortcode parametrization
+		// Force shortcode parametrization.
 		if ( $shortcode_atts = \GV\Utils::_POST( 'shortcode_atts' ) ) {
 			foreach ( $shortcode_atts as $att => $value ) {
-				if ( in_array( $att, array( 'search_key', 'search_value' ) ) ) {
+				if ( in_array( $att, array( 'search_field', 'search_value', 'search_operator' ) ) ) {
 					$view->settings->update( array( $att => $value ) );
 				}
 			}
@@ -455,12 +457,13 @@ class GV_Extension_DataTables_Data {
 		}
 
 		/**
-		 * @filter `gravityview/datatables/output` Filter the output returned from the AJAX request
-		 * @since  2.3
+		 * Filter the output returned from the AJAX request
 		 *
-		 * @param array                $output
-		 * @param View             $view
-		 * @param Entry_Collection $entries
+		 * @since 2.3
+		 *
+		 * @param array            $output  The output data array.
+		 * @param View             $view    The View object.
+		 * @param Entry_Collection $entries The entries collection.
 		 */
 		$output = apply_filters( 'gravityview/datatables/output', $output, $view, $entries );
 
@@ -567,8 +570,9 @@ class GV_Extension_DataTables_Data {
 		$search_all_value = stripslashes_deep( $_POST['search']['value'] );
 
 		/**
-		 * @filter `gravityview/search-all-split-words` Search for each word separately or the whole phrase?
-		 * @since  2.1.1
+		 * Search for each word separately or the whole phrase?
+		 *
+		 * @since 2.1.1
 		 *
 		 * @param bool $split_words True: split a phrase into words; False: search whole word only [Default: true]
 		 */
@@ -624,11 +628,11 @@ class GV_Extension_DataTables_Data {
 		 *
 		 * @action `gk/gravityview/datatables/output/before`
 		 *
-		 * @since TODO
+		 * @since 2.0
 		 *
 		 * @param \GV\Entry_Collection $entries The collection of entries for the current search.
-		 * @param View $view The View.
-		 * @param \WP_Post $post The current View or post/page where View is embedded.
+		 * @param View                 $view    The View.
+		 * @param \WP_Post             $post    The current View or post/page where View is embedded.
 		 */
 		do_action( 'gk/gravityview/datatables/output/before', $entries, $view, $post );
 
@@ -647,6 +651,34 @@ class GV_Extension_DataTables_Data {
 			$internal_source = new \GV\Internal_Source();
 			$renderer        = new \GV\Field_Renderer();
 
+			$sort_field_setting = $this->get_original_sort_field_setting( $view );
+			$visible_field_ids  = [];
+
+			foreach ( $fields as $field ) {
+				if ( 'custom' == $field->type ) {
+					$visible_field_ids[] = 'custom_' . $field->UID;
+				} else {
+					$visible_field_ids[] = $field->ID;
+				}
+			}
+
+			$hidden_sort_fields = array();
+			foreach ( $sort_field_setting as $sort_field ) {
+				if ( ! empty( $sort_field ) && ! in_array( $sort_field, $visible_field_ids ) ) {
+					// Create a \GV\Field object for this sort field.
+					$hidden_field = is_numeric( $sort_field )
+						? \GV\GF_Field::by_id( $view->form, $sort_field )
+						: \GV\Internal_Field::by_id( $sort_field );
+
+					if ( $hidden_field ) {
+						$hidden_sort_fields[] = $hidden_field;
+					}
+				}
+			}
+
+			// Combine visible fields and hidden sort fields for rendering.
+			$all_fields = array_merge( $fields, $hidden_sort_fields );
+
 			// For each entry
 			foreach ( $entries->all() as $entry ) {
 				$temp = array();
@@ -659,8 +691,7 @@ class GV_Extension_DataTables_Data {
 					)
 				);
 
-				// Loop through each column and set the value of the column to the field value
-				foreach ( $fields as $field ) {
+				foreach ( $all_fields as $field ) {
 					$form = $view->form;
 
 					if ( is_callable( array( $entry, 'is_multi' ) ) && $entry->is_multi() ) {
@@ -674,12 +705,13 @@ class GV_Extension_DataTables_Data {
 				\GV\Mocks\Legacy_Context::pop();
 
 				/**
-				 * @filter `gravityview/datatables/output/entry` Modify the entry output before the request is returned
-				 * @since  2.3.1
+				 * Modify the entry output before the request is returned
 				 *
-				 * @param array    $temp  Array of values for the entry, one item per field being rendered by \GV\Field_Renderer()
-				 * @param View $view  Current View being processed
-				 * @param array    $entry Current Gravity Forms entry array
+				 * @since 2.3.1
+				 *
+				 * @param array $temp  Array of values for the entry, one item per field being rendered by \GV\Field_Renderer()
+				 * @param View  $view  Current View being processed
+				 * @param array $entry Current Gravity Forms entry array
 				 */
 				$temp = apply_filters( 'gravityview/datatables/output/entry', $temp, $view, $entry );
 
@@ -711,6 +743,24 @@ class GV_Extension_DataTables_Data {
 		}
 
 		return $width;
+	}
+
+	/**
+	 * Get the original sort_field setting from saved View meta.
+	 *
+	 * This retrieves the sort_field from the saved post meta rather than from
+	 * runtime settings, which may have been modified by AJAX sorting requests.
+	 *
+	 * @since 3.7.1
+	 *
+	 * @param View $view The View object.
+	 *
+	 * @return array The sort_field setting as an array.
+	 */
+	private function get_original_sort_field_setting( $view ) {
+		$original_settings = get_post_meta( $view->ID, '_gravityview_template_settings', true );
+
+		return (array) ( isset( $original_settings['sort_field'] ) ? $original_settings['sort_field'] : [] );
 	}
 
 	/**
@@ -879,6 +929,9 @@ class GV_Extension_DataTables_Data {
 		 * Change the locale used to fetch translations.
 		 *
 		 * @since 1.2.3
+		 *
+		 * @param string $locale       The current locale.
+		 * @param array  $translations The translations mapping array.
 		 */
 		$locale = apply_filters( 'gravityview/datatables/config/locale', $locale, $translations );
 
@@ -912,7 +965,7 @@ class GV_Extension_DataTables_Data {
 			$no_results_text = ! $no_results_text ? __( 'This search returned no results.', 'gv-datatables' ) : $no_results_text;
 
 			/**
-			 * @filter `gravityview_datatables_loading_text` Modify the text shown when DataTables is loaded
+			 * Modify the text shown when DataTables is loaded
 			 *
 			 * @since  2.5 Added $view parameter
 			 *
@@ -931,7 +984,7 @@ class GV_Extension_DataTables_Data {
 		}
 
 		/**
-		 * @filter `gravityview/datatables/config/language` Override language settings
+		 * Override language settings
 		 * @since  1.2.2
 		 *
 		 * {@link https://github.com/DataTables/Plugins/blob/master/i18n/English.lang}
@@ -1059,6 +1112,37 @@ class GV_Extension_DataTables_Data {
 	}
 
 	/**
+	 * Generates a unique state key for DataTables based on view configuration.
+	 *
+	 * This ensures that when view settings change (especially sort fields), the cached
+	 * state is invalidated and a fresh state is used.
+	 *
+	 * @since 3.7.1
+	 *
+	 * @param View $view The View object
+	 *
+	 * @return string A unique hash representing the current view configuration
+	 */
+	private function generate_state_key( $view ) {
+		$config_data = array(
+			'view_id'        => $view->ID,
+			'sort_field'     => $view->settings->get( 'sort_field', array() ),
+			'sort_direction' => $view->settings->get( 'sort_direction', array() ),
+			'page_size'      => $view->settings->get( 'page_size', 10 ),
+			'view_modified'  => get_post_modified_time( 'U', true, $view->ID ),
+		);
+
+		// Include visible field IDs to detect column changes
+		$visible_field_ids = array();
+		foreach ( $view->fields->by_position( 'directory_table-columns' )->by_visible()->all() as $field ) {
+			$visible_field_ids[] = ( 'custom' === $field->type ) ? 'custom_' . $field->UID : $field->ID;
+		}
+		$config_data['visible_fields'] = $visible_field_ids;
+
+		return substr( md5( wp_json_encode( $config_data ) ), 0, 8 );
+	}
+
+	/**
 	 * Generate the script configuration array
 	 *
 	 * @since 1.3.3
@@ -1111,6 +1195,11 @@ class GV_Extension_DataTables_Data {
 			),
 		);
 
+		// Generates a unique state key based on view configuration to ensure cache invalidation when settings change
+		if ( $dt_config['stateSave'] ) {
+			$dt_config['stateKey'] = $this->generate_state_key( $view );
+		}
+
 		// page size, if defined
 		$dt_config['pageLength'] = intval( $view->settings->get( 'page_size', 10 ) );
 
@@ -1120,6 +1209,8 @@ class GV_Extension_DataTables_Data {
 		 * @link https://datatables.net/reference/option/columns
 		 */
 		$columns = array();
+		$visible_field_ids = array();
+
 		foreach ( $view->fields->by_position( 'directory_table-columns' )->by_visible()->all() as $field ) {
 
 			if ( 'custom' == $field->type ) {
@@ -1127,6 +1218,8 @@ class GV_Extension_DataTables_Data {
 			} else {
 				$field_id = $field->ID;
 			}
+
+			$visible_field_ids[] = $field_id;
 
 			$field_config = $field->as_configuration();
 
@@ -1169,9 +1262,63 @@ class GV_Extension_DataTables_Data {
 
 			$columns[] = $field_column;
 		}
-		$dt_config['columns'] = $columns;
 
-		$sort_field_setting = (array) $view->settings->get( 'sort_field', array() );
+		$sort_field_setting    = $this->get_original_sort_field_setting( $view );
+		$hidden_column_indices = [];
+
+		foreach ( $sort_field_setting as $sort_field ) {
+			if ( empty( $sort_field ) || in_array( $sort_field, $visible_field_ids ) ) {
+				continue;
+			}
+
+			if ( ! $view->form || ! class_exists( 'GFAPI' ) ) {
+				continue;
+			}
+
+			$gf_field = GFAPI::get_field( $view->form->ID, $sort_field );
+
+			$is_internal_field = class_exists( 'GravityView_Fields' ) && GravityView_Fields::get( $sort_field );
+
+			if ( ! $gf_field && ! $is_internal_field ) {
+				continue;
+			}
+
+			$field_type = $gf_field ? $gf_field->type : $sort_field;
+			$type = 'string';
+
+			if ( in_array( $field_type, [ 'date', 'date_created', 'date_updated', 'payment_date' ] ) ) {
+				$type = 'num';
+			}
+
+			if ( 'number' === $field_type ) {
+				$type = 'num';
+			}
+
+			$hidden_column_index = count( $columns );
+			$hidden_column_indices[] = $hidden_column_index;
+
+			$columns[] = [
+				'name'       => 'gv_' . $sort_field,
+				'width'      => null,
+				'form_id'    => $view->form->ID,
+				'className'  => 'gv-hidden-sort-column',
+				'type'       => $type,
+				'field_type' => $field_type,
+				'orderable'  => true, // Hidden sort columns should be orderable.
+			];
+		}
+
+		$dt_config['columns'] = $columns;
+		if ( ! empty( $hidden_column_indices ) ) {
+			if ( ! isset( $dt_config['columnDefs'] ) ) {
+				$dt_config['columnDefs'] = array();
+			}
+
+			$dt_config['columnDefs'][] = [
+				'visible' => false,
+				'targets' => $hidden_column_indices,
+			];
+		}
 
 		// set default order
 		foreach ( $sort_field_setting as $l => $sort_field ) {
@@ -1188,15 +1335,21 @@ class GV_Extension_DataTables_Data {
 		}
 
 		/**
-		 * @filter `gravityview_datatables_js_options` Modify the settings used to render DataTables
-		 * @see    https://datatables.net/reference/option/
+		 * Modify the settings used to render DataTables.
 		 *
-		 * @since 3.3 Added $this parameter.
+		 * @link https://datatables.net/reference/option/ Official DataTables documentation.
+		 * @link https://docs.gravitykit.com/article/243-how-to-disable-the-loading-data-message How to disable the "Loading data..." message.
+		 * @link https://docs.gravitykit.com/article/201-how-to-disable-the-datatables-search-filter A document on how to disable the DataTables search filter.
+		 * @link https://docs.gravitykit.com/article/665-datatables-sorting Modifying and clearing the way DataTables stores sorting across sessions.
+		 * @link https://docs.gravitykit.com/article/249-how-to-customize-the-csv-field-separator Converting the CSV export separator to a tab character for TSV format.
 		 *
-		 * @param array   $dt_config The configuration for the current View
-		 * @param int     $view_id   The ID of the View being configured
-		 * @param WP_Post $post      Current View or post/page where View is embedded
-		 * @param GV_Extension_DataTables_Data $this The current instance of the class.
+		 * @since 1.0
+		 * @since 3.3 Added `$this` parameter.
+		 *
+		 * @param array                        $dt_config The configuration for the current View.
+		 * @param int                          $view_id   The ID of the View being configured.
+		 * @param WP_Post                      $post      Current View or post/page where View is embedded.
+		 * @param GV_Extension_DataTables_Data $this      The current instance of the class.
 		 */
 		$dt_config = apply_filters( 'gravityview_datatables_js_options', $dt_config, $view->ID, $post, $this );
 
@@ -1252,7 +1405,7 @@ class GV_Extension_DataTables_Data {
 		}
 
 		/**
-		 * @filter `gravityview_datatables_script_src` Modify the DataTables core script used
+		 * Modify the DataTables core script used
 		 *
 		 * @param string $path Full URL to the jQuery DataTables file
 		 */
@@ -1288,7 +1441,12 @@ class GV_Extension_DataTables_Data {
 		/**
 		 * Extend datatables by including other scripts and styles.
 		 *
+		 * @since 1.0
 		 * @deprecated Will no longer give the views on the page.
+		 *
+		 * @param array   $empty_array_1 Empty array (deprecated).
+		 * @param array   $empty_array_2 Empty array (deprecated).
+		 * @param WP_Post $post          Current View or post/page where View is embedded.
 		 */
 		do_action( 'gravityview_datatables_scripts_styles', array(), array(), $post );
 	}

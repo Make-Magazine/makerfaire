@@ -8,7 +8,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  *
- * Modified by __root__ on 05-December-2025 using Strauss.
+ * Modified using Strauss.
  * @see https://github.com/BrianHenryIE/strauss
  */
 
@@ -34,7 +34,7 @@ class MockFileSessionStorage extends MockArraySessionStorage
      * @param string      $name     Session name
      * @param MetadataBag $metaBag  MetadataBag instance
      */
-    public function __construct($savePath = null, $name = 'MOCKSESSID', MetadataBag $metaBag = null)
+    public function __construct($savePath = null, $name = 'MOCKSESSID', ?MetadataBag $metaBag = null)
     {
         if (null === $savePath) {
             $savePath = sys_get_temp_dir();

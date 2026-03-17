@@ -1,11 +1,9 @@
 <?php
-
 namespace GravityKit\GravityImport\Foundation\ThirdParty\Illuminate\Support;
-
 /**
  * @license MIT
  *
- * Modified by The GravityKit Team on 11-September-2025 using Strauss.
+ * Modified using Strauss.
  * @see https://github.com/BrianHenryIE/strauss
  */
 
@@ -117,7 +115,7 @@ if (! function_exists('array_first')) {
      * @param  mixed  $default
      * @return mixed
      */
-    function array_first($array, callable $callback = null, $default = null)
+    function array_first($array, ?callable $callback = null, $default = null)
     {
         return Arr::first($array, $callback, $default);
     }
@@ -189,7 +187,7 @@ if (! function_exists('array_last')) {
      * @param  mixed  $default
      * @return mixed
      */
-    function array_last($array, callable $callback = null, $default = null)
+    function array_last($array, ?callable $callback = null, $default = null)
     {
         return Arr::last($array, $callback, $default);
     }

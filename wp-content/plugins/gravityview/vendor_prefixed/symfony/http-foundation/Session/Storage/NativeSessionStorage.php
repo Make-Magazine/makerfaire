@@ -8,7 +8,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  *
- * Modified by gravityview on 05-December-2025 using {@see https://github.com/BrianHenryIE/strauss}.
+ * Modified using {@see https://github.com/BrianHenryIE/strauss}.
  */
 
 namespace GravityKit\GravityView\Symfony\Component\HttpFoundation\Session\Storage;
@@ -105,7 +105,7 @@ class NativeSessionStorage implements SessionStorageInterface
      *
      * @param AbstractProxy|\SessionHandlerInterface|null $handler
      */
-    public function __construct(array $options = [], $handler = null, MetadataBag $metaBag = null)
+    public function __construct(array $options = [], $handler = null, ?MetadataBag $metaBag = null)
     {
         if (!\extension_loaded('session')) {
             throw new \LogicException('PHP extension "session" is required.');
@@ -326,7 +326,7 @@ class NativeSessionStorage implements SessionStorageInterface
         return $this->bags[$name];
     }
 
-    public function setMetadataBag(MetadataBag $metaBag = null)
+    public function setMetadataBag(?MetadataBag $metaBag = null)
     {
         if (null === $metaBag) {
             $metaBag = new MetadataBag();

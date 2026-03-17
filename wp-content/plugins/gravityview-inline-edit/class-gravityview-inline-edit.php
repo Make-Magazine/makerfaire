@@ -93,7 +93,7 @@ final class GravityView_Inline_Edit {
 		$default_style = 'bootstrap3-editable';
 
 		/**
-		 * @filter `gravityview-inline-edit/edit-style` Modify the inline edit style
+		 * Modify the inline edit style
 		 *
 		 * @since 1.0
 		 *
@@ -116,7 +116,7 @@ final class GravityView_Inline_Edit {
 		$edit_mode = GravityView_Inline_Edit_GFAddon::get_instance()->get_plugin_setting( 'inline-edit-mode' );
 
 		/**
-		 * @filter `gravityview-inline-edit/edit-mode` Modify the inline edit mode.
+		 * Modify the inline edit mode.
 		 *
 		 * @since 1.0
 		 *
@@ -177,7 +177,7 @@ final class GravityView_Inline_Edit {
 		);
 
 		/**
-		 * @filter `gravityview-inline-edit/ignored-fields` The fields ignored by GravityView Inline Edit
+		 * The fields ignored by GravityView Inline Edit
 		 *
 		 * @since 1.0
 		 *
@@ -224,7 +224,7 @@ final class GravityView_Inline_Edit {
 		);
 
 		/**
-		 * @filter `gravityview-inline-edit/supported-fields` The fields supported by GravityView Inline Edit
+		 * The fields supported by GravityView Inline Edit
 		 *
 		 * @since 1.0
 		 *
@@ -256,7 +256,7 @@ final class GravityView_Inline_Edit {
 		);
 
 		/**
-		 * @filter `gravityview-inline-edit/form-buttons` Modify the text and CSS classes used inline edit buttons
+		 * Modify the text and CSS classes used inline edit buttons
 		 *
 		 * @since 1.0
 		 *
@@ -297,11 +297,11 @@ final class GravityView_Inline_Edit {
 		);
 
 		/**
-		 * @filter `gravityview-inline-edit/inline-edit-caps` Caps required for an user to edit an entry. Passed to GFCommon::current_user_can_any()
+		 * Caps required for an user to edit an entry. Passed to GFCommon::current_user_can_any()
 		 *
 		 * @since 1.0
 		 *
-		 * @uses GFCommon::current_user_can_any()
+		 * @see GFCommon::current_user_can_any()
 		 *
 		 * @param array $caps Array of user capabilities needed to allow inline editing of entries
 		 */
@@ -312,7 +312,7 @@ final class GravityView_Inline_Edit {
 		}
 
 		/**
-		 * @filter `gravityview-inline-edit/user-can-edit-entry` Modify whether the current user can edit an entry
+		 * Modify whether the current user can edit an entry
 		 *
 		 * @since 1.0
 		 * @since 1.2 Added $view_id parameter

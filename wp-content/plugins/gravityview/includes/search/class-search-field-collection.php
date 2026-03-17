@@ -40,7 +40,7 @@ final class Search_Field_Collection extends Collection implements Collection_Pos
 	 *
 	 * @var array<int, self>
 	 */
-	private static $available_fields_cache = [];
+	private static array $available_fields_cache = [];
 
 	/**
 	 * Contains any additional context used for filters.
@@ -618,5 +618,16 @@ final class Search_Field_Collection extends Collection implements Collection_Pos
 	 */
 	public function get_area_configuration( string $position ): array {
 		return $this->area_configuration[ $position ] ?? [];
+	}
+
+	/**
+	 * Clears the internal caches.
+	 *
+	 * @since    $ver$
+	 *
+	 * @internal Used for testing purposes only.
+	 */
+	public static function clear_cache(): void {
+		self::$available_fields_cache = [];
 	}
 }

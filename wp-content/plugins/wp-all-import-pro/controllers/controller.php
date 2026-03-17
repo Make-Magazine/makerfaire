@@ -76,12 +76,12 @@ abstract class PMXI_Controller {
 			if ( ! preg_match('%\.php$%', $viewPath)) {
 				$viewPath .= '.php';
 			}
-			$filePath = PMXI_Plugin::ROOT_DIR . '/views/' . $viewPath;
-			if (is_file($filePath)) {
+			$viewFilePath = PMXI_Plugin::ROOT_DIR . '/views/' . $viewPath;
+			if (is_file($viewFilePath)) {
 				extract($this->data);
-				include $filePath;
+				include $viewFilePath;
 			} else {
-				throw new Exception("Requested template file $filePath is not found.");
+				throw new Exception("Requested template file $viewFilePath is not found.");
 			}
 		}
 	}

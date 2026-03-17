@@ -32,8 +32,6 @@ class GravityView_Lightbox_Entry_Request extends Frontend_Request {
 	public function __construct( View $view, GF_Entry $entry ) {
 		$this->entry = $entry;
 		$this->view  = $view;
-
-		parent::__construct();
 	}
 
 	/**

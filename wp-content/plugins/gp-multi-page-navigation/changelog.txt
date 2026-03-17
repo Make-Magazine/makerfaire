@@ -1,6 +1,14 @@
 
 # Changelog
 
+## 1.3.6 | February 4, 2026
+
+- Fixed issue where in some cases progressing to the third page or later of multi-page forms resulted in blank pages when using a combination of GP Populate Anything, GP Limit Dates, or GF Stripe plugins.
+
+## 1.3.5 | January 7, 2026
+
+- Fixed an issue where form submission would freeze when using a multipage form with page transitions enabled in a popup that redirects on confirmation.
+
 ## 1.3.4 | August 27, 2025
 
 - Fixed an issue where forms using the "Steps" progress indicator and GP Page Transitions "Soft Validation" would not redirect to the confirmation page or URL after submission.

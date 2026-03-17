@@ -214,7 +214,7 @@ class AttachmentHandler{
 
 					if ("" == $attachment) continue;
 
-					$atchs = str_getcsv($attachment, self::$importRecord->options['atch_delim']);
+					$atchs = str_getcsv($attachment, self::$importRecord->options['atch_delim'], '"', '\\');
 
 					if ( ! empty($atchs) ) {
 
@@ -747,7 +747,7 @@ class AttachmentHandler{
 							$line_imgs = explode("\n", $featured_images[$this->recordIndex]);
 							if ( ! empty($line_imgs) )
 								foreach ($line_imgs as $line_img)
-									$imgs = array_merge($imgs, ( ! empty($featured_delim) ) ? str_getcsv($line_img, $featured_delim) : array($line_img) );
+									$imgs = array_merge($imgs, ( ! empty($featured_delim) ) ? str_getcsv($line_img, $featured_delim, '"', '\\') : array($line_img) );
 
 							// keep existing and add newest images
 							if ( ! empty($this->articleData['ID']) and self::$importRecord->options['is_update_images'] and self::$importRecord->options['update_images_logic'] == "add_new" and self::$importRecord->options['update_all_data'] == "no" and $is_show_add_new_images){
@@ -1120,7 +1120,7 @@ class AttachmentHandler{
 						$line_imgs = explode("\n", $this->bundle_data['images'][$this->recordIndex]);
 						if ( ! empty($line_imgs) ){
 							foreach ($line_imgs as $line_img){
-								$imgs = array_merge($imgs, ( ! empty($featured_delim) ) ? str_getcsv($line_img, $featured_delim) : array($line_img) );
+								$imgs = array_merge($imgs, ( ! empty($featured_delim) ) ? str_getcsv($line_img, $featured_delim, '"', '\\') : array($line_img) );
 							}
 						}
 

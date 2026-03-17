@@ -46,7 +46,11 @@ class Core {
 		new WP_Import_Screen();
 		Addon::get_instance();
 
-		// Initialize UI
+		// Initialize background processing and notices.
+		BackgroundProcessor::get_instance();
+		Notices\ImportNotices::get_instance();
+
+		// Initialize UI.
 		new UI( self::version );
 	}
 
@@ -224,7 +228,10 @@ class Core {
 		}
 
 		/**
-		 * @filter `gravityview/import/meta_fields` Filter the known meta fields
+		 * Filter the known meta fields
+		 *
+		 * @since 2.0
+		 *
 		 * @param array Key-value array of known meta fields
 		 */
 		return apply_filters( 'gravityview/import/meta_fields', $fields );

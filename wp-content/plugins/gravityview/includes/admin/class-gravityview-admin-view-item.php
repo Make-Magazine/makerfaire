@@ -122,8 +122,10 @@ abstract class GravityView_Admin_View_Item {
 		/**
 		 * Tap in to modify the field information displayed next to an item.
 		 *
-		 * @param array $field_info_items Additional information to display in a field
-		 * @param GravityView_Admin_View_Field $this Field shown in the admin
+		 * @since 1.17.3
+		 *
+		 * @param array                        $field_info_items Additional information to display in a field.
+		 * @param GravityView_Admin_View_Field $field            Field shown in the admin.
 		 */
 		$field_info_items = apply_filters( 'gravityview_admin_label_item_info', $field_info_items, $this );
 
@@ -161,8 +163,12 @@ abstract class GravityView_Admin_View_Item {
 	 */
 	protected function can_duplicate(): bool {
 		/**
-		 * @filter `gk/gravityview/admin/can_duplicate_field` Modify whether a field can be duplicated.
-		 * @since  2.42
+		 * Modify whether a field can be duplicated.
+		 *
+		 * @since 2.42
+		 *
+		 * @param bool                         $can_duplicate Whether the field can be duplicated.
+		 * @param GravityView_Admin_View_Field $field         Field shown in the admin.
 		 */
 		return (bool) apply_filters( 'gk/gravityview/admin/can_duplicate_field', true, $this );
 	}
@@ -184,11 +190,13 @@ abstract class GravityView_Admin_View_Item {
 		// When a field label is empty, use the Field ID
 		$label = empty( $this->title ) ? sprintf( _x( 'Field #%s (No Label)', 'Label in field picker for empty label', 'gk-gravityview' ), $this->id ) : $this->title;
 
-		// If there's a custom label, and show label is checked, use that as the field heading
-		if ( ! empty( $this->settings['custom_label'] ) && ! empty( $this->settings['show_label'] ) ) {
-			$label = $this->settings['custom_label'];
-		} elseif ( ! empty( $this->item['customLabel'] ) ) {
-			$label = $this->item['customLabel'];
+		// Admin label always takes precedence in the View editor.
+		if ( empty( $this->settings['admin_label'] ) ) {
+			if ( ! empty( $this->settings['custom_label'] ) && ! empty( $this->settings['show_label'] ) ) {
+				$label = $this->settings['custom_label'];
+			} elseif ( ! empty( $this->item['customLabel'] ) ) {
+				$label = $this->item['customLabel'];
+			}
 		}
 
 		$label = (string) esc_attr( $label );
@@ -199,8 +207,7 @@ abstract class GravityView_Admin_View_Item {
 
 		$nonexistent_form_field = $form && $this->id && preg_match( '/^\d+\.\d+$|^\d+$/', $this->id ) && ! gravityview_get_field( $form, $this->id );
 
-		if ( $this->item['icon'] && ! \GV\Utils::get( $this->item, 'parent' ) ) {
-
+		if ( $this->item['icon'] ) {
 			$has_gf_icon  = ( false !== strpos( $this->item['icon'], 'gform-icon' ) );
 			$has_dashicon = ( false !== strpos( $this->item['icon'], 'dashicons' ) );
 
@@ -219,8 +226,10 @@ abstract class GravityView_Admin_View_Item {
 			}
 
 			$field_icon .= ' ';
-		} elseif ( \GV\Utils::get( $this->item, 'parent' ) ) {
-			$field_icon = '<i class="gv-icon gv-icon-level-down"></i>' . ' ';
+		}
+
+		if ( $this->is_child() && ! $this->is_parent() ) {
+			$field_icon = '<i class="gv-icon gv-icon-level-down"></i> ';
 		}
 
 		$output = '<button class="gv-add-field screen-reader-text">' . sprintf( esc_html__( 'Add "%s"', 'gk-gravityview' ), $label ) . '</button>';
@@ -272,9 +281,22 @@ abstract class GravityView_Admin_View_Item {
 
 		$data_form_id = $form ? ' data-formid="' . esc_attr( $this->form_id ) . '"' : '';
 
-		$data_parent_label = ! empty( $this->item['parent'] ) ? ' data-parent-label="' . esc_attr( $this->item['parent']['label'] ) . '"' : '';
+		$parent_label_attr = esc_attr( $this->item['parent']['label'] ?? '' );
+		$data_parent_label = ! empty( $this->item['parent'] ) ? ' data-parent-label="' . $parent_label_attr . '"' : '';
 
-		$output = '<div data-fieldid="' . esc_attr( $this->id ) . '" ' . $data_form_id . $data_parent_label . ' data-inputtype="' . esc_attr( $this->item['input_type'] ) . '" class="gv-fields' . $container_class . '">' . $output . $this->item['settings_html'] . '</div>';
+		$style = '';
+		if ( $this->is_child() ) {
+			// Use JSON encoding to safely escape quotes and special characters for CSS string value.
+			$parent_label_css = esc_attr( wp_json_encode( $this->item['parent']['label'] ?? '' ) );
+
+			$style = sprintf(
+				' style="--field-level: %s; --parent-label: %s;"',
+				$this->get_nesting_level(),
+				$parent_label_css,
+			);
+		}
+
+		$output = '<div data-fieldid="' . esc_attr( $this->id ) . '" ' . $data_form_id . $data_parent_label . ' data-inputtype="' . esc_attr( $this->item['input_type'] ) . '" class="gv-fields' . $container_class . '"' . $style . '>' . $output . $this->item['settings_html'] . '</div>';
 
 		return $output;
 	}
@@ -314,8 +336,11 @@ abstract class GravityView_Admin_View_Item {
 		 * Modify the icon output to add additional indicator icons.
 		 *
 		 * @internal This is currently internally used. Consider not relying on it until further notice :-)
-		 * @param array $icons Array of icons to be shown, with `visible`, `title`, `css_class` keys.
-		 * @param array $item_settings Settings for the current item (widget or field)
+		 *
+		 * @since 2.10
+		 *
+		 * @param array $icons    Array of icons to be shown, with `visible`, `title`, `css_class` keys.
+		 * @param array $settings Settings for the current item (widget or field).
 		 */
 		$icons = (array) apply_filters( 'gravityview/admin/indicator_icons', $icons, $this->settings );
 
@@ -348,5 +373,36 @@ abstract class GravityView_Admin_View_Item {
 	 */
 	protected function get_title( string $label ): string {
 		return $label;
+	}
+
+	/**
+	 * Returns whether this field is a parent field.
+	 *
+	 * @since 2.51.0
+	 *
+	 * @return bool Whether this field is a parent field.
+	 */
+	protected function is_parent(): bool {
+		return false;
+	}
+
+	/**
+	 * Returns whether this field has a parent.
+	 *
+	 * @since 2.51.0
+	 *
+	 * @return bool Whether this field is a child field.
+	 */
+	protected function is_child(): bool {
+		return (bool) ( $this->item['parent'] ?? null );
+	}
+
+	/**
+	 * Returns the nesting level for this field.
+	 * @since 2.51.0
+	 * @return int The nesting level.
+	 */
+	protected function get_nesting_level(): int {
+		return $this->is_child() ? 1 : 0;
 	}
 }

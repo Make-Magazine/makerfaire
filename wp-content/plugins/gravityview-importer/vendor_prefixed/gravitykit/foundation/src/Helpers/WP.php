@@ -2,7 +2,7 @@
 /**
  * @license GPL-2.0-or-later
  *
- * Modified by The GravityKit Team on 11-September-2025 using Strauss.
+ * Modified using Strauss.
  * @see https://github.com/BrianHenryIE/strauss
  */
 
@@ -359,6 +359,6 @@ class WP {
 	 * @return string
 	 */
 	private static function get_transient_key_for_cache( string $transient ) {
-		return ! is_multisite() ? $transient : get_current_network_id() . '-' . $transient;
+		return ! is_multisite() ? $transient : get_current_blog_id() . '-' . $transient;
 	}
 }

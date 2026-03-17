@@ -8,7 +8,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  *
- * Modified by gravityview on 05-December-2025 using {@see https://github.com/BrianHenryIE/strauss}.
+ * Modified using {@see https://github.com/BrianHenryIE/strauss}.
  */
 
 namespace GravityKit\GravityView\Foundation\ThirdParty\Monolog\Handler;
@@ -75,7 +75,7 @@ class PHPConsoleHandler extends AbstractProcessingHandler
      * @param  bool           $bubble
      * @throws Exception
      */
-    public function __construct(array $options = array(), Connector $connector = null, $level = Logger::DEBUG, $bubble = true)
+    public function __construct(array $options = array(), ?Connector $connector = null, $level = Logger::DEBUG, $bubble = true)
     {
         if (!class_exists('PhpConsole\Connector')) {
             throw new Exception('PHP Console library not found. See https://github.com/barbushin/php-console#installation');
@@ -95,7 +95,7 @@ class PHPConsoleHandler extends AbstractProcessingHandler
         return array_replace($this->options, $options);
     }
 
-    private function initConnector(Connector $connector = null)
+    private function initConnector(?Connector $connector = null)
     {
         if (!$connector) {
             if ($this->options['dataStorage']) {

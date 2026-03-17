@@ -33,7 +33,7 @@ class GravityView_FieldType_checkboxes extends GravityView_FieldType {
 		<?php
 		foreach ( $this->field['options'] as $value => $label ) {
 			?>
-			<li 
+			<li
 			<?php
 			if ( isset( $label['requires'] ) ) {
 				printf( 'class="gv-sub-setting" data-requires="%s"', $label['requires'] ); }
@@ -54,6 +54,10 @@ class GravityView_FieldType_checkboxes extends GravityView_FieldType {
 				?>
 			</li>
 			<?php
+		}
+
+		if ( ! empty( $this->field['after'] ) && is_callable( $this->field['after'] ) ) {
+			call_user_func( $this->field['after'], $this );
 		}
 		?>
 		</ul>

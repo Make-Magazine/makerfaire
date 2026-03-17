@@ -281,17 +281,29 @@
 
 	function updateFieldPreview( field ) {
 
-		console.log( field );
-
 		var $inputContainer = $( '#field_' + field.id + ' .ginput_container' ),
 			alignmentClass = field.chainedSelectsAlignment === 'horizontal' ? ' gform-grid-col--size-auto' : '',
+			form_sub_label_placement = form.subLabelPlacement,
+			field_sub_label_placement = field.subLabelPlacement,
+			is_sub_label_above = field_sub_label_placement === 'above' || ( ! field_sub_label_placement && form_sub_label_placement === 'above' ),
+			sub_label_class = field_sub_label_placement === 'hidden_label' ? 'hidden_sub_label screen-reader-text' : '',
 			markup  = '';
 
 		for( var i = 0; i < field.inputs.length; i++ ) {
 			var fieldId = field.inputs[i].id;
 			var fieldIdUnderScore = fieldId.replace( '.', '_' );
 			var options = '<option>' + field.inputs[i].label + '</option>';
-			markup += '<span id="input_' + field.formId + '_' + fieldIdUnderScore + '_container" class="gform-grid-col' + alignmentClass + '"><select name="input_' + fieldId + '" id="input_' + field.formId + '_' + fieldIdUnderScore + '" disabled="disabled">' + options + '</select></span>' + "\n";
+			var input_sub_label = '<label for="input_' + field.formId + '_' + fieldIdUnderScore + '" id="input_' + field.formId + '_' + fieldIdUnderScore + '_label" class="gform-field-label gform-field-label--type-sub ' + sub_label_class + '">' + field.inputs[i].label + '</label>';
+
+			markup += '<span id="input_' + field.formId + '_' + fieldIdUnderScore + '_container" class="gform-grid-col' + alignmentClass + '">';
+			if ( is_sub_label_above ) {
+				markup += input_sub_label;
+			}
+			markup += '<select name="input_' + fieldId + '" id="input_' + field.formId + '_' + fieldIdUnderScore + '" disabled="disabled">' + options + '</select>';
+			if ( ! is_sub_label_above ) {
+				markup += input_sub_label;
+			}
+			markup += '</span>' + "\n";
 		}
 
 		$inputContainer.html( markup );

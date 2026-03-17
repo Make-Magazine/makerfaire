@@ -265,9 +265,9 @@
             this.prop( 'disabled', disabled );
             if( typeof hideInactive != 'undefined' && hideInactive ) {
                 if( disabled ) {
-                    this.hide();
+                    this.parent().children().hide();
                 } else {
-                    this.show();
+                    this.parent().children().show();
                 }
             }
             return this;

@@ -35,7 +35,7 @@
 					<?php $this->error() ?>
 				<?php endif ?>
 
-				<?php //do_action('pmxi_choose_file_header'); ?>
+				<?php do_action('pmxi_choose_file_header'); ?>
 
 		        <form method="post" class="wpallimport-choose-file" enctype="multipart/form-data" autocomplete="off">
 
@@ -44,6 +44,8 @@
 						<input type="hidden" name="is_submitted" value="1" />
 
 						<div class="clear"></div>
+
+						<?php do_action('pmxi_import_options_before'); ?>
 
 						<div class="wpallimport-import-types">
 							<?php if (empty($_GET['deligate'] ?? '')): ?>
@@ -77,16 +79,16 @@
 							</a>
 						</div>
 
-						<input type="hidden" value="<?php echo $post['type']; ?>" name="type"/>
+						<input type="hidden" value="<?php echo esc_attr($post['type']); ?>" name="type"/>
 
 						<div class="wpallimport-upload-type-container" rel="upload_type">
 							<div id="plupload-ui" class="wpallimport-file-type-options">
 					            <div>
-					                <input type="hidden" name="filepath" value="<?php echo $post['filepath'] ?>" id="filepath"/>
+					                <input type="hidden" name="filepath" value="<?php echo esc_attr($post['filepath']); ?>" id="filepath"/>
 					                <a id="select-files" href="javascript:void(0);" <?php if (empty($post['filepath'])):?>style="display:none;"<?php endif; ?> /><?php _e('Click here to select file from your computer...', 'wp-all-import-pro'); ?></a>
 					                <div id="progressbar" class="wpallimport-progressbar">
 					                	<?php if (!empty($post['filepath'])):?>
-					                	<span><?php _e('Upload Complete', 'wp-all-import-pro');?></span> - <?php echo basename($post['filepath']); ?>
+					                	<span><?php _e('Upload Complete', 'wp-all-import-pro');?></span> - <?php echo esc_html(basename($post['filepath'])); ?>
 					                	<?php endif; ?>
 					                </div>
 					                <div id="progress" class="wpallimport-progress" <?php if (!empty($post['filepath'])):?>style="visibility: visible; display: block;"<?php endif; ?>>
@@ -270,6 +272,8 @@
                                 </div>
                             </div>
                         </div>
+
+						<?php do_action('pmxi_import_options_after'); ?>
 
 						<div class="wpallimport-upload-resource-step-two">
 
@@ -513,13 +517,22 @@
                             <input type="hidden" name="is_submitted" value="1" />
                             <input type="hidden" name="auto_generate" value="0" />
                             <input type="hidden" name="go_to_create_filters" value="0" />
-    
+
                             <?php wp_nonce_field('choose-file', '_wpnonce_choose-file'); ?>
                             <a href="javascript:void(0);" class="back rad3 auto-generate-template" style="float:none; background: #e4e6e6; padding: 0 50px;"><?php _e('Skip to Import Settings', 'wp-all-import-pro'); ?></a>
                             <div style="display: flex; flex-direction: column; align-items: center;">
                                 <a href="javascript:void(0);" class="back rad3 create-filters-step" style="float:none; background: #e4e6e6; padding: 0 50px;"><?php _e('Create Filters', 'wp-all-import-pro'); ?></a>
                                 <span style="display: block; text-align: center; margin-top: 5px; font-size: 10px; font-weight:500; color:#777;"><?php _e('Limit What\'s Imported', 'wp-all-import-pro'); ?></span>
                             </div>
+                            <?php
+                            /**
+                             * Hook: pmxi_import_index_after_buttons
+                             *
+                             * Allows plugins to inject additional buttons after the Create Filters button.
+                             * Used by the LLM Bridge plugin to inject the Configure Automatically button.
+                             */
+                            do_action( 'pmxi_import_index_after_buttons' );
+                            ?>
                             <div style="display: flex; flex-direction: column; align-items: center;">
                                 <input type="submit" class="button button-primary button-hero wpallimport-large-button" value="<?php _e('Set Up Import', 'wp-all-import-pro') ?>" id="advanced_upload"/>
                                 <span style="display: block; text-align: center; margin-top: 5px; font-size: 10px; font-weight:500; color:#777;"><?php _e('Import Everything', 'wp-all-import-pro'); ?></span>
@@ -534,3 +547,6 @@
 		</td>
 	</tr>
 </table>
+
+
+

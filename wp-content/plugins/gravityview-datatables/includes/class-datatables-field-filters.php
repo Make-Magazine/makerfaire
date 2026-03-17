@@ -350,11 +350,11 @@ class GV_Extension_DataTables_Field_Filters extends GV_DataTables_Extension {
 		 *
 		 * @since 3.0
 		 *
-		 * @param string $filter_placeholder
-		 * @param string $field_label
-		 * @param \GV\GF_Field $field
-		 * @param GF_Form $form
-		 * @param View $view
+		 * @param string        $filter_placeholder The placeholder text.
+		 * @param string        $field_label        The field label.
+		 * @param \GV\GF_Field  $field              The field object.
+		 * @param GF_Form       $form               The form object.
+		 * @param View          $view               The view object.
 		 */
 		$filter_placeholder = apply_filters( 'gravityview/datatables/field_filters/placeholder', $atts['placeholder'], $field_label, $field, $form, $view );
 
@@ -365,11 +365,10 @@ class GV_Extension_DataTables_Field_Filters extends GV_DataTables_Extension {
 		 *
 		 * @since 3.0
 		 *
-		 * @param string $filter_placeholder
-		 * @param string $field_label
-		 * @param \GV\GF_Field|\GV\Internal_Field $field
-		 * @param GF_Form $form
-		 * @param View $view
+		 * @param array                              $atts  The filter attributes.
+		 * @param \GV\GF_Field|\GV\Internal_Field    $field The field object.
+		 * @param GF_Form                            $form  The form object.
+		 * @param View                               $view  The view object.
 		 */
 		$filter_atts = apply_filters( 'gravityview/datatables/field_filters/atts', $atts, $field, $form, $view );
 

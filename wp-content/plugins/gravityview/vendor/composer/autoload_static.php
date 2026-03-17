@@ -4,13 +4,14 @@
 
 namespace Composer\Autoload;
 
-class ComposerStaticInite56545ec20e762d9f700ff2434772a3c
+class ComposerStaticInit8278b35ded190da4816445181d670841
 {
     public static $classMap = array (
         'Composer\\InstalledVersions' => __DIR__ . '/..' . '/composer/InstalledVersions.php',
         'GVCommon' => __DIR__ . '/../..' . '/includes/class-common.php',
         'GVLogic_Shortcode' => __DIR__ . '/../..' . '/includes/class-gvlogic-shortcode.php',
         'GV\\Admin_Request' => __DIR__ . '/../..' . '/future/includes/class-gv-request-admin.php',
+        'GV\\CLI_Request' => __DIR__ . '/../..' . '/future/includes/class-gv-request-cli.php',
         'GV\\Collection' => __DIR__ . '/../..' . '/future/includes/class-gv-collection.php',
         'GV\\Collection_Position_Aware' => __DIR__ . '/../..' . '/future/includes/interface-gv-collection-position-aware.php',
         'GV\\Context' => __DIR__ . '/../..' . '/future/includes/class-gv-context.php',
@@ -79,7 +80,15 @@ class ComposerStaticInite56545ec20e762d9f700ff2434772a3c
         'GV\\Search\\Fields\\Search_Field_Is_Starred' => __DIR__ . '/../..' . '/includes/search/fields/class-search-field-is-starred.php',
         'GV\\Search\\Fields\\Search_Field_Search_Mode' => __DIR__ . '/../..' . '/includes/search/fields/class-search-field-search-mode.php',
         'GV\\Search\\Fields\\Search_Field_Submit' => __DIR__ . '/../..' . '/includes/search/fields/class-search-field-submit.php',
+        'GV\\Search\\Policies\\Search_Fields_Policy' => __DIR__ . '/../..' . '/includes/search/policies/class-search-fields-policy.php',
+        'GV\\Search\\Querying\\Search_Filter' => __DIR__ . '/../..' . '/includes/search/querying/class-search-filter.php',
+        'GV\\Search\\Querying\\Search_Filter_Builder' => __DIR__ . '/../..' . '/includes/search/querying/class-search-filter-builder.php',
+        'GV\\Search\\Querying\\Search_Filter_Visitor' => __DIR__ . '/../..' . '/includes/search/querying/interface-search-filter-visitor.php',
+        'GV\\Search\\Querying\\Search_Request' => __DIR__ . '/../..' . '/includes/search/querying/class-search-request.php',
+        'GV\\Search\\Querying\\Visitors\\Abstract_Search_Filter_Visitor' => __DIR__ . '/../..' . '/includes/search/querying/visitors/abstract-search-filter-visitor.php',
+        'GV\\Search\\Querying\\Visitors\\Search_Criteria_Visitor' => __DIR__ . '/../..' . '/includes/search/querying/visitors/class-search-criteria-visitor.php',
         'GV\\Search\\Search_Field_Collection' => __DIR__ . '/../..' . '/includes/search/class-search-field-collection.php',
+        'GV\\Search\\Search_Policy' => __DIR__ . '/../..' . '/includes/search/class-search-policy.php',
         'GV\\Settings' => __DIR__ . '/../..' . '/future/includes/class-gv-settings.php',
         'GV\\Shortcode' => __DIR__ . '/../..' . '/future/includes/class-gv-shortcode.php',
         'GV\\Shortcodes\\gravityview' => __DIR__ . '/../..' . '/future/includes/class-gv-shortcode-gravityview.php',
@@ -147,6 +156,7 @@ class ComposerStaticInite56545ec20e762d9f700ff2434772a3c
         'GravityView_Entry_Link_Shortcode' => __DIR__ . '/../..' . '/includes/class-gravityview-entry-link-shortcode.php',
         'GravityView_Entry_List' => __DIR__ . '/../..' . '/includes/class-gravityview-entry-list.php',
         'GravityView_Entry_Notes' => __DIR__ . '/../..' . '/includes/class-gravityview-entry-notes.php',
+        'GravityView_Error_Messages' => __DIR__ . '/../..' . '/future/includes/class-gravityview-error-messages.php',
         'GravityView_Extension' => __DIR__ . '/../..' . '/includes/class-gravityview-extension.php',
         'GravityView_Feature_Upgrade' => __DIR__ . '/../..' . '/includes/plugin-and-theme-hooks/class-gravityview-feature-upgrade.php',
         'GravityView_Field' => __DIR__ . '/../..' . '/includes/fields/class-gravityview-field.php',
@@ -220,6 +230,7 @@ class ComposerStaticInite56545ec20e762d9f700ff2434772a3c
         'GravityView_Field_Quiz' => __DIR__ . '/../..' . '/includes/fields/class-gravityview-field-quiz.php',
         'GravityView_Field_Quiz_Score' => __DIR__ . '/../..' . '/includes/fields/class-gravityview-field-gquiz_score.php',
         'GravityView_Field_Radio' => __DIR__ . '/../..' . '/includes/fields/class-gravityview-field-radio.php',
+        'GravityView_Field_Repeater' => __DIR__ . '/../..' . '/includes/fields/class-gravityview-field-repeater.php',
         'GravityView_Field_Section' => __DIR__ . '/../..' . '/includes/fields/class-gravityview-field-section.php',
         'GravityView_Field_Select' => __DIR__ . '/../..' . '/includes/fields/class-gravityview-field-select.php',
         'GravityView_Field_Sequence' => __DIR__ . '/../..' . '/includes/fields/class-gravityview-field-sequence.php',
@@ -286,6 +297,7 @@ class ComposerStaticInite56545ec20e762d9f700ff2434772a3c
         'GravityView_Plugin_Hooks_Gravity_PDF' => __DIR__ . '/../..' . '/includes/plugin-and-theme-hooks/class-gravityview-plugin-hooks-gravity-pdf.php',
         'GravityView_Plugin_Hooks_Gravity_Perks' => __DIR__ . '/../..' . '/includes/plugin-and-theme-hooks/class-gravityview-plugin-hooks-gravity-perks.php',
         'GravityView_Plugin_Hooks_Gravity_Perks_Nested_Forms' => __DIR__ . '/../..' . '/includes/plugin-and-theme-hooks/class-gravityview-plugin-hooks-gravity-perks-nested-forms.php',
+        'GravityView_Plugin_Hooks_Gravity_Perks_Populate_Anything' => __DIR__ . '/../..' . '/includes/plugin-and-theme-hooks/class-gravityview-plugin-hooks-gravity-perks-populate-anything.php',
         'GravityView_Plugin_Hooks_Iconic_WAP' => __DIR__ . '/../..' . '/includes/plugin-and-theme-hooks/class-gravityview-plugin-hooks-iconic-wap.php',
         'GravityView_Plugin_Hooks_Image_Hopper' => __DIR__ . '/../..' . '/includes/plugin-and-theme-hooks/class-gravityview-plugin-hooks-image-hopper.php',
         'GravityView_Plugin_Hooks_LearnDash' => __DIR__ . '/../..' . '/includes/plugin-and-theme-hooks/class-gravityview-plugin-hooks-learndash.php',
@@ -311,6 +323,7 @@ class ComposerStaticInite56545ec20e762d9f700ff2434772a3c
         'GravityView_Preset_Website_Showcase' => __DIR__ . '/../..' . '/includes/presets/website-showcase/class-gravityview-preset-website-showcase.php',
         'GravityView_Recent_Entries_Widget' => __DIR__ . '/../..' . '/includes/wordpress-widgets/class-gravityview-recent-entries-widget.php',
         'GravityView_Render_Settings' => __DIR__ . '/../..' . '/includes/admin/class.render.settings.php',
+        'GravityView_Repeater_Field_HTML_Template' => __DIR__ . '/../..' . '/includes/fields/class-gravityview-field-repeater-renderer-html.php',
         'GravityView_Roles_Capabilities' => __DIR__ . '/../..' . '/includes/class-gravityview-roles-capabilities.php',
         'GravityView_Search_WP_Widget' => __DIR__ . '/../..' . '/includes/wordpress-widgets/class-gravityview-search-wp-widget.php',
         'GravityView_Search_Widget_Settings_Visible_Fields_Only' => __DIR__ . '/../..' . '/includes/widgets/search-widget/settings/class-search-widget-settings-visible-fields-only.php',
@@ -359,7 +372,7 @@ class ComposerStaticInite56545ec20e762d9f700ff2434772a3c
     public static function getInitializer(ClassLoader $loader)
     {
         return \Closure::bind(function () use ($loader) {
-            $loader->classMap = ComposerStaticInite56545ec20e762d9f700ff2434772a3c::$classMap;
+            $loader->classMap = ComposerStaticInit8278b35ded190da4816445181d670841::$classMap;
 
         }, null, ClassLoader::class);
     }

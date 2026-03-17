@@ -44,6 +44,9 @@
 
 			self.resetCheckboxElemCache();
 
+			// Clear pre-disabled markers when a field becomes enabled (e.g., via conditional logic).
+			$elems.filter( '.gplc-pre-disabled:not(:disabled)' ).removeClass( 'gplc-pre-disabled' );
+
 			// Exclude choices that were already disabled so that they will always be disabled.
 			$elems.each( function() {
 				var $parent = $( this ).parents( '.gfield' );
@@ -59,7 +62,7 @@
 			// Exclude Select All choices.
 			$elems.filter( 'input[id$="select_all"]' ).addClass( 'gplc-select-all' );
 
-			$elems.change( function() {
+			$elems.off( 'change.gplc' ).on( 'change.gplc', function() {
 				self.handleCheckboxClick( $( this ) );
 			} ).each( function() {
 				self.handleCheckboxClick( $( this ) );
@@ -82,6 +85,15 @@
 					.prop('id')
 					.replace('gform_', '');
 
+				if (formId != self.formId) {
+					return;
+				}
+
+				self.bindTriggerEvents();
+			} );
+
+			// Re-evaluate limits after conditional logic runs.
+			$(document).on( 'gform_post_conditional_logic', function( event, formId ) {
 				if (formId != self.formId) {
 					return;
 				}

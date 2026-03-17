@@ -28,6 +28,11 @@ class GPNF_Parent_Merge_Tag {
 	}
 
 	public function parse_parent_merge_tag( $text, $form, $entry, $url_encode, $esc_html, $nl2br, $format ) {
+		// Check if entry is valid - prevent fatal errors when other plugins pass WP_Error objects
+		if ( ! is_array( $entry ) || is_wp_error( $entry ) ) {
+			return $text;
+		}
+
 		$parent_form_id = rgar( $entry, 'gpnf_entry_parent_form' );
 		$parent_form    = GFAPI::get_form( $parent_form_id );
 

@@ -441,9 +441,10 @@ class GP_Multi_Page_Navigation extends GWPerk {
 	}
 
 	public function override_target_page( $page_number, $form, $current_page, $field_values ) {
-		// return infinity so that the GFFormDisplay::validate(); never detects that the last page
-		// is being validated.
-		return INF;
+		// Return a value greater than the last page (last page + 1) so that GFFormDisplay::validate() 
+		// never detects that the last page is being validated. This ensures proper individual page 
+		// validation and maintains compatibility with other plugins that expect numeric page values.
+		return count( $form['pagination']['pages'] ) + 1;
 	}
 
 	public function does_field_have_value_in_post( $field ) {

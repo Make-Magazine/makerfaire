@@ -500,27 +500,22 @@ class GravityView_Admin_Views {
 			];
 		}
 
-		$gv_tooltips['gv_css_merge_tags'] = [
-			'title' => __( 'CSS Merge Tags', 'gk-gravityview' ),
-			'value' => sprintf( __( 'Developers: The CSS classes will be sanitized using the %1$ssanitize_title_with_dashes()%2$s function.',
-				'gk-gravityview' ),
-				'<code>',
-				'</code>' ),
-		];
-
 		/**
 		 * The tooltips GravityView adds to the Gravity Forms tooltip array.
 		 *
-		 * @param array $gv_tooltips Associative array with unique keys containing array of `title` and `value` keys, as expected by `gform_tooltips` filter
+		 * @since 1.0.9-beta
+		 * @deprecated 2.0 Renamed to `gravityview/metaboxes/tooltips`.
 		 *
-		 * @deprecated Renamed to `gravityview/metaboxes/tooltips`
+		 * @param array $gv_tooltips Associative array with unique keys containing array of `title` and `value` keys, as expected by `gform_tooltips` filter.
 		 */
 		$gv_tooltips = apply_filters( 'gravityview_tooltips', $gv_tooltips );
 
 		/**
 		 * The tooltips GravityView adds to the Gravity Forms tooltip array.
 		 *
-		 * @param array $gv_tooltips Associative array with unique keys containing array of `title` and `value` keys, as expected by `gform_tooltips` filter
+		 * @since 2.0
+		 *
+		 * @param array $gv_tooltips Associative array with unique keys containing array of `title` and `value` keys, as expected by `gform_tooltips` filter.
 		 */
 		$gv_tooltips = apply_filters( 'gravityview/metaboxes/tooltips', $gv_tooltips );
 
@@ -695,8 +690,8 @@ HTML;
 		 *
 		 * @since 1.6
 		 *
-		 * @param array $links Links to show
-		 * @param array $form  Gravity Forms form array
+		 * @param array $links Links to show.
+		 * @param array $form  Gravity Forms form array.
 		 */
 		$links = apply_filters( 'gravityview_connected_form_links', $links, $form );
 
@@ -844,6 +839,35 @@ HTML;
 				$statii['directory_fields'] = update_post_meta( $post_id, '_gravityview_directory_fields', $fields );
 			}
 
+			// Save row settings (custom CSS class and HTML ID).
+			if ( isset( $_POST['row_settings'] ) && is_array( $_POST['row_settings'] ) ) {
+				$row_settings = [];
+
+				foreach ( $_POST['row_settings'] as $row_key => $settings ) {
+					$row_key = sanitize_text_field( $row_key );
+
+					if ( ! is_array( $settings ) ) {
+						continue;
+					}
+
+					$sanitized = [];
+
+					if ( ! empty( $settings['custom_class'] ) ) {
+						$sanitized['custom_class'] = sanitize_text_field( $settings['custom_class'] );
+					}
+
+					if ( ! empty( $settings['custom_id'] ) ) {
+						$sanitized['custom_id'] = sanitize_text_field( $settings['custom_id'] );
+					}
+
+					if ( ! empty( $sanitized ) ) {
+						$row_settings[ $row_key ] = $sanitized;
+					}
+				}
+
+				$statii['row_settings'] = update_post_meta( $post_id, '_gravityview_row_settings', $row_settings );
+			}
+
 			// Directory Visible Widgets
 			if ( empty( $_POST['widgets'] ) ) {
 				$_POST['widgets'] = [];
@@ -856,8 +880,8 @@ HTML;
 		 *
 		 * @since 1.17.2
 		 *
+		 * @param int   $post_id ID of the View that has been saved.
 		 * @param array $statii  Array of statuses of the post meta saving processes. If saving worked, each key should be mapped to a value of the post ID (`directory_widgets` => `124`). If failed (or didn't change), the value will be false.
-		 * @param int   $post_id ID of the View that has been saved
 		 */
 		do_action( 'gravityview_view_saved', $post_id, $statii );
 
@@ -902,11 +926,12 @@ HTML;
 			'gravityview_blocklist_field_types' );
 
 		/**
-		 * @filter  `gravityview_blocklist_field_types` Modify the types of fields that shouldn't be shown in a View.
-		 * @since   2.9
+		 * Modify the types of fields that shouldn't be shown in a View.
 		 *
-		 * @param string $context               View context ('single', 'directory', or 'edit').
+		 * @since 2.9
+		 *
 		 * @param array  $blocklist_field_types Array of field types which are not proper to be shown for the $context.
+		 * @param string $context               View context ('single', 'directory', or 'edit').
 		 */
 		$blocklist_field_types = apply_filters( 'gravityview_blocklist_field_types', $blocklist_field_types, $context );
 
@@ -971,9 +996,11 @@ HTML;
 		];
 
 		/**
-		 * non-standard Fields to show at the bottom of the field picker.
+		 * Modify the non-standard fields shown at the bottom of the field picker.
 		 *
-		 * @param array $additional_fields Associative array of field arrays, with `label_text`, `desc`, `field_id`, `label_type`, `input_type`, `field_options`, and `settings_html` keys
+		 * @since 1.0.7-beta
+		 *
+		 * @param array $additional_fields Associative array of field arrays, with `label_text`, `desc`, `field_id`, `label_type`, `input_type`, `field_options`, and `settings_html` keys.
 		 */
 		$additional_fields = apply_filters( 'gravityview_additional_fields', $additional_fields );
 
@@ -1033,9 +1060,11 @@ HTML;
 		/**
 		 * Modify the default fields for each zone and context.
 		 *
-		 * @param array        $entry_default_fields Array of fields shown by default
-		 * @param string|array $form                 form_ID or form object
-		 * @param string       $zone                 Either 'single', 'directory', 'header', 'footer'
+		 * @since 1.0-beta
+		 *
+		 * @param array        $entry_default_fields Array of fields shown by default.
+		 * @param string|array $form                 Form ID or form object.
+		 * @param string       $zone                 Either 'single', 'directory', 'header', 'footer'.
 		 */
 		return apply_filters( 'gravityview_entry_default_fields', $entry_default_fields, $form, $zone );
 	}
@@ -1093,9 +1122,11 @@ HTML;
 		/**
 		 * Modify the available fields that can be used in a View.
 		 *
+		 * @since 2.10
+		 *
 		 * @param array        $fields The fields.
-		 * @param string|array $form   form_ID or form object
-		 * @param string       $zone   Either 'single', 'directory', 'header', 'footer'
+		 * @param string|array $form   Form ID or form object.
+		 * @param string       $zone   Either 'single', 'directory', 'header', 'footer'.
 		 */
 		return apply_filters( 'gravityview/admin/available_fields', $fields, $form, $zone );
 	}
@@ -1155,7 +1186,19 @@ HTML;
 				$button_label = __( 'Add Field', 'gk-gravityview' );
 		}
 
+		// Load row settings for the settings panel.
+		$row_settings = [];
+
+		if ( ! empty( $post->ID ) ) {
+			$row_settings = get_post_meta( $post->ID, '_gravityview_row_settings', true );
+		}
+
+		if ( ! is_array( $row_settings ) ) {
+			$row_settings = [];
+		}
+
 		$is_dynamic = $this->is_dynamic( $template_id, $type, $zone );
+
 		/**
 		 * @internal Don't rely on this filter! This is for internal use and may change.
 		 *
@@ -1214,6 +1257,10 @@ HTML;
 		}
 
 		foreach ( $rows as $row ) :
+			$row_uid     = Grid::extract_row_uid( $row );
+			$row_key     = $zone . '::' . $row_uid;
+			$row_setting = $row_settings[ $row_key ] ?? [];
+
 			printf(
 				'<div class="gv-grid-row %s" data-context="%s">',
 				$is_dynamic ? 'is-sortable' : '',
@@ -1223,9 +1270,7 @@ HTML;
 			/**
 			 * Triggers before a row is rendered in the View editor.
 			 *
-			 * @since  2.31.0
-			 *
-			 * @action `gk/gravityview/admin-views/row/before`
+			 * @since 2.31.0
 			 *
 			 * @param bool   $is_dynamic  Whether the area is dynamic.
 			 * @param string $template_id The template ID.
@@ -1265,8 +1310,6 @@ HTML;
 									<?php
 									/**
 									 * Allows adding custom actions inside the View editor's droppable areas.
-									 *
-									 * @action `gk/gravityview/admin-views/area/actions`
 									 *
 									 * @since 2.44
 									 *
@@ -1392,9 +1435,7 @@ HTML;
 			/**
 			 * Triggers after a row is rendered in the View editor.
 			 *
-			 * @since  2.31.0
-			 *
-			 * @action `gk/gravityview/admin-views/row/before`
+			 * @since 2.31.0
 			 *
 			 * @param bool   $is_dynamic  Whether the area is dynamic.
 			 * @param View   $view        The View.
@@ -1404,8 +1445,68 @@ HTML;
 			 */
 			do_action( 'gk/gravityview/admin-views/row/after', $is_dynamic, $view, $template_id, $type, $zone );
 
+			if ( $is_dynamic ) {
+				$this->render_row_settings_panel( $zone, $row_uid, $row_setting );
+			}
+
 			echo '</div>';
 		endforeach;
+	}
+
+	/**
+	 * Renders the row settings dialog (CSS class and HTML ID inputs).
+	 *
+	 * Uses the same `.gv-dialog-options` modal pattern as field and widget settings.
+	 *
+	 * @since 2.54.0
+	 *
+	 * @param string $zone        The render zone.
+	 * @param string $row_uid     The row UID.
+	 * @param array  $row_setting The saved row settings.
+	 */
+	private function render_row_settings_panel( string $zone, string $row_uid, array $row_setting ): void {
+		$row_key     = $zone . '::' . $row_uid;
+		$name_prefix = 'row_settings[' . esc_attr( $row_key ) . ']';
+
+		$options = [
+			'custom_class' => [
+				'type'       => 'text',
+				'label'      => __( 'Custom CSS Class', 'gk-gravityview' ),
+				'desc'       => __( 'This class will be added to the row container. Use {row_index} for the row number.', 'gk-gravityview' ),
+				'value'      => '',
+				'merge_tags' => true,
+				'class'      => 'widefat code',
+			],
+			'custom_id'    => [
+				'type'       => 'text',
+				'label'      => __( 'Custom HTML ID', 'gk-gravityview' ),
+				'desc'       => __( 'This ID will be added to the row container. Use {row_index} for the row number.', 'gk-gravityview' ),
+				'value'      => '',
+				'merge_tags' => true,
+				'class'      => 'widefat code',
+			],
+		];
+
+		printf(
+			'<div class="gv-dialog-options gv-row-settings-dialog" title="%s" data-row-key="%s">',
+			esc_attr__( 'Row Settings', 'gk-gravityview' ),
+			esc_attr( $row_key )
+		);
+
+		foreach ( $options as $key => $option ) {
+			$value  = $row_setting[ $key ] ?? null;
+			$output = GravityView_Render_Settings::render_field_option(
+				$name_prefix . '[' . $key . ']',
+				$option,
+				$value
+			);
+
+			if ( ! empty( $output ) ) {
+				printf( '<div class="gv-setting-container gv-setting-container-%s">%s</div>', esc_attr( $key ), $output );
+			}
+		}
+
+		echo '</div>';
 	}
 
 	/**
@@ -1436,6 +1537,9 @@ HTML;
 					<rect x="14" y="16.9999" width="2" height="2" fill="currentColor"/>
 				</svg>
 			</div>
+			<div class="gv-grid-row-action gv-grid-row-settings-toggle" aria-expanded="false" title="' . esc_attr__( 'Row Settings', 'gk-gravityview' ) . '">
+				<span class="dashicons dashicons-admin-generic"></span>
+			</div>
 			<div class="gv-grid-row-action gv-grid-row-delete" data-confirm="' . esc_attr__(
 				'Are you sure you want to delete the entire row?',
 				'gk-gravityview'
@@ -1450,9 +1554,7 @@ HTML;
 		/**
 		 * Modifies the actions rendered in the View editor.
 		 *
-		 * @since  2.31.0
-		 *
-		 * @filter `gk/gravityview/admin-views/rows-actions`
+		 * @since 2.31.0
 		 *
 		 * @param string $actions     The HTML for the actions.
 		 * @param string $template_id The template ID.
@@ -1518,9 +1620,12 @@ HTML;
 				/**
 				 * Modify the default widgets for new Views.
 				 *
-				 * @param array  $widgets A Widget configuration array
-				 * @param string $zone    The widget zone that's being requested
-				 * @param int    $post_id The auto-draft post ID
+				 * @since 2.10
+				 *
+				 * @param array  $widgets     A Widget configuration array.
+				 * @param string $template_id The current slug of the selected View template.
+				 * @param string $zone        The widget zone that's being requested.
+				 * @param int    $post_id     The auto-draft post ID.
 				 */
 				$widgets = (array) apply_filters( 'gravityview/view/widgets/default', $widgets, $template_id, $zone, $post_id );
 			} else {
@@ -1544,11 +1649,11 @@ HTML;
 			/**
 			 * Allows additional content after the zone was rendered.
 			 *
-			 * @filter `gk/gravityview/admin/view/after-zone`
+			 * @since 2.10
 			 *
 			 * @param string $template_id Template ID.
 			 * @param string $type        The zone type (field or widget).
-			 * @param string $context     Current View context: `directory`, `single`, or `edit` (default: 'single')
+			 * @param string $context     Current View context: `directory`, `single`, or `edit` (default: 'single').
 			 * @param bool   $is_dynamic  Whether the zone is dynamic.
 			 */
 			do_action( 'gk/gravityview/admin-views/view/after-zone', $template_id, $type, $zone, $is_dynamic );
@@ -1651,12 +1756,15 @@ HTML;
 		}
 
 		/**
-		 * @filter `gravityview_template_active_areas`
-		 * @see    GravityView_Template::assign_active_areas()
+		 * Filters the active areas for the View template.
 		 *
-		 * @param array  $template_areas Empty array, to be filled in by the template class
+		 * @since 1.0-beta
+		 *
+		 * @see GravityView_Template::assign_active_areas()
+		 *
+		 * @param array  $template_areas Empty array, to be filled in by the template class.
 		 * @param string $template_id    Template ID, like `default_list`, `default_table`, `preset_business_data`, etc. {@see GravityView_Template::__construct()}
-		 * @param string $context        Current View context: `directory`, `single`, `edit`, or `search` (default: 'single')
+		 * @param string $context        Current View context: `directory`, `single`, `edit`, or `search` (default: 'single').
 		 */
 		$template_areas = apply_filters( 'gravityview_template_active_areas', [], $template_id, $context );
 
@@ -1675,12 +1783,11 @@ HTML;
 			/**
 			 * Modifies the template area's before rendering.
 			 *
-			 * @filter `gk/gravityview/admin-views/view/template/active-areas`
-			 * @since  2.31.0
+			 * @since 2.31.0
 			 *
 			 * @param array  $template_areas The template areas.
 			 * @param string $template_id    Template ID.
-			 * @param string $context        Current View context: `directory`, `single`, or `edit` (default: 'single')
+			 * @param string $context        Current View context: `directory`, `single`, or `edit` (default: 'single').
 			 * @param array  $fields         The fields for the View.
 			 */
 
@@ -1716,11 +1823,11 @@ HTML;
 			/**
 			 * Allows additional content after the zone was rendered.
 			 *
-			 * @filter `gk/gravityview/admin/view/after-zone`
+			 * @since 2.10
 			 *
 			 * @param string $template_id Template ID.
 			 * @param string $type        The zone type (field or widget).
-			 * @param string $context     Current View context: `directory`, `single`, or `edit` (default: 'single')
+			 * @param string $context     Current View context: `directory`, `single`, or `edit` (default: 'single').
 			 * @param bool   $is_dynamic  Whether the zone is dynamic.
 			 */
 			do_action( 'gk/gravityview/admin-views/view/after-zone', $template_id, $type, $context, $is_dynamic );
@@ -1857,9 +1964,7 @@ HTML;
 		/**
 		 * Modify whether to initialize the Multiple Entries layout with all form fields or only the fields displayed in the Gravity Forms Entries table when creating a new View.
 		 *
-		 * @filter `gk/gravityview/view/configuration/multiple-entries/initialize-with-all-form-fields`
-		 *
-		 * @since  2.27
+		 * @since 2.27
 		 *
 		 * @param bool $show_all_fields Whether to include all form fields (true) or only the fields displayed in the Gravity Forms Entries table (false). Default: `false`.
 		 * @param int  $form_id         The current form ID.
@@ -2013,6 +2118,12 @@ HTML;
 			plugins_url( 'assets/css/admin-datepicker.css', GRAVITYVIEW_FILE ),
 			$version );
 
+		// Enqueue selectWoo for multiselect fields (e.g., note type filtering).
+		if ( ! wp_script_is( 'gravityview_selectwoo', 'enqueued' ) ) {
+			wp_enqueue_script( 'gravityview_selectwoo', plugins_url( 'assets/lib/selectWoo/selectWoo.full.min.js', GRAVITYVIEW_FILE ), [ 'jquery' ], $version );
+			wp_enqueue_style( 'gravityview_selectwoo', plugins_url( 'assets/lib/selectWoo/selectWoo.min.css', GRAVITYVIEW_FILE ), [], $version );
+		}
+
 		// Enqueue scripts
 		wp_enqueue_script(
 			'gravityview_views_scripts',
@@ -2028,6 +2139,7 @@ HTML;
 				'jquery-ui-datepicker',
 				'underscore',
 				'clipboard',
+				'gravityview_selectwoo',
 			],
 			$version
 		);
@@ -2068,6 +2180,7 @@ HTML;
 					'gk-gravityview' ),
 				'discard_unsaved_changes'     => __( 'You have unsaved changes. Continuing will discard them. Are you sure you want to proceed?',
 					'gk-gravityview' ),
+				'label_duplicate_row_id'      => __( 'This ID is already used by another row.', 'gk-gravityview' ),
 				'foundation_licenses_router'  => array_merge(
 					GravityKitFoundation::ajax_router()->get_ajax_params( 'licenses' ),
 					[
@@ -2161,13 +2274,12 @@ HTML;
 		/**
 		 * Modifies whether the zone is sortable.
 		 *
-		 * @filter `gk/gravityview/view/template/active-areas`
-		 * @since  2.31.0
+		 * @since 2.31.0
 		 *
 		 * @param bool   $is_dynamic  Whether area is dynamic, meaning sortable / deletable / actionable.
 		 * @param string $template_id Template ID.
 		 * @param string $type        The object type; widget or field.
-		 * @param string $zone        Current View context: `directory`, `single`, or `edit` (default: 'single')
+		 * @param string $zone        Current View context: `directory`, `single`, or `edit` (default: 'single').
 		 */
 		return (bool) apply_filters( 'gk/gravityview/admin-views/view/is-dynamic', false, $template_id, $type, $zone );
 	}

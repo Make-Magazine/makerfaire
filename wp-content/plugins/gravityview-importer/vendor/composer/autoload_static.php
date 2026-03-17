@@ -4,7 +4,7 @@
 
 namespace Composer\Autoload;
 
-class ComposerStaticInitb5b646dfb18c0950c34f43300f508797
+class ComposerStaticInit4e00f5b89eac8be31848256c0caf2568
 {
     public static $files = array (
         '78f278b8d5e25c06d1f4ed3594fbf783' => __DIR__ . '/../..' . '/src/Schema.php',
@@ -75,12 +75,14 @@ class ComposerStaticInitb5b646dfb18c0950c34f43300f508797
         'Goodby\\CSV\\Import\\Tests\\Standard\\Unit\\StreamFilter\\ConvertMbstringEncodingTest' => __DIR__ . '/..' . '/gravitykit/goodby-csv/src/Goodby/CSV/Import/Tests/Standard/Unit/StreamFilter/ConvertMbstringEncodingTest.php',
         'Goodby\\CSV\\TestHelper\\DbManager' => __DIR__ . '/..' . '/gravitykit/goodby-csv/src/Goodby/CSV/TestHelper/DbManager.php',
         'GravityKit\\GravityImport\\Addon' => __DIR__ . '/../..' . '/src/Addon.php',
+        'GravityKit\\GravityImport\\BackgroundProcessor' => __DIR__ . '/../..' . '/src/BackgroundProcessor.php',
         'GravityKit\\GravityImport\\Batch' => __DIR__ . '/../..' . '/src/Batch.php',
         'GravityKit\\GravityImport\\Compat' => __DIR__ . '/../..' . '/src/Compat.php',
         'GravityKit\\GravityImport\\Core' => __DIR__ . '/../..' . '/src/Core.php',
         'GravityKit\\GravityImport\\GF_Entries_Screen' => __DIR__ . '/../..' . '/src/GF_Entries_Screen.php',
         'GravityKit\\GravityImport\\GF_System_Status_Screen' => __DIR__ . '/../..' . '/src/GF_System_Status_Screen.php',
         'GravityKit\\GravityImport\\Log' => __DIR__ . '/../..' . '/src/Log.php',
+        'GravityKit\\GravityImport\\Notices\\ImportNotices' => __DIR__ . '/../..' . '/src/Notices/ImportNotices.php',
         'GravityKit\\GravityImport\\Processor' => __DIR__ . '/../..' . '/src/Processor.php',
         'GravityKit\\GravityImport\\REST_Batch_Controller' => __DIR__ . '/../..' . '/src/REST_Batch_Controller.php',
         'GravityKit\\GravityImport\\Server' => __DIR__ . '/../..' . '/src/Server.php',
@@ -91,10 +93,10 @@ class ComposerStaticInitb5b646dfb18c0950c34f43300f508797
     public static function getInitializer(ClassLoader $loader)
     {
         return \Closure::bind(function () use ($loader) {
-            $loader->prefixLengthsPsr4 = ComposerStaticInitb5b646dfb18c0950c34f43300f508797::$prefixLengthsPsr4;
-            $loader->prefixDirsPsr4 = ComposerStaticInitb5b646dfb18c0950c34f43300f508797::$prefixDirsPsr4;
-            $loader->prefixesPsr0 = ComposerStaticInitb5b646dfb18c0950c34f43300f508797::$prefixesPsr0;
-            $loader->classMap = ComposerStaticInitb5b646dfb18c0950c34f43300f508797::$classMap;
+            $loader->prefixLengthsPsr4 = ComposerStaticInit4e00f5b89eac8be31848256c0caf2568::$prefixLengthsPsr4;
+            $loader->prefixDirsPsr4 = ComposerStaticInit4e00f5b89eac8be31848256c0caf2568::$prefixDirsPsr4;
+            $loader->prefixesPsr0 = ComposerStaticInit4e00f5b89eac8be31848256c0caf2568::$prefixesPsr0;
+            $loader->classMap = ComposerStaticInit4e00f5b89eac8be31848256c0caf2568::$classMap;
 
         }, null, ClassLoader::class);
     }

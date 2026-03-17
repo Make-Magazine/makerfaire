@@ -8,7 +8,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  *
- * Modified by gravityview on 05-December-2025 using {@see https://github.com/BrianHenryIE/strauss}.
+ * Modified using {@see https://github.com/BrianHenryIE/strauss}.
  */
 
 namespace GravityKit\GravityView\Symfony\Component\HttpFoundation\Session\Storage;
@@ -68,7 +68,7 @@ class MockArraySessionStorage implements SessionStorageInterface
      * @param string      $name    Session name
      * @param MetadataBag $metaBag MetadataBag instance
      */
-    public function __construct($name = 'MOCKSESSID', MetadataBag $metaBag = null)
+    public function __construct($name = 'MOCKSESSID', ?MetadataBag $metaBag = null)
     {
         $this->name = $name;
         $this->setMetadataBag($metaBag);
@@ -210,7 +210,7 @@ class MockArraySessionStorage implements SessionStorageInterface
         return $this->started;
     }
 
-    public function setMetadataBag(MetadataBag $bag = null)
+    public function setMetadataBag(?MetadataBag $bag = null)
     {
         if (null === $bag) {
             $bag = new MetadataBag();

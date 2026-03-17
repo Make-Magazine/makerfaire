@@ -37,7 +37,7 @@ class PMXI_Handler extends PMXI_Session {
      * @return boolean
      */
     public function has_session() {
-    	return isset( $_COOKIE[ $this->_cookie ] ) || $this->_has_cookie || is_user_logged_in();
+    	return ( $this->_cookie !== null && isset( $_COOKIE[ $this->_cookie ] ) ) || $this->_has_cookie || is_user_logged_in();
     }
 
     /**

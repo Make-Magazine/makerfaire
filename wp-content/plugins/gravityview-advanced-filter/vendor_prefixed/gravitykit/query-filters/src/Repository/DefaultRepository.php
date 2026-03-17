@@ -2,7 +2,7 @@
 /**
  * @license MIT
  *
- * Modified by gravitykit on 05-December-2025 using {@see https://github.com/BrianHenryIE/strauss}.
+ * Modified by gravitykit on 20-February-2026 using {@see https://github.com/BrianHenryIE/strauss}.
  */
 
 namespace GravityKit\AdvancedFilter\QueryFilters\Repository;
@@ -34,7 +34,7 @@ final class DefaultRepository implements FormRepository, UserRepository {
 	/**
 	 * Prepends the current user's ID to the field filters.
 	 *
-	 * @since $ver$
+	 * @since 2.7.0
 	 *
 	 * @param array             $field_filters     Original field filters.
 	 * @param array<int|string> $pa_user_field_ids The Populate Anything Field IDs with a user source.
@@ -75,7 +75,7 @@ final class DefaultRepository implements FormRepository, UserRepository {
 	/**
 	 * Ensures the form ID is set for all filters.
 	 *
-	 * @since $ver$
+	 * @since 2.7.0
 	 *
 	 * @param array $field_filters The field filters.
 	 *
@@ -223,7 +223,7 @@ final class DefaultRepository implements FormRepository, UserRepository {
 	/**
 	 * Returns an array of relative date choices for date fields.
 	 *
-	 * @since $ver$
+	 * @since 2.6.0
 	 *
 	 * @param int $form_id The form ID.
 	 *
@@ -320,11 +320,11 @@ final class DefaultRepository implements FormRepository, UserRepository {
 		];
 
 		/**
-		 * @filter `gk/query-filters/relative-date-choices` Modify available relative date choices for date fields.
+		 * Modify available relative date choices for date fields.
 		 *
 		 * If the `operators` key is empty for a choice it will be applied to all operators.
 		 *
-		 * @since  $ver$
+		 * @since  2.6.0
 		 *
 		 * @param array<int, array{text: string, value: string, operators?: string[]}> $choices Array of relative date choices.
 		 *
@@ -531,7 +531,7 @@ final class DefaultRepository implements FormRepository, UserRepository {
 		} );
 
 		/**
-		 * @filter `gk/query-filters/field-filters` Modify available field filters.
+		 * Modify available field filters.
 		 *
 		 * @since  2.0.0
 		 *
@@ -697,7 +697,7 @@ final class DefaultRepository implements FormRepository, UserRepository {
 		}
 
 		/**
-		 * @filter `gk/query-filters/admin-capabilities` Customise the capabilities that define an Administrator able to view entries in frontend when filtered by "Created By".
+		 * Customise the capabilities that define an Administrator able to view entries in frontend when filtered by "Created By".
 		 *
 		 * @since  1.0
 		 *
@@ -727,7 +727,7 @@ final class DefaultRepository implements FormRepository, UserRepository {
 	/**
 	 * Returns fields that have Populate Anything enabled with user IDs.
 	 *
-	 * @since $ver$
+	 * @since 2.7.0
 	 *
 	 * @param array $fields The form fields.
 	 *
@@ -762,7 +762,7 @@ final class DefaultRepository implements FormRepository, UserRepository {
 	/**
 	 * Get categories formatted in a way used by GravityView and Gravity Forms input choices
 	 *
-	 * @since $ver$
+	 * @since 2.7.1
 	 *
 	 * @param array $args Arguments array as used by the get_terms() function.
 	 *

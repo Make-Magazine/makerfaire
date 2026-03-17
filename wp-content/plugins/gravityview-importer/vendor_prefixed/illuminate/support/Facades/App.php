@@ -2,7 +2,7 @@
 /**
  * @license MIT
  *
- * Modified by The GravityKit Team on 11-September-2025 using Strauss.
+ * Modified using Strauss.
  * @see https://github.com/BrianHenryIE/strauss
  */
 
@@ -15,7 +15,7 @@ namespace GravityKit\GravityImport\Foundation\ThirdParty\Illuminate\Support\Faca
  * @method static bool isDownForMaintenance()
  * @method static void registerConfiguredProviders()
  * @method static \GravityKit\GravityImport\Foundation\ThirdParty\Illuminate\Support\ServiceProvider register(\GravityKit\GravityImport\Foundation\ThirdParty\Illuminate\Support\ServiceProvider|string $provider, array $options = [], bool $force = false)
- * @method static void registerDeferredProvider(string $provider, string $service = null)
+ * @method static void registerDeferredProvider(string $provider, ?string $service = null)
  * @method static void boot()
  * @method static void booting(mixed $callback)
  * @method static void booted(mixed $callback)

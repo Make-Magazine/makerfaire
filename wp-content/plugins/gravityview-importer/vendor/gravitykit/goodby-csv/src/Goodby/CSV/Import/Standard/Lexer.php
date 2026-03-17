@@ -18,7 +18,7 @@ class Lexer implements LexerInterface
      * Return new Lexer object
      * @param LexerConfig $config
      */
-    public function __construct(LexerConfig $config = null)
+    public function __construct(?LexerConfig $config = null)
     {
         if (!$config) {
             $config = new LexerConfig();

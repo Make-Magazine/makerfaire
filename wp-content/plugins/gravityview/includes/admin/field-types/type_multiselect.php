@@ -13,15 +13,17 @@ class GravityView_FieldType_multiselect extends GravityView_FieldType {
 	function render_option() {
 		?>
 		<label for="<?php echo $this->get_field_id(); ?>" class="<?php echo $this->get_label_class(); ?>">
-								<?php
+			<?php
+			$label = $this->get_field_label();
 
-								echo '<span class="gv-label">' . $this->get_field_label() . '</span>';
+			if ( '' !== $label ) {
+				echo '<span class="gv-label">' . $label . '</span>';
+			}
 
-								echo $this->get_tooltip() . $this->get_field_desc();
+			echo $this->get_tooltip() . $this->get_field_desc();
 
-								$this->render_input();
-
-								?>
+			$this->render_input();
+			?>
 		</label>
 		<?php
 	}
@@ -33,8 +35,11 @@ class GravityView_FieldType_multiselect extends GravityView_FieldType {
 			return;
 		}
 
+		$class       = isset( $this->field['class'] ) ? esc_attr( $this->field['class'] ) : '';
+		$placeholder = isset( $this->field['placeholder'] ) ? esc_attr( $this->field['placeholder'] ) : '';
+
 		?>
-		<select name="<?php echo esc_attr( $this->name ); ?>[]" id="<?php echo $this->get_field_id(); ?>" multiple="multiple">
+		<select name="<?php echo esc_attr( $this->name ); ?>[]" id="<?php echo $this->get_field_id(); ?>" class="<?php echo $class; ?>" data-placeholder="<?php echo $placeholder; ?>" multiple="multiple">
 			<?php foreach ( $this->field['options'] as $value => $label ) : ?>
 				<option value="<?php echo esc_attr( $value ); ?>" <?php selected( in_array( $value, (array) $this->value ), true, true ); ?>><?php echo esc_html( $label ); ?></option>
 			<?php endforeach; ?>

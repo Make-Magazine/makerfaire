@@ -189,7 +189,13 @@ final class GravityView_Inline_Edit_AJAX {
 
 		$view_id = (int) rgpost( 'view_id' );
 
-		// Clear the cache for this entry.
+		/**
+		 * Clear the cache for an entry
+		 *
+		 * @since 1.0
+		 *
+		 * @param int $entry_id The ID of the entry to clear cache for
+		 */
 		do_action( 'gravityview_clear_entry_cache', $entry_id );
 
 		// If View ID isn't set, we're inside Gravity Forms entry list.
@@ -363,18 +369,14 @@ final class GravityView_Inline_Edit_AJAX {
 	 * x-editable when a field is modified.
 	 *
 	 * @since 1.0
+	 * @since 2.9.0 Returns JSON error instead of empty response on nonce failure.
 	 *
-	 * @return void Exits with false or JSON payload
+	 * @return void Exits with JSON payload.
 	 */
 	private function _edit_gravityview_field() {
 
 		if ( ! isset( $_POST['nonce'] ) || ! wp_verify_nonce( $_POST['nonce'], 'gravityview_inline_edit' ) ) {
-			exit( false );
-		}
-
-		// Doesn't have minimum version of WordPress
-		if ( ! function_exists( 'wp_send_json' ) ) {
-			exit( false );
+			wp_send_json( new WP_Error( 'invalid_nonce', esc_html__( 'Your session has expired or the security token is invalid. Please reload the page and try again.', 'gk-gravityedit' ) ) );
 		}
 
 		if ( ! function_exists( 'rgpost' ) ) {
@@ -395,6 +397,10 @@ final class GravityView_Inline_Edit_AJAX {
 		$entry            = GFAPI::get_entry( $entry_id );
 		$entry_pre_update = $entry;
 		$form             = GFAPI::get_form( $form_id );
+
+		// Apply pre-render filter so that dynamically populated choices (e.g., via GP Populate Anything) are available during save.
+		$form = gf_apply_filters( array( 'gform_pre_render', $form_id ), $form, false, false );
+
 		$gf_field         = GFFormsModel::get_field( $form, $field_id );
 		$values_to_update = array();
 
@@ -427,7 +433,7 @@ final class GravityView_Inline_Edit_AJAX {
 
 					$_id = $field_id . '.' . $input_id;
 
-					if ( $post_value !== $entry[ $_id ] ) {
+					if ( $post_value !== rgar( $entry, $_id ) ) {
 						$values_to_update[ $_id ] = $post_value;
 					}
 				} else {
@@ -442,13 +448,14 @@ final class GravityView_Inline_Edit_AJAX {
 								++$choice_number;
 							}
 
-							$_id = $field_id . '.' . $choice_number;
+							$_id           = $field_id . '.' . $choice_number;
+							$current_value = rgar( $entry, $_id );
 
-							if ( ! in_array( $choice['value'], (array) $post_value ) && '' !== $entry[ $_id ] ) {
+							if ( ! in_array( $choice['value'], (array) $post_value ) && '' !== $current_value ) {
 								$values_to_update[ $_id ] = '';
 							}
 
-							if ( in_array( $choice['value'], (array) $post_value ) && '' === $entry[ $_id ] ) {
+							if ( in_array( $choice['value'], (array) $post_value ) && '' === $current_value ) {
 								$values_to_update[ $_id ] = $choice['value'];
 							}
 
@@ -534,13 +541,14 @@ final class GravityView_Inline_Edit_AJAX {
 							++$choice_number;
 						}
 
-						$_id = $field_id . '.' . $choice_number;
+						$_id           = $field_id . '.' . $choice_number;
+						$current_value = rgar( $entry, $_id );
 
-						if ( ! in_array( $choice['value'], (array) $post_value ) && '' !== $entry[ $_id ] ) {
+						if ( ! in_array( $choice['value'], (array) $post_value ) && '' !== $current_value ) {
 							$values_to_update[ $_id ] = '';
 						}
 
-						if ( in_array( $choice['value'], (array) $post_value ) && '' === $entry[ $_id ] ) {
+						if ( in_array( $choice['value'], (array) $post_value ) && '' === $current_value ) {
 							$values_to_update[ $_id ] = $choice['value'];
 						}
 
@@ -565,14 +573,14 @@ final class GravityView_Inline_Edit_AJAX {
 							++$choice_number;
 						}
 						
-						$_id = $field_id . '.' . $choice_number;
-						
-						// Uncheck if not in post_value array, check if in array
-						if ( ! in_array( $choice['value'], (array) $post_value ) && '' !== $entry[ $_id ] ) {
+						$_id           = $field_id . '.' . $choice_number;
+						$current_value = rgar( $entry, $_id );
+
+						if ( ! in_array( $choice['value'], (array) $post_value ) && '' !== $current_value ) {
 							$values_to_update[ $_id ] = '';
 						}
-						
-						if ( in_array( $choice['value'], (array) $post_value ) && '' === $entry[ $_id ] ) {
+
+						if ( in_array( $choice['value'], (array) $post_value ) && '' === $current_value ) {
 							$values_to_update[ $_id ] = $choice['value'];
 						}
 						
@@ -646,7 +654,11 @@ final class GravityView_Inline_Edit_AJAX {
 	private function _update_entry( $entry, $form_id = 0, $gf_field = null, $type = 'text', $original_entry = array() ) {
 
 		/**
+		 * Remove Gravity Forms update hooks before updating entry
+		 *
 		 * @since 1.2.7
+		 *
+		 * @param bool $remove_hooks Whether to remove Gravity Forms update hooks. Default: true
 		 */
 		$remove_hooks = apply_filters( 'gravityview-inline-edit/remove-gf-update-hooks', true );
 
@@ -775,6 +787,14 @@ final class GravityView_Inline_Edit_AJAX {
 				)
 			);
 
+		}
+
+		// Inline editing only has a single email input, so pass the value as an array
+		// with both elements matching to bypass the "Your emails do not match" validation.
+		if ( $gf_field instanceof \GF_Field_Email && $gf_field->emailConfirmEnabled ) {
+			$email = is_array( $field_value ) ? rgar( $field_value, 0 ) : $field_value;
+
+			$field_value = array( $email, $email );
 		}
 
 		$gf_field->validate( $field_value, null );

@@ -390,36 +390,48 @@
 
 			}
 
-			$field.editable( editableOptions );
-
-			// For select fields, override display to show value instead of text.
+			// For select fields, set custom display before init so x-editable resolves labels on initial render.
 			if ( field_type === 'select' ) {
-				$field.editable( 'option', 'display', function( value, sourceData ) {
+				editableOptions.display = function( value, sourceData ) {
 					const source = $field.data( 'source' );
 					const choiceDisplay = $( this ).attr( 'data-choice_display' );
 					const entryLink = $( this ).data( 'entry-link' );
 
+					// Use string comparison since jQuery may auto-parse numeric data-value attributes.
+					const strValue = String( value );
+
 					if ( source && Array.isArray( source ) ) {
-						const choice = source.find( ( c ) => c.value === value );
+						const choice = source.find( ( c ) => String( c.value ) === strValue );
 
 						if ( ! choice ) {
 							return;
 						}
 
 						// Determine what to display based on choice_display setting.
-						const displayText = ( choiceDisplay === 'label' ) ? choice.text : choice.value;
+						const displayText = ( choiceDisplay === 'value' ) ? choice.value : choice.text;
 
 						// Preserve link if it exists.
 						if ( entryLink ) {
-							$( this ).html( `<a href="${entryLink}">${displayText}</a>` );
+							$( this ).empty().append( $( '<a>', { href: entryLink, text: displayText } ) );
+						} else {
+							$( this ).text( displayText );
+						}
+					} else if ( source && typeof source === 'object' && choiceDisplay !== 'value' && value in source ) {
+						// Source is a key-value object (e.g., dynamically populated select fields).
+						const displayText = source[ value ];
+
+						if ( entryLink ) {
+							$( this ).empty().append( $( '<a>', { href: entryLink, text: displayText } ) );
 						} else {
 							$( this ).text( displayText );
 						}
 					} else {
 						$( this ).text( value );
 					}
-				} );
+				};
 			}
+
+			$field.editable( editableOptions );
 
 			// For checkbox fields, fix empty state styling and link preservation.
 			if ( field_type === 'checklist' ) {
@@ -461,14 +473,14 @@
 						
 						// Find the choice in source data to get proper display text.
 						if ( source && Array.isArray( source ) ) {
-							const choice = source.find( c => c.value === val );
+							const choice = source.find( ( c ) => String( c.value ) === String( val ) );
 
 							if ( choice ) {
-								displayText = ( choiceDisplay === 'label' ) ? choice.text : choice.value;
+								displayText = ( choiceDisplay === 'value' ) ? choice.value : choice.text;
 							}
 						}
 						
-						displayContent += `<li>${displayText}</li>`;
+						displayContent += `<li>${$( '<span>' ).text( displayText ).html()}</li>`;
 					} );
 					
 					displayContent += '</ul>';
@@ -537,6 +549,78 @@
 				let cell_index = table.responsive.index( this.closest( 'li' ) );
 				table.cell( cell_index ).data( params.newValue );
 			}
+
+			// Refresh the DataTables display to reflect the change.
+			self.refreshDataTablesAfterSave( table, this, params );
+		};
+
+		/**
+		 * Refreshes DataTables after an inline edit save.
+		 *
+		 * For server-side processing, reloads the table to get fresh data from the server.
+		 * This ensures View filters are re-applied and footer calculations are updated.
+		 *
+		 * For client-side processing, triggers a redraw to update the display.
+		 * If GravityMath footer calculations are present, also updates the values array.
+		 *
+		 * @since 2.8.0
+		 *
+		 * @param {DataTable} table  The DataTables instance.
+		 * @param {Element}   cell   The cell element that was edited.
+		 * @param {Object}    params The edit parameters containing newValue.
+		 */
+		self.refreshDataTablesAfterSave = function ( table, cell, params ) {
+			const tableSettings = table.settings()[ 0 ];
+			const options = tableSettings.oInit;
+
+			if ( options.serverSide ) {
+				// Default to the View setting value (true if not explicitly disabled).
+				let shouldRefresh = options.inlineEditRefresh !== false;
+
+				/**
+				 * Controls whether DataTables should refresh after an inline edit save.
+				 *
+				 * Only applies to server-side processing. Client-side tables always
+				 * redraw to reflect the updated DOM values.
+				 *
+				 * @since 2.9.0
+				 *
+				 * @param {boolean}   shouldRefresh Whether to refresh the DataTable. Default: true.
+				 * @param {DataTable} table         The DataTables instance.
+				 * @param {Element}   cell          The cell element that was edited.
+				 * @param {Object}    params        The edit parameters containing newValue.
+				 */
+				if ( window.wp && window.wp.hooks ) {
+					shouldRefresh = wp.hooks.applyFilters( 'gk.datatables.inline-edit.refresh', shouldRefresh, table, cell, params );
+				}
+
+				if ( !shouldRefresh ) {
+					return;
+				}
+
+				// Server-side: reload to get fresh data, re-apply filters, and recalculate footers.
+				table.ajax.reload( null, false );
+
+				return;
+			}
+
+			// Client-side processing: always redraw after inline edit.
+			let $cell = $( cell ).closest( 'td' );
+			let rowIndex = $cell.data( 'row-index' );
+			let columnIndex = $cell.data( 'column-index' );
+
+			// Update GravityMath footer calculation values if available.
+			if ( typeof rowIndex !== 'undefined' && typeof columnIndex !== 'undefined' ) {
+				if ( options.footerCalculation && options.footerCalculation.data && options.footerCalculation.data[ columnIndex ] && options.footerCalculation.data[ columnIndex ].values ) {
+					let numericValue = parseFloat( params.newValue );
+
+					options.footerCalculation.data[ columnIndex ].values[ rowIndex ] = isNaN( numericValue ) ? 0 : numericValue;
+					$cell.attr( 'data-numeric-value', isNaN( numericValue ) ? 0 : numericValue );
+				}
+			}
+
+			// Redraw to update display and trigger any footer callbacks.
+			table.draw( false );
 		};
 
 		/**
@@ -764,9 +848,7 @@
 				var view_id = $( this ).find( '.gravityview-inline-edit-id' ).val();
 
 				if ( 'undefined' === typeof view_id ) {
-					if ( console ) {
-						console.error( 'View ID is undefined when setting initial state.' );
-					}
+					self.setEditableState( $( this ), 'enabled', false );
 					return;
 				}
 
@@ -789,7 +871,7 @@
 		 */
 		self.setEditableState = function ( $views, state, set_cookie ) {
 
-			$views.find( '.gv-inline-editable-disabled' ).toggleClass( 'editable-disabled', ( state === 'enabled' ) );
+			$views.find( '.gv-inline-editable-disabled' ).not( '.gv-inline-editable-custom' ).toggleClass( 'editable-disabled', ( state === 'enabled' ) );
 
 			if ( state && state === 'enabled' ) {
 

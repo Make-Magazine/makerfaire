@@ -2,7 +2,7 @@
 /**
  * @license GPL-2.0-or-later
  *
- * Modified by gravityview on 05-December-2025 using {@see https://github.com/BrianHenryIE/strauss}.
+ * Modified using {@see https://github.com/BrianHenryIE/strauss}.
  */
 
 namespace GravityKit\GravityView\Foundation;
@@ -36,7 +36,7 @@ use GravityKit\GravityView\Foundation\Settings\WPDebugSettings;
  * @method static TrustedLogin trustedlogin()
  * @method static HelpScout helpscout()
  * @method static GravityForms gravityforms()
- * @method static LoggerFramework logger( string $logger_name = null, string $logger_title = null )
+ * @method static LoggerFramework logger(?string $logger_name = null, ?string $logger_title = null )
  * @method static SettingsFramework settings()
  * @method static LicensesFramework licenses()
  * @method static TranslationsFramework translations()
@@ -46,7 +46,7 @@ use GravityKit\GravityView\Foundation\Settings\WPDebugSettings;
  * @method static SecureDownload secure_download()
  */
 class Core {
-	const VERSION = '1.7.0';
+	const VERSION = '1.11.0';
 
 	const ID = 'gk_foundation';
 
@@ -182,6 +182,104 @@ class Core {
 				$gk_foundation->init();
 			},
 			self::INIT_PRIORITY
+		);
+
+		/**
+		 * Safety net: retry initialization if the primary callback was skipped.
+		 *
+		 * A WordPress core bug in WP_Hook::resort_active_iterations() can cause
+		 * the plugins_loaded callback above to be silently skipped when another
+		 * plugin removes itself from plugins_loaded during iteration.
+		 *
+		 * @since 1.11.0
+		 *
+		 * @see https://core.trac.wordpress.org/ticket/64653
+		 */
+		add_action(
+			'plugins_loaded',
+			function () {
+				if ( class_exists( 'GravityKitFoundation' ) ) {
+					return;
+				}
+
+				$gk_foundation = apply_filters( 'gk/foundation/get-instance', null );
+
+				if ( ! $gk_foundation ) {
+					return;
+				}
+
+				$gk_foundation->init();
+			},
+			PHP_INT_MAX
+		);
+
+		/**
+		 * Show admin notice if Foundation is still missing after the safety net.
+		 *
+		 * @since 1.11.0
+		 */
+		add_action(
+			'plugins_loaded',
+			static function () {
+				if ( class_exists( 'GravityKitFoundation' ) ) {
+					return;
+				}
+
+				if ( did_action( 'gk/foundation/load-failure-notice' ) ) {
+					return;
+				}
+
+				do_action( 'gk/foundation/load-failure-notice' );
+
+				$gk_foundation = apply_filters( 'gk/foundation/get-instance', null );
+
+				if ( ! $gk_foundation || ! is_callable( [ $gk_foundation, 'get_registered_plugins' ] ) ) {
+					return;
+				}
+
+				$product_names = [];
+
+				/** @phpstan-ignore-next-line */
+				foreach ( $gk_foundation->get_registered_plugins() as $file => $data ) {
+					$plugin_data     = CoreHelpers::get_plugin_data( $file );
+					$product_names[] = $plugin_data['Name'] ?? $data['text_domain'];
+				}
+
+				$count = count( $product_names );
+				$list  = implode( ', ', $product_names );
+
+				// translators: [plugins] is replaced with a list of plugin names.
+				$message = strtr(
+					_n(
+						'[plugins] did not load correctly. Please deactivate and reactivate it to resolve this issue.',
+						'[plugins] did not load correctly. Please deactivate and reactivate them to resolve this issue.',
+						$count,
+						'gk-gravityview'
+					),
+					[ '[plugins]' => '<strong>' . esc_html( $list ) . '</strong>' ]
+				);
+
+				$support_link = '<a href="https://www.gravitykit.com/support/" target="_blank" rel="noopener noreferrer">'
+					. esc_html__( 'contact support', 'gk-gravityview' ) . '</a>';
+
+				// translators: [link] is replaced with a support link.
+				$message .= ' ' . strtr(
+					esc_html__( 'If the problem persists, [link].', 'gk-gravityview' ),
+					[ '[link]' => $support_link ]
+				);
+
+				Notices::get_instance()->add_runtime(
+					[
+						'namespace'    => 'gk-foundation',
+						'slug'         => 'foundation-load-failure',
+						'message'      => $message,
+						'severity'     => 'error',
+						'dismissible'  => false,
+						'capabilities' => [ 'manage_options' ],
+					]
+				);
+			},
+			PHP_INT_MAX
 		);
 	}
 
