@@ -1,11 +1,17 @@
 <?php
+
 // phpcs:disable Yoast.NamingConventions.NamespaceName.TooLong -- Needed in the folder structure.
 namespace Yoast\WP\SEO\Task_List\Infrastructure\Tasks_Collectors;
 
+use Yoast\WP\SEO\Task_List\Domain\Components\Call_To_Action_Entry;
+use Yoast\WP\SEO\Task_List\Domain\Exceptions\Incorrect_Child_Task_Usage_Exception;
 use Yoast\WP\SEO\Task_List\Domain\Exceptions\Invalid_Tasks_Exception;
+use Yoast\WP\SEO\Task_List\Domain\Tasks\Child_Task_Interface;
 use Yoast\WP\SEO\Task_List\Domain\Tasks\Completeable_Task_Interface;
+use Yoast\WP\SEO\Task_List\Domain\Tasks\Parent_Task_Interface;
 use Yoast\WP\SEO\Task_List\Domain\Tasks\Post_Type_Task_Interface;
 use Yoast\WP\SEO\Task_List\Domain\Tasks\Task_Interface;
+use Yoast\WP\SEO\Tracking\Infrastructure\Tracking_Link_Adapter;
 
 /**
  * Manages the collection of tasks.
@@ -20,13 +26,27 @@ class Tasks_Collector implements Tasks_Collector_Interface {
 	private $tasks;
 
 	/**
+	 * Holds the tracking link adapter.
+	 *
+	 * @var Tracking_Link_Adapter
+	 */
+	private $tracking_link_adapter;
+
+	/**
 	 * Constructs the collector.
 	 *
 	 * @param Task_Interface ...$tasks All the tasks.
+	 *
+	 * @throws Incorrect_Child_Task_Usage_Exception If a child task is added.
 	 */
 	public function __construct( Task_Interface ...$tasks ) {
 		$tasks_with_id = [];
 		foreach ( $tasks as $task ) {
+			if ( $task instanceof Child_Task_Interface ) {
+				// Implementations of the Child_Task_Interface are excluded at the DI level, but let's make sure to also throw an exception.
+				throw new Incorrect_Child_Task_Usage_Exception( \esc_html( $task->get_id() ) );
+			}
+
 			if ( $task instanceof Post_Type_Task_Interface ) {
 				continue;
 			}
@@ -34,6 +54,21 @@ class Tasks_Collector implements Tasks_Collector_Interface {
 		}
 
 		$this->tasks = $tasks_with_id;
+	}
+
+	/**
+	 * Sets the tracking link adapter.
+	 *
+	 * @required
+	 *
+	 * @codeCoverageIgnore - Is handled by DI-container.
+	 *
+	 * @param Tracking_Link_Adapter $tracking_link_adapter The tracking link adapter.
+	 *
+	 * @return void
+	 */
+	public function set_tracking_link_adapter( Tracking_Link_Adapter $tracking_link_adapter ) {
+		$this->tracking_link_adapter = $tracking_link_adapter;
 	}
 
 	/**
@@ -81,7 +116,7 @@ class Tasks_Collector implements Tasks_Collector_Interface {
 		 */
 		$tasks = \apply_filters( 'wpseo_task_list_tasks', $this->tasks );
 
-		// Check that every item is an instance of Post_Type_Task_Interface.
+		$extra_tasks = [];
 		foreach ( $tasks as $task_id => $task ) {
 			if ( ! $task instanceof Task_Interface ) {
 				throw new Invalid_Tasks_Exception();
@@ -89,10 +124,16 @@ class Tasks_Collector implements Tasks_Collector_Interface {
 
 			if ( $task->is_valid() === false ) {
 				unset( $tasks[ $task_id ] );
+				continue;
+			}
+
+			// Generate child tasks for parent tasks.
+			if ( $task instanceof Parent_Task_Interface ) {
+				\array_push( $extra_tasks, ...$task->generate_child_tasks() );
 			}
 		}
 
-		return $tasks;
+		return \array_merge( $tasks, $extra_tasks );
 	}
 
 	/**
@@ -105,6 +146,19 @@ class Tasks_Collector implements Tasks_Collector_Interface {
 		$tasks_data = [];
 
 		foreach ( $tasks as $task ) {
+			// We need to enhance the links of the CTA first, if that exists.
+			if ( $task->get_call_to_action() !== null ) {
+				$task->set_enhanced_call_to_action(
+					new Call_To_Action_Entry(
+						$task->get_call_to_action()->get_label(),
+						$task->get_call_to_action()->get_type(),
+						$this->tracking_link_adapter->create_tracking_link_for_tasks(
+							$task->get_call_to_action()->get_href(),
+						),
+					),
+				);
+			}
+
 			$tasks_data[ $task->get_id() ] = $task->to_array();
 		}
 

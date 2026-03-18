@@ -1,4 +1,5 @@
 <?php
+
 // phpcs:disable Yoast.NamingConventions.NamespaceName.TooLong -- Needed in the folder structure.
 namespace Yoast\WP\SEO\Dashboard\Infrastructure\Integrations;
 
@@ -153,7 +154,7 @@ class Site_Kit {
 	 * @return bool If the user can read the data.
 	 */
 	private function can_read_data( array $module ): bool {
-		return ( ! \is_null( $module['can_view'] ) ? $module['can_view'] : false );
+		return ( $module['can_view'] ?? false );
 	}
 
 	/**
@@ -268,7 +269,7 @@ class Site_Kit {
 		return \array_reduce(
 			\array_unique( $actual_paths ),
 			'rest_preload_api_request',
-			[]
+			[],
 		);
 	}
 
@@ -281,8 +282,8 @@ class Site_Kit {
 		return \html_entity_decode(
 			\wp_nonce_url(
 				\self_admin_url( 'plugins.php?action=activate&plugin=' . self::SITE_KIT_FILE ),
-				'activate-plugin_' . self::SITE_KIT_FILE
-			)
+				'activate-plugin_' . self::SITE_KIT_FILE,
+			),
 		);
 	}
 
@@ -295,8 +296,8 @@ class Site_Kit {
 		return \html_entity_decode(
 			\wp_nonce_url(
 				\self_admin_url( 'update.php?action=install-plugin&plugin=google-site-kit' ),
-				'install-plugin_google-site-kit'
-			)
+				'install-plugin_google-site-kit',
+			),
 		);
 	}
 
@@ -309,8 +310,8 @@ class Site_Kit {
 		return \html_entity_decode(
 			\wp_nonce_url(
 				\self_admin_url( 'update.php?action=upgrade-plugin&plugin=' . self::SITE_KIT_FILE ),
-				'upgrade-plugin_' . self::SITE_KIT_FILE
-			)
+				'upgrade-plugin_' . self::SITE_KIT_FILE,
+			),
 		);
 	}
 

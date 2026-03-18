@@ -1,4 +1,5 @@
 <?php
+
 // phpcs:disable Yoast.NamingConventions.NamespaceName.TooLong -- Needed in the folder structure.
 namespace Yoast\WP\SEO\Dashboard\User_Interface\Configuration;
 
@@ -85,10 +86,9 @@ class Site_Kit_Configuration_Dismissal_Route implements Route_Interface {
 							'type'              => 'bool',
 							'sanitize_callback' => 'rest_sanitize_boolean',
 						],
-
 					],
 				],
-			]
+			],
 		);
 	}
 
@@ -108,7 +108,7 @@ class Site_Kit_Configuration_Dismissal_Route implements Route_Interface {
 			return new WP_Error(
 				'wpseo_set_site_kit_configuration_permanent_dismissal_error',
 				$exception->getMessage(),
-				(object) []
+				(object) [],
 			);
 		}
 
@@ -116,7 +116,7 @@ class Site_Kit_Configuration_Dismissal_Route implements Route_Interface {
 				[
 					'success' => $result,
 				],
-				( $result ) ? 200 : 400
+				( $result ) ? 200 : 400,
 			);
 	}
 

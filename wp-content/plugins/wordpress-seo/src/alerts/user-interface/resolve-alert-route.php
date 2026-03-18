@@ -1,4 +1,5 @@
 <?php
+
 // phpcs:disable Yoast.NamingConventions.NamespaceName.TooLong -- Needed in the folder structure.
 namespace Yoast\WP\SEO\Alerts\User_Interface;
 
@@ -63,7 +64,7 @@ class Resolve_Alert_Route implements Integration_Interface {
 			\wp_send_json_error(
 				[
 					'message' => 'Security check failed.',
-				]
+				],
 			);
 			return;
 		}
@@ -72,7 +73,7 @@ class Resolve_Alert_Route implements Integration_Interface {
 			\wp_send_json_error(
 				[
 					'message' => 'Alert ID is missing.',
-				]
+				],
 			);
 			return;
 		}
@@ -85,7 +86,7 @@ class Resolve_Alert_Route implements Integration_Interface {
 		\wp_send_json_success(
 			[
 				'message' => 'Alert resolved successfully.',
-			]
+			],
 		);
 	}
 }

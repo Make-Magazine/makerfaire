@@ -1,4 +1,5 @@
 <?php
+
 // phpcs:disable Yoast.NamingConventions.NamespaceName.TooLong -- Needed in the folder structure.
 namespace Yoast\WP\SEO\Alerts\User_Interface\Default_SEO_Data;
 
@@ -66,7 +67,7 @@ class Default_SEO_Data_Cron_Callback_Integration implements Integration_Interfac
 			[
 				$this,
 				'detect_default_seo_data_in_recent',
-			]
+			],
 		);
 	}
 

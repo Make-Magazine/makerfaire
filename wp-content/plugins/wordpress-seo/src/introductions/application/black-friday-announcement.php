@@ -1,6 +1,5 @@
 <?php
 
-
 namespace Yoast\WP\SEO\Introductions\Application;
 
 use Yoast\WP\SEO\Helpers\Current_Page_Helper;
@@ -59,17 +58,6 @@ class Black_Friday_Announcement implements Introduction_Interface {
 	 * @return string The ID.
 	 */
 	public function get_id() {
-		return self::ID;
-	}
-
-	/**
-	 * Returns the name of the introduction.
-	 *
-	 * @return string The name.
-	 */
-	public function get_name() {
-		\_deprecated_function( __METHOD__, 'Yoast SEO Premium 21.6', 'Please use get_id() instead' );
-
 		return self::ID;
 	}
 
