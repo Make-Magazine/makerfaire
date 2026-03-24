@@ -2,11 +2,12 @@
 namespace ElementorPro\Core\App\Modules\SiteEditor;
 
 use Elementor\Core\Admin\Menu\Admin_Menu_Manager;
-use Elementor\Core\Experiments\Manager as ExperimentsManager;
-use Elementor\Core\Frontend\Render_Mode_Manager;
 use Elementor\Core\Base\Module as BaseModule;
 use Elementor\Core\Common\Modules\Ajax\Module as Ajax;
+use Elementor\Core\Experiments\Manager as ExperimentsManager;
+use Elementor\Core\Frontend\Render_Mode_Manager;
 use Elementor\TemplateLibrary\Source_Local;
+use ElementorPro\Base\Editor_One_Trait;
 use ElementorPro\Core\App\Modules\SiteEditor\Data\Controller;
 use ElementorPro\Core\Behaviors\Feature_Lock;
 use ElementorPro\Modules\ThemeBuilder\AdminMenuItems\Theme_Builder_Menu_Item;
@@ -24,6 +25,8 @@ if ( ! defined( 'ABSPATH' ) ) {
  * Responsible for initializing Elementor Pro App functionality
  */
 class Module extends BaseModule {
+	use Editor_One_Trait;
+
 	/**
 	 * @var Feature_Lock
 	 */
@@ -109,6 +112,12 @@ class Module extends BaseModule {
 		return $settings;
 	}
 
+	private function should_default_to_site_editor(): bool {
+		$experiments_manager = Plugin::elementor()->experiments;
+
+		return $experiments_manager && $experiments_manager->is_feature_active( 'theme_builder_v2' );
+	}
+
 	private function add_default_new_site_editor_experiments( ExperimentsManager $manager ) {
 		$manager->add_feature( [
 			'name' => 'theme_builder_v2',
@@ -129,10 +138,7 @@ class Module extends BaseModule {
 	}
 
 	private function register_site_editor_menu() {
-		$experiments_manager = Plugin::elementor()->experiments;
-
-		// Unique case when the experiments manager is not initialized yet.
-		if ( ! $experiments_manager || ! $experiments_manager->is_feature_active( 'theme_builder_v2' ) ) {
+		if ( ! $this->should_default_to_site_editor() ) {
 			return;
 		}
 
@@ -152,10 +158,7 @@ class Module extends BaseModule {
 	}
 
 	private function register_admin_menu( Admin_Menu_Manager $admin_menu_manager ) {
-		$experiments_manager = Plugin::elementor()->experiments;
-
-		// Unique case when the experiments manager is not initialized yet.
-		if ( ! $experiments_manager || ! $experiments_manager->is_feature_active( 'theme_builder_v2' ) ) {
+		if ( ! $this->should_default_to_site_editor() ) {
 			return;
 		}
 
@@ -168,7 +171,7 @@ class Module extends BaseModule {
 	}
 
 	private function add_finder_item( array $categories ) {
-		if ( ! Plugin::elementor()->experiments->is_feature_active( 'theme_builder_v2' ) ) {
+		if ( ! $this->should_default_to_site_editor() ) {
 			return $categories;
 		}
 
@@ -183,11 +186,6 @@ class Module extends BaseModule {
 		return $categories;
 	}
 
-	/**
-	 * Module constructor.
-	 *
-	 * @access public
-	 */
 	public function __construct() {
 		$this->lock = new Feature_Lock( [ 'type' => 'theme-builder' ] );
 
@@ -201,6 +199,10 @@ class Module extends BaseModule {
 		} );
 
 		add_action( 'elementor/admin/menu/register', function ( Admin_Menu_Manager $admin_menu ) {
+			if ( $this->is_editor_one_active() ) {
+				return;
+			}
+
 			$this->register_admin_menu( $admin_menu );
 		}, Theme_Builder_Table_View::ADMIN_MENU_PRIORITY + 1 );
 

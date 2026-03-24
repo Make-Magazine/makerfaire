@@ -38,8 +38,6 @@ __(
 			  );
 __( 'Delete this class?', 'elementor' );
 __( 'Deleting', 'elementor' );
-__( 'Not now', 'elementor' );
-__( 'Delete', 'elementor' );
 __( 'Class Manager', 'elementor' );
 __( 'Save changes', 'elementor' );
 __( 'You have unsaved changes', 'elementor' );

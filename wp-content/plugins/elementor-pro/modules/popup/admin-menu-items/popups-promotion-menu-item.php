@@ -14,15 +14,15 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Popups_Promotion_Menu_Item extends Base_Promotion_Item {
 
-	public function get_name() {
+	public function get_name(): string {
 		return 'popups';
 	}
 
-	public function get_position() {
+	public function get_position(): ?int {
 		return null;
 	}
 
-	public function get_cta_text() {
+	public function get_cta_text(): string {
 		if ( ! API::active_licence_has_feature( Popup_Module::DOCUMENT_TYPE ) ) {
 			return esc_html__( 'Upgrade Now', 'elementor-pro' );
 		}
@@ -32,7 +32,7 @@ class Popups_Promotion_Menu_Item extends Base_Promotion_Item {
 			: esc_html__( 'Connect & Activate', 'elementor-pro' );
 	}
 
-	public function get_cta_url() {
+	public function get_cta_url(): string {
 		if ( ! API::active_licence_has_feature( Popup_Module::DOCUMENT_TYPE ) ) {
 			$upgrade_url = 'https://go.elementor.com/go-pro-advanced-popups/';
 
@@ -52,23 +52,23 @@ class Popups_Promotion_Menu_Item extends Base_Promotion_Item {
 			: $connect_url;
 	}
 
-	public function get_parent_slug() {
+	public function get_parent_slug(): string {
 		return Source_Local::ADMIN_MENU_SLUG;
 	}
 
-	public function get_label() {
+	public function get_label(): string {
 		return esc_html__( 'Popups', 'elementor-pro' );
 	}
 
-	public function get_page_title() {
+	public function get_page_title(): string {
 		return esc_html__( 'Popups', 'elementor-pro' );
 	}
 
-	public function get_promotion_title() {
+	public function get_promotion_title(): string {
 		return esc_html__( 'Get Popup Builder', 'elementor-pro' );
 	}
 
-	public function get_promotion_description() {
+	public function get_promotion_description(): string {
 		return esc_html__(
 			"Create custom designed Popups using all of Elementor's widgets. Use advanced display conditions and triggers to display the right popup, to the right visitor, at the right time and maximize conversions.",
 			'elementor-pro'

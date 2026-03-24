@@ -9,6 +9,7 @@ return [
 	'handle' => 'elementor-v2-menus',
 	'deps' => [
 		'elementor-v2-locations',
+		'elementor-v2-utils',
 		'react',
 	],
 ];

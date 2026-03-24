@@ -240,7 +240,7 @@ module.exports = React;
 /******/ 			// return url for filenames not based on template
 /******/ 			if (chunkId === "modules_nested-elements_assets_js_editor_module_js") return "3d410a099008411bb011.bundle.js";
 /******/ 			if (chunkId === "vendors-node_modules_prop-types_index_js-node_modules_babel_runtime_helpers_slicedToArray_js") return "6a19e86dd8c1f9165dbe.bundle.js";
-/******/ 			if (chunkId === "modules_nested-elements_assets_js_editor_nested-element-types-base_js") return "daecdcc50702fd1d72f1.bundle.js";
+/******/ 			if (chunkId === "modules_nested-elements_assets_js_editor_nested-element-types-base_js") return "9b97a73ee8fdc5fb7dc3.bundle.js";
 /******/ 			if (chunkId === "modules_nested-elements_assets_js_editor_views_view_js") return "197583acd246fea0e25d.bundle.js";
 /******/ 			// return url for filenames based on template
 /******/ 			return undefined;

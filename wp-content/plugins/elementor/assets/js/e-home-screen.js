@@ -33,11 +33,14 @@ function _isNativeReflectConstruct() { try { var t = !Boolean.prototype.valueOf.
 var EXCLUDED_SELECTORS = {
   ADMIN_MENU: '#adminmenu',
   TOP_BAR: '.e-admin-top-bar',
+  TOP_BAR_EDITOR_ONE: '#editor-one-top-bar',
   WP_ADMIN_BAR: '#wpadminbar',
   SUBMENU: '.wp-submenu',
   PROMO_PAGE: '.e-feature-promotion',
   PROMO_BLANK_STATE: '.elementor-blank_state',
-  APP: '.e-app'
+  APP: '.e-app',
+  SIDEBAR_NAVIGATION: '#editor-one-sidebar-navigation',
+  FLYOUT_MENU: '.elementor-submenu-flyout'
 };
 var ActionControlTracking = /*#__PURE__*/function (_BaseTracking) {
   function ActionControlTracking() {
@@ -152,6 +155,11 @@ var ActionControlTracking = /*#__PURE__*/function (_BaseTracking) {
         if (!base) {
           return;
         }
+        var toggle = base.closest('.elementor-role-toggle');
+        if (toggle && !_this2.isExcludedElement(toggle)) {
+          _this2.trackControl(toggle, _wpDashboardTracking.CONTROL_TYPES.TOGGLE);
+          return;
+        }
         var button = base.closest('button, input[type="submit"], input[type="button"], .button, .e-btn');
         if (button && !_this2.isExcludedElement(button)) {
           if (FILTER_BUTTON_IDS.includes(button.id)) {
@@ -174,7 +182,12 @@ var ActionControlTracking = /*#__PURE__*/function (_BaseTracking) {
         if (!base) {
           return;
         }
-        var toggle = base.closest('.components-toggle-control');
+        var toggle = null;
+        if (_wpDashboardTracking.default.isEditorOneActive()) {
+          toggle = base.closest('.MuiSwitch-switchBase');
+        } else {
+          toggle = base.closest('.components-toggle-control');
+        }
         if (toggle && !_this2.isExcludedElement(toggle)) {
           _this2.trackControl(toggle, _wpDashboardTracking.CONTROL_TYPES.TOGGLE);
           return;
@@ -510,11 +523,13 @@ function _isNativeReflectConstruct() { try { var t = !Boolean.prototype.valueOf.
 var ELEMENTOR_MENU_SELECTORS = {
   ELEMENTOR_TOP_LEVEL: 'li#toplevel_page_elementor',
   TEMPLATES_TOP_LEVEL: 'li#menu-posts-elementor_library',
+  ELEMENTOR_HOME_TOP_LEVEL: 'li#toplevel_page_elementor-home',
   ADMIN_MENU: '#adminmenu',
   TOP_LEVEL_LINK: '.wp-menu-name',
   SUBMENU_CONTAINER: '.wp-submenu',
   SUBMENU_ITEM: '.wp-submenu li a',
-  SUBMENU_ITEM_TOP_LEVEL: '.wp-has-submenu'
+  SUBMENU_ITEM_TOP_LEVEL: '.wp-has-submenu',
+  SIDEBAR_NAVIGATION: '#editor-one-sidebar-navigation'
 };
 var NavigationTracking = /*#__PURE__*/function (_BaseTracking) {
   function NavigationTracking() {
@@ -525,17 +540,13 @@ var NavigationTracking = /*#__PURE__*/function (_BaseTracking) {
   return (0, _createClass2.default)(NavigationTracking, null, [{
     key: "init",
     value: function init() {
-      this.attachElementorMenuTracking();
-      this.attachTemplatesMenuTracking();
-    }
-  }, {
-    key: "attachElementorMenuTracking",
-    value: function attachElementorMenuTracking() {
-      var elementorMenu = document.querySelector(ELEMENTOR_MENU_SELECTORS.ELEMENTOR_TOP_LEVEL);
-      if (!elementorMenu) {
-        return;
+      if (_wpDashboardTracking.default.isEditorOneActive()) {
+        this.attachSidebarNavigationTracking();
+        this.attachElementorHomeMenuTracking();
+      } else {
+        this.attachElementorMenuTracking();
+        this.attachTemplatesMenuTracking();
       }
-      this.attachMenuTracking(elementorMenu, 'Elementor');
     }
   }, {
     key: "attachTemplatesMenuTracking",
@@ -547,11 +558,47 @@ var NavigationTracking = /*#__PURE__*/function (_BaseTracking) {
       this.attachMenuTracking(templatesMenu, 'Templates');
     }
   }, {
+    key: "attachElementorHomeMenuTracking",
+    value: function attachElementorHomeMenuTracking() {
+      var elementorHomeMenu = document.querySelector(ELEMENTOR_MENU_SELECTORS.ELEMENTOR_HOME_TOP_LEVEL);
+      if (!elementorHomeMenu) {
+        return;
+      }
+      this.attachMenuTracking(elementorHomeMenu, 'Elementor');
+    }
+  }, {
+    key: "attachElementorMenuTracking",
+    value: function attachElementorMenuTracking() {
+      var elementorMenu = document.querySelector(ELEMENTOR_MENU_SELECTORS.ELEMENTOR_TOP_LEVEL);
+      if (!elementorMenu) {
+        return;
+      }
+      this.attachMenuTracking(elementorMenu, 'Elementor');
+    }
+  }, {
+    key: "attachSidebarNavigationTracking",
+    value: function attachSidebarNavigationTracking() {
+      var sidebar = document.querySelector(ELEMENTOR_MENU_SELECTORS.SIDEBAR_NAVIGATION);
+      if (sidebar) {
+        this.attachSidebarClickListener(sidebar);
+      }
+    }
+  }, {
+    key: "attachSidebarClickListener",
+    value: function attachSidebarClickListener(sidebar) {
+      var _this = this;
+      this.addEventListenerTracked(sidebar, 'click', function (event) {
+        _this.handleSidebarClick(event);
+      }, {
+        capture: true
+      });
+    }
+  }, {
     key: "attachMenuTracking",
     value: function attachMenuTracking(menuElement, menuName) {
-      var _this = this;
+      var _this2 = this;
       this.addEventListenerTracked(menuElement, 'click', function (event) {
-        _this.handleMenuClick(event, menuName);
+        _this2.handleMenuClick(event, menuName);
       });
     }
   }, {
@@ -567,6 +614,43 @@ var NavigationTracking = /*#__PURE__*/function (_BaseTracking) {
       _wpDashboardTracking.default.trackNavClicked(itemId, isTopLevel ? null : menuName, area);
     }
   }, {
+    key: "handleSidebarClick",
+    value: function handleSidebarClick(event) {
+      var clickedElement = event.target.closest('a, button, [role="button"]');
+      if (!clickedElement) {
+        return;
+      }
+      var itemId = this.extractSidebarItemId(clickedElement);
+      _wpDashboardTracking.default.trackNavClicked(itemId, null, _wpDashboardTracking.NAV_AREAS.SIDEBAR_MENU);
+    }
+  }, {
+    key: "extractSidebarItemId",
+    value: function extractSidebarItemId(element) {
+      var paragraph = element.querySelector('p');
+      if (paragraph) {
+        return paragraph.textContent.trim();
+      }
+      var textContent = element.textContent.trim();
+      if (textContent) {
+        return textContent;
+      }
+      return 'unknown';
+    }
+  }, {
+    key: "extractPageFromUrl",
+    value: function extractPageFromUrl(href) {
+      var urlParams = new URLSearchParams(href.split('?')[1] || '');
+      var page = urlParams.get('page');
+      if (page) {
+        return page;
+      }
+      var postType = urlParams.get('post_type');
+      if (postType) {
+        return postType;
+      }
+      return 'unknown';
+    }
+  }, {
     key: "extractItemId",
     value: function extractItemId(link) {
       var textContent = link.textContent.trim();
@@ -575,19 +659,11 @@ var NavigationTracking = /*#__PURE__*/function (_BaseTracking) {
       }
       var href = link.getAttribute('href');
       if (href) {
-        var urlParams = new URLSearchParams(href.split('?')[1] || '');
-        var page = urlParams.get('page');
-        var postType = urlParams.get('post_type');
-        if (page) {
-          return page;
-        }
-        if (postType) {
-          return postType;
-        }
+        return this.extractPageFromUrl(href);
       }
-      var id = link.getAttribute('id');
-      if (id) {
-        return id;
+      var linkId = link.getAttribute('id');
+      if (linkId) {
+        return linkId;
       }
       return 'unknown';
     }
@@ -1405,9 +1481,9 @@ var _navigation = _interopRequireDefault(__webpack_require__(/*! ./dashboard/nav
 var _pluginActions = _interopRequireDefault(__webpack_require__(/*! ./dashboard/plugin-actions */ "../app/assets/js/event-track/dashboard/plugin-actions.js"));
 var _promotion = _interopRequireDefault(__webpack_require__(/*! ./dashboard/promotion */ "../app/assets/js/event-track/dashboard/promotion.js"));
 var _screenView = _interopRequireDefault(__webpack_require__(/*! ./dashboard/screen-view */ "../app/assets/js/event-track/dashboard/screen-view.js"));
-var _topBar = _interopRequireDefault(__webpack_require__(/*! ./dashboard/top-bar */ "../app/assets/js/event-track/dashboard/top-bar.js"));
 var _menuPromotion = _interopRequireDefault(__webpack_require__(/*! ./dashboard/menu-promotion */ "../app/assets/js/event-track/dashboard/menu-promotion.js"));
 var _actionControls = _interopRequireDefault(__webpack_require__(/*! ./dashboard/action-controls */ "../app/assets/js/event-track/dashboard/action-controls.js"));
+var _topBar = _interopRequireDefault(__webpack_require__(/*! ./dashboard/top-bar */ "../app/assets/js/event-track/dashboard/top-bar.js"));
 var SESSION_TIMEOUT_MINUTES = 30;
 var MINUTE_MS = 60 * 1000;
 var SESSION_TIMEOUT = SESSION_TIMEOUT_MINUTES * MINUTE_MS;
@@ -1427,7 +1503,8 @@ var NAV_AREAS = exports.NAV_AREAS = {
   LEFT_MENU: 'left_menu',
   SUBMENU: 'submenu',
   HOVER_MENU: 'hover_menu',
-  TOP_BAR: 'top_bar'
+  TOP_BAR: 'top_bar',
+  SIDEBAR_MENU: 'sidebar'
 };
 var SCREEN_TYPES = exports.SCREEN_TYPES = {
   TAB: 'tab',
@@ -1439,6 +1516,11 @@ var WpDashboardTracking = exports["default"] = /*#__PURE__*/function () {
     (0, _classCallCheck2.default)(this, WpDashboardTracking);
   }
   return (0, _createClass2.default)(WpDashboardTracking, null, [{
+    key: "getElementorCommon",
+    value: function getElementorCommon() {
+      return window.elementorCommon;
+    }
+  }, {
     key: "init",
     value: function init() {
       if (this.initialized) {
@@ -1469,6 +1551,13 @@ var WpDashboardTracking = exports["default"] = /*#__PURE__*/function () {
       }
       this.processPendingNavClick();
       this.saveSessionToStorage();
+    }
+  }, {
+    key: "isEditorOneActive",
+    value: function isEditorOneActive() {
+      var _elementorCommon$conf, _elementorCommon$conf2;
+      var elementorCommon = this.getElementorCommon();
+      return (_elementorCommon$conf = elementorCommon === null || elementorCommon === void 0 || (_elementorCommon$conf2 = elementorCommon.config) === null || _elementorCommon$conf2 === void 0 || (_elementorCommon$conf2 = _elementorCommon$conf2.editor_events) === null || _elementorCommon$conf2 === void 0 ? void 0 : _elementorCommon$conf2.isEditorOneActive) !== null && _elementorCommon$conf !== void 0 ? _elementorCommon$conf : false;
     }
   }, {
     key: "processPendingNavClick",
@@ -1524,24 +1613,27 @@ var WpDashboardTracking = exports["default"] = /*#__PURE__*/function () {
   }, {
     key: "isEventsManagerAvailable",
     value: function isEventsManagerAvailable() {
-      var _elementorCommon;
-      return ((_elementorCommon = elementorCommon) === null || _elementorCommon === void 0 ? void 0 : _elementorCommon.eventsManager) && 'function' === typeof elementorCommon.eventsManager.dispatchEvent;
+      var elementorCommon = this.getElementorCommon();
+      return (elementorCommon === null || elementorCommon === void 0 ? void 0 : elementorCommon.eventsManager) && 'function' === typeof elementorCommon.eventsManager.dispatchEvent;
     }
   }, {
     key: "canSendEvents",
     value: function canSendEvents() {
-      var _elementorCommon2;
-      return ((_elementorCommon2 = elementorCommon) === null || _elementorCommon2 === void 0 || (_elementorCommon2 = _elementorCommon2.config) === null || _elementorCommon2 === void 0 || (_elementorCommon2 = _elementorCommon2.editor_events) === null || _elementorCommon2 === void 0 ? void 0 : _elementorCommon2.can_send_events) || false;
+      var _elementorCommon$conf3, _elementorCommon$conf4;
+      var elementorCommon = this.getElementorCommon();
+      return (_elementorCommon$conf3 = elementorCommon === null || elementorCommon === void 0 || (_elementorCommon$conf4 = elementorCommon.config) === null || _elementorCommon$conf4 === void 0 || (_elementorCommon$conf4 = _elementorCommon$conf4.editor_events) === null || _elementorCommon$conf4 === void 0 ? void 0 : _elementorCommon$conf4.can_send_events) !== null && _elementorCommon$conf3 !== void 0 ? _elementorCommon$conf3 : false;
     }
   }, {
     key: "dispatchEvent",
     value: function dispatchEvent(eventName) {
+      var _elementorCommon$even;
       var properties = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
       var options = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
       if (!this.isEventsManagerAvailable() || !this.canSendEvents()) {
         return;
       }
-      elementorCommon.eventsManager.dispatchEvent(eventName, properties, options);
+      var elementorCommon = this.getElementorCommon();
+      elementorCommon === null || elementorCommon === void 0 || (_elementorCommon$even = elementorCommon.eventsManager) === null || _elementorCommon$even === void 0 || _elementorCommon$even.dispatchEvent(eventName, properties, options);
     }
   }, {
     key: "updateActivity",
@@ -1629,6 +1721,10 @@ var WpDashboardTracking = exports["default"] = /*#__PURE__*/function () {
           } else if (_this2.isElementorPage(link.href)) {
             _this2.isNavigatingToElementor = true;
           }
+        }
+        var isSidebar = event.target.closest('#editor-one-sidebar-navigation');
+        if (isSidebar) {
+          _this2.isNavigatingToElementor = true;
         }
       };
       var handleFormSubmit = function handleFormSubmit(event) {
@@ -1771,11 +1867,13 @@ var WpDashboardTracking = exports["default"] = /*#__PURE__*/function () {
         document.removeEventListener(type, handler, true);
       });
       this.navigationListeners = [];
-      _topBar.default.destroy();
       _screenView.default.destroy();
       _promotion.default.destroy();
       _menuPromotion.default.destroy();
       _actionControls.default.destroy();
+      if (!WpDashboardTracking.isEditorOneActive()) {
+        _topBar.default.destroy();
+      }
       this.initialized = false;
     }
   }]);
@@ -1798,11 +1896,13 @@ window.addEventListener('elementor/admin/init', function () {
   _navigation.default.init();
   if (isElementorPage) {
     WpDashboardTracking.init();
-    _topBar.default.init();
     _screenView.default.init();
     _promotion.default.init();
     _menuPromotion.default.init();
     _actionControls.default.init();
+    if (!WpDashboardTracking.isEditorOneActive()) {
+      _topBar.default.init();
+    }
   }
 });
 window.addEventListener('beforeunload', function () {
@@ -1886,7 +1986,6 @@ var _objectDestructuringEmpty2 = _interopRequireDefault(__webpack_require__(/*! 
 var _extends2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime/helpers/extends */ "../node_modules/@babel/runtime/helpers/extends.js"));
 var _ui = __webpack_require__(/*! @elementor/ui */ "@elementor/ui");
 var _List = _interopRequireDefault(__webpack_require__(/*! @elementor/ui/List */ "@elementor/ui/List"));
-var _Link = _interopRequireDefault(__webpack_require__(/*! @elementor/ui/Link */ "@elementor/ui/Link"));
 var _Button = _interopRequireDefault(__webpack_require__(/*! @elementor/ui/Button */ "@elementor/ui/Button"));
 var _Card = _interopRequireDefault(__webpack_require__(/*! @elementor/ui/Card */ "@elementor/ui/Card"));
 var _CardActions = _interopRequireDefault(__webpack_require__(/*! @elementor/ui/CardActions */ "@elementor/ui/CardActions"));
@@ -1895,7 +1994,6 @@ var _CardMedia = _interopRequireDefault(__webpack_require__(/*! @elementor/ui/Ca
 var _promoTracking = __webpack_require__(/*! ../../utils/promo-tracking */ "../modules/home/assets/js/utils/promo-tracking.js");
 var Addons = function Addons(_ref) {
   var props = (0, _extends2.default)({}, ((0, _objectDestructuringEmpty2.default)(_ref), _ref));
-  var domain = props.adminUrl.replace('wp-admin/', '');
   var addonsArray = props.addonsData.repeater;
   var cardsPerRow = 3 === addonsArray.length ? 3 : 2;
   var handleAddonClick = function handleAddonClick(title, url) {
@@ -1912,7 +2010,7 @@ var Addons = function Addons(_ref) {
       display: 'flex',
       flexDirection: 'column',
       gap: 2,
-      borderRadius: 1,
+      borderRadius: 2,
       border: '1px solid rgba(0, 0, 0, 0.12)'
     }
   }, /*#__PURE__*/_react.default.createElement(_ui.Box, null, /*#__PURE__*/_react.default.createElement(_ui.Typography, {
@@ -1974,12 +2072,7 @@ var Addons = function Addons(_ref) {
         return handleAddonClick(item.title, item.url);
       }
     }, item.button_label))));
-  })), /*#__PURE__*/_react.default.createElement(_Link.default, {
-    variant: "body2",
-    color: "info.main",
-    underline: "none",
-    href: "".concat(domain).concat(props.addonsData.footer.file_path)
-  }, props.addonsData.footer.label));
+  })));
 };
 var _default = exports["default"] = Addons;
 Addons.propTypes = {
@@ -2393,7 +2486,6 @@ GetStartedListItem.propTypes = {
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
 "use strict";
-/* provided dependency */ var PropTypes = __webpack_require__(/*! prop-types */ "../node_modules/prop-types/index.js");
 
 
 var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault */ "../node_modules/@babel/runtime/helpers/interopRequireDefault.js");
@@ -2406,9 +2498,12 @@ var _objectDestructuringEmpty2 = _interopRequireDefault(__webpack_require__(/*! 
 var _extends2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime/helpers/extends */ "../node_modules/@babel/runtime/helpers/extends.js"));
 var _ui = __webpack_require__(/*! @elementor/ui */ "@elementor/ui");
 var _List = _interopRequireDefault(__webpack_require__(/*! @elementor/ui/List */ "@elementor/ui/List"));
+var _propTypes = _interopRequireDefault(__webpack_require__(/*! prop-types */ "../node_modules/prop-types/index.js"));
 var _getStartedListItem = _interopRequireDefault(__webpack_require__(/*! ./get-started-list-item */ "../modules/home/assets/js/components/editor-screen/get-started-list-item.js"));
 var GetStarted = function GetStarted(_ref) {
   var props = (0, _extends2.default)({}, ((0, _objectDestructuringEmpty2.default)(_ref), _ref));
+  var hasSidebarPromotion = props.homeScreenData.hasOwnProperty('sidebar_promotion_variants');
+  var mdGridColumns = hasSidebarPromotion ? 'repeat(3, 1fr)' : 'repeat(4, 1fr)';
   return /*#__PURE__*/_react.default.createElement(_ui.Paper, {
     elevation: 0,
     sx: {
@@ -2432,7 +2527,8 @@ var GetStarted = function GetStarted(_ref) {
     sx: {
       display: 'grid',
       gridTemplateColumns: {
-        md: 'repeat(4, 1fr)',
+        xl: 'repeat(4, 1fr)',
+        md: mdGridColumns,
         xs: 'repeat(2, 1fr)'
       },
       columnGap: {
@@ -2452,8 +2548,9 @@ var GetStarted = function GetStarted(_ref) {
 };
 var _default = exports["default"] = GetStarted;
 GetStarted.propTypes = {
-  getStartedData: PropTypes.object.isRequired,
-  adminUrl: PropTypes.string.isRequired
+  getStartedData: _propTypes.default.object.isRequired,
+  adminUrl: _propTypes.default.string.isRequired,
+  homeScreenData: _propTypes.default.object.isRequired
 };
 
 /***/ }),
@@ -2490,14 +2587,14 @@ var HeaderSection = function HeaderSection(props) {
     }
   }, /*#__PURE__*/_react.default.createElement(_Typography.default, {
     variant: "h5"
-  }, (0, _i18n.__)('Home', 'elementor')), /*#__PURE__*/_react.default.createElement(_Button.default, {
+  }, (0, _i18n.__)('Quick Start', 'elementor')), /*#__PURE__*/_react.default.createElement(_Button.default, {
     variant: "contained",
     size: "medium",
     color: "primary",
     href: props.editWebsiteUrl,
     target: "_blank",
     rel: "noopener noreferrer"
-  }, (0, _i18n.__)('Edit Website', 'elementor')));
+  }, (0, _i18n.__)('Edit site', 'elementor')));
 };
 HeaderSection.propTypes = {
   editWebsiteUrl: _propTypes.default.string.isRequired
@@ -2532,11 +2629,7 @@ var _getStartedSection = _interopRequireDefault(__webpack_require__(/*! ./get-st
 var _createWithAiBanner = _interopRequireDefault(__webpack_require__(/*! ./create-with-ai-banner */ "../modules/home/assets/js/components/editor-screen/create-with-ai-banner.js"));
 var EditorScreen = function EditorScreen(props) {
   var hasSidebarPromotion = props.homeScreenData.hasOwnProperty('sidebar_promotion_variants');
-  return /*#__PURE__*/ /*  Box wrapper around the Container is needed to neutralize wp-content area left-padding */_react.default.createElement(_ui.Box, {
-    sx: {
-      pr: 1
-    }
-  }, /*#__PURE__*/_react.default.createElement(_ui.Container, {
+  return /*#__PURE__*/ /*  Box wrapper around the Container is needed to neutralize wp-content area left-padding */_react.default.createElement(_ui.Box, null, /*#__PURE__*/_react.default.createElement(_ui.Container, {
     disableGutters: true,
     maxWidth: "lg",
     sx: {
@@ -2572,13 +2665,14 @@ var EditorScreen = function EditorScreen(props) {
     createWithAIData: props.homeScreenData.create_with_ai
   }), /*#__PURE__*/_react.default.createElement(_getStartedSection.default, {
     getStartedData: props.homeScreenData.get_started,
-    adminUrl: props.adminUrl
+    adminUrl: props.adminUrl,
+    homeScreenData: props.homeScreenData
   }), props.homeScreenData.add_ons && /*#__PURE__*/_react.default.createElement(_addonsSection.default, {
     addonsData: props.homeScreenData.add_ons,
     adminUrl: props.adminUrl
   }), /*#__PURE__*/_react.default.createElement(_externalLinksSection.default, {
     externalLinksData: props.homeScreenData.external_links
-  })), /*#__PURE__*/_react.default.createElement(_ui.Container, {
+  })), hasSidebarPromotion && /*#__PURE__*/_react.default.createElement(_ui.Container, {
     maxWidth: "xs",
     disableGutters: true,
     sx: {
@@ -2589,7 +2683,7 @@ var EditorScreen = function EditorScreen(props) {
       flexDirection: 'column',
       gap: 2.5
     }
-  }, hasSidebarPromotion && /*#__PURE__*/_react.default.createElement(_sidebarPromotion.default, {
+  }, /*#__PURE__*/_react.default.createElement(_sidebarPromotion.default, {
     sideData: props.homeScreenData.sidebar_promotion_variants
   })))));
 };
@@ -2629,7 +2723,8 @@ var SidebarBanner = function SidebarBanner(_ref) {
   return /*#__PURE__*/_react.default.createElement(_ui.Paper, {
     elevation: 0,
     sx: {
-      overflow: 'hidden'
+      overflow: 'hidden',
+      borderRadius: 1
     }
   }, /*#__PURE__*/_react.default.createElement(_Link.default, {
     target: "_blank",
@@ -2698,7 +2793,8 @@ var SidebarDefault = function SidebarDefault(_ref) {
   return /*#__PURE__*/_react.default.createElement(_ui.Paper, {
     elevation: 0,
     sx: {
-      p: 3
+      p: 3,
+      borderRadius: 1
     }
   }, /*#__PURE__*/_react.default.createElement(_ui.Stack, {
     gap: 1.5,
@@ -2853,7 +2949,8 @@ var TopSection = function TopSection(_ref) {
       gap: {
         xs: 2,
         sm: 3,
-        lg: 22
+        lg: 10,
+        xl: 22
       },
       borderRadius: 1,
       border: '1px solid rgba(0, 0, 0, 0.12)'
@@ -3490,11 +3587,7 @@ var _getStartedSection = _interopRequireDefault(__webpack_require__(/*! ./get-st
 var _createWithAiBanner = _interopRequireDefault(__webpack_require__(/*! ./create-with-ai-banner */ "../modules/home/assets/js/components/home-screen/create-with-ai-banner.js"));
 var HomeScreen = function HomeScreen(props) {
   var hasSidebarPromotion = props.homeScreenData.hasOwnProperty('sidebar_promotion_variants');
-  return /*#__PURE__*/ /*  Box wrapper around the Container is needed to neutralize wp-content area left-padding */_react.default.createElement(_ui.Box, {
-    sx: {
-      pr: 1
-    }
-  }, /*#__PURE__*/_react.default.createElement(_ui.Container, {
+  return /*#__PURE__*/ /*  Box wrapper around the Container is needed to neutralize wp-content area left-padding */_react.default.createElement(_ui.Box, null, /*#__PURE__*/_react.default.createElement(_ui.Container, {
     disableGutters: true,
     maxWidth: "lg",
     sx: {

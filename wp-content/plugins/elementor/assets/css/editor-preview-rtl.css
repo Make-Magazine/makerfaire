@@ -39,15 +39,12 @@ body.rtl {
 }
 
 .e-logo-wrapper {
-  background: var(--e-a-bg-logo);
   display: inline-block;
-  padding: 0.75em;
-  border-radius: 50%;
   line-height: 1;
 }
 .e-logo-wrapper i {
-  color: var(--e-a-color-logo);
-  font-size: 1em;
+  color: var(--e-a-color-circle-logo);
+  font-size: 2.5em;
 }
 
 .elementor-control-unit-1 {
@@ -2979,6 +2976,7 @@ body:not(.elementor-device-mobile) .elementor-control.elementor-control-responsi
   --e-p-border-global:	#5EEAD4;
   --e-p-border-global-hover:	#1DDDBF;
   --e-p-border-global-invert:	#0C0D0E;
+  --e-p-border-global-element:	#5EEAD4;
 }
 
 .elementor-editor-active .elementor-add-section {
@@ -3827,6 +3825,18 @@ html.elementor-html {
 .elementor-editor-preview .elementor-widget-empty {
   display: none;
 }
+.elementor-editor-preview :where(.elementor-edit-area-active) .elementor-element-overlay,
+.elementor-editor-preview :where(.elementor-edit-area-active) .elementor-empty,
+.elementor-editor-preview :where(.elementor-edit-area-active) .elementor-empty-view,
+.elementor-editor-preview :where(.elementor-edit-area-active) .elementor-widget-empty {
+  display: revert;
+}
+.elementor-editor-preview :where(.elementor-edit-area-active.elementor-widget-e-component) > .elementor-section-wrap > :first-child > .elementor-element-overlay::after {
+  outline-color: var(--e-p-border-global-element);
+}
+.elementor-editor-preview :where(.elementor-edit-area-active.elementor-widget-e-component) > .elementor-section-wrap > :first-child.elementor-element-editable > .elementor-element-overlay::after {
+  outline-offset: -1px;
+}
 
 .e-preview--show-hidden-elements[data-elementor-device-mode=widescreen] .elementor-edit-area-active .elementor-hidden-widescreen,
 .e-preview--show-hidden-elements[data-elementor-device-mode=desktop] .elementor-edit-area-active .elementor-hidden-desktop,
@@ -3925,6 +3935,13 @@ html.elementor-html {
 }
 
 .e-youtube-base iframe {
+  pointer-events: none;
+}
+
+.elementor-widget-e-component[data-atomic].elementor-edit-area-active > * > * {
+  pointer-events: initial;
+}
+.elementor-widget-e-component[data-atomic]:not(.elementor-edit-area-active) > * > * {
   pointer-events: none;
 }
 

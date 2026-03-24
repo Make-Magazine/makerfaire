@@ -6,6 +6,7 @@ use Elementor\Core\Utils\Promotions\Filtered_Promotions_Manager;
 use Elementor\Modules\EditorOne\Classes\Active_Menu_Resolver;
 use Elementor\Modules\EditorOne\Classes\Menu_Data_Provider;
 use Elementor\Modules\EditorOne\Classes\Url_Matcher;
+use Elementor\Modules\EditorOne\Classes\Menu_Config;
 use Elementor\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -33,15 +34,21 @@ class Sidebar_Navigation_Handler {
 	}
 
 	public function add_body_class( string $classes ): string {
-		if ( ! $this->menu_data_provider->is_elementor_editor_page() ) {
+		if ( ! $this->menu_data_provider->is_editor_one_admin_page() ) {
 			return $classes;
 		}
 
-		return $classes . ' e-has-sidebar-navigation';
+		$classes .= ' e-has-sidebar-navigation';
+
+		if ( Menu_Config::is_elementor_home_menu_available() ) {
+			$classes .= ' e-has-elementor-home-menu';
+		}
+
+		return $classes;
 	}
 
 	public function enqueue_sidebar_assets(): void {
-		if ( ! $this->menu_data_provider->is_elementor_editor_page() ) {
+		if ( ! $this->menu_data_provider->is_editor_one_admin_page() ) {
 			return;
 		}
 
@@ -78,7 +85,7 @@ class Sidebar_Navigation_Handler {
 	}
 
 	public function render_sidebar_container(): void {
-		if ( ! $this->menu_data_provider->is_elementor_editor_page() ) {
+		if ( ! $this->menu_data_provider->is_editor_one_admin_page() ) {
 			return;
 		}
 
@@ -86,7 +93,9 @@ class Sidebar_Navigation_Handler {
 	}
 
 	private function get_sidebar_config(): array {
-		$flyout_data = $this->menu_data_provider->get_editor_flyout_data();
+		$flyout_data = $this->menu_data_provider->get_third_level_data(
+			Menu_Data_Provider::THIRD_LEVEL_EDITOR_FLYOUT
+		);
 		$level4_groups = $this->menu_data_provider->get_level4_flyout_data();
 		$promotion = $this->get_promotion_data();
 		$active_state = $this->get_active_menu_state( $flyout_data['items'], $level4_groups );
@@ -96,7 +105,6 @@ class Sidebar_Navigation_Handler {
 			'level4Groups' => $level4_groups,
 			'activeMenuSlug' => $active_state['menu_slug'],
 			'activeChildSlug' => $active_state['child_slug'],
-			'isRTL' => is_rtl(),
 			'siteTitle' => esc_html__( 'Editor', 'elementor' ),
 			'hasPro' => Utils::has_pro(),
 			'upgradeUrl' => $promotion['url'],

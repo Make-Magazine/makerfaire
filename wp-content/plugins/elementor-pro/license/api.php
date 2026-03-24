@@ -3,7 +3,6 @@ namespace ElementorPro\License;
 
 use Elementor\Core\Common\Modules\Connect\Module as ConnectModule;
 use ElementorPro\Plugin;
-use ElementorPro\Modules\Tiers\Module as Tiers;
 use Elementor\Api as Core_API;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -643,5 +642,26 @@ class API {
 		$plan_type = $license_data['tier'] ?? 'free';
 
 		return $plan_type;
+	}
+
+	/**
+	 * Get the subscription ID for Elementor Pro.
+	 *
+	 * @return string
+	 */
+	public static function get_subscription_id(): string {
+		$license_data = static::get_license_data();
+
+		return $license_data['subscription_id'] ?? $license_data['subscriptionId'] ?? $license_data['subscription-id'] ?? '';
+	}
+
+	/**
+	 * Get the subscription display name for Elementor Pro.
+	 *
+	 * @return string
+	 */
+	public static function get_subscription_display_name(): string {
+		$plan_type = static::get_plan_type();
+		return 'Elementor Pro ' . ucfirst( $plan_type );
 	}
 }

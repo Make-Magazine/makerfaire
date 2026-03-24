@@ -1,4 +1,4 @@
-/*! elementor-pro - v3.34.0 - 22-12-2025 */
+/*! elementor-pro - v3.35.0 - 11-02-2026 */
 .elementor-panel .elementor-control .e-control-error {
   color: #F59E0B;
 }
@@ -410,7 +410,7 @@
   width: 80px;
   max-width: 100%;
 }
-#elementor-publish .elementor-popup__display-settings .elementor-control-send_app_promo, #elementor-publish .elementor-popup__display-settings .elementor-control-type-raw_html {
+#elementor-publish .elementor-popup__display-settings .elementor-control-type-raw_html {
   padding: 0 0 10px;
 }
 

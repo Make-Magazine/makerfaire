@@ -403,7 +403,7 @@ var FlyoutMenuRenderer = exports.FlyoutMenuRenderer = /*#__PURE__*/function () {
       if (!editorFlyout || !editorFlyout.items || !editorFlyout.items.length) {
         return false;
       }
-      var editorLi = this.findEditorMenuItem();
+      var editorLi = this.findEditorInMenu("#toplevel_page_elementor-home");
       if (!editorLi) {
         return false;
       }
@@ -411,6 +411,12 @@ var FlyoutMenuRenderer = exports.FlyoutMenuRenderer = /*#__PURE__*/function () {
       var editorFlyoutUl = document.createElement('ul');
       editorFlyoutUl.className = 'elementor-submenu-flyout elementor-level-3';
       editorFlyout.items.forEach(function (item) {
+        if (item.has_divider_before) {
+          var dividerLi = document.createElement('li');
+          dividerLi.className = 'elementor-flyout-divider';
+          dividerLi.setAttribute('role', 'separator');
+          editorFlyoutUl.appendChild(dividerLi);
+        }
         var li = document.createElement('li');
         li.setAttribute('data-group-id', item.group_id || '');
         var a = document.createElement('a');
@@ -423,16 +429,9 @@ var FlyoutMenuRenderer = exports.FlyoutMenuRenderer = /*#__PURE__*/function () {
       return true;
     }
   }, {
-    key: "findEditorMenuItem",
-    value: function findEditorMenuItem() {
-      var elementorMenu = document.querySelector('#adminmenu a[href="admin.php?page=elementor"]');
-      if (!elementorMenu) {
-        elementorMenu = document.querySelector('#adminmenu .toplevel_page_elementor');
-      }
-      if (!elementorMenu) {
-        return null;
-      }
-      var menuItem = elementorMenu.closest('li.menu-top');
+    key: "findEditorInMenu",
+    value: function findEditorInMenu(menuSelector) {
+      var menuItem = document.querySelector(menuSelector);
       if (!menuItem) {
         return null;
       }
@@ -440,7 +439,7 @@ var FlyoutMenuRenderer = exports.FlyoutMenuRenderer = /*#__PURE__*/function () {
       if (!submenu) {
         return null;
       }
-      var editorItem = submenu.querySelector('a[href*="elementor-editor"]');
+      var editorItem = submenu.querySelector('a[href$="page=elementor"]');
       if (!editorItem) {
         return null;
       }
@@ -470,24 +469,24 @@ var _createClass2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtim
 var SidebarMenuHandler = exports.SidebarMenuHandler = /*#__PURE__*/function () {
   function SidebarMenuHandler() {
     (0, _classCallCheck2.default)(this, SidebarMenuHandler);
-    this.elementorMenu = document.querySelector('#toplevel_page_elementor');
-  }
-  return (0, _createClass2.default)(SidebarMenuHandler, [{
-    key: "handle",
-    value: function handle() {
-      if (!this.elementorMenu) {
-        return;
-      }
+    this.elementorHomeMenu = this.findElementorHomeMenu();
+    if (this.elementorHomeMenu) {
       this.deactivateOtherMenus();
       this.activateElementorMenu();
       this.highlightSubmenu();
+    }
+  }
+  return (0, _createClass2.default)(SidebarMenuHandler, [{
+    key: "findElementorHomeMenu",
+    value: function findElementorHomeMenu() {
+      return document.querySelector('#toplevel_page_elementor-home');
     }
   }, {
     key: "deactivateOtherMenus",
     value: function deactivateOtherMenus() {
       var _this = this;
       document.querySelectorAll('#adminmenu li.wp-has-current-submenu').forEach(function (item) {
-        if (item !== _this.elementorMenu) {
+        if (item !== _this.elementorHomeMenu) {
           item.classList.remove('wp-has-current-submenu', 'wp-menu-open', 'selected');
           item.classList.add('wp-not-current-submenu');
           var link = item.querySelector(':scope > a');
@@ -500,9 +499,9 @@ var SidebarMenuHandler = exports.SidebarMenuHandler = /*#__PURE__*/function () {
   }, {
     key: "activateElementorMenu",
     value: function activateElementorMenu() {
-      this.elementorMenu.classList.remove('wp-not-current-submenu');
-      this.elementorMenu.classList.add('wp-has-current-submenu', 'wp-menu-open', 'selected');
-      var elementorLink = this.elementorMenu.querySelector(':scope > a.menu-top');
+      this.elementorHomeMenu.classList.remove('wp-not-current-submenu');
+      this.elementorHomeMenu.classList.add('wp-has-current-submenu', 'wp-menu-open', 'selected');
+      var elementorLink = this.elementorHomeMenu.querySelector(':scope > a.menu-top');
       if (elementorLink) {
         elementorLink.classList.add('wp-has-current-submenu', 'wp-menu-open');
       }
@@ -513,15 +512,15 @@ var SidebarMenuHandler = exports.SidebarMenuHandler = /*#__PURE__*/function () {
       var currentUrl = new URL(window.location.href);
       var searchParams = currentUrl.searchParams;
       var page = searchParams.get('page');
-      var targetSlug = 'elementor-editor';
-      if ('elementor' === page) {
-        targetSlug = 'elementor-editor';
+      var targetSlug = 'elementor';
+      if ('elementor' === page || 'elementor-home' === page) {
+        targetSlug = 'elementor';
       } else if ('e-form-submissions' === page) {
         targetSlug = 'e-form-submissions';
       } else if ('elementor-theme-builder' === page) {
         targetSlug = 'elementor-theme-builder';
       }
-      var submenuItems = this.elementorMenu.querySelectorAll('.wp-submenu li');
+      var submenuItems = this.elementorHomeMenu.querySelectorAll('.wp-submenu li');
       submenuItems.forEach(function (item) {
         var link = item.querySelector('a');
         if (!link) {
@@ -694,15 +693,15 @@ var _sidebarMenuHandler = __webpack_require__(/*! ./classes/sidebar-menu-handler
 var _flyoutInteractionHandler = __webpack_require__(/*! ./classes/flyout-interaction-handler */ "../modules/editor-one/assets/js/admin-menu/classes/flyout-interaction-handler.js");
 var EditorOneMenu = /*#__PURE__*/function () {
   function EditorOneMenu() {
+    var _window;
     (0, _classCallCheck2.default)(this, EditorOneMenu);
-    // eslint-disable-next-line no-undef
-    this.config = editorOneMenuConfig || {};
+    this.config = ((_window = window) === null || _window === void 0 ? void 0 : _window.editorOneMenuConfig) || {};
   }
   return (0, _createClass2.default)(EditorOneMenu, [{
     key: "init",
     value: function init() {
       if (this.isSidebarNavigationActive()) {
-        new _sidebarMenuHandler.SidebarMenuHandler().handle();
+        new _sidebarMenuHandler.SidebarMenuHandler();
         return;
       }
       this.buildFlyoutMenus();

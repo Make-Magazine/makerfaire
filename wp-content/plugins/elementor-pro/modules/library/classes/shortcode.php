@@ -28,10 +28,10 @@ class Shortcode {
 		}
 
 		printf(
-			'<label class="screen-reader-text" for="%1$s">%2$s</label><input class="elementor-shortcode-input" type="text" id="%1$s" readonly onfocus="this.select()" value="%3$s" />',
+			'<label class="screen-reader-text" for="%1$s">%2$s</label><textarea class="elementor-shortcode-textarea" id="%1$s" readonly rows="1" onfocus="this.select()">%3$s</textarea>',
 			sprintf(
 				/* translators: %s: Template ID. */
-				esc_attr( 'elementor-templte-%s-shortcode' ),
+				esc_attr( 'elementor-template-%s-shortcode' ),
 				$post_id // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 			),
 			sprintf(
@@ -41,7 +41,7 @@ class Shortcode {
 			),
 			sprintf(
 				/* translators: %s: Shortcode, %d: Template ID. */
-				esc_attr( '[%s id="%d"]' ),
+				esc_textarea( '[%s id="%d"]' ),
 				self::SHORTCODE, // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 				$post_id // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 			)

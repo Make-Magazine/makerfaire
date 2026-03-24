@@ -2,10 +2,15 @@
 namespace ElementorPro\Modules\AssetsManager\AssetTypes;
 
 use Elementor\Core\Admin\Menu\Admin_Menu_Manager;
+use Elementor\Modules\EditorOne\Classes\Menu_Data_Provider;
+use Elementor\Plugin;
+use ElementorPro\Base\Editor_One_Trait;
 use ElementorPro\Core\Behaviors\Feature_Lock;
 use ElementorPro\License\API;
 use ElementorPro\Modules\AssetsManager\AssetTypes\AdminMenuItems\Custom_Icons_Menu_Item;
 use ElementorPro\Modules\AssetsManager\AssetTypes\AdminMenuItems\Custom_Icons_Promotion_Menu_Item;
+use ElementorPro\Modules\AssetsManager\AssetTypes\EditorOneMenuItems\Editor_One_Icons_Menu_Item;
+use ElementorPro\Modules\AssetsManager\AssetTypes\EditorOneMenuItems\Editor_One_Icons_Promotion;
 use ElementorPro\Modules\AssetsManager\Classes;
 use Elementor\Settings;
 
@@ -14,6 +19,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Icons_Manager {
+	use Editor_One_Trait;
 
 	const CAPABILITY = 'manage_options';
 
@@ -193,9 +199,6 @@ class Icons_Manager {
 		return $categories;
 	}
 
-	/**
-	 * Register Font Manager action and filter hooks
-	 */
 	protected function actions() {
 		add_action( 'init', [ $this, 'register_post_type' ] );
 
@@ -203,6 +206,10 @@ class Icons_Manager {
 			add_action( 'init', [ $this, 'redirect_admin_old_page_to_new' ] );
 
 			add_action( 'elementor/admin/menu/register', function ( Admin_Menu_Manager $admin_menu_manager ) {
+				if ( $this->is_editor_one_active() ) {
+					return;
+				}
+
 				$this->register_admin_menu( $admin_menu_manager );
 			} );
 
@@ -224,6 +231,14 @@ class Icons_Manager {
 			}, 50 );
 
 			add_action( 'admin_head', [ $this, 'clean_admin_listing_page' ] );
+
+			add_action( 'elementor/editor-one/menu/register', function ( Menu_Data_Provider $menu_data_provider ) {
+				if ( $this->can_use_custom_icons() ) {
+					$menu_data_provider->register_menu( new Editor_One_Icons_Menu_Item() );
+				} else {
+					$menu_data_provider->register_menu( new Editor_One_Icons_Promotion() );
+				}
+			} );
 		}
 
 		// TODO: Maybe just ignore all of those when the user can't use custom icons?
@@ -231,6 +246,12 @@ class Icons_Manager {
 		add_filter( 'post_row_actions', [ $this, 'post_row_actions' ], 10, 2 );
 
 		add_filter( 'elementor/finder/categories', [ $this, 'add_finder_item' ] );
+
+		add_filter( 'elementor/editor-one/admin-edit-post-types', function ( array $post_types ) {
+			$post_types[] = self::CPT;
+
+			return $post_types;
+		} );
 
 		/**
 		 * Elementor icons manager loaded.

@@ -15,5 +15,6 @@ return [
 		'elementor-v2-schema',
 		'elementor-v2-ui',
 		'react',
+		'wp-i18n',
 	],
 ];

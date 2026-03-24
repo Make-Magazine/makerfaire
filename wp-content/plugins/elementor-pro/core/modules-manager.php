@@ -38,6 +38,7 @@ final class Modules_Manager {
 			// Modules with Widgets.
 			'attributes',
 			'atomic-widgets',
+			'atomic-form',
 			'display-conditions',
 			'transitions',
 			'theme-builder',
@@ -81,6 +82,8 @@ final class Modules_Manager {
 			'search',
 			'cloud-library',
 			'variables',
+			'editor-one',
+			'interactions',
 		];
 
 		foreach ( $modules as $module_name ) {

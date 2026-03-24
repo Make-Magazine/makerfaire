@@ -4,6 +4,7 @@ namespace ElementorPro\Core\App;
 use Elementor\Core\Base\App as BaseApp;
 use Elementor\Core\Utils\Assets_Config_Provider;
 use Elementor\Core\Utils\Collection;
+use Elementor\TemplateLibrary\Source_Local;
 use Elementor\Utils;
 use ElementorPro\Plugin;
 use ElementorPro\Core\App\Modules\SiteEditor\Module as SiteEditor;
@@ -11,6 +12,7 @@ use ElementorPro\Core\App\Modules\KitLibrary\Module as KitLibrary;
 use ElementorPro\Core\App\Modules\Onboarding\Module as Onboarding;
 use ElementorPro\Core\App\Modules\ImportExport\Module as ImportExport;
 use ElementorPro\Core\App\Modules\ImportExportCustomization\Module as ImportExportCustomization;
+use ElementorPro\Modules\ThemeBuilder\Module as ThemeBuilderModule;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -36,7 +38,19 @@ class App extends BaseApp {
 	}
 
 	public function set_menu_url() {
-		Plugin::elementor()->app->set_settings( 'menu_url', Plugin::elementor()->app->get_base_url() . '#/site-editor' );
+		$menu_url = Plugin::elementor()->app->get_base_url() . '#/site-editor';
+
+		$experiments_manager = Plugin::elementor()->experiments;
+
+		if ( $experiments_manager && ! $experiments_manager->is_feature_active( 'theme_builder_v2' ) ) {
+			$menu_url = add_query_arg(
+				'tabs_group',
+				ThemeBuilderModule::ADMIN_LIBRARY_TAB_GROUP,
+				admin_url( Source_Local::ADMIN_MENU_SLUG )
+			);
+		}
+
+		Plugin::elementor()->app->set_settings( 'menu_url', $menu_url );
 	}
 
 	protected function get_init_settings() {

@@ -2,29 +2,34 @@
 namespace ElementorPro\Modules\Forms;
 
 use Elementor\Controls_Manager;
-use Elementor\Settings;
 use Elementor\Core\Admin\Admin_Notices;
 use Elementor\Core\Common\Modules\Ajax\Module as Ajax;
-use ElementorPro\Core\Upgrade\Manager as Upgrade_Manager;
-
+use Elementor\Modules\EditorOne\Classes\Menu_Data_Provider;
+use Elementor\Settings;
 use Elementor\User;
-use ElementorPro\Core\Utils;
-use ElementorPro\Modules\Forms\Data\Controller;
+use ElementorPro\Base\Editor_One_Trait;
 use ElementorPro\Base\Module_Base;
+use ElementorPro\Core\Upgrade\Manager as Upgrade_Manager;
+use ElementorPro\Core\Utils;
+use ElementorPro\License\API;
 use ElementorPro\Modules\Forms\Controls\Fields_Map;
+use ElementorPro\Modules\Forms\Controls\Fields_Repeater;
+use ElementorPro\Modules\Forms\Data\Controller;
 use ElementorPro\Modules\Forms\Registrars\Form_Actions_Registrar;
 use ElementorPro\Modules\Forms\Registrars\Form_Fields_Registrar;
-use ElementorPro\Modules\Forms\Submissions\Component as Form_Submissions_Component;
-use ElementorPro\Modules\Forms\Controls\Fields_Repeater;
-use ElementorPro\Plugin;
-use ElementorPro\License\API;
 use ElementorPro\Modules\Forms\Submissions\AdminMenuItems\Submissions_Promotion_Menu_Item;
+use ElementorPro\Modules\Forms\Submissions\Component as Form_Submissions_Component;
+use ElementorPro\Modules\Forms\Submissions\EditorOneMenuItems\Editor_One_Submissions_Menu_Item;
+use ElementorPro\Modules\Forms\Submissions\EditorOneMenuItems\Editor_One_Submissions_Promotion;
+use ElementorPro\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
 class Module extends Module_Base {
+	use Editor_One_Trait;
+
 	/**
 	 * @var Form_Actions_Registrar
 	 */
@@ -195,6 +200,10 @@ class Module extends Module_Base {
 		$this->add_component( $name, new Form_Submissions_Component() );
 	}
 
+	private function are_submissions_disabled(): bool {
+		return '1' === get_option( 'elementor_' . Form_Submissions_Component::NAME );
+	}
+
 	public function register_submissions_admin_fields( Settings $settings ) {
 		$settings->add_field(
 			Settings::TAB_ADVANCED,
@@ -209,15 +218,12 @@ class Module extends Module_Base {
 						'' => esc_html__( 'Enable', 'elementor-pro' ),
 						'1' => esc_html__( 'Disable', 'elementor-pro' ),
 					],
-					'desc' => esc_html__( 'Never lose another submission! Using “Actions After Submit” you can now choose to save all submissions to an internal database.', 'elementor-pro' ),
+					'desc' => esc_html__( 'Never lose another submission! Using "Actions After Submit" you can now choose to save all submissions to an internal database.', 'elementor-pro' ),
 				],
 			],
 		);
 	}
 
-	/**
-	 * Module constructor.
-	 */
 	public function __construct() {
 		parent::__construct();
 
@@ -238,9 +244,29 @@ class Module extends Module_Base {
 			$this->register_submissions_component();
 		} else {
 			add_action( 'elementor/admin/menu/register', function( $admin_menu ) {
+				if ( $this->are_submissions_disabled() ) {
+					return;
+				}
+
+				if ( $this->is_editor_one_active() ) {
+					return;
+				}
+
 				$admin_menu->register( Form_Submissions_Component::PAGE_ID, new Submissions_Promotion_Menu_Item() );
 			}, 9 /* After "Settings" */ );
 		}
+
+		add_action( 'elementor/editor-one/menu/register', function ( Menu_Data_Provider $menu_data_provider ) {
+			if ( $this->are_submissions_disabled() ) {
+				return;
+			}
+
+			if ( API::is_licence_has_feature( Form_Submissions_Component::NAME ) ) {
+				$menu_data_provider->register_menu( new Editor_One_Submissions_Menu_Item() );
+			} else {
+				$menu_data_provider->register_menu( new Editor_One_Submissions_Promotion() );
+			}
+		} );
 
 		// Initialize registrars.
 		$this->actions_registrar = new Form_Actions_Registrar();

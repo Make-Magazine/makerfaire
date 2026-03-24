@@ -553,7 +553,7 @@ var PromotionWidgetsTable = exports.PromotionWidgetsTable = function PromotionWi
       checked: false,
       disabled: true,
       size: "small",
-      className: "e-id-elementor-element-manager-toggle-".concat(widget.name)
+      "data-id": "e-id-elementor-element-manager-toggle-".concat(widget.name)
     })), /*#__PURE__*/_react.default.createElement(_ui.TableCell, null), /*#__PURE__*/_react.default.createElement(_ui.TableCell, null, (0, _i18n.__)('Elementor Pro', 'elementor')), /*#__PURE__*/_react.default.createElement(_ui.TableCell, null, /*#__PURE__*/_react.default.createElement(_RolePermissions.EditButtonDisabled, {
       widgetName: widget.name
     })));
@@ -781,6 +781,32 @@ var _react = _interopRequireDefault(__webpack_require__(/*! react */ "react"));
 var _ui = __webpack_require__(/*! @elementor/ui */ "@elementor/ui");
 var _i18n = __webpack_require__(/*! @wordpress/i18n */ "@wordpress/i18n");
 var _propTypes = _interopRequireDefault(__webpack_require__(/*! prop-types */ "../node_modules/prop-types/index.js"));
+var FIELD_HEIGHT = 28;
+var FONT_SIZE = 12;
+var ICON_SIZE = 16;
+var StyledTextField = (0, _ui.styled)(_ui.TextField)({
+  '& .MuiInputBase-root': {
+    height: FIELD_HEIGHT,
+    fontSize: FONT_SIZE
+  }
+});
+var StyledFormControl = (0, _ui.styled)(_ui.FormControl)({
+  '& .MuiInputBase-root': {
+    height: FIELD_HEIGHT,
+    fontSize: FONT_SIZE
+  },
+  '& .MuiSelect-icon': {
+    width: ICON_SIZE,
+    height: ICON_SIZE,
+    top: 'calc(50% - 8px)'
+  }
+});
+var StyledButton = (0, _ui.styled)(_ui.Button)({
+  height: FIELD_HEIGHT,
+  fontSize: FONT_SIZE,
+  minWidth: 'auto',
+  whiteSpace: 'nowrap'
+});
 var SearchFilters = exports.SearchFilters = function SearchFilters(_ref) {
   var searchKeyword = _ref.searchKeyword,
     onSearchChange = _ref.onSearchChange,
@@ -799,25 +825,36 @@ var SearchFilters = exports.SearchFilters = function SearchFilters(_ref) {
     isSaving = _ref.isSaving,
     hasUnsavedChanges = _ref.hasUnsavedChanges;
   return /*#__PURE__*/_react.default.createElement(_ui.Stack, {
-    direction: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
+    direction: {
+      xs: 'column',
+      sm: 'row'
+    },
+    alignItems: {
+      xs: 'stretch',
+      sm: 'flex-start'
+    },
+    gap: 1.5,
     sx: function sx(theme) {
       return {
         position: 'sticky',
-        top: theme.spacing(4),
+        top: theme.spacing(10),
         backgroundColor: 'var(--e-one-palette-background-default)',
         zIndex: 10,
-        paddingBlock: 2.5,
+        paddingBlock: 2,
         paddingInline: 2,
-        boxShadow: 'rgba(0, 0, 0, 0.15) 0 5px 10px 0'
+        boxShadow: 'rgba(0, 0, 0, 0.15) 0 5px 10px 0',
+        marginBottom: theme.spacing(1)
       };
     }
-  }, /*#__PURE__*/_react.default.createElement(_ui.Box, null, /*#__PURE__*/_react.default.createElement(_ui.Stack, {
+  }, /*#__PURE__*/_react.default.createElement(_ui.Stack, {
     direction: "row",
     alignItems: "center",
-    gap: 2
-  }, /*#__PURE__*/_react.default.createElement(_ui.TextField, {
+    flexWrap: "wrap",
+    gap: 1.5,
+    sx: {
+      flex: 1
+    }
+  }, /*#__PURE__*/_react.default.createElement(StyledTextField, {
     color: "secondary",
     value: searchKeyword,
     size: "small",
@@ -830,12 +867,11 @@ var SearchFilters = exports.SearchFilters = function SearchFilters(_ref) {
         minWidth: theme.spacing(14)
       };
     }
-  }), /*#__PURE__*/_react.default.createElement(_ui.FormControl, {
-    fullWidth: true,
+  }), /*#__PURE__*/_react.default.createElement(StyledFormControl, {
     size: "small",
     sx: function sx(theme) {
       return {
-        width: theme.spacing(16)
+        width: theme.spacing(20)
       };
     },
     color: "secondary"
@@ -845,18 +881,29 @@ var SearchFilters = exports.SearchFilters = function SearchFilters(_ref) {
     onChange: function onChange(event) {
       return onPluginFilterChange(event.target.value);
     },
-    name: "elementor-element-manager-select-filter-by-plugin"
-  }, plugins.map(function (plugin) {
+    "data-id": "elementor-element-manager-select-filter-by-plugin",
+    displayEmpty: true,
+    renderValue: function renderValue(value) {
+      if ('' === value) {
+        return (0, _i18n.__)('All Plugins', 'elementor');
+      }
+      var selectedPlugin = plugins.find(function (p) {
+        return p.value === value;
+      });
+      return selectedPlugin ? selectedPlugin.label : value;
+    }
+  }, /*#__PURE__*/_react.default.createElement(_ui.MenuItem, {
+    value: ""
+  }, (0, _i18n.__)('All Plugins', 'elementor')), plugins.map(function (plugin) {
     return /*#__PURE__*/_react.default.createElement(_ui.MenuItem, {
       key: plugin.value,
       value: plugin.value
     }, plugin.label);
-  }))), /*#__PURE__*/_react.default.createElement(_ui.FormControl, {
-    fullWidth: true,
+  }))), /*#__PURE__*/_react.default.createElement(StyledFormControl, {
     size: "small",
     sx: function sx(theme) {
       return {
-        width: theme.spacing(16)
+        width: theme.spacing(20)
       };
     },
     color: "secondary"
@@ -865,7 +912,7 @@ var SearchFilters = exports.SearchFilters = function SearchFilters(_ref) {
     onChange: function onChange(event) {
       return onStatusFilterChange(event.target.value);
     },
-    name: "elementor-element-manager-select-filter-by-status",
+    "data-id": "elementor-element-manager-select-filter-by-status",
     placeholder: (0, _i18n.__)('Status', 'elementor')
   }, /*#__PURE__*/_react.default.createElement(_ui.MenuItem, {
     value: "all"
@@ -877,39 +924,48 @@ var SearchFilters = exports.SearchFilters = function SearchFilters(_ref) {
     orientation: "vertical",
     flexItem: true,
     sx: {
-      height: 30,
+      height: FIELD_HEIGHT,
       marginBlock: 0,
-      marginInline: 0.5
+      marginInline: 0.5,
+      alignSelf: 'center',
+      display: {
+        xs: 'none',
+        md: 'block'
+      }
     }
-  }), /*#__PURE__*/_react.default.createElement(_ui.Stack, {
-    direction: "row",
-    gap: 1
-  }, /*#__PURE__*/_react.default.createElement(_ui.Button, {
+  }), /*#__PURE__*/_react.default.createElement(StyledButton, {
     variant: "outlined",
     color: "secondary",
+    size: "small",
     disabled: usageIsLoading,
     onClick: onScanUsage,
-    className: "e-id-elementor-element-manager-button-scan-element-usage",
+    "data-id": "e-id-elementor-element-manager-button-scan-element-usage",
     loading: usageIsLoading
-  }, (0, _i18n.__)('Scan Element Usage', 'elementor')), /*#__PURE__*/_react.default.createElement(_ui.Button, {
+  }, (0, _i18n.__)('Scan Element Usage', 'elementor')), /*#__PURE__*/_react.default.createElement(StyledButton, {
     variant: "outlined",
     color: "secondary",
+    size: "small",
     onClick: onDeactivateUnused,
     disabled: null === usageData,
-    className: "e-id-elementor-element-manager-button-deactivate-unused-elements"
-  }, (0, _i18n.__)('Deactivate Unused Elements', 'elementor')), /*#__PURE__*/_react.default.createElement(_ui.Button, {
+    "data-id": "e-id-elementor-element-manager-button-deactivate-unused-elements"
+  }, (0, _i18n.__)('Deactivate Unused Elements', 'elementor')), /*#__PURE__*/_react.default.createElement(StyledButton, {
     variant: "outlined",
     color: "secondary",
+    size: "small",
     disabled: !widgetsDisabledCount,
     onClick: onEnableAll,
-    className: "e-id-elementor-element-manager-button-enable-all"
-  }, (0, _i18n.__)('Enable All', 'elementor'))))), /*#__PURE__*/_react.default.createElement(_ui.Box, null, /*#__PURE__*/_react.default.createElement(_ui.Button, {
+    "data-id": "e-id-elementor-element-manager-button-enable-all"
+  }, (0, _i18n.__)('Enable All', 'elementor'))), /*#__PURE__*/_react.default.createElement(StyledButton, {
     variant: "contained",
+    size: "small",
     disabled: isSaving || !hasUnsavedChanges,
     onClick: onSaveChanges,
-    className: "e-id-elementor-element-manager-button-save-changes",
-    loading: isSaving
-  }, (0, _i18n.__)('Save Changes', 'elementor'))));
+    "data-id": "e-id-elementor-element-manager-button-save-changes",
+    loading: isSaving,
+    sx: {
+      alignSelf: 'flex-start'
+    }
+  }, (0, _i18n.__)('Save Changes', 'elementor')));
 };
 SearchFilters.propTypes = {
   searchKeyword: _propTypes.default.string.isRequired,
@@ -1071,7 +1127,7 @@ var WidgetsTable = exports.WidgetsTable = function WidgetsTable(_ref) {
     onClick: function onClick() {
       return onSortingClicked('widget');
     },
-    className: "e-id-elementor-element-manager-button-sort-by-element"
+    "data-id": "e-id-elementor-element-manager-button-sort-by-element"
   }, (0, _i18n.__)('Element', 'elementor'))), /*#__PURE__*/_react.default.createElement(_ui.TableCell, {
     sx: function sx(theme) {
       return {
@@ -1084,7 +1140,7 @@ var WidgetsTable = exports.WidgetsTable = function WidgetsTable(_ref) {
     onClick: function onClick() {
       return onSortingClicked('usage');
     },
-    className: "e-id-elementor-element-manager-button-sort-by-usage"
+    "data-id": "e-id-elementor-element-manager-button-sort-by-usage"
   }, (0, _i18n.__)('Usage', 'elementor'))), /*#__PURE__*/_react.default.createElement(_ui.TableCell, null, (0, _i18n.__)('Plugin', 'elementor')), /*#__PURE__*/_react.default.createElement(_ui.TableCell, null, /*#__PURE__*/_react.default.createElement(_ui.Stack, {
     direction: "row",
     justifyContent: "flex-start",
@@ -1105,7 +1161,8 @@ var WidgetsTable = exports.WidgetsTable = function WidgetsTable(_ref) {
     href: promotionWidgets.length ? managerPermissions.pro.url : managerPermissions.advanced.url,
     size: "small",
     text: promotionWidgets.length ? managerPermissions.pro.text : managerPermissions.advanced.text,
-    className: ['e-id-elementor-element-manager-button-upgrade-permissions', 'go-pro'].join(' ')
+    className: "go-pro",
+    "data-id": "e-id-elementor-element-manager-button-upgrade-permissions"
   })))))), /*#__PURE__*/_react.default.createElement(_ui.TableBody, null, widgets.map(function (widget) {
     return /*#__PURE__*/_react.default.createElement(_ui.TableRow, {
       key: widget.name,
@@ -1130,7 +1187,7 @@ var WidgetsTable = exports.WidgetsTable = function WidgetsTable(_ref) {
         return onToggleWidget(widget.name, checked);
       },
       size: "small",
-      className: "e-id-elementor-element-manager-toggle-".concat(widget.name)
+      "data-id": "e-id-elementor-element-manager-toggle-".concat(widget.name)
     })), /*#__PURE__*/_react.default.createElement(_ui.TableCell, null, /*#__PURE__*/_react.default.createElement(_UsageTimesColumn.UsageTimesColumn, {
       widgetName: widget.name,
       usageData: usageWidgets.data,
@@ -1306,6 +1363,7 @@ var _api = __webpack_require__(/*! ../../api */ "../modules/element-manager/asse
 function ownKeys(e, r) { var t = Object.keys(e); if (Object.getOwnPropertySymbols) { var o = Object.getOwnPropertySymbols(e); r && (o = o.filter(function (r) { return Object.getOwnPropertyDescriptor(e, r).enumerable; })), t.push.apply(t, o); } return t; }
 function _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t = null != arguments[r] ? arguments[r] : {}; r % 2 ? ownKeys(Object(t), !0).forEach(function (r) { (0, _defineProperty2.default)(e, r, t[r]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(e, Object.getOwnPropertyDescriptors(t)) : ownKeys(Object(t)).forEach(function (r) { Object.defineProperty(e, r, Object.getOwnPropertyDescriptor(t, r)); }); } return e; }
 var useElementManager = exports.useElementManager = function useElementManager() {
+  var isInitialMount = (0, _react.useRef)(true);
   var _useState = (0, _react.useState)(true),
     _useState2 = (0, _slicedToArray2.default)(_useState, 2),
     isLoading = _useState2[0],
@@ -1486,6 +1544,11 @@ var useElementManager = exports.useElementManager = function useElementManager()
               });
               setPlugins(pluginsData);
               setIsLoading(false);
+              setChangeProgress(function (prev) {
+                return _objectSpread(_objectSpread({}, prev), {}, {
+                  isUnsavedChanges: false
+                });
+              });
             case 2:
             case "end":
               return _context3.stop();
@@ -1500,6 +1563,10 @@ var useElementManager = exports.useElementManager = function useElementManager()
   }, []);
   (0, _react.useEffect)(function () {
     if (isLoading) {
+      return;
+    }
+    if (isInitialMount.current) {
+      isInitialMount.current = false;
       return;
     }
     setChangeProgress(function (prev) {

@@ -7909,6 +7909,7 @@ var _componentModalBase = _interopRequireDefault(__webpack_require__(/*! element
 var commands = _interopRequireWildcard(__webpack_require__(/*! ./commands/ */ "../assets/dev/js/editor/components/template-library/commands/index.js"));
 var commandsData = _interopRequireWildcard(__webpack_require__(/*! ./commands-data/ */ "../assets/dev/js/editor/components/template-library/commands-data/index.js"));
 var _constants = __webpack_require__(/*! ./constants */ "../assets/dev/js/editor/components/template-library/constants.js");
+var _editorOneEvents = __webpack_require__(/*! elementor-editor-utils/editor-one-events */ "../assets/dev/js/editor/utils/editor-one-events.js");
 function _interopRequireWildcard(e, t) { if ("function" == typeof WeakMap) var r = new WeakMap(), n = new WeakMap(); return (_interopRequireWildcard = function _interopRequireWildcard(e, t) { if (!t && e && e.__esModule) return e; var o, i, f = { __proto__: null, default: e }; if (null === e || "object" != _typeof(e) && "function" != typeof e) return f; if (o = t ? n : r) { if (o.has(e)) return o.get(e); o.set(e, f); } for (var _t in e) "default" !== _t && {}.hasOwnProperty.call(e, _t) && ((i = (o = Object.defineProperty) && Object.getOwnPropertyDescriptor(e, _t)) && (i.get || i.set) ? o(f, _t, i) : f[_t] = e[_t]); return f; })(e, t); }
 function ownKeys(e, r) { var t = Object.keys(e); if (Object.getOwnPropertySymbols) { var o = Object.getOwnPropertySymbols(e); r && (o = o.filter(function (r) { return Object.getOwnPropertyDescriptor(e, r).enumerable; })), t.push.apply(t, o); } return t; }
 function _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t = null != arguments[r] ? arguments[r] : {}; r % 2 ? ownKeys(Object(t), !0).forEach(function (r) { (0, _defineProperty2.default)(e, r, t[r]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(e, Object.getOwnPropertyDescriptors(t)) : ownKeys(Object(t)).forEach(function (r) { Object.defineProperty(e, r, Object.getOwnPropertyDescriptor(t, r)); }); } return e; }
@@ -8036,8 +8037,14 @@ var Component = exports["default"] = /*#__PURE__*/function (_ComponentModalBase)
     value: function renderTab(tab) {
       var currentTab = this.tabs[tab];
       var filter = currentTab.getFilter ? currentTab.getFilter() : currentTab.filter;
+      this.trackLibraryNavigation(tab, currentTab.title);
       this.currentTab = tab;
       this.manager.setScreen(filter);
+    }
+  }, {
+    key: "trackLibraryNavigation",
+    value: function trackLibraryNavigation(tab, tabTitle) {
+      _editorOneEvents.EditorOneEventManager.sendELibraryNav(tabTitle || tab);
     }
   }, {
     key: "activateTab",
@@ -8079,14 +8086,27 @@ var Component = exports["default"] = /*#__PURE__*/function (_ComponentModalBase)
     value: function insertTemplate(args) {
       var _this2 = this;
       this.downloadTemplate(args, function (data, callbackParams) {
+        var _model$get, _elementor$config$lib;
+        var model = callbackParams.model;
+        var source = (_model$get = model.get('source')) !== null && _model$get !== void 0 ? _model$get : 'local';
+        var templateType = model.get('type');
+        var templateTitle = model.get('title');
+        var templateId = model.get('template_id');
+        var baseTier = (_elementor$config$lib = elementor.config.library_connect) === null || _elementor$config$lib === void 0 ? void 0 : _elementor$config$lib.base_access_tier;
+        var templateTier = model.get('accessTier');
         $e.run('document/elements/import', {
-          model: callbackParams.model,
+          model: model,
           data: data,
           options: callbackParams.importOptions,
           onAfter: function onAfter() {
-            var _callbackParams$model;
             _this2.manager.eventManager.sendTemplateInsertedEvent({
-              library_type: (_callbackParams$model = callbackParams.model.get('source')) !== null && _callbackParams$model !== void 0 ? _callbackParams$model : 'local'
+              library_type: source
+            });
+            _editorOneEvents.EditorOneEventManager.sendELibraryInsert({
+              assetId: templateId,
+              assetName: templateTitle,
+              libraryType: templateType || source,
+              proRequired: baseTier !== templateTier
             });
           }
         });
@@ -10029,7 +10049,6 @@ module.exports = Marionette.ItemView.extend({
   template: '#tmpl-elementor-template-library-connect-states',
   id: 'elementor-template-library-connect-states',
   ui: {
-    connect: '#elementor-template-library-connect__button',
     selectSourceFilter: '.elementor-template-library-filter-select-source .source-option',
     title: '.elementor-template-library-blank-title',
     message: '.elementor-template-library-blank-message',
@@ -10049,7 +10068,7 @@ module.exports = Marionette.ItemView.extend({
         title: (_elementorAppConfig$c = (_elementorAppConfig = elementorAppConfig) === null || _elementorAppConfig === void 0 || (_elementorAppConfig = _elementorAppConfig['cloud-library']) === null || _elementorAppConfig === void 0 ? void 0 : _elementorAppConfig.library_connect_title_copy) !== null && _elementorAppConfig$c !== void 0 ? _elementorAppConfig$c : __('Connect to your Elementor account', 'elementor'),
         message: (_elementorAppConfig$c2 = (_elementorAppConfig2 = elementorAppConfig) === null || _elementorAppConfig2 === void 0 || (_elementorAppConfig2 = _elementorAppConfig2['cloud-library']) === null || _elementorAppConfig2 === void 0 ? void 0 : _elementorAppConfig2.library_connect_sub_title_copy) !== null && _elementorAppConfig$c2 !== void 0 ? _elementorAppConfig$c2 : __('Then you can find all your templates in one convenient library.', 'elementor'),
         icon: defaultIcon,
-        button: "<a class=\"elementor-button e-primary\" href=\"".concat((_elementorAppConfig3 = elementorAppConfig) === null || _elementorAppConfig3 === void 0 || (_elementorAppConfig3 = _elementorAppConfig3['cloud-library']) === null || _elementorAppConfig3 === void 0 ? void 0 : _elementorAppConfig3.library_connect_url, "\" target=\"_blank\">").concat((_elementorAppConfig$c3 = (_elementorAppConfig4 = elementorAppConfig) === null || _elementorAppConfig4 === void 0 || (_elementorAppConfig4 = _elementorAppConfig4['cloud-library']) === null || _elementorAppConfig4 === void 0 ? void 0 : _elementorAppConfig4.library_connect_button_copy) !== null && _elementorAppConfig$c3 !== void 0 ? _elementorAppConfig$c3 : __('Connect', 'elementor'), "</a>")
+        button: "<a class=\"elementor-button e-primary connect-button\" href=\"".concat((_elementorAppConfig3 = elementorAppConfig) === null || _elementorAppConfig3 === void 0 || (_elementorAppConfig3 = _elementorAppConfig3['cloud-library']) === null || _elementorAppConfig3 === void 0 ? void 0 : _elementorAppConfig3.library_connect_url, "\" target=\"_blank\">").concat((_elementorAppConfig$c3 = (_elementorAppConfig4 = elementorAppConfig) === null || _elementorAppConfig4 === void 0 || (_elementorAppConfig4 = _elementorAppConfig4['cloud-library']) === null || _elementorAppConfig4 === void 0 ? void 0 : _elementorAppConfig4.library_connect_button_copy) !== null && _elementorAppConfig$c3 !== void 0 ? _elementorAppConfig$c3 : __('Connect', 'elementor'), "</a>")
       },
       connectedNoQuota: {
         title: __('It’s time to level up', 'elementor'),
@@ -10121,13 +10140,21 @@ module.exports = Marionette.ItemView.extend({
     this.ui.icon.html(modeStrings.icon);
   },
   handleElementorConnect: function handleElementorConnect() {
-    this.ui.connect.elementorConnect({
+    var $connectButton = this.$el.find('.connect-button');
+    if (!$connectButton.length) {
+      return;
+    }
+    $connectButton.elementorConnect({
+      popup: {
+        width: 726,
+        height: 534
+      },
       success: function success() {
         elementor.config.library_connect.is_connected = true;
-        $e.run('library/close');
         elementor.notifications.showToast({
           message: __('Connected successfully.', 'elementor')
         });
+        $e.routes.refreshContainer('library');
       },
       error: function error() {
         elementor.config.library_connect.is_connected = false;
@@ -12554,6 +12581,7 @@ module.exports = TemplateLibraryTemplateLocalView;
 "use strict";
 
 
+var _editorOneEvents = __webpack_require__(/*! elementor-editor-utils/editor-one-events */ "../assets/dev/js/editor/utils/editor-one-events.js");
 var TemplateLibraryTemplateView = __webpack_require__(/*! elementor-templates/views/template/base */ "../assets/dev/js/editor/components/template-library/views/template/base.js"),
   TemplateLibraryTemplateRemoteView;
 TemplateLibraryTemplateRemoteView = TemplateLibraryTemplateView.extend({
@@ -12575,9 +12603,19 @@ TemplateLibraryTemplateRemoteView = TemplateLibraryTemplateView.extend({
     });
   },
   onFavoriteCheckboxChange: function onFavoriteCheckboxChange() {
+    var _elementor$config$lib;
     var isFavorite = this.ui.favoriteCheckbox[0].checked;
     this.model.set('favorite', isFavorite);
     elementor.templates.markAsFavorite(this.model, isFavorite);
+    var baseTier = (_elementor$config$lib = elementor.config.library_connect) === null || _elementor$config$lib === void 0 ? void 0 : _elementor$config$lib.base_access_tier;
+    var templateTier = this.model.get('accessTier');
+    _editorOneEvents.EditorOneEventManager.sendELibraryFavorite({
+      assetId: this.model.get('template_id'),
+      assetName: this.model.get('title'),
+      libraryType: this.model.get('type') || this.model.get('source'),
+      isFavorite: isFavorite,
+      proRequired: baseTier !== templateTier
+    });
     if (!isFavorite && elementor.templates.getFilter('favorite')) {
       elementor.channels.templates.trigger('filter:change');
     }
@@ -14497,7 +14535,7 @@ var _default = exports["default"] = /*#__PURE__*/function (_ControlBaseDataView)
         }).html(_.escape(globalData.title)),
         $colorHex = jQuery('<span>', {
           class: 'e-global__color-hex'
-        }).html(globalData.value);
+        }).text(globalData.value);
       $color.append($colorPreview, $colorTitle, $colorHex);
       return $color;
     }
@@ -15214,15 +15252,23 @@ ControlMediaItemView = ControlBaseDataView.extend({
     elementor.config.user.dismissed_editor_notices.push(eventName);
   },
   onPromotionAction: function onPromotionAction(event) {
-    var _JSON$parse = JSON.parse(event.target.closest('button').dataset.settings),
-      _JSON$parse$action_ur = _JSON$parse.action_url,
-      actionURL = _JSON$parse$action_ur === void 0 ? null : _JSON$parse$action_ur;
+    var settings = {};
+    try {
+      settings = JSON.parse(event.target.closest('button').dataset.settings);
+    } catch (e) {
+      // Do nothing.
+    }
+    var _settings = settings,
+      _settings$action_url = _settings.action_url,
+      actionURL = _settings$action_url === void 0 ? null : _settings$action_url,
+      _settings$source = _settings.source,
+      source = _settings$source === void 0 ? 'io-editor-gallery-install' : _settings$source;
     if (actionURL) {
       window.open(actionURL, '_blank');
     }
     elementorCommon.ajax.addRequest('elementor_image_optimization_campaign', {
       data: {
-        source: 'io-editor-gallery-install'
+        source: source
       }
     });
     this.hidePromotion();
@@ -16082,13 +16128,21 @@ ControlMediaItemView = ControlMultipleBaseItemView.extend({
     this.dismissPromotion(this.getDismissPromotionEventName());
   },
   onPromotionAction: function onPromotionAction(event) {
-    var _JSON$parse = JSON.parse(event.target.closest('button').dataset.settings),
-      _JSON$parse$action_ur = _JSON$parse.action_url,
-      actionURL = _JSON$parse$action_ur === void 0 ? null : _JSON$parse$action_ur;
+    var settings = {};
+    try {
+      settings = JSON.parse(event.target.closest('button').dataset.settings);
+    } catch (e) {
+      // Do nothing.
+    }
+    var _settings = settings,
+      _settings$action_url = _settings.action_url,
+      actionURL = _settings$action_url === void 0 ? null : _settings$action_url,
+      _settings$source = _settings.source,
+      source = _settings$source === void 0 ? 'io-editor-image-install' : _settings$source;
     if (actionURL) {
       window.open(actionURL, '_blank');
     }
-    this.hidePromotion();
+    this.hidePromotion(null, source);
   },
   dismissPromotion: function dismissPromotion(eventName) {
     this.hidePromotion(eventName);
@@ -16102,6 +16156,7 @@ ControlMediaItemView = ControlMultipleBaseItemView.extend({
   },
   hidePromotion: function hidePromotion() {
     var eventName = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : null;
+    var source = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 'io-editor-image-install';
     var $promotions = this.ui.promotions;
     $promotions.hide();
     if (!eventName) {
@@ -16109,7 +16164,7 @@ ControlMediaItemView = ControlMultipleBaseItemView.extend({
     }
     elementorCommon.ajax.addRequest('elementor_image_optimization_campaign', {
       data: {
-        source: 'io-editor-image-install'
+        source: source
       }
     });
 
@@ -26753,7 +26808,7 @@ var Save = exports.Save = /*#__PURE__*/function (_$e$modules$CommandIn) {
       var _apply = (0, _asyncToGenerator2.default)(/*#__PURE__*/_regenerator.default.mark(function _callee(args) {
         var _elementorCommon$conf,
           _this = this;
-        var _args$status, status, _args$force, force, _args$onSuccess, onSuccess, _args$document, document, container, settings, oldStatus, _elementorCommon$__be, _elementorCommon, elements, successArgs, deferred;
+        var _args$status, status, _args$force, force, _args$onSuccess, onSuccess, _args$document, document, container, _elementorCommon$__be, _elementorCommon, settings, oldStatus, elements, successArgs, deferred;
         return _regenerator.default.wrap(function (_context) {
           while (1) switch (_context.prev = _context.next) {
             case 0:
@@ -26764,16 +26819,7 @@ var Save = exports.Save = /*#__PURE__*/function (_$e$modules$CommandIn) {
               }
               return _context.abrupt("return", jQuery.Deferred().reject('Document already in save progress'));
             case 1:
-              container = document.container, settings = container.settings.toJSON({
-                remove: ['default']
-              }), oldStatus = container.settings.get('post_status');
-              this.addPersistentSettingsToPayload(settings, container);
-
-              // TODO: Remove - Backwards compatibility.
-              elementor.saver.trigger('before:save', args).trigger('before:save:' + status, args);
-              document.editor.isSaving = true;
-              document.editor.isChangedDuringSave = false;
-              settings.post_status = status;
+              container = document.container;
               if (!((_elementorCommon$conf = elementorCommon.config.experimentalFeatures) !== null && _elementorCommon$conf !== void 0 && _elementorCommon$conf.e_components)) {
                 _context.next = 2;
                 break;
@@ -26784,6 +26830,17 @@ var Save = exports.Save = /*#__PURE__*/function (_$e$modules$CommandIn) {
                 status: status
               });
             case 2:
+              settings = container.settings.toJSON({
+                remove: ['default']
+              });
+              oldStatus = container.settings.get('post_status');
+              this.addPersistentSettingsToPayload(settings, container);
+
+              // TODO: Remove - Backwards compatibility.
+              elementor.saver.trigger('before:save', args).trigger('before:save:' + status, args);
+              document.editor.isSaving = true;
+              document.editor.isChangedDuringSave = false;
+              settings.post_status = status;
               elements = [];
               if (elementor.config.document.panel.has_elements) {
                 elements = container.model.get('elements').toJSON({
@@ -28697,7 +28754,8 @@ var EditorBase = exports["default"] = /*#__PURE__*/function (_Marionette$Applica
   }, {
     key: "getPreviewContainer",
     value: function getPreviewContainer() {
-      return this.getPreviewView().getContainer();
+      var _this$getPreviewView;
+      return (_this$getPreviewView = this.getPreviewView()) === null || _this$getPreviewView === void 0 ? void 0 : _this$getPreviewView.getContainer();
     }
   }, {
     key: "getContainer",
@@ -34473,16 +34531,22 @@ Object.defineProperty(exports, "__esModule", ({
 }));
 exports["default"] = EmptyComponent;
 var _react = _interopRequireDefault(__webpack_require__(/*! react */ "react"));
+var _editorOneEvents = __webpack_require__(/*! elementor-editor-utils/editor-one-events */ "../assets/dev/js/editor/utils/editor-one-events.js");
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 /* eslint-disable jsx-a11y/click-events-have-key-events */
+
 function EmptyComponent() {
+  var handleClick = function handleClick() {
+    _editorOneEvents.EditorOneEventManager.sendCanvasEmptyBoxAction({
+      targetName: 'add_container'
+    });
+    $e.route('panel/elements/categories');
+  };
   return /*#__PURE__*/_react.default.createElement("div", {
     className: "elementor-first-add"
   }, /*#__PURE__*/_react.default.createElement("div", {
     className: "elementor-icon eicon-plus",
-    onClick: function onClick() {
-      return $e.route('panel/elements/categories');
-    }
+    onClick: handleClick
   }));
 }
 
@@ -35513,6 +35577,60 @@ var _default = exports["default"] = Close;
 
 /***/ }),
 
+/***/ "../assets/dev/js/editor/regions/navigator/commands/expand-all.js":
+/*!************************************************************************!*\
+  !*** ../assets/dev/js/editor/regions/navigator/commands/expand-all.js ***!
+  \************************************************************************/
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+"use strict";
+
+
+var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault */ "../node_modules/@babel/runtime/helpers/interopRequireDefault.js");
+Object.defineProperty(exports, "__esModule", ({
+  value: true
+}));
+exports["default"] = exports.ExpandAll = void 0;
+var _classCallCheck2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime/helpers/classCallCheck */ "../node_modules/@babel/runtime/helpers/classCallCheck.js"));
+var _createClass2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime/helpers/createClass */ "../node_modules/@babel/runtime/helpers/createClass.js"));
+var _possibleConstructorReturn2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime/helpers/possibleConstructorReturn */ "../node_modules/@babel/runtime/helpers/possibleConstructorReturn.js"));
+var _getPrototypeOf2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime/helpers/getPrototypeOf */ "../node_modules/@babel/runtime/helpers/getPrototypeOf.js"));
+var _inherits2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime/helpers/inherits */ "../node_modules/@babel/runtime/helpers/inherits.js"));
+function _callSuper(t, o, e) { return o = (0, _getPrototypeOf2.default)(o), (0, _possibleConstructorReturn2.default)(t, _isNativeReflectConstruct() ? Reflect.construct(o, e || [], (0, _getPrototypeOf2.default)(t).constructor) : o.apply(t, e)); }
+function _isNativeReflectConstruct() { try { var t = !Boolean.prototype.valueOf.call(Reflect.construct(Boolean, [], function () {})); } catch (t) {} return (_isNativeReflectConstruct = function _isNativeReflectConstruct() { return !!t; })(); }
+var ExpandAll = exports.ExpandAll = /*#__PURE__*/function (_$e$modules$CommandBa) {
+  function ExpandAll() {
+    (0, _classCallCheck2.default)(this, ExpandAll);
+    return _callSuper(this, ExpandAll, arguments);
+  }
+  (0, _inherits2.default)(ExpandAll, _$e$modules$CommandBa);
+  return (0, _createClass2.default)(ExpandAll, [{
+    key: "apply",
+    value: function apply() {
+      if (this.component.isOpen) {
+        this.expandAllElements();
+      } else {
+        this.openNavigator();
+      }
+    }
+  }, {
+    key: "openNavigator",
+    value: function openNavigator() {
+      $e.run('navigator/open', {
+        expandAllElements: true
+      });
+    }
+  }, {
+    key: "expandAllElements",
+    value: function expandAllElements() {
+      this.component.manager.currentView.elements.currentView.recursiveChildInvoke('toggleList', true);
+    }
+  }]);
+}($e.modules.CommandBase);
+var _default = exports["default"] = ExpandAll;
+
+/***/ }),
+
 /***/ "../assets/dev/js/editor/regions/navigator/commands/index.js":
 /*!*******************************************************************!*\
   !*** ../assets/dev/js/editor/regions/navigator/commands/index.js ***!
@@ -35531,6 +35649,12 @@ Object.defineProperty(exports, "Close", ({
     return _close.Close;
   }
 }));
+Object.defineProperty(exports, "ExpandAll", ({
+  enumerable: true,
+  get: function get() {
+    return _expandAll.ExpandAll;
+  }
+}));
 Object.defineProperty(exports, "Open", ({
   enumerable: true,
   get: function get() {
@@ -35544,6 +35668,7 @@ Object.defineProperty(exports, "Toggle", ({
   }
 }));
 var _close = __webpack_require__(/*! ./close */ "../assets/dev/js/editor/regions/navigator/commands/close.js");
+var _expandAll = __webpack_require__(/*! ./expand-all */ "../assets/dev/js/editor/regions/navigator/commands/expand-all.js");
 var _open = __webpack_require__(/*! ./open */ "../assets/dev/js/editor/regions/navigator/commands/open.js");
 var _toggle = __webpack_require__(/*! ./toggle */ "../assets/dev/js/editor/regions/navigator/commands/toggle.js");
 
@@ -35578,8 +35703,8 @@ var Open = exports.Open = /*#__PURE__*/function (_$e$modules$CommandBa) {
   (0, _inherits2.default)(Open, _$e$modules$CommandBa);
   return (0, _createClass2.default)(Open, [{
     key: "apply",
-    value: function apply() {
-      $e.route(this.component.getNamespace());
+    value: function apply(args) {
+      $e.route(this.component.getNamespace(), args);
     }
   }]);
 }($e.modules.CommandBase);
@@ -35695,8 +35820,12 @@ var Component = exports["default"] = /*#__PURE__*/function (_ComponentBase) {
     key: "open",
     value: function open(args) {
       var _args$model = args.model,
-        model = _args$model === void 0 ? false : _args$model;
-      this.manager.open(model);
+        model = _args$model === void 0 ? false : _args$model,
+        _args$expandAllElemen = args.expandAllElements,
+        expandAllElements = _args$expandAllElemen === void 0 ? false : _args$expandAllElemen;
+      this.manager.open(model, {
+        expandAllElements: expandAllElements
+      });
       return true;
     }
   }, {
@@ -35903,6 +36032,12 @@ var _default = exports["default"] = /*#__PURE__*/function (_Marionette$Composite
       this.childViewContainer = '.elementor-navigator__elements';
       this.listenTo(this.model, 'change', this.onModelChange).listenTo(this.model.get('settings'), 'change', this.onModelSettingsChange);
       this.listenTo(this.model, 'change:editor_settings', this.onModelEditorSettingsChange);
+      this.listenTo(this.model, 'title_external_change', this.onTitleExternalChange);
+    }
+  }, {
+    key: "onTitleExternalChange",
+    value: function onTitleExternalChange() {
+      this.ui.title.text(this.model.getTitle());
     }
   }, {
     key: "onModelEditorSettingsChange",
@@ -36597,7 +36732,7 @@ var _default = exports["default"] = /*#__PURE__*/function (_BaseRegion) {
     }
   }, {
     key: "open",
-    value: function open(model) {
+    value: function open(model, options) {
       this.$el.show();
       this.setSize();
       if (this.storage.docked) {
@@ -36605,6 +36740,9 @@ var _default = exports["default"] = /*#__PURE__*/function (_BaseRegion) {
       }
       if (model) {
         model.trigger('request:edit');
+      }
+      if (options !== null && options !== void 0 && options.expandAllElements) {
+        this.currentView.elements.currentView.recursiveChildInvoke('toggleList', true);
       }
       this.saveStorage('visible', true);
       this.ensurePosition();
@@ -39112,10 +39250,13 @@ module.exports = Marionette.ItemView.extend({
 
 var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault */ "../node_modules/@babel/runtime/helpers/interopRequireDefault.js");
 var _localizedValueStore = _interopRequireDefault(__webpack_require__(/*! elementor-editor-utils/localized-value-store */ "../assets/dev/js/editor/utils/localized-value-store.js"));
+var _editorOneEvents = __webpack_require__(/*! elementor-editor-utils/editor-one-events */ "../assets/dev/js/editor/utils/editor-one-events.js");
+var WIDGET_PANEL_SEARCH_DEBOUNCE_MS = 2000;
 var PanelElementsSearchView = Marionette.ItemView.extend({
   template: '#tmpl-elementor-panel-element-search',
   localizedValue: '',
   localizedValueStore: new _localizedValueStore.default(),
+  debouncedTrackSearch: null,
   tagName: 'search',
   id: 'elementor-panel-elements-search-wrapper',
   ui: {
@@ -39126,8 +39267,26 @@ var PanelElementsSearchView = Marionette.ItemView.extend({
     // Used to capture the ctrl+V
     'input @ui.input': 'onInputChanged' // Will capture the context menu paste
   },
+  initialize: function initialize() {
+    this.debouncedTrackSearch = (0, _editorOneEvents.createDebouncedWidgetPanelSearch)(WIDGET_PANEL_SEARCH_DEBOUNCE_MS);
+  },
   clearInput: function clearInput() {
     this.ui.input.val('');
+  },
+  getVisibleWidgetsCount: function getVisibleWidgetsCount() {
+    var $widgetsContainer = jQuery('#elementor-panel-elements');
+    return $widgetsContainer.find('.elementor-element:visible').length;
+  },
+  trackWidgetSearch: function trackWidgetSearch() {
+    var _this = this;
+    var userInput = this.ui.input.val();
+    if (!userInput) {
+      return;
+    }
+    setTimeout(function () {
+      var resultsCount = _this.getVisibleWidgetsCount();
+      _this.debouncedTrackSearch(resultsCount, userInput);
+    }, 100);
   },
   onInputChanged: function onInputChanged(event) {
     var ESC_KEY = 27;
@@ -39135,9 +39294,15 @@ var PanelElementsSearchView = Marionette.ItemView.extend({
       this.clearInput();
     }
     this.localizedValue = this.localizedValueStore.appendAndParseLocalizedData(event);
-    // Broadcast the localized value.
     elementor.channels.panelElements.reply('filter:localized', this.localizedValue);
     this.triggerMethod('search:change:input');
+    this.trackWidgetSearch();
+  },
+  onDestroy: function onDestroy() {
+    var _this$debouncedTrackS;
+    if ((_this$debouncedTrackS = this.debouncedTrackSearch) !== null && _this$debouncedTrackS !== void 0 && _this$debouncedTrackS.cancel) {
+      this.debouncedTrackSearch.cancel();
+    }
   }
 });
 module.exports = PanelElementsSearchView;
@@ -41063,6 +41228,390 @@ ControlsCSSParser = elementorModules.ViewModule.extend({
   }
 });
 module.exports = ControlsCSSParser;
+
+/***/ }),
+
+/***/ "../assets/dev/js/editor/utils/editor-one-events.js":
+/*!**********************************************************!*\
+  !*** ../assets/dev/js/editor/utils/editor-one-events.js ***!
+  \**********************************************************/
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+"use strict";
+
+
+var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault */ "../node_modules/@babel/runtime/helpers/interopRequireDefault.js");
+Object.defineProperty(exports, "__esModule", ({
+  value: true
+}));
+exports["default"] = exports.createDebouncedWidgetPanelSearch = exports.createDebouncedFinderSearch = exports.EditorOneEventManager = void 0;
+var _defineProperty2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime/helpers/defineProperty */ "../node_modules/@babel/runtime/helpers/defineProperty.js"));
+var _classCallCheck2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime/helpers/classCallCheck */ "../node_modules/@babel/runtime/helpers/classCallCheck.js"));
+var _createClass2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime/helpers/createClass */ "../node_modules/@babel/runtime/helpers/createClass.js"));
+function ownKeys(e, r) { var t = Object.keys(e); if (Object.getOwnPropertySymbols) { var o = Object.getOwnPropertySymbols(e); r && (o = o.filter(function (r) { return Object.getOwnPropertyDescriptor(e, r).enumerable; })), t.push.apply(t, o); } return t; }
+function _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t = null != arguments[r] ? arguments[r] : {}; r % 2 ? ownKeys(Object(t), !0).forEach(function (r) { (0, _defineProperty2.default)(e, r, t[r]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(e, Object.getOwnPropertyDescriptors(t)) : ownKeys(Object(t)).forEach(function (r) { Object.defineProperty(e, r, Object.getOwnPropertyDescriptor(t, r)); }); } return e; }
+var EditorOneEventManager = exports.EditorOneEventManager = /*#__PURE__*/function () {
+  function EditorOneEventManager() {
+    (0, _classCallCheck2.default)(this, EditorOneEventManager);
+  }
+  return (0, _createClass2.default)(EditorOneEventManager, null, [{
+    key: "getEventsManager",
+    value: function getEventsManager() {
+      var _elementorCommon;
+      return (_elementorCommon = elementorCommon) === null || _elementorCommon === void 0 ? void 0 : _elementorCommon.eventsManager;
+    }
+  }, {
+    key: "getConfig",
+    value: function getConfig() {
+      var _this$getEventsManage;
+      return (_this$getEventsManage = this.getEventsManager()) === null || _this$getEventsManage === void 0 ? void 0 : _this$getEventsManage.config;
+    }
+  }, {
+    key: "canSendEvents",
+    value: function canSendEvents() {
+      var _elementorCommon2;
+      return ((_elementorCommon2 = elementorCommon) === null || _elementorCommon2 === void 0 || (_elementorCommon2 = _elementorCommon2.config) === null || _elementorCommon2 === void 0 || (_elementorCommon2 = _elementorCommon2.editor_events) === null || _elementorCommon2 === void 0 ? void 0 : _elementorCommon2.can_send_events) || false;
+    }
+  }, {
+    key: "isEventsManagerAvailable",
+    value: function isEventsManagerAvailable() {
+      var eventsManager = this.getEventsManager();
+      return eventsManager && 'function' === typeof eventsManager.dispatchEvent;
+    }
+  }, {
+    key: "dispatchEvent",
+    value: function dispatchEvent(eventName, payload) {
+      if (!this.isEventsManagerAvailable() || !this.canSendEvents()) {
+        return false;
+      }
+      try {
+        return this.getEventsManager().dispatchEvent(eventName, payload);
+      } catch (error) {
+        return false;
+      }
+    }
+  }, {
+    key: "toLowerSnake",
+    value: function toLowerSnake(value) {
+      if (!value || 'string' !== typeof value) {
+        return value;
+      }
+      return value.replace(/\s+/g, '_').toLowerCase();
+    }
+  }, {
+    key: "decodeHtmlEntities",
+    value: function decodeHtmlEntities(text) {
+      if (!text || 'string' !== typeof text) {
+        return text;
+      }
+      var doc = new DOMParser().parseFromString(text, 'text/html');
+      return doc.body.textContent || text;
+    }
+  }, {
+    key: "isInEditorContext",
+    value: function isInEditorContext() {
+      var _window$elementor;
+      return 'undefined' !== typeof window.elementor && !!((_window$elementor = window.elementor) !== null && _window$elementor !== void 0 && _window$elementor.documents);
+    }
+  }, {
+    key: "getFinderContext",
+    value: function getFinderContext() {
+      var _config$appTypes, _config$appTypes2, _config$locations, _config$locations2;
+      var config = this.getConfig();
+      var isEditor = this.isInEditorContext();
+      return {
+        windowName: isEditor ? config === null || config === void 0 || (_config$appTypes = config.appTypes) === null || _config$appTypes === void 0 ? void 0 : _config$appTypes.editor : config === null || config === void 0 || (_config$appTypes2 = config.appTypes) === null || _config$appTypes2 === void 0 ? void 0 : _config$appTypes2.wpAdmin,
+        targetLocation: this.toLowerSnake(isEditor ? config === null || config === void 0 || (_config$locations = config.locations) === null || _config$locations === void 0 ? void 0 : _config$locations.topBar : config === null || config === void 0 || (_config$locations2 = config.locations) === null || _config$locations2 === void 0 ? void 0 : _config$locations2.sidebar)
+      };
+    }
+  }, {
+    key: "createBasePayload",
+    value: function createBasePayload() {
+      var _config$appTypes$edit, _config$appTypes3, _config$appTypes$edit2, _config$appTypes4;
+      var overrides = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+      var config = this.getConfig();
+      return _objectSpread({
+        app_type: (_config$appTypes$edit = config === null || config === void 0 || (_config$appTypes3 = config.appTypes) === null || _config$appTypes3 === void 0 ? void 0 : _config$appTypes3.editor) !== null && _config$appTypes$edit !== void 0 ? _config$appTypes$edit : 'editor',
+        window_name: (_config$appTypes$edit2 = config === null || config === void 0 || (_config$appTypes4 = config.appTypes) === null || _config$appTypes4 === void 0 ? void 0 : _config$appTypes4.editor) !== null && _config$appTypes$edit2 !== void 0 ? _config$appTypes$edit2 : 'editor'
+      }, overrides);
+    }
+  }, {
+    key: "sendTopBarPublishDropdown",
+    value: function sendTopBarPublishDropdown(targetName) {
+      var _config$names, _config$triggers, _config$targetTypes, _config$interactionRe, _config$locations3, _config$secondaryLoca, _config$targetTypes2;
+      var config = this.getConfig();
+      return this.dispatchEvent(config === null || config === void 0 || (_config$names = config.names) === null || _config$names === void 0 || (_config$names = _config$names.editorOne) === null || _config$names === void 0 ? void 0 : _config$names.topBarPublishDropdown, this.createBasePayload({
+        interaction_type: this.toLowerSnake(config === null || config === void 0 || (_config$triggers = config.triggers) === null || _config$triggers === void 0 ? void 0 : _config$triggers.click),
+        target_type: config === null || config === void 0 || (_config$targetTypes = config.targetTypes) === null || _config$targetTypes === void 0 ? void 0 : _config$targetTypes.dropdownItem,
+        target_name: targetName,
+        interaction_result: config === null || config === void 0 || (_config$interactionRe = config.interactionResults) === null || _config$interactionRe === void 0 ? void 0 : _config$interactionRe.actionSelected,
+        target_location: this.toLowerSnake(config === null || config === void 0 || (_config$locations3 = config.locations) === null || _config$locations3 === void 0 ? void 0 : _config$locations3.topBar),
+        location_l1: this.toLowerSnake(config === null || config === void 0 || (_config$secondaryLoca = config.secondaryLocations) === null || _config$secondaryLoca === void 0 ? void 0 : _config$secondaryLoca.publishDropdown),
+        location_l2: config === null || config === void 0 || (_config$targetTypes2 = config.targetTypes) === null || _config$targetTypes2 === void 0 ? void 0 : _config$targetTypes2.dropdownItem,
+        interaction_description: 'User selected an action from the publish dropdown'
+      }));
+    }
+  }, {
+    key: "sendTopBarPageList",
+    value: function sendTopBarPageList(targetName) {
+      var _config$names2, _config$triggers2, _config$targetTypes3, _config$interactionRe2, _config$interactionRe3, _config$locations4, _config$secondaryLoca2, _config$targetTypes4;
+      var isCreate = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
+      var config = this.getConfig();
+      return this.dispatchEvent(config === null || config === void 0 || (_config$names2 = config.names) === null || _config$names2 === void 0 || (_config$names2 = _config$names2.editorOne) === null || _config$names2 === void 0 ? void 0 : _config$names2.topBarPageList, this.createBasePayload({
+        interaction_type: this.toLowerSnake(config === null || config === void 0 || (_config$triggers2 = config.triggers) === null || _config$triggers2 === void 0 ? void 0 : _config$triggers2.click),
+        target_type: config === null || config === void 0 || (_config$targetTypes3 = config.targetTypes) === null || _config$targetTypes3 === void 0 ? void 0 : _config$targetTypes3.dropdownItem,
+        target_name: targetName,
+        interaction_result: isCreate ? config === null || config === void 0 || (_config$interactionRe2 = config.interactionResults) === null || _config$interactionRe2 === void 0 ? void 0 : _config$interactionRe2.create : config === null || config === void 0 || (_config$interactionRe3 = config.interactionResults) === null || _config$interactionRe3 === void 0 ? void 0 : _config$interactionRe3.navigate,
+        target_location: this.toLowerSnake(config === null || config === void 0 || (_config$locations4 = config.locations) === null || _config$locations4 === void 0 ? void 0 : _config$locations4.topBar),
+        location_l1: this.toLowerSnake(config === null || config === void 0 || (_config$secondaryLoca2 = config.secondaryLocations) === null || _config$secondaryLoca2 === void 0 ? void 0 : _config$secondaryLoca2.pageListDropdown),
+        location_l2: config === null || config === void 0 || (_config$targetTypes4 = config.targetTypes) === null || _config$targetTypes4 === void 0 ? void 0 : _config$targetTypes4.dropdownItem,
+        interaction_description: 'User selected an action from the page list dropdown'
+      }));
+    }
+  }, {
+    key: "sendSiteSettingsSession",
+    value: function sendSiteSettingsSession(_ref) {
+      var _config$names3, _config$triggers3, _config$interactionRe4, _config$locations5, _config$secondaryLoca3;
+      var targetType = _ref.targetType,
+        _ref$visitedItems = _ref.visitedItems,
+        visitedItems = _ref$visitedItems === void 0 ? [] : _ref$visitedItems,
+        _ref$savedItems = _ref.savedItems,
+        savedItems = _ref$savedItems === void 0 ? [] : _ref$savedItems,
+        state = _ref.state;
+      var config = this.getConfig();
+      return this.dispatchEvent(config === null || config === void 0 || (_config$names3 = config.names) === null || _config$names3 === void 0 || (_config$names3 = _config$names3.editorOne) === null || _config$names3 === void 0 ? void 0 : _config$names3.siteSettingsSession, this.createBasePayload({
+        interaction_type: this.toLowerSnake(config === null || config === void 0 || (_config$triggers3 = config.triggers) === null || _config$triggers3 === void 0 ? void 0 : _config$triggers3.click),
+        target_type: targetType,
+        target_name: 'site_settings',
+        interaction_result: config === null || config === void 0 || (_config$interactionRe4 = config.interactionResults) === null || _config$interactionRe4 === void 0 ? void 0 : _config$interactionRe4.sessionEnd,
+        target_location: this.toLowerSnake(config === null || config === void 0 || (_config$locations5 = config.locations) === null || _config$locations5 === void 0 ? void 0 : _config$locations5.leftPanel),
+        location_l1: this.toLowerSnake(config === null || config === void 0 || (_config$secondaryLoca3 = config.secondaryLocations) === null || _config$secondaryLoca3 === void 0 ? void 0 : _config$secondaryLoca3.siteSettings),
+        interaction_description: 'Records areas visited as part of the site setting session',
+        metadata: {
+          visited_items: visitedItems,
+          saved_items: savedItems
+        },
+        state: state
+      }));
+    }
+  }, {
+    key: "sendELibraryNav",
+    value: function sendELibraryNav(tabName) {
+      var _config$names4, _config$triggers4, _config$targetTypes5, _config$interactionRe5, _config$locations6, _config$secondaryLoca4;
+      var config = this.getConfig();
+      return this.dispatchEvent(config === null || config === void 0 || (_config$names4 = config.names) === null || _config$names4 === void 0 || (_config$names4 = _config$names4.editorOne) === null || _config$names4 === void 0 ? void 0 : _config$names4.eLibraryNav, this.createBasePayload({
+        interaction_type: this.toLowerSnake(config === null || config === void 0 || (_config$triggers4 = config.triggers) === null || _config$triggers4 === void 0 ? void 0 : _config$triggers4.tabSelect),
+        target_type: config === null || config === void 0 || (_config$targetTypes5 = config.targetTypes) === null || _config$targetTypes5 === void 0 ? void 0 : _config$targetTypes5.tab,
+        target_name: this.toLowerSnake(tabName),
+        interaction_result: config === null || config === void 0 || (_config$interactionRe5 = config.interactionResults) === null || _config$interactionRe5 === void 0 ? void 0 : _config$interactionRe5.tabChanged,
+        target_location: this.toLowerSnake(config === null || config === void 0 || (_config$locations6 = config.locations) === null || _config$locations6 === void 0 ? void 0 : _config$locations6.elementorLibrary),
+        location_l1: this.toLowerSnake(config === null || config === void 0 || (_config$secondaryLoca4 = config.secondaryLocations) === null || _config$secondaryLoca4 === void 0 ? void 0 : _config$secondaryLoca4.libraryTabs),
+        interaction_description: 'User navigates within elementor library'
+      }));
+    }
+  }, {
+    key: "sendELibraryInsert",
+    value: function sendELibraryInsert(_ref2) {
+      var _config$triggers5, _config$targetTypes6, _config$interactionRe6, _config$locations7, _config$secondaryLoca5, _config$names5;
+      var assetId = _ref2.assetId,
+        assetName = _ref2.assetName,
+        libraryType = _ref2.libraryType,
+        _ref2$proRequired = _ref2.proRequired,
+        proRequired = _ref2$proRequired === void 0 ? false : _ref2$proRequired;
+      var config = this.getConfig();
+      var payload = this.createBasePayload({
+        interaction_type: this.toLowerSnake(config === null || config === void 0 || (_config$triggers5 = config.triggers) === null || _config$triggers5 === void 0 ? void 0 : _config$triggers5.insert),
+        target_type: config === null || config === void 0 || (_config$targetTypes6 = config.targetTypes) === null || _config$targetTypes6 === void 0 ? void 0 : _config$targetTypes6.button,
+        target_name: String(assetId),
+        interaction_result: config === null || config === void 0 || (_config$interactionRe6 = config.interactionResults) === null || _config$interactionRe6 === void 0 ? void 0 : _config$interactionRe6.assetInserted,
+        target_location: this.toLowerSnake(config === null || config === void 0 || (_config$locations7 = config.locations) === null || _config$locations7 === void 0 ? void 0 : _config$locations7.elementorLibrary),
+        location_l1: this.toLowerSnake(libraryType),
+        location_l2: this.toLowerSnake(config === null || config === void 0 || (_config$secondaryLoca5 = config.secondaryLocations) === null || _config$secondaryLoca5 === void 0 ? void 0 : _config$secondaryLoca5.assetCard),
+        interaction_description: 'User inserts block/pages from elementor library',
+        metadata: {
+          template_id: String(assetId),
+          template_name: this.decodeHtmlEntities(assetName) || ''
+        }
+      });
+      if (proRequired) {
+        payload.state = 'pro_plan_required';
+      }
+      return this.dispatchEvent(config === null || config === void 0 || (_config$names5 = config.names) === null || _config$names5 === void 0 || (_config$names5 = _config$names5.editorOne) === null || _config$names5 === void 0 ? void 0 : _config$names5.eLibraryInsert, payload);
+    }
+  }, {
+    key: "sendELibraryFavorite",
+    value: function sendELibraryFavorite(_ref3) {
+      var _config$triggers6, _config$targetTypes7, _config$interactionRe7, _config$locations8, _config$secondaryLoca6, _config$names6;
+      var assetId = _ref3.assetId,
+        assetName = _ref3.assetName,
+        libraryType = _ref3.libraryType,
+        isFavorite = _ref3.isFavorite,
+        _ref3$proRequired = _ref3.proRequired,
+        proRequired = _ref3$proRequired === void 0 ? false : _ref3$proRequired;
+      var config = this.getConfig();
+      var payload = this.createBasePayload({
+        interaction_type: this.toLowerSnake(config === null || config === void 0 || (_config$triggers6 = config.triggers) === null || _config$triggers6 === void 0 ? void 0 : _config$triggers6.click),
+        target_type: config === null || config === void 0 || (_config$targetTypes7 = config.targetTypes) === null || _config$targetTypes7 === void 0 ? void 0 : _config$targetTypes7.toggle,
+        target_name: String(assetId),
+        interaction_result: config === null || config === void 0 || (_config$interactionRe7 = config.interactionResults) === null || _config$interactionRe7 === void 0 ? void 0 : _config$interactionRe7.assetFavorite,
+        target_value: Boolean(isFavorite),
+        target_location: this.toLowerSnake(config === null || config === void 0 || (_config$locations8 = config.locations) === null || _config$locations8 === void 0 ? void 0 : _config$locations8.elementorLibrary),
+        location_l1: this.toLowerSnake(libraryType),
+        location_l2: this.toLowerSnake(config === null || config === void 0 || (_config$secondaryLoca6 = config.secondaryLocations) === null || _config$secondaryLoca6 === void 0 ? void 0 : _config$secondaryLoca6.assetCard),
+        interaction_description: 'User favorite block/pages from elementor library',
+        metadata: {
+          template_id: String(assetId),
+          template_name: this.decodeHtmlEntities(assetName) || ''
+        }
+      });
+      if (proRequired) {
+        payload.state = 'pro_plan_required';
+      }
+      return this.dispatchEvent(config === null || config === void 0 || (_config$names6 = config.names) === null || _config$names6 === void 0 || (_config$names6 = _config$names6.editorOne) === null || _config$names6 === void 0 ? void 0 : _config$names6.eLibraryFavorite, payload);
+    }
+  }, {
+    key: "sendELibraryGenerateAi",
+    value: function sendELibraryGenerateAi(_ref4) {
+      var _config$names7, _config$triggers7, _config$targetTypes8, _config$interactionRe8, _config$locations9, _config$secondaryLoca7;
+      var assetId = _ref4.assetId,
+        assetName = _ref4.assetName,
+        libraryType = _ref4.libraryType;
+      var config = this.getConfig();
+      return this.dispatchEvent(config === null || config === void 0 || (_config$names7 = config.names) === null || _config$names7 === void 0 || (_config$names7 = _config$names7.editorOne) === null || _config$names7 === void 0 ? void 0 : _config$names7.eLibraryGenerateAi, this.createBasePayload({
+        interaction_type: this.toLowerSnake(config === null || config === void 0 || (_config$triggers7 = config.triggers) === null || _config$triggers7 === void 0 ? void 0 : _config$triggers7.click),
+        target_type: config === null || config === void 0 || (_config$targetTypes8 = config.targetTypes) === null || _config$targetTypes8 === void 0 ? void 0 : _config$targetTypes8.button,
+        target_name: String(assetId),
+        interaction_result: config === null || config === void 0 || (_config$interactionRe8 = config.interactionResults) === null || _config$interactionRe8 === void 0 ? void 0 : _config$interactionRe8.aiGenerate,
+        target_location: this.toLowerSnake(config === null || config === void 0 || (_config$locations9 = config.locations) === null || _config$locations9 === void 0 ? void 0 : _config$locations9.elementorLibrary),
+        location_l1: this.toLowerSnake(libraryType),
+        location_l2: this.toLowerSnake(config === null || config === void 0 || (_config$secondaryLoca7 = config.secondaryLocations) === null || _config$secondaryLoca7 === void 0 ? void 0 : _config$secondaryLoca7.assetCard),
+        interaction_description: 'User generated block/page based on a library asset',
+        metadata: {
+          template_id: String(assetId),
+          template_name: this.decodeHtmlEntities(assetName) || ''
+        }
+      }));
+    }
+  }, {
+    key: "sendFinderSearchInput",
+    value: function sendFinderSearchInput(_ref5) {
+      var _config$triggers8, _config$targetTypes9, _config$interactionRe9, _config$interactionRe0, _config$secondaryLoca8, _config$names8;
+      var resultsCount = _ref5.resultsCount,
+        _ref5$searchTerm = _ref5.searchTerm,
+        searchTerm = _ref5$searchTerm === void 0 ? null : _ref5$searchTerm;
+      var config = this.getConfig();
+      var hasResults = resultsCount > 0;
+      var finderContext = this.getFinderContext();
+      var payload = this.createBasePayload({
+        window_name: finderContext.windowName,
+        interaction_type: this.toLowerSnake(config === null || config === void 0 || (_config$triggers8 = config.triggers) === null || _config$triggers8 === void 0 ? void 0 : _config$triggers8.typing),
+        target_type: config === null || config === void 0 || (_config$targetTypes9 = config.targetTypes) === null || _config$targetTypes9 === void 0 ? void 0 : _config$targetTypes9.searchInput,
+        target_name: 'finder',
+        interaction_result: hasResults ? config === null || config === void 0 || (_config$interactionRe9 = config.interactionResults) === null || _config$interactionRe9 === void 0 ? void 0 : _config$interactionRe9.resultsUpdated : config === null || config === void 0 || (_config$interactionRe0 = config.interactionResults) === null || _config$interactionRe0 === void 0 ? void 0 : _config$interactionRe0.noResults,
+        target_location: finderContext.targetLocation,
+        location_l1: this.toLowerSnake(config === null || config === void 0 || (_config$secondaryLoca8 = config.secondaryLocations) === null || _config$secondaryLoca8 === void 0 ? void 0 : _config$secondaryLoca8.finder),
+        interaction_description: 'Finder search input, follows debounce behavior',
+        metadata: {
+          results_count: resultsCount
+        }
+      });
+      if (!hasResults && searchTerm) {
+        payload.metadata.search_term = searchTerm;
+      }
+      return this.dispatchEvent(config === null || config === void 0 || (_config$names8 = config.names) === null || _config$names8 === void 0 || (_config$names8 = _config$names8.editorOne) === null || _config$names8 === void 0 ? void 0 : _config$names8.finderSearchInput, payload);
+    }
+  }, {
+    key: "sendFinderResultSelect",
+    value: function sendFinderResultSelect(choice) {
+      var _config$names9, _config$triggers9, _config$targetTypes0, _config$interactionRe1, _config$secondaryLoca9, _config$secondaryLoca0;
+      var config = this.getConfig();
+      var finderContext = this.getFinderContext();
+      return this.dispatchEvent(config === null || config === void 0 || (_config$names9 = config.names) === null || _config$names9 === void 0 || (_config$names9 = _config$names9.editorOne) === null || _config$names9 === void 0 ? void 0 : _config$names9.finderResultSelect, this.createBasePayload({
+        window_name: finderContext.windowName,
+        interaction_type: this.toLowerSnake(config === null || config === void 0 || (_config$triggers9 = config.triggers) === null || _config$triggers9 === void 0 ? void 0 : _config$triggers9.click),
+        target_type: config === null || config === void 0 || (_config$targetTypes0 = config.targetTypes) === null || _config$targetTypes0 === void 0 ? void 0 : _config$targetTypes0.searchResult,
+        target_name: choice,
+        interaction_result: config === null || config === void 0 || (_config$interactionRe1 = config.interactionResults) === null || _config$interactionRe1 === void 0 ? void 0 : _config$interactionRe1.selected,
+        target_location: finderContext.targetLocation,
+        location_l1: this.toLowerSnake(config === null || config === void 0 || (_config$secondaryLoca9 = config.secondaryLocations) === null || _config$secondaryLoca9 === void 0 ? void 0 : _config$secondaryLoca9.finder),
+        location_l2: this.toLowerSnake(config === null || config === void 0 || (_config$secondaryLoca0 = config.secondaryLocations) === null || _config$secondaryLoca0 === void 0 ? void 0 : _config$secondaryLoca0.finderResults),
+        interaction_description: 'Finder search results was selected'
+      }));
+    }
+  }, {
+    key: "sendCanvasEmptyBoxAction",
+    value: function sendCanvasEmptyBoxAction(_ref6) {
+      var _config$triggers0, _config$targetTypes1, _config$interactionRe10, _config$locations0, _config$secondaryLoca1, _config$names0;
+      var targetName = _ref6.targetName,
+        _ref6$metadata = _ref6.metadata,
+        metadata = _ref6$metadata === void 0 ? {} : _ref6$metadata,
+        _ref6$containerCreate = _ref6.containerCreated,
+        containerCreated = _ref6$containerCreate === void 0 ? null : _ref6$containerCreate;
+      var config = this.getConfig();
+      var payload = this.createBasePayload({
+        interaction_type: this.toLowerSnake(config === null || config === void 0 || (_config$triggers0 = config.triggers) === null || _config$triggers0 === void 0 ? void 0 : _config$triggers0.click),
+        target_type: config === null || config === void 0 || (_config$targetTypes1 = config.targetTypes) === null || _config$targetTypes1 === void 0 ? void 0 : _config$targetTypes1.buttons,
+        target_name: targetName,
+        interaction_result: config === null || config === void 0 || (_config$interactionRe10 = config.interactionResults) === null || _config$interactionRe10 === void 0 ? void 0 : _config$interactionRe10.selected,
+        target_location: this.toLowerSnake(config === null || config === void 0 || (_config$locations0 = config.locations) === null || _config$locations0 === void 0 ? void 0 : _config$locations0.canvas),
+        location_l1: this.toLowerSnake(config === null || config === void 0 || (_config$secondaryLoca1 = config.secondaryLocations) === null || _config$secondaryLoca1 === void 0 ? void 0 : _config$secondaryLoca1.emptyBox),
+        interaction_description: 'Empty box on canvas actions'
+      });
+      if (Object.keys(metadata).length > 0) {
+        payload.metadata = metadata;
+      }
+      if (containerCreated !== null) {
+        payload.state = containerCreated;
+      }
+      return this.dispatchEvent(config === null || config === void 0 || (_config$names0 = config.names) === null || _config$names0 === void 0 || (_config$names0 = _config$names0.editorOne) === null || _config$names0 === void 0 ? void 0 : _config$names0.canvasEmptyBoxAction, payload);
+    }
+  }, {
+    key: "sendWidgetPanelSearch",
+    value: function sendWidgetPanelSearch(_ref7) {
+      var _config$triggers1, _config$targetTypes10, _config$interactionRe11, _config$interactionRe12, _config$locations1, _config$locations10, _config$secondaryLoca10, _config$names1;
+      var resultsCount = _ref7.resultsCount,
+        _ref7$userInput = _ref7.userInput,
+        userInput = _ref7$userInput === void 0 ? null : _ref7$userInput;
+      var config = this.getConfig();
+      var hasResults = resultsCount > 0;
+      var payload = this.createBasePayload({
+        interaction_type: this.toLowerSnake(config === null || config === void 0 || (_config$triggers1 = config.triggers) === null || _config$triggers1 === void 0 ? void 0 : _config$triggers1.typing),
+        target_type: config === null || config === void 0 || (_config$targetTypes10 = config.targetTypes) === null || _config$targetTypes10 === void 0 ? void 0 : _config$targetTypes10.searchWidget,
+        target_name: 'search_widget',
+        interaction_result: hasResults ? config === null || config === void 0 || (_config$interactionRe11 = config.interactionResults) === null || _config$interactionRe11 === void 0 ? void 0 : _config$interactionRe11.resultsUpdated : config === null || config === void 0 || (_config$interactionRe12 = config.interactionResults) === null || _config$interactionRe12 === void 0 ? void 0 : _config$interactionRe12.noResults,
+        target_location: this.toLowerSnake(config === null || config === void 0 || (_config$locations1 = config.locations) === null || _config$locations1 === void 0 ? void 0 : _config$locations1.leftPanel),
+        location_l1: this.toLowerSnake(config === null || config === void 0 || (_config$locations10 = config.locations) === null || _config$locations10 === void 0 ? void 0 : _config$locations10.widgetPanel),
+        location_l2: this.toLowerSnake(config === null || config === void 0 || (_config$secondaryLoca10 = config.secondaryLocations) === null || _config$secondaryLoca10 === void 0 ? void 0 : _config$secondaryLoca10.searchBar),
+        interaction_description: 'Widget search input, follows debounce behavior'
+      });
+      if (!hasResults && userInput) {
+        payload.metadata = {
+          user_input: userInput
+        };
+      }
+      return this.dispatchEvent(config === null || config === void 0 || (_config$names1 = config.names) === null || _config$names1 === void 0 || (_config$names1 = _config$names1.editorOne) === null || _config$names1 === void 0 ? void 0 : _config$names1.widgetPanelSearch, payload);
+    }
+  }]);
+}();
+var createDebouncedFinderSearch = exports.createDebouncedFinderSearch = function createDebouncedFinderSearch() {
+  var delay = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 300;
+  return _.debounce(function (resultsCount, searchTerm) {
+    EditorOneEventManager.sendFinderSearchInput({
+      resultsCount: resultsCount,
+      searchTerm: searchTerm
+    });
+  }, delay);
+};
+var createDebouncedWidgetPanelSearch = exports.createDebouncedWidgetPanelSearch = function createDebouncedWidgetPanelSearch() {
+  var delay = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 2000;
+  return _.debounce(function (resultsCount, userInput) {
+    EditorOneEventManager.sendWidgetPanelSearch({
+      resultsCount: resultsCount,
+      userInput: userInput
+    });
+  }, delay);
+};
+var _default = exports["default"] = EditorOneEventManager;
 
 /***/ }),
 
@@ -43225,6 +43774,7 @@ var _inherits2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime/h
 var _defineProperty2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime/helpers/defineProperty */ "../node_modules/@babel/runtime/helpers/defineProperty.js"));
 var _containerHelper = _interopRequireDefault(__webpack_require__(/*! elementor-editor-utils/container-helper */ "../assets/dev/js/editor/utils/container-helper.js"));
 var _environment = _interopRequireDefault(__webpack_require__(/*! elementor-common/utils/environment */ "../core/common/assets/js/utils/environment.js"));
+var _editorOneEvents = __webpack_require__(/*! elementor-editor-utils/editor-one-events */ "../assets/dev/js/editor/utils/editor-one-events.js");
 function ownKeys(e, r) { var t = Object.keys(e); if (Object.getOwnPropertySymbols) { var o = Object.getOwnPropertySymbols(e); r && (o = o.filter(function (r) { return Object.getOwnPropertyDescriptor(e, r).enumerable; })), t.push.apply(t, o); } return t; }
 function _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t = null != arguments[r] ? arguments[r] : {}; r % 2 ? ownKeys(Object(t), !0).forEach(function (r) { (0, _defineProperty2.default)(e, r, t[r]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(e, Object.getOwnPropertyDescriptors(t)) : ownKeys(Object(t)).forEach(function (r) { Object.defineProperty(e, r, Object.getOwnPropertyDescriptor(t, r)); }); } return e; }
 function _callSuper(t, o, e) { return o = (0, _getPrototypeOf2.default)(o), (0, _possibleConstructorReturn2.default)(t, _isNativeReflectConstruct() ? Reflect.construct(o, e || [], (0, _getPrototypeOf2.default)(t).constructor) : o.apply(t, e)); }
@@ -43406,6 +43956,9 @@ var AddSectionBase = /*#__PURE__*/function (_Marionette$ItemView) {
   }, {
     key: "onAddTemplateButtonClick",
     value: function onAddTemplateButtonClick() {
+      _editorOneEvents.EditorOneEventManager.sendCanvasEmptyBoxAction({
+        targetName: 'e_library'
+      });
       $e.run('library/open', this.getTemplatesModalOptions());
     }
   }, {
@@ -43443,6 +43996,14 @@ var AddSectionBase = /*#__PURE__*/function (_Marionette$ItemView) {
       var selectedStructure = event.currentTarget.dataset.structure,
         parsedStructure = elementor.presetsFactory.getParsedGridStructure(selectedStructure),
         isAddedAboveAnotherContainer = !!this.options.at || 0 === this.options.at;
+      _editorOneEvents.EditorOneEventManager.sendCanvasEmptyBoxAction({
+        targetName: 'add_container',
+        metadata: {
+          container_type: 'grid',
+          structure_type: selectedStructure
+        },
+        containerCreated: true
+      });
       var newContainer = _containerHelper.default.createContainer({
         container_type: _containerHelper.default.CONTAINER_TYPE_GRID,
         grid_columns_grid: {
@@ -43499,7 +44060,16 @@ var AddSectionBase = /*#__PURE__*/function (_Marionette$ItemView) {
     key: "onFlexPresetSelected",
     value: function onFlexPresetSelected(e) {
       this.closeSelectPresets();
-      return _containerHelper.default.createContainerFromPreset(e.currentTarget.dataset.preset, elementor.getPreviewContainer(), this.options);
+      var preset = e.currentTarget.dataset.preset;
+      _editorOneEvents.EditorOneEventManager.sendCanvasEmptyBoxAction({
+        targetName: 'add_container',
+        metadata: {
+          container_type: 'flexbox',
+          structure_type: preset
+        },
+        containerCreated: true
+      });
+      return _containerHelper.default.createContainerFromPreset(preset, elementor.getPreviewContainer(), this.options);
     }
   }, {
     key: "onDropping",
@@ -43550,6 +44120,7 @@ var _possibleConstructorReturn2 = _interopRequireDefault(__webpack_require__(/*!
 var _getPrototypeOf2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime/helpers/getPrototypeOf */ "../node_modules/@babel/runtime/helpers/getPrototypeOf.js"));
 var _inherits2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime/helpers/inherits */ "../node_modules/@babel/runtime/helpers/inherits.js"));
 var _base = _interopRequireDefault(__webpack_require__(/*! ./base */ "../assets/dev/js/editor/views/add-section/base.js"));
+var _editorOneEvents = __webpack_require__(/*! elementor-editor-utils/editor-one-events */ "../assets/dev/js/editor/utils/editor-one-events.js");
 function _callSuper(t, o, e) { return o = (0, _getPrototypeOf2.default)(o), (0, _possibleConstructorReturn2.default)(t, _isNativeReflectConstruct() ? Reflect.construct(o, e || [], (0, _getPrototypeOf2.default)(t).constructor) : o.apply(t, e)); }
 function _isNativeReflectConstruct() { try { var t = !Boolean.prototype.valueOf.call(Reflect.construct(Boolean, [], function () {})); } catch (t) {} return (_isNativeReflectConstruct = function _isNativeReflectConstruct() { return !!t; })(); }
 var AddSectionView = exports["default"] = /*#__PURE__*/function (_BaseAddSectionView) {
@@ -43566,6 +44137,10 @@ var AddSectionView = exports["default"] = /*#__PURE__*/function (_BaseAddSection
   }, {
     key: "onCloseButtonClick",
     value: function onCloseButtonClick() {
+      _editorOneEvents.EditorOneEventManager.sendCanvasEmptyBoxAction({
+        targetName: 'close',
+        containerCreated: false
+      });
       this.closeSelectPresets();
     }
   }]);
@@ -43594,6 +44169,7 @@ var _getPrototypeOf2 = _interopRequireDefault(__webpack_require__(/*! @babel/run
 var _get2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime/helpers/get */ "../node_modules/@babel/runtime/helpers/get.js"));
 var _inherits2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime/helpers/inherits */ "../node_modules/@babel/runtime/helpers/inherits.js"));
 var _base = _interopRequireDefault(__webpack_require__(/*! ./base */ "../assets/dev/js/editor/views/add-section/base.js"));
+var _editorOneEvents = __webpack_require__(/*! elementor-editor-utils/editor-one-events */ "../assets/dev/js/editor/utils/editor-one-events.js");
 function _callSuper(t, o, e) { return o = (0, _getPrototypeOf2.default)(o), (0, _possibleConstructorReturn2.default)(t, _isNativeReflectConstruct() ? Reflect.construct(o, e || [], (0, _getPrototypeOf2.default)(t).constructor) : o.apply(t, e)); }
 function _isNativeReflectConstruct() { try { var t = !Boolean.prototype.valueOf.call(Reflect.construct(Boolean, [], function () {})); } catch (t) {} return (_isNativeReflectConstruct = function _isNativeReflectConstruct() { return !!t; })(); }
 function _superPropGet(t, o, e, r) { var p = (0, _get2.default)((0, _getPrototypeOf2.default)(1 & r ? t.prototype : t), o, e); return 2 & r && "function" == typeof p ? function (t) { return p.apply(e, t); } : p; }
@@ -43625,6 +44201,10 @@ var AddSectionView = /*#__PURE__*/function (_BaseAddSectionView) {
   }, {
     key: "onCloseButtonClick",
     value: function onCloseButtonClick() {
+      _editorOneEvents.EditorOneEventManager.sendCanvasEmptyBoxAction({
+        targetName: 'close',
+        containerCreated: false
+      });
       this.fadeToDeath();
     }
   }, {
@@ -43758,11 +44338,14 @@ module.exports = Marionette.CompositeView.extend({
     if (options.edit && elementor.documents.getCurrent().history.getActive()) {
       // Ensure container is created. TODO: Open editor via UI hook after `document/elements/create`.
       newView.getContainer();
-      newModel.trigger('request:edit', {
-        scrollIntoView: options.scrollIntoView
-      });
+      newView._openEditingPanel(options);
     }
     return newView;
+  },
+  _openEditingPanel: function _openEditingPanel(options) {
+    this.model.trigger('request:edit', {
+      scrollIntoView: options.scrollIntoView
+    });
   },
   createElementFromContainer: function createElementFromContainer(container) {
     var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
@@ -46202,6 +46785,7 @@ var _possibleConstructorReturn2 = _interopRequireDefault(__webpack_require__(/*!
 var _getPrototypeOf2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime/helpers/getPrototypeOf */ "../node_modules/@babel/runtime/helpers/getPrototypeOf.js"));
 var _inherits2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime/helpers/inherits */ "../node_modules/@babel/runtime/helpers/inherits.js"));
 var _defineProperty2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime/helpers/defineProperty */ "../node_modules/@babel/runtime/helpers/defineProperty.js"));
+var _editorOneEvents = __webpack_require__(/*! elementor-editor-utils/editor-one-events */ "../assets/dev/js/editor/utils/editor-one-events.js");
 function _callSuper(t, o, e) { return o = (0, _getPrototypeOf2.default)(o), (0, _possibleConstructorReturn2.default)(t, _isNativeReflectConstruct() ? Reflect.construct(o, e || [], (0, _getPrototypeOf2.default)(t).constructor) : o.apply(t, e)); }
 function _isNativeReflectConstruct() { try { var t = !Boolean.prototype.valueOf.call(Reflect.construct(Boolean, [], function () {})); } catch (t) {} return (_isNativeReflectConstruct = function _isNativeReflectConstruct() { return !!t; })(); }
 var Back = exports.Back = /*#__PURE__*/function (_$e$modules$CommandBa) {
@@ -46245,8 +46829,44 @@ var Back = exports.Back = /*#__PURE__*/function (_$e$modules$CommandBa) {
       return $e.routes.back('panel');
     }
   }, {
+    key: "markSessionSaved",
+    value: function markSessionSaved() {
+      var globalComponent = this.component;
+      if (!globalComponent) {
+        return;
+      }
+      globalComponent.siteSettingsSession.hasSaved = true;
+      var currentTab = globalComponent.currentTab;
+      var activeSection = null;
+      try {
+        var _panelView$getCurrent, _currentPage$content;
+        var panelView = elementor.getPanelView();
+        var currentPage = panelView === null || panelView === void 0 || (_panelView$getCurrent = panelView.getCurrentPageView) === null || _panelView$getCurrent === void 0 ? void 0 : _panelView$getCurrent.call(panelView);
+        var contentView = currentPage === null || currentPage === void 0 || (_currentPage$content = currentPage.content) === null || _currentPage$content === void 0 ? void 0 : _currentPage$content.currentView;
+        activeSection = (contentView === null || contentView === void 0 ? void 0 : contentView.activeSection) || null;
+      } catch (e) {}
+      var savedItem = activeSection ? "".concat(currentTab, " - ").concat(activeSection) : currentTab;
+      if (savedItem) {
+        globalComponent.trackSavedItem(savedItem);
+      }
+    }
+  }, {
+    key: "trackSiteSettingsSession",
+    value: function trackSiteSettingsSession(targetType, state) {
+      var _this$component$getSi, _this$component, _this$component$reset, _this$component2;
+      var sessionData = ((_this$component$getSi = (_this$component = this.component).getSiteSettingsSessionData) === null || _this$component$getSi === void 0 ? void 0 : _this$component$getSi.call(_this$component)) || {};
+      _editorOneEvents.EditorOneEventManager.sendSiteSettingsSession({
+        targetType: targetType,
+        visitedItems: sessionData.visitedItems || [],
+        savedItems: sessionData.savedItems || [],
+        state: state
+      });
+      (_this$component$reset = (_this$component2 = this.component).resetSiteSettingsSession) === null || _this$component$reset === void 0 || _this$component$reset.call(_this$component2);
+    }
+  }, {
     key: "getCloseConfirmDialog",
     value: function getCloseConfirmDialog(event) {
+      var _this2 = this;
       if (!this.confirmDialog) {
         var modalOptions = {
           id: 'elementor-kit-warn-on-close',
@@ -46261,6 +46881,7 @@ var Back = exports.Back = /*#__PURE__*/function (_$e$modules$CommandBa) {
             cancel: __('Cancel', 'elementor')
           },
           onConfirm: function onConfirm() {
+            _this2.trackSiteSettingsSession('back', 'discard');
             $e.run('panel/global/close');
           }
         };
@@ -46285,14 +46906,15 @@ var Back = exports.Back = /*#__PURE__*/function (_$e$modules$CommandBa) {
   }, {
     key: "resolveChanges",
     value: function resolveChanges() {
-      var _this2 = this;
+      var _this3 = this;
       return new Promise(function (resolve) {
-        _this2.getUnsavedChangesDialog(resolve).show();
+        _this3.getUnsavedChangesDialog(resolve).show();
       });
     }
   }, {
     key: "getUnsavedChangesDialog",
     value: function getUnsavedChangesDialog(resolve) {
+      var _this4 = this;
       if (!this.document) {
         resolve();
         return;
@@ -46312,7 +46934,9 @@ var Back = exports.Back = /*#__PURE__*/function (_$e$modules$CommandBa) {
             cancel: __('Discard', 'elementor')
           },
           onConfirm: function onConfirm() {
+            _this4.markSessionSaved();
             $e.run('document/save/update').then(function () {
+              _this4.trackSiteSettingsSession('save', 'saved');
               resolve();
             });
           },
@@ -46320,6 +46944,7 @@ var Back = exports.Back = /*#__PURE__*/function (_$e$modules$CommandBa) {
             $e.run('document/save/discard', {
               document: document
             }).then(function () {
+              _this4.trackSiteSettingsSession('back', 'discard');
               resolve();
             });
           }
@@ -46356,6 +46981,7 @@ var _createClass2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtim
 var _possibleConstructorReturn2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime/helpers/possibleConstructorReturn */ "../node_modules/@babel/runtime/helpers/possibleConstructorReturn.js"));
 var _getPrototypeOf2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime/helpers/getPrototypeOf */ "../node_modules/@babel/runtime/helpers/getPrototypeOf.js"));
 var _inherits2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime/helpers/inherits */ "../node_modules/@babel/runtime/helpers/inherits.js"));
+var _editorOneEvents = __webpack_require__(/*! elementor-editor-utils/editor-one-events */ "../assets/dev/js/editor/utils/editor-one-events.js");
 function _callSuper(t, o, e) { return o = (0, _getPrototypeOf2.default)(o), (0, _possibleConstructorReturn2.default)(t, _isNativeReflectConstruct() ? Reflect.construct(o, e || [], (0, _getPrototypeOf2.default)(t).constructor) : o.apply(t, e)); }
 function _isNativeReflectConstruct() { try { var t = !Boolean.prototype.valueOf.call(Reflect.construct(Boolean, [], function () {})); } catch (t) {} return (_isNativeReflectConstruct = function _isNativeReflectConstruct() { return !!t; })(); }
 var Close = exports.Close = /*#__PURE__*/function (_$e$modules$CommandBa) {
@@ -46367,20 +46993,34 @@ var Close = exports.Close = /*#__PURE__*/function (_$e$modules$CommandBa) {
   return (0, _createClass2.default)(Close, [{
     key: "apply",
     value: function apply(args) {
-      var _this = this;
+      var _this$component$getSi2,
+        _this$component3,
+        _this = this;
       var mode = args.mode;
 
-      // The kit is opened directly.
+      // The kit is opened directly — no document switch needed, safe to track immediately.
       if (elementor.config.initial_document.id === parseInt(elementor.config.kit_id)) {
+        var _this$component$siteS, _this$component$getSi, _this$component, _this$component$reset, _this$component2;
+        var hasSaved = ((_this$component$siteS = this.component.siteSettingsSession) === null || _this$component$siteS === void 0 ? void 0 : _this$component$siteS.hasSaved) || false;
+        var sessionData = ((_this$component$getSi = (_this$component = this.component).getSiteSettingsSessionData) === null || _this$component$getSi === void 0 ? void 0 : _this$component$getSi.call(_this$component)) || {};
+        _editorOneEvents.EditorOneEventManager.sendSiteSettingsSession({
+          targetType: 'close',
+          visitedItems: sessionData.visitedItems || [],
+          savedItems: sessionData.savedItems || [],
+          state: hasSaved ? 'saved' : 'discard'
+        });
+        (_this$component$reset = (_this$component2 = this.component).resetSiteSettingsSession) === null || _this$component$reset === void 0 || _this$component$reset.call(_this$component2);
         return $e.run('panel/global/exit');
       }
+
+      // Capture session data before the switch (it may be reset during onClose).
+      var sessionSnapshot = ((_this$component$getSi2 = (_this$component3 = this.component).getSiteSettingsSessionData) === null || _this$component$getSi2 === void 0 ? void 0 : _this$component$getSi2.call(_this$component3)) || {};
       $e.internal('panel/state-loading');
       return $e.run('editor/documents/switch', {
         mode: mode,
         id: elementor.config.initial_document.id,
         onClose: function onClose(document) {
           if (document.isDraft()) {
-            // Restore published style.
             elementor.toggleDocumentCssFiles(document, true);
             elementor.settings.page.destroyControlsCSS();
           }
@@ -46390,7 +47030,24 @@ var Close = exports.Close = /*#__PURE__*/function (_$e$modules$CommandBa) {
           // The kit shouldn't be cached for next open. (it may be changed via create colors/typography).
           elementor.documents.invalidateCache(elementor.config.kit_id);
         }
-      }).finally(function () {
+      }).then(function () {
+        var _sessionSnapshot$visi, _this$component$siteS2, _this$component$reset2, _this$component4;
+        // Skip if session was already tracked and reset (e.g. by back.js dialog).
+        if (!((_sessionSnapshot$visi = sessionSnapshot.visitedItems) !== null && _sessionSnapshot$visi !== void 0 && _sessionSnapshot$visi.length)) {
+          return;
+        }
+
+        // Re-read hasSaved in case a save happened during the switch (e.g. "Save & leave").
+        var hasSaved = sessionSnapshot.hasSaved || ((_this$component$siteS2 = _this.component.siteSettingsSession) === null || _this$component$siteS2 === void 0 ? void 0 : _this$component$siteS2.hasSaved) || false;
+        var state = hasSaved ? 'saved' : 'discard';
+        _editorOneEvents.EditorOneEventManager.sendSiteSettingsSession({
+          targetType: 'close',
+          visitedItems: sessionSnapshot.visitedItems,
+          savedItems: sessionSnapshot.savedItems || [],
+          state: state
+        });
+        (_this$component$reset2 = (_this$component4 = _this.component).resetSiteSettingsSession) === null || _this$component$reset2 === void 0 || _this$component$reset2.call(_this$component4);
+      }).catch(function () {}).finally(function () {
         return $e.internal('panel/state-ready');
       });
     }
@@ -46570,6 +47227,8 @@ var commands = _interopRequireWildcard(__webpack_require__(/*! ./commands/ */ ".
 var _repeater = _interopRequireDefault(__webpack_require__(/*! ./repeater */ "../core/kits/assets/js/repeater.js"));
 var _componentBase = _interopRequireDefault(__webpack_require__(/*! elementor-editor/component-base */ "../assets/dev/js/editor/component-base.js"));
 function _interopRequireWildcard(e, t) { if ("function" == typeof WeakMap) var r = new WeakMap(), n = new WeakMap(); return (_interopRequireWildcard = function _interopRequireWildcard(e, t) { if (!t && e && e.__esModule) return e; var o, i, f = { __proto__: null, default: e }; if (null === e || "object" != _typeof(e) && "function" != typeof e) return f; if (o = t ? n : r) { if (o.has(e)) return o.get(e); o.set(e, f); } for (var _t in e) "default" !== _t && {}.hasOwnProperty.call(e, _t) && ((i = (o = Object.defineProperty) && Object.getOwnPropertyDescriptor(e, _t)) && (i.get || i.set) ? o(f, _t, i) : f[_t] = e[_t]); return f; })(e, t); }
+function ownKeys(e, r) { var t = Object.keys(e); if (Object.getOwnPropertySymbols) { var o = Object.getOwnPropertySymbols(e); r && (o = o.filter(function (r) { return Object.getOwnPropertyDescriptor(e, r).enumerable; })), t.push.apply(t, o); } return t; }
+function _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t = null != arguments[r] ? arguments[r] : {}; r % 2 ? ownKeys(Object(t), !0).forEach(function (r) { (0, _defineProperty2.default)(e, r, t[r]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(e, Object.getOwnPropertyDescriptors(t)) : ownKeys(Object(t)).forEach(function (r) { Object.defineProperty(e, r, Object.getOwnPropertyDescriptor(t, r)); }); } return e; }
 function _callSuper(t, o, e) { return o = (0, _getPrototypeOf2.default)(o), (0, _possibleConstructorReturn2.default)(t, _isNativeReflectConstruct() ? Reflect.construct(o, e || [], (0, _getPrototypeOf2.default)(t).constructor) : o.apply(t, e)); }
 function _isNativeReflectConstruct() { try { var t = !Boolean.prototype.valueOf.call(Reflect.construct(Boolean, [], function () {})); } catch (t) {} return (_isNativeReflectConstruct = function _isNativeReflectConstruct() { return !!t; })(); }
 function _superPropGet(t, o, e, r) { var p = (0, _get2.default)((0, _getPrototypeOf2.default)(1 & r ? t.prototype : t), o, e); return 2 & r && "function" == typeof p ? function (t) { return p.apply(e, t); } : p; }
@@ -46582,6 +47241,11 @@ var _default = exports["default"] = /*#__PURE__*/function (_ComponentBase) {
     }
     _this = _callSuper(this, _default, [].concat(args));
     (0, _defineProperty2.default)(_this, "pages", {});
+    (0, _defineProperty2.default)(_this, "siteSettingsSession", {
+      visitedItems: [],
+      savedItems: [],
+      hasSaved: false
+    });
     return _this;
   }
   (0, _inherits2.default)(_default, _ComponentBase);
@@ -46645,11 +47309,39 @@ var _default = exports["default"] = /*#__PURE__*/function (_ComponentBase) {
     key: "renderTab",
     value: function renderTab(tab, args) {
       if (tab !== this.currentTab) {
-        // Prevent re-rendering the same tab (with just different args).
         this.currentTab = tab;
+        this.trackVisitedTab(tab);
         elementor.getPanelView().setPage('kit_settings').content.currentView.activateTab(tab);
       }
       this.activateControl(args.activeControl);
+    }
+  }, {
+    key: "trackVisitedTab",
+    value: function trackVisitedTab(tabName) {
+      if (tabName && !this.siteSettingsSession.visitedItems.includes(tabName)) {
+        this.siteSettingsSession.visitedItems.push(tabName);
+      }
+    }
+  }, {
+    key: "trackSavedItem",
+    value: function trackSavedItem(itemName) {
+      if (itemName && !this.siteSettingsSession.savedItems.includes(itemName)) {
+        this.siteSettingsSession.savedItems.push(itemName);
+      }
+    }
+  }, {
+    key: "getSiteSettingsSessionData",
+    value: function getSiteSettingsSessionData() {
+      return _objectSpread({}, this.siteSettingsSession);
+    }
+  }, {
+    key: "resetSiteSettingsSession",
+    value: function resetSiteSettingsSession() {
+      this.siteSettingsSession = {
+        visitedItems: [],
+        savedItems: [],
+        hasSaved: false
+      };
     }
   }]);
 }(_componentBase.default);
@@ -47875,6 +48567,8 @@ var KitAfterSave = exports.KitAfterSave = /*#__PURE__*/function (_After) {
   }, {
     key: "apply",
     value: function apply(args) {
+      this.trackSiteSettingsSave();
+
       // On save clear cache of all edited documents and dynamic tags.
       // This is needed because when returning to the editor after saving the kit, it was still displaying the old data.
       this.clearDocumentCache();
@@ -47909,6 +48603,28 @@ var KitAfterSave = exports.KitAfterSave = /*#__PURE__*/function (_After) {
         });
         reloadConfirm.show();
       }
+    }
+  }, {
+    key: "trackSiteSettingsSave",
+    value: function trackSiteSettingsSave() {
+      var globalComponent = $e.components.get('panel/global');
+      if (!globalComponent) {
+        return;
+      }
+      var currentTab = globalComponent.currentTab;
+      var activeSection = null;
+      try {
+        var _panelView$getCurrent, _currentPage$content;
+        var panelView = elementor.getPanelView();
+        var currentPage = panelView === null || panelView === void 0 || (_panelView$getCurrent = panelView.getCurrentPageView) === null || _panelView$getCurrent === void 0 ? void 0 : _panelView$getCurrent.call(panelView);
+        var contentView = currentPage === null || currentPage === void 0 || (_currentPage$content = currentPage.content) === null || _currentPage$content === void 0 ? void 0 : _currentPage$content.currentView;
+        activeSection = (contentView === null || contentView === void 0 ? void 0 : contentView.activeSection) || null;
+      } catch (e) {}
+      var savedItem = activeSection ? "".concat(currentTab, " - ").concat(activeSection) : currentTab;
+      if (savedItem) {
+        globalComponent.trackSavedItem(savedItem);
+      }
+      globalComponent.siteSettingsSession.hasSaved = true;
     }
   }, {
     key: "clearDocumentCache",
@@ -49283,8 +49999,10 @@ var TemplatesModule = exports["default"] = /*#__PURE__*/function (_elementorModu
       elementor.templates.getDefaultTemplateTypeData().then(function (templateTypesData) {
         var _elementor;
         jQuery.each((_elementor = elementor) === null || _elementor === void 0 || (_elementor = _elementor.config) === null || _elementor === void 0 || (_elementor = _elementor.library) === null || _elementor === void 0 ? void 0 : _elementor.doc_types, function (type, title) {
-          var safeData = jQuery.extend(true, {}, templateTypesData, elementor.templates.getDefaultTemplateTypeSafeData(title));
-          elementor.templates.registerTemplateType(type, safeData);
+          elementor.templates.getDefaultTemplateTypeSafeData(title).then(function (defaultData) {
+            var safeData = jQuery.extend(true, {}, templateTypesData, defaultData);
+            elementor.templates.registerTemplateType(type, safeData);
+          });
         });
       });
     }
@@ -63478,7 +64196,7 @@ module.exports = ReactDOM;
 /******/ 		// This function allow to reference async chunks
 /******/ 		__webpack_require__.u = (chunkId) => {
 /******/ 			// return url for filenames not based on template
-/******/ 			if (chunkId === "app_modules_onboarding_assets_js_utils_modules_post-onboarding-tracker_js") return "b2e8e6071c9bc14c04e4.bundle.js";
+/******/ 			if (chunkId === "app_modules_onboarding_assets_js_utils_modules_post-onboarding-tracker_js") return "1144a7ccb8f8bf9d8772.bundle.js";
 /******/ 			if (chunkId === "assets_dev_js_editor_utils_post-onboarding-tracking_js") return "e883e6638ef93bfd3204.bundle.js";
 /******/ 			// return url for filenames based on template
 /******/ 			return undefined;

@@ -52,6 +52,8 @@
 
 /*! ../../controls-registry/controls-registry */
 
+/*! ../../controls-registry/create-top-level-object-type */
+
 /*! ../../hooks/use-direction */
 
 /*! ../../hooks/use-persist-dynamic-value */
@@ -65,6 +67,8 @@
 /*! ../../style-tab-collapsible-content */
 
 /*! ../../styles-field-layout */
+
+/*! ../../sync/get-elementor-globals */
 
 /*! ../../utils/get-styles-provider-color */
 
@@ -104,6 +108,8 @@
 
 /*! ../dynamic-control */
 
+/*! ../editing-panel-replacement-registry */
+
 /*! ../errors */
 
 /*! ../field-indicators-registry */
@@ -139,6 +145,10 @@
 /*! ../provider-colors-registry */
 
 /*! ../style-indicator */
+
+/*! ../style-tab */
+
+/*! ../style-tab-section */
 
 /*! ../styles-inheritance-transformers-registry */
 
@@ -188,8 +198,6 @@
 
 /*! ./classes-prop-context */
 
-/*! ./collapse-icon */
-
 /*! ./collapsible-content */
 
 /*! ./column-count-field */
@@ -213,6 +221,8 @@
 /*! ./components/editing-panel-hooks */
 
 /*! ./components/popover-body */
+
+/*! ./components/promotions/init */
 
 /*! ./components/section-content */
 
@@ -248,9 +258,15 @@
 
 /*! ./controls-registry */
 
+/*! ./controls-registry/control */
+
 /*! ./controls-registry/controls-registry */
 
+/*! ./controls-registry/create-top-level-object-type */
+
 /*! ./controls-registry/element-controls/registry */
+
+/*! ./controls-registry/settings-field */
 
 /*! ./creatable-autocomplete */
 
@@ -268,6 +284,8 @@
 
 /*! ./css-classes/css-class-selector */
 
+/*! ./custom-css */
+
 /*! ./dimensions-field */
 
 /*! ./display-field */
@@ -278,7 +296,11 @@
 
 /*! ./dynamics/init */
 
+/*! ./dynamics/utils */
+
 /*! ./editing-panel-error-fallback */
+
+/*! ./editing-panel-replacement-registry */
 
 /*! ./editing-panel-tabs */
 
@@ -304,8 +326,6 @@
 
 /*! ./gap-control-field */
 
-/*! ./get-elementor-config */
-
 /*! ./hooks/use-custom-css */
 
 /*! ./hooks/use-dynamic-tag */
@@ -313,6 +333,8 @@
 /*! ./hooks/use-font-families */
 
 /*! ./hooks/use-prop-dynamic-action */
+
+/*! ./hooks/use-state-by-element */
 
 /*! ./hooks/use-styles-fields */
 
@@ -719,10 +741,6 @@
   \*************************************************************************************/
 
 /*!**************************************************************************************!*\
-  !*** ./packages/packages/core/editor-editing-panel/src/components/collapse-icon.tsx ***!
-  \**************************************************************************************/
-
-/*!**************************************************************************************!*\
   !*** ./packages/packages/core/editor-editing-panel/src/components/control-label.tsx ***!
   \**************************************************************************************/
 
@@ -773,6 +791,10 @@
 /*!***************************************************************************************!*\
   !*** ./packages/packages/core/editor-editing-panel/src/sync/get-elementor-globals.ts ***!
   \***************************************************************************************/
+
+/*!****************************************************************************************!*\
+  !*** ./packages/packages/core/editor-editing-panel/src/components/promotions/init.tsx ***!
+  \****************************************************************************************/
 
 /*!****************************************************************************************!*\
   !*** ./packages/packages/core/editor-editing-panel/src/components/section-content.tsx ***!
@@ -867,12 +889,16 @@
   \**********************************************************************************************/
 
 /*!**********************************************************************************************!*\
+  !*** ./packages/packages/core/editor-editing-panel/src/components/promotions/custom-css.tsx ***!
+  \**********************************************************************************************/
+
+/*!**********************************************************************************************!*\
   !*** ./packages/packages/core/editor-editing-panel/src/controls-registry/settings-field.tsx ***!
   \**********************************************************************************************/
 
-/*!***********************************************************************************************!*\
-  !*** ./packages/packages/core/editor-editing-panel/src/dynamics/sync/get-elementor-config.ts ***!
-  \***********************************************************************************************/
+/*!************************************************************************************************!*\
+  !*** ./packages/packages/core/editor-editing-panel/src/editing-panel-replacement-registry.tsx ***!
+  \************************************************************************************************/
 
 /*!*************************************************************************************************!*\
   !*** ./packages/packages/core/editor-editing-panel/src/contexts/styles-inheritance-context.tsx ***!

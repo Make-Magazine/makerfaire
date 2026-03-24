@@ -797,10 +797,9 @@ h6,
   height: 1.75rem;
   line-height: 1.75rem;
   text-align: center;
-  font-size: calc(0.4 * 1.75rem);
+  font-size: 1.75rem;
   border-radius: 50%;
-  color: var(--app-logo-color);
-  background-color: var(--app-logo-background-color);
+  color: var(--app-logo-background-color);
 }
 .eps-app__logo:not(:last-child) {
   margin-inline-end: 0.625rem;
@@ -3687,12 +3686,12 @@ h6,
   }
 }
 .e-onboarding__header-logo .eps-app__logo {
-  background-color: #0C0D0E;
-  color: #ffffff;
+  color: #0C0D0E;
   width: 1.3rem;
   height: 1.3rem;
-  line-height: 1.3rem;
-  font-size: 0.48rem;
+  line-height: 1.4rem;
+  font-size: 1.3rem;
+  background: unset;
 }
 .e-onboarding__header-logo .eps-app__logo:not(:last-child) {
   margin-inline-end: 7px;

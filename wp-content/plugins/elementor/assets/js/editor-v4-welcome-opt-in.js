@@ -77,8 +77,8 @@ var _ui = __webpack_require__(/*! @elementor/ui */ "@elementor/ui");
 function _interopRequireWildcard(e, t) { if ("function" == typeof WeakMap) var r = new WeakMap(), n = new WeakMap(); return (_interopRequireWildcard = function _interopRequireWildcard(e, t) { if (!t && e && e.__esModule) return e; var o, i, f = { __proto__: null, default: e }; if (null === e || "object" != _typeof(e) && "function" != typeof e) return f; if (o = t ? n : r) { if (o.has(e)) return o.get(e); o.set(e, f); } for (var _t in e) "default" !== _t && {}.hasOwnProperty.call(e, _t) && ((i = (o = Object.defineProperty) && Object.getOwnPropertyDescriptor(e, _t)) && (i.get || i.set) ? o(f, _t, i) : f[_t] = e[_t]); return f; })(e, t); }
 var i18n = {
   heading: (0, _i18n.__)('Say hello to a new experience!', 'elementor'),
-  introduction: (0, _i18n.__)('You\'re now using Editor V4, a new generation of web creation.', 'elementor'),
-  listItems: [(0, _i18n.__)('Try out Editor V4 elements such as Div, SVG and Paragraph.', 'elementor'), (0, _i18n.__)('Set up a new Class and apply it site-wide for perfect consistency.', 'elementor'), (0, _i18n.__)('Customize any style element per screen size by switching between responsive views.', 'elementor')],
+  introduction: (0, _i18n.__)('You now have access to the beta of version 4, ready to use on production.', 'elementor'),
+  listItems: [(0, _i18n.__)('Try out Atomic Elements such as: Flexbox, Heading, Button & Paragraph.', 'elementor'), (0, _i18n.__)('Apply Variables and Classes site-wide for perfect consistency.', 'elementor'), (0, _i18n.__)('Customize any style element per screen size by switching between responsive views.', 'elementor')],
   footerText: (0, _i18n.__)('Need help getting started?', 'elementor'),
   helpCenter: (0, _i18n.__)('Learn more', 'elementor'),
   closeButton: (0, _i18n.__)('Let\'s Go', 'elementor')
@@ -107,7 +107,7 @@ var WelcomeDialog = exports.WelcomeDialog = function WelcomeDialog(_ref) {
   }, /*#__PURE__*/_react.default.createElement(_ui.Box, {
     sx: {
       aspectRatio: '2',
-      backgroundImage: 'url(https://assets.elementor.com/v4-promotion/v1/images/v4_opt_in.png)',
+      backgroundImage: 'url(https://assets.elementor.com/v4-promotion/v1/images/v4_welcome.png)',
       backgroundSize: 'cover',
       backgroundPosition: 'center'
     }

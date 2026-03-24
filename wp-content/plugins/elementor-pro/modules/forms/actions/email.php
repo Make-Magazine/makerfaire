@@ -2,6 +2,7 @@
 namespace ElementorPro\Modules\Forms\Actions;
 
 use Elementor\Controls_Manager;
+use Elementor\Core\Admin\Admin_Notices;
 use ElementorPro\Core\Utils\Hints;
 use ElementorPro\Core\Utils;
 use ElementorPro\Core\Utils\Collection;
@@ -227,13 +228,69 @@ class Email extends Action_Base {
 
 	public function maybe_add_site_mailer_notice( $widget ) {
 		$notice_id = 'site_mailer_forms_email_notice';
+
 		if ( ! Hints::should_show_hint( $notice_id ) ) {
 			return;
 		}
-		$notice_content = esc_html__( 'Experiencing email deliverability issues? Get your emails delivered with Site Mailer.', 'elementor-pro' );
 
-		if ( 2 === Utils\Abtest::get_variation( 'plg_site_mailer_submission' ) ) {
-			$notice_content = esc_html__( 'Make sure your emails reach the inbox every time with Site Mailer', 'elementor-pro' );
+		$plugin_slug = 'site-mailer';
+
+		$one_subscription = method_exists( Hints::class, 'is_plugin_connected_to_one_subscription' ) && Hints::is_plugin_connected_to_one_subscription();
+		$is_installed = Hints::is_plugin_installed( $plugin_slug );
+		$is_active = Hints::is_plugin_active( $plugin_slug );
+
+		if ( $is_active ) {
+			return;
+		}
+
+		if ( $one_subscription ) {
+			if ( ! $is_installed ) {
+				$notice_content = esc_html__( 'Make sure your site’s emails reach the inbox every time. Site Mailer is included in your ONE subscription.', 'elementor-pro' );
+				$button_text = esc_html__( 'Install now', 'elementor-pro' );
+				$button_url = Hints::get_plugin_install_url( $plugin_slug );
+				$campaign_data = [
+					'name' => 'site_mailer_forms_email_notice',
+					'campaign' => 'sm-plg-form-v1-one-install',
+					'source' => 'sm-editor-form-one-install',
+					'medium' => 'wp-dash-one',
+				];
+			} elseif ( ! $is_active ) {
+				$notice_content = esc_html__( 'Ensure your site’s emails reach the inbox every time. Site Mailer is included in your ONE subscription. Activate it to continue.', 'elementor-pro' );
+				$button_text = esc_html__( 'Activate now', 'elementor-pro' );
+				$button_url = Hints::get_plugin_activate_url( $plugin_slug );
+				$campaign_data = [
+					'name' => 'site_mailer_forms_email_notice',
+					'campaign' => 'sm-plg-form-v1-one-activate',
+					'source' => 'sm-editor-form-one-activate',
+					'medium' => 'wp-dash-one',
+				];
+			}
+		} else {
+			$notice_content = esc_html__( 'Experiencing email deliverability issues? Get your emails delivered with Site Mailer.', 'elementor-pro' );
+
+			if ( 2 === Utils\Abtest::get_variation( 'plg_site_mailer_submission' ) ) {
+				$notice_content = esc_html__( 'Make sure your emails reach the inbox every time with Site Mailer.', 'elementor-pro' );
+			}
+
+			if ( ! $is_installed ) {
+				$button_text = esc_html__( 'Install now', 'elementor-pro' );
+				$button_url = Hints::get_plugin_install_url( $plugin_slug );
+				$campaign_data = [
+					'name' => 'site_mailer_forms_email_notice',
+					'campaign' => 'sm-form-install',
+					'source' => 'sm-plg-form-v1-install',
+					'medium' => 'wp-dash',
+				];
+			} elseif ( ! $is_active ) {
+				$button_text = esc_html__( 'Activate now', 'elementor-pro' );
+				$button_url = Hints::get_plugin_activate_url( $plugin_slug );
+				$campaign_data = [
+					'name' => 'site_mailer_forms_email_notice',
+					'campaign' => 'sm-form-activate',
+					'source' => 'sm-plg-form-v1-activate',
+					'medium' => 'wp-dash',
+				];
+			}
 		}
 
 		$widget->add_control(
@@ -246,10 +303,11 @@ class Email extends Action_Base {
 					'content' => $notice_content,
 					'icon' => true,
 					'dismissible' => $notice_id,
-					'button_text' => Hints::is_plugin_installed( 'site-mailer' ) ? __( 'Activate Plugin', 'elementor-pro' ) : __( 'Install Plugin', 'elementor-pro' ),
+					'button_text' => $button_text,
 					'button_event' => $notice_id,
 					'button_data' => [
-						'action_url' => Hints::get_plugin_action_url( 'site-mailer' ),
+						'action_url' => $button_url,
+						'source' => $campaign_data['source'],
 					],
 				], true ),
 			]

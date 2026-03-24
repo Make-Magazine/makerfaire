@@ -2,9 +2,15 @@
 
 /*! ../contexts/popup-state-context */
 
+/*! ../interactions-controls-registry */
+
 /*! ../utils/create-interactions-provider */
 
-/*! ../utils/get-interactions-config */
+/*! ../utils/prop-value-utils */
+
+/*! ../utils/temp-id-utils */
+
+/*! ./components/controls/trigger */
 
 /*! ./components/empty-state */
 
@@ -18,8 +24,6 @@
 
 /*! ./controls/time-frame-indicator */
 
-/*! ./controls/trigger */
-
 /*! ./empty-state */
 
 /*! ./hooks/on-duplicate */
@@ -28,11 +32,15 @@
 
 /*! ./interaction-details */
 
+/*! ./interactions-controls-registry */
+
 /*! ./interactions-list */
 
 /*! ./interactions-repository */
 
 /*! ./providers/document-elements-interactions-provider */
+
+/*! ./temp-id-utils */
 
 /*! ./types */
 
@@ -112,6 +120,14 @@
   !*** ./packages/packages/core/editor-interactions/src/hooks/on-duplicate.ts ***!
   \******************************************************************************/
 
+/*!*******************************************************************************!*\
+  !*** ./packages/packages/core/editor-interactions/src/utils/temp-id-utils.ts ***!
+  \*******************************************************************************/
+
+/*!**********************************************************************************!*\
+  !*** ./packages/packages/core/editor-interactions/src/utils/prop-value-utils.ts ***!
+  \**********************************************************************************/
+
 /*!***********************************************************************************!*\
   !*** ./packages/packages/core/editor-interactions/src/components/empty-state.tsx ***!
   \***********************************************************************************/
@@ -150,6 +166,10 @@
 
 /*!******************************************************************************************!*\
   !*** ./packages/packages/core/editor-interactions/src/contexts/interactions-context.tsx ***!
+  \******************************************************************************************/
+
+/*!******************************************************************************************!*\
+  !*** ./packages/packages/core/editor-interactions/src/interactions-controls-registry.ts ***!
   \******************************************************************************************/
 
 /*!*******************************************************************************************!*\

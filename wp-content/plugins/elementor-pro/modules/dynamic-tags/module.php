@@ -91,7 +91,7 @@ class Module extends TagsModule {
 	}
 
 	public function get_tag_classes_names() {
-		return [
+		$tags = [
 			'Archive_Description',
 			'Archive_Meta',
 			'Archive_Title',
@@ -104,7 +104,6 @@ class Module extends TagsModule {
 			'Comments_Number',
 			'Comments_URL',
 			'Page_Title',
-			'Post_Custom_Field',
 			'Post_Date',
 			'Post_Excerpt',
 			'Post_Featured_Image',
@@ -129,6 +128,13 @@ class Module extends TagsModule {
 			'User_Info',
 			'User_Profile_Picture',
 		];
+		$tier = API::get_access_tier();
+
+		if ( 'essential' !== $tier ) {
+			$tags[] = 'Post_Custom_Field';
+		}
+
+		return $tags;
 	}
 
 	public function get_groups() {
@@ -158,5 +164,12 @@ class Module extends TagsModule {
 				'title' => esc_html__( 'WooCommerce', 'elementor-pro' ),
 			],
 		];
+	}
+
+	// TODO: Remove this in 3.37.0
+	public static function add_v4_svg_category( $categories ) {
+		return defined( 'Elementor\Modules\DynamicTags\Module::SVG_CATEGORY' )
+			? array_merge( $categories, [ \Elementor\Modules\DynamicTags\Module::SVG_CATEGORY ] )
+			: $categories;
 	}
 }

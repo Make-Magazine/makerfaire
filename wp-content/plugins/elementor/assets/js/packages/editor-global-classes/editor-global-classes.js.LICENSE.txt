@@ -42,6 +42,8 @@
 
 /*! ../global-classes-styles-provider */
 
+/*! ../save-global-classes */
+
 /*! ../search-and-filter/components/filter/active-filters */
 
 /*! ../search-and-filter/components/filter/css-class-filter */
@@ -110,6 +112,10 @@
 
 /*! ./mcp-integration */
 
+/*! ./mcp-integration/classes-resource */
+
+/*! ./mcp-manage-global-classes */
+
 /*! ./not-found */
 
 /*! ./panel-interactions */
@@ -136,6 +142,8 @@
 
 /*! @elementor/editor */
 
+/*! @elementor/editor-canvas */
+
 /*! @elementor/editor-current-user */
 
 /*! @elementor/editor-documents */
@@ -146,6 +154,8 @@
 
 /*! @elementor/editor-panels */
 
+/*! @elementor/editor-props */
+
 /*! @elementor/editor-styles */
 
 /*! @elementor/editor-styles-repository */
@@ -154,11 +164,11 @@
 
 /*! @elementor/editor-v1-adapters */
 
+/*! @elementor/events */
+
 /*! @elementor/http-client */
 
 /*! @elementor/icons */
-
-/*! @elementor/mixpanel */
 
 /*! @elementor/query */
 
@@ -207,15 +217,15 @@
   \*****************************************/
 
 /*!*****************************************!*\
+  !*** external ["elementorV2","events"] ***!
+  \*****************************************/
+
+/*!*****************************************!*\
   !*** external ["elementorV2","schema"] ***!
   \*****************************************/
 
 /*!*******************************************!*\
   !*** external ["elementorV2","editorUi"] ***!
-  \*******************************************/
-
-/*!*******************************************!*\
-  !*** external ["elementorV2","mixpanel"] ***!
   \*******************************************/
 
 /*!********************************************!*\
@@ -225,6 +235,14 @@
 /*!*********************************************!*\
   !*** external ["elementorV2","httpClient"] ***!
   \*********************************************/
+
+/*!**********************************************!*\
+  !*** external ["elementorV2","editorProps"] ***!
+  \**********************************************/
+
+/*!***********************************************!*\
+  !*** external ["elementorV2","editorCanvas"] ***!
+  \***********************************************/
 
 /*!***********************************************!*\
   !*** external ["elementorV2","editorPanels"] ***!
@@ -381,6 +399,10 @@
 /*!***************************************************************************************************!*\
   !*** ./packages/packages/core/editor-global-classes/src/components/search-and-filter/context.tsx ***!
   \***************************************************************************************************/
+
+/*!*******************************************************************************************************!*\
+  !*** ./packages/packages/core/editor-global-classes/src/mcp-integration/mcp-manage-global-classes.ts ***!
+  \*******************************************************************************************************/
 
 /*!*********************************************************************************************************!*\
   !*** ./packages/packages/core/editor-global-classes/src/components/class-manager/panel-interactions.ts ***!

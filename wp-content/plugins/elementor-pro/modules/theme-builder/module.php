@@ -7,14 +7,17 @@ use Elementor\Core\Admin\Menu\Admin_Menu_Manager;
 use Elementor\Core\Admin\Menu\Main as MainMenu;
 use Elementor\Core\App\App;
 use Elementor\Core\Base\Document;
+use Elementor\Modules\EditorOne\Classes\Menu_Config;
+use Elementor\Modules\EditorOne\Classes\Menu_Data_Provider;
 use Elementor\TemplateLibrary\Source_Local;
-use Elementor\App\Modules\ImportExportCustomization\Utils as ImportExportCustomizationUtils;
+use ElementorPro\Base\Editor_One_Trait;
 use ElementorPro\Base\Module_Base;
 use ElementorPro\Core\Utils;
 use ElementorPro\Modules\ThemeBuilder\AdminMenuItems\Theme_Builder_Menu_Item;
 use ElementorPro\Modules\ThemeBuilder\Classes;
 use ElementorPro\Modules\ThemeBuilder\Documents\Single;
 use ElementorPro\Modules\ThemeBuilder\Documents\Theme_Document;
+use ElementorPro\Modules\ThemeBuilder\EditorOneMenuItems\Editor_One_Theme_Builder_Menu_Item;
 use ElementorPro\Modules\ThemeBuilder\ImportExportCustomization;
 use ElementorPro\Plugin;
 
@@ -23,10 +26,12 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Module extends Module_Base {
+	use Editor_One_Trait;
 
 	const ADMIN_LIBRARY_TAB_GROUP = 'theme';
 
 	const ADMIN_MENU_PRIORITY = 15;
+	const THEME_BUILDER_MENU_PRIORITY_BEFORE_SUBMISSIONS = 5;
 
 	public static function is_preview() {
 		return Plugin::elementor()->preview->is_preview_mode() || is_preview();
@@ -467,6 +472,10 @@ class Module extends Module_Base {
 			} );
 		} else {
 			add_action( 'elementor/admin/menu/register', function ( Admin_Menu_Manager $admin_menu ) {
+				if ( $this->is_editor_one_active() ) {
+					return;
+				}
+
 				$this->register_admin_menu_legacy( $admin_menu );
 			}, static::ADMIN_MENU_PRIORITY /* After "Popups" */ );
 
@@ -484,6 +493,10 @@ class Module extends Module_Base {
 					$this->get_admin_templates_url( true )
 				);
 			}, 22 /* After core promotion menu */ );
+
+			add_action( 'elementor/editor-one/menu/register', function ( Menu_Data_Provider $menu_data_provider ) {
+				$menu_data_provider->register_menu( new Editor_One_Theme_Builder_Menu_Item() );
+			}, static::THEME_BUILDER_MENU_PRIORITY_BEFORE_SUBMISSIONS );
 		}
 
 		add_filter( 'elementor/template-library/create_new_dialog_types', [ $this, 'create_new_dialog_types' ] );

@@ -10,23 +10,23 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Custom_Icons_Menu_Item implements Admin_Menu_Item {
-	public function get_capability() {
+	public function get_capability(): string {
 		return Icons_Manager::CAPABILITY;
 	}
 
-	public function get_label() {
+	public function get_label(): string {
 		return esc_html__( 'Custom Icons', 'elementor-pro' );
 	}
 
-	public function get_parent_slug() {
+	public function get_parent_slug(): string {
 		return Settings::PAGE_ID;
 	}
 
-	public function get_position() {
+	public function get_position(): ?int {
 		return null;
 	}
 
-	public function is_visible() {
+	public function is_visible(): bool {
 		return true;
 	}
 }

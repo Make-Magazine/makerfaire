@@ -9,6 +9,7 @@ use ElementorPro\Modules\AtomicWidgets\PropTypes\Display_Conditions\Display_Cond
 use ElementorPro\Modules\AtomicWidgets\PropTypes\Display_Conditions\Condition_Group_Prop_Type;
 use ElementorPro\Modules\AtomicWidgets\Transformers\Display_Conditions as Display_Conditions_Transformer;
 use ElementorPro\Modules\AtomicWidgets\Transformers\Condition_Group as Condition_Group_Transformer;
+use ElementorPro\License\API;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
@@ -38,11 +39,34 @@ class Module extends Module_Base {
 			'elementor/atomic-widgets/settings/transformers/register',
 			fn ( $transformers ) => $this->register_settings_transformers( $transformers ),
 		);
+
+		add_filter(
+			'elementor/atomic_widgets/editor_data/element_styles',
+			fn( $styles_without_custom_css, $styles ) => $this->get_license_based_custom_css_value( $styles_without_custom_css, $styles ),
+			10,
+			2
+		);
 	}
 
 	private function inject_props_schema( $schema ) {
-		$schema[ Display_Conditions_Prop_Type::get_key() ] = Display_Conditions_Prop_Type::make();
+		$display_conditions_prop_type = Display_Conditions_Prop_Type::make();
 
+		$components_module = 'Elementor\\Modules\\Components\\Module';
+		$overridable_prop_type = 'Elementor\\Modules\\Components\\PropTypes\\Overridable_Prop_Type';
+
+		$is_components_experiment_active = false;
+		if ( class_exists( $components_module ) ) {
+			$is_components_experiment_active = Plugin::elementor()->experiments->is_feature_active( $components_module::EXPERIMENT_NAME );
+		}
+
+		if (
+			$is_components_experiment_active &&
+			class_exists( $overridable_prop_type )
+		) {
+			$display_conditions_prop_type->meta( $overridable_prop_type::ignore() );
+		}
+
+		$schema[ Display_Conditions_Prop_Type::get_key() ] = $display_conditions_prop_type;
 		return $schema;
 	}
 
@@ -52,4 +76,17 @@ class Module extends Module_Base {
 
 		return $transformers;
 	}
+
+	private function get_license_based_custom_css_value( $styles_without_custom_css, $styles ) {
+		if ( $this->has_custom_css_feature_in_license() ) {
+			return $styles;
+		}
+
+		return $styles_without_custom_css;
+	}
+
+	private function has_custom_css_feature_in_license() {
+		return API::is_license_active() && API::is_licence_has_feature( 'atomic-custom-css' );
+	}
 }
+

@@ -65,13 +65,18 @@
 
 	&__add-button {
 		margin-block-start: $e-site-editor-add-button-margin-block-start;
-		background-color: var(--e-site-editor-add-button-background-color);
-		color: $e-site-editor-add-button-color;
+		background-color: var(--e-one-palette-primary-main, var(--e-site-editor-add-button-background-color));
+		border-color: var(--e-one-palette-primary-main, var(--e-site-editor-add-button-background-color));
+		color: var(--e-one-palette-primary-contrast-text, var(--e-one-palette-primary-contrastText, #{$e-site-editor-add-button-color}));
 		text-transform: uppercase;
+		text-decoration: none;
 
-		&:hover {
-			background-color: var(--e-site-editor-add-button-color-hover-background-color);
-			color: $e-site-editor-add-button-color-hover-color;
+		&:hover,
+		&:focus {
+			background-color: var(--e-one-palette-primary-dark, var(--e-site-editor-add-button-color-hover-background-color));
+			border-color: var(--e-one-palette-primary-dark, var(--e-site-editor-add-button-color-hover-background-color));
+			color: var(--e-one-palette-primary-contrast-text, var(--e-one-palette-primary-contrastText, #{$e-site-editor-add-button-color-hover-color}));
+			text-decoration: none;
 		}
 	}
 

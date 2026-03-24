@@ -2,6 +2,7 @@
 
 namespace ElementorPro\Modules\Variables;
 
+use Elementor\Modules\Variables\PropTypes\Size_Variable_Prop_Type;
 use ElementorPro\Plugin;
 use ElementorPro\Base\Module_Base;
 use Elementor\Modules\AtomicWidgets\Module as AtomicWidgetsModule;
@@ -48,6 +49,8 @@ class Module extends Module_Base {
 		}
 
 		$this->hooks()->register();
+
+		add_action( 'elementor/editor/before_enqueue_scripts', fn () => $this->enqueue_editor_scripts() );
 	}
 
 	private function is_experiment_active(): bool {
@@ -55,5 +58,25 @@ class Module extends Module_Base {
 			&& Plugin::elementor()->experiments->is_feature_active( self::EXPERIMENT_NAME )
 			&& Plugin::elementor()->experiments->is_feature_active( AtomicWidgetsModule::EXPERIMENT_NAME )
 			&& Plugin::elementor()->experiments->is_feature_active( VariablesModule::EXPERIMENT_NAME );
+	}
+
+	private function get_quota_config( $limit ): array {
+		return [
+			Size_Variable_Prop_Type::get_key() => $limit,
+		];
+	}
+
+	public function enqueue_editor_scripts() {
+		$limit = 100000;
+
+		if ( API::is_license_expired() ) {
+			$limit = 0;
+		}
+
+		wp_add_inline_script(
+			'elementor-common',
+			'window.ElementorVariablesQuotaConfigExtended = ' . wp_json_encode( $this->get_quota_config( $limit ) ) . ';',
+			'before'
+		);
 	}
 }

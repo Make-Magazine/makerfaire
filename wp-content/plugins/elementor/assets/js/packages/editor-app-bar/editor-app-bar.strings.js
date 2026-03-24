@@ -1,6 +1,16 @@
 __( 'Exit to WordPress', 'elementor' );
+__( 'Send Feedback', 'elementor' );
 __( 'More', 'elementor' );
 __( 'Elementor Logo', 'elementor' );
+__( 'Submit Feedback', 'elementor' );
+__(
+											'E.g. Can you add ABC features? I want to do ABC and it’s important because …',
+											'elementor'
+										);
+__( 'Your Feedback', 'elementor' );
+__( 'Submit Another Feedback', 'elementor' );
+__( 'Submit', 'elementor' );
+__( 'Connect to Elementor', 'elementor' );
 __( 'Integrations', 'elementor' );
 __( 'User Preferences', 'elementor' );
 __( 'Theme Builder', 'elementor' );
@@ -17,8 +27,8 @@ __( '%s (%dpx and up)', 'elementor' );
 // translators: %s: Breakpoint label, %d: Breakpoint size.
 __( '%s (up to %dpx)', 'elementor' );
 __( 'Keyboard Shortcuts', 'elementor' );
-__( 'Help Center', 'elementor' );
 __( 'History', 'elementor' );
+__( 'Help Center', 'elementor' );
 __( 'Finder', 'elementor' );
 __( 'Elements', 'elementor' );
 __( 'Widgets', 'elementor' );

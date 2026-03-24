@@ -2,7 +2,6 @@
 namespace ElementorPro\Modules\Woocommerce\Widgets;
 
 use ElementorPro\Modules\Woocommerce\Module;
-use ElementorPro\Modules\Woocommerce\Traits\Send_App_Plg_Trait;
 use ElementorPro\Plugin;
 use Elementor\Controls_Manager;
 use Elementor\Group_Control_Box_Shadow;
@@ -19,7 +18,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Cart extends Base_Widget {
-	use Send_App_Plg_Trait;
 
 	public function get_name() {
 		return 'woocommerce-cart';
@@ -59,8 +57,6 @@ class Cart extends Base_Widget {
 				'label' => esc_html__( 'General', 'elementor-pro' ),
 			]
 		);
-
-		$this->maybe_add_send_app_promotion_control( $this );
 
 		$this->add_control(
 			'cart_layout',

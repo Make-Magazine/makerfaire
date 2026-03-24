@@ -122,8 +122,9 @@
 /******/ 		// This function allow to reference async chunks
 /******/ 		__webpack_require__.u = (chunkId) => {
 /******/ 			// return url for filenames not based on template
-/******/ 			if (chunkId === "lightbox") return "" + chunkId + ".a1f44406e887981f48c7.bundle.js";
-/******/ 			if (chunkId === "text-path") return "" + chunkId + ".eb787fc2b296f56e6e5f.bundle.js";
+/******/ 			if (chunkId === "vendors-node_modules_dompurify_dist_purify_cjs_js") return "6caa76d2f6eec6c4e665.bundle.js";
+/******/ 			if (chunkId === "lightbox") return "" + chunkId + ".d9ea72d232a14f514ee2.bundle.js";
+/******/ 			if (chunkId === "text-path") return "" + chunkId + ".6db73cc0a10a70f128eb.bundle.js";
 /******/ 			if (chunkId === "accordion") return "" + chunkId + ".b9a0ab19c7c872c405d7.bundle.js";
 /******/ 			if (chunkId === "alert") return "" + chunkId + ".fd509aa768e7b35a8e32.bundle.js";
 /******/ 			if (chunkId === "counter") return "" + chunkId + ".7310c276bc7865a3d438.bundle.js";
@@ -135,12 +136,12 @@
 /******/ 			if (chunkId === "text-editor") return "" + chunkId + ".0c9960167105139d27c9.bundle.js";
 /******/ 			if (chunkId === "wp-audio") return "" + chunkId + ".0ba9114964acf4c37ca2.bundle.js";
 /******/ 			if (chunkId === "nested-tabs") return "" + chunkId + ".7a338e6d7e060c473993.bundle.js";
-/******/ 			if (chunkId === "nested-accordion") return "" + chunkId + ".cb37a0fa563959afdb4c.bundle.js";
+/******/ 			if (chunkId === "nested-accordion") return "" + chunkId + ".4340b64226322f36bcc0.bundle.js";
 /******/ 			if (chunkId === "contact-buttons") return "" + chunkId + ".086261d3e9c4d8037686.bundle.js";
 /******/ 			if (chunkId === "floating-bars") return "" + chunkId + ".a6e6a043444b62f64f82.bundle.js";
 /******/ 			if (chunkId === "shared-frontend-handlers") return "" + chunkId + ".3b079824c37a5fe2bdaa.bundle.js";
-/******/ 			if (chunkId === "shared-editor-handlers") return "" + chunkId + ".2bd41204c7f5b9ac048f.bundle.js";
-/******/ 			if (chunkId === "container-editor-handlers") return "" + chunkId + ".48e4e3303dfb31ec6cf5.bundle.js";
+/******/ 			if (chunkId === "shared-editor-handlers") return "" + chunkId + ".3023894100138e442ab0.bundle.js";
+/******/ 			if (chunkId === "container-editor-handlers") return "" + chunkId + ".e7e069c4e656425c51f8.bundle.js";
 /******/ 			if (chunkId === "section-frontend-handlers") return "" + chunkId + ".c3950c6b190ca134bc8d.bundle.js";
 /******/ 			if (chunkId === "section-editor-handlers") return "" + chunkId + ".d65899d232b5339510d7.bundle.js";
 /******/ 			if (chunkId === "nested-title-keyboard-handler") return "" + chunkId + ".0c2b498e3e0695a1dc19.bundle.js";

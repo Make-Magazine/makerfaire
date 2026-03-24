@@ -3,6 +3,7 @@ namespace ElementorPro\Modules\DynamicTags\ACF\Tags;
 
 use ElementorPro\Modules\DynamicTags\Tags\Base\Data_Tag;
 use ElementorPro\Modules\DynamicTags\ACF\Module;
+use ElementorPro\Modules\DynamicTags\Module as DynamicTagsModule;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
@@ -23,7 +24,14 @@ class ACF_URL extends Data_Tag {
 	}
 
 	public function get_categories() {
-		return [ Module::URL_CATEGORY ];
+		$categories = [
+			Module::URL_CATEGORY,
+		];
+
+		// TODO: Remove this in 3.37.0
+		$categories = DynamicTagsModule::add_v4_svg_category( $categories );
+
+		return $categories;
 	}
 
 	public function get_panel_template_setting_key() {

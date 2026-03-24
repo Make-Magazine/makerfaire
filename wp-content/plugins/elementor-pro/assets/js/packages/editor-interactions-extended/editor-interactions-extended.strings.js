@@ -1,0 +1,10 @@
+__( 'Page load', 'elementor-pro' );
+__( 'Scroll into view', 'elementor-pro' );
+__( 'While scrolling', 'elementor-pro' );
+__( 'Page load', 'elementor-pro' );
+__( 'Scroll into view', 'elementor-pro' );
+__( 'While scrolling', 'elementor-pro' );
+__( 'No', 'elementor-pro' );
+__( 'Yes', 'elementor-pro' );
+__( 'Yes', 'elementor-pro' );
+__( 'No', 'elementor-pro' );

@@ -54,6 +54,26 @@ var _default = exports["default"] = {
 
 /***/ }),
 
+/***/ "../modules/editor-one/assets/js/shared/is-rtl.js":
+/*!********************************************************!*\
+  !*** ../modules/editor-one/assets/js/shared/is-rtl.js ***!
+  \********************************************************/
+/***/ ((__unused_webpack_module, exports) => {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", ({
+  value: true
+}));
+exports["default"] = isRTL;
+function isRTL() {
+  var _elementorCommon$conf, _elementorCommon;
+  return (_elementorCommon$conf = (_elementorCommon = elementorCommon) === null || _elementorCommon === void 0 || (_elementorCommon = _elementorCommon.config) === null || _elementorCommon === void 0 ? void 0 : _elementorCommon.isRTL) !== null && _elementorCommon$conf !== void 0 ? _elementorCommon$conf : false;
+}
+
+/***/ }),
+
 /***/ "../modules/editor-one/assets/js/sidebar-navigation/classes/menu-active-state-resolver.js":
 /*!************************************************************************************************!*\
   !*** ../modules/editor-one/assets/js/sidebar-navigation/classes/menu-active-state-resolver.js ***!
@@ -109,7 +129,7 @@ exports["default"] = void 0;
 var _react = _interopRequireDefault(__webpack_require__(/*! react */ "react"));
 var _ui = __webpack_require__(/*! @elementor/ui */ "@elementor/ui");
 var _propTypes = _interopRequireDefault(__webpack_require__(/*! prop-types */ "../node_modules/prop-types/index.js"));
-var _styledComponents = __webpack_require__(/*! ./styled-components */ "../modules/editor-one/assets/js/sidebar-navigation/components/collapsed-menu/styled-components.js");
+var _shared = __webpack_require__(/*! ../shared */ "../modules/editor-one/assets/js/sidebar-navigation/components/shared/index.js");
 var CollapsedMenuItemPopover = function CollapsedMenuItemPopover(_ref) {
   var item = _ref.item,
     children = _ref.children,
@@ -118,10 +138,21 @@ var CollapsedMenuItemPopover = function CollapsedMenuItemPopover(_ref) {
     anchorEl = _ref.anchorEl,
     onClose = _ref.onClose,
     IconComponent = _ref.IconComponent,
-    isActive = _ref.isActive;
-  return /*#__PURE__*/_react.default.createElement(_react.default.Fragment, null, /*#__PURE__*/_react.default.createElement(_styledComponents.CollapsedIconButton, {
-    isHighlighted: isActive || isPopoverOpen
-  }, /*#__PURE__*/_react.default.createElement(IconComponent, null)), /*#__PURE__*/_react.default.createElement(_styledComponents.StyledPopover, {
+    isActive = _ref.isActive,
+    onMouseEnter = _ref.onMouseEnter,
+    anchorRef = _ref.anchorRef;
+  return /*#__PURE__*/_react.default.createElement(_ui.ListItem, {
+    disablePadding: true,
+    dense: true,
+    disableGutters: true,
+    onMouseEnter: onMouseEnter,
+    ref: anchorRef
+  }, /*#__PURE__*/_react.default.createElement(_shared.MenuItemButton, {
+    selected: isActive || isPopoverOpen,
+    sx: {
+      height: 36
+    }
+  }, /*#__PURE__*/_react.default.createElement(_shared.MenuIcon, null, /*#__PURE__*/_react.default.createElement(IconComponent, null))), /*#__PURE__*/_react.default.createElement(_shared.StyledPopover, {
     open: isPopoverOpen,
     anchorEl: anchorEl,
     onClose: onClose,
@@ -140,18 +171,19 @@ var CollapsedMenuItemPopover = function CollapsedMenuItemPopover(_ref) {
     },
     disableRestoreFocus: true,
     hideBackdrop: true
-  }, /*#__PURE__*/_react.default.createElement(_styledComponents.PopoverContent, null, /*#__PURE__*/_react.default.createElement(_ui.List, {
-    disablePadding: true
-  }, /*#__PURE__*/_react.default.createElement(_ui.ListSubheader, null, /*#__PURE__*/_react.default.createElement(_styledComponents.PopoverTitle, {
-    elementType: "div",
-    variant: "caption"
-  }, item.label)), children.map(function (childItem) {
+  }, /*#__PURE__*/_react.default.createElement(_shared.PopoverContent, null, /*#__PURE__*/_react.default.createElement(_ui.List, {
+    disablePadding: true,
+    dense: true
+  }, /*#__PURE__*/_react.default.createElement(_shared.PopoverTitle, null, item.label), children.map(function (childItem) {
     return /*#__PURE__*/_react.default.createElement(_ui.ListItem, {
       key: childItem.slug,
       disablePadding: true,
       disableGutters: true,
-      dense: true
-    }, /*#__PURE__*/_react.default.createElement(_styledComponents.PopoverListItemButton, {
+      dense: true,
+      sx: {
+        height: 28
+      }
+    }, /*#__PURE__*/_react.default.createElement(_shared.PopoverListItemButton, {
       component: "a",
       href: childItem.url,
       selected: childItem.slug === activeChildSlug
@@ -171,7 +203,9 @@ CollapsedMenuItemPopover.propTypes = {
   anchorEl: _propTypes.default.object,
   onClose: _propTypes.default.func.isRequired,
   IconComponent: _propTypes.default.elementType.isRequired,
-  isActive: _propTypes.default.bool.isRequired
+  isActive: _propTypes.default.bool.isRequired,
+  onMouseEnter: _propTypes.default.func.isRequired,
+  anchorRef: _propTypes.default.oneOfType([_propTypes.default.func, _propTypes.default.object]).isRequired
 };
 var _default = exports["default"] = CollapsedMenuItemPopover;
 
@@ -194,25 +228,37 @@ exports["default"] = void 0;
 var _react = _interopRequireDefault(__webpack_require__(/*! react */ "react"));
 var _ui = __webpack_require__(/*! @elementor/ui */ "@elementor/ui");
 var _propTypes = _interopRequireDefault(__webpack_require__(/*! prop-types */ "../node_modules/prop-types/index.js"));
-var _styledComponents = __webpack_require__(/*! ./styled-components */ "../modules/editor-one/assets/js/sidebar-navigation/components/collapsed-menu/styled-components.js");
+var _shared = __webpack_require__(/*! ../shared */ "../modules/editor-one/assets/js/sidebar-navigation/components/shared/index.js");
+var _isRtl = _interopRequireDefault(__webpack_require__(/*! ../../../shared/is-rtl */ "../modules/editor-one/assets/js/shared/is-rtl.js"));
 var CollapsedMenuItemTooltip = function CollapsedMenuItemTooltip(_ref) {
   var item = _ref.item,
     isActive = _ref.isActive,
     onClick = _ref.onClick,
-    IconComponent = _ref.IconComponent;
-  return /*#__PURE__*/_react.default.createElement(_ui.Tooltip, {
+    IconComponent = _ref.IconComponent,
+    onMouseEnter = _ref.onMouseEnter;
+  var isRtlLanguage = (0, _isRtl.default)();
+  return /*#__PURE__*/_react.default.createElement(_ui.ListItem, {
+    disablePadding: true,
+    dense: true,
+    disableGutters: true,
+    onMouseEnter: onMouseEnter
+  }, /*#__PURE__*/_react.default.createElement(_ui.Tooltip, {
     title: item.label,
-    placement: "right"
-  }, /*#__PURE__*/_react.default.createElement(_styledComponents.CollapsedIconButton, {
+    placement: isRtlLanguage ? 'left' : 'right'
+  }, /*#__PURE__*/_react.default.createElement(_shared.MenuItemButton, {
     onClick: onClick,
-    isHighlighted: isActive
-  }, /*#__PURE__*/_react.default.createElement(IconComponent, null)));
+    selected: isActive,
+    sx: {
+      height: 36
+    }
+  }, /*#__PURE__*/_react.default.createElement(_shared.MenuIcon, null, /*#__PURE__*/_react.default.createElement(IconComponent, null)))));
 };
 CollapsedMenuItemTooltip.propTypes = {
   item: _propTypes.default.object.isRequired,
   isActive: _propTypes.default.bool.isRequired,
   onClick: _propTypes.default.func.isRequired,
-  IconComponent: _propTypes.default.elementType.isRequired
+  IconComponent: _propTypes.default.elementType.isRequired,
+  onMouseEnter: _propTypes.default.func.isRequired
 };
 var _default = exports["default"] = CollapsedMenuItemTooltip;
 
@@ -231,10 +277,6 @@ var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/inte
 Object.defineProperty(exports, "__esModule", ({
   value: true
 }));
-var _exportNames = {
-  SidebarCollapsedMenu: true,
-  SidebarCollapsedMenuItem: true
-};
 Object.defineProperty(exports, "SidebarCollapsedMenu", ({
   enumerable: true,
   get: function get() {
@@ -249,18 +291,6 @@ Object.defineProperty(exports, "SidebarCollapsedMenuItem", ({
 }));
 var _sidebarCollapsedMenu = _interopRequireDefault(__webpack_require__(/*! ./sidebar-collapsed-menu */ "../modules/editor-one/assets/js/sidebar-navigation/components/collapsed-menu/sidebar-collapsed-menu.js"));
 var _sidebarCollapsedMenuItem = _interopRequireDefault(__webpack_require__(/*! ./sidebar-collapsed-menu-item */ "../modules/editor-one/assets/js/sidebar-navigation/components/collapsed-menu/sidebar-collapsed-menu-item.js"));
-var _styledComponents = __webpack_require__(/*! ./styled-components */ "../modules/editor-one/assets/js/sidebar-navigation/components/collapsed-menu/styled-components.js");
-Object.keys(_styledComponents).forEach(function (key) {
-  if (key === "default" || key === "__esModule") return;
-  if (Object.prototype.hasOwnProperty.call(_exportNames, key)) return;
-  if (key in exports && exports[key] === _styledComponents[key]) return;
-  Object.defineProperty(exports, key, {
-    enumerable: true,
-    get: function get() {
-      return _styledComponents[key];
-    }
-  });
-});
 
 /***/ }),
 
@@ -279,12 +309,12 @@ Object.defineProperty(exports, "__esModule", ({
 }));
 exports["default"] = void 0;
 var _react = _interopRequireDefault(__webpack_require__(/*! react */ "react"));
+var _slicedToArray2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime/helpers/slicedToArray */ "../node_modules/@babel/runtime/helpers/slicedToArray.js"));
 var _element = __webpack_require__(/*! @wordpress/element */ "../node_modules/@wordpress/element/build-module/index.js");
 var _propTypes = _interopRequireDefault(__webpack_require__(/*! prop-types */ "../node_modules/prop-types/index.js"));
 var _shared = __webpack_require__(/*! ../shared */ "../modules/editor-one/assets/js/sidebar-navigation/components/shared/index.js");
 var _collapsedMenuItemPopover = _interopRequireDefault(__webpack_require__(/*! ./collapsed-menu-item-popover */ "../modules/editor-one/assets/js/sidebar-navigation/components/collapsed-menu/collapsed-menu-item-popover.js"));
 var _collapsedMenuItemTooltip = _interopRequireDefault(__webpack_require__(/*! ./collapsed-menu-item-tooltip */ "../modules/editor-one/assets/js/sidebar-navigation/components/collapsed-menu/collapsed-menu-item-tooltip.js"));
-var _styledComponents = __webpack_require__(/*! ./styled-components */ "../modules/editor-one/assets/js/sidebar-navigation/components/collapsed-menu/styled-components.js");
 var SidebarCollapsedMenuItem = function SidebarCollapsedMenuItem(_ref) {
   var item = _ref.item,
     isActive = _ref.isActive,
@@ -294,8 +324,11 @@ var SidebarCollapsedMenuItem = function SidebarCollapsedMenuItem(_ref) {
     isPopoverOpen = _ref.isPopoverOpen,
     onOpenPopover = _ref.onOpenPopover,
     onClosePopover = _ref.onClosePopover;
-  var anchorRef = (0, _element.useRef)(null);
-  var hasChildren = children && children.length > 0;
+  var _useState = (0, _element.useState)(null),
+    _useState2 = (0, _slicedToArray2.default)(_useState, 2),
+    anchorEl = _useState2[0],
+    setAnchorEl = _useState2[1];
+  var hasChildren = !!(children !== null && children !== void 0 && children.length);
   var IconComponent = _shared.ICON_MAP[item.icon] || _shared.DEFAULT_ICON;
   var handleMouseEnter = function handleMouseEnter() {
     if (hasChildren) {
@@ -309,23 +342,23 @@ var SidebarCollapsedMenuItem = function SidebarCollapsedMenuItem(_ref) {
       window.location.href = item.url;
     }
   };
-  return /*#__PURE__*/_react.default.createElement(_styledComponents.CollapsedMenuItemContainer, {
-    ref: anchorRef,
-    onMouseEnter: handleMouseEnter
-  }, hasChildren ? /*#__PURE__*/_react.default.createElement(_collapsedMenuItemPopover.default, {
+  return /*#__PURE__*/_react.default.createElement(_react.default.Fragment, null, hasChildren ? /*#__PURE__*/_react.default.createElement(_collapsedMenuItemPopover.default, {
     item: item,
     children: children,
     activeChildSlug: activeChildSlug,
     isPopoverOpen: isPopoverOpen,
-    anchorEl: anchorRef.current,
+    anchorEl: anchorEl,
     onClose: onClosePopover,
     IconComponent: IconComponent,
-    isActive: isActive
+    isActive: isActive,
+    onMouseEnter: handleMouseEnter,
+    anchorRef: setAnchorEl
   }) : /*#__PURE__*/_react.default.createElement(_collapsedMenuItemTooltip.default, {
     item: item,
     isActive: isActive,
     onClick: handleClick,
-    IconComponent: IconComponent
+    IconComponent: IconComponent,
+    onMouseEnter: handleMouseEnter
   }));
 };
 SidebarCollapsedMenuItem.propTypes = {
@@ -358,10 +391,11 @@ exports["default"] = void 0;
 var _react = _interopRequireDefault(__webpack_require__(/*! react */ "react"));
 var _slicedToArray2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime/helpers/slicedToArray */ "../node_modules/@babel/runtime/helpers/slicedToArray.js"));
 var _element = __webpack_require__(/*! @wordpress/element */ "../node_modules/@wordpress/element/build-module/index.js");
+var _ui = __webpack_require__(/*! @elementor/ui */ "@elementor/ui");
 var _propTypes = _interopRequireDefault(__webpack_require__(/*! prop-types */ "../node_modules/prop-types/index.js"));
 var _menuActiveStateResolver = _interopRequireDefault(__webpack_require__(/*! ../../classes/menu-active-state-resolver */ "../modules/editor-one/assets/js/sidebar-navigation/classes/menu-active-state-resolver.js"));
 var _sidebarCollapsedMenuItem = _interopRequireDefault(__webpack_require__(/*! ./sidebar-collapsed-menu-item */ "../modules/editor-one/assets/js/sidebar-navigation/components/collapsed-menu/sidebar-collapsed-menu-item.js"));
-var _styledComponents = __webpack_require__(/*! ./styled-components */ "../modules/editor-one/assets/js/sidebar-navigation/components/collapsed-menu/styled-components.js");
+var _shared = __webpack_require__(/*! ../shared */ "../modules/editor-one/assets/js/sidebar-navigation/components/shared/index.js");
 var SidebarCollapsedMenu = function SidebarCollapsedMenu(_ref) {
   var menuItems = _ref.menuItems,
     level4Groups = _ref.level4Groups,
@@ -390,10 +424,16 @@ var SidebarCollapsedMenu = function SidebarCollapsedMenu(_ref) {
   var handleClosePopover = (0, _element.useCallback)(function () {
     setOpenPopoverSlug(null);
   }, []);
-  return /*#__PURE__*/_react.default.createElement(_styledComponents.CollapsedMenuContainer, {
+  return /*#__PURE__*/_react.default.createElement(_shared.MenuList, {
+    isCollapsed: true,
     onMouseLeave: handleClosePopover
   }, menuItems.map(function (item) {
-    return /*#__PURE__*/_react.default.createElement(_sidebarCollapsedMenuItem.default, {
+    return /*#__PURE__*/_react.default.createElement(_react.default.Fragment, null, item.has_divider_before && /*#__PURE__*/_react.default.createElement(_ui.Divider, {
+      key: "divider-".concat(item.slug),
+      sx: {
+        my: 1
+      }
+    }), /*#__PURE__*/_react.default.createElement(_sidebarCollapsedMenuItem.default, {
       key: item.slug,
       item: item,
       isActive: activeStateResolver.isMenuActive(item),
@@ -402,7 +442,7 @@ var SidebarCollapsedMenu = function SidebarCollapsedMenu(_ref) {
       isPopoverOpen: openPopoverSlug === item.slug,
       onOpenPopover: handleOpenPopover,
       onClosePopover: handleClosePopover
-    });
+    }));
   }));
 };
 SidebarCollapsedMenu.propTypes = {
@@ -412,106 +452,6 @@ SidebarCollapsedMenu.propTypes = {
   activeChildSlug: _propTypes.default.string.isRequired
 };
 var _default = exports["default"] = SidebarCollapsedMenu;
-
-/***/ }),
-
-/***/ "../modules/editor-one/assets/js/sidebar-navigation/components/collapsed-menu/styled-components.js":
-/*!*********************************************************************************************************!*\
-  !*** ../modules/editor-one/assets/js/sidebar-navigation/components/collapsed-menu/styled-components.js ***!
-  \*********************************************************************************************************/
-/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", ({
-  value: true
-}));
-exports.StyledPopover = exports.PopoverTitle = exports.PopoverListItemButton = exports.PopoverContent = exports.CollapsedMenuItemContainer = exports.CollapsedMenuContainer = exports.CollapsedIconButton = exports.CollapsedHeaderContainer = void 0;
-var _ui = __webpack_require__(/*! @elementor/ui */ "@elementor/ui");
-var CollapsedMenuContainer = exports.CollapsedMenuContainer = (0, _ui.styled)(_ui.Box)(function (_ref) {
-  var theme = _ref.theme;
-  return {
-    paddingLeft: theme.spacing(1),
-    paddingRight: theme.spacing(1),
-    paddingTop: theme.spacing(2),
-    paddingBottom: theme.spacing(2)
-  };
-});
-var CollapsedMenuItemContainer = exports.CollapsedMenuItemContainer = (0, _ui.styled)(_ui.Box)(function (_ref2) {
-  var theme = _ref2.theme;
-  return {
-    display: 'flex',
-    justifyContent: 'center',
-    marginBottom: theme.spacing(0.5)
-  };
-});
-var CollapsedIconButton = exports.CollapsedIconButton = (0, _ui.styled)(_ui.IconButton, {
-  shouldForwardProp: function shouldForwardProp(prop) {
-    return prop !== 'isHighlighted';
-  }
-})(function (_ref3) {
-  var theme = _ref3.theme,
-    isHighlighted = _ref3.isHighlighted;
-  return {
-    width: 40,
-    height: 40,
-    borderRadius: theme.shape.borderRadius,
-    backgroundColor: isHighlighted ? theme.palette.action.selected : 'transparent',
-    color: theme.palette.text.primary,
-    '&:hover': {
-      backgroundColor: theme.palette.action.hover
-    },
-    '& svg': {
-      fontSize: 20
-    }
-  };
-});
-var PopoverTitle = exports.PopoverTitle = (0, _ui.styled)(_ui.Typography)(function (_ref4) {
-  var theme = _ref4.theme;
-  return {
-    color: theme.palette.text.tertiary
-  };
-});
-var PopoverContent = exports.PopoverContent = (0, _ui.styled)(_ui.Box)(function (_ref5) {
-  var theme = _ref5.theme;
-  return {
-    paddingTop: theme.spacing(1),
-    paddingBottom: theme.spacing(1)
-  };
-});
-var CollapsedHeaderContainer = exports.CollapsedHeaderContainer = (0, _ui.styled)(_ui.Box)(function (_ref6) {
-  var theme = _ref6.theme;
-  return {
-    position: 'relative',
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
-    height: 80,
-    borderBottom: "1px solid ".concat(theme.palette.divider)
-  };
-});
-var PopoverListItemButton = exports.PopoverListItemButton = (0, _ui.styled)(_ui.ListItemButton)(function (_ref7) {
-  var theme = _ref7.theme;
-  return {
-    paddingLeft: theme.spacing(2),
-    paddingRight: theme.spacing(2),
-    paddingTop: theme.spacing(0.5),
-    paddingBottom: theme.spacing(0.5)
-  };
-});
-var StyledPopover = exports.StyledPopover = (0, _ui.styled)(_ui.Popover)(function (_ref8) {
-  var theme = _ref8.theme;
-  return {
-    pointerEvents: 'none',
-    '& .MuiPaper-root': {
-      marginLeft: theme.spacing(1),
-      minWidth: 180,
-      borderRadius: theme.shape.borderRadius,
-      pointerEvents: 'auto'
-    }
-  };
-});
 
 /***/ }),
 
@@ -721,7 +661,7 @@ Object.defineProperty(exports, "__esModule", ({
 }));
 exports["default"] = void 0;
 var _react = _interopRequireDefault(__webpack_require__(/*! react */ "react"));
-var _ChevronLeftIcon = _interopRequireDefault(__webpack_require__(/*! @elementor/icons/ChevronLeftIcon */ "@elementor/icons/ChevronLeftIcon"));
+var _ChevronRightIcon = _interopRequireDefault(__webpack_require__(/*! @elementor/icons/ChevronRightIcon */ "@elementor/icons/ChevronRightIcon"));
 var _SearchIcon = _interopRequireDefault(__webpack_require__(/*! @elementor/icons/SearchIcon */ "@elementor/icons/SearchIcon"));
 var _editor = _interopRequireDefault(__webpack_require__(/*! ../icons/editor */ "../modules/editor-one/assets/js/sidebar-navigation/components/icons/editor.js"));
 var _propTypes = _interopRequireDefault(__webpack_require__(/*! prop-types */ "../node_modules/prop-types/index.js"));
@@ -739,8 +679,9 @@ var SidebarHeader = function SidebarHeader(_ref) {
     onClick: finderAction
   }, /*#__PURE__*/_react.default.createElement(_SearchIcon.default, null))), /*#__PURE__*/_react.default.createElement(_shared.CollapseButton, {
     onClick: onCollapse,
-    size: "small"
-  }, /*#__PURE__*/_react.default.createElement(_ChevronLeftIcon.default, null)));
+    size: "small",
+    expanded: true
+  }, /*#__PURE__*/_react.default.createElement(_ChevronRightIcon.default, null)));
 };
 SidebarHeader.propTypes = {
   siteTitle: _propTypes.default.string.isRequired,
@@ -768,13 +709,12 @@ var HeaderContainer = exports.HeaderContainer = (0, _ui.styled)(_ui.Box)(functio
   var theme = _ref.theme;
   return {
     position: 'relative',
-    paddingLeft: theme.spacing(2),
-    paddingRight: theme.spacing(2),
+    marginLeft: theme.spacing(2),
+    marginRight: theme.spacing(2),
     height: 80,
     borderBottom: "1px solid ".concat(theme.palette.divider),
     display: 'flex',
-    alignItems: 'center',
-    marginBottom: theme.spacing(1)
+    alignItems: 'center'
   };
 });
 var HeaderContent = exports.HeaderContent = (0, _ui.styled)(_ui.Box)(function (_ref2) {
@@ -797,6 +737,60 @@ var SearchButton = exports.SearchButton = (0, _ui.styled)(_ui.IconButton)(functi
     color: theme.palette.action.active
   };
 });
+
+/***/ }),
+
+/***/ "../modules/editor-one/assets/js/sidebar-navigation/components/hooks/use-admin-menu-offset.js":
+/*!****************************************************************************************************!*\
+  !*** ../modules/editor-one/assets/js/sidebar-navigation/components/hooks/use-admin-menu-offset.js ***!
+  \****************************************************************************************************/
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+"use strict";
+
+
+var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault */ "../node_modules/@babel/runtime/helpers/interopRequireDefault.js");
+Object.defineProperty(exports, "__esModule", ({
+  value: true
+}));
+exports.useAdminMenuOffset = void 0;
+var _element = __webpack_require__(/*! @wordpress/element */ "../node_modules/@wordpress/element/build-module/index.js");
+var _isRtl = _interopRequireDefault(__webpack_require__(/*! ../../../shared/is-rtl */ "../modules/editor-one/assets/js/shared/is-rtl.js"));
+var ADMIN_MENU_WRAP_ID = 'adminmenuwrap';
+var WPCONTENT_ID = 'wpcontent';
+var INITIALIZED_DATA_ATTR = 'data-editor-one-offset-initialized';
+var useAdminMenuOffset = exports.useAdminMenuOffset = function useAdminMenuOffset() {
+  var cleanupRef = (0, _element.useRef)(null);
+  (0, _element.useEffect)(function () {
+    var adminMenuWrap = document.getElementById(ADMIN_MENU_WRAP_ID);
+    var wpcontent = document.getElementById(WPCONTENT_ID);
+    if (!adminMenuWrap || !wpcontent || wpcontent.hasAttribute(INITIALIZED_DATA_ATTR)) {
+      return;
+    }
+    var updateOffset = function updateOffset() {
+      var isRtlLanguage = (0, _isRtl.default)();
+      var rect = adminMenuWrap.getBoundingClientRect();
+      var offset = isRtlLanguage ? document.documentElement.clientWidth - rect.left : rect.right;
+      wpcontent.style.setProperty('--editor-one-sidebar-left-offset', "".concat(offset, "px"));
+    };
+    updateOffset();
+    var resizeObserver = new ResizeObserver(updateOffset);
+    resizeObserver.observe(wpcontent);
+    window.addEventListener('resize', updateOffset);
+    wpcontent.setAttribute(INITIALIZED_DATA_ATTR, 'true');
+    cleanupRef.current = function () {
+      resizeObserver.disconnect();
+      window.removeEventListener('resize', updateOffset);
+      wpcontent.removeAttribute(INITIALIZED_DATA_ATTR);
+    };
+    return function () {
+      if (cleanupRef.current) {
+        cleanupRef.current();
+        cleanupRef.current = null;
+      }
+    };
+  }, []);
+};
 
 /***/ }),
 
@@ -1046,10 +1040,6 @@ var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/inte
 Object.defineProperty(exports, "__esModule", ({
   value: true
 }));
-var _exportNames = {
-  SidebarMenu: true,
-  SidebarMenuItem: true
-};
 Object.defineProperty(exports, "SidebarMenu", ({
   enumerable: true,
   get: function get() {
@@ -1064,18 +1054,6 @@ Object.defineProperty(exports, "SidebarMenuItem", ({
 }));
 var _sidebarMenu = _interopRequireDefault(__webpack_require__(/*! ./sidebar-menu */ "../modules/editor-one/assets/js/sidebar-navigation/components/menu/sidebar-menu.js"));
 var _sidebarMenuItem = _interopRequireDefault(__webpack_require__(/*! ./sidebar-menu-item */ "../modules/editor-one/assets/js/sidebar-navigation/components/menu/sidebar-menu-item.js"));
-var _styledComponents = __webpack_require__(/*! ./styled-components */ "../modules/editor-one/assets/js/sidebar-navigation/components/menu/styled-components.js");
-Object.keys(_styledComponents).forEach(function (key) {
-  if (key === "default" || key === "__esModule") return;
-  if (Object.prototype.hasOwnProperty.call(_exportNames, key)) return;
-  if (key in exports && exports[key] === _styledComponents[key]) return;
-  Object.defineProperty(exports, key, {
-    enumerable: true,
-    get: function get() {
-      return _styledComponents[key];
-    }
-  });
-});
 
 /***/ }),
 
@@ -1099,81 +1077,73 @@ var _element = __webpack_require__(/*! @wordpress/element */ "../node_modules/@w
 var _ui = __webpack_require__(/*! @elementor/ui */ "@elementor/ui");
 var _propTypes = _interopRequireDefault(__webpack_require__(/*! prop-types */ "../node_modules/prop-types/index.js"));
 var _shared = __webpack_require__(/*! ../shared */ "../modules/editor-one/assets/js/sidebar-navigation/components/shared/index.js");
-var _styledComponents = __webpack_require__(/*! ./styled-components */ "../modules/editor-one/assets/js/sidebar-navigation/components/menu/styled-components.js");
 var STORAGE_KEY_PREFIX = 'elementor_sidebar_menu_expanded_v2_';
-var getStorageKey = function getStorageKey(slug) {
-  return "".concat(STORAGE_KEY_PREFIX).concat(slug);
-};
-var shouldExpandByDefault = function shouldExpandByDefault(children, activeChildSlug) {
-  if (!children || !children.length) {
-    return false;
-  }
-  return children.some(function (child) {
-    return child.slug === activeChildSlug;
-  });
-};
-var getInitialExpandedState = function getInitialExpandedState(slug, hasChildren, children, activeChildSlug) {
-  if (!hasChildren) {
-    return false;
-  }
-  var isExpandedByDefault = shouldExpandByDefault(children, activeChildSlug);
-  if (isExpandedByDefault) {
-    localStorage.setItem(getStorageKey(slug), String(true));
-    return true;
-  }
-  var stored = localStorage.getItem(getStorageKey(slug));
-  return 'true' === stored;
-};
 var SidebarMenuItem = function SidebarMenuItem(_ref) {
   var item = _ref.item,
     isActive = _ref.isActive,
     children = _ref.children,
     activeChildSlug = _ref.activeChildSlug;
-  var hasChildren = children && children.length > 0;
+  var hasChildren = !!(children !== null && children !== void 0 && children.length);
+  var IconComponent = _shared.ICON_MAP[item.icon] || _shared.DEFAULT_ICON;
   var _useState = (0, _element.useState)(function () {
-      return getInitialExpandedState(item.slug, hasChildren, children, activeChildSlug);
+      if (!hasChildren) {
+        return false;
+      }
+      var storageKey = "".concat(STORAGE_KEY_PREFIX).concat(item.slug);
+      var shouldExpand = children.some(function (child) {
+        return child.slug === activeChildSlug;
+      });
+      if (shouldExpand) {
+        localStorage.setItem(storageKey, 'true');
+        return true;
+      }
+      var stored = localStorage.getItem(storageKey);
+      if (null === stored) {
+        return true;
+      }
+      return 'true' === stored;
     }),
     _useState2 = (0, _slicedToArray2.default)(_useState, 2),
     isExpanded = _useState2[0],
     setIsExpanded = _useState2[1];
-  var IconComponent = _shared.ICON_MAP[item.icon] || _shared.DEFAULT_ICON;
   var handleClick = (0, _element.useCallback)(function () {
     if (hasChildren) {
-      var newState = !isExpanded;
-      setIsExpanded(newState);
-      localStorage.setItem(getStorageKey(item.slug), String(newState));
+      setIsExpanded(function (prev) {
+        var newState = !prev;
+        localStorage.setItem("".concat(STORAGE_KEY_PREFIX).concat(item.slug), String(newState));
+        return newState;
+      });
     } else {
       window.location.href = item.url;
     }
-  }, [hasChildren, isExpanded, item.slug, item.url]);
+  }, [hasChildren, item.slug, item.url]);
   return /*#__PURE__*/_react.default.createElement(_react.default.Fragment, null, /*#__PURE__*/_react.default.createElement(_ui.ListItem, {
     disablePadding: true,
     dense: true,
     disableGutters: true
-  }, /*#__PURE__*/_react.default.createElement(_styledComponents.MenuItemButton, {
+  }, /*#__PURE__*/_react.default.createElement(_shared.MenuItemButton, {
     onClick: handleClick,
     selected: isActive && !hasChildren
-  }, /*#__PURE__*/_react.default.createElement(_styledComponents.MenuIcon, null, /*#__PURE__*/_react.default.createElement(IconComponent, null)), /*#__PURE__*/_react.default.createElement(_ui.ListItemText, {
+  }, /*#__PURE__*/_react.default.createElement(_shared.MenuIcon, null, /*#__PURE__*/_react.default.createElement(IconComponent, null)), /*#__PURE__*/_react.default.createElement(_ui.ListItemText, {
     primary: item.label,
     primaryTypographyProps: {
       variant: 'body2'
     }
-  }), hasChildren && /*#__PURE__*/_react.default.createElement(_styledComponents.ExpandIcon, {
+  }), hasChildren && /*#__PURE__*/_react.default.createElement(_shared.ExpandIcon, {
     expanded: isExpanded
   }))), hasChildren && /*#__PURE__*/_react.default.createElement(_ui.Collapse, {
     in: isExpanded,
     timeout: "auto",
     unmountOnExit: true
   }, /*#__PURE__*/_react.default.createElement(_ui.List, {
-    disablePadding: true,
-    disableGutters: true
+    disablePadding: true
   }, children.map(function (childItem) {
-    return /*#__PURE__*/_react.default.createElement(_styledComponents.ChildListItem, {
+    return /*#__PURE__*/_react.default.createElement(_shared.ChildListItem, {
       key: childItem.slug,
       disablePadding: true,
       dense: true,
       disableGutters: true
-    }, /*#__PURE__*/_react.default.createElement(_styledComponents.ChildMenuItemButton, {
+    }, /*#__PURE__*/_react.default.createElement(_shared.ChildMenuItemButton, {
       component: "a",
       href: childItem.url,
       selected: childItem.slug === activeChildSlug
@@ -1206,16 +1176,19 @@ var _default = exports["default"] = SidebarMenuItem;
 
 
 var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault */ "../node_modules/@babel/runtime/helpers/interopRequireDefault.js");
+var _typeof = __webpack_require__(/*! @babel/runtime/helpers/typeof */ "../node_modules/@babel/runtime/helpers/typeof.js");
 Object.defineProperty(exports, "__esModule", ({
   value: true
 }));
 exports["default"] = void 0;
-var _react = _interopRequireDefault(__webpack_require__(/*! react */ "react"));
+var _react = _interopRequireWildcard(__webpack_require__(/*! react */ "react"));
 var _element = __webpack_require__(/*! @wordpress/element */ "../node_modules/@wordpress/element/build-module/index.js");
+var _ui = __webpack_require__(/*! @elementor/ui */ "@elementor/ui");
 var _propTypes = _interopRequireDefault(__webpack_require__(/*! prop-types */ "../node_modules/prop-types/index.js"));
 var _menuActiveStateResolver = _interopRequireDefault(__webpack_require__(/*! ../../classes/menu-active-state-resolver */ "../modules/editor-one/assets/js/sidebar-navigation/classes/menu-active-state-resolver.js"));
 var _sidebarMenuItem = _interopRequireDefault(__webpack_require__(/*! ./sidebar-menu-item */ "../modules/editor-one/assets/js/sidebar-navigation/components/menu/sidebar-menu-item.js"));
-var _styledComponents = __webpack_require__(/*! ./styled-components */ "../modules/editor-one/assets/js/sidebar-navigation/components/menu/styled-components.js");
+var _shared = __webpack_require__(/*! ../shared */ "../modules/editor-one/assets/js/sidebar-navigation/components/shared/index.js");
+function _interopRequireWildcard(e, t) { if ("function" == typeof WeakMap) var r = new WeakMap(), n = new WeakMap(); return (_interopRequireWildcard = function _interopRequireWildcard(e, t) { if (!t && e && e.__esModule) return e; var o, i, f = { __proto__: null, default: e }; if (null === e || "object" != _typeof(e) && "function" != typeof e) return f; if (o = t ? n : r) { if (o.has(e)) return o.get(e); o.set(e, f); } for (var _t in e) "default" !== _t && {}.hasOwnProperty.call(e, _t) && ((i = (o = Object.defineProperty) && Object.getOwnPropertyDescriptor(e, _t)) && (i.get || i.set) ? o(f, _t, i) : f[_t] = e[_t]); return f; })(e, t); }
 var SidebarMenu = function SidebarMenu(_ref) {
   var menuItems = _ref.menuItems,
     level4Groups = _ref.level4Groups,
@@ -1234,14 +1207,18 @@ var SidebarMenu = function SidebarMenu(_ref) {
     }
     return group.items;
   };
-  return /*#__PURE__*/_react.default.createElement(_styledComponents.MenuList, null, menuItems.map(function (item) {
-    return /*#__PURE__*/_react.default.createElement(_sidebarMenuItem.default, {
-      key: item.slug,
+  return /*#__PURE__*/_react.default.createElement(_shared.MenuList, null, menuItems.map(function (item) {
+    return /*#__PURE__*/_react.default.createElement(_react.Fragment, {
+      key: item.slug
+    }, item.has_divider_before && /*#__PURE__*/_react.default.createElement(_ui.Divider, {
+      sx: {
+        my: 1
+      }
+    }), /*#__PURE__*/_react.default.createElement(_sidebarMenuItem.default, {
       item: item,
       isActive: activeStateResolver.isMenuActive(item),
-      children: getChildren(item),
       activeChildSlug: activeChildSlug
-    });
+    }, getChildren(item)));
   }));
 };
 SidebarMenu.propTypes = {
@@ -1251,76 +1228,6 @@ SidebarMenu.propTypes = {
   activeChildSlug: _propTypes.default.string.isRequired
 };
 var _default = exports["default"] = SidebarMenu;
-
-/***/ }),
-
-/***/ "../modules/editor-one/assets/js/sidebar-navigation/components/menu/styled-components.js":
-/*!***********************************************************************************************!*\
-  !*** ../modules/editor-one/assets/js/sidebar-navigation/components/menu/styled-components.js ***!
-  \***********************************************************************************************/
-/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
-
-"use strict";
-
-
-var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault */ "../node_modules/@babel/runtime/helpers/interopRequireDefault.js");
-Object.defineProperty(exports, "__esModule", ({
-  value: true
-}));
-exports.MenuList = exports.MenuItemButton = exports.MenuIcon = exports.ExpandIcon = exports.ChildMenuItemButton = exports.ChildListItem = void 0;
-var _ui = __webpack_require__(/*! @elementor/ui */ "@elementor/ui");
-var _ChevronDownSmallIcon = _interopRequireDefault(__webpack_require__(/*! @elementor/icons/ChevronDownSmallIcon */ "@elementor/icons/ChevronDownSmallIcon"));
-var MenuList = exports.MenuList = (0, _ui.styled)(_ui.List)(function (_ref) {
-  var theme = _ref.theme;
-  return {
-    paddingLeft: theme.spacing(2),
-    paddingRight: theme.spacing(2)
-  };
-});
-var MenuItemButton = exports.MenuItemButton = (0, _ui.styled)(_ui.ListItemButton)(function (_ref2) {
-  var theme = _ref2.theme;
-  return {
-    paddingLeft: theme.spacing(1),
-    paddingRight: theme.spacing(1),
-    marginBottom: 0,
-    paddingBottom: theme.spacing(0.5),
-    whiteSpace: 'nowrap'
-  };
-});
-var MenuIcon = exports.MenuIcon = (0, _ui.styled)(_ui.ListItemIcon)(function (_ref3) {
-  var theme = _ref3.theme;
-  return {
-    minWidth: 28,
-    color: theme.palette.text.primary,
-    '& svg': {
-      fontSize: 20
-    }
-  };
-});
-var ChildMenuItemButton = exports.ChildMenuItemButton = (0, _ui.styled)(_ui.ListItemButton)(function (_ref4) {
-  var theme = _ref4.theme;
-  return {
-    paddingLeft: theme.spacing(6),
-    paddingRight: theme.spacing(2),
-    minHeight: 32,
-    whiteSpace: 'nowrap'
-  };
-});
-var ChildListItem = exports.ChildListItem = (0, _ui.styled)(_ui.ListItem)({
-  maxHeight: 32
-});
-var ExpandIcon = exports.ExpandIcon = (0, _ui.styled)(_ChevronDownSmallIcon.default, {
-  shouldForwardProp: function shouldForwardProp(prop) {
-    return prop !== 'expanded';
-  }
-})(function (_ref5) {
-  var expanded = _ref5.expanded;
-  return {
-    fontSize: 20,
-    transform: expanded ? 'rotate(180deg)' : 'rotate(0deg)',
-    transition: 'transform 0.2s'
-  };
-});
 
 /***/ }),
 
@@ -1340,21 +1247,24 @@ Object.defineProperty(exports, "__esModule", ({
 exports.ICON_MAP = exports.DEFAULT_ICON = void 0;
 var _AdjustmentsIcon = _interopRequireDefault(__webpack_require__(/*! @elementor/icons/AdjustmentsIcon */ "@elementor/icons/AdjustmentsIcon"));
 var _FolderIcon = _interopRequireDefault(__webpack_require__(/*! @elementor/icons/FolderIcon */ "@elementor/icons/FolderIcon"));
+var _RocketIcon = _interopRequireDefault(__webpack_require__(/*! @elementor/icons/RocketIcon */ "@elementor/icons/RocketIcon"));
 var _HomeIcon = _interopRequireDefault(__webpack_require__(/*! @elementor/icons/HomeIcon */ "@elementor/icons/HomeIcon"));
-var _InfoCircleIcon = _interopRequireDefault(__webpack_require__(/*! @elementor/icons/InfoCircleIcon */ "@elementor/icons/InfoCircleIcon"));
 var _SendIcon = _interopRequireDefault(__webpack_require__(/*! @elementor/icons/SendIcon */ "@elementor/icons/SendIcon"));
 var _SettingsIcon = _interopRequireDefault(__webpack_require__(/*! @elementor/icons/SettingsIcon */ "@elementor/icons/SettingsIcon"));
 var _UsersIcon = _interopRequireDefault(__webpack_require__(/*! @elementor/icons/UsersIcon */ "@elementor/icons/UsersIcon"));
+var _PlugIcon = _interopRequireDefault(__webpack_require__(/*! @elementor/icons/PlugIcon */ "@elementor/icons/PlugIcon"));
 var _tool = _interopRequireDefault(__webpack_require__(/*! ../icons/tool */ "../modules/editor-one/assets/js/sidebar-navigation/components/icons/tool.js"));
+var _FileSettingsIcon = _interopRequireDefault(__webpack_require__(/*! @elementor/icons/FileSettingsIcon */ "@elementor/icons/FileSettingsIcon"));
 var ICON_MAP = exports.ICON_MAP = {
   adjustments: _AdjustmentsIcon.default,
   folder: _FolderIcon.default,
-  home: _HomeIcon.default,
-  'info-circle': _InfoCircleIcon.default,
+  home: _RocketIcon.default,
   send: _SendIcon.default,
   settings: _SettingsIcon.default,
   tool: _tool.default,
-  users: _UsersIcon.default
+  users: _UsersIcon.default,
+  extension: _PlugIcon.default,
+  'file-settings': _FileSettingsIcon.default
 };
 var DEFAULT_ICON = exports.DEFAULT_ICON = _HomeIcon.default;
 
@@ -1406,11 +1316,14 @@ Object.keys(_styledComponents).forEach(function (key) {
 "use strict";
 
 
+var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault */ "../node_modules/@babel/runtime/helpers/interopRequireDefault.js");
 Object.defineProperty(exports, "__esModule", ({
   value: true
 }));
-exports.SiteIconBox = exports.ScrollableContent = exports.NavContainer = exports.CollapseButton = void 0;
+exports.StyledPopover = exports.SiteIconBox = exports.ScrollableContent = exports.PopoverTitle = exports.PopoverListItemButton = exports.PopoverContent = exports.NavContainer = exports.MenuList = exports.MenuItemButton = exports.MenuIcon = exports.ExpandIcon = exports.CollapsedMenuItemContainer = exports.CollapsedIconButton = exports.CollapsedHeaderContainer = exports.CollapseButton = exports.ChildMenuItemButton = exports.ChildListItem = void 0;
 var _ui = __webpack_require__(/*! @elementor/ui */ "@elementor/ui");
+var _ChevronDownSmallIcon = _interopRequireDefault(__webpack_require__(/*! @elementor/icons/ChevronDownSmallIcon */ "@elementor/icons/ChevronDownSmallIcon"));
+var _isRtl = _interopRequireDefault(__webpack_require__(/*! ../../../shared/is-rtl */ "../modules/editor-one/assets/js/shared/is-rtl.js"));
 var NavContainer = exports.NavContainer = (0, _ui.styled)(_ui.Box)(function (_ref) {
   var theme = _ref.theme;
   return {
@@ -1438,11 +1351,25 @@ var SiteIconBox = exports.SiteIconBox = (0, _ui.styled)(_ui.Box)(function (_ref2
     }
   };
 });
-var CollapseButton = exports.CollapseButton = (0, _ui.styled)(_ui.IconButton)(function (_ref3) {
-  var theme = _ref3.theme;
+var CollapseButton = exports.CollapseButton = (0, _ui.styled)(_ui.IconButton, {
+  shouldForwardProp: function shouldForwardProp(prop) {
+    return prop !== 'expanded';
+  }
+})(function (_ref3) {
+  var theme = _ref3.theme,
+    expanded = _ref3.expanded;
+  var isRtlLanguage = (0, _isRtl.default)();
+  var transform = 'none';
+  if (expanded && isRtlLanguage) {
+    transform = 'rotate(180deg) scaleX(-1)';
+  } else if (expanded) {
+    transform = 'rotate(180deg)';
+  } else if (isRtlLanguage) {
+    transform = 'scaleX(-1)';
+  }
   return {
     position: 'absolute',
-    insetInlineEnd: -12,
+    insetInlineEnd: -28,
     bottom: -12,
     width: 24,
     height: 24,
@@ -1454,7 +1381,8 @@ var CollapseButton = exports.CollapseButton = (0, _ui.styled)(_ui.IconButton)(fu
       backgroundColor: theme.palette.background.paper
     },
     '& svg': {
-      fontSize: 16
+      fontSize: 16,
+      transform: transform
     }
   };
 });
@@ -1462,6 +1390,142 @@ var ScrollableContent = exports.ScrollableContent = (0, _ui.styled)(_ui.Box)({
   flex: 1,
   overflowY: 'auto',
   overflowX: 'hidden'
+});
+var MenuList = exports.MenuList = (0, _ui.styled)(_ui.List)(function (_ref4) {
+  var theme = _ref4.theme;
+  return {
+    padding: theme.spacing(2)
+  };
+});
+var MenuItemButton = exports.MenuItemButton = (0, _ui.styled)(_ui.ListItemButton)(function (_ref5) {
+  var theme = _ref5.theme;
+  return {
+    paddingLeft: theme.spacing(1),
+    paddingRight: theme.spacing(1),
+    marginBottom: 0,
+    paddingBottom: theme.spacing(0.5),
+    whiteSpace: 'nowrap',
+    justifyContent: 'center',
+    borderRadius: 4
+  };
+});
+var MenuIcon = exports.MenuIcon = (0, _ui.styled)(_ui.ListItemIcon)(function (_ref6) {
+  var theme = _ref6.theme;
+  return {
+    minWidth: 'auto',
+    color: theme.palette.text.primary,
+    margin: 0,
+    display: 'flex',
+    justifyContent: 'center',
+    '& svg': {
+      fontSize: 20
+    }
+  };
+});
+var ChildMenuItemButton = exports.ChildMenuItemButton = (0, _ui.styled)(_ui.ListItemButton)(function (_ref7) {
+  var theme = _ref7.theme;
+  return {
+    paddingLeft: theme.spacing(6),
+    paddingRight: theme.spacing(2),
+    minHeight: 32,
+    whiteSpace: 'nowrap',
+    borderRadius: 4
+  };
+});
+var ChildListItem = exports.ChildListItem = (0, _ui.styled)(_ui.ListItem)({
+  maxHeight: 32
+});
+var ExpandIcon = exports.ExpandIcon = (0, _ui.styled)(_ChevronDownSmallIcon.default, {
+  shouldForwardProp: function shouldForwardProp(prop) {
+    return prop !== 'expanded';
+  }
+})(function (_ref8) {
+  var expanded = _ref8.expanded;
+  return {
+    fontSize: 20,
+    transform: expanded ? 'rotate(180deg)' : 'rotate(0deg)',
+    transition: 'transform 0.2s'
+  };
+});
+var CollapsedMenuItemContainer = exports.CollapsedMenuItemContainer = (0, _ui.styled)(_ui.Box)(function (_ref9) {
+  var theme = _ref9.theme;
+  return {
+    display: 'flex',
+    justifyContent: 'center',
+    marginBottom: theme.spacing(0.5)
+  };
+});
+var CollapsedIconButton = exports.CollapsedIconButton = (0, _ui.styled)(_ui.IconButton, {
+  shouldForwardProp: function shouldForwardProp(prop) {
+    return prop !== 'isHighlighted';
+  }
+})(function (_ref0) {
+  var theme = _ref0.theme,
+    isHighlighted = _ref0.isHighlighted;
+  return {
+    width: 36,
+    height: 36,
+    borderRadius: theme.shape.borderRadius,
+    backgroundColor: isHighlighted ? theme.palette.action.selected : 'transparent',
+    color: theme.palette.text.primary,
+    '&:hover': {
+      backgroundColor: theme.palette.action.hover
+    },
+    '& svg': {
+      fontSize: 20
+    }
+  };
+});
+var PopoverTitle = exports.PopoverTitle = (0, _ui.styled)(_ui.ListSubheader)(function (_ref1) {
+  var theme = _ref1.theme;
+  return {
+    color: theme.palette.text.tertiary,
+    fontSize: 12,
+    fontWeight: 400,
+    height: 28
+  };
+});
+var PopoverContent = exports.PopoverContent = (0, _ui.styled)(_ui.Box)(function (_ref10) {
+  var theme = _ref10.theme;
+  return {
+    paddingTop: theme.spacing(1),
+    paddingBottom: theme.spacing(1)
+  };
+});
+var CollapsedHeaderContainer = exports.CollapsedHeaderContainer = (0, _ui.styled)(_ui.Box)(function (_ref11) {
+  var theme = _ref11.theme;
+  return {
+    position: 'relative',
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    height: 80,
+    marginLeft: theme.spacing(2),
+    marginRight: theme.spacing(2),
+    borderBottom: "1px solid ".concat(theme.palette.divider)
+  };
+});
+var PopoverListItemButton = exports.PopoverListItemButton = (0, _ui.styled)(_ui.ListItemButton)(function (_ref12) {
+  var theme = _ref12.theme;
+  return {
+    paddingLeft: theme.spacing(2),
+    paddingRight: theme.spacing(2),
+    paddingTop: theme.spacing(0.5),
+    paddingBottom: theme.spacing(0.5),
+    borderRadius: 4
+  };
+});
+var StyledPopover = exports.StyledPopover = (0, _ui.styled)(_ui.Popover)(function (_ref13) {
+  var theme = _ref13.theme;
+  return {
+    pointerEvents: 'none',
+    '& .MuiPaper-root': {
+      marginLeft: theme.spacing(1),
+      minWidth: 180,
+      borderRadius: theme.shape.borderRadius,
+      pointerEvents: 'auto'
+    }
+  };
 });
 
 /***/ }),
@@ -1486,22 +1550,23 @@ var _ChevronRightIcon = _interopRequireDefault(__webpack_require__(/*! @elemento
 var _editor = _interopRequireDefault(__webpack_require__(/*! ./icons/editor */ "../modules/editor-one/assets/js/sidebar-navigation/components/icons/editor.js"));
 var _propTypes = _interopRequireDefault(__webpack_require__(/*! prop-types */ "../node_modules/prop-types/index.js"));
 var _collapsedMenu = __webpack_require__(/*! ./collapsed-menu */ "../modules/editor-one/assets/js/sidebar-navigation/components/collapsed-menu/index.js");
-var _styledComponents = __webpack_require__(/*! ./collapsed-menu/styled-components */ "../modules/editor-one/assets/js/sidebar-navigation/components/collapsed-menu/styled-components.js");
 var _cta = __webpack_require__(/*! ./cta */ "../modules/editor-one/assets/js/sidebar-navigation/components/cta/index.js");
 var _header = __webpack_require__(/*! ./header */ "../modules/editor-one/assets/js/sidebar-navigation/components/header/index.js");
 var _menu = __webpack_require__(/*! ./menu */ "../modules/editor-one/assets/js/sidebar-navigation/components/menu/index.js");
 var _shared = __webpack_require__(/*! ./shared */ "../modules/editor-one/assets/js/sidebar-navigation/components/shared/index.js");
 var _useSidebarCollapse2 = __webpack_require__(/*! ./hooks/use-sidebar-collapse */ "../modules/editor-one/assets/js/sidebar-navigation/components/hooks/use-sidebar-collapse.js");
+var _useAdminMenuOffset = __webpack_require__(/*! ./hooks/use-admin-menu-offset */ "../modules/editor-one/assets/js/sidebar-navigation/components/hooks/use-admin-menu-offset.js");
 var SidebarNavigation = function SidebarNavigation(_ref) {
   var config = _ref.config;
   var _useSidebarCollapse = (0, _useSidebarCollapse2.useSidebarCollapse)(),
     isCollapsed = _useSidebarCollapse.isCollapsed,
     toggleCollapse = _useSidebarCollapse.toggleCollapse;
+  (0, _useAdminMenuOffset.useAdminMenuOffset)();
   if (isCollapsed) {
     return /*#__PURE__*/_react.default.createElement(_shared.NavContainer, {
       component: "nav",
       collapsed: true
-    }, /*#__PURE__*/_react.default.createElement(_styledComponents.CollapsedHeaderContainer, null, /*#__PURE__*/_react.default.createElement(_shared.SiteIconBox, null, /*#__PURE__*/_react.default.createElement(_editor.default, null)), /*#__PURE__*/_react.default.createElement(_shared.CollapseButton, {
+    }, /*#__PURE__*/_react.default.createElement(_shared.CollapsedHeaderContainer, null, /*#__PURE__*/_react.default.createElement(_shared.SiteIconBox, null, /*#__PURE__*/_react.default.createElement(_editor.default, null)), /*#__PURE__*/_react.default.createElement(_shared.CollapseButton, {
       onClick: toggleCollapse,
       size: "small"
     }, /*#__PURE__*/_react.default.createElement(_ChevronRightIcon.default, null))), /*#__PURE__*/_react.default.createElement(_shared.ScrollableContent, null, /*#__PURE__*/_react.default.createElement(_collapsedMenu.SidebarCollapsedMenu, {
@@ -5230,17 +5295,6 @@ module.exports = elementorV2.icons['ChevronDownSmallIcon'];
 
 /***/ }),
 
-/***/ "@elementor/icons/ChevronLeftIcon":
-/*!*******************************************************!*\
-  !*** external "elementorV2.icons['ChevronLeftIcon']" ***!
-  \*******************************************************/
-/***/ ((module) => {
-
-"use strict";
-module.exports = elementorV2.icons['ChevronLeftIcon'];
-
-/***/ }),
-
 /***/ "@elementor/icons/ChevronRightIcon":
 /*!********************************************************!*\
   !*** external "elementorV2.icons['ChevronRightIcon']" ***!
@@ -5249,6 +5303,17 @@ module.exports = elementorV2.icons['ChevronLeftIcon'];
 
 "use strict";
 module.exports = elementorV2.icons['ChevronRightIcon'];
+
+/***/ }),
+
+/***/ "@elementor/icons/FileSettingsIcon":
+/*!********************************************************!*\
+  !*** external "elementorV2.icons['FileSettingsIcon']" ***!
+  \********************************************************/
+/***/ ((module) => {
+
+"use strict";
+module.exports = elementorV2.icons['FileSettingsIcon'];
 
 /***/ }),
 
@@ -5274,14 +5339,25 @@ module.exports = elementorV2.icons['HomeIcon'];
 
 /***/ }),
 
-/***/ "@elementor/icons/InfoCircleIcon":
-/*!******************************************************!*\
-  !*** external "elementorV2.icons['InfoCircleIcon']" ***!
-  \******************************************************/
+/***/ "@elementor/icons/PlugIcon":
+/*!************************************************!*\
+  !*** external "elementorV2.icons['PlugIcon']" ***!
+  \************************************************/
 /***/ ((module) => {
 
 "use strict";
-module.exports = elementorV2.icons['InfoCircleIcon'];
+module.exports = elementorV2.icons['PlugIcon'];
+
+/***/ }),
+
+/***/ "@elementor/icons/RocketIcon":
+/*!**************************************************!*\
+  !*** external "elementorV2.icons['RocketIcon']" ***!
+  \**************************************************/
+/***/ ((module) => {
+
+"use strict";
+module.exports = elementorV2.icons['RocketIcon'];
 
 /***/ }),
 
@@ -5445,10 +5521,12 @@ var _react2 = _interopRequireDefault(__webpack_require__(/*! elementor-utils/rea
 var _ui = __webpack_require__(/*! @elementor/ui */ "@elementor/ui");
 var _index = _interopRequireDefault(__webpack_require__(/*! ./components/index */ "../modules/editor-one/assets/js/sidebar-navigation/components/index.js"));
 var _propTypes = _interopRequireDefault(__webpack_require__(/*! prop-types */ "../node_modules/prop-types/index.js"));
+var _isRtl = _interopRequireDefault(__webpack_require__(/*! ../shared/is-rtl */ "../modules/editor-one/assets/js/shared/is-rtl.js"));
 var App = function App(_ref) {
   var config = _ref.config;
+  var isRtlLanguage = (0, _isRtl.default)();
   return /*#__PURE__*/_react.default.createElement(_ui.DirectionProvider, {
-    rtl: config.isRTL
+    rtl: isRtlLanguage
   }, /*#__PURE__*/_react.default.createElement(_ui.LocalizationProvider, null, /*#__PURE__*/_react.default.createElement(_ui.ThemeProvider, {
     colorScheme: "light"
   }, /*#__PURE__*/_react.default.createElement(_index.default, {

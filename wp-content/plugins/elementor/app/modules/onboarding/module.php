@@ -28,7 +28,6 @@ class Module extends BaseModule {
 	const ONBOARDING_OPTION = 'elementor_onboarded';
 
 	const EXPERIMENT_EMPHASIZE_CONNECT_BENEFITS = 'emphasizeConnectBenefits101';
-	const EXPERIMENT_OFFER_THEME_CHOICES_HELLO_BIZ = 'offerThemeChoicesHelloBiz201';
 	const EXPERIMENT_EMPHASIZE_THEME_VALUE_AUDIENCE_202 = 'emphasizeThemeValueAudience202';
 	const EXPERIMENT_UPDATE_COPY_VISUALS = 'updateCopyVisuals401';
 	const EXPERIMENT_REDUCE_HIERARCHY_BLANK_OPTION = 'reduceHierarchyBlankOption402';
@@ -113,6 +112,7 @@ class Module extends BaseModule {
 
 		/** @var Library $library */
 		$library = Plugin::$instance->common->get_component( 'connect' )->get_app( 'library' );
+		$is_editor_one_active = Plugin::$instance->experiments->is_feature_active( 'e_editor_one' );
 
 		Plugin::$instance->app->set_settings( 'onboarding', [
 			'eventPlacement' => 'Onboarding wizard',
@@ -126,6 +126,7 @@ class Module extends BaseModule {
 			'helloOptOut' => count( $pages_and_posts->posts ) < 5,
 			'siteName' => esc_html( $site_name ),
 			'isUnfilteredFilesEnabled' => Uploads_Manager::are_unfiltered_uploads_enabled(),
+			'isEditorOneActive' => $is_editor_one_active,
 			'urls' => [
 				'kitLibrary' => Plugin::$instance->app->get_base_url() . '&source=onboarding#/kit-library?order[direction]=desc&order[by]=featuredIndex',
 				'sitePlanner' => add_query_arg( [
@@ -167,17 +168,17 @@ class Module extends BaseModule {
 			'nonce' => wp_create_nonce( 'onboarding' ),
 			'experiment' => true,
 			'isExperiment101Enabled' => $this->is_experiment_enabled( self::EXPERIMENT_EMPHASIZE_CONNECT_BENEFITS ),
-			'isExperiment201Enabled' => $this->is_experiment_enabled( self::EXPERIMENT_OFFER_THEME_CHOICES_HELLO_BIZ ),
 			'isExperiment202Enabled' => $this->is_experiment_enabled( self::EXPERIMENT_EMPHASIZE_THEME_VALUE_AUDIENCE_202 ),
 			'isExperiment401Enabled' => $this->is_experiment_enabled( self::EXPERIMENT_UPDATE_COPY_VISUALS ),
 			'isExperiment402Enabled' => $this->is_experiment_enabled( self::EXPERIMENT_REDUCE_HIERARCHY_BLANK_OPTION ),
 			'experimentNames' => [
 				'101' => self::EXPERIMENT_EMPHASIZE_CONNECT_BENEFITS,
-				'201' => self::EXPERIMENT_OFFER_THEME_CHOICES_HELLO_BIZ,
 				'202' => self::EXPERIMENT_EMPHASIZE_THEME_VALUE_AUDIENCE_202,
 				'401' => self::EXPERIMENT_UPDATE_COPY_VISUALS,
 				'402' => self::EXPERIMENT_REDUCE_HIERARCHY_BLANK_OPTION,
 			],
+			'pageSubheading' => $is_editor_one_active ? __( 'Choose the capabilities you need to bring your vision to life', 'elementor' ) : __( 'Which Elementor Pro features do you need to bring your creative vision to life?', 'elementor' ),
+			'pageHeading' => $is_editor_one_active ? __( ' Elevate your website with additional features.', 'elementor' ) : __( 'Elevate your website with additional Pro features.', 'elementor' ),
 		] );
 	}
 

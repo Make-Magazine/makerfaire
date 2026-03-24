@@ -1,4 +1,4 @@
-/*! elementor-pro - v3.34.0 - 22-12-2025 */
+/*! elementor-pro - v3.35.0 - 11-02-2026 */
 "use strict";
 (self["webpackChunkelementor_pro"] = self["webpackChunkelementor_pro"] || []).push([["elements-handlers"],{
 
@@ -1266,7 +1266,7 @@ class _default extends elementorModules.frontend.Document {
   initTriggers() {
     this.triggers = new _triggers.default(this.getDocumentSettings('triggers'), this);
   }
-  showModal(event, avoidMultiple = false) {
+  showModal(avoidMultiple) {
     // eslint-disable-next-line @wordpress/no-unused-vars-before-return
     const settings = this.getDocumentSettings();
     if (!this.isEdit) {
@@ -1544,7 +1544,7 @@ class _default extends elementorModules.Module {
     if (settings.toggle && modal.isVisible()) {
       modal.hide();
     } else {
-      popup.showModal(event);
+      popup.showModal(null, event);
     }
   }
   closePopup(settings, event) {

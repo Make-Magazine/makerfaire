@@ -7,13 +7,17 @@ use Elementor\Core\Base\Document as DocumentBase;
 use Elementor\Core\Common\Modules\Ajax\Module as Ajax;
 use Elementor\Core\Documents_Manager;
 use Elementor\Core\DynamicTags\Manager as DynamicTagsManager;
+use Elementor\Modules\EditorOne\Classes\Menu_Data_Provider;
 use Elementor\TemplateLibrary\Source_Local;
+use ElementorPro\Base\Editor_One_Trait;
 use ElementorPro\Base\Module_Base;
 use ElementorPro\Core\Behaviors\Feature_Lock;
 use ElementorPro\Core\Utils;
 use ElementorPro\License\API;
 use ElementorPro\Modules\Popup\AdminMenuItems\Popups_Menu_Item;
 use ElementorPro\Modules\Popup\AdminMenuItems\Popups_Promotion_Menu_Item;
+use ElementorPro\Modules\Popup\EditorOneMenuItems\Editor_One_Popups_Menu_Item;
+use ElementorPro\Modules\Popup\EditorOneMenuItems\Editor_One_Popups_Promotion;
 use ElementorPro\Modules\ThemeBuilder\Classes\Locations_Manager;
 use ElementorPro\Plugin;
 
@@ -22,6 +26,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Module extends Module_Base {
+	use Editor_One_Trait;
+
 	const DOCUMENT_TYPE = 'popup';
 
 	const PROMOTION_MENU_SLUG = 'e-popups';
@@ -30,6 +36,8 @@ class Module extends Module_Base {
 
 	public function __construct() {
 		parent::__construct();
+
+		add_action( 'admin_init', [ $this, 'redirect_legacy_popups_promotion_url' ] );
 
 		add_action( 'elementor/frontend/after_register_styles', [ $this, 'register_frontend_styles' ] );
 		add_action( 'elementor/preview/enqueue_styles', [ $this, 'enqueue_preview_styles' ] );
@@ -55,6 +63,10 @@ class Module extends Module_Base {
 			} );
 		} else {
 			add_action( 'elementor/admin/menu/register', function( Admin_Menu_Manager $admin_menu_manager ) {
+				if ( $this->is_editor_one_active() ) {
+					return;
+				}
+
 				if ( $this->can_use_popups() ) {
 					$admin_menu_manager->register( $this->get_admin_url( true ), new Popups_Menu_Item() );
 				} else {
@@ -66,6 +78,14 @@ class Module extends Module_Base {
 			add_action( 'admin_menu', function() {
 				$this->register_admin_menu_legacy();
 			}, 21 /* After `Admin_Menu_Manager` */ );
+
+			add_action( 'elementor/editor-one/menu/register', function ( Menu_Data_Provider $menu_data_provider ) {
+				if ( $this->can_use_popups() ) {
+					$menu_data_provider->register_menu( new Editor_One_Popups_Menu_Item() );
+				} else {
+					$menu_data_provider->register_menu( new Editor_One_Popups_Promotion() );
+				}
+			} );
 		}
 
 		add_filter( 'elementor/finder/categories', [ $this, 'add_finder_items' ] );
@@ -81,6 +101,34 @@ class Module extends Module_Base {
 			[],
 			ELEMENTOR_PRO_VERSION
 		);
+	}
+
+	public function redirect_legacy_popups_promotion_url(): void {
+		$page = filter_input( INPUT_GET, 'page', FILTER_SANITIZE_FULL_SPECIAL_CHARS );
+
+		if ( static::PROMOTION_MENU_SLUG !== $page ) {
+			return;
+		}
+
+		if ( $this->can_use_popups() ) {
+			wp_safe_redirect( $this->get_admin_url() );
+			exit;
+		}
+
+		global $pagenow;
+
+		if ( $this->is_editor_one_active() ) {
+			if ( 'edit.php' !== $pagenow ) {
+				return;
+			}
+
+			if ( Source_Local::CPT !== filter_input( INPUT_GET, 'post_type', FILTER_SANITIZE_FULL_SPECIAL_CHARS ) ) {
+				return;
+			}
+
+			wp_safe_redirect( admin_url( 'admin.php?page=' . static::PROMOTION_MENU_SLUG ) );
+			exit;
+		}
 	}
 
 	public function enqueue_preview_styles() {
@@ -241,7 +289,7 @@ class Module extends Module_Base {
 		return $categories;
 	}
 
-	private function get_admin_url( $relative = false ) {
+	public function get_admin_url( $relative = false ) {
 		$base_url = Source_Local::ADMIN_MENU_SLUG;
 		if ( ! $relative ) {
 			$base_url = admin_url( $base_url );

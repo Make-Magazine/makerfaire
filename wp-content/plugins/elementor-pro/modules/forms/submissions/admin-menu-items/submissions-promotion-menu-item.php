@@ -39,7 +39,7 @@ class Submissions_Promotion_Menu_Item extends Base_Promotion_Template {
 		return 'https://www.youtube-nocookie.com/embed/LNfnwba9C-8?si=JLHk3UAexnvTfU1a';
 	}
 
-	public function get_cta_text() {
+	public function get_cta_text(): string {
 		if ( ! API::active_licence_has_feature( Form_Submissions_Component::NAME ) ) {
 			return esc_html__( 'Upgrade Now', 'elementor-pro' );
 		}

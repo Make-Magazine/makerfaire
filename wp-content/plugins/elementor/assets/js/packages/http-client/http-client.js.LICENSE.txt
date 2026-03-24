@@ -56,10 +56,6 @@
 
 /*! ../utils.js */
 
-/*! ./../core/settle.js */
-
-/*! ./../utils.js */
-
 /*! ./AxiosError.js */
 
 /*! ./AxiosHeaders.js */
@@ -126,6 +122,8 @@
 
 /*! ./isURLSameOrigin.js */
 
+/*! ./lib/axios.js */
+
 /*! ./mergeConfig.js */
 
 /*! ./node/index.js */
@@ -151,6 +149,10 @@
 /*!**************************************!*\
   !*** external ["elementorV2","env"] ***!
   \**************************************/
+
+/*!**********************************************!*\
+  !*** ./packages/node_modules/axios/index.js ***!
+  \**********************************************/
 
 /*!**************************************************!*\
   !*** ./packages/node_modules/axios/lib/axios.js ***!

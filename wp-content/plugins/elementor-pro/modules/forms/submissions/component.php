@@ -10,6 +10,7 @@ use ElementorPro\Modules\Forms\Submissions\AdminMenuItems\Submissions_Menu_Item;
 use ElementorPro\Modules\Forms\Submissions\AdminMenuItems\Submissions_Promotion_Menu_Item;
 use ElementorPro\Plugin;
 use ElementorPro\Base\Module_Base;
+use ElementorPro\Base\Editor_One_Trait;
 use ElementorPro\Modules\Forms\Submissions\Database\Query;
 use ElementorPro\Modules\Forms\Submissions\Data\Controller;
 use ElementorPro\Modules\Forms\Submissions\Database\Migration;
@@ -21,6 +22,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Component extends Module_Base {
+	use Editor_One_Trait;
 	const NAME = 'form-submissions';
 	const PAGE_ID = 'e-form-submissions';
 
@@ -187,6 +189,9 @@ class Component extends Module_Base {
 			} );
 		} else {
 			add_action( 'elementor/admin/menu/register', function( Admin_Menu_Manager $admin_menu ) {
+				if ( $this->is_editor_one_active() ) {
+					return;
+				}
 				$this->register_admin_menu_legacy( $admin_menu );
 			}, 9 /* After "Settings" */ );
 

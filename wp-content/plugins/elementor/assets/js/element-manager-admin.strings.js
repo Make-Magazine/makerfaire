@@ -53,6 +53,8 @@ __( 'times', 'elementor' );
 __( 'Show', 'elementor' );
 __( 'Search', 'elementor' );
 __( 'Plugin', 'elementor' );
+__( 'All Plugins', 'elementor' );
+__( 'All Plugins', 'elementor' );
 __( 'Status', 'elementor' );
 __( 'All Statuses', 'elementor' );
 __( 'Active', 'elementor' );

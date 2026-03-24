@@ -2,21 +2,27 @@
 namespace ElementorPro\Modules\AssetsManager\AssetTypes;
 
 use Elementor\Core\Admin\Menu\Admin_Menu_Manager;
-use Elementor\Utils;
-use ElementorPro\Core\Utils as Pro_Utils;
 use Elementor\Core\Common\Modules\Ajax\Module as Ajax;
+use Elementor\Modules\EditorOne\Classes\Menu_Data_Provider;
+use Elementor\Plugin;
+use Elementor\Settings;
+use Elementor\Utils;
+use ElementorPro\Base\Editor_One_Trait;
 use ElementorPro\Core\Behaviors\Feature_Lock;
+use ElementorPro\Core\Utils as Pro_Utils;
 use ElementorPro\License\API;
 use ElementorPro\Modules\AssetsManager\AssetTypes\AdminMenuItems\Custom_Fonts_Menu_Item;
 use ElementorPro\Modules\AssetsManager\AssetTypes\AdminMenuItems\Custom_Fonts_Promotion_Menu_Item;
+use ElementorPro\Modules\AssetsManager\AssetTypes\EditorOneMenuItems\Editor_One_Fonts_Menu_Item;
+use ElementorPro\Modules\AssetsManager\AssetTypes\EditorOneMenuItems\Editor_One_Fonts_Promotion;
 use ElementorPro\Modules\AssetsManager\Classes;
-use Elementor\Settings;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
 class Fonts_Manager {
+	use Editor_One_Trait;
 
 	const CAPABILITY = 'manage_options';
 
@@ -612,9 +618,6 @@ class Fonts_Manager {
 		return $parent_file;
 	}
 
-	/**
-	 * Register Font Manager action and filter hooks
-	 */
 	protected function actions() {
 		add_action( 'init', [ $this, 'register_post_type_and_tax' ] );
 
@@ -622,6 +625,10 @@ class Fonts_Manager {
 			add_action( 'init', [ $this, 'redirect_admin_old_page_to_new' ] );
 
 			add_action( 'elementor/admin/menu/register', function ( Admin_Menu_Manager $admin_menu_manager ) {
+				if ( $this->is_editor_one_active() ) {
+					return;
+				}
+
 				$this->register_admin_menu( $admin_menu_manager );
 			} );
 
@@ -643,6 +650,14 @@ class Fonts_Manager {
 			}, 50 );
 
 			add_action( 'admin_head', [ $this, 'clean_admin_listing_page' ] );
+
+			add_action( 'elementor/editor-one/menu/register', function ( Menu_Data_Provider $menu_data_provider ) {
+				if ( $this->can_use_custom_fonts() ) {
+					$menu_data_provider->register_menu( new Editor_One_Fonts_Menu_Item() );
+				} else {
+					$menu_data_provider->register_menu( new Editor_One_Fonts_Promotion() );
+				}
+			} );
 		}
 
 		// TODO: Maybe just ignore all of those when the user can't use custom fonts?
@@ -666,6 +681,12 @@ class Fonts_Manager {
 
 		// Ajax.
 		add_action( 'elementor/ajax/register_actions', [ $this, 'register_ajax_actions' ] );
+
+		add_filter( 'elementor/editor-one/admin-edit-post-types', function ( array $post_types ) {
+			$post_types[] = self::CPT;
+
+			return $post_types;
+		} );
 
 		/**
 		 * Elementor fonts manager loaded.

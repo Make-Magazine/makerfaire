@@ -23,6 +23,10 @@ class Contact_URL extends Tag {
 		return Module::ACTION_GROUP;
 	}
 
+	public function get_atomic_group() {
+		return Module::SITE_GROUP;
+	}
+
 	public function get_categories() {
 		return [ Module::URL_CATEGORY ];
 	}

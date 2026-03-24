@@ -283,7 +283,7 @@ function BarHeading(props) {
   }, /*#__PURE__*/_react.default.createElement("div", {
     className: "e-logo-wrapper"
   }, /*#__PURE__*/_react.default.createElement("i", {
-    className: "eicon-elementor",
+    className: "eicon-elementor-circle",
     "aria-hidden": "true"
   })), /*#__PURE__*/_react.default.createElement("span", {
     className: "e-admin-top-bar__heading-title"

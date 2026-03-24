@@ -62,7 +62,6 @@ __( 'Container', 'elementor' );
 __( 'Clear', 'elementor' );
 __( 'Color Picker', 'elementor' );
 __( 'Create New Global Color', 'elementor' );
-__( 'Item', 'elementor' );
 __( 'Item #%s', 'elementor' );
 __( 'New Typography Setting', 'elementor' );
 __( 'Are you sure you want to create a new Global Font setting?', 'elementor' );
@@ -87,6 +86,7 @@ __( 'Please note that the same exact color already exists in your Global Colors 
 __( 'Are you sure you want to create a new Global Color?', 'elementor' );
 __( 'New Global Color', 'elementor' );
 __( 'Are you sure you want to create a new Global Color?', 'elementor' );
+__( 'Item', 'elementor' );
 __( 'Add new layout element', 'elementor' );
 __( 'Paste', 'elementor' );
 __( 'Paste from other site', 'elementor' );

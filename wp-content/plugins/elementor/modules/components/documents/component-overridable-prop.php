@@ -25,10 +25,13 @@ class Component_Overridable_Prop {
 	public $label;
 
 	/** @var array{ $$type: string, value: mixed } */
-	public $default_value;
+	public $origin_value;
 
 	/** @var string */
 	public $group_id;
+
+	/** @var ?array{ $el_type: string, $widget_type: string, $prop_key: string } */
+	public $origin_prop_fields = null;
 
 	public function __construct( array $overridable_prop ) {
 		$this->override_key = $overridable_prop['overrideKey'];
@@ -37,8 +40,17 @@ class Component_Overridable_Prop {
 		$this->widget_type = $overridable_prop['widgetType'];
 		$this->prop_key = $overridable_prop['propKey'];
 		$this->label = $overridable_prop['label'];
-		$this->default_value = $overridable_prop['defaultValue'];
+		$this->origin_value = $overridable_prop['originValue'];
 		$this->group_id = $overridable_prop['groupId'] ?? null;
+
+		if ( isset( $overridable_prop['originPropFields'] ) ) {
+			$this->origin_prop_fields = [
+				'el_type' => $overridable_prop['originPropFields']['elType'],
+				'widget_type' => $overridable_prop['originPropFields']['widgetType'],
+				'prop_key' => $overridable_prop['originPropFields']['propKey'],
+				'element_id' => $overridable_prop['originPropFields']['elementId'],
+			];
+		}
 	}
 
 	public static function make( array $overridable_prop ): self {

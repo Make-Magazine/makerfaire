@@ -24,7 +24,7 @@ class Post_Custom_Field extends Tag {
 	}
 
 	public function get_categories() {
-		return [
+		$categories = [
 			Module::TEXT_CATEGORY,
 			Module::URL_CATEGORY,
 			Module::POST_META_CATEGORY,
@@ -32,6 +32,11 @@ class Post_Custom_Field extends Tag {
 			Module::DATETIME_CATEGORY,
 			Module::MEDIA_CATEGORY,
 		];
+
+		// TODO: Remove this in 3.37.0
+		$categories = Module::add_v4_svg_category( $categories );
+
+		return $categories;
 	}
 
 	public function get_panel_template_setting_key() {

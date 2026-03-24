@@ -823,8 +823,6 @@ class Form extends Form_Base {
 			]
 		);
 
-		$this->maybe_add_send_app_promotion_control();
-
 		$actions = Module::instance()->actions_registrar->get();
 
 		$actions_options = [];
@@ -2759,37 +2757,5 @@ class Form extends Form_Base {
 
 	public function get_group_name() {
 		return 'forms';
-	}
-
-	private function maybe_add_send_app_promotion_control(): void {
-		if ( Hints::is_plugin_installed( 'send-app' ) ) {
-			return;
-		}
-
-		$notice_id = 'send_app_forms_actions_notice';
-		if ( ! Hints::should_show_hint( $notice_id ) ) {
-			return;
-		}
-
-		$notice_content = wp_kses( __( 'Turning leads into sales can be easy.<br />Let Send do the work', 'elementor-pro' ), [ 'br' => [] ] );
-
-		$this->add_control(
-			'send_app_promo',
-			[
-				'type' => Controls_Manager::RAW_HTML,
-				'raw' => Hints::get_notice_template( [
-					'display' => ! Hints::is_dismissed( $notice_id ),
-					'type' => 'info',
-					'content' => $notice_content,
-					'icon' => true,
-					'dismissible' => $notice_id,
-					'button_text' => __( 'Start for free', 'elementor-pro' ),
-					'button_event' => $notice_id,
-					'button_data' => [
-						'action_url' => Hints::get_plugin_action_url( 'send-app' ),
-					],
-				], true ),
-			]
-		);
 	}
 }

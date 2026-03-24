@@ -4,13 +4,17 @@ namespace ElementorPro\Modules\CustomCode;
 use Elementor\Core\Admin\Menu\Admin_Menu_Manager;
 use Elementor\Core\Documents_Manager;
 use Elementor\Icons_Manager;
+use Elementor\Modules\EditorOne\Classes\Menu_Data_Provider;
 use Elementor\Settings;
 use Elementor\TemplateLibrary\Source_Local;
 use Elementor\Utils;
+use ElementorPro\Base\Editor_One_Trait;
 use ElementorPro\Base\Module_Base;
 use ElementorPro\License\API;
 use ElementorPro\Modules\CustomCode\AdminMenuItems\Custom_Code_Menu_Item;
 use ElementorPro\Modules\CustomCode\AdminMenuItems\Custom_Code_Promotion_Menu_Item;
+use ElementorPro\Modules\CustomCode\EditorOneMenuItems\Editor_One_Custom_Code_Menu_Item;
+use ElementorPro\Modules\CustomCode\EditorOneMenuItems\Editor_One_Custom_Code_Promotion;
 use ElementorPro\Modules\CustomCode\ImportExport\Import_Export as Custom_Code_Import_Export;
 use ElementorPro\Modules\CustomCode\ImportExportCustomization\Import_Export_Customization as Custom_Code_Import_Export_Customization;
 use ElementorPro\Modules\ThemeBuilder\Classes\Conditions_Manager;
@@ -22,6 +26,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Module extends Module_Base {
+	use Editor_One_Trait;
+
 	const CAPABILITY = 'manage_options';
 	const CPT = 'elementor_snippet';
 	const MODULE_NAME = 'custom_code';
@@ -72,6 +78,10 @@ class Module extends Module_Base {
 		}
 
 		add_action( 'elementor/admin/menu/register', function ( Admin_Menu_Manager $admin_menu_manager ) {
+			if ( $this->is_editor_one_active() ) {
+				return;
+			}
+
 			$this->add_admin_menu( $admin_menu_manager );
 		} );
 
@@ -91,6 +101,14 @@ class Module extends Module_Base {
 			);
 		}, /* After custom icons */  51 );
 
+		add_action( 'elementor/editor-one/menu/register', function ( Menu_Data_Provider $menu_data_provider ) {
+			if ( $this->can_use_custom_code() ) {
+				$menu_data_provider->register_menu( new Editor_One_Custom_Code_Menu_Item() );
+			} else {
+				$menu_data_provider->register_menu( new Editor_One_Custom_Code_Promotion() );
+			}
+		} );
+
 		add_action( 'current_screen', function () {
 			if ( ! is_admin() ) {
 				return;
@@ -106,6 +124,12 @@ class Module extends Module_Base {
 					$this->enqueue_assets();
 				}, 0 /* elementor-app-base styles should be loaded in early stages */ );
 			}
+		} );
+
+		add_filter( 'elementor/editor-one/admin-edit-post-types', function ( array $post_types ) {
+			$post_types[] = self::CPT;
+
+			return $post_types;
 		} );
 
 		$this->frontend_actions();

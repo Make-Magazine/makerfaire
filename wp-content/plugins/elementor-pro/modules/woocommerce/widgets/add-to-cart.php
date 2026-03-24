@@ -8,7 +8,6 @@ use ElementorPro\Core\Utils;
 use ElementorPro\Core\Utils\Hints;
 use ElementorPro\Modules\QueryControl\Module;
 use ElementorPro\Modules\Woocommerce\Traits\Product_Id_Trait;
-use ElementorPro\Modules\Woocommerce\Traits\Send_App_Plg_Trait;
 use ElementorPro\Plugin;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -18,7 +17,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Add_To_Cart extends Widget_Button {
 	use Base_Widget_Trait;
 	use Product_Id_Trait;
-	use Send_App_Plg_Trait;
 
 	public function get_name() {
 		return 'wc-add-to-cart';
@@ -75,8 +73,6 @@ class Add_To_Cart extends Widget_Button {
 				'label' => esc_html__( 'Product', 'elementor-pro' ),
 			]
 		);
-
-		$this->maybe_add_send_app_promotion_control( $this );
 
 		$this->add_control(
 			'product_id',

@@ -2,21 +2,28 @@
 namespace ElementorPro\License;
 
 use Elementor\Core\Admin\Admin_Notices;
+use Elementor\Modules\EditorOne\Classes\Menu_Data_Provider;
 use Elementor\Settings;
 use Elementor\Utils;
-use ElementorPro\Core\Utils as Pro_Utils;
+use ElementorPro\Base\Editor_One_Trait;
 use ElementorPro\Core\Connect\Apps\Activate;
+use ElementorPro\Core\Utils as Pro_Utils;
+use ElementorPro\License\API as License_API;
 use ElementorPro\License\Data\Controller;
+use ElementorPro\License\EditorOneMenuItems\Editor_One_License_Menu_Item;
+use ElementorPro\License\EditorOneMenuItems\Editor_One_Renew_Menu_Item;
+use ElementorPro\License\EditorOneMenuItems\Editor_One_Upgrade_Menu_Item;
 use ElementorPro\License\Notices\Trial_Expired_Notice;
 use ElementorPro\License\Notices\Trial_Period_Notice;
+use ElementorPro\License\One;
 use ElementorPro\Plugin;
-use ElementorPro\License\API as License_API;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
 class Admin {
+	use Editor_One_Trait;
 
 	const PAGE_ID = 'elementor-license';
 
@@ -155,6 +162,10 @@ class Admin {
 	}
 
 	public function register_page() {
+		if ( $this->is_editor_one_active() ) {
+			return;
+		}
+
 		$menu_text = esc_html__( 'License', 'elementor-pro' );
 
 		add_submenu_page(
@@ -214,10 +225,10 @@ class Admin {
 		}
 
 		?>
-		<div class="wrap elementor-admin-page-license">
+		<div class="wrap elementor-admin-page-license <?php echo $this->is_editor_one_active() ? 'elementor-admin-page-license-editor-one' : ''; ?>">
 			<h2 class="wp-heading-inline"><?php echo esc_html__( 'License Settings', 'elementor-pro' ); ?></h2>
 
-			<form class="elementor-license-box" method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>">
+			<form class="<?php echo esc_attr( $this->get_license_box_classes() ); ?>" method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>">
 				<?php wp_nonce_field( 'elementor-pro-license' ); ?>
 
 				<?php if ( empty( $license_key ) ) : ?>
@@ -263,6 +274,8 @@ class Admin {
 
 					<?php $this->render_part_error_notification( $license_data ); ?>
 
+					<?php $this->render_part_subscription_info(); ?>
+
 					<p class="e-row-stretch e-row-divider-bottom">
 						<span>
 						<?php
@@ -292,16 +305,31 @@ class Admin {
 						</a>
 					</p>
 
-					<p class="e-row-stretch">
-						<span><?php echo esc_html__( 'Want to deactivate the license for any reason?', 'elementor-pro' ); ?></span>
-						<a class="button" href="<?php echo esc_url( $this->get_deactivate_url() ); ?>">
-							<?php echo esc_html__( 'Disconnect', 'elementor-pro' ); ?>
-						</a>
-					</p>
+					<?php if ( $this->is_editor_one_active() ) : ?>
+						<p class="e-row-stretch">
+							<span><?php echo esc_html__( 'Want to deactivate the license for any reason?', 'elementor-pro' ); ?></span>
+							<?php if ( One::is_connected() ) : ?>
+								<a class="button" href="<?php echo esc_url( One::get_manage_subscription_url() ); ?>">
+									<?php echo esc_html__( 'Manage Subscription', 'elementor-pro' ); ?>
+								</a>
+							<?php else : ?>
+								<a class="button" href="<?php echo esc_url( $this->get_deactivate_url() ); ?>">
+									<?php echo esc_html__( 'Disconnect', 'elementor-pro' ); ?>
+								</a>
+							<?php endif; ?>
+						</p>
+					<?php else : ?>
+						<p class="e-row-stretch">
+							<span><?php echo esc_html__( 'Want to deactivate the license for any reason?', 'elementor-pro' ); ?></span>
+							<a class="button" href="<?php echo esc_url( $this->get_deactivate_url() ); ?>">
+								<?php echo esc_html__( 'Disconnect', 'elementor-pro' ); ?>
+							</a>
+						</p>
+					<?php endif; ?>
 				<?php endif; ?>
 			</form>
 			<?php if ( License_API::TIER_ESSENENTIAL === License_API::get_access_tier() ) : ?>
-				<p id="tier-upgrade-promotion" class="elementor-license-box e-row-stretch">
+				<p id="tier-upgrade-promotion" class="<?php echo esc_attr( $this->get_license_box_classes( 'e-row-stretch' ) ); ?>">
 					<span><?php echo esc_html__( 'Get more advanced features', 'elementor-pro' ); ?></span>
 					<a class="button elementor-upgrade-link" target="_blank" href="https://go.elementor.com/go-pro-advanced-license-screen/">
 						<?php echo Pro_Utils::is_sale_time() ? esc_html__( 'Discounted Upgrades', 'elementor-pro' ) : esc_html__( 'Upgrade now', 'elementor-pro' ); ?>
@@ -372,6 +400,29 @@ class Admin {
 				); ?>
 			</p>
 		<?php endif;
+	}
+
+	private function render_part_subscription_info() {
+		if ( ! $this->is_editor_one_active() || ! API::is_license_active() ) {
+			return;
+		}
+
+		$subscription_id = API::get_subscription_id();
+		$subscription_name = One::is_connected()
+			? One::get_subscription_display_name()
+			: API::get_subscription_display_name();
+
+		?>
+		<p class="e-row-stretch e-row-divider-bottom">
+			<span>
+				<strong><?php echo esc_html__( 'Subscription', 'elementor-pro' ); ?>:</strong>
+				<?php echo esc_html( $subscription_name ); ?>
+				<?php if ( $subscription_id ) : ?>
+					- <?php echo esc_html( $subscription_id ); ?>
+				<?php endif; ?>
+			</span>
+		</p>
+		<?php
 	}
 
 	private function is_block_editor_page() {
@@ -614,7 +665,7 @@ class Admin {
 		<div class="wrap elementor-admin-page-license">
 			<h2><?php echo esc_html__( 'License Settings', 'elementor-pro' ); ?></h2>
 
-			<form class="elementor-license-box" method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>">
+			<form class="<?php echo esc_attr( $this->get_license_box_classes() ); ?>" method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>">
 				<?php wp_nonce_field( 'elementor-pro-license' ); ?>
 
 				<h3>
@@ -752,11 +803,19 @@ class Admin {
 		}
 	}
 
+	public function register_editor_one_menu( Menu_Data_Provider $menu_data_provider ): void {
+		$menu_data_provider->register_menu( new Editor_One_License_Menu_Item() );
+		$menu_data_provider->register_menu( new Editor_One_Renew_Menu_Item() );
+		$menu_data_provider->register_menu( new Editor_One_Upgrade_Menu_Item() );
+	}
+
 	public function register_actions() {
 		add_action( 'admin_menu', [ $this, 'register_page' ], 800 );
 		add_action( 'admin_init', [ $this, 'handle_tracker_actions' ], 9 );
 		add_action( 'admin_post_elementor_pro_activate_license', [ $this, 'action_activate_license' ] );
 		add_action( 'admin_post_elementor_pro_deactivate_license', [ $this, 'action_deactivate_license' ] );
+
+		add_action( 'elementor/editor-one/menu/register', [ $this, 'register_editor_one_menu' ] );
 
 		add_action( 'admin_notices', [ $this, 'admin_license_details' ], 20 );
 
@@ -796,5 +855,19 @@ class Admin {
 
 	private function register_rest_controller() {
 		new Controller();
+	}
+
+	private function get_license_box_classes( string $additional_classes = '' ): string {
+		$classes = [ 'elementor-license-box' ];
+
+		if ( $additional_classes ) {
+			$classes[] = $additional_classes;
+		}
+
+		if ( $this->is_editor_one_active() ) {
+			$classes[] = 'e-one-section-outlined';
+		}
+
+		return implode( ' ', $classes );
 	}
 }

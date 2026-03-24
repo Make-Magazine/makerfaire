@@ -111,6 +111,7 @@ const CustomCss = () => {
   } = (0,_elementor_editor_editing_panel__WEBPACK_IMPORTED_MODULE_3__.useCustomCss)();
   const metaKey = `${meta.breakpoint || 'desktop'}-${meta.state || 'default'}-${id}`;
   const [localStates, setLocalStates] = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)({});
+  const [hasLicense, setHasLicense] = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(true);
   (0,react__WEBPACK_IMPORTED_MODULE_0__.useEffect)(() => {
     if (!localStates[metaKey]) {
       setLocalStates(prev => ({
@@ -123,6 +124,13 @@ const CustomCss = () => {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [metaKey]);
+  (0,react__WEBPACK_IMPORTED_MODULE_0__.useEffect)(() => {
+    const checkLicense = async () => {
+      const isLicenseExpired = await (0,_elementor_editor_controls_extended__WEBPACK_IMPORTED_MODULE_2__.getIsLicenseExpired)(true);
+      setHasLicense(!isLicenseExpired);
+    };
+    checkLicense();
+  }, []);
   const currentLocalState = (0,react__WEBPACK_IMPORTED_MODULE_0__.useMemo)(() => {
     return localStates[metaKey] || {
       value: customCss?.raw || '',
@@ -164,7 +172,8 @@ const CustomCss = () => {
   }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(_elementor_editor_controls__WEBPACK_IMPORTED_MODULE_1__.ControlFormLabel, null, (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_5__.__)('CSS code', 'elementor-pro')), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(_elementor_editor_controls__WEBPACK_IMPORTED_MODULE_1__.ControlAdornments, null))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(_elementor_editor_controls_extended__WEBPACK_IMPORTED_MODULE_2__.CssEditor, {
     value: currentLocalState.value,
     onChange: handleChange,
-    syntaxRuleOptions: syntaxRuleOptions
+    syntaxRuleOptions: syntaxRuleOptions,
+    readOnly: !hasLicense
   }));
 };
 
@@ -199,10 +208,15 @@ __webpack_require__.r(__webpack_exports__);
 async function init() {
   _elementor_editor_canvas__WEBPACK_IMPORTED_MODULE_0__.settingsTransformersRegistry.register('attributes', _transformers_settings_attributes_transformer__WEBPACK_IMPORTED_MODULE_5__.proAttributesTransformer);
   _elementor_editor_editing_panel__WEBPACK_IMPORTED_MODULE_2__.controlsRegistry.register('attributes', _elementor_editor_controls_extended__WEBPACK_IMPORTED_MODULE_1__.AttributesControl, 'full', _elementor_editor_props__WEBPACK_IMPORTED_MODULE_3__.keyValuePropTypeUtil);
-  (0,_elementor_editor_editing_panel__WEBPACK_IMPORTED_MODULE_2__.injectIntoStyleTab)({
-    id: 'custom-css',
-    component: _components_custom_css_section__WEBPACK_IMPORTED_MODULE_4__.CustomCssStyleSection
-  });
+  if (await (0,_elementor_editor_controls_extended__WEBPACK_IMPORTED_MODULE_1__.licenseApi)('atomic-custom-css')) {
+    (0,_elementor_editor_editing_panel__WEBPACK_IMPORTED_MODULE_2__.injectIntoStyleTab)({
+      id: 'custom-css',
+      component: _components_custom_css_section__WEBPACK_IMPORTED_MODULE_4__.CustomCssStyleSection,
+      options: {
+        overwrite: true
+      }
+    });
+  }
   _elementor_editor_editing_panel__WEBPACK_IMPORTED_MODULE_2__.controlsRegistry.register('display-conditions', _elementor_editor_controls_extended__WEBPACK_IMPORTED_MODULE_1__.DisplayConditionsControl, 'two-columns', _elementor_editor_controls_extended__WEBPACK_IMPORTED_MODULE_1__.displayConditionsPropTypeUtil);
 }
 

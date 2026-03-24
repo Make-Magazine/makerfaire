@@ -579,7 +579,7 @@ function Header(props) {
   }, /*#__PURE__*/_react.default.createElement(TitleTag, (0, _extends2.default)({
     className: "eps-app__logo-title-wrapper"
   }, titleAttrs), /*#__PURE__*/_react.default.createElement("i", {
-    className: "eps-app__logo eicon-elementor"
+    className: "eps-app__logo eicon-elementor-circle"
   }), /*#__PURE__*/_react.default.createElement("h1", {
     className: "eps-app__title"
   }, props.title)), /*#__PURE__*/_react.default.createElement(_headerButtons.default, {
@@ -4081,6 +4081,62 @@ var htmlDecodeTextContent = exports.htmlDecodeTextContent = function htmlDecodeT
 
 /***/ }),
 
+/***/ "../app/modules/import-export/assets/js/shared/utils/is-valid-redirect-url.js":
+/*!************************************************************************************!*\
+  !*** ../app/modules/import-export/assets/js/shared/utils/is-valid-redirect-url.js ***!
+  \************************************************************************************/
+/***/ ((__unused_webpack_module, exports) => {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", ({
+  value: true
+}));
+exports["default"] = isValidRedirectUrl;
+function isValidRedirectUrl(url) {
+  try {
+    var parsedUrl = new URL(url);
+    return parsedUrl.hostname === window.location.hostname && ('http:' === parsedUrl.protocol || 'https:' === parsedUrl.protocol);
+  } catch (e) {
+    return false;
+  }
+}
+
+/***/ }),
+
+/***/ "../app/modules/import-export/assets/js/shared/utils/redirect.js":
+/*!***********************************************************************!*\
+  !*** ../app/modules/import-export/assets/js/shared/utils/redirect.js ***!
+  \***********************************************************************/
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+"use strict";
+
+
+var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault */ "../node_modules/@babel/runtime/helpers/interopRequireDefault.js");
+Object.defineProperty(exports, "__esModule", ({
+  value: true
+}));
+exports["default"] = safeRedirect;
+var _isValidRedirectUrl = _interopRequireDefault(__webpack_require__(/*! ./is-valid-redirect-url */ "../app/modules/import-export/assets/js/shared/utils/is-valid-redirect-url.js"));
+function safeRedirect(url) {
+  try {
+    if (url.startsWith('/')) {
+      url = window.location.origin + url;
+    }
+    var decodedUrl = decodeURIComponent(url);
+    if ((0, _isValidRedirectUrl.default)(decodedUrl)) {
+      window.location.href = decodedUrl;
+      return true;
+    }
+  } catch (e) {
+    return false;
+  }
+}
+
+/***/ }),
+
 /***/ "../app/modules/site-editor/assets/js/context/template-types.js":
 /*!**********************************************************************!*\
   !*** ../app/modules/site-editor/assets/js/context/template-types.js ***!
@@ -4796,27 +4852,42 @@ function Promotion() {
 
 
 var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault */ "../node_modules/@babel/runtime/helpers/interopRequireDefault.js");
+var _typeof = __webpack_require__(/*! @babel/runtime/helpers/typeof */ "../node_modules/@babel/runtime/helpers/typeof.js");
 Object.defineProperty(exports, "__esModule", ({
   value: true
 }));
 exports["default"] = Layout;
-var _react = _interopRequireDefault(__webpack_require__(/*! react */ "react"));
+var _react = _interopRequireWildcard(__webpack_require__(/*! react */ "react"));
 var _page = _interopRequireDefault(__webpack_require__(/*! elementor-app/layout/page */ "../app/assets/js/layout/page.js"));
 var _menu = _interopRequireDefault(__webpack_require__(/*! ../organisms/menu */ "../app/modules/site-editor/assets/js/organisms/menu.js"));
 var _templateTypes = _interopRequireDefault(__webpack_require__(/*! ../context/template-types */ "../app/modules/site-editor/assets/js/context/template-types.js"));
+var _useQueryParams = _interopRequireDefault(__webpack_require__(/*! elementor-app/hooks/use-query-params */ "../app/assets/js/hooks/use-query-params.js"));
+var _redirect = _interopRequireDefault(__webpack_require__(/*! ../../../../import-export/assets/js/shared/utils/redirect */ "../app/modules/import-export/assets/js/shared/utils/redirect.js"));
 __webpack_require__(/*! ./site-editor.scss */ "../app/modules/site-editor/assets/js/templates/site-editor.scss");
+function _interopRequireWildcard(e, t) { if ("function" == typeof WeakMap) var r = new WeakMap(), n = new WeakMap(); return (_interopRequireWildcard = function _interopRequireWildcard(e, t) { if (!t && e && e.__esModule) return e; var o, i, f = { __proto__: null, default: e }; if (null === e || "object" != _typeof(e) && "function" != typeof e) return f; if (o = t ? n : r) { if (o.has(e)) return o.get(e); o.set(e, f); } for (var _t in e) "default" !== _t && {}.hasOwnProperty.call(e, _t) && ((i = (o = Object.defineProperty) && Object.getOwnPropertyDescriptor(e, _t)) && (i.get || i.set) ? o(f, _t, i) : f[_t] = e[_t]); return f; })(e, t); }
 function Layout(props) {
-  var _props$titleRedirectR;
-  var config = {
-    title: __('Theme Builder', 'elementor'),
-    titleRedirectRoute: (_props$titleRedirectR = props.titleRedirectRoute) !== null && _props$titleRedirectR !== void 0 ? _props$titleRedirectR : null,
-    headerButtons: props.headerButtons,
-    sidebar: /*#__PURE__*/_react.default.createElement(_menu.default, {
-      allPartsButton: props.allPartsButton,
-      promotion: props.promotion
-    }),
-    content: props.children
-  };
+  var _useQueryParams$getAl = (0, _useQueryParams.default)().getAll(),
+    returnTo = _useQueryParams$getAl.return_to;
+  var onClose = (0, _react.useCallback)(function () {
+    if (returnTo && (0, _redirect.default)(returnTo)) {
+      return;
+    }
+    window.top.location = elementorAppConfig.admin_url;
+  }, [returnTo]);
+  var config = (0, _react.useMemo)(function () {
+    var _props$titleRedirectR;
+    return {
+      title: __('Theme Builder', 'elementor'),
+      titleRedirectRoute: (_props$titleRedirectR = props.titleRedirectRoute) !== null && _props$titleRedirectR !== void 0 ? _props$titleRedirectR : null,
+      headerButtons: props.headerButtons,
+      sidebar: /*#__PURE__*/_react.default.createElement(_menu.default, {
+        allPartsButton: props.allPartsButton,
+        promotion: props.promotion
+      }),
+      content: props.children,
+      onClose: onClose
+    };
+  }, [props.titleRedirectRoute, props.headerButtons, props.allPartsButton, props.promotion, props.children, onClose]);
   return /*#__PURE__*/_react.default.createElement(_templateTypes.default, null, /*#__PURE__*/_react.default.createElement(_page.default, config));
 }
 Layout.propTypes = {

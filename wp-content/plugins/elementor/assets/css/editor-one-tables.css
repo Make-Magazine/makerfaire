@@ -45,12 +45,19 @@
 }
 .form-table td > label,
 .form-table td > .elementor-field-row {
-  display: flex;
-  align-items: flex-start;
-  gap: 4px;
+  display: block;
+  position: relative;
+  padding-inline-start: 24px;
   font-size: 13px;
   color: var(--e-one-palette-text-primary);
-  line-height: 1.4;
+  line-height: 1.5;
+}
+.form-table td > label input[type=checkbox],
+.form-table td > .elementor-field-row input[type=checkbox] {
+  position: absolute;
+  inset-inline-start: 0;
+  inset-block-start: 2px;
+  margin: 0;
 }
 .form-table .description {
   color: var(--e-one-palette-text-tertiary);
@@ -131,7 +138,6 @@
 .wp-list-table tbody td {
   color: var(--e-one-palette-text-primary);
   font-size: 13px;
-  font-weight: 400;
   padding: 10px;
 }
 .wp-list-table tbody td:last-child {
@@ -277,5 +283,17 @@
 }
 #elementor-element-manager-wrap .wp-list-table tbody td .MuiSwitch-root {
   margin: 0;
+}
+
+@media screen and (min-width: 783px) {
+  body.post-type-elementor_library .wp-list-table thead th#title, body.post-type-elementor_library .wp-list-table thead th.column-title {
+    width: 20%;
+  }
+  body.post-type-elementor_library .wp-list-table tbody td#title, body.post-type-elementor_library .wp-list-table tbody td.column-title {
+    width: 20%;
+  }
+}
+.wp-list-table:not(.e-form-submissions-list-table) tbody td {
+  font-weight: 400;
 }
 /*# sourceMappingURL=editor-one-tables.css.map */
