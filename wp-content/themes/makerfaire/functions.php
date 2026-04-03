@@ -644,3 +644,10 @@ function gf_wprocket()  {
 }
 add_action( 'gform_register_init_scripts', 'gf_wprocket', 9999, 0 );
 */
+//admins should always be gravityform api users
+add_filter('gform_webapi_get_users_settings_page', function($args) {
+    return array(
+        'role__in' => ['administrator'],
+        'number'   => -1,
+    );
+});
