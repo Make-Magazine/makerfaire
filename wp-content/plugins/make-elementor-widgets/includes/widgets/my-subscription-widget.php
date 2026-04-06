@@ -226,7 +226,7 @@ class Elementor_mySubscription_Widget extends \Elementor\Widget_Base {
 		*/
 			//echo '<b>Calling customer by email API '.$sub_by_email_api.'</b><br/>';
 			$sub_by_email_api = 'https://ows.omeda.com/webservices/rest/brand/MK/customer/email/' . $user_email . '/subscription/product/7/*';
-			$header = array("x-omeda-appid: 0387143E-E0DB-4D2F-8441-8DAB0AF47954");
+			$header = array("x-omeda-appid: ".OMEDA_APP_ID);
 
 			$subscriptionJson = json_decode(MakeBasicCurl($sub_by_email_api, $header));
 
