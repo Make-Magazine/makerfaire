@@ -645,3 +645,9 @@ b, strong {
       }
   }
 }
+// hide floating footer on bay area pages
+.parent-pageid-719770, .pageid-719770 {
+  .floating-footer {
+    display: none !important;
+  }
+}
