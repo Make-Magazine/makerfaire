@@ -185,8 +185,7 @@ if (isset($entry->errors)) {
     }
 
     $project_short = (isset($entry['16']) ? $entry['16'] : '');    // Description
-    $presentation_title  = (isset($entry['880']) ? $entry['880'] : '');
-    $presentation_description = (isset($entry['882']) ? $entry['882'] : '');
+    $presentation_title  = (isset($entry['880']) ? $entry['880'] : ''); // this is just used for presenterSigns.php. Do we need it to be separate fron Project Title
 
     //field 287 and field 877 can be used in a form for any text input question.
     //We will display these on the entry detail form
