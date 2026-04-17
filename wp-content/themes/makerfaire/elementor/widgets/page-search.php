@@ -149,8 +149,8 @@ class Page_Search extends Widget_Base {
 					jQuery('.elementor-tab-content').css('display', 'block');
 				}
 				if(jQuery('.e-n-accordion-item-title[aria-expanded="false"]').length > 0) {
-					jQuery('.e-n-accordion-item-title').attr('aria-expanded', 'true');
-					jQuery('.e-n-accordion-item .elementor-element').css('display', 'block');
+					jQuery('details.e-n-accordion-item').prop('open', true);
+
 				}
 				var searchVal = this.value;
 				$content.unmark({
