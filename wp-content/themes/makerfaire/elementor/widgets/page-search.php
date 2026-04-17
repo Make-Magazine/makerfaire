@@ -69,7 +69,6 @@ class Page_Search extends Widget_Base {
 			.make-searchbar {
 				flex-wrap: wrap;
 				display: flex;
-				z-index: 99999;
 				padding: 15px;
 				background: #f1f1f1;
 				border: solid 1px #ccc;
@@ -77,13 +76,6 @@ class Page_Search extends Widget_Base {
 			}
 			.make-searchbar img {
 				filter: brightness(0) invert(1);
-			}
-			@media screen and (min-width: 768px) {
-				.elementor-element:has(> .e-con-inner > .elementor-widget-page_search) {
-					position: sticky;
-					top: 500px;
-					z-index: 9;
-				}
 			}
 			.make-searchbar h4 {
 				width: 100%;
