@@ -79,10 +79,10 @@ class Page_Search extends Widget_Base {
 				filter: brightness(0) invert(1);
 			}
 			@media screen and (min-width: 768px) {
-				.make-searchbar {
-					position: fixed;
-					top: 150px;
-					right: 10px;
+				.elementor-element:has(> .e-con-inner > .elementor-widget-page_search) {
+					position: sticky;
+					top: 500px;
+					z-index: 9;
 				}
 			}
 			.make-searchbar h4 {
