@@ -78,10 +78,11 @@ class Page_Search extends Widget_Base {
 			.make-searchbar img {
 				filter: brightness(0) invert(1);
 			}
-			@media screen and (max-width: 768px) {
+			@media screen and (min-width: 768px) {
 				.make-searchbar {
-					top: auto;
-					bottom: 0px;
+					position: fixed;
+					top: 150px;
+					right: 10px;
 				}
 			}
 			.make-searchbar h4 {
