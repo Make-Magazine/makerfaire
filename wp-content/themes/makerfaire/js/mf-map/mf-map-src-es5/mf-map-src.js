@@ -148,7 +148,6 @@ jQuery(document).ready(function () {
         var useragent = navigator.userAgent,
           mapdiv = this.$refs.map;
         if (useragent.indexOf('iPhone') != -1 || useragent.indexOf('Android') != -1) {
-          _self.map.setZoom(2);
           mapdiv.style.width = '100%';
           mapdiv.style.height = '300px';
         } else {
@@ -509,22 +508,19 @@ jQuery(document).ready(function () {
       },
       // adding the markers to the map
       addMarkers: function addMarkers() {
-        // first clear all existing markers and markerClusters
+        if (!this.map) return;
         for (var i = 0; i < this.markers.length; i++) {
           this.markers[i].setMap(null);
         }
-        this.markers = new Array();
-        if (this.markerCluster) {
-          this.markerCluster.clearMarkers();
-        }
-        var gMarkerIcon = {
-          path: google.maps.SymbolPath.CIRCLE,
-          scale: 6,
-          fillOpacity: 2,
-          strokeOpacity: 0
-        };
-        this.markers = this.filteredData.map(function (location, i) {
-          // styling for the various types of faires... flagship is now: Global
+        this.markers = [];
+        this.markers = this.filteredData.map(function (location) {
+          var gMarkerIcon = {
+            // ← inside the loop
+            path: google.maps.SymbolPath.CIRCLE,
+            scale: 6,
+            fillOpacity: 2,
+            strokeOpacity: 0
+          };
           switch (location.category) {
             case 'Flagship':
               gMarkerIcon.fillColor = '#F5A623';
@@ -538,7 +534,6 @@ jQuery(document).ready(function () {
             default:
               gMarkerIcon.fillColor = '#67D0F7';
           }
-          //this math random business keeps faires that were in the same location year after year from being on top of each other and not individually clickable
           var latLng = {
             lat: parseFloat(location.lat) + Math.random() / 1000,
             lng: parseFloat(location.lng) + Math.random() / 1000
@@ -546,23 +541,53 @@ jQuery(document).ready(function () {
           var marker = new google.maps.Marker({
             icon: gMarkerIcon,
             position: latLng,
-            label: '',
             title: location.faire_name
           });
           marker.addListener('click', function () {
-            // for faires that have a start and end date
             var myWindow = new google.maps.InfoWindow({
-              content: '<div style=""><h4>' + location.faire_name + '</h4><p>' + location.venue_address_street + '</p><p>' + location.event_dt + '</p><p><a href="' + location.faire_url + '" target="_blank">' + location.faire_url + '</a></p></div>'
+              content: '<div><h4>' + location.faire_name + '</h4><p>' + location.venue_address_street + '</p><p>' + location.event_dt + '</p><p><a href="' + location.faire_url + '" target="_blank">' + location.faire_url + '</a></p></div>'
             });
             myWindow.open(this.map, marker);
           });
           return marker;
         });
-        //Add a marker clusterer to manage the markers.
-        this.markerCluster = new MarkerClusterer(this.map, this.markers, {
-          imagePath: '/wp-content/themes/makerfaire/js/mf-map/markers/m',
-          gridSize: 40
-        });
+        if (!this.markerCluster) {
+          this.markerCluster = new markerClusterer.MarkerClusterer({
+            map: this.map,
+            markers: this.markers,
+            renderer: {
+              render: function render(_ref) {
+                var count = _ref.count,
+                  position = _ref.position;
+                var icon;
+                if (count < 3) {
+                  icon = '/wp-content/themes/makerfaire/js/mf-map/markers/m1.png';
+                } else if (count < 7) {
+                  icon = '/wp-content/themes/makerfaire/js/mf-map/markers/m2.png';
+                } else {
+                  icon = '/wp-content/themes/makerfaire/js/mf-map/markers/m3.png';
+                }
+                return new google.maps.Marker({
+                  position: position,
+                  icon: {
+                    url: icon,
+                    scaledSize: new google.maps.Size(53, 52)
+                  },
+                  label: {
+                    text: String(count),
+                    color: 'white',
+                    fontWeight: 'bold',
+                    fontSize: '12px'
+                  },
+                  zIndex: 1000 + count
+                });
+              }
+            }
+          });
+        } else {
+          this.markerCluster.clearMarkers();
+          this.markerCluster.addMarkers(this.markers);
+        }
       }
     }
   });
