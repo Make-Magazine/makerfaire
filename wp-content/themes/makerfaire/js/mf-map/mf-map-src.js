@@ -84,7 +84,7 @@ jQuery(document).ready(function () {
 			buttonMessage: "Show All Faires Ever",
 			map: null,
 			markerCluster: null,
-			mapDefaultZoom: 2,
+			mapDefaultZoom: 2.5,
 			mapMinZoom: 2,
 			mapMaxZoom: 20,
 			mapDefaultPos: {
@@ -140,11 +140,12 @@ jQuery(document).ready(function () {
 					mapdiv = this.$refs.map;
 
 				if (useragent.indexOf('iPhone') != -1 || useragent.indexOf('Android') != -1) {
+					_self.map.setZoom(2);
 					mapdiv.style.width = '100%';
 					mapdiv.style.height = '300px';
 				} else {
 					mapdiv.style.width = '100%';
-					mapdiv.style.height = '450px';
+					mapdiv.style.height = '600px';
 				}
 			},
 			initMap: function () {

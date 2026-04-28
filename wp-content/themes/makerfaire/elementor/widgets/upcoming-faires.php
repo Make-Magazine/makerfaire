@@ -277,9 +277,9 @@ class Upcoming_Faires extends Widget_Base {
 					if(!empty($row->faire_image) && @getimagesize($row->faire_image) !== false) {
 						$return .=  "<img src='$row->faire_image' alt='$name' />";
 					} else if($event_type == "School") {
-						$return .=  "<img src='".random_pic(wp_upload_dir()['basedir'] . '/MF_RMT_school_defaults')."' alt='$name'  />";
+						$return .=  "<img src='".random_pic(get_template_directory() . '/images/MF_RMT_school_defaults')."' alt='$name'  />";
 					} else {
-						$return .=  "<img src='".random_pic(wp_upload_dir()['basedir'] . '/MF_RMT_defaults')."' alt='$name'  />";
+						$return .=  "<img src='".random_pic(get_template_directory() . '/images/MF_RMT_defaults')."' alt='$name'  />";
 					}
 				}
 				$return .= 		"<div class='uf-date-row'>";
