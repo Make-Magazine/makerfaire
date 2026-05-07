@@ -22,9 +22,8 @@ foreach (glob($templatePath . '/functions/*/*.php') as $file) {
     include_once $file;
 }
 
-if(isset($_GET['doing_wp_cron'])) {
-	include_once dirname(__FILE__) . '/makershed/makershed_cron.php';
-}
+// cron job to populate wp_makershedfeed table
+include_once dirname(__FILE__) . '/makershed/makershed_cron.php';
 
 // Include all custom post type files in the /cpt directory:
 foreach (glob($templatePath . '/cpt/*.php') as $file) {
