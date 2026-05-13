@@ -64,8 +64,8 @@
         </script>
 
         <?php
-        // Tracking pixels users can turn off through the cookie law checkbox -- defaults to yes
-        if (!isset($_COOKIE['cookielawinfo-checkbox-non-necessary']) || $_COOKIE['cookielawinfo-checkbox-non-necessary'] == "yes") {
+        // Tracking pixels users can turn off through the cookie law checkbox -- defaults to no
+        if (isset($_COOKIE['cookielawinfo-checkbox-non-necessary']) && $_COOKIE['cookielawinfo-checkbox-non-necessary'] == 'yes') {
             //get_template_part('dfp');
             ?>
 			<!-- Data layer Object -->
@@ -123,8 +123,8 @@
     <body id="makerfaire" <?php body_class('no-js'); ?>>
 		<div id="page" class="site-container">
         <?php
-        // Tracking pixels users can turn off through the cookie law checkbox
-        if (!isset($_COOKIE['cookielawinfo-checkbox-non-necessary']) || $_COOKIE['cookielawinfo-checkbox-non-necessary'] == "yes") {
+        // Tracking pixels users can turn off through the cookie law checkbox -- defaults to no
+        if (isset($_COOKIE['cookielawinfo-checkbox-non-necessary']) && $_COOKIE['cookielawinfo-checkbox-non-necessary'] == 'yes') {
             ?>
 			<!-- Google Tag Manager (noscript) -->
 			<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-PCDDDV"

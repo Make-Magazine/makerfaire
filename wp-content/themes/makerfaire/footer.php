@@ -32,8 +32,8 @@
 </script>
 
 <?php
-// Tracking pixels users can turn off through the cookie law checkbox -- defaults to yes
-if (!isset($_COOKIE['cookielawinfo-checkbox-non-necessary']) || $_COOKIE['cookielawinfo-checkbox-non-necessary'] == "yes") {
+// Tracking pixels users can turn off through the cookie law checkbox -- defaults to no
+if (isset($_COOKIE['cookielawinfo-checkbox-non-necessary']) && $_COOKIE['cookielawinfo-checkbox-non-necessary'] == 'yes') {
     ?>
     <div id="fb-root"></div>
     <script>(function (d, s, id) {
