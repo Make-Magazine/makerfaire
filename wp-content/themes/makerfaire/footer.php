@@ -31,41 +31,6 @@
     });        
 </script>
 
-<?php
-// Tracking pixels users can turn off through the cookie law checkbox -- defaults to no
-if (isset($_COOKIE['cookielawinfo-checkbox-non-necessary']) && $_COOKIE['cookielawinfo-checkbox-non-necessary'] == 'yes') {
-    ?>
-    <div id="fb-root"></div>
-    <script>(function (d, s, id) {
-            var js, fjs = d.getElementsByTagName(s)[0];
-            if (d.getElementById(id))
-                return;
-            js = d.createElement(s);
-            js.id = id;
-            js.src = "//connect.facebook.net/en_US/all.js#xfbml=1&appId=131038253638769";
-            fjs.parentNode.insertBefore(js, fjs);
-        }(document, 'script', 'facebook-jssdk'));
-    </script>
-
-    <!-- Start Active Campaign Pixel -->
-    <script type="text/javascript">
-        (function (e, t, o, n, p, r, i) {
-            e.visitorGlobalObjectAlias = n;
-            e[e.visitorGlobalObjectAlias] = e[e.visitorGlobalObjectAlias] || function () {
-                (e[e.visitorGlobalObjectAlias].q = e[e.visitorGlobalObjectAlias].q || []).push(arguments)};e[e.visitorGlobalObjectAlias].l = (new Date).getTime();
-            r = t.createElement("script");
-            r.src = o;
-            r.async = true;
-            i = t.getElementsByTagName("script")[0];
-            i.parentNode.insertBefore(r, i)
-        })(window, document, "https://diffuser-cdn.app-us1.com/diffuser/diffuser.js", "vgo");
-        vgo('setAccount', '1000801328');
-        vgo('setTrackByDefault', true);
-        vgo('process');
-    </script>
-    <!-- Start Active Campaign Pixel -->
-
-<?php } // end of cookie law if  ?>
 
 <script type="text/javascript">
     jQuery(document).ready(function () {

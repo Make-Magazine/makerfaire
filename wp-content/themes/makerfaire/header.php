@@ -29,110 +29,11 @@
         </script>
         <!-- Le styles -->
         <?php wp_head(); ?>
-        <!-- Remarketing pixel -->
-        <script type="text/javascript">
-            adroll_adv_id = "QZ72KCGOPBGLLLPAE3SDSI";
-            adroll_pix_id = "RGZKRB7CHJF5RBMNCUJREU";
-            (function () {
-                var oldonload = window.onload;
-                window.onload = function () {
-                    __adroll_loaded = true;
-                    var scr = document.createElement("script");
-                    var host = (("https:" == document.location.protocol) ? "https://s.adroll.com" : "http://a.adroll.com");
-                    scr.setAttribute('async', 'true');
-                    scr.type = "text/javascript";
-                    scr.src = host + "/j/roundtrip.js";
-                    ((document.getElementsByTagName('head') || [null])[0] ||
-                            document.getElementsByTagName('script')[0].parentNode).appendChild(scr);
-                    if (oldonload) {
-                        oldonload()
-                    }
-                };
-            }());
-        </script>
-
-        <script>
-            var _prum = [['id', '53fcea2fabe53d341d4ae0eb'],
-                ['mark', 'firstbyte', (new Date()).getTime()]];
-            (function () {
-                var s = document.getElementsByTagName('script')[0]
-                        , p = document.createElement('script');
-                p.async = 'async';
-                p.src = '//rum-static.pingdom.net/prum.min.js';
-                s.parentNode.insertBefore(p, s);
-            })();
-        </script>
-
-        <?php
-        // Tracking pixels users can turn off through the cookie law checkbox -- defaults to no
-        if (isset($_COOKIE['cookielawinfo-checkbox-non-necessary']) && $_COOKIE['cookielawinfo-checkbox-non-necessary'] == 'yes') {
-            //get_template_part('dfp');
-            ?>
-			<!-- Data layer Object -->
-			<script type="text/javascript">
-				window.dataLayer = window.dataLayer || [];
-			</script>
-
-			<!-- Google Tag Manager -->
-			<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
-			new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
-			j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
-			'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
-			})(window,document,'script','dataLayer','GTM-PCDDDV');</script>
-			<!-- End Google Tag Manager -->
-
-			<!-- Google tag (gtag.js) GA4 -->
-			<script async src="https://www.googletagmanager.com/gtag/js?id=G-51PP9YXQ8B"></script>
-			<script>
-				function gtag(){dataLayer.push(arguments);}
-				gtag('js', new Date());
-				gtag('config', 'G-51PP9YXQ8B');
-			</script>
-
-            <!-- Facebook Pixel Code -->
-            <script>
-                !function (f, b, e, v, n, t, s) {
-                    if (f.fbq)
-                        return;
-                    n = f.fbq = function () {
-                        n.callMethod ?
-                                n.callMethod.apply(n, arguments) : n.queue.push(arguments)};if (!f._fbq)
-                        f._fbq = n;
-                    n.push = n;
-                    n.loaded = !0;
-                    n.version = '2.0';
-                    n.queue = [];
-                    t = b.createElement(e);
-                    t.async = !0;
-                    t.src = v;
-                    s = b.getElementsByTagName(e)[0];
-                    s.parentNode.insertBefore(t, s)
-                }(window,
-                        document, 'script', 'https://connect.facebook.net/en_US/fbevents.js');
-
-                fbq('init', '399923000199419');
-                fbq('track', "PageView");
-            </script>
-            <noscript></noscript>
-            <!-- End Facebook Pixel Code -->
-            
-		<?php } // end cookie law if  ?>
 
     </head>
 
     <body id="makerfaire" <?php body_class('no-js'); ?>>
 		<div id="page" class="site-container">
-        <?php
-        // Tracking pixels users can turn off through the cookie law checkbox -- defaults to no
-        if (isset($_COOKIE['cookielawinfo-checkbox-non-necessary']) && $_COOKIE['cookielawinfo-checkbox-non-necessary'] == 'yes') {
-            ?>
-			<!-- Google Tag Manager (noscript) -->
-			<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-PCDDDV"
-			height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
-			<!-- End Google Tag Manager (noscript) -->
-            <script type="text/javascript">document.body.className = document.body.className.replace('no-js', 'js');</script>
-
-		<?php } // end cookie law if  ?>
 
         <a name="topofpage"></a>    
 		<?php
