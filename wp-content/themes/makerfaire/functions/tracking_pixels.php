@@ -18,7 +18,7 @@ function add_tracking_config() {
         var logoutURL   = '<?php echo wp_logout_url(home_url()); ?>';
 
         var trackingConfig = {
-            gtm:              'GTM-PCDDDV',
+            gtm: 'GTM-PCDDDV',
             activeCampaign: {
                 accountId: '1000801328',
                 trackByDefault: true
@@ -55,3 +55,31 @@ function add_body_pixels() {
     }
 }
 add_action('wp_body_open', 'add_body_pixels');
+
+// tiktok requires cookies, so will be blocked and require user to allow cookies
+add_filter('embed_oembed_html', function($html, $url, $attr, $post_id) {
+    if (strpos($url, 'tiktok.com') !== false) {
+        // Store the raw URL for consent-gated display
+        $placeholder = '<div class="tiktok-consent-wrapper" data-url="' . esc_attr($url) . '">';
+        $placeholder .= '<div class="embed-placeholder">';
+        $placeholder .= '<p>This TikTok video uses advertising cookies.</p>';
+        $placeholder .= '<button class="universal-btn tiktok-consent-btn">Accept cookies to view</button>';
+        $placeholder .= '</div>';
+        $placeholder .= '<div class="tiktok-embed-container" style="display:none;">' . $html . '</div>';
+        $placeholder .= '</div>';
+        
+        if (isset($_COOKIE['cookielawinfo-checkbox-non-necessary']) && 
+            $_COOKIE['cookielawinfo-checkbox-non-necessary'] == 'yes') {
+            return $html; // Already consented — show embed directly
+        }
+        return $placeholder;
+    }
+    return $html;
+}, 10, 4);
+
+add_filter('oembed_ttl', function($ttl, $url) {
+    if (strpos($url, 'tiktok.com') !== false) {
+        return DAY_IN_SECONDS;
+    }
+    return $ttl;
+}, 10, 2);
