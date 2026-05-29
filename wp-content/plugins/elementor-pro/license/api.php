@@ -142,10 +142,8 @@ class API {
 			'value' => json_encode( $value ),
 		];
 
-		$updated = update_option( $cache_key, $data, false );
-		if ( false === $updated ) {
-			self::$transient_data[ $cache_key ] = $data;
-		}
+		self::$transient_data[ $cache_key ] = $data;
+		update_option( $cache_key, $data, false );
 	}
 
 	private static function get_transient( $cache_key ) {
@@ -230,7 +228,7 @@ class API {
 
 			$license_data = self::remote_post( 'license/validate', $body_args );
 
-			if ( is_wp_error( $license_data ) || ! isset( $license_data['success'] ) ) {
+			if ( is_wp_error( $license_data ) || ( ! isset( $license_data['success'] ) && ! isset( $license_data['status'] ) ) ) {
 				$license_data = self::get_transient( Admin::LICENSE_DATA_FALLBACK_OPTION_NAME );
 				if ( false === $license_data ) {
 					$license_data = $license_data_error;
@@ -238,6 +236,10 @@ class API {
 
 				self::set_license_data( $license_data, '+30 minutes' );
 			} else {
+				if ( ! isset( $license_data['success'] ) ) {
+					$license_data['success'] = ! isset( $license_data['error'] );
+				}
+
 				self::set_license_data( $license_data );
 			}
 		}
@@ -421,7 +423,7 @@ class API {
 	public static function is_license_active() {
 		$license_data = self::get_license_data();
 
-		return (bool) $license_data['success'];
+		return (bool) ( $license_data['success'] ?? false );
 	}
 
 	public static function is_license_expired() {
@@ -653,6 +655,16 @@ class API {
 		$license_data = static::get_license_data();
 
 		return $license_data['subscription_id'] ?? $license_data['subscriptionId'] ?? $license_data['subscription-id'] ?? '';
+	}
+
+	public static function get_renew_url( $renew_url = self::RENEW_URL ): string {
+		$subscription_id = static::get_subscription_id();
+
+		if ( empty( $subscription_id ) ) {
+			return $renew_url;
+		}
+
+		return add_query_arg( 'subscription-id', $subscription_id, $renew_url );
 	}
 
 	/**

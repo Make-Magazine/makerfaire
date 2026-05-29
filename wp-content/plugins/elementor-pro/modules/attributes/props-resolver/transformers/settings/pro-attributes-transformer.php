@@ -20,9 +20,7 @@ class Pro_Attributes_Transformer extends Transformer_Base {
 				return '';
 			}
 
-			$escaped_value = esc_attr( $item['value'] );
-
-			return $item['key'] . '="' . $escaped_value . '"';
+			return $item['key'] . '="' . $item['value'] . '"';
 		}, $value ) );
 
 		return $result;

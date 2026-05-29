@@ -62,6 +62,24 @@ class Site_Settings extends Export_Runner_Base {
 			}
 		}
 
+		if ( method_exists( $runner, 'is_classes_feature_active' ) && $runner->is_classes_feature_active() ) {
+			$include_classes = $customization['classes'] ?? false;
+			$classes_count = method_exists( $runner, 'get_classes_count' ) ? $runner->get_classes_count() : 0;
+			$manifest_data['site-settings']['classes'] = (bool) $include_classes;
+			$manifest_data['site-settings']['classesCount'] = $include_classes ? $classes_count : 0;
+		} else {
+			unset( $manifest_data['site-settings']['classes'] );
+		}
+
+		if ( method_exists( $runner, 'is_variables_feature_active' ) && $runner->is_variables_feature_active() ) {
+			$include_variables = $customization['variables'] ?? false;
+			$variables_count = method_exists( $runner, 'get_variables_count' ) ? $runner->get_variables_count() : 0;
+			$manifest_data['site-settings']['variables'] = (bool) $include_variables;
+			$manifest_data['site-settings']['variablesCount'] = $include_variables ? $variables_count : 0;
+		} else {
+			unset( $manifest_data['site-settings']['variables'] );
+		}
+
 		return [
 			'files' => [
 				'path' => 'site-settings',

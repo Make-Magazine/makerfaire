@@ -63,7 +63,7 @@ abstract class Model_Base implements \JsonSerializable {
 	 *
 	 * @return Query_Builder
 	 */
-	public static function query( \wpdb $connection = null ) {
+	public static function query( ?\wpdb $connection = null ) {
 		$builder = new Model_Query_Builder( static::class, $connection );
 
 		return $builder->from( static::get_table() );

@@ -13,14 +13,12 @@ class Module extends BaseModule {
 
 	private $export_runners = [
 		'site-settings' => Export\Site_Settings::class,
-		'plugins' => Export\Plugins::class,
 		'templates' => Export\Templates::class,
 		'taxonomies' => Export\Taxonomies::class,
 	];
 
 	private $import_runners = [
 		'site-settings' => Import\Site_Settings::class,
-		'plugins' => Import\Plugins::class,
 		'templates' => Import\Templates::class,
 		'taxonomies' => Import\Taxonomies::class,
 		'elementor-content' => Import\Elementor_Content::class,
@@ -36,11 +34,15 @@ class Module extends BaseModule {
 	}
 
 	private function add_actions() {
-		add_filter( 'elementor/import-export-customization/export/site-settings/customization', [ $this, 'export_site_settings_customization' ], 10, 4 );
-		add_filter( 'elementor/import-export-customization/import/site-settings/customization', [ $this, 'import_site_settings_customization' ], 10, 5 );
+		if ( ! Utils::is_high_tier() ) {
+			return;
+		}
 
 		add_filter( 'elementor/import-export-customization/export/templates/customization', [ $this, 'export_templates_customization' ], 10, 4 );
 		add_filter( 'elementor/import-export-customization/import/templates/customization', [ $this, 'import_templates_customization' ], 10, 5 );
+
+		add_filter( 'elementor/import-export-customization/export/site-settings/customization', [ $this, 'export_site_settings_customization' ], 10, 4 );
+		add_filter( 'elementor/import-export-customization/import/site-settings/customization', [ $this, 'import_site_settings_customization' ], 10, 5 );
 
 		add_filter( 'elementor/import-export-customization/export/taxonomies/customization', [ $this, 'export_taxonomies_customization' ], 10, 4 );
 		add_filter( 'elementor/import-export-customization/import/taxonomies/customization', [ $this, 'import_taxonomies_customization' ], 10, 5 );

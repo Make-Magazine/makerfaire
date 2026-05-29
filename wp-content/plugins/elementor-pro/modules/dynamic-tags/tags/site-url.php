@@ -1,14 +1,14 @@
 <?php
 namespace ElementorPro\Modules\DynamicTags\Tags;
 
-use ElementorPro\Modules\DynamicTags\Tags\Base\Data_Tag;
+use ElementorPro\Modules\DynamicTags\Tags\Base\Pro_Data_Tag;
 use ElementorPro\Modules\DynamicTags\Module;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
 
-class Site_URL extends Data_Tag {
+class Site_URL extends Pro_Data_Tag {
 
 	public function get_name() {
 		return 'site-url';

@@ -2,7 +2,7 @@
 namespace ElementorPro\Modules\DynamicTags\Tags;
 
 use Elementor\Controls_Manager;
-use ElementorPro\Modules\DynamicTags\Tags\Base\Tag;
+use ElementorPro\Modules\DynamicTags\Tags\Base\Pro_Tag;
 use ElementorPro\Modules\DynamicTags\Module;
 use ElementorPro\Core\Utils;
 
@@ -10,7 +10,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
 
-class Request_Parameter extends Tag {
+class Request_Parameter extends Pro_Tag {
 	public function get_name() {
 		return 'request-arg';
 	}

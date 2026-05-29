@@ -120,4 +120,15 @@ class Post_Custom_Field extends Tag {
 
 		return $options;
 	}
+
+	public function get_editor_config() {
+		$config = parent::get_editor_config();
+
+		$config['meta'] = [
+			'origin' => 'elementor',
+			'required_license' => Module::LICENSE_FEATURE_ACF_NAME,
+		];
+
+		return $config;
+	}
 }

@@ -2,14 +2,14 @@
 namespace ElementorPro\Modules\DynamicTags\Tags;
 
 use Elementor\Controls_Manager;
-use ElementorPro\Modules\DynamicTags\Tags\Base\Tag;
+use ElementorPro\Modules\DynamicTags\Tags\Base\Pro_Tag;
 use ElementorPro\Modules\DynamicTags\Module;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
 
-class Post_Time extends Tag {
+class Post_Time extends Pro_Tag {
 	public function get_name() {
 		return 'post-time';
 	}

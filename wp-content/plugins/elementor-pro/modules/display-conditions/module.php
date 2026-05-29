@@ -148,17 +148,8 @@ class Module extends Module_Base {
 	}
 
 	protected function add_render_actions() {
-		$element_types = [
-			'section',
-			'column',
-			'widget',
-			'container',
-		];
-
-		foreach ( $element_types as $el ) {
-			add_action( 'elementor/frontend/' . $el . '/before_render', [ $this, 'before_element_render' ] );
-			add_action( 'elementor/frontend/' . $el . '/after_render', [ $this, 'after_element_render' ] );
-		}
+		add_action( 'elementor/frontend/before_render', [ $this, 'before_element_render' ] );
+		add_action( 'elementor/frontend/after_render', [ $this, 'after_element_render' ] );
 	}
 
 	private function add_control_to_advanced_tab( $element, $args, $injection_position ) {

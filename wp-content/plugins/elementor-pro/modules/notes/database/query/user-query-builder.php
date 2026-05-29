@@ -22,7 +22,7 @@ class User_Query_Builder extends Model_Query_Builder {
 	 *
 	 * @param \wpdb|null $connection
 	 */
-	public function __construct( \wpdb $connection = null ) {
+	public function __construct( ?\wpdb $connection = null ) {
 		parent::__construct( User::class, $connection );
 	}
 

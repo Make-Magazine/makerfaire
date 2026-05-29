@@ -38,6 +38,24 @@ class Facebook_SDK_Manager {
 	 * @param Widget_Base $widget
 	 */
 	public static function add_app_id_control( $widget ) {
+
+		if ( $widget->get_name() === 'facebook-button' || $widget->get_name() === 'facebook-comments' ) {
+			$widget->add_control(
+				'app_deprecated',
+				[
+					'type' => Controls_Manager::ALERT,
+					'alert_type' => 'info',
+					'content' => sprintf(
+						/* translators: 1: Link opening tag, 2: Link closing tag. */
+						esc_html__( 'This Facebook widget has been discontinued by Meta and will no longer show any content. Please remove it from your page layout to maintain a professional site appearance. %1$sLearn more%2$s', 'elementor-pro' ),
+						sprintf( '<a href="%s" target="_blank">', 'https://developers.facebook.com/blog/post/2025/11/10/platform-evolution-facebook-social-plugins-to-be-discontinued-february-2026/' ),
+						'</a>'
+					),
+				]
+			);
+			return;
+		}
+
 		if ( ! self::get_app_id() ) {
 			$content = sprintf(
 				/* translators: 1: Setting Page Link opening tag, 2: Link closing tag. */

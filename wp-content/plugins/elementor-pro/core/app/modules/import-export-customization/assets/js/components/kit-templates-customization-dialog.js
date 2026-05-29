@@ -127,6 +127,7 @@ export function KitTemplatesCustomizationDialog( {
 				const hasEnabledCustomization = templates.siteTemplates?.enabled || templates.themeBuilder?.enabled || templates.globalWidgets?.enabled;
 				const transformedAnalytics = transformAnalyticsData( templates );
 				handleSaveChanges( 'templates', templates, hasEnabledCustomization, transformedAnalytics );
+				handleClose();
 			} }
 			minHeight="auto"
 		>

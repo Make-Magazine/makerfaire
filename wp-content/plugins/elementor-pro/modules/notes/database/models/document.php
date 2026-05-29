@@ -43,7 +43,7 @@ class Document extends Model_Base {
 	 *
 	 * @return Query_Builder
 	 */
-	public static function query( \wpdb $connection = null ) {
+	public static function query( ?\wpdb $connection = null ) {
 		// PHPCS has an error without any reason, the method 'query' is not related to the `wpdb` object.
 		return parent::query( $connection ) // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
 			->select( [

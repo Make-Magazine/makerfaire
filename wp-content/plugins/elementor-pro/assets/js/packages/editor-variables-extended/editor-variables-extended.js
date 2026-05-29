@@ -2,6 +2,118 @@
 /******/ 	"use strict";
 /******/ 	var __webpack_modules__ = ({
 
+/***/ "./packages/packages/pro/editor-variables-extended/src/bc/is-unit-extended-option.ts":
+/*!*******************************************************************************************!*\
+  !*** ./packages/packages/pro/editor-variables-extended/src/bc/is-unit-extended-option.ts ***!
+  \*******************************************************************************************/
+/***/ (function(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   isUnitExtendedOption: function() { return /* binding */ isUnitExtendedOption; }
+/* harmony export */ });
+/* harmony import */ var _elementor_editor_controls__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @elementor/editor-controls */ "@elementor/editor-controls");
+/* harmony import */ var _elementor_editor_controls__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_elementor_editor_controls__WEBPACK_IMPORTED_MODULE_0__);
+
+
+/**
+ * @param      unit
+ * @deprecated Will be removed in 4.2.0. Use `isUnitExtendedOption` from `@elementor/editor-controls` when Core provides it.
+ */
+const isUnitExtendedOption = _elementor_editor_controls__WEBPACK_IMPORTED_MODULE_0__.isUnitExtendedOption ?? (unit => {
+  return ['auto', 'custom'].includes(unit);
+});
+
+/***/ }),
+
+/***/ "./packages/packages/pro/editor-variables-extended/src/bc/use-typing-buffer-pro.ts":
+/*!*****************************************************************************************!*\
+  !*** ./packages/packages/pro/editor-variables-extended/src/bc/use-typing-buffer-pro.ts ***!
+  \*****************************************************************************************/
+/***/ (function(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   useTypingBuffer: function() { return /* binding */ useTypingBuffer; }
+/* harmony export */ });
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "react");
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
+
+
+/**
+ * @deprecated Will be removed in 4.2.0. Backward-compatibility fallback when Core does not provide useTypingBuffer.
+ */
+
+/**
+ * @param      options
+ * @deprecated Will be removed in 4.2.0. Use `useTypingBuffer` from `@elementor/editor-controls` when Core provides it.
+ */
+function useTypingBuffer(options = {}) {
+  const {
+    limit = 3,
+    timeout = 600
+  } = options;
+  const inputBufferRef = (0,react__WEBPACK_IMPORTED_MODULE_0__.useRef)('');
+  const timeoutRef = (0,react__WEBPACK_IMPORTED_MODULE_0__.useRef)(null);
+  const appendKey = key => {
+    inputBufferRef.current = (inputBufferRef.current + key).slice(-limit);
+    if (timeoutRef.current) {
+      clearTimeout(timeoutRef.current);
+    }
+    timeoutRef.current = setTimeout(() => {
+      inputBufferRef.current = '';
+      timeoutRef.current = null;
+    }, timeout);
+    return inputBufferRef.current;
+  };
+  const startsWith = (haystack, needle) => {
+    // At least 2 characters in needle for longer haystack.
+    if (3 < haystack.length && 2 > needle.length) {
+      return false;
+    }
+    return haystack.startsWith(needle);
+  };
+  (0,react__WEBPACK_IMPORTED_MODULE_0__.useEffect)(() => {
+    return () => {
+      inputBufferRef.current = '';
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+        timeoutRef.current = null;
+      }
+    };
+  }, []);
+  return {
+    buffer: inputBufferRef.current,
+    appendKey,
+    startsWith
+  };
+}
+
+/***/ }),
+
+/***/ "./packages/packages/pro/editor-variables-extended/src/bc/use-typing-buffer.ts":
+/*!*************************************************************************************!*\
+  !*** ./packages/packages/pro/editor-variables-extended/src/bc/use-typing-buffer.ts ***!
+  \*************************************************************************************/
+/***/ (function(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   useTypingBuffer: function() { return /* binding */ useTypingBuffer; }
+/* harmony export */ });
+/* harmony import */ var _elementor_editor_controls__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @elementor/editor-controls */ "@elementor/editor-controls");
+/* harmony import */ var _elementor_editor_controls__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_elementor_editor_controls__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _use_typing_buffer_pro__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./use-typing-buffer-pro */ "./packages/packages/pro/editor-variables-extended/src/bc/use-typing-buffer-pro.ts");
+
+
+
+/**
+ * @deprecated Will be removed in 4.2.0. Use `useTypingBuffer` from `@elementor/editor-controls` when Core provides it.
+ */
+const useTypingBuffer = _elementor_editor_controls__WEBPACK_IMPORTED_MODULE_0__.useTypingBuffer ?? _use_typing_buffer_pro__WEBPACK_IMPORTED_MODULE_1__.useTypingBuffer;
+
+/***/ }),
+
 /***/ "./packages/packages/pro/editor-variables-extended/src/components/size/popover/custom-size-popover.tsx":
 /*!*************************************************************************************************************!*\
   !*** ./packages/packages/pro/editor-variables-extended/src/components/size/popover/custom-size-popover.tsx ***!
@@ -167,7 +279,7 @@ const SizeField = ({
     setSize,
     setUnit
   } = (0,_hooks_use_size_value__WEBPACK_IMPORTED_MODULE_3__.useSizeValue)(value, onChange, handleUnitChange, propType, propTypeKey);
-  const handleShortcutKeys = (0,_hooks_use_unit_shortcuts__WEBPACK_IMPORTED_MODULE_4__.useUnitShortcuts)(units, setUnit);
+  const handleShortcutKeys = (0,_hooks_use_unit_shortcuts__WEBPACK_IMPORTED_MODULE_4__.useUnitShortcuts)(currentValue?.unit, units, setUnit);
   const isUnitExtended = isUnitExtendedOption(currentValue.unit);
   const onSizeInputClick = event => {
     const target = event.target;
@@ -183,11 +295,11 @@ const SizeField = ({
     type: isUnitExtended ? 'text' : 'number',
     value: currentValue.size,
     onChange: setSize,
-    onKeyUp: handleShortcutKeys,
     onKeyDown: event => {
       if (RESTRICTED_INPUT_KEYS.includes(event.key)) {
         event.preventDefault();
       }
+      handleShortcutKeys(event);
       onKeyDown?.(event);
     },
     InputProps: {
@@ -468,57 +580,80 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "react");
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _bc_is_unit_extended_option__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../bc/is-unit-extended-option */ "./packages/packages/pro/editor-variables-extended/src/bc/is-unit-extended-option.ts");
+/* harmony import */ var _bc_use_typing_buffer__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../bc/use-typing-buffer */ "./packages/packages/pro/editor-variables-extended/src/bc/use-typing-buffer.ts");
 
-const RESTRICTED_KEYBOARD_SHORTCUT_UNITS = ['auto'];
-const useUnitShortcuts = (units, onUnitMatched) => {
-  const bufferRef = (0,react__WEBPACK_IMPORTED_MODULE_0__.useRef)('');
+
+
+const useUnitShortcuts = (unit, units, onUnitMatched) => {
+  const {
+    appendKey,
+    startsWith
+  } = (0,_bc_use_typing_buffer__WEBPACK_IMPORTED_MODULE_2__.useTypingBuffer)();
   return (0,react__WEBPACK_IMPORTED_MODULE_0__.useCallback)(event => {
     const {
-      key
+      key,
+      altKey,
+      ctrlKey,
+      metaKey
     } = event;
+    if (altKey || ctrlKey || metaKey) {
+      return;
+    }
+    if ((0,_bc_is_unit_extended_option__WEBPACK_IMPORTED_MODULE_1__.isUnitExtendedOption)(unit) && !isNaN(Number(key))) {
+      const defaultUnit = units?.[0];
+      if (defaultUnit) {
+        onUnitMatched(defaultUnit);
+      }
+      return;
+    }
     if (!/^[a-zA-Z%]$/.test(key)) {
       return;
     }
     event.preventDefault();
     const char = key.toLowerCase();
-    const newBuffer = (bufferRef.current + char).slice(-3);
-    bufferRef.current = newBuffer;
-    const matched = matchUnitFromBuffer(newBuffer, units);
+    const newBuffer = appendKey(char);
+    const matched = units.find(u => startsWith(u, newBuffer));
     if (matched) {
       onUnitMatched(matched);
     }
-  }, [units, onUnitMatched]);
+  }, [unit, units, onUnitMatched, appendKey, startsWith]);
 };
-function matchUnitFromBuffer(buffer, units) {
-  const allowed = units.filter(unit => !RESTRICTED_KEYBOARD_SHORTCUT_UNITS.includes(unit));
-  const lastChar = buffer[buffer.length - 1];
-  return allowed.find(unit => unit.includes(buffer)) ?? allowed.find(unit => unit.startsWith(lastChar)) ?? allowed.find(unit => unit.includes(lastChar));
-}
 
 /***/ }),
 
-/***/ "./packages/packages/pro/editor-variables-extended/src/init.ts":
-/*!*********************************************************************!*\
-  !*** ./packages/packages/pro/editor-variables-extended/src/init.ts ***!
-  \*********************************************************************/
+/***/ "./packages/packages/pro/editor-variables-extended/src/init.tsx":
+/*!**********************************************************************!*\
+  !*** ./packages/packages/pro/editor-variables-extended/src/init.tsx ***!
+  \**********************************************************************/
 /***/ (function(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   init: function() { return /* binding */ init; }
 /* harmony export */ });
-/* harmony import */ var _elementor_editor_props__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @elementor/editor-props */ "@elementor/editor-props");
-/* harmony import */ var _elementor_editor_props__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_elementor_editor_props__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _elementor_editor_variables__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @elementor/editor-variables */ "@elementor/editor-variables");
-/* harmony import */ var _elementor_editor_variables__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_elementor_editor_variables__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var _elementor_icons__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @elementor/icons */ "@elementor/icons");
-/* harmony import */ var _elementor_icons__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_elementor_icons__WEBPACK_IMPORTED_MODULE_2__);
-/* harmony import */ var _components_size_size_field__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./components/size/size-field */ "./packages/packages/pro/editor-variables-extended/src/components/size/size-field.tsx");
-/* harmony import */ var _prop_types_size_variable_prop_type__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./prop-types/size-variable-prop-type */ "./packages/packages/pro/editor-variables-extended/src/prop-types/size-variable-prop-type.ts");
-/* harmony import */ var _utils_prop_type_compatibility__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./utils/prop-type-compatibility */ "./packages/packages/pro/editor-variables-extended/src/utils/prop-type-compatibility.ts");
-/* harmony import */ var _utils_settings__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./utils/settings */ "./packages/packages/pro/editor-variables-extended/src/utils/settings.ts");
-/* harmony import */ var _utils_transform_utils__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./utils/transform-utils */ "./packages/packages/pro/editor-variables-extended/src/utils/transform-utils.ts");
-/* harmony import */ var _utils_version_compare__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./utils/version-compare */ "./packages/packages/pro/editor-variables-extended/src/utils/version-compare.ts");
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "react");
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _elementor_core_adapter_utils__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @elementor/core-adapter-utils */ "@elementor/core-adapter-utils");
+/* harmony import */ var _elementor_core_adapter_utils__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_elementor_core_adapter_utils__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var _elementor_editor_props__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @elementor/editor-props */ "@elementor/editor-props");
+/* harmony import */ var _elementor_editor_props__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_elementor_editor_props__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var _elementor_editor_ui__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @elementor/editor-ui */ "@elementor/editor-ui");
+/* harmony import */ var _elementor_editor_ui__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_elementor_editor_ui__WEBPACK_IMPORTED_MODULE_3__);
+/* harmony import */ var _elementor_editor_variables__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @elementor/editor-variables */ "@elementor/editor-variables");
+/* harmony import */ var _elementor_editor_variables__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(_elementor_editor_variables__WEBPACK_IMPORTED_MODULE_4__);
+/* harmony import */ var _elementor_icons__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! @elementor/icons */ "@elementor/icons");
+/* harmony import */ var _elementor_icons__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(_elementor_icons__WEBPACK_IMPORTED_MODULE_5__);
+/* harmony import */ var _elementor_license_api__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! @elementor/license-api */ "@elementor/license-api");
+/* harmony import */ var _elementor_license_api__WEBPACK_IMPORTED_MODULE_6___default = /*#__PURE__*/__webpack_require__.n(_elementor_license_api__WEBPACK_IMPORTED_MODULE_6__);
+/* harmony import */ var _components_size_size_field__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./components/size/size-field */ "./packages/packages/pro/editor-variables-extended/src/components/size/size-field.tsx");
+/* harmony import */ var _prop_types_size_variable_prop_type__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./prop-types/size-variable-prop-type */ "./packages/packages/pro/editor-variables-extended/src/prop-types/size-variable-prop-type.ts");
+/* harmony import */ var _utils_prop_type_compatibility__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./utils/prop-type-compatibility */ "./packages/packages/pro/editor-variables-extended/src/utils/prop-type-compatibility.ts");
+/* harmony import */ var _utils_settings__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./utils/settings */ "./packages/packages/pro/editor-variables-extended/src/utils/settings.ts");
+/* harmony import */ var _utils_transform_utils__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ./utils/transform-utils */ "./packages/packages/pro/editor-variables-extended/src/utils/transform-utils.ts");
+
+
+
 
 
 
@@ -529,36 +664,43 @@ __webpack_require__.r(__webpack_exports__);
 
 
 const parse = (value, type) => {
-  return (0,_utils_transform_utils__WEBPACK_IMPORTED_MODULE_7__.parseSizeValue)(value, undefined, undefined, type);
+  return (0,_utils_transform_utils__WEBPACK_IMPORTED_MODULE_11__.parseSizeValue)(value, undefined, undefined, type);
 };
-function init() {
+async function init() {
+  const isLicenseExpired = await (0,_elementor_license_api__WEBPACK_IMPORTED_MODULE_6__.fetchLicenseStatus)().catch(() => false);
   const commonOptions = {
-    valueField: _components_size_size_field__WEBPACK_IMPORTED_MODULE_3__.SizeField,
-    icon: _elementor_icons__WEBPACK_IMPORTED_MODULE_2__.ExpandDiagonalIcon,
-    propTypeUtil: _prop_types_size_variable_prop_type__WEBPACK_IMPORTED_MODULE_4__.sizeVariablePropTypeUtil,
-    fallbackPropTypeUtil: _elementor_editor_props__WEBPACK_IMPORTED_MODULE_0__.sizePropTypeUtil,
+    valueField: _components_size_size_field__WEBPACK_IMPORTED_MODULE_7__.SizeField,
+    icon: _elementor_icons__WEBPACK_IMPORTED_MODULE_5__.ExpandDiagonalIcon,
+    propTypeUtil: _prop_types_size_variable_prop_type__WEBPACK_IMPORTED_MODULE_8__.sizeVariablePropTypeUtil,
+    fallbackPropTypeUtil: _elementor_editor_props__WEBPACK_IMPORTED_MODULE_2__.sizePropTypeUtil,
     variableType: 'size',
-    valueTransformer: parse
+    valueTransformer: parse,
+    ...(isLicenseExpired && {
+      emptyState: /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(_elementor_editor_ui__WEBPACK_IMPORTED_MODULE_3__.CtaButton, {
+        size: "small",
+        href: 'https://go.elementor.com/renew-license-manager-size-variable'
+      })
+    })
   };
-  (0,_elementor_editor_variables__WEBPACK_IMPORTED_MODULE_1__.registerVariableType)({
+  (0,_elementor_editor_variables__WEBPACK_IMPORTED_MODULE_4__.registerVariableType)({
     ...commonOptions,
-    key: _prop_types_size_variable_prop_type__WEBPACK_IMPORTED_MODULE_4__.sizeVariablePropTypeUtil.key,
+    key: _prop_types_size_variable_prop_type__WEBPACK_IMPORTED_MODULE_8__.sizeVariablePropTypeUtil.key,
     defaultValue: '0px',
     selectionFilter: (variables, propType) => {
-      const availableUnits = (0,_utils_settings__WEBPACK_IMPORTED_MODULE_6__.getAvailableUnits)(propType);
+      const availableUnits = (0,_utils_settings__WEBPACK_IMPORTED_MODULE_10__.getAvailableUnits)(propType);
       return variables.filter(variable => {
         const {
           unit
-        } = (0,_utils_transform_utils__WEBPACK_IMPORTED_MODULE_7__.parseSizeValue)(variable.value);
+        } = (0,_utils_transform_utils__WEBPACK_IMPORTED_MODULE_11__.parseSizeValue)(variable.value);
         return availableUnits.includes(unit);
       });
     },
-    isCompatible: _utils_prop_type_compatibility__WEBPACK_IMPORTED_MODULE_5__.isPropTypeCompatible
+    isCompatible: _utils_prop_type_compatibility__WEBPACK_IMPORTED_MODULE_9__.isPropTypeCompatible
   });
-  if ((0,_utils_version_compare__WEBPACK_IMPORTED_MODULE_8__.isCoreAtLeast)('3.35')) {
-    (0,_elementor_editor_variables__WEBPACK_IMPORTED_MODULE_1__.registerVariableType)({
+  if ((0,_elementor_core_adapter_utils__WEBPACK_IMPORTED_MODULE_1__.isCoreAtLeast)('3.35')) {
+    (0,_elementor_editor_variables__WEBPACK_IMPORTED_MODULE_4__.registerVariableType)({
       ...commonOptions,
-      key: _prop_types_size_variable_prop_type__WEBPACK_IMPORTED_MODULE_4__.GLOBAL_CUSTOM_SIZE_VARIABLE_KEY,
+      key: _prop_types_size_variable_prop_type__WEBPACK_IMPORTED_MODULE_8__.GLOBAL_CUSTOM_SIZE_VARIABLE_KEY,
       isCompatible: () => true
     });
   }
@@ -643,15 +785,16 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   getAvailableUnits: function() { return /* binding */ getAvailableUnits; },
 /* harmony export */   getDefaultUnit: function() { return /* binding */ getDefaultUnit; }
 /* harmony export */ });
-/* harmony import */ var _elementor_editor_props__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @elementor/editor-props */ "@elementor/editor-props");
-/* harmony import */ var _elementor_editor_props__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_elementor_editor_props__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _version_compare__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./version-compare */ "./packages/packages/pro/editor-variables-extended/src/utils/version-compare.ts");
+/* harmony import */ var _elementor_core_adapter_utils__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @elementor/core-adapter-utils */ "@elementor/core-adapter-utils");
+/* harmony import */ var _elementor_core_adapter_utils__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_elementor_core_adapter_utils__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _elementor_editor_props__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @elementor/editor-props */ "@elementor/editor-props");
+/* harmony import */ var _elementor_editor_props__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_elementor_editor_props__WEBPACK_IMPORTED_MODULE_1__);
 
 
 const DEFAULT_UNIT = 'px';
 const CUSTOM_UNIT_KEY = 'custom';
 const AUTO_UNIT_KEY = 'auto';
-const DEFAULT_UNITS = ['px', '%', 'em', 'rem', 'vw', 'vh'];
+const DEFAULT_UNITS = ['px', '%', 'em', 'rem', 'ch', 'vw', 'vh', 's', 'ms'];
 const EXTENDED_UNITS = [AUTO_UNIT_KEY, CUSTOM_UNIT_KEY];
 const allUnits = [...DEFAULT_UNITS, ...EXTENDED_UNITS];
 const getAvailableUnits = propType => {
@@ -672,12 +815,12 @@ const getDefaultUnit = propType => {
 };
 const extractSettings = propType => {
   if (propType?.kind === 'union') {
-    return propType.prop_types[_elementor_editor_props__WEBPACK_IMPORTED_MODULE_0__.sizePropTypeUtil.key].settings;
+    return propType.prop_types[_elementor_editor_props__WEBPACK_IMPORTED_MODULE_1__.sizePropTypeUtil.key].settings;
   }
   return {};
 };
 const normalizeUnits = units => {
-  if ((0,_version_compare__WEBPACK_IMPORTED_MODULE_1__.isCoreAtLeast)('3.35')) {
+  if ((0,_elementor_core_adapter_utils__WEBPACK_IMPORTED_MODULE_0__.isCoreAtLeast)('3.35')) {
     return units;
   }
 
@@ -767,28 +910,6 @@ const formatSizeValue = ({
 
 /***/ }),
 
-/***/ "./packages/packages/pro/editor-variables-extended/src/utils/version-compare.ts":
-/*!**************************************************************************************!*\
-  !*** ./packages/packages/pro/editor-variables-extended/src/utils/version-compare.ts ***!
-  \**************************************************************************************/
-/***/ (function(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
-
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   isCoreAtLeast: function() { return /* binding */ isCoreAtLeast; }
-/* harmony export */ });
-function getCoreVersion() {
-  return window.elementorCommonConfig?.version ?? '0.0';
-}
-function isCoreAtLeast(minVersion) {
-  const version = getCoreVersion();
-  const [major, minor] = version.split('.').map(Number);
-  const [minMajor, minMinor] = minVersion.split('.').map(Number);
-  return major > minMajor || major === minMajor && minor >= minMinor;
-}
-
-/***/ }),
-
 /***/ "react":
 /*!**************************!*\
   !*** external ["React"] ***!
@@ -796,6 +917,26 @@ function isCoreAtLeast(minVersion) {
 /***/ (function(module) {
 
 module.exports = window["React"];
+
+/***/ }),
+
+/***/ "@elementor/core-adapter-utils":
+/*!***************************************************!*\
+  !*** external ["elementorV2","coreAdapterUtils"] ***!
+  \***************************************************/
+/***/ (function(module) {
+
+module.exports = window["elementorV2"]["coreAdapterUtils"];
+
+/***/ }),
+
+/***/ "@elementor/editor-controls":
+/*!*************************************************!*\
+  !*** external ["elementorV2","editorControls"] ***!
+  \*************************************************/
+/***/ (function(module) {
+
+module.exports = window["elementorV2"]["editorControls"];
 
 /***/ }),
 
@@ -836,6 +977,16 @@ module.exports = window["elementorV2"]["editorVariables"];
 /***/ (function(module) {
 
 module.exports = window["elementorV2"]["icons"];
+
+/***/ }),
+
+/***/ "@elementor/license-api":
+/*!*********************************************!*\
+  !*** external ["elementorV2","licenseApi"] ***!
+  \*********************************************/
+/***/ (function(module) {
+
+module.exports = window["elementorV2"]["licenseApi"];
 
 /***/ }),
 
@@ -889,6 +1040,12 @@ module.exports = window["wp"]["i18n"];
 /******/ 		};
 /******/ 	
 /******/ 		// Execute the module function
+/******/ 		if (!(moduleId in __webpack_modules__)) {
+/******/ 			delete __webpack_module_cache__[moduleId];
+/******/ 			var e = new Error("Cannot find module '" + moduleId + "'");
+/******/ 			e.code = 'MODULE_NOT_FOUND';
+/******/ 			throw e;
+/******/ 		}
 /******/ 		__webpack_modules__[moduleId](module, module.exports, __webpack_require__);
 /******/ 	
 /******/ 		// Return the exports of the module
@@ -938,7 +1095,7 @@ module.exports = window["wp"]["i18n"];
 /******/ 	
 /************************************************************************/
 var __webpack_exports__ = {};
-// This entry need to be wrapped in an IIFE because it need to be isolated against other modules in the chunk.
+// This entry needs to be wrapped in an IIFE because it needs to be isolated against other modules in the chunk.
 !function() {
 /*!**********************************************************************!*\
   !*** ./packages/packages/pro/editor-variables-extended/src/index.ts ***!
@@ -947,7 +1104,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   init: function() { return /* reexport safe */ _init__WEBPACK_IMPORTED_MODULE_0__.init; }
 /* harmony export */ });
-/* harmony import */ var _init__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./init */ "./packages/packages/pro/editor-variables-extended/src/init.ts");
+/* harmony import */ var _init__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./init */ "./packages/packages/pro/editor-variables-extended/src/init.tsx");
 
 }();
 (window.elementorV2 = window.elementorV2 || {}).editorVariablesExtended = __webpack_exports__;

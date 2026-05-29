@@ -21,7 +21,7 @@ abstract class Base_Migration {
 	/**
 	 * @param \wpdb|null $wpdb_instance
 	 */
-	public function __construct( \wpdb $wpdb_instance = null ) {
+	public function __construct( ?\wpdb $wpdb_instance = null ) {
 		if ( ! $wpdb_instance ) {
 			global $wpdb;
 

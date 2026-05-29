@@ -39,6 +39,7 @@ final class Modules_Manager {
 			'attributes',
 			'atomic-widgets',
 			'atomic-form',
+			'collection-loop',
 			'display-conditions',
 			'transitions',
 			'theme-builder',

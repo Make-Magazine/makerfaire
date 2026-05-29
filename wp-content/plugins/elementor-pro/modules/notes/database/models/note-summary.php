@@ -56,7 +56,7 @@ class Note_Summary extends Model_Base {
 	 *
 	 * @return Note_Query_Builder
 	 */
-	public static function query( \wpdb $connection = null ) {
+	public static function query( ?\wpdb $connection = null ) {
 		$table_name = static::get_table();
 
 		return ( new Note_Query_Builder( $connection ) )

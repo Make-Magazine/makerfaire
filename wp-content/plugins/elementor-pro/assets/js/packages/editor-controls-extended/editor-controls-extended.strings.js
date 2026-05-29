@@ -1,3 +1,5 @@
+__( 'Name', 'elementor-pro' );
+__( 'Value', 'elementor-pro' );
 __( 'Display Conditions', 'elementor-pro' );
 __( "Empty attribute names aren't valid and won't render on the page.", 'elementor-pro' );
 __( 'Name', 'elementor-pro' );

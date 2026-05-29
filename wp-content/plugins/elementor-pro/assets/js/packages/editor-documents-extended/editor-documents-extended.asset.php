@@ -12,6 +12,7 @@ return [
 		'elementor-v2-editor-documents',
 		'elementor-v2-editor-v1-adapters',
 		'elementor-v2-icons',
+		'elementor-v2-license-api',
 		'elementor-v2-store',
 		'elementor-v2-ui',
 		'react',

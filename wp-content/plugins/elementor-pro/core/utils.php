@@ -451,4 +451,25 @@ class Utils {
 	public static function is_sale_time(): bool {
 		return \Elementor\Utils::is_sale_time();
 	}
+
+	/**
+	 * Resolve a class constant with a fallback for cases where the class is from an external
+	 * dependency (e.g. core) that may be on an older version without that constant.
+	 * Direct access (ClassName::CONSTANT) causes a fatal error when the constant doesn't exist.
+	 *
+	 * @param class-string $class    Fully-qualified class name.
+	 * @param string       $constant Constant name.
+	 * @param string       $fallback Value to return when the constant is not defined.
+	 */
+	public static function get_class_constant( string $class, string $constant, string $fallback ): string {
+		static $reflectors = [];
+
+		if ( ! isset( $reflectors[ $class ] ) ) {
+			$reflectors[ $class ] = new \ReflectionClass( $class );
+		}
+
+		return $reflectors[ $class ]->hasConstant( $constant )
+			? (string) $reflectors[ $class ]->getConstant( $constant )
+			: $fallback;
+	}
 }

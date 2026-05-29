@@ -446,6 +446,7 @@ export function KitContentCustomizationDialog( {
 				const hasEnabledCustomization = settings.pages.length > 0 || settings.menus || settings.customPostTypes.length > 0 || settings.taxonomies.length > 0 || settings.mediaFormat !== MEDIA_FORMAT_OPTIONS.LINK;
 				const transformedAnalytics = transformAnalyticsData( settings, pageOptions, taxonomyOptions, customPostTypes );
 				handleSaveChanges( 'content', settings, hasEnabledCustomization, transformedAnalytics );
+				handleClose();
 			} }
 		>
 			<Stack sx={ { position: 'relative' } } gap={ 2 }>

@@ -3,14 +3,14 @@ namespace ElementorPro\Modules\DynamicTags\Tags;
 
 use Elementor\Controls_Manager;
 use ElementorPro\Core\Utils;
-use ElementorPro\Modules\DynamicTags\Tags\Base\Tag;
+use ElementorPro\Modules\DynamicTags\Tags\Base\Pro_Tag;
 use ElementorPro\Modules\DynamicTags\Module;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
 
-class Post_Excerpt extends Tag {
+class Post_Excerpt extends Pro_Tag {
 	public function get_name() {
 		return 'post-excerpt';
 	}

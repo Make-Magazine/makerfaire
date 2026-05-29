@@ -59,6 +59,52 @@ class Form extends Form_Base {
 		return [ 'widget-form' ];
 	}
 
+	private function should_show_atomic_form_promotion(): bool {
+		if ( version_compare( ELEMENTOR_VERSION, '4.0', '<' ) ) {
+			return false;
+		}
+		if ( ! Plugin::elementor()->experiments->is_feature_active( 'e_atomic_elements' ) ) {
+			return false;
+		}
+		if ( ! Plugin::elementor()->experiments->is_feature_active( 'e_pro_atomic_form' ) ) {
+			return false;
+		}
+
+		return ! Hints::is_dismissed( 'atomic_form_v3_promotion' );
+	}
+
+	private function render_atomic_form_promotion() {
+		if ( ! $this->should_show_atomic_form_promotion() ) {
+			return;
+		}
+
+		$this->add_control(
+			'atomic_form_v3_promotion',
+			[
+				'type' => Controls_Manager::NOTICE,
+				'notice_type' => 'info',
+				'icon' => true,
+				'dismissible' => false,
+				'heading' => esc_html__( 'Atomic form', 'elementor-pro' ),
+				'content' => '<style>'
+					. '.elementor-control-atomic_form_v3_promotion .elementor-control-notice { gap: 6px; padding: 11px 13px; margin-block-start: -10px; }'
+					. '.elementor-control-atomic_form_v3_promotion .elementor-control-notice-main { padding-inline-end: 12px; }'
+					. '.elementor-control-atomic_form_v3_promotion .elementor-control-notice-main-heading { font-weight: normal; font-size: 13px; }'
+					. '.elementor-control-atomic_form_v3_promotion .e-btn { background: transparent; padding: 0; font-weight: 800; }'
+					. '.elementor-control-atomic_form_v3_promotion .e-btn:hover { background: transparent; }'
+					. '.elementor-control-atomic_form_v3_promotion .e-btn-1 { color: #69727D; }'
+					. '.elementor-control-atomic_form_v3_promotion .e-btn-2 { color: #3F6AD8; }'
+					. '</style>'
+					. esc_html__( 'Switch to the Atomic form for full styling control and unlimited design flexibility.', 'elementor-pro' ),
+				'button_text' => esc_html__( 'Dismiss', 'elementor-pro' ),
+				'button_event' => 'atomic_form_v3_promotion',
+				'button_text2' => esc_html__( 'Use Atomic Form', 'elementor-pro' ),
+				'button_event2' => 'atomic_form_v3_promotion',
+				'separator' => 'after',
+			]
+		);
+	}
+
 	protected function register_controls() {
 		$repeater = new Repeater();
 
@@ -500,6 +546,8 @@ class Form extends Form_Base {
 				'label' => esc_html__( 'Form Fields', 'elementor-pro' ),
 			]
 		);
+
+		$this->render_atomic_form_promotion();
 
 		$this->add_control(
 			'form_name',

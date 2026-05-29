@@ -22,6 +22,8 @@ trait Site_Settings_Helpers {
 			'customCode',
 			'customIcons',
 			'customFonts',
+			'classes',
+			'variables',
 		];
 	}
 

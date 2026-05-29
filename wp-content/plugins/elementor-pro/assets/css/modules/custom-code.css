@@ -39,7 +39,6 @@
   margin: 1em 0;
 }
 #wpcontent .wrap.elementor-admin-page-license .elementor-license-box .button {
-  height: 30px;
   margin-inline-start: 15px;
   margin-block-end: 0;
 }
@@ -254,8 +253,8 @@
   height: 30px;
 }
 #e-form-submissions .tablenav .actions .select2-container .select2-selection--single {
-  height: 30px;
-  border: 1px solid #7e8993;
+  height: 32px;
+  border: 1px solid #000000;
 }
 
 input[type=search].select2-search__field {
@@ -1571,7 +1570,7 @@ span.font-variations-count {
 }
 .e-site-editor-conditions__remove-condition {
   color: #818A96;
-  font-size: type(size, "18");
+  font-size: type(size, '18');
   display: flex;
   align-items: center;
   justify-content: center;
@@ -1687,7 +1686,7 @@ span.font-variations-count {
   text-transform: uppercase;
   padding-inline-start: 2.125rem;
   width: 7.5rem;
-  font-size: type(size, "12");
+  font-size: type(size, '12');
   border-inline-end: 1px solid;
   border-color: var(--e-site-editor-input-wrapper-border-color);
 }

@@ -2,7 +2,7 @@
 namespace ElementorPro\Modules\DynamicTags\Tags;
 
 use Elementor\Controls_Manager;
-use ElementorPro\Modules\DynamicTags\Tags\Base\Data_Tag;
+use ElementorPro\Modules\DynamicTags\Tags\Base\Pro_Data_Tag;
 use ElementorPro\Modules\DynamicTags\Module;
 use ElementorPro\Modules\QueryControl\Module as QueryModule;
 
@@ -10,7 +10,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
 
-class Internal_URL extends Data_Tag {
+class Internal_URL extends Pro_Data_Tag {
 
 	public function get_name() {
 		return 'internal-url';

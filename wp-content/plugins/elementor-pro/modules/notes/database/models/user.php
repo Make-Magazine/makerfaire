@@ -93,7 +93,7 @@ class User extends Model_Base {
 	 *
 	 * @return \ElementorPro\Modules\Notes\Database\Query\User_Query_Builder()
 	 */
-	public static function query( \wpdb $connection = null ) {
+	public static function query( ?\wpdb $connection = null ) {
 		return ( new User_Query_Builder( $connection ) )->from( static::get_table() );
 	}
 

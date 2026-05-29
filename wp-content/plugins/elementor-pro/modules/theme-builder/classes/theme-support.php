@@ -122,6 +122,7 @@ class Theme_Support {
 
 		$templates[] = 'footer.php';
 
+		remove_all_actions( 'wp_footer' );
 		ob_start();
 		// It cause a `require_once` so, in the get_header it self it will not be required again.
 		locate_template( $templates, true );

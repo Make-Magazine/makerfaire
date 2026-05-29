@@ -10,8 +10,9 @@ return [
 	'deps' => [
 		'elementor-v2-editor-controls',
 		'elementor-v2-editor-props',
-		'elementor-v2-http-client',
+		'elementor-v2-editor-ui',
 		'elementor-v2-icons',
+		'elementor-v2-license-api',
 		'elementor-v2-schema',
 		'elementor-v2-ui',
 		'react',

@@ -9,6 +9,7 @@ use ElementorPro\Modules\AtomicWidgets\PropTypes\Display_Conditions\Display_Cond
 use ElementorPro\Modules\AtomicWidgets\PropTypes\Display_Conditions\Condition_Group_Prop_Type;
 use ElementorPro\Modules\AtomicWidgets\Transformers\Display_Conditions as Display_Conditions_Transformer;
 use ElementorPro\Modules\AtomicWidgets\Transformers\Condition_Group as Condition_Group_Transformer;
+use ElementorPro\Modules\AtomicWidgets\Template_Styles;
 use ElementorPro\License\API;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -46,6 +47,8 @@ class Module extends Module_Base {
 			10,
 			2
 		);
+
+		( new Template_Styles() )->register_hooks();
 	}
 
 	private function inject_props_schema( $schema ) {
@@ -86,7 +89,7 @@ class Module extends Module_Base {
 	}
 
 	private function has_custom_css_feature_in_license() {
-		return API::is_license_active() && API::is_licence_has_feature( 'atomic-custom-css' );
+		return API::is_licence_has_feature( 'atomic-custom-css' );
 	}
 }
 

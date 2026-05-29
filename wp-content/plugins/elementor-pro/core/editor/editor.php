@@ -18,10 +18,14 @@ class Editor extends App {
 	const APP_BAR_DEPS_V2 = [
 		'editor-site-navigation-extended',
 		'editor-documents-extended',
+		'license-api',
 	];
 	const EDITOR_V4_PACKAGES = [
 		'editor-controls-extended',
 		'editor-editing-panel-extended',
+		'editor-components-extended',
+		'core-adapter-utils',
+		'editor-templates-extended',
 	];
 
 	/**

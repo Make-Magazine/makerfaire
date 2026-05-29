@@ -595,7 +595,7 @@ class Loop_Grid extends Base {
 
 	public static function on_import_update_dynamic_content( array $element_config, array $data, $controls = null ) : array {
 		if ( isset( $element_config['settings']['template_id'] ) && isset( $data['post_ids'] ) ) {
-			$element_config['settings']['template_id'] = $data['post_ids'][ $element_config['settings']['template_id'] ];
+			$element_config['settings']['template_id'] = $data['post_ids'][ $element_config['settings']['template_id'] ] ?? 0;
 		}
 
 		return $element_config;

@@ -3,14 +3,13 @@ namespace ElementorPro\Modules\DynamicTags\ACF\Tags;
 
 use Elementor\Controls_Manager;
 use ElementorPro\Modules\DynamicTags\ACF\Dynamic_Value_Provider;
-use ElementorPro\Modules\DynamicTags\Tags\Base\Data_Tag;
 use ElementorPro\Modules\DynamicTags\ACF\Module;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
 
-class ACF_Date_Time extends Data_Tag {
+class ACF_Date_Time extends Base_ACF_Tag {
 
 	/**
 	 * @var Dynamic_Value_Provider|mixed

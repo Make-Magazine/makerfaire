@@ -34,7 +34,7 @@ class Join_Clause extends Query_Builder {
 	 *
 	 * @return void
 	 */
-	public function __construct( $type, \wpdb $connection = null ) {
+	public function __construct( $type, ?\wpdb $connection = null ) {
 		parent::__construct( $connection );
 
 		$this->type = $type;

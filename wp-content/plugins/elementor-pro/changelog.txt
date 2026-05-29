@@ -1,5 +1,57 @@
 # Elementor Pro - by Elementor.com
 
+#### 4.1.0 - 2026-05-26
+
+* Tweak: Added Radio Button element to Atomic Form - Atomic Editor
+* Tweak: Added Select element to Atomic Form - Atomic Editor
+* Tweak: Added Date Picker element to Atomic Form - Atomic Editor
+* Tweak: Added Time Picker element to Atomic Form - Atomic Editor
+* Tweak: Added File Upload element to Atomic Form - Atomic Editor
+* Tweak: Added Webhook URL support to Atomic Form - Atomic Editor
+* Tweak: Improved the default To and From field settings in Atomic Form - Atomic Editor
+* Tweak: Updated the Connected Input ID control to a Select control in Atomic Form - Atomic Editor
+* Tweak: Added the Atomic Elements section when editing Loop Grid templates - Atomic Editor
+* Tweak: Added support for dynamic field mentions in email content in Atomic Form - Atomic Editor
+* Tweak: Added Start and End grid lines for the While Scrolling effect in Interactions - Atomic Editor
+* Tweak: Updated the minimum required WordPress version to 6.8
+* Fix: Custom styles are lost for Atomic elements used in loops - Atomic Editor
+* Fix: Action Log and Page Title are not recorded in Atomic Form submissions - Atomic Editor
+* Fix: Inline editing does not work for Buttons inside Atomic Form - Atomic Editor
+* Fix: Atomic Form cannot be dragged into containers or child containers - Atomic Editor
+* Fix: Pasting content from another site may cause a fatal error with Loop Item Templates
+
+#### 4.0.4 - 2026-04-28
+
+* Fix: Flexbox and Div Block do not work with display conditions - Atomic Editor
+* Fix: Custom CSS editor not editable in RTL websites - Atomic Editor
+
+#### 4.0.3 - 2026-04-20
+
+* Tweak: Updated base style font styling in Atomic Form - Atomic Editor
+* Fix: Submit button not working inside popups in Atomic Form - Atomic Editor
+* Fix: Forms fail to send when using ACF Email dynamic tag - Atomic Editor
+* Fix: Custom CSS editor not editable in RTL websites - Atomic Editor
+
+#### 4.0.2 - 2026-04-13
+
+* Fix: Interactions apply only to the first matching element instead of all instances on the page - Atomic Editor
+
+#### 4.0.1 - 2026-04-01
+
+* Fix: Exposed text properties appear empty in existing components - Atomic Editor ([#35357](https://github.com/elementor/elementor/issues/35357))
+* Fix: Cannot publish existing components with overridable properties - Atomic Editor
+* Fix: Unexpected characters appear when deleting attribute values using backspace - Atomic Editor
+
+#### 4.0.0 - 2026-03-30
+
+* New: Introducing Atomic Forms using composable Atomic elements - create flexible form layouts by combining individual field elements - Atomic Editor
+* New: Introducing Interactions with new triggers and custom effects for dynamic experiences - create animations based on user scroll and user behavior - Atomic Editor
+* Tweak: Component creation is available for Pro users - Atomic Editor
+* Tweak: Added the ability to detach Components into editable layouts - Atomic Editor
+* Tweak: Added support for custom fonts in typography controls - Atomic Editor
+* Fix: Unable to paste content into the Custom CSS field - Atomic Editor
+* Fix: Error when assigning a dynamic custom field to a component's inner element in Components - Atomic Editor
+
 #### 3.35.1 - 2026-02-11
 
 * Fix: Enqueue script errors when `WP_DEBUG` is enabled ([#34617](https://github.com/elementor/elementor/issues/34617))

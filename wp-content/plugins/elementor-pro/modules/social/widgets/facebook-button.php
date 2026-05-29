@@ -13,6 +13,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Facebook_Button extends Base_Widget {
 
+	public function show_in_panel(): bool {
+		return false;
+	}
+
 	public function get_name() {
 		return 'facebook-button';
 	}

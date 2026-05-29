@@ -202,10 +202,6 @@ class Loop extends Theme_Document {
 			'recommended' => [
 				'title' => esc_html__( 'Recommended', 'elementor-pro' ),
 			],
-			'layout' => [
-				'title' => esc_html__( 'Layout', 'elementor-pro' ),
-				'hideIfEmpty' => true,
-			],
 		];
 		return static::insert_categories_after_favorites( $new_categories );
 	}
@@ -459,7 +455,11 @@ class Loop extends Theme_Document {
 		$existing_categories = parent::get_editor_panel_categories();
 		$category_keys = array_keys( $existing_categories );
 		$index = array_search( 'favorites', $category_keys, true );
-		return array_splice( $existing_categories, 0, $index + 1 ) + $new_categories + array_splice( $existing_categories, $index + 1 );
+
+		$before_and_including_favorites = array_slice( $existing_categories, 0, $index + 1, true );
+		$after_favorites = array_slice( $existing_categories, $index + 1, null, true );
+
+		return $before_and_including_favorites + $new_categories + $after_favorites;
 	}
 
 	private function update_post_settings_controls( $source_type ) {

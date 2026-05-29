@@ -87,11 +87,14 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _elementor_editor_controls_extended__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_elementor_editor_controls_extended__WEBPACK_IMPORTED_MODULE_2__);
 /* harmony import */ var _elementor_editor_editing_panel__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @elementor/editor-editing-panel */ "@elementor/editor-editing-panel");
 /* harmony import */ var _elementor_editor_editing_panel__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_elementor_editor_editing_panel__WEBPACK_IMPORTED_MODULE_3__);
-/* harmony import */ var _elementor_ui__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @elementor/ui */ "@elementor/ui");
-/* harmony import */ var _elementor_ui__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(_elementor_ui__WEBPACK_IMPORTED_MODULE_4__);
-/* harmony import */ var _wordpress_i18n__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! @wordpress/i18n */ "@wordpress/i18n");
-/* harmony import */ var _wordpress_i18n__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(_wordpress_i18n__WEBPACK_IMPORTED_MODULE_5__);
-/* harmony import */ var _custom_css_field__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./custom-css-field */ "./packages/packages/pro/editor-editing-panel-extended/src/components/custom-css-field.tsx");
+/* harmony import */ var _elementor_license_api__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @elementor/license-api */ "@elementor/license-api");
+/* harmony import */ var _elementor_license_api__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(_elementor_license_api__WEBPACK_IMPORTED_MODULE_4__);
+/* harmony import */ var _elementor_ui__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! @elementor/ui */ "@elementor/ui");
+/* harmony import */ var _elementor_ui__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(_elementor_ui__WEBPACK_IMPORTED_MODULE_5__);
+/* harmony import */ var _wordpress_i18n__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! @wordpress/i18n */ "@wordpress/i18n");
+/* harmony import */ var _wordpress_i18n__WEBPACK_IMPORTED_MODULE_6___default = /*#__PURE__*/__webpack_require__.n(_wordpress_i18n__WEBPACK_IMPORTED_MODULE_6__);
+/* harmony import */ var _custom_css_field__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./custom-css-field */ "./packages/packages/pro/editor-editing-panel-extended/src/components/custom-css-field.tsx");
+
 
 
 
@@ -109,9 +112,11 @@ const CustomCss = () => {
     customCss,
     setCustomCss
   } = (0,_elementor_editor_editing_panel__WEBPACK_IMPORTED_MODULE_3__.useCustomCss)();
+  const {
+    data: isLicenseExpired
+  } = (0,_elementor_license_api__WEBPACK_IMPORTED_MODULE_4__.useIsLicenseExpired)();
   const metaKey = `${meta.breakpoint || 'desktop'}-${meta.state || 'default'}-${id}`;
   const [localStates, setLocalStates] = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)({});
-  const [hasLicense, setHasLicense] = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(true);
   (0,react__WEBPACK_IMPORTED_MODULE_0__.useEffect)(() => {
     if (!localStates[metaKey]) {
       setLocalStates(prev => ({
@@ -124,13 +129,6 @@ const CustomCss = () => {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [metaKey]);
-  (0,react__WEBPACK_IMPORTED_MODULE_0__.useEffect)(() => {
-    const checkLicense = async () => {
-      const isLicenseExpired = await (0,_elementor_editor_controls_extended__WEBPACK_IMPORTED_MODULE_2__.getIsLicenseExpired)(true);
-      setHasLicense(!isLicenseExpired);
-    };
-    checkLicense();
-  }, []);
   const currentLocalState = (0,react__WEBPACK_IMPORTED_MODULE_0__.useMemo)(() => {
     return localStates[metaKey] || {
       value: customCss?.raw || '',
@@ -165,15 +163,15 @@ const CustomCss = () => {
   }, [meta.breakpoint]);
   return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(_elementor_editor_editing_panel__WEBPACK_IMPORTED_MODULE_3__.SectionContent, {
     gap: 1
-  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(_custom_css_field__WEBPACK_IMPORTED_MODULE_6__.CustomCssField, null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(_elementor_ui__WEBPACK_IMPORTED_MODULE_4__.Stack, {
+  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(_custom_css_field__WEBPACK_IMPORTED_MODULE_7__.CustomCssField, null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(_elementor_ui__WEBPACK_IMPORTED_MODULE_5__.Stack, {
     direction: "row",
     alignItems: "center",
     gap: 1
-  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(_elementor_editor_controls__WEBPACK_IMPORTED_MODULE_1__.ControlFormLabel, null, (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_5__.__)('CSS code', 'elementor-pro')), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(_elementor_editor_controls__WEBPACK_IMPORTED_MODULE_1__.ControlAdornments, null))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(_elementor_editor_controls_extended__WEBPACK_IMPORTED_MODULE_2__.CssEditor, {
+  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(_elementor_editor_controls__WEBPACK_IMPORTED_MODULE_1__.ControlFormLabel, null, (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_6__.__)('CSS code', 'elementor-pro')), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(_elementor_editor_controls__WEBPACK_IMPORTED_MODULE_1__.ControlAdornments, null))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(_elementor_editor_controls_extended__WEBPACK_IMPORTED_MODULE_2__.CssEditor, {
     value: currentLocalState.value,
     onChange: handleChange,
     syntaxRuleOptions: syntaxRuleOptions,
-    readOnly: !hasLicense
+    readOnly: isLicenseExpired
   }));
 };
 
@@ -197,8 +195,11 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _elementor_editor_editing_panel__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_elementor_editor_editing_panel__WEBPACK_IMPORTED_MODULE_2__);
 /* harmony import */ var _elementor_editor_props__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @elementor/editor-props */ "@elementor/editor-props");
 /* harmony import */ var _elementor_editor_props__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_elementor_editor_props__WEBPACK_IMPORTED_MODULE_3__);
-/* harmony import */ var _components_custom_css_section__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./components/custom-css-section */ "./packages/packages/pro/editor-editing-panel-extended/src/components/custom-css-section.tsx");
-/* harmony import */ var _transformers_settings_attributes_transformer__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./transformers/settings/attributes-transformer */ "./packages/packages/pro/editor-editing-panel-extended/src/transformers/settings/attributes-transformer.ts");
+/* harmony import */ var _elementor_license_api__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @elementor/license-api */ "@elementor/license-api");
+/* harmony import */ var _elementor_license_api__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(_elementor_license_api__WEBPACK_IMPORTED_MODULE_4__);
+/* harmony import */ var _components_custom_css_section__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./components/custom-css-section */ "./packages/packages/pro/editor-editing-panel-extended/src/components/custom-css-section.tsx");
+/* harmony import */ var _transformers_settings_attributes_transformer__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./transformers/settings/attributes-transformer */ "./packages/packages/pro/editor-editing-panel-extended/src/transformers/settings/attributes-transformer.ts");
+
 
 
 
@@ -206,18 +207,28 @@ __webpack_require__.r(__webpack_exports__);
 
 
 async function init() {
-  _elementor_editor_canvas__WEBPACK_IMPORTED_MODULE_0__.settingsTransformersRegistry.register('attributes', _transformers_settings_attributes_transformer__WEBPACK_IMPORTED_MODULE_5__.proAttributesTransformer);
+  _elementor_editor_canvas__WEBPACK_IMPORTED_MODULE_0__.settingsTransformersRegistry.register('attributes', _transformers_settings_attributes_transformer__WEBPACK_IMPORTED_MODULE_6__.proAttributesTransformer);
   _elementor_editor_editing_panel__WEBPACK_IMPORTED_MODULE_2__.controlsRegistry.register('attributes', _elementor_editor_controls_extended__WEBPACK_IMPORTED_MODULE_1__.AttributesControl, 'full', _elementor_editor_props__WEBPACK_IMPORTED_MODULE_3__.keyValuePropTypeUtil);
-  if (await (0,_elementor_editor_controls_extended__WEBPACK_IMPORTED_MODULE_1__.licenseApi)('atomic-custom-css')) {
+  _elementor_editor_editing_panel__WEBPACK_IMPORTED_MODULE_2__.controlsRegistry.register('options', _elementor_editor_controls_extended__WEBPACK_IMPORTED_MODULE_1__.OptionsControl, 'full', _elementor_editor_props__WEBPACK_IMPORTED_MODULE_3__.keyValuePropTypeUtil);
+  const features = await (0,_elementor_license_api__WEBPACK_IMPORTED_MODULE_4__.fetchTierFeatures)().catch(() => []);
+  if (features.includes('atomic-custom-css')) {
     (0,_elementor_editor_editing_panel__WEBPACK_IMPORTED_MODULE_2__.injectIntoStyleTab)({
       id: 'custom-css',
-      component: _components_custom_css_section__WEBPACK_IMPORTED_MODULE_4__.CustomCssStyleSection,
+      component: _components_custom_css_section__WEBPACK_IMPORTED_MODULE_5__.CustomCssStyleSection,
       options: {
         overwrite: true
       }
     });
   }
   _elementor_editor_editing_panel__WEBPACK_IMPORTED_MODULE_2__.controlsRegistry.register('display-conditions', _elementor_editor_controls_extended__WEBPACK_IMPORTED_MODULE_1__.DisplayConditionsControl, 'two-columns', _elementor_editor_controls_extended__WEBPACK_IMPORTED_MODULE_1__.displayConditionsPropTypeUtil);
+
+  // BC check, can be removed at 4.2.0 version
+  if (typeof _elementor_editor_editing_panel__WEBPACK_IMPORTED_MODULE_2__.setLicenseConfig === 'function') {
+    const isExpired = await (0,_elementor_license_api__WEBPACK_IMPORTED_MODULE_4__.fetchLicenseStatus)().catch(() => false);
+    (0,_elementor_editor_editing_panel__WEBPACK_IMPORTED_MODULE_2__.setLicenseConfig)({
+      expired: isExpired
+    });
+  }
 }
 
 /***/ }),
@@ -301,6 +312,16 @@ module.exports = window["elementorV2"]["editorProps"];
 
 /***/ }),
 
+/***/ "@elementor/license-api":
+/*!*********************************************!*\
+  !*** external ["elementorV2","licenseApi"] ***!
+  \*********************************************/
+/***/ (function(module) {
+
+module.exports = window["elementorV2"]["licenseApi"];
+
+/***/ }),
+
 /***/ "@elementor/ui":
 /*!*************************************!*\
   !*** external ["elementorV2","ui"] ***!
@@ -341,6 +362,12 @@ module.exports = window["wp"]["i18n"];
 /******/ 		};
 /******/ 	
 /******/ 		// Execute the module function
+/******/ 		if (!(moduleId in __webpack_modules__)) {
+/******/ 			delete __webpack_module_cache__[moduleId];
+/******/ 			var e = new Error("Cannot find module '" + moduleId + "'");
+/******/ 			e.code = 'MODULE_NOT_FOUND';
+/******/ 			throw e;
+/******/ 		}
 /******/ 		__webpack_modules__[moduleId](module, module.exports, __webpack_require__);
 /******/ 	
 /******/ 		// Return the exports of the module
@@ -390,7 +417,7 @@ module.exports = window["wp"]["i18n"];
 /******/ 	
 /************************************************************************/
 var __webpack_exports__ = {};
-// This entry need to be wrapped in an IIFE because it need to be isolated against other modules in the chunk.
+// This entry needs to be wrapped in an IIFE because it needs to be isolated against other modules in the chunk.
 !function() {
 /*!**************************************************************************!*\
   !*** ./packages/packages/pro/editor-editing-panel-extended/src/index.ts ***!

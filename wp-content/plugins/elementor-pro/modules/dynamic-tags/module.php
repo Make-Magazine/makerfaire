@@ -30,6 +30,7 @@ class Module extends TagsModule {
 
 	const WOOCOMMERCE_GROUP = 'woocommerce';
 
+	const LICENSE_FEATURE_DYNAMIC_TAGS_NAME = 'dynamic-tags';
 	const LICENSE_FEATURE_ACF_NAME = 'dynamic-tags-acf';
 	const LICENSE_FEATURE_PODS_NAME = 'dynamic-tags-pods';
 	const LICENSE_FEATURE_TOOLSET_NAME = 'dynamic-tags-toolset';
@@ -91,46 +92,49 @@ class Module extends TagsModule {
 	}
 
 	public function get_tag_classes_names() {
-		$tags = [
-			'Archive_Description',
-			'Archive_Meta',
-			'Archive_Title',
-			'Archive_URL',
-			'Author_Info',
-			'Author_Meta',
-			'Author_Name',
-			'Author_Profile_Picture',
-			'Author_URL',
-			'Comments_Number',
-			'Comments_URL',
-			'Page_Title',
-			'Post_Date',
-			'Post_Excerpt',
-			'Post_Featured_Image',
-			'Post_Gallery',
-			'Post_ID',
-			'Post_Terms',
-			'Post_Time',
-			'Post_Title',
-			'Post_URL',
-			'Site_Logo',
-			'Site_Tagline',
-			'Site_Title',
-			'Site_URL',
-			'Internal_URL',
-			'Current_Date_Time',
-			'Reload_Page',
-			'Request_Parameter',
-			'Lightbox',
-			'Featured_Image_Data',
-			'Shortcode',
-			'Contact_URL',
-			'User_Info',
-			'User_Profile_Picture',
-		];
-		$tier = API::get_access_tier();
+		$tags = [];
 
-		if ( 'essential' !== $tier ) {
+		if ( API::is_licence_has_feature( self::LICENSE_FEATURE_DYNAMIC_TAGS_NAME, API::BC_VALIDATION_CALLBACK ) ) {
+			$tags = [
+				'Archive_Description',
+				'Archive_Meta',
+				'Archive_Title',
+				'Archive_URL',
+				'Author_Info',
+				'Author_Meta',
+				'Author_Name',
+				'Author_Profile_Picture',
+				'Author_URL',
+				'Comments_Number',
+				'Comments_URL',
+				'Page_Title',
+				'Post_Date',
+				'Post_Excerpt',
+				'Post_Featured_Image',
+				'Post_Gallery',
+				'Post_ID',
+				'Post_Terms',
+				'Post_Time',
+				'Post_Title',
+				'Post_URL',
+				'Site_Logo',
+				'Site_Tagline',
+				'Site_Title',
+				'Site_URL',
+				'Internal_URL',
+				'Current_Date_Time',
+				'Reload_Page',
+				'Request_Parameter',
+				'Lightbox',
+				'Featured_Image_Data',
+				'Shortcode',
+				'Contact_URL',
+				'User_Info',
+				'User_Profile_Picture',
+			];
+		}
+
+		if ( API::is_licence_has_feature( self::LICENSE_FEATURE_ACF_NAME, API::BC_VALIDATION_CALLBACK ) ) {
 			$tags[] = 'Post_Custom_Field';
 		}
 

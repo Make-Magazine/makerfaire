@@ -3,13 +3,20 @@ namespace ElementorPro\Modules\DynamicTags\Pods\Tags;
 
 use Elementor\Controls_Manager;
 use ElementorPro\Modules\DynamicTags\Tags\Base\Tag;
+use ElementorPro\Modules\DynamicTags\Tags\Base\License_Meta_Trait;
 use ElementorPro\Modules\DynamicTags\Pods\Module;
+use ElementorPro\Modules\DynamicTags\Module as DynamicTagsModule;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
 
 abstract class Pods_Base extends Tag {
+	use License_Meta_Trait;
+
+	protected function get_required_license_feature() {
+		return DynamicTagsModule::LICENSE_FEATURE_PODS_NAME;
+	}
 
 	public function get_group() {
 		return Module::PODS_GROUP;

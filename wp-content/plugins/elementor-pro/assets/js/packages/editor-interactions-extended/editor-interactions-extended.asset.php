@@ -8,13 +8,17 @@ if ( ! defined( 'ABSPATH' ) ) {
 return [
 	'handle' => 'elementor-v2-editor-interactions-extended',
 	'deps' => [
+		'elementor-v2-editor',
 		'elementor-v2-editor-controls',
-		'elementor-v2-editor-controls-extended',
+		'elementor-v2-editor-editing-panel',
 		'elementor-v2-editor-interactions',
+		'elementor-v2-editor-props',
 		'elementor-v2-editor-ui',
 		'elementor-v2-icons',
+		'elementor-v2-license-api',
 		'elementor-v2-ui',
 		'react',
+		'react-dom',
 		'wp-i18n',
 	],
 ];

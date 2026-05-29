@@ -145,7 +145,7 @@ class Share_Buttons extends Base_Widget {
 						'button' => 'facebook',
 					],
 					[
-						'button' => 'twitter',
+						'button' => 'x-twitter',
 					],
 					[
 						'button' => 'linkedin',

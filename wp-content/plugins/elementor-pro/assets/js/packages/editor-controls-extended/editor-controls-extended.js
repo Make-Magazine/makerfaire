@@ -2,6 +2,574 @@
 /******/ 	"use strict";
 /******/ 	var __webpack_modules__ = ({
 
+/***/ "./node_modules/@monaco-editor/loader/lib/es/_virtual/_rollupPluginBabelHelpers.js":
+/*!*****************************************************************************************!*\
+  !*** ./node_modules/@monaco-editor/loader/lib/es/_virtual/_rollupPluginBabelHelpers.js ***!
+  \*****************************************************************************************/
+/***/ (function(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   arrayLikeToArray: function() { return /* binding */ _arrayLikeToArray; },
+/* harmony export */   arrayWithHoles: function() { return /* binding */ _arrayWithHoles; },
+/* harmony export */   defineProperty: function() { return /* binding */ _defineProperty; },
+/* harmony export */   iterableToArrayLimit: function() { return /* binding */ _iterableToArrayLimit; },
+/* harmony export */   nonIterableRest: function() { return /* binding */ _nonIterableRest; },
+/* harmony export */   objectSpread2: function() { return /* binding */ _objectSpread2; },
+/* harmony export */   objectWithoutProperties: function() { return /* binding */ _objectWithoutProperties; },
+/* harmony export */   objectWithoutPropertiesLoose: function() { return /* binding */ _objectWithoutPropertiesLoose; },
+/* harmony export */   slicedToArray: function() { return /* binding */ _slicedToArray; },
+/* harmony export */   toPrimitive: function() { return /* binding */ _toPrimitive; },
+/* harmony export */   toPropertyKey: function() { return /* binding */ _toPropertyKey; },
+/* harmony export */   unsupportedIterableToArray: function() { return /* binding */ _unsupportedIterableToArray; }
+/* harmony export */ });
+function _arrayLikeToArray(r, a) {
+  (null == a || a > r.length) && (a = r.length);
+  for (var e = 0, n = Array(a); e < a; e++) n[e] = r[e];
+  return n;
+}
+function _arrayWithHoles(r) {
+  if (Array.isArray(r)) return r;
+}
+function _defineProperty(e, r, t) {
+  return (r = _toPropertyKey(r)) in e ? Object.defineProperty(e, r, {
+    value: t,
+    enumerable: true,
+    configurable: true,
+    writable: true
+  }) : e[r] = t, e;
+}
+function _iterableToArrayLimit(r, l) {
+  var t = null == r ? null : "undefined" != typeof Symbol && r[Symbol.iterator] || r["@@iterator"];
+  if (null != t) {
+    var e,
+      n,
+      i,
+      u,
+      a = [],
+      f = true,
+      o = false;
+    try {
+      if (i = (t = t.call(r)).next, 0 === l) ; else for (; !(f = (e = i.call(t)).done) && (a.push(e.value), a.length !== l); f = !0);
+    } catch (r) {
+      o = true, n = r;
+    } finally {
+      try {
+        if (!f && null != t.return && (u = t.return(), Object(u) !== u)) return;
+      } finally {
+        if (o) throw n;
+      }
+    }
+    return a;
+  }
+}
+function _nonIterableRest() {
+  throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
+}
+function ownKeys(e, r) {
+  var t = Object.keys(e);
+  if (Object.getOwnPropertySymbols) {
+    var o = Object.getOwnPropertySymbols(e);
+    r && (o = o.filter(function (r) {
+      return Object.getOwnPropertyDescriptor(e, r).enumerable;
+    })), t.push.apply(t, o);
+  }
+  return t;
+}
+function _objectSpread2(e) {
+  for (var r = 1; r < arguments.length; r++) {
+    var t = null != arguments[r] ? arguments[r] : {};
+    r % 2 ? ownKeys(Object(t), true).forEach(function (r) {
+      _defineProperty(e, r, t[r]);
+    }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(e, Object.getOwnPropertyDescriptors(t)) : ownKeys(Object(t)).forEach(function (r) {
+      Object.defineProperty(e, r, Object.getOwnPropertyDescriptor(t, r));
+    });
+  }
+  return e;
+}
+function _objectWithoutProperties(e, t) {
+  if (null == e) return {};
+  var o,
+    r,
+    i = _objectWithoutPropertiesLoose(e, t);
+  if (Object.getOwnPropertySymbols) {
+    var n = Object.getOwnPropertySymbols(e);
+    for (r = 0; r < n.length; r++) o = n[r], -1 === t.indexOf(o) && {}.propertyIsEnumerable.call(e, o) && (i[o] = e[o]);
+  }
+  return i;
+}
+function _objectWithoutPropertiesLoose(r, e) {
+  if (null == r) return {};
+  var t = {};
+  for (var n in r) if ({}.hasOwnProperty.call(r, n)) {
+    if (-1 !== e.indexOf(n)) continue;
+    t[n] = r[n];
+  }
+  return t;
+}
+function _slicedToArray(r, e) {
+  return _arrayWithHoles(r) || _iterableToArrayLimit(r, e) || _unsupportedIterableToArray(r, e) || _nonIterableRest();
+}
+function _toPrimitive(t, r) {
+  if ("object" != typeof t || !t) return t;
+  var e = t[Symbol.toPrimitive];
+  if (void 0 !== e) {
+    var i = e.call(t, r);
+    if ("object" != typeof i) return i;
+    throw new TypeError("@@toPrimitive must return a primitive value.");
+  }
+  return ("string" === r ? String : Number)(t);
+}
+function _toPropertyKey(t) {
+  var i = _toPrimitive(t, "string");
+  return "symbol" == typeof i ? i : i + "";
+}
+function _unsupportedIterableToArray(r, a) {
+  if (r) {
+    if ("string" == typeof r) return _arrayLikeToArray(r, a);
+    var t = {}.toString.call(r).slice(8, -1);
+    return "Object" === t && r.constructor && (t = r.constructor.name), "Map" === t || "Set" === t ? Array.from(r) : "Arguments" === t || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(t) ? _arrayLikeToArray(r, a) : void 0;
+  }
+}
+
+
+
+
+/***/ }),
+
+/***/ "./node_modules/@monaco-editor/loader/lib/es/config/index.js":
+/*!*******************************************************************!*\
+  !*** ./node_modules/@monaco-editor/loader/lib/es/config/index.js ***!
+  \*******************************************************************/
+/***/ (function(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": function() { return /* binding */ config; }
+/* harmony export */ });
+var config = {
+  paths: {
+    vs: 'https://cdn.jsdelivr.net/npm/monaco-editor@0.55.1/min/vs'
+  }
+};
+
+
+
+
+/***/ }),
+
+/***/ "./node_modules/@monaco-editor/loader/lib/es/index.js":
+/*!************************************************************!*\
+  !*** ./node_modules/@monaco-editor/loader/lib/es/index.js ***!
+  \************************************************************/
+/***/ (function(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": function() { return /* reexport safe */ _loader_index_js__WEBPACK_IMPORTED_MODULE_0__["default"]; }
+/* harmony export */ });
+/* harmony import */ var _loader_index_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./loader/index.js */ "./node_modules/@monaco-editor/loader/lib/es/loader/index.js");
+
+
+
+
+
+
+
+/***/ }),
+
+/***/ "./node_modules/@monaco-editor/loader/lib/es/loader/index.js":
+/*!*******************************************************************!*\
+  !*** ./node_modules/@monaco-editor/loader/lib/es/loader/index.js ***!
+  \*******************************************************************/
+/***/ (function(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": function() { return /* binding */ loader; }
+/* harmony export */ });
+/* harmony import */ var _virtual_rollupPluginBabelHelpers_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../_virtual/_rollupPluginBabelHelpers.js */ "./node_modules/@monaco-editor/loader/lib/es/_virtual/_rollupPluginBabelHelpers.js");
+/* harmony import */ var state_local__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! state-local */ "./node_modules/state-local/lib/es/state-local.js");
+/* harmony import */ var _config_index_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../config/index.js */ "./node_modules/@monaco-editor/loader/lib/es/config/index.js");
+/* harmony import */ var _validators_index_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../validators/index.js */ "./node_modules/@monaco-editor/loader/lib/es/validators/index.js");
+/* harmony import */ var _utils_compose_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../utils/compose.js */ "./node_modules/@monaco-editor/loader/lib/es/utils/compose.js");
+/* harmony import */ var _utils_deepMerge_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../utils/deepMerge.js */ "./node_modules/@monaco-editor/loader/lib/es/utils/deepMerge.js");
+/* harmony import */ var _utils_makeCancelable_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../utils/makeCancelable.js */ "./node_modules/@monaco-editor/loader/lib/es/utils/makeCancelable.js");
+
+
+
+
+
+
+
+
+var _excluded = ["monaco"];
+
+/** the local state of the module */
+var _state$create = state_local__WEBPACK_IMPORTED_MODULE_1__["default"].create({
+    config: _config_index_js__WEBPACK_IMPORTED_MODULE_2__["default"],
+    isInitialized: false,
+    resolve: null,
+    reject: null,
+    monaco: null
+  }),
+  _state$create2 = (0,_virtual_rollupPluginBabelHelpers_js__WEBPACK_IMPORTED_MODULE_0__.slicedToArray)(_state$create, 2),
+  getState = _state$create2[0],
+  setState = _state$create2[1];
+
+/**
+ * set the loader configuration
+ * @param {Object} config - the configuration object
+ */
+function config(globalConfig) {
+  var _validators$config = _validators_index_js__WEBPACK_IMPORTED_MODULE_3__["default"].config(globalConfig),
+    monaco = _validators$config.monaco,
+    config = (0,_virtual_rollupPluginBabelHelpers_js__WEBPACK_IMPORTED_MODULE_0__.objectWithoutProperties)(_validators$config, _excluded);
+  setState(function (state) {
+    return {
+      config: (0,_utils_deepMerge_js__WEBPACK_IMPORTED_MODULE_5__["default"])(state.config, config),
+      monaco: monaco
+    };
+  });
+}
+
+/**
+ * handles the initialization of the monaco-editor
+ * @return {Promise} - returns an instance of monaco (with a cancelable promise)
+ */
+function init() {
+  var state = getState(function (_ref) {
+    var monaco = _ref.monaco,
+      isInitialized = _ref.isInitialized,
+      resolve = _ref.resolve;
+    return {
+      monaco: monaco,
+      isInitialized: isInitialized,
+      resolve: resolve
+    };
+  });
+  if (!state.isInitialized) {
+    setState({
+      isInitialized: true
+    });
+    if (state.monaco) {
+      state.resolve(state.monaco);
+      return (0,_utils_makeCancelable_js__WEBPACK_IMPORTED_MODULE_6__["default"])(wrapperPromise);
+    }
+    if (window.monaco && window.monaco.editor) {
+      storeMonacoInstance(window.monaco);
+      state.resolve(window.monaco);
+      return (0,_utils_makeCancelable_js__WEBPACK_IMPORTED_MODULE_6__["default"])(wrapperPromise);
+    }
+    (0,_utils_compose_js__WEBPACK_IMPORTED_MODULE_4__["default"])(injectScripts, getMonacoLoaderScript)(configureLoader);
+  }
+  return (0,_utils_makeCancelable_js__WEBPACK_IMPORTED_MODULE_6__["default"])(wrapperPromise);
+}
+
+/**
+ * injects provided scripts into the document.body
+ * @param {Object} script - an HTML script element
+ * @return {Object} - the injected HTML script element
+ */
+function injectScripts(script) {
+  return document.body.appendChild(script);
+}
+
+/**
+ * creates an HTML script element with/without provided src
+ * @param {string} [src] - the source path of the script
+ * @return {Object} - the created HTML script element
+ */
+function createScript(src) {
+  var script = document.createElement('script');
+  return src && (script.src = src), script;
+}
+
+/**
+ * creates an HTML script element with the monaco loader src
+ * @return {Object} - the created HTML script element
+ */
+function getMonacoLoaderScript(configureLoader) {
+  var state = getState(function (_ref2) {
+    var config = _ref2.config,
+      reject = _ref2.reject;
+    return {
+      config: config,
+      reject: reject
+    };
+  });
+  var loaderScript = createScript("".concat(state.config.paths.vs, "/loader.js"));
+  loaderScript.onload = function () {
+    return configureLoader();
+  };
+  loaderScript.onerror = state.reject;
+  return loaderScript;
+}
+
+/**
+ * configures the monaco loader
+ */
+function configureLoader() {
+  var state = getState(function (_ref3) {
+    var config = _ref3.config,
+      resolve = _ref3.resolve,
+      reject = _ref3.reject;
+    return {
+      config: config,
+      resolve: resolve,
+      reject: reject
+    };
+  });
+  var require = window.require;
+  require.config(state.config);
+  require(['vs/editor/editor.main'], function (loaded) {
+    var monaco = loaded.m /* for 0.53 & 0.54 */ || loaded /* for other versions */;
+    storeMonacoInstance(monaco);
+    state.resolve(monaco);
+  }, function (error) {
+    state.reject(error);
+  });
+}
+
+/**
+ * store monaco instance in local state
+ */
+function storeMonacoInstance(monaco) {
+  if (!getState().monaco) {
+    setState({
+      monaco: monaco
+    });
+  }
+}
+
+/**
+ * internal helper function
+ * extracts stored monaco instance
+ * @return {Object|null} - the monaco instance
+ */
+function __getMonacoInstance() {
+  return getState(function (_ref4) {
+    var monaco = _ref4.monaco;
+    return monaco;
+  });
+}
+var wrapperPromise = new Promise(function (resolve, reject) {
+  return setState({
+    resolve: resolve,
+    reject: reject
+  });
+});
+var loader = {
+  config: config,
+  init: init,
+  __getMonacoInstance: __getMonacoInstance
+};
+
+
+
+
+/***/ }),
+
+/***/ "./node_modules/@monaco-editor/loader/lib/es/utils/compose.js":
+/*!********************************************************************!*\
+  !*** ./node_modules/@monaco-editor/loader/lib/es/utils/compose.js ***!
+  \********************************************************************/
+/***/ (function(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": function() { return /* binding */ compose; }
+/* harmony export */ });
+var compose = function compose() {
+  for (var _len = arguments.length, fns = new Array(_len), _key = 0; _key < _len; _key++) {
+    fns[_key] = arguments[_key];
+  }
+  return function (x) {
+    return fns.reduceRight(function (y, f) {
+      return f(y);
+    }, x);
+  };
+};
+
+
+
+
+/***/ }),
+
+/***/ "./node_modules/@monaco-editor/loader/lib/es/utils/curry.js":
+/*!******************************************************************!*\
+  !*** ./node_modules/@monaco-editor/loader/lib/es/utils/curry.js ***!
+  \******************************************************************/
+/***/ (function(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": function() { return /* binding */ curry; }
+/* harmony export */ });
+function curry(fn) {
+  return function curried() {
+    var _this = this;
+    for (var _len = arguments.length, args = new Array(_len), _key = 0; _key < _len; _key++) {
+      args[_key] = arguments[_key];
+    }
+    return args.length >= fn.length ? fn.apply(this, args) : function () {
+      for (var _len2 = arguments.length, nextArgs = new Array(_len2), _key2 = 0; _key2 < _len2; _key2++) {
+        nextArgs[_key2] = arguments[_key2];
+      }
+      return curried.apply(_this, [].concat(args, nextArgs));
+    };
+  };
+}
+
+
+
+
+/***/ }),
+
+/***/ "./node_modules/@monaco-editor/loader/lib/es/utils/deepMerge.js":
+/*!**********************************************************************!*\
+  !*** ./node_modules/@monaco-editor/loader/lib/es/utils/deepMerge.js ***!
+  \**********************************************************************/
+/***/ (function(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": function() { return /* binding */ merge; }
+/* harmony export */ });
+/* harmony import */ var _virtual_rollupPluginBabelHelpers_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../_virtual/_rollupPluginBabelHelpers.js */ "./node_modules/@monaco-editor/loader/lib/es/_virtual/_rollupPluginBabelHelpers.js");
+
+
+function merge(target, source) {
+  Object.keys(source).forEach(function (key) {
+    if (source[key] instanceof Object) {
+      if (target[key]) {
+        Object.assign(source[key], merge(target[key], source[key]));
+      }
+    }
+  });
+  return (0,_virtual_rollupPluginBabelHelpers_js__WEBPACK_IMPORTED_MODULE_0__.objectSpread2)((0,_virtual_rollupPluginBabelHelpers_js__WEBPACK_IMPORTED_MODULE_0__.objectSpread2)({}, target), source);
+}
+
+
+
+
+/***/ }),
+
+/***/ "./node_modules/@monaco-editor/loader/lib/es/utils/isObject.js":
+/*!*********************************************************************!*\
+  !*** ./node_modules/@monaco-editor/loader/lib/es/utils/isObject.js ***!
+  \*********************************************************************/
+/***/ (function(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": function() { return /* binding */ isObject; }
+/* harmony export */ });
+function isObject(value) {
+  return {}.toString.call(value).includes('Object');
+}
+
+
+
+
+/***/ }),
+
+/***/ "./node_modules/@monaco-editor/loader/lib/es/utils/makeCancelable.js":
+/*!***************************************************************************!*\
+  !*** ./node_modules/@monaco-editor/loader/lib/es/utils/makeCancelable.js ***!
+  \***************************************************************************/
+/***/ (function(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   CANCELATION_MESSAGE: function() { return /* binding */ CANCELATION_MESSAGE; },
+/* harmony export */   "default": function() { return /* binding */ makeCancelable; }
+/* harmony export */ });
+// The source (has been changed) is https://github.com/facebook/react/issues/5465#issuecomment-157888325
+
+var CANCELATION_MESSAGE = {
+  type: 'cancelation',
+  msg: 'operation is manually canceled'
+};
+function makeCancelable(promise) {
+  var hasCanceled_ = false;
+  var wrappedPromise = new Promise(function (resolve, reject) {
+    promise.then(function (val) {
+      return hasCanceled_ ? reject(CANCELATION_MESSAGE) : resolve(val);
+    });
+    promise["catch"](reject);
+  });
+  return wrappedPromise.cancel = function () {
+    return hasCanceled_ = true;
+  }, wrappedPromise;
+}
+
+
+
+
+/***/ }),
+
+/***/ "./node_modules/@monaco-editor/loader/lib/es/validators/index.js":
+/*!***********************************************************************!*\
+  !*** ./node_modules/@monaco-editor/loader/lib/es/validators/index.js ***!
+  \***********************************************************************/
+/***/ (function(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": function() { return /* binding */ validators; },
+/* harmony export */   errorHandler: function() { return /* binding */ errorHandler; },
+/* harmony export */   errorMessages: function() { return /* binding */ errorMessages; }
+/* harmony export */ });
+/* harmony import */ var _utils_curry_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../utils/curry.js */ "./node_modules/@monaco-editor/loader/lib/es/utils/curry.js");
+/* harmony import */ var _utils_isObject_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../utils/isObject.js */ "./node_modules/@monaco-editor/loader/lib/es/utils/isObject.js");
+
+
+
+/**
+ * validates the configuration object and informs about deprecation
+ * @param {Object} config - the configuration object 
+ * @return {Object} config - the validated configuration object
+ */
+function validateConfig(config) {
+  if (!config) errorHandler('configIsRequired');
+  if (!(0,_utils_isObject_js__WEBPACK_IMPORTED_MODULE_1__["default"])(config)) errorHandler('configType');
+  if (config.urls) {
+    informAboutDeprecation();
+    return {
+      paths: {
+        vs: config.urls.monacoBase
+      }
+    };
+  }
+  return config;
+}
+
+/**
+ * logs deprecation message
+ */
+function informAboutDeprecation() {
+  console.warn(errorMessages.deprecation);
+}
+function throwError(errorMessages, type) {
+  throw new Error(errorMessages[type] || errorMessages["default"]);
+}
+var errorMessages = {
+  configIsRequired: 'the configuration object is required',
+  configType: 'the configuration object should be an object',
+  "default": 'an unknown error accured in `@monaco-editor/loader` package',
+  deprecation: "Deprecation warning!\n    You are using deprecated way of configuration.\n\n    Instead of using\n      monaco.config({ urls: { monacoBase: '...' } })\n    use\n      monaco.config({ paths: { vs: '...' } })\n\n    For more please check the link https://github.com/suren-atoyan/monaco-loader#config\n  "
+};
+var errorHandler = (0,_utils_curry_js__WEBPACK_IMPORTED_MODULE_0__["default"])(throwError)(errorMessages);
+var validators = {
+  config: validateConfig
+};
+
+
+
+
+/***/ }),
+
 /***/ "./packages/packages/pro/editor-controls-extended/src/components/css-code-editor/css-editor.styles.ts":
 /*!************************************************************************************************************!*\
   !*** ./packages/packages/pro/editor-controls-extended/src/components/css-code-editor/css-editor.styles.ts ***!
@@ -17,6 +585,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _elementor_ui__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_elementor_ui__WEBPACK_IMPORTED_MODULE_0__);
 
 const EditorWrapper = (0,_elementor_ui__WEBPACK_IMPORTED_MODULE_0__.styled)((0,_elementor_ui__WEBPACK_IMPORTED_MODULE_0__.Box))`
+	/* @noflip */
+	direction: ltr;
 	border: 1px solid var( --e-a-border-color );
 	border-radius: 8px;
 	padding: 4px;
@@ -99,15 +669,18 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var _elementor_editor_controls__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @elementor/editor-controls */ "@elementor/editor-controls");
 /* harmony import */ var _elementor_editor_controls__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_elementor_editor_controls__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var _elementor_ui__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @elementor/ui */ "@elementor/ui");
-/* harmony import */ var _elementor_ui__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_elementor_ui__WEBPACK_IMPORTED_MODULE_2__);
-/* harmony import */ var _monaco_editor_react__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @monaco-editor/react */ "./packages/node_modules/@monaco-editor/react/dist/index.mjs");
-/* harmony import */ var _wordpress_i18n__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @wordpress/i18n */ "@wordpress/i18n");
-/* harmony import */ var _wordpress_i18n__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(_wordpress_i18n__WEBPACK_IMPORTED_MODULE_4__);
-/* harmony import */ var _css_editor_styles__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./css-editor.styles */ "./packages/packages/pro/editor-controls-extended/src/components/css-code-editor/css-editor.styles.ts");
-/* harmony import */ var _css_validation__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./css-validation */ "./packages/packages/pro/editor-controls-extended/src/components/css-code-editor/css-validation.ts");
-/* harmony import */ var _resize_handle__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./resize-handle */ "./packages/packages/pro/editor-controls-extended/src/components/css-code-editor/resize-handle.tsx");
-/* harmony import */ var _visual_content_change_protection__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./visual-content-change-protection */ "./packages/packages/pro/editor-controls-extended/src/components/css-code-editor/visual-content-change-protection.ts");
+/* harmony import */ var _elementor_editor_ui__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @elementor/editor-ui */ "@elementor/editor-ui");
+/* harmony import */ var _elementor_editor_ui__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_elementor_editor_ui__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var _elementor_ui__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @elementor/ui */ "@elementor/ui");
+/* harmony import */ var _elementor_ui__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_elementor_ui__WEBPACK_IMPORTED_MODULE_3__);
+/* harmony import */ var _monaco_editor_react__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @monaco-editor/react */ "./node_modules/@monaco-editor/react/dist/index.mjs");
+/* harmony import */ var _wordpress_i18n__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! @wordpress/i18n */ "@wordpress/i18n");
+/* harmony import */ var _wordpress_i18n__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(_wordpress_i18n__WEBPACK_IMPORTED_MODULE_5__);
+/* harmony import */ var _css_editor_styles__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./css-editor.styles */ "./packages/packages/pro/editor-controls-extended/src/components/css-code-editor/css-editor.styles.ts");
+/* harmony import */ var _css_validation__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./css-validation */ "./packages/packages/pro/editor-controls-extended/src/components/css-code-editor/css-validation.ts");
+/* harmony import */ var _resize_handle__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./resize-handle */ "./packages/packages/pro/editor-controls-extended/src/components/css-code-editor/resize-handle.tsx");
+/* harmony import */ var _visual_content_change_protection__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./visual-content-change-protection */ "./packages/packages/pro/editor-controls-extended/src/components/css-code-editor/visual-content-change-protection.ts");
+
 
 
 
@@ -122,14 +695,14 @@ const createEditorDidMountHandler = (editorRef, monacoRef, onUserContentChange, 
   return (editor, monaco) => {
     editorRef.current = editor;
     monacoRef.current = monaco;
-    (0,_visual_content_change_protection__WEBPACK_IMPORTED_MODULE_8__.preventChangeOnVisualContent)(editor);
-    (0,_css_validation__WEBPACK_IMPORTED_MODULE_6__.setCustomSyntaxRules)(editor, monaco, syntaxRuleOptions);
+    (0,_visual_content_change_protection__WEBPACK_IMPORTED_MODULE_9__.preventChangeOnVisualContent)(editor);
+    (0,_css_validation__WEBPACK_IMPORTED_MODULE_7__.setCustomSyntaxRules)(editor, monaco, syntaxRuleOptions);
     const initialCode = editor.getModel()?.getValue() ?? '';
-    const initialUserContent = (0,_visual_content_change_protection__WEBPACK_IMPORTED_MODULE_8__.getActual)(initialCode);
+    const initialUserContent = (0,_visual_content_change_protection__WEBPACK_IMPORTED_MODULE_9__.getActual)(initialCode);
     onUserContentChange(initialUserContent);
     monaco.editor.onDidChangeMarkers(() => {
-      (0,_css_validation__WEBPACK_IMPORTED_MODULE_6__.clearMarkersFromVisualContent)(editor, monaco);
-      setIsValid((0,_css_validation__WEBPACK_IMPORTED_MODULE_6__.validate)(editor, monaco));
+      (0,_css_validation__WEBPACK_IMPORTED_MODULE_7__.clearMarkersFromVisualContent)(editor, monaco);
+      setIsValid((0,_css_validation__WEBPACK_IMPORTED_MODULE_7__.validate)(editor, monaco));
     });
     editor.setPosition({
       lineNumber: 2,
@@ -182,7 +755,7 @@ const CssEditor = ({
   syntaxRuleOptions,
   readOnly = false
 }) => {
-  const theme = (0,_elementor_ui__WEBPACK_IMPORTED_MODULE_2__.useTheme)();
+  const theme = (0,_elementor_ui__WEBPACK_IMPORTED_MODULE_3__.useTheme)();
   const containerRef = (0,react__WEBPACK_IMPORTED_MODULE_0__.useRef)(null);
   const editorRef = (0,react__WEBPACK_IMPORTED_MODULE_0__.useRef)(null);
   const monacoRef = (0,react__WEBPACK_IMPORTED_MODULE_0__.useRef)(null);
@@ -192,7 +765,7 @@ const CssEditor = ({
   const [contentVersion, setContentVersion] = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(0);
   useOnUpdate(() => {
     const code = editorRef.current?.getModel()?.getValue() ?? '';
-    const userContent = (0,_visual_content_change_protection__WEBPACK_IMPORTED_MODULE_8__.getActual)(code);
+    const userContent = (0,_visual_content_change_protection__WEBPACK_IMPORTED_MODULE_9__.getActual)(code);
     setHasContent(!userContent.trim());
     onChange(userContent, isValid);
   }, [contentVersion, isValid]);
@@ -211,7 +784,7 @@ const CssEditor = ({
     if (!editorRef.current || !monacoRef.current) {
       return;
     }
-    (0,_css_validation__WEBPACK_IMPORTED_MODULE_6__.setCustomSyntaxRules)(editorRef?.current, monacoRef.current, syntaxRuleOptions);
+    (0,_css_validation__WEBPACK_IMPORTED_MODULE_7__.setCustomSyntaxRules)(editorRef?.current, monacoRef.current, syntaxRuleOptions);
     if (debounceTimer.current) {
       clearTimeout(debounceTimer.current);
     }
@@ -220,7 +793,7 @@ const CssEditor = ({
     }, 500);
   };
   const handleEditorDidMount = createEditorDidMountHandler(editorRef, monacoRef, handleUserContentChange, setIsValid, syntaxRuleOptions);
-  const handleReset = () => editorRef.current?.getModel()?.setValue((0,_visual_content_change_protection__WEBPACK_IMPORTED_MODULE_8__.setVisualContent)(''));
+  const handleReset = () => editorRef.current?.getModel()?.setValue((0,_visual_content_change_protection__WEBPACK_IMPORTED_MODULE_9__.setVisualContent)(''));
   (0,react__WEBPACK_IMPORTED_MODULE_0__.useEffect)(() => {
     const timerRef = debounceTimer;
     return () => {
@@ -230,19 +803,20 @@ const CssEditor = ({
       }
     };
   }, []);
-  return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(_elementor_editor_controls__WEBPACK_IMPORTED_MODULE_1__.FloatingActionsBar, {
+  return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(_elementor_editor_ui__WEBPACK_IMPORTED_MODULE_2__.FloatingActionsBar, {
     actions: hasContent ? [/*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(_elementor_editor_controls__WEBPACK_IMPORTED_MODULE_1__.ClearIconButton, {
       key: "clear",
-      tooltipText: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_4__.__)('Clear', 'elementor-pro'),
+      tooltipText: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_5__.__)('Clear', 'elementor-pro'),
       onClick: handleReset
     })] : []
-  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(_elementor_ui__WEBPACK_IMPORTED_MODULE_2__.Box, null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(_css_editor_styles__WEBPACK_IMPORTED_MODULE_5__.EditorWrapper, {
-    ref: containerRef
-  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(_monaco_editor_react__WEBPACK_IMPORTED_MODULE_3__.Editor, {
+  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(_elementor_ui__WEBPACK_IMPORTED_MODULE_3__.Box, null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(_css_editor_styles__WEBPACK_IMPORTED_MODULE_6__.EditorWrapper, {
+    ref: containerRef,
+    dir: "ltr"
+  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(_monaco_editor_react__WEBPACK_IMPORTED_MODULE_4__.Editor, {
     height: "100%",
     language: "css",
     theme: theme.palette.mode === 'dark' ? 'vs-dark' : 'vs',
-    value: (0,_visual_content_change_protection__WEBPACK_IMPORTED_MODULE_8__.setVisualContent)(value),
+    value: (0,_visual_content_change_protection__WEBPACK_IMPORTED_MODULE_9__.setVisualContent)(value),
     onMount: handleEditorDidMount,
     onChange: handleEditorChange,
     options: {
@@ -266,9 +840,10 @@ const CssEditor = ({
       lineDecorationsWidth: 2,
       wordWrap: 'on',
       scrollBeyondLastLine: false,
-      readOnly
+      readOnly,
+      editContext: false
     }
-  }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(_resize_handle__WEBPACK_IMPORTED_MODULE_7__.ResizeHandleComponent, {
+  }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(_resize_handle__WEBPACK_IMPORTED_MODULE_8__.ResizeHandleComponent, {
     onResize: handleResize,
     containerRef: containerRef,
     onHeightChange: handleHeightChange
@@ -577,8 +1152,7 @@ const AttributesControl = (0,_elementor_editor_controls__WEBPACK_IMPORTED_MODULE
     valueName: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_2__.__)('Value', 'elementor-pro'),
     regexKey: "^[a-zA-Z0-9_-]*$",
     validationErrorMessage: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_2__.__)('Names can only use letters, numbers, dashes (-) and underscores (_).', 'elementor-pro'),
-    getHelperText: getHelperText,
-    escapeHtml: true
+    getHelperText: getHelperText
   });
 });
 
@@ -707,6 +1281,34 @@ const DisplayConditionsControl = (0,_elementor_editor_controls__WEBPACK_IMPORTED
 
 /***/ }),
 
+/***/ "./packages/packages/pro/editor-controls-extended/src/controls/options-control.tsx":
+/*!*****************************************************************************************!*\
+  !*** ./packages/packages/pro/editor-controls-extended/src/controls/options-control.tsx ***!
+  \*****************************************************************************************/
+/***/ (function(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   OptionsControl: function() { return /* binding */ OptionsControl; }
+/* harmony export */ });
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "react");
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _elementor_editor_controls__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @elementor/editor-controls */ "@elementor/editor-controls");
+/* harmony import */ var _elementor_editor_controls__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_elementor_editor_controls__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var _wordpress_i18n__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @wordpress/i18n */ "@wordpress/i18n");
+/* harmony import */ var _wordpress_i18n__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_wordpress_i18n__WEBPACK_IMPORTED_MODULE_2__);
+
+
+
+const OptionsControl = (0,_elementor_editor_controls__WEBPACK_IMPORTED_MODULE_1__.createControl)(() => {
+  return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(_elementor_editor_controls__WEBPACK_IMPORTED_MODULE_1__.KeyValueControl, {
+    keyName: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_2__.__)('Name', 'elementor-pro'),
+    valueName: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_2__.__)('Value', 'elementor-pro')
+  });
+});
+
+/***/ }),
+
 /***/ "./packages/packages/pro/editor-controls-extended/src/extend-transition-properties.ts":
 /*!********************************************************************************************!*\
   !*** ./packages/packages/pro/editor-controls-extended/src/extend-transition-properties.ts ***!
@@ -752,55 +1354,16 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   init: function() { return /* binding */ init; }
 /* harmony export */ });
-/* harmony import */ var _extend_transition_properties__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./extend-transition-properties */ "./packages/packages/pro/editor-controls-extended/src/extend-transition-properties.ts");
-/* harmony import */ var _license_api__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./license-api */ "./packages/packages/pro/editor-controls-extended/src/license-api.ts");
+/* harmony import */ var _elementor_license_api__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @elementor/license-api */ "@elementor/license-api");
+/* harmony import */ var _elementor_license_api__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_elementor_license_api__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _extend_transition_properties__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./extend-transition-properties */ "./packages/packages/pro/editor-controls-extended/src/extend-transition-properties.ts");
 
 
 async function init() {
-  const isExpired = await (0,_license_api__WEBPACK_IMPORTED_MODULE_1__.getIsLicenseExpired)();
-  if (await (0,_license_api__WEBPACK_IMPORTED_MODULE_1__.licenseApi)('transitions')) {
-    (0,_extend_transition_properties__WEBPACK_IMPORTED_MODULE_0__.extendTransitionProperties)(isExpired);
+  const [isExpired, features] = await Promise.all([(0,_elementor_license_api__WEBPACK_IMPORTED_MODULE_0__.fetchLicenseStatus)().catch(() => false), (0,_elementor_license_api__WEBPACK_IMPORTED_MODULE_0__.fetchTierFeatures)().catch(() => [])]);
+  if (features.includes('transitions')) {
+    (0,_extend_transition_properties__WEBPACK_IMPORTED_MODULE_1__.extendTransitionProperties)(isExpired);
   }
-}
-
-/***/ }),
-
-/***/ "./packages/packages/pro/editor-controls-extended/src/license-api.ts":
-/*!***************************************************************************!*\
-  !*** ./packages/packages/pro/editor-controls-extended/src/license-api.ts ***!
-  \***************************************************************************/
-/***/ (function(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
-
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   getIsLicenseExpired: function() { return /* binding */ getIsLicenseExpired; },
-/* harmony export */   licenseApi: function() { return /* binding */ licenseApi; }
-/* harmony export */ });
-/* harmony import */ var _elementor_http_client__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @elementor/http-client */ "@elementor/http-client");
-/* harmony import */ var _elementor_http_client__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_elementor_http_client__WEBPACK_IMPORTED_MODULE_0__);
-
-const TIER_FEATURES_URL = 'elementor-pro/v1/license/tier-features';
-const ACTIVE_LICENSE_RESOURCE_URL = 'elementor-pro/v1/license/get-license-status';
-let features = [];
-let isLicenseExpired = null;
-async function licenseApi(featureName) {
-  if (features.includes(featureName)) {
-    return true;
-  }
-  try {
-    const response = await (0,_elementor_http_client__WEBPACK_IMPORTED_MODULE_0__.httpService)().get(TIER_FEATURES_URL);
-    features = response.data?.features || [];
-  } catch {}
-  return features.includes(featureName);
-}
-async function getIsLicenseExpired(force = false) {
-  try {
-    if (isLicenseExpired === null || force) {
-      const response = await (0,_elementor_http_client__WEBPACK_IMPORTED_MODULE_0__.httpService)().get(ACTIVE_LICENSE_RESOURCE_URL);
-      isLicenseExpired = !!response.data?.isExpired;
-    }
-  } catch {}
-  return !!isLicenseExpired;
 }
 
 /***/ }),
@@ -888,614 +1451,10 @@ function getStructuredConditions(conditions) {
 
 /***/ }),
 
-/***/ "./packages/node_modules/@monaco-editor/loader/lib/es/_virtual/_rollupPluginBabelHelpers.js":
-/*!**************************************************************************************************!*\
-  !*** ./packages/node_modules/@monaco-editor/loader/lib/es/_virtual/_rollupPluginBabelHelpers.js ***!
-  \**************************************************************************************************/
-/***/ (function(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
-
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   arrayLikeToArray: function() { return /* binding */ _arrayLikeToArray; },
-/* harmony export */   arrayWithHoles: function() { return /* binding */ _arrayWithHoles; },
-/* harmony export */   defineProperty: function() { return /* binding */ _defineProperty; },
-/* harmony export */   iterableToArrayLimit: function() { return /* binding */ _iterableToArrayLimit; },
-/* harmony export */   nonIterableRest: function() { return /* binding */ _nonIterableRest; },
-/* harmony export */   objectSpread2: function() { return /* binding */ _objectSpread2; },
-/* harmony export */   objectWithoutProperties: function() { return /* binding */ _objectWithoutProperties; },
-/* harmony export */   objectWithoutPropertiesLoose: function() { return /* binding */ _objectWithoutPropertiesLoose; },
-/* harmony export */   slicedToArray: function() { return /* binding */ _slicedToArray; },
-/* harmony export */   unsupportedIterableToArray: function() { return /* binding */ _unsupportedIterableToArray; }
-/* harmony export */ });
-function _defineProperty(obj, key, value) {
-  if (key in obj) {
-    Object.defineProperty(obj, key, {
-      value: value,
-      enumerable: true,
-      configurable: true,
-      writable: true
-    });
-  } else {
-    obj[key] = value;
-  }
-
-  return obj;
-}
-
-function ownKeys(object, enumerableOnly) {
-  var keys = Object.keys(object);
-
-  if (Object.getOwnPropertySymbols) {
-    var symbols = Object.getOwnPropertySymbols(object);
-    if (enumerableOnly) symbols = symbols.filter(function (sym) {
-      return Object.getOwnPropertyDescriptor(object, sym).enumerable;
-    });
-    keys.push.apply(keys, symbols);
-  }
-
-  return keys;
-}
-
-function _objectSpread2(target) {
-  for (var i = 1; i < arguments.length; i++) {
-    var source = arguments[i] != null ? arguments[i] : {};
-
-    if (i % 2) {
-      ownKeys(Object(source), true).forEach(function (key) {
-        _defineProperty(target, key, source[key]);
-      });
-    } else if (Object.getOwnPropertyDescriptors) {
-      Object.defineProperties(target, Object.getOwnPropertyDescriptors(source));
-    } else {
-      ownKeys(Object(source)).forEach(function (key) {
-        Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key));
-      });
-    }
-  }
-
-  return target;
-}
-
-function _objectWithoutPropertiesLoose(source, excluded) {
-  if (source == null) return {};
-  var target = {};
-  var sourceKeys = Object.keys(source);
-  var key, i;
-
-  for (i = 0; i < sourceKeys.length; i++) {
-    key = sourceKeys[i];
-    if (excluded.indexOf(key) >= 0) continue;
-    target[key] = source[key];
-  }
-
-  return target;
-}
-
-function _objectWithoutProperties(source, excluded) {
-  if (source == null) return {};
-
-  var target = _objectWithoutPropertiesLoose(source, excluded);
-
-  var key, i;
-
-  if (Object.getOwnPropertySymbols) {
-    var sourceSymbolKeys = Object.getOwnPropertySymbols(source);
-
-    for (i = 0; i < sourceSymbolKeys.length; i++) {
-      key = sourceSymbolKeys[i];
-      if (excluded.indexOf(key) >= 0) continue;
-      if (!Object.prototype.propertyIsEnumerable.call(source, key)) continue;
-      target[key] = source[key];
-    }
-  }
-
-  return target;
-}
-
-function _slicedToArray(arr, i) {
-  return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _unsupportedIterableToArray(arr, i) || _nonIterableRest();
-}
-
-function _arrayWithHoles(arr) {
-  if (Array.isArray(arr)) return arr;
-}
-
-function _iterableToArrayLimit(arr, i) {
-  if (typeof Symbol === "undefined" || !(Symbol.iterator in Object(arr))) return;
-  var _arr = [];
-  var _n = true;
-  var _d = false;
-  var _e = undefined;
-
-  try {
-    for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) {
-      _arr.push(_s.value);
-
-      if (i && _arr.length === i) break;
-    }
-  } catch (err) {
-    _d = true;
-    _e = err;
-  } finally {
-    try {
-      if (!_n && _i["return"] != null) _i["return"]();
-    } finally {
-      if (_d) throw _e;
-    }
-  }
-
-  return _arr;
-}
-
-function _unsupportedIterableToArray(o, minLen) {
-  if (!o) return;
-  if (typeof o === "string") return _arrayLikeToArray(o, minLen);
-  var n = Object.prototype.toString.call(o).slice(8, -1);
-  if (n === "Object" && o.constructor) n = o.constructor.name;
-  if (n === "Map" || n === "Set") return Array.from(o);
-  if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen);
-}
-
-function _arrayLikeToArray(arr, len) {
-  if (len == null || len > arr.length) len = arr.length;
-
-  for (var i = 0, arr2 = new Array(len); i < len; i++) arr2[i] = arr[i];
-
-  return arr2;
-}
-
-function _nonIterableRest() {
-  throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
-}
-
-
-
-
-/***/ }),
-
-/***/ "./packages/node_modules/@monaco-editor/loader/lib/es/config/index.js":
-/*!****************************************************************************!*\
-  !*** ./packages/node_modules/@monaco-editor/loader/lib/es/config/index.js ***!
-  \****************************************************************************/
-/***/ (function(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
-
-__webpack_require__.r(__webpack_exports__);
-var config = {
-  paths: {
-    vs: 'https://cdn.jsdelivr.net/npm/monaco-editor@0.52.2/min/vs'
-  }
-};
-
-/* harmony default export */ __webpack_exports__["default"] = (config);
-
-
-/***/ }),
-
-/***/ "./packages/node_modules/@monaco-editor/loader/lib/es/index.js":
-/*!*********************************************************************!*\
-  !*** ./packages/node_modules/@monaco-editor/loader/lib/es/index.js ***!
-  \*********************************************************************/
-/***/ (function(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
-
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "default": function() { return /* reexport safe */ _loader_index_js__WEBPACK_IMPORTED_MODULE_0__["default"]; }
-/* harmony export */ });
-/* harmony import */ var _loader_index_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./loader/index.js */ "./packages/node_modules/@monaco-editor/loader/lib/es/loader/index.js");
-
-
-
-
-/***/ }),
-
-/***/ "./packages/node_modules/@monaco-editor/loader/lib/es/loader/index.js":
-/*!****************************************************************************!*\
-  !*** ./packages/node_modules/@monaco-editor/loader/lib/es/loader/index.js ***!
-  \****************************************************************************/
-/***/ (function(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
-
-__webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _virtual_rollupPluginBabelHelpers_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../_virtual/_rollupPluginBabelHelpers.js */ "./packages/node_modules/@monaco-editor/loader/lib/es/_virtual/_rollupPluginBabelHelpers.js");
-/* harmony import */ var state_local__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! state-local */ "./packages/node_modules/state-local/lib/es/state-local.js");
-/* harmony import */ var _config_index_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../config/index.js */ "./packages/node_modules/@monaco-editor/loader/lib/es/config/index.js");
-/* harmony import */ var _validators_index_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../validators/index.js */ "./packages/node_modules/@monaco-editor/loader/lib/es/validators/index.js");
-/* harmony import */ var _utils_compose_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../utils/compose.js */ "./packages/node_modules/@monaco-editor/loader/lib/es/utils/compose.js");
-/* harmony import */ var _utils_deepMerge_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../utils/deepMerge.js */ "./packages/node_modules/@monaco-editor/loader/lib/es/utils/deepMerge.js");
-/* harmony import */ var _utils_makeCancelable_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../utils/makeCancelable.js */ "./packages/node_modules/@monaco-editor/loader/lib/es/utils/makeCancelable.js");
-
-
-
-
-
-
-
-
-/** the local state of the module */
-
-var _state$create = state_local__WEBPACK_IMPORTED_MODULE_1__["default"].create({
-  config: _config_index_js__WEBPACK_IMPORTED_MODULE_2__["default"],
-  isInitialized: false,
-  resolve: null,
-  reject: null,
-  monaco: null
-}),
-    _state$create2 = (0,_virtual_rollupPluginBabelHelpers_js__WEBPACK_IMPORTED_MODULE_0__.slicedToArray)(_state$create, 2),
-    getState = _state$create2[0],
-    setState = _state$create2[1];
-/**
- * set the loader configuration
- * @param {Object} config - the configuration object
- */
-
-
-function config(globalConfig) {
-  var _validators$config = _validators_index_js__WEBPACK_IMPORTED_MODULE_3__["default"].config(globalConfig),
-      monaco = _validators$config.monaco,
-      config = (0,_virtual_rollupPluginBabelHelpers_js__WEBPACK_IMPORTED_MODULE_0__.objectWithoutProperties)(_validators$config, ["monaco"]);
-
-  setState(function (state) {
-    return {
-      config: (0,_utils_deepMerge_js__WEBPACK_IMPORTED_MODULE_5__["default"])(state.config, config),
-      monaco: monaco
-    };
-  });
-}
-/**
- * handles the initialization of the monaco-editor
- * @return {Promise} - returns an instance of monaco (with a cancelable promise)
- */
-
-
-function init() {
-  var state = getState(function (_ref) {
-    var monaco = _ref.monaco,
-        isInitialized = _ref.isInitialized,
-        resolve = _ref.resolve;
-    return {
-      monaco: monaco,
-      isInitialized: isInitialized,
-      resolve: resolve
-    };
-  });
-
-  if (!state.isInitialized) {
-    setState({
-      isInitialized: true
-    });
-
-    if (state.monaco) {
-      state.resolve(state.monaco);
-      return (0,_utils_makeCancelable_js__WEBPACK_IMPORTED_MODULE_6__["default"])(wrapperPromise);
-    }
-
-    if (window.monaco && window.monaco.editor) {
-      storeMonacoInstance(window.monaco);
-      state.resolve(window.monaco);
-      return (0,_utils_makeCancelable_js__WEBPACK_IMPORTED_MODULE_6__["default"])(wrapperPromise);
-    }
-
-    (0,_utils_compose_js__WEBPACK_IMPORTED_MODULE_4__["default"])(injectScripts, getMonacoLoaderScript)(configureLoader);
-  }
-
-  return (0,_utils_makeCancelable_js__WEBPACK_IMPORTED_MODULE_6__["default"])(wrapperPromise);
-}
-/**
- * injects provided scripts into the document.body
- * @param {Object} script - an HTML script element
- * @return {Object} - the injected HTML script element
- */
-
-
-function injectScripts(script) {
-  return document.body.appendChild(script);
-}
-/**
- * creates an HTML script element with/without provided src
- * @param {string} [src] - the source path of the script
- * @return {Object} - the created HTML script element
- */
-
-
-function createScript(src) {
-  var script = document.createElement('script');
-  return src && (script.src = src), script;
-}
-/**
- * creates an HTML script element with the monaco loader src
- * @return {Object} - the created HTML script element
- */
-
-
-function getMonacoLoaderScript(configureLoader) {
-  var state = getState(function (_ref2) {
-    var config = _ref2.config,
-        reject = _ref2.reject;
-    return {
-      config: config,
-      reject: reject
-    };
-  });
-  var loaderScript = createScript("".concat(state.config.paths.vs, "/loader.js"));
-
-  loaderScript.onload = function () {
-    return configureLoader();
-  };
-
-  loaderScript.onerror = state.reject;
-  return loaderScript;
-}
-/**
- * configures the monaco loader
- */
-
-
-function configureLoader() {
-  var state = getState(function (_ref3) {
-    var config = _ref3.config,
-        resolve = _ref3.resolve,
-        reject = _ref3.reject;
-    return {
-      config: config,
-      resolve: resolve,
-      reject: reject
-    };
-  });
-  var require = window.require;
-
-  require.config(state.config);
-
-  require(['vs/editor/editor.main'], function (monaco) {
-    storeMonacoInstance(monaco);
-    state.resolve(monaco);
-  }, function (error) {
-    state.reject(error);
-  });
-}
-/**
- * store monaco instance in local state
- */
-
-
-function storeMonacoInstance(monaco) {
-  if (!getState().monaco) {
-    setState({
-      monaco: monaco
-    });
-  }
-}
-/**
- * internal helper function
- * extracts stored monaco instance
- * @return {Object|null} - the monaco instance
- */
-
-
-function __getMonacoInstance() {
-  return getState(function (_ref4) {
-    var monaco = _ref4.monaco;
-    return monaco;
-  });
-}
-
-var wrapperPromise = new Promise(function (resolve, reject) {
-  return setState({
-    resolve: resolve,
-    reject: reject
-  });
-});
-var loader = {
-  config: config,
-  init: init,
-  __getMonacoInstance: __getMonacoInstance
-};
-
-/* harmony default export */ __webpack_exports__["default"] = (loader);
-
-
-/***/ }),
-
-/***/ "./packages/node_modules/@monaco-editor/loader/lib/es/utils/compose.js":
-/*!*****************************************************************************!*\
-  !*** ./packages/node_modules/@monaco-editor/loader/lib/es/utils/compose.js ***!
-  \*****************************************************************************/
-/***/ (function(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
-
-__webpack_require__.r(__webpack_exports__);
-var compose = function compose() {
-  for (var _len = arguments.length, fns = new Array(_len), _key = 0; _key < _len; _key++) {
-    fns[_key] = arguments[_key];
-  }
-
-  return function (x) {
-    return fns.reduceRight(function (y, f) {
-      return f(y);
-    }, x);
-  };
-};
-
-/* harmony default export */ __webpack_exports__["default"] = (compose);
-
-
-/***/ }),
-
-/***/ "./packages/node_modules/@monaco-editor/loader/lib/es/utils/curry.js":
-/*!***************************************************************************!*\
-  !*** ./packages/node_modules/@monaco-editor/loader/lib/es/utils/curry.js ***!
-  \***************************************************************************/
-/***/ (function(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
-
-__webpack_require__.r(__webpack_exports__);
-function curry(fn) {
-  return function curried() {
-    var _this = this;
-
-    for (var _len = arguments.length, args = new Array(_len), _key = 0; _key < _len; _key++) {
-      args[_key] = arguments[_key];
-    }
-
-    return args.length >= fn.length ? fn.apply(this, args) : function () {
-      for (var _len2 = arguments.length, nextArgs = new Array(_len2), _key2 = 0; _key2 < _len2; _key2++) {
-        nextArgs[_key2] = arguments[_key2];
-      }
-
-      return curried.apply(_this, [].concat(args, nextArgs));
-    };
-  };
-}
-
-/* harmony default export */ __webpack_exports__["default"] = (curry);
-
-
-/***/ }),
-
-/***/ "./packages/node_modules/@monaco-editor/loader/lib/es/utils/deepMerge.js":
-/*!*******************************************************************************!*\
-  !*** ./packages/node_modules/@monaco-editor/loader/lib/es/utils/deepMerge.js ***!
-  \*******************************************************************************/
-/***/ (function(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
-
-__webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _virtual_rollupPluginBabelHelpers_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../_virtual/_rollupPluginBabelHelpers.js */ "./packages/node_modules/@monaco-editor/loader/lib/es/_virtual/_rollupPluginBabelHelpers.js");
-
-
-function merge(target, source) {
-  Object.keys(source).forEach(function (key) {
-    if (source[key] instanceof Object) {
-      if (target[key]) {
-        Object.assign(source[key], merge(target[key], source[key]));
-      }
-    }
-  });
-  return (0,_virtual_rollupPluginBabelHelpers_js__WEBPACK_IMPORTED_MODULE_0__.objectSpread2)((0,_virtual_rollupPluginBabelHelpers_js__WEBPACK_IMPORTED_MODULE_0__.objectSpread2)({}, target), source);
-}
-
-/* harmony default export */ __webpack_exports__["default"] = (merge);
-
-
-/***/ }),
-
-/***/ "./packages/node_modules/@monaco-editor/loader/lib/es/utils/isObject.js":
-/*!******************************************************************************!*\
-  !*** ./packages/node_modules/@monaco-editor/loader/lib/es/utils/isObject.js ***!
-  \******************************************************************************/
-/***/ (function(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
-
-__webpack_require__.r(__webpack_exports__);
-function isObject(value) {
-  return {}.toString.call(value).includes('Object');
-}
-
-/* harmony default export */ __webpack_exports__["default"] = (isObject);
-
-
-/***/ }),
-
-/***/ "./packages/node_modules/@monaco-editor/loader/lib/es/utils/makeCancelable.js":
-/*!************************************************************************************!*\
-  !*** ./packages/node_modules/@monaco-editor/loader/lib/es/utils/makeCancelable.js ***!
-  \************************************************************************************/
-/***/ (function(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
-
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   CANCELATION_MESSAGE: function() { return /* binding */ CANCELATION_MESSAGE; }
-/* harmony export */ });
-// The source (has been changed) is https://github.com/facebook/react/issues/5465#issuecomment-157888325
-var CANCELATION_MESSAGE = {
-  type: 'cancelation',
-  msg: 'operation is manually canceled'
-};
-
-function makeCancelable(promise) {
-  var hasCanceled_ = false;
-  var wrappedPromise = new Promise(function (resolve, reject) {
-    promise.then(function (val) {
-      return hasCanceled_ ? reject(CANCELATION_MESSAGE) : resolve(val);
-    });
-    promise["catch"](reject);
-  });
-  return wrappedPromise.cancel = function () {
-    return hasCanceled_ = true;
-  }, wrappedPromise;
-}
-
-/* harmony default export */ __webpack_exports__["default"] = (makeCancelable);
-
-
-
-/***/ }),
-
-/***/ "./packages/node_modules/@monaco-editor/loader/lib/es/validators/index.js":
-/*!********************************************************************************!*\
-  !*** ./packages/node_modules/@monaco-editor/loader/lib/es/validators/index.js ***!
-  \********************************************************************************/
-/***/ (function(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
-
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   errorHandler: function() { return /* binding */ errorHandler; },
-/* harmony export */   errorMessages: function() { return /* binding */ errorMessages; }
-/* harmony export */ });
-/* harmony import */ var _utils_curry_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../utils/curry.js */ "./packages/node_modules/@monaco-editor/loader/lib/es/utils/curry.js");
-/* harmony import */ var _utils_isObject_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../utils/isObject.js */ "./packages/node_modules/@monaco-editor/loader/lib/es/utils/isObject.js");
-
-
-
-/**
- * validates the configuration object and informs about deprecation
- * @param {Object} config - the configuration object 
- * @return {Object} config - the validated configuration object
- */
-
-function validateConfig(config) {
-  if (!config) errorHandler('configIsRequired');
-  if (!(0,_utils_isObject_js__WEBPACK_IMPORTED_MODULE_1__["default"])(config)) errorHandler('configType');
-
-  if (config.urls) {
-    informAboutDeprecation();
-    return {
-      paths: {
-        vs: config.urls.monacoBase
-      }
-    };
-  }
-
-  return config;
-}
-/**
- * logs deprecation message
- */
-
-
-function informAboutDeprecation() {
-  console.warn(errorMessages.deprecation);
-}
-
-function throwError(errorMessages, type) {
-  throw new Error(errorMessages[type] || errorMessages["default"]);
-}
-
-var errorMessages = {
-  configIsRequired: 'the configuration object is required',
-  configType: 'the configuration object should be an object',
-  "default": 'an unknown error accured in `@monaco-editor/loader` package',
-  deprecation: "Deprecation warning!\n    You are using deprecated way of configuration.\n\n    Instead of using\n      monaco.config({ urls: { monacoBase: '...' } })\n    use\n      monaco.config({ paths: { vs: '...' } })\n\n    For more please check the link https://github.com/suren-atoyan/monaco-loader#config\n  "
-};
-var errorHandler = (0,_utils_curry_js__WEBPACK_IMPORTED_MODULE_0__["default"])(throwError)(errorMessages);
-var validators = {
-  config: validateConfig
-};
-
-/* harmony default export */ __webpack_exports__["default"] = (validators);
-
-
-
-/***/ }),
-
-/***/ "./packages/node_modules/state-local/lib/es/state-local.js":
-/*!*****************************************************************!*\
-  !*** ./packages/node_modules/state-local/lib/es/state-local.js ***!
-  \*****************************************************************/
+/***/ "./node_modules/state-local/lib/es/state-local.js":
+/*!********************************************************!*\
+  !*** ./node_modules/state-local/lib/es/state-local.js ***!
+  \********************************************************/
 /***/ (function(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
 __webpack_require__.r(__webpack_exports__);
@@ -1726,13 +1685,13 @@ module.exports = window["elementorV2"]["editorProps"];
 
 /***/ }),
 
-/***/ "@elementor/http-client":
-/*!*********************************************!*\
-  !*** external ["elementorV2","httpClient"] ***!
-  \*********************************************/
+/***/ "@elementor/editor-ui":
+/*!*******************************************!*\
+  !*** external ["elementorV2","editorUi"] ***!
+  \*******************************************/
 /***/ (function(module) {
 
-module.exports = window["elementorV2"]["httpClient"];
+module.exports = window["elementorV2"]["editorUi"];
 
 /***/ }),
 
@@ -1743,6 +1702,16 @@ module.exports = window["elementorV2"]["httpClient"];
 /***/ (function(module) {
 
 module.exports = window["elementorV2"]["icons"];
+
+/***/ }),
+
+/***/ "@elementor/license-api":
+/*!*********************************************!*\
+  !*** external ["elementorV2","licenseApi"] ***!
+  \*********************************************/
+/***/ (function(module) {
+
+module.exports = window["elementorV2"]["licenseApi"];
 
 /***/ }),
 
@@ -1776,10 +1745,10 @@ module.exports = window["wp"]["i18n"];
 
 /***/ }),
 
-/***/ "./packages/node_modules/@monaco-editor/react/dist/index.mjs":
-/*!*******************************************************************!*\
-  !*** ./packages/node_modules/@monaco-editor/react/dist/index.mjs ***!
-  \*******************************************************************/
+/***/ "./node_modules/@monaco-editor/react/dist/index.mjs":
+/*!**********************************************************!*\
+  !*** ./node_modules/@monaco-editor/react/dist/index.mjs ***!
+  \**********************************************************/
 /***/ (function(__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) {
 
 __webpack_require__.r(__webpack_exports__);
@@ -1790,7 +1759,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   loader: function() { return /* reexport safe */ _monaco_editor_loader__WEBPACK_IMPORTED_MODULE_0__["default"]; },
 /* harmony export */   useMonaco: function() { return /* binding */ Le; }
 /* harmony export */ });
-/* harmony import */ var _monaco_editor_loader__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @monaco-editor/loader */ "./packages/node_modules/@monaco-editor/loader/lib/es/index.js");
+/* harmony import */ var _monaco_editor_loader__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @monaco-editor/loader */ "./node_modules/@monaco-editor/loader/lib/es/index.js");
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! react */ "react");
 var le={wrapper:{display:"flex",position:"relative",textAlign:"initial"},fullWidth:{width:"100%"},hide:{display:"none"}},v=le;var ae={container:{display:"flex",height:"100%",width:"100%",justifyContent:"center",alignItems:"center"}},Y=ae;function Me({children:e}){return react__WEBPACK_IMPORTED_MODULE_1__.createElement("div",{style:Y.container},e)}var Z=Me;var $=Z;function Ee({width:e,height:r,isEditorReady:n,loading:t,_ref:a,className:m,wrapperProps:E}){return react__WEBPACK_IMPORTED_MODULE_1__.createElement("section",{style:{...v.wrapper,width:e,height:r},...E},!n&&react__WEBPACK_IMPORTED_MODULE_1__.createElement($,null,t),react__WEBPACK_IMPORTED_MODULE_1__.createElement("div",{ref:a,style:{...v.fullWidth,...!n&&v.hide},className:m}))}var ee=Ee;var H=(0,react__WEBPACK_IMPORTED_MODULE_1__.memo)(ee);function Ce(e){(0,react__WEBPACK_IMPORTED_MODULE_1__.useEffect)(e,[])}var k=Ce;function he(e,r,n=!0){let t=(0,react__WEBPACK_IMPORTED_MODULE_1__.useRef)(!0);(0,react__WEBPACK_IMPORTED_MODULE_1__.useEffect)(t.current||!n?()=>{t.current=!1}:e,r)}var l=he;function D(){}function h(e,r,n,t){return De(e,t)||be(e,r,n,t)}function De(e,r){return e.editor.getModel(te(e,r))}function be(e,r,n,t){return e.editor.createModel(r,n,t?te(e,t):void 0)}function te(e,r){return e.Uri.parse(r)}function Oe({original:e,modified:r,language:n,originalLanguage:t,modifiedLanguage:a,originalModelPath:m,modifiedModelPath:E,keepCurrentOriginalModel:g=!1,keepCurrentModifiedModel:N=!1,theme:x="light",loading:P="Loading...",options:y={},height:V="100%",width:z="100%",className:F,wrapperProps:j={},beforeMount:A=D,onMount:q=D}){let[M,O]=(0,react__WEBPACK_IMPORTED_MODULE_1__.useState)(!1),[T,s]=(0,react__WEBPACK_IMPORTED_MODULE_1__.useState)(!0),u=(0,react__WEBPACK_IMPORTED_MODULE_1__.useRef)(null),c=(0,react__WEBPACK_IMPORTED_MODULE_1__.useRef)(null),w=(0,react__WEBPACK_IMPORTED_MODULE_1__.useRef)(null),d=(0,react__WEBPACK_IMPORTED_MODULE_1__.useRef)(q),o=(0,react__WEBPACK_IMPORTED_MODULE_1__.useRef)(A),b=(0,react__WEBPACK_IMPORTED_MODULE_1__.useRef)(!1);k(()=>{let i=_monaco_editor_loader__WEBPACK_IMPORTED_MODULE_0__["default"].init();return i.then(f=>(c.current=f)&&s(!1)).catch(f=>f?.type!=="cancelation"&&console.error("Monaco initialization: error:",f)),()=>u.current?I():i.cancel()}),l(()=>{if(u.current&&c.current){let i=u.current.getOriginalEditor(),f=h(c.current,e||"",t||n||"text",m||"");f!==i.getModel()&&i.setModel(f)}},[m],M),l(()=>{if(u.current&&c.current){let i=u.current.getModifiedEditor(),f=h(c.current,r||"",a||n||"text",E||"");f!==i.getModel()&&i.setModel(f)}},[E],M),l(()=>{let i=u.current.getModifiedEditor();i.getOption(c.current.editor.EditorOption.readOnly)?i.setValue(r||""):r!==i.getValue()&&(i.executeEdits("",[{range:i.getModel().getFullModelRange(),text:r||"",forceMoveMarkers:!0}]),i.pushUndoStop())},[r],M),l(()=>{u.current?.getModel()?.original.setValue(e||"")},[e],M),l(()=>{let{original:i,modified:f}=u.current.getModel();c.current.editor.setModelLanguage(i,t||n||"text"),c.current.editor.setModelLanguage(f,a||n||"text")},[n,t,a],M),l(()=>{c.current?.editor.setTheme(x)},[x],M),l(()=>{u.current?.updateOptions(y)},[y],M);let L=(0,react__WEBPACK_IMPORTED_MODULE_1__.useCallback)(()=>{if(!c.current)return;o.current(c.current);let i=h(c.current,e||"",t||n||"text",m||""),f=h(c.current,r||"",a||n||"text",E||"");u.current?.setModel({original:i,modified:f})},[n,r,a,e,t,m,E]),U=(0,react__WEBPACK_IMPORTED_MODULE_1__.useCallback)(()=>{!b.current&&w.current&&(u.current=c.current.editor.createDiffEditor(w.current,{automaticLayout:!0,...y}),L(),c.current?.editor.setTheme(x),O(!0),b.current=!0)},[y,x,L]);(0,react__WEBPACK_IMPORTED_MODULE_1__.useEffect)(()=>{M&&d.current(u.current,c.current)},[M]),(0,react__WEBPACK_IMPORTED_MODULE_1__.useEffect)(()=>{!T&&!M&&U()},[T,M,U]);function I(){let i=u.current?.getModel();g||i?.original?.dispose(),N||i?.modified?.dispose(),u.current?.dispose()}return react__WEBPACK_IMPORTED_MODULE_1__.createElement(H,{width:z,height:V,isEditorReady:M,loading:P,_ref:w,className:F,wrapperProps:j})}var ie=Oe;var we=(0,react__WEBPACK_IMPORTED_MODULE_1__.memo)(ie);function Pe(){let[e,r]=(0,react__WEBPACK_IMPORTED_MODULE_1__.useState)(_monaco_editor_loader__WEBPACK_IMPORTED_MODULE_0__["default"].__getMonacoInstance());return k(()=>{let n;return e||(n=_monaco_editor_loader__WEBPACK_IMPORTED_MODULE_0__["default"].init(),n.then(t=>{r(t)})),()=>n?.cancel()}),e}var Le=Pe;function He(e){let r=(0,react__WEBPACK_IMPORTED_MODULE_1__.useRef)();return (0,react__WEBPACK_IMPORTED_MODULE_1__.useEffect)(()=>{r.current=e},[e]),r.current}var se=He;var _=new Map;function Ve({defaultValue:e,defaultLanguage:r,defaultPath:n,value:t,language:a,path:m,theme:E="light",line:g,loading:N="Loading...",options:x={},overrideServices:P={},saveViewState:y=!0,keepCurrentModel:V=!1,width:z="100%",height:F="100%",className:j,wrapperProps:A={},beforeMount:q=D,onMount:M=D,onChange:O,onValidate:T=D}){let[s,u]=(0,react__WEBPACK_IMPORTED_MODULE_1__.useState)(!1),[c,w]=(0,react__WEBPACK_IMPORTED_MODULE_1__.useState)(!0),d=(0,react__WEBPACK_IMPORTED_MODULE_1__.useRef)(null),o=(0,react__WEBPACK_IMPORTED_MODULE_1__.useRef)(null),b=(0,react__WEBPACK_IMPORTED_MODULE_1__.useRef)(null),L=(0,react__WEBPACK_IMPORTED_MODULE_1__.useRef)(M),U=(0,react__WEBPACK_IMPORTED_MODULE_1__.useRef)(q),I=(0,react__WEBPACK_IMPORTED_MODULE_1__.useRef)(),i=(0,react__WEBPACK_IMPORTED_MODULE_1__.useRef)(t),f=se(m),Q=(0,react__WEBPACK_IMPORTED_MODULE_1__.useRef)(!1),B=(0,react__WEBPACK_IMPORTED_MODULE_1__.useRef)(!1);k(()=>{let p=_monaco_editor_loader__WEBPACK_IMPORTED_MODULE_0__["default"].init();return p.then(R=>(d.current=R)&&w(!1)).catch(R=>R?.type!=="cancelation"&&console.error("Monaco initialization: error:",R)),()=>o.current?pe():p.cancel()}),l(()=>{let p=h(d.current,e||t||"",r||a||"",m||n||"");p!==o.current?.getModel()&&(y&&_.set(f,o.current?.saveViewState()),o.current?.setModel(p),y&&o.current?.restoreViewState(_.get(m)))},[m],s),l(()=>{o.current?.updateOptions(x)},[x],s),l(()=>{!o.current||t===void 0||(o.current.getOption(d.current.editor.EditorOption.readOnly)?o.current.setValue(t):t!==o.current.getValue()&&(B.current=!0,o.current.executeEdits("",[{range:o.current.getModel().getFullModelRange(),text:t,forceMoveMarkers:!0}]),o.current.pushUndoStop(),B.current=!1))},[t],s),l(()=>{let p=o.current?.getModel();p&&a&&d.current?.editor.setModelLanguage(p,a)},[a],s),l(()=>{g!==void 0&&o.current?.revealLine(g)},[g],s),l(()=>{d.current?.editor.setTheme(E)},[E],s);let X=(0,react__WEBPACK_IMPORTED_MODULE_1__.useCallback)(()=>{if(!(!b.current||!d.current)&&!Q.current){U.current(d.current);let p=m||n,R=h(d.current,t||e||"",r||a||"",p||"");o.current=d.current?.editor.create(b.current,{model:R,automaticLayout:!0,...x},P),y&&o.current.restoreViewState(_.get(p)),d.current.editor.setTheme(E),g!==void 0&&o.current.revealLine(g),u(!0),Q.current=!0}},[e,r,n,t,a,m,x,P,y,E,g]);(0,react__WEBPACK_IMPORTED_MODULE_1__.useEffect)(()=>{s&&L.current(o.current,d.current)},[s]),(0,react__WEBPACK_IMPORTED_MODULE_1__.useEffect)(()=>{!c&&!s&&X()},[c,s,X]),i.current=t,(0,react__WEBPACK_IMPORTED_MODULE_1__.useEffect)(()=>{s&&O&&(I.current?.dispose(),I.current=o.current?.onDidChangeModelContent(p=>{B.current||O(o.current.getValue(),p)}))},[s,O]),(0,react__WEBPACK_IMPORTED_MODULE_1__.useEffect)(()=>{if(s){let p=d.current.editor.onDidChangeMarkers(R=>{let G=o.current.getModel()?.uri;if(G&&R.find(J=>J.path===G.path)){let J=d.current.editor.getModelMarkers({resource:G});T?.(J)}});return()=>{p?.dispose()}}return()=>{}},[s,T]);function pe(){I.current?.dispose(),V?y&&_.set(m,o.current.saveViewState()):o.current.getModel()?.dispose(),o.current.dispose()}return react__WEBPACK_IMPORTED_MODULE_1__.createElement(H,{width:z,height:F,isEditorReady:s,loading:N,_ref:b,className:j,wrapperProps:A})}var fe=Ve;var de=(0,react__WEBPACK_IMPORTED_MODULE_1__.memo)(fe);var Ft=de;
 //# sourceMappingURL=index.mjs.map
@@ -1817,6 +1786,12 @@ var le={wrapper:{display:"flex",position:"relative",textAlign:"initial"},fullWid
 /******/ 		};
 /******/ 	
 /******/ 		// Execute the module function
+/******/ 		if (!(moduleId in __webpack_modules__)) {
+/******/ 			delete __webpack_module_cache__[moduleId];
+/******/ 			var e = new Error("Cannot find module '" + moduleId + "'");
+/******/ 			e.code = 'MODULE_NOT_FOUND';
+/******/ 			throw e;
+/******/ 		}
 /******/ 		__webpack_modules__[moduleId](module, module.exports, __webpack_require__);
 /******/ 	
 /******/ 		// Return the exports of the module
@@ -1866,7 +1841,7 @@ var le={wrapper:{display:"flex",position:"relative",textAlign:"initial"},fullWid
 /******/ 	
 /************************************************************************/
 var __webpack_exports__ = {};
-// This entry need to be wrapped in an IIFE because it need to be isolated against other modules in the chunk.
+// This entry needs to be wrapped in an IIFE because it needs to be isolated against other modules in the chunk.
 !function() {
 /*!*********************************************************************!*\
   !*** ./packages/packages/pro/editor-controls-extended/src/index.ts ***!
@@ -1874,20 +1849,19 @@ var __webpack_exports__ = {};
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   AttributesControl: function() { return /* reexport safe */ _controls_attributes_control__WEBPACK_IMPORTED_MODULE_1__.AttributesControl; },
-/* harmony export */   CssEditor: function() { return /* reexport safe */ _components_css_code_editor_css_editor__WEBPACK_IMPORTED_MODULE_5__.CssEditor; },
-/* harmony export */   DisplayConditionsControl: function() { return /* reexport safe */ _controls_display_conditions_control__WEBPACK_IMPORTED_MODULE_2__.DisplayConditionsControl; },
-/* harmony export */   conditionGroupPropTypeUtil: function() { return /* reexport safe */ _prop_types_condition_group__WEBPACK_IMPORTED_MODULE_4__.conditionGroupPropTypeUtil; },
-/* harmony export */   displayConditionsPropTypeUtil: function() { return /* reexport safe */ _prop_types_display_conditions__WEBPACK_IMPORTED_MODULE_3__.displayConditionsPropTypeUtil; },
-/* harmony export */   getIsLicenseExpired: function() { return /* reexport safe */ _license_api__WEBPACK_IMPORTED_MODULE_6__.getIsLicenseExpired; },
-/* harmony export */   licenseApi: function() { return /* reexport safe */ _license_api__WEBPACK_IMPORTED_MODULE_6__.licenseApi; }
+/* harmony export */   CssEditor: function() { return /* reexport safe */ _components_css_code_editor_css_editor__WEBPACK_IMPORTED_MODULE_6__.CssEditor; },
+/* harmony export */   DisplayConditionsControl: function() { return /* reexport safe */ _controls_display_conditions_control__WEBPACK_IMPORTED_MODULE_3__.DisplayConditionsControl; },
+/* harmony export */   OptionsControl: function() { return /* reexport safe */ _controls_options_control__WEBPACK_IMPORTED_MODULE_2__.OptionsControl; },
+/* harmony export */   conditionGroupPropTypeUtil: function() { return /* reexport safe */ _prop_types_condition_group__WEBPACK_IMPORTED_MODULE_5__.conditionGroupPropTypeUtil; },
+/* harmony export */   displayConditionsPropTypeUtil: function() { return /* reexport safe */ _prop_types_display_conditions__WEBPACK_IMPORTED_MODULE_4__.displayConditionsPropTypeUtil; }
 /* harmony export */ });
 /* harmony import */ var _init__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./init */ "./packages/packages/pro/editor-controls-extended/src/init.ts");
 /* harmony import */ var _controls_attributes_control__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./controls/attributes-control */ "./packages/packages/pro/editor-controls-extended/src/controls/attributes-control.tsx");
-/* harmony import */ var _controls_display_conditions_control__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./controls/display-conditions-control */ "./packages/packages/pro/editor-controls-extended/src/controls/display-conditions-control.tsx");
-/* harmony import */ var _prop_types_display_conditions__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./prop-types/display-conditions */ "./packages/packages/pro/editor-controls-extended/src/prop-types/display-conditions.ts");
-/* harmony import */ var _prop_types_condition_group__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./prop-types/condition-group */ "./packages/packages/pro/editor-controls-extended/src/prop-types/condition-group.ts");
-/* harmony import */ var _components_css_code_editor_css_editor__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./components/css-code-editor/css-editor */ "./packages/packages/pro/editor-controls-extended/src/components/css-code-editor/css-editor.tsx");
-/* harmony import */ var _license_api__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./license-api */ "./packages/packages/pro/editor-controls-extended/src/license-api.ts");
+/* harmony import */ var _controls_options_control__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./controls/options-control */ "./packages/packages/pro/editor-controls-extended/src/controls/options-control.tsx");
+/* harmony import */ var _controls_display_conditions_control__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./controls/display-conditions-control */ "./packages/packages/pro/editor-controls-extended/src/controls/display-conditions-control.tsx");
+/* harmony import */ var _prop_types_display_conditions__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./prop-types/display-conditions */ "./packages/packages/pro/editor-controls-extended/src/prop-types/display-conditions.ts");
+/* harmony import */ var _prop_types_condition_group__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./prop-types/condition-group */ "./packages/packages/pro/editor-controls-extended/src/prop-types/condition-group.ts");
+/* harmony import */ var _components_css_code_editor_css_editor__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./components/css-code-editor/css-editor */ "./packages/packages/pro/editor-controls-extended/src/components/css-code-editor/css-editor.tsx");
 
 
 

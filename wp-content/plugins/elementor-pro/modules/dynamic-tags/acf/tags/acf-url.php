@@ -1,7 +1,6 @@
 <?php
 namespace ElementorPro\Modules\DynamicTags\ACF\Tags;
 
-use ElementorPro\Modules\DynamicTags\Tags\Base\Data_Tag;
 use ElementorPro\Modules\DynamicTags\ACF\Module;
 use ElementorPro\Modules\DynamicTags\Module as DynamicTagsModule;
 
@@ -9,7 +8,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
 
-class ACF_URL extends Data_Tag {
+class ACF_URL extends Base_ACF_Tag {
 
 	public function get_name() {
 		return 'acf-url';

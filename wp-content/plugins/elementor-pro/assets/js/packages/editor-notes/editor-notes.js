@@ -33,7 +33,7 @@ function useNotesActionProps() {
     icon: _elementor_icons__WEBPACK_IMPORTED_MODULE_1__.MessageIcon,
     onClick: () => {
       const extendedWindow = window;
-      const eventsManager = extendedWindow?.elementorCommon?.eventsManager || extendedWindow?.elementor?.editorEvents;
+      const eventsManager = extendedWindow?.elementorCommon?.eventsManager;
       const config = eventsManager?.config;
       if (config) {
         eventsManager.dispatchEvent(config.names.topBar.notes, {
@@ -138,6 +138,12 @@ module.exports = window["wp"]["i18n"];
 /******/ 		};
 /******/ 	
 /******/ 		// Execute the module function
+/******/ 		if (!(moduleId in __webpack_modules__)) {
+/******/ 			delete __webpack_module_cache__[moduleId];
+/******/ 			var e = new Error("Cannot find module '" + moduleId + "'");
+/******/ 			e.code = 'MODULE_NOT_FOUND';
+/******/ 			throw e;
+/******/ 		}
 /******/ 		__webpack_modules__[moduleId](module, module.exports, __webpack_require__);
 /******/ 	
 /******/ 		// Return the exports of the module
@@ -187,7 +193,7 @@ module.exports = window["wp"]["i18n"];
 /******/ 	
 /************************************************************************/
 var __webpack_exports__ = {};
-// This entry need to be wrapped in an IIFE because it need to be isolated against other modules in the chunk.
+// This entry needs to be wrapped in an IIFE because it needs to be isolated against other modules in the chunk.
 !function() {
 /*!*********************************************************!*\
   !*** ./packages/packages/pro/editor-notes/src/index.ts ***!

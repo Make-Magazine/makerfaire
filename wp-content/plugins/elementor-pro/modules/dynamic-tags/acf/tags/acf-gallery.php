@@ -1,14 +1,13 @@
 <?php
 namespace ElementorPro\Modules\DynamicTags\ACF\Tags;
 
-use ElementorPro\Modules\DynamicTags\Tags\Base\Data_Tag;
 use ElementorPro\Modules\DynamicTags\ACF\Module;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
 
-class ACF_Gallery extends Data_Tag {
+class ACF_Gallery extends Base_ACF_Tag {
 
 	public function get_name() {
 		return 'acf-gallery';

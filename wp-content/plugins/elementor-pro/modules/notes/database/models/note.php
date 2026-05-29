@@ -249,7 +249,7 @@ class Note extends Model_Base {
 	 *
 	 * @return Note_Query_Builder
 	 */
-	public static function query( \wpdb $connection = null ) {
+	public static function query( ?\wpdb $connection = null ) {
 		return ( new Note_Query_Builder( $connection ) )->from( static::get_table() );
 	}
 

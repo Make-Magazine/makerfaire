@@ -553,39 +553,75 @@ class Fonts_Manager {
 		return $fonts;
 	}
 
-	/**
-	 * Enqueue fonts css
-	 *
-	 * @param $post_css
-	 */
-	public function enqueue_fonts( $post_css ) {
-		$used_fonts = $post_css->get_fonts();
-		$font_manager_fonts = $this->get_fonts();
+	private function resolve_font_data( $font_family ) {
+		if ( in_array( $font_family, $this->enqueued_fonts, true ) ) {
+			return null;
+		}
+
 		$font_types = $this->get_font_types();
 
+		if ( ! isset( $font_types[ $font_family ] ) ) {
+			return null;
+		}
+
+		$font_type_name = $font_types[ $font_family ];
+
+		if ( 'variable' === $font_type_name ) {
+			$font_type_name = 'custom';
+		}
+
+		$font_type = $this->get_font_type_object( $font_type_name );
+
+		if ( ! $font_type ) {
+			return null;
+		}
+
+		$font_manager_fonts = $this->get_fonts();
+		$font_data = isset( $font_manager_fonts[ $font_family ] ) ? $font_manager_fonts[ $font_family ] : [];
+
+		return [
+			'font_type' => $font_type,
+			'font_data' => $font_data,
+		];
+	}
+
+	public function enqueue_fonts( $post_css ) {
+		$used_fonts = $post_css->get_fonts();
+
 		foreach ( $used_fonts as $font_family ) {
-			if ( ! isset( $font_types[ $font_family ] ) || in_array( $font_family, $this->enqueued_fonts ) ) {
+			$resolved = $this->resolve_font_data( $font_family );
+
+			if ( ! $resolved ) {
 				continue;
 			}
 
-			$font_type_name = $font_types[ $font_family ];
-
-			if ( 'variable' === $font_type_name ) {
-				$font_type_name = 'custom';
-			}
-
-			$font_type = $this->get_font_type_object( $font_type_name );
-			if ( ! $font_type ) {
-				continue;
-			}
-
-			$font_data = [];
-			if ( isset( $font_manager_fonts[ $font_family ] ) ) {
-				$font_data = $font_manager_fonts[ $font_family ];
-			}
-			$font_type->enqueue_font( $font_family, $font_data, $post_css );
+			$resolved['font_type']->enqueue_font( $font_family, $resolved['font_data'], $post_css );
 
 			$this->enqueued_fonts[] = $font_family;
+		}
+	}
+
+	public function print_font_link( $font_family ) {
+		$resolved = $this->resolve_font_data( $font_family );
+
+		if ( ! $resolved ) {
+			return;
+		}
+
+		$font_face = isset( $resolved['font_data']['font_face'] ) ? $resolved['font_data']['font_face'] : '';
+
+		if ( empty( $font_face ) ) {
+			return;
+		}
+
+		wp_add_inline_style( 'elementor-pro-custom-fonts', $font_face );
+
+		$this->enqueued_fonts[] = $font_family;
+	}
+
+	public function register_custom_font_styles( $fonts_to_enqueue ) {
+		foreach ( $fonts_to_enqueue as $font_family ) {
+			$this->print_font_link( $font_family );
 		}
 	}
 
@@ -671,6 +707,14 @@ class Fonts_Manager {
 		add_filter( 'elementor/finder/categories', [ $this, 'add_finder_item' ] );
 		add_action( 'elementor/css-file/post/parse', [ $this, 'enqueue_fonts' ] );
 		add_action( 'elementor/css-file/global/parse', [ $this, 'enqueue_fonts' ] );
+		add_action( 'elementor/fonts/register_styles', [ $this, 'register_custom_font_styles' ] );
+		add_action( 'elementor/fonts/print_font_links/custom', [ $this, 'print_font_link' ] );
+		add_action( 'elementor/fonts/print_font_links/variable', [ $this, 'print_font_link' ] );
+
+		add_action( 'wp_enqueue_scripts', function () {
+			wp_register_style( 'elementor-pro-custom-fonts', false, [], ELEMENTOR_PRO_VERSION );
+			wp_enqueue_style( 'elementor-pro-custom-fonts' );
+		}, 15 );
 		add_filter( 'post_updated_messages', [ $this, 'post_updated_messages' ] );
 		add_filter( 'enter_title_here', [ $this, 'update_enter_title_here' ], 10, 2 );
 

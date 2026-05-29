@@ -13,6 +13,7 @@ return [
 		'elementor-v2-editor-controls-extended',
 		'elementor-v2-editor-editing-panel',
 		'elementor-v2-editor-props',
+		'elementor-v2-license-api',
 		'elementor-v2-ui',
 		'react',
 		'wp-i18n',

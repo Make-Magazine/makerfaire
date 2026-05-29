@@ -226,6 +226,44 @@ function init() {
 
 /***/ }),
 
+/***/ "./packages/packages/pro/editor-documents-extended/src/form-license-block.ts":
+/*!***********************************************************************************!*\
+  !*** ./packages/packages/pro/editor-documents-extended/src/form-license-block.ts ***!
+  \***********************************************************************************/
+/***/ (function(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   initFormLicenseBlock: function() { return /* binding */ initFormLicenseBlock; }
+/* harmony export */ });
+/* harmony import */ var _elementor_editor_v1_adapters__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @elementor/editor-v1-adapters */ "@elementor/editor-v1-adapters");
+/* harmony import */ var _elementor_editor_v1_adapters__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_elementor_editor_v1_adapters__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _elementor_license_api__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @elementor/license-api */ "@elementor/license-api");
+/* harmony import */ var _elementor_license_api__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_elementor_license_api__WEBPACK_IMPORTED_MODULE_1__);
+
+
+const FORM_ELEMENT_TYPE = 'e-form';
+const MOVE_COMMAND = 'document/elements/move';
+function getArgsElementType(args) {
+  return args.model?.widgetType || args.model?.elType;
+}
+async function initFormLicenseBlock() {
+  const isExpired = await (0,_elementor_license_api__WEBPACK_IMPORTED_MODULE_1__.fetchLicenseStatus)().catch(() => false);
+  if (!isExpired) {
+    return;
+  }
+  (0,_elementor_editor_v1_adapters__WEBPACK_IMPORTED_MODULE_0__.registerDataHook)('dependency', 'document/elements/create', (args, options) => {
+    const isTriggeredByMove = options?.commandsCurrentTrace?.includes(MOVE_COMMAND);
+    if (isTriggeredByMove) {
+      return true;
+    }
+    const elementType = getArgsElementType(args);
+    return elementType !== FORM_ELEMENT_TYPE;
+  });
+}
+
+/***/ }),
+
 /***/ "./packages/packages/pro/editor-documents-extended/src/icons/hierarchy-icon.tsx":
 /*!**************************************************************************************!*\
   !*** ./packages/packages/pro/editor-documents-extended/src/icons/hierarchy-icon.tsx ***!
@@ -315,19 +353,22 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _elementor_store__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @elementor/store */ "@elementor/store");
 /* harmony import */ var _elementor_store__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_elementor_store__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var _extensions__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./extensions */ "./packages/packages/pro/editor-documents-extended/src/extensions/index.ts");
-/* harmony import */ var _store__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./store */ "./packages/packages/pro/editor-documents-extended/src/store/index.ts");
-/* harmony import */ var _sync__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./sync */ "./packages/packages/pro/editor-documents-extended/src/sync/index.ts");
+/* harmony import */ var _form_license_block__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./form-license-block */ "./packages/packages/pro/editor-documents-extended/src/form-license-block.ts");
+/* harmony import */ var _store__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./store */ "./packages/packages/pro/editor-documents-extended/src/store/index.ts");
+/* harmony import */ var _sync__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./sync */ "./packages/packages/pro/editor-documents-extended/src/sync/index.ts");
+
 
 
 
 
 function init() {
   (0,_extensions__WEBPACK_IMPORTED_MODULE_1__.init)();
+  (0,_form_license_block__WEBPACK_IMPORTED_MODULE_2__.initFormLicenseBlock)();
   initStore();
 }
 function initStore() {
-  (0,_elementor_store__WEBPACK_IMPORTED_MODULE_0__.__registerSlice)(_store__WEBPACK_IMPORTED_MODULE_2__.slice);
-  (0,_sync__WEBPACK_IMPORTED_MODULE_3__.syncStore)();
+  (0,_elementor_store__WEBPACK_IMPORTED_MODULE_0__.__registerSlice)(_store__WEBPACK_IMPORTED_MODULE_3__.slice);
+  (0,_sync__WEBPACK_IMPORTED_MODULE_4__.syncStore)();
 }
 
 /***/ }),
@@ -506,6 +547,16 @@ module.exports = window["elementorV2"]["icons"];
 
 /***/ }),
 
+/***/ "@elementor/license-api":
+/*!*********************************************!*\
+  !*** external ["elementorV2","licenseApi"] ***!
+  \*********************************************/
+/***/ (function(module) {
+
+module.exports = window["elementorV2"]["licenseApi"];
+
+/***/ }),
+
 /***/ "@elementor/store":
 /*!****************************************!*\
   !*** external ["elementorV2","store"] ***!
@@ -556,6 +607,12 @@ module.exports = window["wp"]["i18n"];
 /******/ 		};
 /******/ 	
 /******/ 		// Execute the module function
+/******/ 		if (!(moduleId in __webpack_modules__)) {
+/******/ 			delete __webpack_module_cache__[moduleId];
+/******/ 			var e = new Error("Cannot find module '" + moduleId + "'");
+/******/ 			e.code = 'MODULE_NOT_FOUND';
+/******/ 			throw e;
+/******/ 		}
 /******/ 		__webpack_modules__[moduleId](module, module.exports, __webpack_require__);
 /******/ 	
 /******/ 		// Return the exports of the module
@@ -605,7 +662,7 @@ module.exports = window["wp"]["i18n"];
 /******/ 	
 /************************************************************************/
 var __webpack_exports__ = {};
-// This entry need to be wrapped in an IIFE because it need to be isolated against other modules in the chunk.
+// This entry needs to be wrapped in an IIFE because it needs to be isolated against other modules in the chunk.
 !function() {
 /*!**********************************************************************!*\
   !*** ./packages/packages/pro/editor-documents-extended/src/index.ts ***!
