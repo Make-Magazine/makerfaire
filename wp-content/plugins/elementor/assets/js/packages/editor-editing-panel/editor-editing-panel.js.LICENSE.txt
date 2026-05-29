@@ -1,10 +1,6 @@
 /*! ../../../../hooks/use-styles-field */
 
-/*! ../../../../sync/get-elementor-globals */
-
 /*! ../../../contexts/element-context */
-
-/*! ../../../contexts/section-context */
 
 /*! ../../../contexts/style-context */
 
@@ -22,6 +18,8 @@
 
 /*! ../../../styles-inheritance/components/ui-providers */
 
+/*! ../../../utils/can-element-have-children */
+
 /*! ../../../utils/get-recently-used-styles */
 
 /*! ../../../utils/get-styles-provider-color */
@@ -32,15 +30,11 @@
 
 /*! ../../components/custom-css-indicator */
 
-/*! ../../components/popover-body */
-
 /*! ../../components/style-indicator */
 
 /*! ../../contexts/classes-prop-context */
 
 /*! ../../contexts/element-context */
-
-/*! ../../contexts/section-context */
 
 /*! ../../contexts/style-context */
 
@@ -56,6 +50,8 @@
 
 /*! ../../hooks/use-direction */
 
+/*! ../../hooks/use-license-config */
+
 /*! ../../hooks/use-persist-dynamic-value */
 
 /*! ../../panel-divider */
@@ -67,8 +63,6 @@
 /*! ../../style-tab-collapsible-content */
 
 /*! ../../styles-field-layout */
-
-/*! ../../sync/get-elementor-globals */
 
 /*! ../../utils/get-styles-provider-color */
 
@@ -82,15 +76,9 @@
 
 /*! ../contexts/scroll-context */
 
-/*! ../contexts/section-context */
-
 /*! ../contexts/style-context */
 
 /*! ../contexts/styles-inheritance-context */
-
-/*! ../control-replacement */
-
-/*! ../controls-actions */
 
 /*! ../controls-registry */
 
@@ -150,15 +138,11 @@
 
 /*! ../style-tab-section */
 
-/*! ../styles-inheritance-transformers-registry */
-
 /*! ../styles-inheritance/components/styles-inheritance-section-indicators */
 
 /*! ../styles-inheritance/create-styles-inheritance */
 
 /*! ../sync/get-atomic-dynamic-tags */
-
-/*! ../sync/get-elementor-globals */
 
 /*! ../sync/is-atomic-widget-selected */
 
@@ -168,8 +152,6 @@
 
 /*! ../utils/prop-dependency-utils */
 
-/*! ./action */
-
 /*! ./action-icons */
 
 /*! ./align-content-field */
@@ -177,6 +159,8 @@
 /*! ./align-items-field */
 
 /*! ./align-self-child-field */
+
+/*! ./align-self-grid-child-field */
 
 /*! ./apply-unapply-actions */
 
@@ -198,8 +182,6 @@
 
 /*! ./classes-prop-context */
 
-/*! ./collapsible-content */
-
 /*! ./column-count-field */
 
 /*! ./column-gap-field */
@@ -220,8 +202,6 @@
 
 /*! ./components/editing-panel-hooks */
 
-/*! ./components/popover-body */
-
 /*! ./components/promotions/init */
 
 /*! ./components/section-content */
@@ -229,8 +209,6 @@
 /*! ./components/settings-control */
 
 /*! ./components/style-indicator */
-
-/*! ./components/style-sections/typography-section/hooks/use-font-families */
 
 /*! ./components/style-tab */
 
@@ -246,19 +224,15 @@
 
 /*! ./contexts/element-context */
 
-/*! ./contexts/section-context */
-
 /*! ./contexts/style-context */
 
 /*! ./control-label */
 
-/*! ./control-replacement */
-
-/*! ./controls-actions */
-
 /*! ./controls-registry */
 
 /*! ./controls-registry/control */
+
+/*! ./controls-registry/control-type-container */
 
 /*! ./controls-registry/controls-registry */
 
@@ -289,6 +263,8 @@
 /*! ./dimensions-field */
 
 /*! ./display-field */
+
+/*! ./duplicate-class-menu-item */
 
 /*! ./dynamic-selection */
 
@@ -326,11 +302,19 @@
 
 /*! ./gap-control-field */
 
+/*! ./grid-auto-flow-field */
+
+/*! ./grid-justify-items-field */
+
+/*! ./grid-size-field */
+
+/*! ./grid-span-field */
+
 /*! ./hooks/use-custom-css */
 
 /*! ./hooks/use-dynamic-tag */
 
-/*! ./hooks/use-font-families */
+/*! ./hooks/use-license-config */
 
 /*! ./hooks/use-prop-dynamic-action */
 
@@ -367,8 +351,6 @@
 /*! ./overflow-field */
 
 /*! ./panel */
-
-/*! ./popover-action */
 
 /*! ./position-field */
 
@@ -414,11 +396,7 @@
 
 /*! ./styles-inheritance-infotip */
 
-/*! ./styles-inheritance-transformers-registry */
-
 /*! ./styles-inheritance/init */
-
-/*! ./styles-inheritance/styles-inheritance-transformers-registry */
 
 /*! ./sync/is-atomic-widget-selected */
 
@@ -476,6 +454,8 @@
 
 /*! ./utils/is-equal */
 
+/*! ./utils/prop-dependency-utils */
+
 /*! ./utils/rotated-icon */
 
 /*! ./value-component */
@@ -511,6 +491,8 @@
 /*! @elementor/editor-ui */
 
 /*! @elementor/editor-v1-adapters */
+
+/*! @elementor/editor-variables */
 
 /*! @elementor/icons */
 
@@ -608,6 +590,10 @@
   !*** external ["elementorV2","editorDocuments"] ***!
   \**************************************************/
 
+/*!**************************************************!*\
+  !*** external ["elementorV2","editorVariables"] ***!
+  \**************************************************/
+
 /*!***************************************************!*\
   !*** external ["elementorV2","editorResponsive"] ***!
   \***************************************************/
@@ -640,10 +626,6 @@
   !*** ./packages/packages/core/editor-editing-panel/src/errors.ts ***!
   \*******************************************************************/
 
-/*!********************************************************************!*\
-  !*** ./packages/packages/core/editor-editing-panel/src/action.tsx ***!
-  \********************************************************************/
-
 /*!**************************************************************************!*\
   !*** ./packages/packages/core/editor-editing-panel/src/dynamics/init.ts ***!
   \**************************************************************************/
@@ -660,14 +642,6 @@
   !*** ./packages/packages/core/editor-editing-panel/src/dynamics/errors.ts ***!
   \****************************************************************************/
 
-/*!****************************************************************************!*\
-  !*** ./packages/packages/core/editor-editing-panel/src/popover-action.tsx ***!
-  \****************************************************************************/
-
-/*!*****************************************************************************!*\
-  !*** ./packages/packages/core/editor-editing-panel/src/controls-actions.ts ***!
-  \*****************************************************************************/
-
 /*!*******************************************************************************!*\
   !*** ./packages/packages/core/editor-editing-panel/src/reset-style-props.tsx ***!
   \*******************************************************************************/
@@ -679,10 +653,6 @@
 /*!********************************************************************************!*\
   !*** ./packages/packages/core/editor-editing-panel/src/hooks/use-direction.ts ***!
   \********************************************************************************/
-
-/*!*********************************************************************************!*\
-  !*** ./packages/packages/core/editor-editing-panel/src/control-replacement.tsx ***!
-  \*********************************************************************************/
 
 /*!*********************************************************************************!*\
   !*** ./packages/packages/core/editor-editing-panel/src/hooks/use-custom-css.ts ***!
@@ -713,10 +683,6 @@
   \************************************************************************************/
 
 /*!*************************************************************************************!*\
-  !*** ./packages/packages/core/editor-editing-panel/src/components/popover-body.tsx ***!
-  \*************************************************************************************/
-
-/*!*************************************************************************************!*\
   !*** ./packages/packages/core/editor-editing-panel/src/components/settings-tab.tsx ***!
   \*************************************************************************************/
 
@@ -726,6 +692,10 @@
 
 /*!*************************************************************************************!*\
   !*** ./packages/packages/core/editor-editing-panel/src/hooks/use-computed-style.ts ***!
+  \*************************************************************************************/
+
+/*!*************************************************************************************!*\
+  !*** ./packages/packages/core/editor-editing-panel/src/hooks/use-license-config.ts ***!
   \*************************************************************************************/
 
 /*!*************************************************************************************!*\
@@ -761,10 +731,6 @@
   \**************************************************************************************/
 
 /*!**************************************************************************************!*\
-  !*** ./packages/packages/core/editor-editing-panel/src/contexts/section-context.tsx ***!
-  \**************************************************************************************/
-
-/*!**************************************************************************************!*\
   !*** ./packages/packages/core/editor-editing-panel/src/dynamics/dynamic-control.tsx ***!
   \**************************************************************************************/
 
@@ -786,10 +752,6 @@
 
 /*!***************************************************************************************!*\
   !*** ./packages/packages/core/editor-editing-panel/src/hooks/use-state-by-element.ts ***!
-  \***************************************************************************************/
-
-/*!***************************************************************************************!*\
-  !*** ./packages/packages/core/editor-editing-panel/src/sync/get-elementor-globals.ts ***!
   \***************************************************************************************/
 
 /*!****************************************************************************************!*\
@@ -825,6 +787,10 @@
   \*****************************************************************************************/
 
 /*!******************************************************************************************!*\
+  !*** ./packages/packages/core/editor-editing-panel/src/components/css-classes/consts.ts ***!
+  \******************************************************************************************/
+
+/*!******************************************************************************************!*\
   !*** ./packages/packages/core/editor-editing-panel/src/components/style-tab-section.tsx ***!
   \******************************************************************************************/
 
@@ -853,10 +819,6 @@
   \*******************************************************************************************/
 
 /*!********************************************************************************************!*\
-  !*** ./packages/packages/core/editor-editing-panel/src/components/collapsible-content.tsx ***!
-  \********************************************************************************************/
-
-/*!********************************************************************************************!*\
   !*** ./packages/packages/core/editor-editing-panel/src/components/editing-panel-hooks.tsx ***!
   \********************************************************************************************/
 
@@ -870,6 +832,10 @@
 
 /*!********************************************************************************************!*\
   !*** ./packages/packages/core/editor-editing-panel/src/hooks/use-persist-dynamic-value.ts ***!
+  \********************************************************************************************/
+
+/*!********************************************************************************************!*\
+  !*** ./packages/packages/core/editor-editing-panel/src/utils/can-element-have-children.ts ***!
   \********************************************************************************************/
 
 /*!********************************************************************************************!*\
@@ -1001,6 +967,10 @@
   \*************************************************************************************************************/
 
 /*!**************************************************************************************************************!*\
+  !*** ./packages/packages/core/editor-editing-panel/src/components/css-classes/duplicate-class-menu-item.tsx ***!
+  \**************************************************************************************************************/
+
+/*!**************************************************************************************************************!*\
   !*** ./packages/packages/core/editor-editing-panel/src/styles-inheritance/components/infotip/label-chip.tsx ***!
   \**************************************************************************************************************/
 
@@ -1101,6 +1071,14 @@
   \**********************************************************************************************************************/
 
 /*!**********************************************************************************************************************!*\
+  !*** ./packages/packages/core/editor-editing-panel/src/components/style-sections/layout-section/grid-size-field.tsx ***!
+  \**********************************************************************************************************************/
+
+/*!**********************************************************************************************************************!*\
+  !*** ./packages/packages/core/editor-editing-panel/src/components/style-sections/layout-section/grid-span-field.tsx ***!
+  \**********************************************************************************************************************/
+
+/*!**********************************************************************************************************************!*\
   !*** ./packages/packages/core/editor-editing-panel/src/components/style-sections/position-section/z-index-field.tsx ***!
   \**********************************************************************************************************************/
 
@@ -1172,10 +1150,6 @@
   !*** ./packages/packages/core/editor-editing-panel/src/components/style-sections/position-section/position-section.tsx ***!
   \*************************************************************************************************************************/
 
-/*!*************************************************************************************************************************!*\
-  !*** ./packages/packages/core/editor-editing-panel/src/styles-inheritance/styles-inheritance-transformers-registry.tsx ***!
-  \*************************************************************************************************************************/
-
 /*!**************************************************************************************************************************!*\
   !*** ./packages/packages/core/editor-editing-panel/src/components/style-sections/border-section/border-radius-field.tsx ***!
   \**************************************************************************************************************************/
@@ -1198,6 +1172,10 @@
 
 /*!***************************************************************************************************************************!*\
   !*** ./packages/packages/core/editor-editing-panel/src/components/style-sections/layout-section/flex-direction-field.tsx ***!
+  \***************************************************************************************************************************/
+
+/*!***************************************************************************************************************************!*\
+  !*** ./packages/packages/core/editor-editing-panel/src/components/style-sections/layout-section/grid-auto-flow-field.tsx ***!
   \***************************************************************************************************************************/
 
 /*!***************************************************************************************************************************!*\
@@ -1265,6 +1243,10 @@
   \*****************************************************************************************************************************/
 
 /*!*******************************************************************************************************************************!*\
+  !*** ./packages/packages/core/editor-editing-panel/src/components/style-sections/layout-section/grid-justify-items-field.tsx ***!
+  \*******************************************************************************************************************************/
+
+/*!*******************************************************************************************************************************!*\
   !*** ./packages/packages/core/editor-editing-panel/src/components/style-sections/typography-section/letter-spacing-field.tsx ***!
   \*******************************************************************************************************************************/
 
@@ -1281,12 +1263,12 @@
   \********************************************************************************************************************************/
 
 /*!*********************************************************************************************************************************!*\
-  !*** ./packages/packages/core/editor-editing-panel/src/components/style-sections/typography-section/hooks/use-font-families.ts ***!
-  \*********************************************************************************************************************************/
-
-/*!*********************************************************************************************************************************!*\
   !*** ./packages/packages/core/editor-editing-panel/src/styles-inheritance/components/styles-inheritance-section-indicators.tsx ***!
   \*********************************************************************************************************************************/
+
+/*!**********************************************************************************************************************************!*\
+  !*** ./packages/packages/core/editor-editing-panel/src/components/style-sections/layout-section/align-self-grid-child-field.tsx ***!
+  \**********************************************************************************************************************************/
 
 /*!**********************************************************************************************************************************!*\
   !*** ./packages/packages/core/editor-editing-panel/src/styles-inheritance/transformers/background-color-overlay-transformer.tsx ***!

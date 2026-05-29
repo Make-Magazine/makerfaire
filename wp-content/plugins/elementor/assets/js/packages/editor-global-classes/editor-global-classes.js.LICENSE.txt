@@ -30,8 +30,6 @@
 
 /*! ../../utils/tracking */
 
-/*! ../api */
-
 /*! ../components/css-class-usage/types */
 
 /*! ../components/search-and-filter/context */
@@ -41,6 +39,10 @@
 /*! ../errors */
 
 /*! ../global-classes-styles-provider */
+
+/*! ../load-document-classes */
+
+/*! ../load-existing-classes */
 
 /*! ../save-global-classes */
 
@@ -58,9 +60,13 @@
 
 /*! ../store */
 
+/*! ../utils/create-labels-for-classes */
+
 /*! ../utils/tracking */
 
 /*! ./api */
+
+/*! ./apply-global-class-guide-prompt */
 
 /*! ./capabilities */
 
@@ -69,6 +75,8 @@
 /*! ./class-manager-introduction */
 
 /*! ./class-manager-panel */
+
+/*! ./class-manager/class-manager-panel */
 
 /*! ./classes-resource */
 
@@ -81,6 +89,12 @@
 /*! ./components/class-manager/duplicate-label-dialog */
 
 /*! ./components/convert-local-class-to-global-class */
+
+/*! ./components/global-styles-import-listener */
+
+/*! ./components/open-panel-from-event */
+
+/*! ./components/open-panel-from-url */
 
 /*! ./components/populate-store */
 
@@ -106,6 +120,10 @@
 
 /*! ./init */
 
+/*! ./load-document-classes */
+
+/*! ./load-existing-classes */
+
 /*! ./mcp-apply-unapply-global-classes */
 
 /*! ./mcp-get-global-class-usages */
@@ -124,6 +142,8 @@
 
 /*! ./sortable */
 
+/*! ./start-sync-to-v3-modal */
+
 /*! ./store */
 
 /*! ./sync-with-document */
@@ -135,6 +155,10 @@
 /*! ./use-empty-css-class */
 
 /*! ./use-filtered-css-class-usage */
+
+/*! ./utils.js */
+
+/*! ./utils/create-labels-for-classes */
 
 /*! ./utils/snapshot-history */
 
@@ -180,13 +204,23 @@
 
 /*! @elementor/utils */
 
+/*! @tanstack/react-virtual */
+
+/*! @tanstack/virtual-core */
+
 /*! @wordpress/i18n */
 
 /*! react */
 
+/*! react-dom */
+
 /*!**************************!*\
   !*** external ["React"] ***!
   \**************************/
+
+/*!*****************************!*\
+  !*** external ["ReactDOM"] ***!
+  \*****************************/
 
 /*!******************************!*\
   !*** external ["wp","i18n"] ***!
@@ -292,6 +326,18 @@
   !*** ./packages/packages/core/editor-global-classes/src/errors.ts ***!
   \********************************************************************/
 
+/*!************************************************************************!*\
+  !*** ./packages/node_modules/@tanstack/virtual-core/dist/esm/index.js ***!
+  \************************************************************************/
+
+/*!************************************************************************!*\
+  !*** ./packages/node_modules/@tanstack/virtual-core/dist/esm/utils.js ***!
+  \************************************************************************/
+
+/*!*************************************************************************!*\
+  !*** ./packages/node_modules/@tanstack/react-virtual/dist/esm/index.js ***!
+  \*************************************************************************/
+
 /*!**************************************************************************!*\
   !*** ./packages/packages/core/editor-global-classes/src/capabilities.ts ***!
   \**************************************************************************/
@@ -314,6 +360,14 @@
 
 /*!***********************************************************************************!*\
   !*** ./packages/packages/core/editor-global-classes/src/hooks/use-dirty-state.ts ***!
+  \***********************************************************************************/
+
+/*!***********************************************************************************!*\
+  !*** ./packages/packages/core/editor-global-classes/src/load-document-classes.ts ***!
+  \***********************************************************************************/
+
+/*!***********************************************************************************!*\
+  !*** ./packages/packages/core/editor-global-classes/src/load-existing-classes.ts ***!
   \***********************************************************************************/
 
 /*!***********************************************************************************!*\
@@ -357,7 +411,15 @@
   \********************************************************************************************/
 
 /*!*********************************************************************************************!*\
+  !*** ./packages/packages/core/editor-global-classes/src/components/open-panel-from-url.tsx ***!
+  \*********************************************************************************************/
+
+/*!*********************************************************************************************!*\
   !*** ./packages/packages/core/editor-global-classes/src/hooks/use-css-class-usage-by-id.ts ***!
+  \*********************************************************************************************/
+
+/*!*********************************************************************************************!*\
+  !*** ./packages/packages/core/editor-global-classes/src/utils/create-labels-for-classes.ts ***!
   \*********************************************************************************************/
 
 /*!**********************************************************************************************!*\
@@ -371,6 +433,10 @@
 /*!**********************************************************************************************!*\
   !*** ./packages/packages/core/editor-global-classes/src/mcp-integration/classes-resource.ts ***!
   \**********************************************************************************************/
+
+/*!***********************************************************************************************!*\
+  !*** ./packages/packages/core/editor-global-classes/src/components/open-panel-from-event.tsx ***!
+  \***********************************************************************************************/
 
 /*!************************************************************************************************!*\
   !*** ./packages/packages/core/editor-global-classes/src/components/class-manager/sortable.tsx ***!
@@ -399,6 +465,10 @@
 /*!***************************************************************************************************!*\
   !*** ./packages/packages/core/editor-global-classes/src/components/search-and-filter/context.tsx ***!
   \***************************************************************************************************/
+
+/*!*******************************************************************************************************!*\
+  !*** ./packages/packages/core/editor-global-classes/src/components/global-styles-import-listener.tsx ***!
+  \*******************************************************************************************************/
 
 /*!*******************************************************************************************************!*\
   !*** ./packages/packages/core/editor-global-classes/src/mcp-integration/mcp-manage-global-classes.ts ***!
@@ -432,8 +502,16 @@
   !*** ./packages/packages/core/editor-global-classes/src/components/convert-local-class-to-global-class.tsx ***!
   \*************************************************************************************************************/
 
+/*!*************************************************************************************************************!*\
+  !*** ./packages/packages/core/editor-global-classes/src/mcp-integration/apply-global-class-guide-prompt.ts ***!
+  \*************************************************************************************************************/
+
 /*!**************************************************************************************************************!*\
   !*** ./packages/packages/core/editor-global-classes/src/components/class-manager/duplicate-label-dialog.tsx ***!
+  \**************************************************************************************************************/
+
+/*!**************************************************************************************************************!*\
+  !*** ./packages/packages/core/editor-global-classes/src/components/class-manager/start-sync-to-v3-modal.tsx ***!
   \**************************************************************************************************************/
 
 /*!**************************************************************************************************************!*\

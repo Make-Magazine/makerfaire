@@ -427,6 +427,7 @@ body.rtl {
 .elementor-templates-modal__header__items-area {
   display: flex;
   flex-direction: row-reverse;
+  align-items: center;
 }
 .elementor-templates-modal__header__item {
   position: relative;
@@ -442,6 +443,15 @@ body.rtl {
 }
 .elementor-templates-modal__header__item > i:hover {
   color: var(--e-a-color-txt-hover);
+}
+.elementor-templates-modal__header__close:is(button) {
+  background: transparent;
+  margin: 0;
+  font-size: inherit;
+  font-family: inherit;
+  color: inherit;
+  border: none;
+  cursor: pointer;
 }
 .elementor-templates-modal__header__close--normal {
   width: 47px;
@@ -510,10 +520,17 @@ body.rtl {
   border-radius: var(--e-a-border-radius);
   transition: var(--e-a-transition-hover);
   cursor: pointer;
+  background: none;
+  border: none;
+  font-family: inherit;
 }
 #elementor-toast .dialog-button:hover {
   background: var(--e-a-bg-hover);
   color: var(--e-a-color-txt-hover);
+}
+#elementor-toast .dialog-button:focus-visible {
+  outline: 2px solid var(--e-a-border-color-focus, #4F46E5);
+  outline-offset: 2px;
 }
 #elementor-toast .dialog-button:last-child {
   margin-inline-end: 0;

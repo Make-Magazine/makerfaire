@@ -974,8 +974,15 @@ module.exports = elementorModules.Module.extend({
         }
       },
       button: {
-        tag: 'div'
+        tag: 'button'
       }
+    });
+
+    // Add role="status" and aria-live for screen reader announcement
+    toast.getElements('widget').attr({
+      role: 'status',
+      'aria-live': 'polite',
+      'aria-atomic': 'true'
     });
     this.getToast = function () {
       return toast;
@@ -985,6 +992,8 @@ module.exports = elementorModules.Module.extend({
     var toast = this.getToast();
     toast.setMessage(options.message);
     toast.getElements('buttonsWrapper').empty();
+    toast.focusedButton = null;
+    toast.buttons = [];
     var isPositionValid = this.isPositionValid(options === null || options === void 0 ? void 0 : options.position);
     if (!isPositionValid) {
       this.positionToWindow();
@@ -1713,12 +1722,14 @@ var _default = exports["default"] = /*#__PURE__*/function (_elementorModules$Mod
       if (_.has(this.cache, cacheKey)) {
         deferred = jQuery.Deferred().done(request.success).resolve(this.cache[cacheKey]);
       } else {
+        var _request$error;
         deferred = this.addRequest(request.action, {
           data: request.data,
           unique_id: request.unique_id,
           success: function success(data) {
             return _this3.cache[cacheKey] = data;
-          }
+          },
+          error: (_request$error = request.error) !== null && _request$error !== void 0 ? _request$error : function () {}
         }, immediately).done(request.success);
       }
       return deferred;
@@ -2145,7 +2156,9 @@ var eventsConfig = {
     aiGenerate: 'ai_generate',
     resultsUpdated: 'results_updated',
     noResults: 'no_results',
-    selected: 'selected'
+    selected: 'selected',
+    promotionViewed: 'promotion_viewed',
+    upgradeNow: 'upgrade_now'
   },
   targetNames: {
     publishDropdown: {
@@ -2192,7 +2205,10 @@ var eventsConfig = {
     structurePanel: 'Structure Panel',
     canvas: 'Canvas',
     leftPanel: 'Left Panel',
-    elementorLibrary: 'Elementor Library'
+    elementorLibrary: 'Elementor Library',
+    components: {
+      instanceEditingPanel: 'Instance Editing Panel'
+    }
   },
   secondaryLocations: {
     layout: 'Layout Section',
@@ -2325,6 +2341,7 @@ var eventsConfig = {
     },
     // ChecklistSteps event names are generated dynamically, based on stepId and action type taken: title, action, done, undone, upgrade
     elementorEditor: {
+      editorLoaded: 'editor_loaded',
       checklist: {
         checklistHeaderClose: 'checklist_header_close_icon',
         checklistFirstPopup: 'checklist popup triggered'
@@ -2341,7 +2358,17 @@ var eventsConfig = {
       save: 'save_new_variable',
       openManager: 'open_variables_manager',
       saveChanges: 'save_variables_changes',
-      delete: 'delete_variable'
+      delete: 'delete_variable',
+      variableSyncToV3: 'variable_sync_to_v3'
+    },
+    design_system: {
+      importOpened: 'design_system_import_opened',
+      fileSelected: 'design_system_file_selected',
+      validationFailed: 'design_system_validation_failed',
+      conflictChoice: 'design_system_conflict_choice',
+      confirmed: 'design_system_import_confirmed',
+      imported: 'design_system_imported',
+      importFailed: 'design_system_import_failed'
     },
     components: {
       createClicked: 'component_create_clicked',
@@ -2352,7 +2379,8 @@ var eventsConfig = {
       propertiesPanelOpened: 'component_properties_panel_opened',
       propertiesGroupCreated: 'component_properties_group_created',
       propertyExposed: 'component_property_exposed',
-      propertyRemoved: 'component_property_removed'
+      propertyRemoved: 'component_property_removed',
+      detached: 'component_detached'
     },
     global_classes: {
       classApplied: 'class_applied',
@@ -2372,7 +2400,10 @@ var eventsConfig = {
       classStyled: 'class_styled',
       classStateClicked: 'class_state_clicked',
       classUsageClicked: 'class_usage_clicked',
-      classDuplicate: 'class_duplicate'
+      classDuplicate: 'class_duplicate',
+      classSyncToV3PopupShown: 'class_sync_to_v3_popup_shown',
+      classSyncToV3: 'class_sync_to_v3',
+      classSyncToV3PopupClick: 'class_sync_to_v3_popup_click'
     },
     editorOne: {
       topBarPublishDropdown: 'top_bar_publish_dropdown',
@@ -2386,6 +2417,13 @@ var eventsConfig = {
       finderResultSelect: 'finder_result_select',
       canvasEmptyBoxAction: 'canvas_empty_box_action',
       widgetPanelSearch: 'widget_panel_search'
+    },
+    interactions: {
+      created: 'interactions_created'
+    },
+    promotions: {
+      viewPromotion: 'view_promotion',
+      upgradePromotionClick: 'upgrade_promotion_click'
     }
   }
 };
@@ -2403,6 +2441,7 @@ var _default = exports["default"] = eventsConfig;
 
 
 var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault */ "../node_modules/@babel/runtime/helpers/interopRequireDefault.js");
+var _typeof = __webpack_require__(/*! @babel/runtime/helpers/typeof */ "../node_modules/@babel/runtime/helpers/typeof.js");
 Object.defineProperty(exports, "__esModule", ({
   value: true
 }));
@@ -2416,18 +2455,16 @@ var _getPrototypeOf2 = _interopRequireDefault(__webpack_require__(/*! @babel/run
 var _inherits2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime/helpers/inherits */ "../node_modules/@babel/runtime/helpers/inherits.js"));
 var _defineProperty2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime/helpers/defineProperty */ "../node_modules/@babel/runtime/helpers/defineProperty.js"));
 var _eventsConfig = _interopRequireDefault(__webpack_require__(/*! ./events-config */ "../core/common/modules/events-manager/assets/js/events-config.js"));
-var _mixpanelBrowser = _interopRequireDefault(__webpack_require__(/*! mixpanel-browser */ "../node_modules/mixpanel-browser/dist/mixpanel.module.js"));
+var _mixpanelBrowser = _interopRequireWildcard(__webpack_require__(/*! mixpanel-browser */ "../node_modules/mixpanel-browser/dist/mixpanel.module.js"));
 var _tiers = __webpack_require__(/*! elementor-utils/tiers */ "../assets/dev/js/utils/tiers.js");
+var _sessionRecording = __webpack_require__(/*! ./session-recording */ "../core/common/modules/events-manager/assets/js/session-recording.js");
+function _interopRequireWildcard(e, t) { if ("function" == typeof WeakMap) var r = new WeakMap(), n = new WeakMap(); return (_interopRequireWildcard = function _interopRequireWildcard(e, t) { if (!t && e && e.__esModule) return e; var o, i, f = { __proto__: null, default: e }; if (null === e || "object" != _typeof(e) && "function" != typeof e) return f; if (o = t ? n : r) { if (o.has(e)) return o.get(e); o.set(e, f); } for (var _t2 in e) "default" !== _t2 && {}.hasOwnProperty.call(e, _t2) && ((i = (o = Object.defineProperty) && Object.getOwnPropertyDescriptor(e, _t2)) && (i.get || i.set) ? o(f, _t2, i) : f[_t2] = e[_t2]); return f; })(e, t); }
 function ownKeys(e, r) { var t = Object.keys(e); if (Object.getOwnPropertySymbols) { var o = Object.getOwnPropertySymbols(e); r && (o = o.filter(function (r) { return Object.getOwnPropertyDescriptor(e, r).enumerable; })), t.push.apply(t, o); } return t; }
 function _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t = null != arguments[r] ? arguments[r] : {}; r % 2 ? ownKeys(Object(t), !0).forEach(function (r) { (0, _defineProperty2.default)(e, r, t[r]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(e, Object.getOwnPropertyDescriptors(t)) : ownKeys(Object(t)).forEach(function (r) { Object.defineProperty(e, r, Object.getOwnPropertyDescriptor(t, r)); }); } return e; }
 function _callSuper(t, o, e) { return o = (0, _getPrototypeOf2.default)(o), (0, _possibleConstructorReturn2.default)(t, _isNativeReflectConstruct() ? Reflect.construct(o, e || [], (0, _getPrototypeOf2.default)(t).constructor) : o.apply(t, e)); }
 function _isNativeReflectConstruct() { try { var t = !Boolean.prototype.valueOf.call(Reflect.construct(Boolean, [], function () {})); } catch (t) {} return (_isNativeReflectConstruct = function _isNativeReflectConstruct() { return !!t; })(); }
-function _classPrivateFieldInitSpec(e, t, a) { _checkPrivateRedeclaration(e, t), t.set(e, a); }
-function _checkPrivateRedeclaration(e, t) { if (t.has(e)) throw new TypeError("Cannot initialize the same private elements twice on an object"); }
-function _classPrivateFieldGet(s, a) { return s.get(_assertClassBrand(s, a)); }
-function _classPrivateFieldSet(s, a, r) { return s.set(_assertClassBrand(s, a), r), r; }
-function _assertClassBrand(e, t, n) { if ("function" == typeof e ? e === t : e.has(t)) return arguments.length < 3 ? t : n; throw new TypeError("Private element is not present on this object"); }
-var _sessionRecordingInProgress = /*#__PURE__*/new WeakMap();
+/** @type {Mixpanel | null} */
+var mixpanelInstance = null;
 var _default = exports["default"] = /*#__PURE__*/function (_elementorModules$Mod) {
   function _default() {
     var _this;
@@ -2437,18 +2474,20 @@ var _default = exports["default"] = /*#__PURE__*/function (_elementorModules$Mod
     }
     _this = _callSuper(this, _default, [].concat(args));
     (0, _defineProperty2.default)(_this, "trackingEnabled", false);
-    _classPrivateFieldInitSpec(_this, _sessionRecordingInProgress, false);
+    (0, _defineProperty2.default)(_this, "availableExperiments", []);
     return _this;
   }
   (0, _inherits2.default)(_default, _elementorModules$Mod);
   return (0, _createClass2.default)(_default, [{
     key: "onInit",
     value: function onInit() {
-      var _this2 = this;
+      var _elementorCommon$conf,
+        _this2 = this;
       this.config = _eventsConfig.default;
       if (!this.canSendEvents()) {
         return;
       }
+      (0, _sessionRecording.configureSessionRecording)((_elementorCommon$conf = elementorCommon.config.editor_events) === null || _elementorCommon$conf === void 0 ? void 0 : _elementorCommon$conf.session_recording_events);
       this.initializeMixpanel(function () {
         return _this2.enableTracking();
       });
@@ -2456,47 +2495,55 @@ var _default = exports["default"] = /*#__PURE__*/function (_elementorModules$Mod
   }, {
     key: "initializeMixpanel",
     value: function initializeMixpanel(onLoaded) {
-      var _elementorCommon$conf;
-      _mixpanelBrowser.default.init((_elementorCommon$conf = elementorCommon.config.editor_events) === null || _elementorCommon$conf === void 0 ? void 0 : _elementorCommon$conf.token, {
-        persistence: 'localStorage',
-        autocapture: false,
-        record_sessions_percent: 0,
-        record_idle_timeout_ms: 60000,
-        record_max_ms: 300000,
-        record_mask_text_selector: '',
-        flags: true,
-        api_hosts: {
-          flags: 'https://api-eu.mixpanel.com'
-        },
-        loaded: onLoaded
-      });
+      if (mixpanelInstance && mixpanelInstance.isInitialized) {
+        onLoaded(mixpanelInstance);
+      } else {
+        var _elementorCommon$conf2;
+        mixpanelInstance = _mixpanelBrowser.default.init((_elementorCommon$conf2 = elementorCommon.config.editor_events) === null || _elementorCommon$conf2 === void 0 ? void 0 : _elementorCommon$conf2.token, {
+          persistence: 'localStorage',
+          autocapture: false,
+          flags: true,
+          api_host: 'https://api-eu.mixpanel.com',
+          loaded: onLoaded,
+          record_sessions_percent: 0,
+          record_idle_timeout_ms: 60 * 1000,
+          // 60 Seconds
+          record_min_ms: 5 * 1000,
+          // 5 Seconds
+          record_max_ms: 30 * 1000,
+          // 30 Seconds
+          record_mask_text_selector: ''
+        }, 'elementor-editor');
+      }
+      elementorCommon.config.editor_events.mixpanelInstance = mixpanelInstance;
     }
   }, {
     key: "enableTracking",
     value: function enableTracking() {
-      var _elementorCommon$conf2;
+      var _elementorCommon$conf3;
       if (!this.isMixpanelReady()) {
         return;
       }
-      var userId = (_elementorCommon$conf2 = elementorCommon.config.library_connect) === null || _elementorCommon$conf2 === void 0 ? void 0 : _elementorCommon$conf2.user_id;
+      var userId = (_elementorCommon$conf3 = elementorCommon.config.editor_events) === null || _elementorCommon$conf3 === void 0 ? void 0 : _elementorCommon$conf3.user_id;
+      mixpanelInstance.register({
+        appType: 'Editor'
+      });
       if (userId) {
-        var _elementorCommon$conf3;
-        _mixpanelBrowser.default.identify(userId);
-        _mixpanelBrowser.default.register({
-          appType: 'Editor'
-        });
-        _mixpanelBrowser.default.people.set_once({
+        var _elementorCommon$conf4;
+        mixpanelInstance.identify(userId);
+        mixpanelInstance.people.set_once({
           $user_id: userId,
           $last_login: new Date().toISOString(),
-          $plan_type: ((_elementorCommon$conf3 = elementorCommon.config.library_connect) === null || _elementorCommon$conf3 === void 0 ? void 0 : _elementorCommon$conf3.plan_type) || _tiers.TIERS.free
+          $plan_type: ((_elementorCommon$conf4 = elementorCommon.config.library_connect) === null || _elementorCommon$conf4 === void 0 ? void 0 : _elementorCommon$conf4.plan_type) || _tiers.TIERS.free
         });
       }
       this.trackingEnabled = true;
+      this.availableExperiments = Object.keys(elementorCommon.config.experimentalFeatures || {});
     }
   }, {
     key: "dispatchEvent",
     value: function dispatchEvent(name, data) {
-      var _elementorCommon$conf4, _elementorCommon$conf5, _elementorCommon$conf6, _elementorCommon$conf7, _elementorCommon$conf8, _elementorCommon$conf9, _elementorCommon$conf0, _elementorCommon$conf1, _elementorCommon$conf10;
+      var _elementorCommon$conf5, _elementorCommon$conf6, _elementorCommon$conf7, _elementorCommon$conf8, _elementorCommon$conf9, _elementorCommon$conf0, _elementorCommon$conf1, _elementorCommon$conf10, _elementorCommon$conf11;
       var options = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
       if (!this.canSendEvents()) {
         return;
@@ -2505,69 +2552,40 @@ var _default = exports["default"] = /*#__PURE__*/function (_elementorModules$Mod
         this.enableTracking();
       }
       var eventData = _objectSpread({
-        user_id: ((_elementorCommon$conf4 = elementorCommon.config.library_connect) === null || _elementorCommon$conf4 === void 0 ? void 0 : _elementorCommon$conf4.user_id) || null,
-        user_roles: ((_elementorCommon$conf5 = elementorCommon.config.library_connect) === null || _elementorCommon$conf5 === void 0 ? void 0 : _elementorCommon$conf5.user_roles) || [],
-        subscription_id: ((_elementorCommon$conf6 = elementorCommon.config.editor_events) === null || _elementorCommon$conf6 === void 0 ? void 0 : _elementorCommon$conf6.subscription_id) || null,
-        user_tier: ((_elementorCommon$conf7 = elementorCommon.config.library_connect) === null || _elementorCommon$conf7 === void 0 ? void 0 : _elementorCommon$conf7.current_access_tier) || null,
-        url: (_elementorCommon$conf8 = elementorCommon.config.editor_events) === null || _elementorCommon$conf8 === void 0 ? void 0 : _elementorCommon$conf8.site_url,
-        wp_version: (_elementorCommon$conf9 = elementorCommon.config.editor_events) === null || _elementorCommon$conf9 === void 0 ? void 0 : _elementorCommon$conf9.wp_version,
-        client_id: (_elementorCommon$conf0 = elementorCommon.config.editor_events) === null || _elementorCommon$conf0 === void 0 ? void 0 : _elementorCommon$conf0.site_key,
-        app_version: (_elementorCommon$conf1 = elementorCommon.config.editor_events) === null || _elementorCommon$conf1 === void 0 ? void 0 : _elementorCommon$conf1.elementor_version,
-        site_language: (_elementorCommon$conf10 = elementorCommon.config.editor_events) === null || _elementorCommon$conf10 === void 0 ? void 0 : _elementorCommon$conf10.site_language
+        user_id: ((_elementorCommon$conf5 = elementorCommon.config.editor_events) === null || _elementorCommon$conf5 === void 0 ? void 0 : _elementorCommon$conf5.user_id) || null,
+        user_roles: ((_elementorCommon$conf6 = elementorCommon.config.library_connect) === null || _elementorCommon$conf6 === void 0 ? void 0 : _elementorCommon$conf6.user_roles) || [],
+        subscription_id: ((_elementorCommon$conf7 = elementorCommon.config.editor_events) === null || _elementorCommon$conf7 === void 0 ? void 0 : _elementorCommon$conf7.subscription_id) || null,
+        user_tier: ((_elementorCommon$conf8 = elementorCommon.config.library_connect) === null || _elementorCommon$conf8 === void 0 ? void 0 : _elementorCommon$conf8.current_access_tier) || null,
+        url: (_elementorCommon$conf9 = elementorCommon.config.editor_events) === null || _elementorCommon$conf9 === void 0 ? void 0 : _elementorCommon$conf9.site_url,
+        wp_version: (_elementorCommon$conf0 = elementorCommon.config.editor_events) === null || _elementorCommon$conf0 === void 0 ? void 0 : _elementorCommon$conf0.wp_version,
+        client_id: (_elementorCommon$conf1 = elementorCommon.config.editor_events) === null || _elementorCommon$conf1 === void 0 ? void 0 : _elementorCommon$conf1.site_key,
+        app_version: (_elementorCommon$conf10 = elementorCommon.config.editor_events) === null || _elementorCommon$conf10 === void 0 ? void 0 : _elementorCommon$conf10.elementor_version,
+        site_language: (_elementorCommon$conf11 = elementorCommon.config.editor_events) === null || _elementorCommon$conf11 === void 0 ? void 0 : _elementorCommon$conf11.site_language,
+        experiments: this.availableExperiments
       }, data);
-      _mixpanelBrowser.default.track(name, eventData, options);
-    }
-  }, {
-    key: "startSessionRecording",
-    value: function startSessionRecording() {
-      if (!this.canSendEvents() || this.isSessionRecordingInProgress()) {
-        return;
+      mixpanelInstance.track(name, eventData, options);
+      var recordingDecision = (0, _sessionRecording.handleSessionRecording)(name, mixpanelInstance);
+      if (recordingDecision) {
+        mixpanelInstance.track(recordingDecision, eventData);
       }
-      if (!this.trackingEnabled) {
-        this.enableTracking();
-      }
-      _mixpanelBrowser.default.start_session_recording();
-      this.setSessionRecordingInProgress(true);
-    }
-  }, {
-    key: "stopSessionRecording",
-    value: function stopSessionRecording() {
-      if (!this.canSendEvents() || !this.isSessionRecordingInProgress()) {
-        return;
-      }
-      _mixpanelBrowser.default.stop_session_recording();
-      this.setSessionRecordingInProgress(false);
-    }
-  }, {
-    key: "setSessionRecordingInProgress",
-    value: function setSessionRecordingInProgress(value) {
-      if ('boolean' !== typeof value) {
-        return;
-      }
-      _classPrivateFieldSet(_sessionRecordingInProgress, this, value);
-    }
-  }, {
-    key: "isSessionRecordingInProgress",
-    value: function isSessionRecordingInProgress() {
-      return _classPrivateFieldGet(_sessionRecordingInProgress, this);
     }
   }, {
     key: "featureFlagIsActive",
     value: function () {
       var _featureFlagIsActive = (0, _asyncToGenerator2.default)(/*#__PURE__*/_regenerator.default.mark(function _callee(flagName) {
-        var _mixpanel$flags;
+        var _mixpanelInstance;
         var isEnabled;
         return _regenerator.default.wrap(function (_context) {
           while (1) switch (_context.prev = _context.next) {
             case 0:
-              if (!('function' !== typeof (_mixpanelBrowser.default === null || _mixpanelBrowser.default === void 0 || (_mixpanel$flags = _mixpanelBrowser.default.flags) === null || _mixpanel$flags === void 0 ? void 0 : _mixpanel$flags.is_enabled))) {
+              if (!('function' !== typeof ((_mixpanelInstance = mixpanelInstance) === null || _mixpanelInstance === void 0 || (_mixpanelInstance = _mixpanelInstance.flags) === null || _mixpanelInstance === void 0 ? void 0 : _mixpanelInstance.is_enabled))) {
                 _context.next = 1;
                 break;
               }
               return _context.abrupt("return", false);
             case 1:
               _context.next = 2;
-              return _mixpanelBrowser.default.flags.is_enabled(flagName, false);
+              return mixpanelInstance.flags.is_enabled(flagName, false);
             case 2:
               isEnabled = _context.sent;
               return _context.abrupt("return", true === isEnabled);
@@ -2587,8 +2605,8 @@ var _default = exports["default"] = /*#__PURE__*/function (_elementorModules$Mod
     value: function () {
       var _getExperimentVariant = (0, _asyncToGenerator2.default)(/*#__PURE__*/_regenerator.default.mark(function _callee2(experimentName) {
         var defaultValue,
-          _elementorCommon$conf11,
           _elementorCommon$conf12,
+          _elementorCommon$conf13,
           isAbTestingEnabled,
           variant,
           _args2 = arguments,
@@ -2604,14 +2622,14 @@ var _default = exports["default"] = /*#__PURE__*/function (_elementorModules$Mod
               }
               return _context2.abrupt("return", defaultValue);
             case 2:
-              isAbTestingEnabled = (_elementorCommon$conf11 = (_elementorCommon$conf12 = elementorCommon.config.editor_events) === null || _elementorCommon$conf12 === void 0 ? void 0 : _elementorCommon$conf12.flags_enabled) !== null && _elementorCommon$conf11 !== void 0 ? _elementorCommon$conf11 : false;
+              isAbTestingEnabled = (_elementorCommon$conf12 = (_elementorCommon$conf13 = elementorCommon.config.editor_events) === null || _elementorCommon$conf13 === void 0 ? void 0 : _elementorCommon$conf13.flags_enabled) !== null && _elementorCommon$conf12 !== void 0 ? _elementorCommon$conf12 : false;
               if (isAbTestingEnabled) {
                 _context2.next = 3;
                 break;
               }
               return _context2.abrupt("return", defaultValue);
             case 3:
-              if (_mixpanelBrowser.default) {
+              if (mixpanelInstance) {
                 _context2.next = 4;
                 break;
               }
@@ -2620,20 +2638,20 @@ var _default = exports["default"] = /*#__PURE__*/function (_elementorModules$Mod
               if (!this.trackingEnabled) {
                 this.enableTracking();
               }
-              if (_mixpanelBrowser.default.flags) {
+              if (mixpanelInstance.flags) {
                 _context2.next = 5;
                 break;
               }
               return _context2.abrupt("return", defaultValue);
             case 5:
-              if (!('function' !== typeof _mixpanelBrowser.default.flags.get_variant_value)) {
+              if (!('function' !== typeof mixpanelInstance.flags.get_variant_value)) {
                 _context2.next = 6;
                 break;
               }
               return _context2.abrupt("return", defaultValue);
             case 6:
               _context2.next = 7;
-              return _mixpanelBrowser.default.flags.get_variant_value(experimentName, defaultValue);
+              return mixpanelInstance.flags.get_variant_value(experimentName, defaultValue);
             case 7:
               variant = _context2.sent;
               if (!(undefined === variant || null === variant)) {
@@ -2664,7 +2682,7 @@ var _default = exports["default"] = /*#__PURE__*/function (_elementorModules$Mod
       if (!this.trackingEnabled) {
         return;
       }
-      _mixpanelBrowser.default.track('$experiment_started', {
+      mixpanelInstance.track('$experiment_started', {
         'Experiment name': experimentName,
         'Variant name': experimentVariant
       });
@@ -2672,11 +2690,11 @@ var _default = exports["default"] = /*#__PURE__*/function (_elementorModules$Mod
   }, {
     key: "isMixpanelReady",
     value: function isMixpanelReady() {
-      if ('undefined' === typeof _mixpanelBrowser.default || !_mixpanelBrowser.default) {
+      if ('undefined' === typeof mixpanelInstance || !mixpanelInstance) {
         return false;
       }
       try {
-        var distinctId = _mixpanelBrowser.default.get_distinct_id();
+        var distinctId = mixpanelInstance.get_distinct_id();
         return distinctId !== undefined && distinctId !== null;
       } catch (error) {
         return false;
@@ -2688,8 +2706,92 @@ var _default = exports["default"] = /*#__PURE__*/function (_elementorModules$Mod
       var _elementorCommon;
       return !!((_elementorCommon = elementorCommon) !== null && _elementorCommon !== void 0 && (_elementorCommon = _elementorCommon.config) !== null && _elementorCommon !== void 0 && (_elementorCommon = _elementorCommon.editor_events) !== null && _elementorCommon !== void 0 && _elementorCommon.can_send_events);
     }
+  }, {
+    key: "getMixpanelInstance",
+    value: function getMixpanelInstance() {
+      return this.isMixpanelReady() ? mixpanelInstance : undefined;
+    }
   }]);
 }(elementorModules.Module);
+
+/***/ }),
+
+/***/ "../core/common/modules/events-manager/assets/js/session-recording.js":
+/*!****************************************************************************!*\
+  !*** ../core/common/modules/events-manager/assets/js/session-recording.js ***!
+  \****************************************************************************/
+/***/ ((__unused_webpack_module, exports) => {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", ({
+  value: true
+}));
+exports.configureSessionRecording = configureSessionRecording;
+exports.getIsRecording = getIsRecording;
+exports.handleSessionRecording = handleSessionRecording;
+var RECORD_SESSION_PERCENT = 1;
+var sessionRecordingPairs = [];
+var activeEndEvent = null;
+var isRecording = false;
+function shouldRecordSession(distinctId, percent) {
+  var fraction = Math.min(Math.max(percent / 100, 0), 1);
+  var hash = 0;
+  for (var i = 0; i < distinctId.length; i++) {
+    // eslint-disable-next-line no-bitwise
+    hash = hash * 31 + distinctId.charCodeAt(i) >>> 0;
+  }
+  return hash / 4294967295 < fraction;
+}
+
+/**
+ * @param {Array<{start: string, end?: string|null}>} pairs
+ */
+function configureSessionRecording(pairs) {
+  if (!Array.isArray(pairs)) {
+    return;
+  }
+  sessionRecordingPairs = pairs.filter(function (pair) {
+    return 'string' === typeof (pair === null || pair === void 0 ? void 0 : pair.start) && pair.start;
+  });
+}
+
+/**
+ * Evaluates whether to start/stop recording based on the event name.
+ *
+ * @param {string}                              name
+ * @param {import('mixpanel-browser').Mixpanel} mixpanelInstance
+ * @return {'recording_started'|'recording_skipped'|'recording_stopped'|null} The recording decision, or null if no action taken.
+ */
+function handleSessionRecording(name, mixpanelInstance) {
+  var matchedPair = sessionRecordingPairs.find(function (pair) {
+    return pair.start === name;
+  });
+  if (matchedPair) {
+    var distinctId = mixpanelInstance.get_distinct_id();
+    if (shouldRecordSession(distinctId, RECORD_SESSION_PERCENT)) {
+      var _matchedPair$end;
+      mixpanelInstance.start_session_recording();
+      isRecording = true;
+      activeEndEvent = (_matchedPair$end = matchedPair.end) !== null && _matchedPair$end !== void 0 ? _matchedPair$end : null;
+      return 'recording_started';
+    }
+    isRecording = false;
+    activeEndEvent = null;
+    return 'recording_skipped';
+  }
+  if (activeEndEvent && name === activeEndEvent) {
+    mixpanelInstance.stop_session_recording();
+    isRecording = false;
+    activeEndEvent = null;
+    return 'recording_stopped';
+  }
+  return null;
+}
+function getIsRecording() {
+  return isRecording;
+}
 
 /***/ }),
 

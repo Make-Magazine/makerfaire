@@ -4,25 +4,20 @@ namespace Elementor\Modules\Promotions;
 
 use Elementor\Api;
 use Elementor\Controls_Manager;
-use Elementor\Core\Admin\Menu\Admin_Menu_Manager;
 use Elementor\Core\Base\Module as Base_Module;
-use Elementor\Modules\Promotions\AdminMenuItems\Custom_Code_Promotion_Item;
-use Elementor\Modules\Promotions\AdminMenuItems\Custom_Fonts_Promotion_Item;
-use Elementor\Modules\Promotions\AdminMenuItems\Custom_Icons_Promotion_Item;
 use Elementor\Modules\Promotions\AdminMenuItems\Editor_One_Custom_Code_Menu;
 use Elementor\Modules\Promotions\AdminMenuItems\Editor_One_Custom_Elements_Menu;
 use Elementor\Modules\Promotions\AdminMenuItems\Editor_One_Fonts_Menu;
 use Elementor\Modules\Promotions\AdminMenuItems\Editor_One_Icons_Menu;
 use Elementor\Modules\Promotions\AdminMenuItems\Editor_One_Popups_Menu;
 use Elementor\Modules\Promotions\AdminMenuItems\Editor_One_Submissions_Menu;
-use Elementor\Modules\Promotions\AdminMenuItems\Form_Submissions_Promotion_Item;
 use Elementor\Modules\Promotions\AdminMenuItems\Go_Pro_Promotion_Item;
-use Elementor\Modules\Promotions\AdminMenuItems\Popups_Promotion_Item;
 use Elementor\Modules\Promotions\Controls\Atomic_Promotion_Control;
 use Elementor\Modules\Promotions\Pointers\Birthday;
 use Elementor\Modules\Promotions\Pointers\Black_Friday;
 use Elementor\Modules\Promotions\PropTypes\Promotion_Prop_Type;
 use Elementor\Modules\Promotions\Widgets\Ally_Dashboard_Widget;
+use Elementor\Modules\Promotions\Widgets\Atomic_Form_Widget_Promotion;
 use Elementor\Widgets_Manager;
 use Elementor\Utils;
 use Elementor\Includes\EditorAssetsAPI;
@@ -54,17 +49,9 @@ class Module extends Base_Module {
 			$this->handle_external_redirects();
 		} );
 
-		add_action( 'elementor/admin/menu/register', function ( Admin_Menu_Manager $admin_menu ) {
-			$this->register_menu_items( $admin_menu );
-		}, static::ADMIN_MENU_PRIORITY );
-
 		add_action( 'elementor/editor-one/menu/register', function ( Menu_Data_Provider $menu_data_provider ) {
 			$this->register_editor_one_menu_items( $menu_data_provider );
 		} );
-
-		add_action( 'elementor/admin/menu/register', function ( Admin_Menu_Manager $admin_menu ) {
-			$this->register_promotion_menu_item( $admin_menu );
-		}, static::ADMIN_MENU_PROMOTIONS_PRIORITY );
 
 		add_action( 'elementor/widgets/register', function( Widgets_Manager $manager ) {
 			foreach ( Api::get_promotion_widgets() as $widget_data ) {
@@ -83,6 +70,8 @@ class Module extends Base_Module {
 			new Black_Friday();
 		}
 
+		add_filter( 'elementor/editor/localize_settings', [ $this, 'add_v4_promotions_data' ] );
+
 		if ( Utils::has_pro() ) {
 			return;
 		}
@@ -93,7 +82,6 @@ class Module extends Base_Module {
 
 		add_action( 'elementor/editor/before_enqueue_scripts', [ $this, 'enqueue_react_data' ] );
 		add_action( 'elementor/editor/before_enqueue_scripts', [ $this, 'enqueue_editor_v4_alphachip' ] );
-		add_filter( 'elementor/editor/localize_settings', [ $this, 'add_v4_promotions_data' ] );
 
 		// Add Ally promo
 		Ally_Dashboard_Widget::init();
@@ -107,7 +95,7 @@ class Module extends Base_Module {
 	 * @return string
 	 */
 	public static function get_ally_external_scanner_url(): string {
-		return apply_filters( 'elementor/ally_external_scanner_url', 'https://elementor.com/tools/ally-accessibility-checker/scanner' );
+		return apply_filters( 'elementor/ally_external_scanner_url', 'https://go.elementor.com/acc-checker-dashboard-plg' );
 	}
 
 	private function handle_external_redirects() {
@@ -122,16 +110,6 @@ class Module extends Base_Module {
 		}
 	}
 
-	private function register_menu_items( Admin_Menu_Manager $admin_menu ) {
-		if ( ! $this->is_editor_one_active() ) {
-			$admin_menu->register( 'e-form-submissions', new Form_Submissions_Promotion_Item() );
-			$admin_menu->register( 'elementor_custom_fonts', new Custom_Fonts_Promotion_Item() );
-			$admin_menu->register( 'elementor_custom_icons', new Custom_Icons_Promotion_Item() );
-			$admin_menu->register( 'elementor_custom_code', new Custom_Code_Promotion_Item() );
-			$admin_menu->register( 'popup_templates', new Popups_Promotion_Item() );
-		}
-	}
-
 	private function register_editor_one_menu_items( Menu_Data_Provider $menu_data_provider ) {
 		$menu_data_provider->register_menu( new Editor_One_Custom_Elements_Menu() );
 		$menu_data_provider->register_menu( new Editor_One_Submissions_Menu() );
@@ -139,12 +117,6 @@ class Module extends Base_Module {
 		$menu_data_provider->register_menu( new Editor_One_Icons_Menu() );
 		$menu_data_provider->register_menu( new Editor_One_Custom_Code_Menu() );
 		$menu_data_provider->register_menu( new Editor_One_Popups_Menu() );
-	}
-
-	private function register_promotion_menu_item( Admin_Menu_Manager $admin_menu ) {
-		if ( ! $this->is_editor_one_active() ) {
-			$admin_menu->register( 'go_elementor_pro', new Go_Pro_Promotion_Item() );
-		}
 	}
 
 	public function enqueue_react_data(): void {
@@ -234,10 +206,6 @@ class Module extends Base_Module {
 		];
 	}
 
-	private function is_editor_one_active(): bool {
-		return (bool) Plugin::instance()->modules_manager->get_modules( 'editor-one' );
-	}
-
 	private function is_atomic_widgets_active(): bool {
 		return Plugin::$instance->experiments->is_feature_active( 'e_atomic_elements' );
 	}
@@ -279,6 +247,8 @@ class Module extends Base_Module {
 				);
 			}
 		} );
+
+		( new Atomic_Form_Widget_Promotion() )->register();
 	}
 
 	public function inject_atomic_promotion_props( array $schema ): array {

@@ -1,0 +1,14 @@
+"use strict";
+(self["webpackChunkelementor"] = self["webpackChunkelementor"] || []).push([["node_modules_elementor_elementor-one-assets_locales_nl_common_json"],{
+
+/***/ "../node_modules/@elementor/elementor-one-assets/locales/nl/common.json":
+/*!******************************************************************************!*\
+  !*** ../node_modules/@elementor/elementor-one-assets/locales/nl/common.json ***!
+  \******************************************************************************/
+/***/ ((module) => {
+
+module.exports = /*#__PURE__*/JSON.parse('{"example":{"component":"Voorbeeldcomponent"},"header":{"title":"website bouwer","userInfo":"Mijn rekening","userProfileMenu":{"connectPreText":"Heb je een Elementor One-abonnement?","connect":"Verbinden","goToMyAccount":"Ga naar Mijn account","disconnect":"Verbreek de verbinding","elementorOneActive":"Elementor Eén","active":"Actief","urlMismatch":"URL-mismatch gedetecteerd","fixUrlMismatch":"Nu repareren"},"whatsNew":"Wat is er nieuw","whatsNewError":"Er is iets misgegaan bij het ophalen van de meldingen. Probeer het later opnieuw."}}');
+
+/***/ })
+
+}]);

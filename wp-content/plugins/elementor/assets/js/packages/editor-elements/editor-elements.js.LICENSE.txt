@@ -4,15 +4,13 @@
 
 /*! ../sync/get-element-editor-settings */
 
-/*! ../sync/get-element-interactions */
-
 /*! ../sync/get-element-setting */
-
-/*! ../sync/get-element-type */
 
 /*! ../sync/get-selected-elements */
 
 /*! ../sync/get-widgets-cache */
+
+/*! ../sync/model-utils */
 
 /*! ../sync/update-element-settings */
 
@@ -28,6 +26,8 @@
 
 /*! ./get-current-document-container */
 
+/*! ./get-element-type */
+
 /*! ./get-selected-elements */
 
 /*! ./get-widgets-cache */
@@ -36,19 +36,19 @@
 
 /*! ./hooks/use-element-editor-settings */
 
-/*! ./hooks/use-element-interactions */
-
-/*! ./hooks/use-element-setting */
-
 /*! ./hooks/use-parent-element */
 
 /*! ./hooks/use-selected-element */
+
+/*! ./hooks/use-selected-element-settings */
 
 /*! ./link-restriction */
 
 /*! ./move-element */
 
 /*! ./mutate-element-styles */
+
+/*! ./resolve-element */
 
 /*! ./styles/consts */
 
@@ -98,6 +98,8 @@
 
 /*! ./sync/get-widgets-cache */
 
+/*! ./sync/model-utils */
+
 /*! ./sync/move-element */
 
 /*! ./sync/move-elements */
@@ -105,6 +107,8 @@
 /*! ./sync/remove-elements */
 
 /*! ./sync/replace-element */
+
+/*! ./sync/resolve-element */
 
 /*! ./sync/update-element-editor-settings */
 
@@ -123,12 +127,6 @@
 /*! @elementor/utils */
 
 /*! @wordpress/i18n */
-
-/*! react */
-
-/*!**************************!*\
-  !*** external ["React"] ***!
-  \**************************/
 
 /*!******************************!*\
   !*** external ["wp","i18n"] ***!
@@ -168,6 +166,10 @@
 
 /*!************************************************************************!*\
   !*** ./packages/packages/libs/editor-elements/src/link-restriction.ts ***!
+  \************************************************************************/
+
+/*!************************************************************************!*\
+  !*** ./packages/packages/libs/editor-elements/src/sync/model-utils.ts ***!
   \************************************************************************/
 
 /*!*************************************************************************!*\
@@ -210,6 +212,10 @@
   !*** ./packages/packages/libs/editor-elements/src/sync/replace-element.ts ***!
   \****************************************************************************/
 
+/*!****************************************************************************!*\
+  !*** ./packages/packages/libs/editor-elements/src/sync/resolve-element.ts ***!
+  \****************************************************************************/
+
 /*!*****************************************************************************!*\
   !*** ./packages/packages/libs/editor-elements/src/sync/get-element-type.ts ***!
   \*****************************************************************************/
@@ -249,10 +255,6 @@
 /*!********************************************************************************!*\
   !*** ./packages/packages/libs/editor-elements/src/sync/get-element-setting.ts ***!
   \********************************************************************************/
-
-/*!*********************************************************************************!*\
-  !*** ./packages/packages/libs/editor-elements/src/hooks/use-element-setting.ts ***!
-  \*********************************************************************************/
 
 /*!**********************************************************************************!*\
   !*** ./packages/packages/libs/editor-elements/src/hooks/use-element-children.ts ***!
@@ -294,10 +296,6 @@
   !*** ./packages/packages/libs/editor-elements/src/sync/get-element-interactions.ts ***!
   \*************************************************************************************/
 
-/*!**************************************************************************************!*\
-  !*** ./packages/packages/libs/editor-elements/src/hooks/use-element-interactions.ts ***!
-  \**************************************************************************************/
-
 /*!****************************************************************************************!*\
   !*** ./packages/packages/libs/editor-elements/src/sync/get-element-editor-settings.ts ***!
   \****************************************************************************************/
@@ -309,6 +307,10 @@
 /*!*****************************************************************************************!*\
   !*** ./packages/packages/libs/editor-elements/src/hooks/use-element-editor-settings.ts ***!
   \*****************************************************************************************/
+
+/*!*******************************************************************************************!*\
+  !*** ./packages/packages/libs/editor-elements/src/hooks/use-selected-element-settings.ts ***!
+  \*******************************************************************************************/
 
 /*!*******************************************************************************************!*\
   !*** ./packages/packages/libs/editor-elements/src/sync/get-current-document-container.ts ***!

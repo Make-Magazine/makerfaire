@@ -21,6 +21,7 @@ return [
 		'elementor-v2-editor-styles-repository',
 		'elementor-v2-editor-ui',
 		'elementor-v2-editor-v1-adapters',
+		'elementor-v2-editor-variables',
 		'elementor-v2-icons',
 		'elementor-v2-locations',
 		'elementor-v2-menus',

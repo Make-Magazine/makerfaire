@@ -124,7 +124,6 @@ var _react = _interopRequireDefault(__webpack_require__(/*! react */ "react"));
 var _extends2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime/helpers/extends */ "../node_modules/@babel/runtime/helpers/extends.js"));
 var _objectWithoutProperties2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime/helpers/objectWithoutProperties */ "../node_modules/@babel/runtime/helpers/objectWithoutProperties.js"));
 var _ui = __webpack_require__(/*! @elementor/ui */ "@elementor/ui");
-var _icons = __webpack_require__(/*! @elementor/icons */ "@elementor/icons");
 var _excluded = ["children"],
   _excluded2 = ["children"],
   _excluded3 = ["children"],
@@ -146,7 +145,7 @@ var ContentList = exports.ContentList = function ContentList(_ref2) {
   return /*#__PURE__*/_react.default.createElement(_ui.Box, (0, _extends2.default)({
     component: "ul",
     sx: {
-      my: 0
+      listStyle: 'disc'
     }
   }, props), children);
 };
@@ -157,11 +156,7 @@ var ContentListItem = exports.ContentListItem = function ContentListItem(_ref3) 
   var children = _ref3.children,
     props = (0, _objectWithoutProperties2.default)(_ref3, _excluded3);
   return /*#__PURE__*/_react.default.createElement(TextNode, (0, _extends2.default)({
-    component: "li",
-    sx: {
-      listStyle: 'disc',
-      marginInlineStart: 3
-    }
+    component: "li"
   }, props), children);
 };
 ContentListItem.propTypes = {
@@ -173,10 +168,7 @@ var AdvantagesList = exports.AdvantagesList = function AdvantagesList(_ref4) {
   return /*#__PURE__*/_react.default.createElement(_ui.Box, (0, _extends2.default)({
     component: "ul",
     sx: {
-      display: 'flex',
-      flexDirection: 'column',
-      gap: 0.5,
-      my: 0
+      marginInlineStart: 2
     }
   }, props), children);
 };
@@ -189,16 +181,10 @@ var AdvantagesListItem = exports.AdvantagesListItem = function AdvantagesListIte
   return /*#__PURE__*/_react.default.createElement(TextNode, (0, _extends2.default)({
     component: "li",
     sx: {
-      listStyle: 'none',
-      marginInlineStart: 0,
       lineHeight: '150%',
-      display: 'flex',
-      alignItems: 'flex-start',
-      gap: 0.5
+      listStyle: 'disc'
     }
-  }, props), /*#__PURE__*/_react.default.createElement(_icons.CheckIcon, {
-    fontSize: "small"
-  }), children);
+  }, props), children);
 };
 AdvantagesListItem.propTypes = {
   children: PropTypes.node
@@ -277,7 +263,7 @@ var Message = exports.Message = function Message(_ref) {
     autoHideDuration: 4000,
     anchorOrigin: {
       vertical: 'bottom',
-      horizontal: 'right'
+      horizontal: 'center'
     },
     onClose: onClose
   }, 'message' !== severity ? /*#__PURE__*/_react.default.createElement(_ui.Alert, {
@@ -340,24 +326,18 @@ var _DialogHeader = _interopRequireDefault(__webpack_require__(/*! @elementor/ui
 var _excluded = ["onClose", "onSubmit", "isEnrolled"];
 function _interopRequireWildcard(e, t) { if ("function" == typeof WeakMap) var r = new WeakMap(), n = new WeakMap(); return (_interopRequireWildcard = function _interopRequireWildcard(e, t) { if (!t && e && e.__esModule) return e; var o, i, f = { __proto__: null, default: e }; if (null === e || "object" != _typeof(e) && "function" != typeof e) return f; if (o = t ? n : r) { if (o.has(e)) return o.get(e); o.set(e, f); } for (var _t in e) "default" !== _t && {}.hasOwnProperty.call(e, _t) && ((i = (o = Object.defineProperty) && Object.getOwnPropertyDescriptor(e, _t)) && (i.get || i.set) ? o(f, _t, i) : f[_t] = e[_t]); return f; })(e, t); }
 var i18n = {
-  header: (0, _i18n.__)('Version 4', 'elementor'),
-  chip: (0, _i18n.__)('Beta', 'elementor'),
+  header: (0, _i18n.__)('Atomic Editor', 'elementor'),
   checkboxText: (0, _i18n.__)('I’ve read and understood.', 'elementor'),
   optIn: {
-    titleText: (0, _i18n.__)('You are about to enable version 4 features!', 'elementor'),
-    introText: (0, _i18n.__)('By activating, you’ll get early access to the next generation of Elementor’s Editor. This is your chance to explore new capabilities and help shape the future of Elementor! ', 'elementor'),
-    notesHeader: (0, _i18n.__)(' Important notes:', 'elementor'),
-    notes: {
-      details: [(0, _i18n.__)('Features are still in development, but the beta is safe to use in production.', 'elementor'), (0, _i18n.__)('When you activate, you’ll also be activating Containers and Nested Elements. You can turn them back off by going to: WP Admin > Elementor > Settings > Features.', 'elementor')]
-    },
+    titleText: (0, _i18n.__)('You are about to enable Atomic Editor features!', 'elementor'),
+    introText: (0, _i18n.__)('By activating, you’ll get access to the next generation of Elementor’s Editor. This is your chance to explore new capabilities and help shape the future of Elementor! ', 'elementor'),
+    details: [(0, _i18n.__)('When you activate, you’ll also be activating Containers and Nested Elements. You can turn them back off by going to: WP Admin > Elementor > Settings > Features.', 'elementor')],
     activateButton: (0, _i18n.__)('Activate', 'elementor'),
     cancelButton: (0, _i18n.__)('Cancel', 'elementor')
   },
   optOut: {
-    titleText: (0, _i18n.__)('You\'re about to lose all content created with version 4', 'elementor'),
-    notes: {
-      details: [(0, _i18n.__)('By deactivating, you’ll lose all Atomic Elements, Classes and Variables. Any content you created with these features will no longer be available or appear on your site.', 'elementor'), (0, _i18n.__)('Containers and Nested Elements will stay in their current status.', 'elementor')]
-    },
+    titleText: (0, _i18n.__)('You\'re about to lose all content created with Atomic features', 'elementor'),
+    details: [(0, _i18n.__)('By deactivating, you’ll lose all Atomic Elements, Classes and Variables. Any content you created with these features will no longer be available or appear on your site.', 'elementor'), (0, _i18n.__)('Containers and Nested Elements will stay in their current status.', 'elementor')],
     activateButton: (0, _i18n.__)('Deactivate', 'elementor'),
     cancelButton: (0, _i18n.__)('Cancel', 'elementor')
   }
@@ -384,34 +364,33 @@ var Terms = exports.Terms = function Terms(_ref) {
   var currentState = isEnrolled ? 'optOut' : 'optIn';
   return /*#__PURE__*/_react.default.createElement(_ui.Dialog, (0, _extends2.default)({}, props, {
     open: true,
-    onClose: onClose
-  }), /*#__PURE__*/_react.default.createElement(_DialogHeader.default, null, /*#__PURE__*/_react.default.createElement(_DialogHeaderGroup.default, null, /*#__PURE__*/_react.default.createElement(_ui.DialogTitle, null, i18n.header), /*#__PURE__*/_react.default.createElement(_ui.Chip, {
-    label: i18n.chip,
-    color: "secondary",
-    variant: "filled",
-    size: "small"
-  }))), /*#__PURE__*/_react.default.createElement(_ui.DialogContent, {
+    onClose: onClose,
+    maxWidth: "md"
+  }), /*#__PURE__*/_react.default.createElement(_DialogHeader.default, null, /*#__PURE__*/_react.default.createElement(_DialogHeaderGroup.default, null, /*#__PURE__*/_react.default.createElement(_ui.DialogTitle, null, i18n.header))), /*#__PURE__*/_react.default.createElement(_ui.DialogContent, {
     dividers: true
   }, /*#__PURE__*/_react.default.createElement(_ui.Stack, {
     gap: 2.5
   }, /*#__PURE__*/_react.default.createElement(_ui.Stack, {
-    gap: 1
+    gap: 1.5,
+    sx: {
+      mx: 2,
+      maxWidth: '550px'
+    }
   }, /*#__PURE__*/_react.default.createElement(_optInContent.TextNode, {
     align: "center",
     variant: "h6"
-  }, i18n[currentState].titleText), /*#__PURE__*/_react.default.createElement(_optInContent.TextNode, {
+  }, i18n[currentState].titleText), i18n[currentState].introText && /*#__PURE__*/_react.default.createElement(_optInContent.TextNode, {
     align: "center",
-    variant: "body2"
-  }, i18n[currentState].introText)), /*#__PURE__*/_react.default.createElement(_ui.Stack, {
-    gap: 1
-  }, /*#__PURE__*/_react.default.createElement(_optInContent.TextNode, {
-    variant: "body2"
-  }, i18n[currentState].notesHeader), /*#__PURE__*/_react.default.createElement(_optInContent.ContentList, null, /*#__PURE__*/_react.default.createElement(_optInContent.ContentListItem, {
-    variant: "body2"
-  }, i18n[currentState].notes.details[0]), i18n[currentState].notes.details.slice(1).map(function (entry, index) {
+    variant: "body3"
+  }, i18n[currentState].introText)), /*#__PURE__*/_react.default.createElement(_ui.Stack, null, /*#__PURE__*/_react.default.createElement(_optInContent.ContentList, {
+    sx: {
+      mx: 3,
+      maxWidth: '550px'
+    }
+  }, i18n[currentState].details.map(function (entry, index) {
     return /*#__PURE__*/_react.default.createElement(_optInContent.ContentListItem, {
       key: index,
-      variant: "body2"
+      variant: "body3"
     }, entry);
   }))), /*#__PURE__*/_react.default.createElement(_ui.FormControlLabel, {
     control: /*#__PURE__*/_react.default.createElement(_ui.Checkbox, {
@@ -480,11 +459,9 @@ var decodeHtmlUrl = function decodeHtmlUrl(html) {
 var OPT_IN_MSG = 'e-editor-v4-opt-in-message';
 var OPT_OUT_MSG = 'e-editor-v4-opt-out-message';
 var i18n = {
-  title: (0, _i18n.__)('The next generation of web creation', 'elementor'),
-  chip: (0, _i18n.__)('Beta', 'elementor'),
-  welcomeText: (0, _i18n.__)('Welcome to version 4 of Elementor\'s Editor. It’s faster, more flexible, and built on a fully atomic approach to structure & styling.', 'elementor'),
-  advantagesHeader: (0, _i18n.__)('Here’s what’s inside the beta version:', 'elementor'),
-  advantages: [(0, _i18n.__)('Unparalleled performance - Cleaner code & a lighter CSS footprint with single-div wrappers.', 'elementor'), (0, _i18n.__)('Professional tools at your fingertips - Variables, Classes and States.', 'elementor'), (0, _i18n.__)('Consistent styling experience - A unified Style tab for all atomic elements.', 'elementor'), (0, _i18n.__)('Fully responsive design - Customize any style property per screen.', 'elementor')],
+  title: (0, _i18n.__)('Activate Atomic Editor features', 'elementor'),
+  welcomeText: (0, _i18n.__)('The Atomic Editor presents a new generation of high-performance, flexible building blocks designed for less bloat and precise styling with a unified interface.', 'elementor'),
+  advantages: [[(0, _i18n.__)('Combine legacy widgets & new elements', 'elementor'), (0, _i18n.__)('Your current and new workflows work together on the same page.', 'elementor')], [(0, _i18n.__)('Build reusable design systems', 'elementor'), (0, _i18n.__)('Classes, Variables and Components give you a clear path for scale.', 'elementor')], [(0, _i18n.__)('Consistent styling experience', 'elementor'), (0, _i18n.__)('A unified Style tab for all Atomic Elements with full control over responsive design.', 'elementor')], [(0, _i18n.__)('Unparalleled performance', 'elementor'), (0, _i18n.__)('Cleaner code and a lighter CSS footprint with single-div wrappers.', 'elementor')]],
   andMore: (0, _i18n.__)('And much more!', 'elementor'),
   readMore: (0, _i18n.__)('Learn more', 'elementor'),
   feedback: (0, _i18n.__)('We’d love your feedback!', 'elementor'),
@@ -494,12 +471,12 @@ var i18n = {
   buttons: {
     tryOut: (0, _i18n.__)('Try out the new experience', 'elementor'),
     optIn: (0, _i18n.__)('Activate the new experience', 'elementor'),
-    optOut: (0, _i18n.__)('Deactivate V4', 'elementor')
+    optOut: (0, _i18n.__)('Deactivate', 'elementor')
   },
   messages: {
     optInSuccess: (0, _i18n.__)('Welcome! You’ve got the newest version of the editor.', 'elementor'),
     optOut: (0, _i18n.__)('You’ve deactivated the new Editor. Have feedback?', 'elementor'),
-    error: (0, _i18n.__)('Ouch, there was a glitch. Try activating V4 again soon.', 'elementor')
+    error: (0, _i18n.__)('Ouch, there was a glitch. Try activating again soon.', 'elementor')
   }
 };
 var optInLinks = {
@@ -611,28 +588,17 @@ var OptIn = exports.OptIn = function OptIn(_ref) {
   }, /*#__PURE__*/_react.default.createElement(_optInContent.TextNode, {
     variant: "h4",
     width: "fit-content"
-  }, /*#__PURE__*/_react.default.createElement("span", null, i18n.title), /*#__PURE__*/_react.default.createElement(_ui.Chip, {
-    size: "small",
-    color: "secondary",
-    variant: "filled",
-    label: i18n.chip,
-    sx: {
-      verticalAlign: 'baseline',
-      transform: 'translateY(-4px)',
-      ml: 1
-    }
-  })), /*#__PURE__*/_react.default.createElement(_ui.Stack, {
+  }, /*#__PURE__*/_react.default.createElement("span", null, i18n.title)), /*#__PURE__*/_react.default.createElement(_ui.Stack, {
     direction: "column",
-    gap: 3
-  }, /*#__PURE__*/_react.default.createElement(_ui.Box, null, /*#__PURE__*/_react.default.createElement(_optInContent.TextNode, null, i18n.welcomeText)), /*#__PURE__*/_react.default.createElement(_ui.Box, null, /*#__PURE__*/_react.default.createElement(_optInContent.TextNode, {
-    variant: "subtitle1",
+    gap: 1
+  }, /*#__PURE__*/_react.default.createElement(_ui.Box, null, /*#__PURE__*/_react.default.createElement(_optInContent.TextNode, null, i18n.welcomeText)), /*#__PURE__*/_react.default.createElement(_ui.Box, null, /*#__PURE__*/_react.default.createElement(_optInContent.AdvantagesList, {
     sx: {
-      mb: 1.5
+      gap: 0.5
     }
-  }, i18n.advantagesHeader), /*#__PURE__*/_react.default.createElement(_optInContent.AdvantagesList, null, i18n.advantages.map(function (entry, i) {
+  }, i18n.advantages.map(function (entry, i) {
     return /*#__PURE__*/_react.default.createElement(_optInContent.AdvantagesListItem, {
       key: i
-    }, entry);
+    }, /*#__PURE__*/_react.default.createElement("b", null, entry[0]), " - ", entry[1]);
   }), /*#__PURE__*/_react.default.createElement(_optInContent.AdvantagesListItem, {
     key: i18n.advantages.length
   }, i18n.andMore, " ", /*#__PURE__*/_react.default.createElement(_ui.Link, {
@@ -728,7 +694,16 @@ var OptIn = exports.OptIn = function OptIn(_ref) {
   }), optInMessage && /*#__PURE__*/_react.default.createElement(_optInMessage.Message, {
     onClose: function onClose() {
       return setOptInMessage('');
-    }
+    },
+    action: /*#__PURE__*/_react.default.createElement(_ui.Link, {
+      href: optInLinks.tryOutUrl,
+      color: "#FFFFFF",
+      sx: {
+        cursor: 'pointer',
+        textDecoration: 'none',
+        pl: 3
+      }
+    }, i18n.buttons.tryOut)
   }, optInMessage), optOutMessage && /*#__PURE__*/_react.default.createElement(_optInMessage.Message, {
     onClose: function onClose() {
       return setOptOutMessage('');
@@ -736,7 +711,7 @@ var OptIn = exports.OptIn = function OptIn(_ref) {
     action: /*#__PURE__*/_react.default.createElement(_ui.Link, {
       href: optInLinks.feedbackUrl,
       target: "_blank",
-      color: "inherit",
+      color: "#FFFFFF",
       sx: {
         cursor: 'pointer',
         textDecoration: 'none',

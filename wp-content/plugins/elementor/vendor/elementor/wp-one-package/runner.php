@@ -30,24 +30,24 @@ if ( file_exists( $autoload_files_path ) ) {
 
 $pattern = '#/([^/]+)/vendor/elementor/#';
 if ( preg_match( $pattern, __DIR__, $matches ) ) {
-	$wp_one_package_versions[ $matches[1] ] = '1.0.57';
+	$wp_one_package_versions[ $matches[1] ] = '1.0.62';
 }
 
-if ( ! function_exists( 'elementor_one_register_1_dot_0_dot_57' ) && function_exists( 'add_action' ) ) {
+if ( ! function_exists( 'elementor_one_register_1_dot_0_dot_62' ) && function_exists( 'add_action' ) ) {
 
 	if ( ! class_exists( '\ElementorOne\Versions', false ) ) {
 		require_once __DIR__ . '/src/Versions.php';
 		add_action( 'plugins_loaded', [ \ElementorOne\Versions::class, 'initialize_latest_version' ], -15, 0 );
 	}
 
-	add_action( 'plugins_loaded', 'elementor_one_register_1_dot_0_dot_57', -20, 0 );
+	add_action( 'plugins_loaded', 'elementor_one_register_1_dot_0_dot_62', -20, 0 );
 
-	function elementor_one_register_1_dot_0_dot_57() {
+	function elementor_one_register_1_dot_0_dot_62() {
 		$versions = \ElementorOne\Versions::instance();
-		$versions->register( '1.0.57', 'elementor_one_initialize_1_dot_0_dot_57' );
+		$versions->register( '1.0.62', 'elementor_one_initialize_1_dot_0_dot_62' );
 	}
 
-	function elementor_one_initialize_1_dot_0_dot_57() {
+	function elementor_one_initialize_1_dot_0_dot_62() {
 		// The Loader class will be autoloaded from the highest version source
 		\ElementorOne\Loader::init();
 	}

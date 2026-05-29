@@ -7679,7 +7679,7 @@ function ImportComplete() {
     altText: (0, _i18n.__)('Kit is live illustration', 'elementor'),
     testId: "import-complete-icon"
   }), /*#__PURE__*/_react.default.createElement(_components.CompleteHeading, {
-    title: (0, _i18n.__)('Your website templates is now live on your site!', 'elementor'),
+    title: (0, _i18n.__)('Your website template is now live on your site!', 'elementor'),
     subtitle: (0, _i18n.__)('You\'ve imported and applied the following to your site:', 'elementor'),
     testId: "import-complete-heading"
   }), /*#__PURE__*/_react.default.createElement(_components.CompleteSummary, {
@@ -8318,6 +8318,313 @@ var ImportExportCustomization = exports["default"] = /*#__PURE__*/(0, _createCla
     _iterator.f();
   }
 });
+
+/***/ }),
+
+/***/ "../app/modules/import-export-customization/assets/js/shared/components/classes-variables-section.js":
+/*!***********************************************************************************************************!*\
+  !*** ../app/modules/import-export-customization/assets/js/shared/components/classes-variables-section.js ***!
+  \***********************************************************************************************************/
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+"use strict";
+
+
+var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault */ "../node_modules/@babel/runtime/helpers/interopRequireDefault.js");
+var _typeof = __webpack_require__(/*! @babel/runtime/helpers/typeof */ "../node_modules/@babel/runtime/helpers/typeof.js");
+Object.defineProperty(exports, "__esModule", ({
+  value: true
+}));
+exports.ClassesVariablesSection = ClassesVariablesSection;
+var _react = _interopRequireWildcard(__webpack_require__(/*! react */ "react"));
+var _slicedToArray2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime/helpers/slicedToArray */ "../node_modules/@babel/runtime/helpers/slicedToArray.js"));
+var _ui = __webpack_require__(/*! @elementor/ui */ "@elementor/ui");
+var _icons = __webpack_require__(/*! @elementor/icons */ "@elementor/icons");
+var _i18n = __webpack_require__(/*! @wordpress/i18n */ "@wordpress/i18n");
+var _propTypes = _interopRequireDefault(__webpack_require__(/*! prop-types */ "../node_modules/prop-types/index.js"));
+function _interopRequireWildcard(e, t) { if ("function" == typeof WeakMap) var r = new WeakMap(), n = new WeakMap(); return (_interopRequireWildcard = function _interopRequireWildcard(e, t) { if (!t && e && e.__esModule) return e; var o, i, f = { __proto__: null, default: e }; if (null === e || "object" != _typeof(e) && "function" != typeof e) return f; if (o = t ? n : r) { if (o.has(e)) return o.get(e); o.set(e, f); } for (var _t in e) "default" !== _t && {}.hasOwnProperty.call(e, _t) && ((i = (o = Object.defineProperty) && Object.getOwnPropertyDescriptor(e, _t)) && (i.get || i.set) ? o(f, _t, i) : f[_t] = e[_t]); return f; })(e, t); }
+var SubSettingRow = function SubSettingRow(_ref) {
+  var label = _ref.label,
+    checked = _ref.checked,
+    _onChange = _ref.onChange,
+    _ref$disabled = _ref.disabled,
+    disabled = _ref$disabled === void 0 ? false : _ref$disabled,
+    _ref$limitExceeded = _ref.limitExceeded,
+    limitExceeded = _ref$limitExceeded === void 0 ? false : _ref$limitExceeded,
+    _ref$overLimitCount = _ref.overLimitCount,
+    overLimitCount = _ref$overLimitCount === void 0 ? 0 : _ref$overLimitCount,
+    onReviewClick = _ref.onReviewClick,
+    _ref$overrideAll = _ref.overrideAll,
+    overrideAll = _ref$overrideAll === void 0 ? false : _ref$overrideAll,
+    onOverrideAllChange = _ref.onOverrideAllChange,
+    _ref$showOverrideOpti = _ref.showOverrideOption,
+    showOverrideOption = _ref$showOverrideOpti === void 0 ? false : _ref$showOverrideOpti,
+    _ref$notExported = _ref.notExported,
+    notExported = _ref$notExported === void 0 ? false : _ref$notExported;
+  if (notExported) {
+    return /*#__PURE__*/_react.default.createElement(_ui.Box, {
+      sx: {
+        display: 'flex',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        px: 1.25
+      }
+    }, /*#__PURE__*/_react.default.createElement(_ui.Typography, {
+      variant: "body1",
+      color: "text.primary"
+    }, label), /*#__PURE__*/_react.default.createElement(_ui.Typography, {
+      variant: "body1",
+      color: "text.secondary"
+    }, (0, _i18n.__)('Not exported', 'elementor')));
+  }
+  return /*#__PURE__*/_react.default.createElement(_ui.Box, {
+    sx: {
+      display: 'flex',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      px: 1.25
+    }
+  }, /*#__PURE__*/_react.default.createElement(_ui.Stack, {
+    direction: "row",
+    alignItems: "center",
+    spacing: 1,
+    sx: {
+      flex: 1
+    }
+  }, /*#__PURE__*/_react.default.createElement(_ui.Typography, {
+    variant: "body1",
+    color: "text.primary"
+  }, label), limitExceeded && overLimitCount > 0 && /*#__PURE__*/_react.default.createElement(_ui.Chip, {
+    label: "".concat(overLimitCount, " ").concat((0, _i18n.__)('over limit', 'elementor')),
+    size: "tiny",
+    sx: {
+      height: 20,
+      borderColor: 'warning.main',
+      color: 'warning.main',
+      backgroundColor: 'transparent',
+      '& .MuiChip-label': {
+        px: 0.75,
+        fontSize: 12
+      }
+    },
+    variant: "outlined"
+  }), limitExceeded && onReviewClick && /*#__PURE__*/_react.default.createElement(_ui.Link, {
+    component: "button",
+    variant: "body2",
+    color: "info.main",
+    onClick: onReviewClick,
+    sx: {
+      display: 'flex',
+      alignItems: 'center',
+      gap: 0.5,
+      textDecoration: 'none',
+      '&:hover': {
+        textDecoration: 'underline'
+      }
+    }
+  }, (0, _i18n.__)('Review', 'elementor'), /*#__PURE__*/_react.default.createElement(_icons.ExternalLinkIcon, {
+    sx: {
+      fontSize: 16
+    }
+  }))), /*#__PURE__*/_react.default.createElement(_ui.Stack, {
+    direction: "row",
+    alignItems: "center",
+    spacing: 1
+  }, showOverrideOption && limitExceeded && /*#__PURE__*/_react.default.createElement(_ui.Stack, {
+    direction: "row",
+    alignItems: "center",
+    spacing: 0.5
+  }, /*#__PURE__*/_react.default.createElement(_ui.FormControlLabel, {
+    control: /*#__PURE__*/_react.default.createElement(_ui.Checkbox, {
+      checked: overrideAll,
+      onChange: function onChange(e) {
+        return onOverrideAllChange === null || onOverrideAllChange === void 0 ? void 0 : onOverrideAllChange(e.target.checked);
+      },
+      color: "info",
+      size: "small",
+      sx: {
+        p: 0
+      }
+    }),
+    label: (0, _i18n.__)('Override all', 'elementor'),
+    sx: {
+      gap: 1,
+      mr: 0,
+      '& .MuiFormControlLabel-label': {
+        fontSize: 14
+      }
+    }
+  }), /*#__PURE__*/_react.default.createElement(_ui.Tooltip, {
+    title: (0, _i18n.__)('This will delete all existing items and replace them with the imported ones', 'elementor'),
+    placement: "top",
+    arrow: true
+  }, /*#__PURE__*/_react.default.createElement(_icons.AlertTriangleFilledIcon, {
+    sx: {
+      fontSize: 16,
+      color: 'warning.main',
+      cursor: 'pointer'
+    }
+  }))), /*#__PURE__*/_react.default.createElement(_ui.Switch, {
+    checked: checked,
+    onChange: function onChange(e, isChecked) {
+      return _onChange === null || _onChange === void 0 ? void 0 : _onChange(isChecked);
+    },
+    color: "info",
+    size: "medium",
+    disabled: disabled || limitExceeded && !overrideAll
+  })));
+};
+SubSettingRow.propTypes = {
+  label: _propTypes.default.string.isRequired,
+  checked: _propTypes.default.bool,
+  onChange: _propTypes.default.func,
+  disabled: _propTypes.default.bool,
+  limitExceeded: _propTypes.default.bool,
+  overLimitCount: _propTypes.default.number,
+  onReviewClick: _propTypes.default.func,
+  overrideAll: _propTypes.default.bool,
+  onOverrideAllChange: _propTypes.default.func,
+  showOverrideOption: _propTypes.default.bool,
+  notExported: _propTypes.default.bool
+};
+function ClassesVariablesSection(_ref2) {
+  var _settings$classesOver, _settings$variablesOv, _settings$classes, _settings$variables;
+  var settings = _ref2.settings,
+    onSettingChange = _ref2.onSettingChange,
+    _ref2$isImport = _ref2.isImport,
+    isImport = _ref2$isImport === void 0 ? false : _ref2$isImport,
+    _ref2$classesExported = _ref2.classesExported,
+    classesExported = _ref2$classesExported === void 0 ? true : _ref2$classesExported,
+    _ref2$variablesExport = _ref2.variablesExported,
+    variablesExported = _ref2$variablesExport === void 0 ? true : _ref2$variablesExport,
+    _ref2$classesLimitExc = _ref2.classesLimitExceeded,
+    classesLimitExceeded = _ref2$classesLimitExc === void 0 ? false : _ref2$classesLimitExc,
+    _ref2$variablesLimitE = _ref2.variablesLimitExceeded,
+    variablesLimitExceeded = _ref2$variablesLimitE === void 0 ? false : _ref2$variablesLimitE,
+    _ref2$classesOverLimi = _ref2.classesOverLimitCount,
+    classesOverLimitCount = _ref2$classesOverLimi === void 0 ? 0 : _ref2$classesOverLimi,
+    _ref2$variablesOverLi = _ref2.variablesOverLimitCount,
+    variablesOverLimitCount = _ref2$variablesOverLi === void 0 ? 0 : _ref2$variablesOverLi,
+    onClassesReviewClick = _ref2.onClassesReviewClick,
+    onVariablesReviewClick = _ref2.onVariablesReviewClick,
+    _ref2$disabled = _ref2.disabled,
+    disabled = _ref2$disabled === void 0 ? false : _ref2$disabled,
+    _ref2$notExported = _ref2.notExported,
+    notExported = _ref2$notExported === void 0 ? false : _ref2$notExported;
+  var _useState = (0, _react.useState)((_settings$classesOver = settings.classesOverrideAll) !== null && _settings$classesOver !== void 0 ? _settings$classesOver : false),
+    _useState2 = (0, _slicedToArray2.default)(_useState, 2),
+    classesOverrideAll = _useState2[0],
+    setClassesOverrideAll = _useState2[1];
+  var _useState3 = (0, _react.useState)((_settings$variablesOv = settings.variablesOverrideAll) !== null && _settings$variablesOv !== void 0 ? _settings$variablesOv : false),
+    _useState4 = (0, _slicedToArray2.default)(_useState3, 2),
+    variablesOverrideAll = _useState4[0],
+    setVariablesOverrideAll = _useState4[1];
+  var hasLimitWarning = isImport && (classesLimitExceeded || variablesLimitExceeded);
+  var classesNotExported = isImport && !classesExported;
+  var variablesNotExported = isImport && !variablesExported;
+  return /*#__PURE__*/_react.default.createElement(_ui.Box, {
+    sx: {
+      mb: 3,
+      border: 1,
+      borderRadius: 1,
+      borderColor: 'action.focus',
+      p: 2.5
+    }
+  }, /*#__PURE__*/_react.default.createElement(_ui.Stack, {
+    spacing: 2.5
+  }, /*#__PURE__*/_react.default.createElement(_ui.Box, {
+    sx: {
+      display: 'flex',
+      justifyContent: 'space-between',
+      alignItems: 'center'
+    }
+  }, /*#__PURE__*/_react.default.createElement(_ui.Typography, {
+    variant: "h6"
+  }, (0, _i18n.__)('Classes & variables', 'elementor'))), hasLimitWarning && !notExported && /*#__PURE__*/_react.default.createElement(_ui.Alert, {
+    severity: "warning",
+    icon: /*#__PURE__*/_react.default.createElement(_icons.AlertTriangleFilledIcon, {
+      sx: {
+        color: 'warning.main'
+      }
+    }),
+    sx: {
+      alignItems: 'center',
+      backgroundColor: 'warning.background',
+      '& .MuiAlert-message': {
+        display: 'flex',
+        alignItems: 'center',
+        gap: 0.75
+      }
+    }
+  }, /*#__PURE__*/_react.default.createElement(_ui.Typography, {
+    variant: "body2",
+    component: "span",
+    sx: {
+      fontWeight: 500
+    },
+    color: "text.secondary"
+  }, (0, _i18n.__)('Import limit reached.', 'elementor')), /*#__PURE__*/_react.default.createElement(_ui.Typography, {
+    variant: "body2",
+    component: "span",
+    color: "text.secondary"
+  }, (0, _i18n.__)('To resolve this, review existing items or choose to override', 'elementor'))), /*#__PURE__*/_react.default.createElement(_ui.Stack, {
+    spacing: 1.5
+  }, /*#__PURE__*/_react.default.createElement(SubSettingRow, {
+    label: (0, _i18n.__)('Classes', 'elementor'),
+    checked: (_settings$classes = settings.classes) !== null && _settings$classes !== void 0 ? _settings$classes : false,
+    onChange: function onChange(isChecked) {
+      return onSettingChange('classes', isChecked);
+    },
+    disabled: disabled,
+    limitExceeded: isImport && classesLimitExceeded && !classesNotExported,
+    overLimitCount: classesOverLimitCount,
+    onReviewClick: onClassesReviewClick,
+    overrideAll: classesOverrideAll,
+    onOverrideAllChange: function onOverrideAllChange(checked) {
+      setClassesOverrideAll(checked);
+      onSettingChange('classesOverrideAll', checked);
+    },
+    showOverrideOption: isImport && !classesNotExported,
+    notExported: classesNotExported
+  }), /*#__PURE__*/_react.default.createElement(SubSettingRow, {
+    label: (0, _i18n.__)('Variables', 'elementor'),
+    checked: (_settings$variables = settings.variables) !== null && _settings$variables !== void 0 ? _settings$variables : false,
+    onChange: function onChange(isChecked) {
+      return onSettingChange('variables', isChecked);
+    },
+    disabled: disabled,
+    limitExceeded: isImport && variablesLimitExceeded && !variablesNotExported,
+    overLimitCount: variablesOverLimitCount,
+    onReviewClick: onVariablesReviewClick,
+    overrideAll: variablesOverrideAll,
+    onOverrideAllChange: function onOverrideAllChange(checked) {
+      setVariablesOverrideAll(checked);
+      onSettingChange('variablesOverrideAll', checked);
+    },
+    showOverrideOption: isImport && !variablesNotExported,
+    notExported: variablesNotExported
+  }))));
+}
+ClassesVariablesSection.propTypes = {
+  settings: _propTypes.default.shape({
+    classes: _propTypes.default.bool,
+    variables: _propTypes.default.bool,
+    classesOverrideAll: _propTypes.default.bool,
+    variablesOverrideAll: _propTypes.default.bool
+  }).isRequired,
+  onSettingChange: _propTypes.default.func.isRequired,
+  isImport: _propTypes.default.bool,
+  classesExported: _propTypes.default.bool,
+  variablesExported: _propTypes.default.bool,
+  classesLimitExceeded: _propTypes.default.bool,
+  variablesLimitExceeded: _propTypes.default.bool,
+  classesOverLimitCount: _propTypes.default.number,
+  variablesOverLimitCount: _propTypes.default.number,
+  onClassesReviewClick: _propTypes.default.func,
+  onVariablesReviewClick: _propTypes.default.func,
+  disabled: _propTypes.default.bool,
+  notExported: _propTypes.default.bool
+};
 
 /***/ }),
 
@@ -9043,106 +9350,6 @@ ProcessingErrorDialog.propTypes = {
 
 /***/ }),
 
-/***/ "../app/modules/import-export-customization/assets/js/shared/components/icons/external-link-icon.js":
-/*!**********************************************************************************************************!*\
-  !*** ../app/modules/import-export-customization/assets/js/shared/components/icons/external-link-icon.js ***!
-  \**********************************************************************************************************/
-/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
-
-"use strict";
-
-
-var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault */ "../node_modules/@babel/runtime/helpers/interopRequireDefault.js");
-Object.defineProperty(exports, "__esModule", ({
-  value: true
-}));
-exports.ExternalLinkIcon = void 0;
-var _react = _interopRequireDefault(__webpack_require__(/*! react */ "react"));
-var _extends2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime/helpers/extends */ "../node_modules/@babel/runtime/helpers/extends.js"));
-var _ui = __webpack_require__(/*! @elementor/ui */ "@elementor/ui");
-var ExternalLinkIcon = exports.ExternalLinkIcon = function ExternalLinkIcon(props) {
-  return /*#__PURE__*/_react.default.createElement(_ui.SvgIcon, (0, _extends2.default)({
-    viewBox: "0 0 18 18",
-    sx: {
-      fontSize: 16,
-      color: 'info.light'
-    }
-  }, props), /*#__PURE__*/_react.default.createElement("path", {
-    fillRule: "evenodd",
-    clipRule: "evenodd",
-    d: "M11 1C11 0.585786 11.3358 0.25 11.75 0.25H16.75C17.1642 0.25 17.5 0.585786 17.5 1V6C17.5 6.41421 17.1642 6.75 16.75 6.75C16.3358 6.75 16 6.41421 16 6V2.81066L7.28033 11.5303C6.98744 11.8232 6.51256 11.8232 6.21967 11.5303C5.92678 11.2374 5.92678 10.7626 6.21967 10.4697L14.9393 1.75H11.75C11.3358 1.75 11 1.41421 11 1ZM0.805456 4.05546C1.32118 3.53973 2.02065 3.25 2.75 3.25H7.75C8.16421 3.25 8.5 3.58579 8.5 4C8.5 4.41421 8.16421 4.75 7.75 4.75H2.75C2.41848 4.75 2.10054 4.8817 1.86612 5.11612C1.6317 5.35054 1.5 5.66848 1.5 6V15C1.5 15.3315 1.6317 15.6495 1.86612 15.8839C2.10054 16.1183 2.41848 16.25 2.75 16.25H11.75C12.0815 16.25 12.3995 16.1183 12.6339 15.8839C12.8683 15.6495 13 15.3315 13 15V10C13 9.58579 13.3358 9.25 13.75 9.25C14.1642 9.25 14.5 9.58579 14.5 10V15C14.5 15.7293 14.2103 16.4288 13.6945 16.9445C13.1788 17.4603 12.4793 17.75 11.75 17.75H2.75C2.02065 17.75 1.32118 17.4603 0.805456 16.9445C0.289731 16.4288 0 15.7293 0 15V6C0 5.27065 0.289731 4.57118 0.805456 4.05546Z",
-    fill: "currentColor"
-  }));
-};
-
-/***/ }),
-
-/***/ "../app/modules/import-export-customization/assets/js/shared/components/icons/index.js":
-/*!*********************************************************************************************!*\
-  !*** ../app/modules/import-export-customization/assets/js/shared/components/icons/index.js ***!
-  \*********************************************************************************************/
-/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", ({
-  value: true
-}));
-Object.defineProperty(exports, "ExternalLinkIcon", ({
-  enumerable: true,
-  get: function get() {
-    return _externalLinkIcon.ExternalLinkIcon;
-  }
-}));
-Object.defineProperty(exports, "XIcon", ({
-  enumerable: true,
-  get: function get() {
-    return _xIcon.XIcon;
-  }
-}));
-var _xIcon = __webpack_require__(/*! ./x-icon */ "../app/modules/import-export-customization/assets/js/shared/components/icons/x-icon.js");
-var _externalLinkIcon = __webpack_require__(/*! ./external-link-icon */ "../app/modules/import-export-customization/assets/js/shared/components/icons/external-link-icon.js");
-
-/***/ }),
-
-/***/ "../app/modules/import-export-customization/assets/js/shared/components/icons/x-icon.js":
-/*!**********************************************************************************************!*\
-  !*** ../app/modules/import-export-customization/assets/js/shared/components/icons/x-icon.js ***!
-  \**********************************************************************************************/
-/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
-
-"use strict";
-
-
-var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault */ "../node_modules/@babel/runtime/helpers/interopRequireDefault.js");
-var _typeof = __webpack_require__(/*! @babel/runtime/helpers/typeof */ "../node_modules/@babel/runtime/helpers/typeof.js");
-Object.defineProperty(exports, "__esModule", ({
-  value: true
-}));
-exports.XIcon = void 0;
-var _react = _interopRequireWildcard(__webpack_require__(/*! react */ "react"));
-var _extends2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime/helpers/extends */ "../node_modules/@babel/runtime/helpers/extends.js"));
-var _ui = __webpack_require__(/*! @elementor/ui */ "@elementor/ui");
-function _interopRequireWildcard(e, t) { if ("function" == typeof WeakMap) var r = new WeakMap(), n = new WeakMap(); return (_interopRequireWildcard = function _interopRequireWildcard(e, t) { if (!t && e && e.__esModule) return e; var o, i, f = { __proto__: null, default: e }; if (null === e || "object" != _typeof(e) && "function" != typeof e) return f; if (o = t ? n : r) { if (o.has(e)) return o.get(e); o.set(e, f); } for (var _t in e) "default" !== _t && {}.hasOwnProperty.call(e, _t) && ((i = (o = Object.defineProperty) && Object.getOwnPropertyDescriptor(e, _t)) && (i.get || i.set) ? o(f, _t, i) : f[_t] = e[_t]); return f; })(e, t); }
-var XIcon = exports.XIcon = (0, _react.forwardRef)(function (props, ref) {
-  return /*#__PURE__*/_react.default.createElement(_ui.SvgIcon, (0, _extends2.default)({
-    viewBox: "0 0 24 24"
-  }, props, {
-    ref: ref
-  }), /*#__PURE__*/_react.default.createElement("path", {
-    fillRule: "evenodd",
-    clipRule: "evenodd",
-    d: "M18.5303 5.46967C18.8232 5.76256 18.8232 6.23744 18.5303 6.53033L6.53033 18.5303C6.23744 18.8232 5.76256 18.8232 5.46967 18.5303C5.17678 18.2374 5.17678 17.7626 5.46967 17.4697L17.4697 5.46967C17.7626 5.17678 18.2374 5.17678 18.5303 5.46967Z"
-  }), /*#__PURE__*/_react.default.createElement("path", {
-    fillRule: "evenodd",
-    clipRule: "evenodd",
-    d: "M5.46967 5.46967C5.76256 5.17678 6.23744 5.17678 6.53033 5.46967L18.5303 17.4697C18.8232 17.7626 18.8232 18.2374 18.5303 18.5303C18.2374 18.8232 17.7626 18.8232 17.4697 18.5303L5.46967 6.53033C5.17678 6.23744 5.17678 5.76256 5.46967 5.46967Z"
-  }));
-});
-
-/***/ }),
-
 /***/ "../app/modules/import-export-customization/assets/js/shared/components/index.js":
 /*!***************************************************************************************!*\
   !*** ../app/modules/import-export-customization/assets/js/shared/components/index.js ***!
@@ -9161,8 +9368,15 @@ var _exportNames = {
   CompleteIcon: true,
   CompleteHeading: true,
   CompleteSummary: true,
-  DownloadLink: true
+  DownloadLink: true,
+  ClassesVariablesSection: true
 };
+Object.defineProperty(exports, "ClassesVariablesSection", ({
+  enumerable: true,
+  get: function get() {
+    return _classesVariablesSection.ClassesVariablesSection;
+  }
+}));
 Object.defineProperty(exports, "CompleteHeading", ({
   enumerable: true,
   get: function get() {
@@ -9205,23 +9419,12 @@ Object.keys(_layout).forEach(function (key) {
     }
   });
 });
-var _icons = __webpack_require__(/*! ./icons */ "../app/modules/import-export-customization/assets/js/shared/components/icons/index.js");
-Object.keys(_icons).forEach(function (key) {
-  if (key === "default" || key === "__esModule") return;
-  if (Object.prototype.hasOwnProperty.call(_exportNames, key)) return;
-  if (key in exports && exports[key] === _icons[key]) return;
-  Object.defineProperty(exports, key, {
-    enumerable: true,
-    get: function get() {
-      return _icons[key];
-    }
-  });
-});
 var _kitPartsSelection = _interopRequireDefault(__webpack_require__(/*! ./kit-parts-selection */ "../app/modules/import-export-customization/assets/js/shared/components/kit-parts-selection.js"));
 var _completeIcon = _interopRequireDefault(__webpack_require__(/*! ./complete-icon */ "../app/modules/import-export-customization/assets/js/shared/components/complete-icon.js"));
 var _completeHeading = _interopRequireDefault(__webpack_require__(/*! ./complete-heading */ "../app/modules/import-export-customization/assets/js/shared/components/complete-heading.js"));
 var _completeSummary = _interopRequireDefault(__webpack_require__(/*! ./complete-summary */ "../app/modules/import-export-customization/assets/js/shared/components/complete-summary.js"));
 var _downloadLink = _interopRequireDefault(__webpack_require__(/*! ./download-link */ "../app/modules/import-export-customization/assets/js/shared/components/download-link.js"));
+var _classesVariablesSection = __webpack_require__(/*! ./classes-variables-section */ "../app/modules/import-export-customization/assets/js/shared/components/classes-variables-section.js");
 
 /***/ }),
 
@@ -9493,6 +9696,7 @@ function KitContentCustomizationDialog(_ref) {
     handleSaveChanges: function handleSaveChanges() {
       var transformedAnalytics = transformAnalyticsData(settings, customPostTypes);
       _handleSaveChanges('content', settings, true, transformedAnalytics);
+      handleClose();
     }
   }, /*#__PURE__*/_react.default.createElement(_ui.Stack, {
     gap: 2
@@ -9568,10 +9772,7 @@ function KitCustomizationDialog(_ref) {
     color: "secondary"
   }, (0, _i18n.__)('Cancel', 'elementor')), /*#__PURE__*/_react.default.createElement(_ui.Button, {
     disabled: saveDisabled,
-    onClick: function onClick() {
-      handleSaveChanges();
-      handleClose();
-    },
+    onClick: handleSaveChanges,
     variant: "contained",
     color: "primary"
   }, (0, _i18n.__)('Save changes', 'elementor'))));
@@ -9594,7 +9795,6 @@ KitCustomizationDialog.propTypes = {
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
 "use strict";
-/* provided dependency */ var __ = __webpack_require__(/*! @wordpress/i18n */ "@wordpress/i18n")["__"];
 
 
 var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault */ "../node_modules/@babel/runtime/helpers/interopRequireDefault.js");
@@ -9606,15 +9806,29 @@ exports["default"] = KitPartsSelection;
 var _react = _interopRequireWildcard(__webpack_require__(/*! react */ "react"));
 var _slicedToArray2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime/helpers/slicedToArray */ "../node_modules/@babel/runtime/helpers/slicedToArray.js"));
 var _ui = __webpack_require__(/*! @elementor/ui */ "@elementor/ui");
+var _icons = __webpack_require__(/*! @elementor/icons */ "@elementor/icons");
 var _propTypes = _interopRequireDefault(__webpack_require__(/*! prop-types */ "../node_modules/prop-types/index.js"));
+var _i18n = __webpack_require__(/*! @wordpress/i18n */ "@wordpress/i18n");
 var _appsEventTracking = __webpack_require__(/*! elementor-app/event-track/apps-event-tracking */ "../app/assets/js/event-track/apps-event-tracking.js");
 var _kitContentData = _interopRequireDefault(__webpack_require__(/*! ../kit-content-data */ "../app/modules/import-export-customization/assets/js/shared/kit-content-data.js"));
 var _useContextDetection2 = _interopRequireDefault(__webpack_require__(/*! ../hooks/use-context-detection */ "../app/modules/import-export-customization/assets/js/shared/hooks/use-context-detection.js"));
+var _useClassesVariablesLimits = __webpack_require__(/*! ../hooks/use-classes-variables-limits */ "../app/modules/import-export-customization/assets/js/shared/hooks/use-classes-variables-limits.js");
 var _reExportBanner = __webpack_require__(/*! ./re-export-banner */ "../app/modules/import-export-customization/assets/js/shared/components/re-export-banner.js");
 var _upgradeVersionBanner = __webpack_require__(/*! ./upgrade-version-banner */ "../app/modules/import-export-customization/assets/js/shared/components/upgrade-version-banner.js");
 function _interopRequireWildcard(e, t) { if ("function" == typeof WeakMap) var r = new WeakMap(), n = new WeakMap(); return (_interopRequireWildcard = function _interopRequireWildcard(e, t) { if (!t && e && e.__esModule) return e; var o, i, f = { __proto__: null, default: e }; if (null === e || "object" != _typeof(e) && "function" != typeof e) return f; if (o = t ? n : r) { if (o.has(e)) return o.get(e); o.set(e, f); } for (var _t in e) "default" !== _t && {}.hasOwnProperty.call(e, _t) && ((i = (o = Object.defineProperty) && Object.getOwnPropertyDescriptor(e, _t)) && (i.get || i.set) ? o(f, _t, i) : f[_t] = e[_t]); return f; })(e, t); }
+function isExperimentActive(experimentName) {
+  var _common$config;
+  var common = typeof globalThis !== 'undefined' ? globalThis.elementorCommon : undefined;
+  return !!(common !== null && common !== void 0 && (_common$config = common.config) !== null && _common$config !== void 0 && (_common$config = _common$config.experimentalFeatures) !== null && _common$config !== void 0 && _common$config[experimentName]);
+}
+function isClassesFeatureActive() {
+  return isExperimentActive('e_classes') && isExperimentActive('e_atomic_elements');
+}
+function isVariablesFeatureActive() {
+  return isExperimentActive('e_variables') && isExperimentActive('e_atomic_elements');
+}
 function KitPartsSelection(_ref) {
-  var _useContextDetection;
+  var _useContextDetection, _contextData$data$upl, _contextData$data2, _contextData$data$upl2, _contextData$data3, _contextData$data4, _contextData$data5;
   var onCheckboxChange = _ref.onCheckboxChange,
     testId = _ref.testId,
     handleSaveCustomization = _ref.handleSaveCustomization,
@@ -9633,53 +9847,75 @@ function KitPartsSelection(_ref) {
     contextData = _ref2$contextData === void 0 ? {} : _ref2$contextData;
   var _contextData$data = contextData.data,
     data = _contextData$data === void 0 ? null : _contextData$data;
+  var showClassesSection = isClassesFeatureActive();
+  var showVariablesSection = isVariablesFeatureActive();
+  var _useClassesVariablesL = (0, _useClassesVariablesLimits.useClassesVariablesLimits)({
+      open: true,
+      isImport: isImport
+    }),
+    existingClassesCount = _useClassesVariablesL.existingClassesCount,
+    existingVariablesCount = _useClassesVariablesL.existingVariablesCount,
+    classesLimit = _useClassesVariablesL.classesLimit,
+    variablesLimit = _useClassesVariablesL.variablesLimit,
+    calculateLimitInfo = _useClassesVariablesL.calculateLimitInfo;
+  var importedClassesCount = (_contextData$data$upl = contextData === null || contextData === void 0 || (_contextData$data2 = contextData.data) === null || _contextData$data2 === void 0 || (_contextData$data2 = _contextData$data2.uploadedData) === null || _contextData$data2 === void 0 || (_contextData$data2 = _contextData$data2.manifest) === null || _contextData$data2 === void 0 || (_contextData$data2 = _contextData$data2['site-settings']) === null || _contextData$data2 === void 0 ? void 0 : _contextData$data2.classesCount) !== null && _contextData$data$upl !== void 0 ? _contextData$data$upl : 0;
+  var importedVariablesCount = (_contextData$data$upl2 = contextData === null || contextData === void 0 || (_contextData$data3 = contextData.data) === null || _contextData$data3 === void 0 || (_contextData$data3 = _contextData$data3.uploadedData) === null || _contextData$data3 === void 0 || (_contextData$data3 = _contextData$data3.manifest) === null || _contextData$data3 === void 0 || (_contextData$data3 = _contextData$data3['site-settings']) === null || _contextData$data3 === void 0 ? void 0 : _contextData$data3.variablesCount) !== null && _contextData$data$upl2 !== void 0 ? _contextData$data$upl2 : 0;
+  var isClassesExportedInManifest = !!(contextData !== null && contextData !== void 0 && (_contextData$data4 = contextData.data) !== null && _contextData$data4 !== void 0 && (_contextData$data4 = _contextData$data4.uploadedData) !== null && _contextData$data4 !== void 0 && (_contextData$data4 = _contextData$data4.manifest) !== null && _contextData$data4 !== void 0 && (_contextData$data4 = _contextData$data4['site-settings']) !== null && _contextData$data4 !== void 0 && _contextData$data4.classes);
+  var isVariablesExportedInManifest = !!(contextData !== null && contextData !== void 0 && (_contextData$data5 = contextData.data) !== null && _contextData$data5 !== void 0 && (_contextData$data5 = _contextData$data5.uploadedData) !== null && _contextData$data5 !== void 0 && (_contextData$data5 = _contextData$data5.manifest) !== null && _contextData$data5 !== void 0 && (_contextData$data5 = _contextData$data5['site-settings']) !== null && _contextData$data5 !== void 0 && _contextData$data5.variables);
+  var classesLimitInfo = (0, _react.useMemo)(function () {
+    return calculateLimitInfo(existingClassesCount, importedClassesCount, classesLimit);
+  }, [existingClassesCount, importedClassesCount, classesLimit, calculateLimitInfo]);
+  var variablesLimitInfo = (0, _react.useMemo)(function () {
+    return calculateLimitInfo(existingVariablesCount, importedVariablesCount, variablesLimit);
+  }, [existingVariablesCount, importedVariablesCount, variablesLimit, calculateLimitInfo]);
+  var hasSettingsLimitWarning = isImport && (showClassesSection && isClassesExportedInManifest && classesLimitInfo.isExceeded || showVariablesSection && isVariablesExportedInManifest && variablesLimitInfo.isExceeded);
   (0, _react.useEffect)(function () {
     if (showMediaFormatValidation && !isImport) {
       setActiveDialog('content');
     }
   }, [showMediaFormatValidation, isImport]);
   var isSiteSettingsExported = function isSiteSettingsExported() {
-    var _contextData$data2;
-    var siteSettings = contextData === null || contextData === void 0 || (_contextData$data2 = contextData.data) === null || _contextData$data2 === void 0 || (_contextData$data2 = _contextData$data2.uploadedData) === null || _contextData$data2 === void 0 || (_contextData$data2 = _contextData$data2.manifest) === null || _contextData$data2 === void 0 ? void 0 : _contextData$data2['site-settings'];
+    var _contextData$data6;
+    var siteSettings = contextData === null || contextData === void 0 || (_contextData$data6 = contextData.data) === null || _contextData$data6 === void 0 || (_contextData$data6 = _contextData$data6.uploadedData) === null || _contextData$data6 === void 0 || (_contextData$data6 = _contextData$data6.manifest) === null || _contextData$data6 === void 0 ? void 0 : _contextData$data6['site-settings'];
     if (!siteSettings) {
       return false;
     }
     return Object.values(siteSettings).some(Boolean);
   };
   var isContentSettingsExported = function isContentSettingsExported() {
-    var _contextData$data3, _contextData$data4, _contextData$data5, _contextData$data6;
-    var taxonomies = contextData === null || contextData === void 0 || (_contextData$data3 = contextData.data) === null || _contextData$data3 === void 0 || (_contextData$data3 = _contextData$data3.uploadedData) === null || _contextData$data3 === void 0 || (_contextData$data3 = _contextData$data3.manifest) === null || _contextData$data3 === void 0 ? void 0 : _contextData$data3.taxonomies;
-    var content = contextData === null || contextData === void 0 || (_contextData$data4 = contextData.data) === null || _contextData$data4 === void 0 || (_contextData$data4 = _contextData$data4.uploadedData) === null || _contextData$data4 === void 0 || (_contextData$data4 = _contextData$data4.manifest) === null || _contextData$data4 === void 0 ? void 0 : _contextData$data4.content;
-    var wpContent = contextData === null || contextData === void 0 || (_contextData$data5 = contextData.data) === null || _contextData$data5 === void 0 || (_contextData$data5 = _contextData$data5.uploadedData) === null || _contextData$data5 === void 0 || (_contextData$data5 = _contextData$data5.manifest) === null || _contextData$data5 === void 0 ? void 0 : _contextData$data5['wp-content'];
-    var customPostTypes = contextData === null || contextData === void 0 || (_contextData$data6 = contextData.data) === null || _contextData$data6 === void 0 || (_contextData$data6 = _contextData$data6.uploadedData) === null || _contextData$data6 === void 0 || (_contextData$data6 = _contextData$data6.manifest) === null || _contextData$data6 === void 0 ? void 0 : _contextData$data6['custom-post-type-title'];
+    var _contextData$data7, _contextData$data8, _contextData$data9, _contextData$data0;
+    var taxonomies = contextData === null || contextData === void 0 || (_contextData$data7 = contextData.data) === null || _contextData$data7 === void 0 || (_contextData$data7 = _contextData$data7.uploadedData) === null || _contextData$data7 === void 0 || (_contextData$data7 = _contextData$data7.manifest) === null || _contextData$data7 === void 0 ? void 0 : _contextData$data7.taxonomies;
+    var content = contextData === null || contextData === void 0 || (_contextData$data8 = contextData.data) === null || _contextData$data8 === void 0 || (_contextData$data8 = _contextData$data8.uploadedData) === null || _contextData$data8 === void 0 || (_contextData$data8 = _contextData$data8.manifest) === null || _contextData$data8 === void 0 ? void 0 : _contextData$data8.content;
+    var wpContent = contextData === null || contextData === void 0 || (_contextData$data9 = contextData.data) === null || _contextData$data9 === void 0 || (_contextData$data9 = _contextData$data9.uploadedData) === null || _contextData$data9 === void 0 || (_contextData$data9 = _contextData$data9.manifest) === null || _contextData$data9 === void 0 ? void 0 : _contextData$data9['wp-content'];
+    var customPostTypes = contextData === null || contextData === void 0 || (_contextData$data0 = contextData.data) === null || _contextData$data0 === void 0 || (_contextData$data0 = _contextData$data0.uploadedData) === null || _contextData$data0 === void 0 || (_contextData$data0 = _contextData$data0.manifest) === null || _contextData$data0 === void 0 ? void 0 : _contextData$data0['custom-post-type-title'];
     return taxonomies || content || wpContent || customPostTypes;
   };
   var isExported = function isExported(item) {
-    var _contextData$data7;
+    var _contextData$data1;
     switch (item.type) {
       case 'settings':
         return isSiteSettingsExported();
       case 'content':
         return isContentSettingsExported();
       default:
-        return contextData === null || contextData === void 0 || (_contextData$data7 = contextData.data) === null || _contextData$data7 === void 0 || (_contextData$data7 = _contextData$data7.uploadedData) === null || _contextData$data7 === void 0 || (_contextData$data7 = _contextData$data7.manifest) === null || _contextData$data7 === void 0 ? void 0 : _contextData$data7[item.type];
+        return contextData === null || contextData === void 0 || (_contextData$data1 = contextData.data) === null || _contextData$data1 === void 0 || (_contextData$data1 = _contextData$data1.uploadedData) === null || _contextData$data1 === void 0 || (_contextData$data1 = _contextData$data1.manifest) === null || _contextData$data1 === void 0 ? void 0 : _contextData$data1[item.type];
     }
   };
   var isDisabled = function isDisabled(item) {
-    var _item$data$features, _contextData$data8;
+    var _item$data$features, _contextData$data10;
     if ((_item$data$features = item.data.features) !== null && _item$data$features !== void 0 && _item$data$features.locked && !elementorAppConfig.hasPro) {
       return true;
     }
     if (isImport) {
       return !isExported(item) || item.required;
     }
-    return item.required && (contextData === null || contextData === void 0 || (_contextData$data8 = contextData.data) === null || _contextData$data8 === void 0 || (_contextData$data8 = _contextData$data8.includes) === null || _contextData$data8 === void 0 ? void 0 : _contextData$data8.includes(item.type));
+    return item.required && (contextData === null || contextData === void 0 || (_contextData$data10 = contextData.data) === null || _contextData$data10 === void 0 || (_contextData$data10 = _contextData$data10.includes) === null || _contextData$data10 === void 0 ? void 0 : _contextData$data10.includes(item.type));
   };
   var isEditDisabled = function isEditDisabled(item) {
     if (isImport) {
-      var _contextData$data9;
+      var _contextData$data11;
       var manifestKey = 'settings' === item.type ? 'site-settings' : item.type;
-      return !(contextData !== null && contextData !== void 0 && (_contextData$data9 = contextData.data) !== null && _contextData$data9 !== void 0 && (_contextData$data9 = _contextData$data9.uploadedData) !== null && _contextData$data9 !== void 0 && (_contextData$data9 = _contextData$data9.manifest) !== null && _contextData$data9 !== void 0 && _contextData$data9[manifestKey]);
+      return !(contextData !== null && contextData !== void 0 && (_contextData$data11 = contextData.data) !== null && _contextData$data11 !== void 0 && (_contextData$data11 = _contextData$data11.uploadedData) !== null && _contextData$data11 !== void 0 && (_contextData$data11 = _contextData$data11.manifest) !== null && _contextData$data11 !== void 0 && _contextData$data11[manifestKey]);
     }
     return false;
   };
@@ -9701,7 +9937,7 @@ function KitPartsSelection(_ref) {
       }
     }, featuresText);
     return isLockedFeaturesNoPro ? /*#__PURE__*/_react.default.createElement(_ui.Tooltip, {
-      title: ((_item$data$features4 = item.data.features) === null || _item$data$features4 === void 0 ? void 0 : _item$data$features4.tooltip) || __('This feature requires Elementor Pro', 'elementor'),
+      title: ((_item$data$features4 = item.data.features) === null || _item$data$features4 === void 0 ? void 0 : _item$data$features4.tooltip) || (0, _i18n.__)('This feature requires Elementor Pro', 'elementor'),
       arrow: true,
       placement: "top"
     }, description) : description;
@@ -9753,7 +9989,7 @@ function KitPartsSelection(_ref) {
         },
         "data-type": item.type,
         disabled: isEditDisabled(item)
-      }, __('Upgrade', 'elementor'));
+      }, (0, _i18n.__)('Upgrade', 'elementor'));
     }
     if (!isImport) {
       return /*#__PURE__*/_react.default.createElement(_ui.Button, {
@@ -9766,7 +10002,7 @@ function KitPartsSelection(_ref) {
         },
         "data-type": item.type,
         disabled: isEditDisabled(item)
-      }, __('Edit', 'elementor'));
+      }, (0, _i18n.__)('Edit', 'elementor'));
     }
     return isExported(item) ? /*#__PURE__*/_react.default.createElement(_ui.Button, {
       color: "secondary",
@@ -9778,13 +10014,13 @@ function KitPartsSelection(_ref) {
       },
       "data-type": item.type,
       disabled: isEditDisabled(item)
-    }, __('Edit', 'elementor')) : /*#__PURE__*/_react.default.createElement(_ui.Typography, {
+    }, (0, _i18n.__)('Edit', 'elementor')) : /*#__PURE__*/_react.default.createElement(_ui.Typography, {
       variant: "body1",
       color: "text.disabled",
       sx: {
         alignSelf: 'center'
       }
-    }, __('Not exported', 'elementor'));
+    }, (0, _i18n.__)('Not exported', 'elementor'));
   };
   return /*#__PURE__*/_react.default.createElement(_ui.Stack, {
     spacing: 2,
@@ -9817,7 +10053,23 @@ function KitPartsSelection(_ref) {
         flex: 1,
         opacity: isLockedFeaturesNoPro ? 0.5 : 1
       }
-    }, renderCheckboxControl(item, disabled), renderFeatureDescription(item, isLockedFeaturesNoPro)), getSectionEditButton(item, isLockedFeaturesNoPro))), DialogComponent && /*#__PURE__*/_react.default.createElement(DialogComponent, {
+    }, /*#__PURE__*/_react.default.createElement(_ui.Box, {
+      sx: {
+        display: 'flex',
+        alignItems: 'center'
+      }
+    }, renderCheckboxControl(item, disabled), 'settings' === item.type && hasSettingsLimitWarning && /*#__PURE__*/_react.default.createElement(_ui.Tooltip, {
+      title: (0, _i18n.__)('Limit exceeded. Click \'Edit\' to review conflicts or override existing items', 'elementor'),
+      placement: "top",
+      arrow: true
+    }, /*#__PURE__*/_react.default.createElement(_icons.AlertTriangleFilledIcon, {
+      sx: {
+        fontSize: 20,
+        color: 'warning.main',
+        ml: 0.5
+      },
+      "aria-hidden": true
+    }))), renderFeatureDescription(item, isLockedFeaturesNoPro)), getSectionEditButton(item, isLockedFeaturesNoPro))), DialogComponent && /*#__PURE__*/_react.default.createElement(DialogComponent, {
       open: activeDialog === item.type,
       handleClose: function handleClose() {
         return setActiveDialog(null);
@@ -9862,7 +10114,7 @@ var _react = _interopRequireWildcard(__webpack_require__(/*! react */ "react"));
 var _defineProperty2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime/helpers/defineProperty */ "../node_modules/@babel/runtime/helpers/defineProperty.js"));
 var _slicedToArray2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime/helpers/slicedToArray */ "../node_modules/@babel/runtime/helpers/slicedToArray.js"));
 var _ui = __webpack_require__(/*! @elementor/ui */ "@elementor/ui");
-var _icons = __webpack_require__(/*! ./icons */ "../app/modules/import-export-customization/assets/js/shared/components/icons/index.js");
+var _icons = __webpack_require__(/*! @elementor/icons */ "@elementor/icons");
 var _propTypes = _interopRequireDefault(__webpack_require__(/*! prop-types */ "../node_modules/prop-types/index.js"));
 var _useKitPlugins2 = _interopRequireDefault(__webpack_require__(/*! ../hooks/use-kit-plugins */ "../app/modules/import-export-customization/assets/js/shared/hooks/use-kit-plugins.js"));
 var _useContextDetection2 = _interopRequireDefault(__webpack_require__(/*! ../hooks/use-context-detection */ "../app/modules/import-export-customization/assets/js/shared/hooks/use-context-detection.js"));
@@ -10188,20 +10440,35 @@ Object.defineProperty(exports, "__esModule", ({
 }));
 exports.KitSettingsCustomizationDialog = KitSettingsCustomizationDialog;
 var _react = _interopRequireWildcard(__webpack_require__(/*! react */ "react"));
+var _regenerator = _interopRequireDefault(__webpack_require__(/*! @babel/runtime/regenerator */ "../node_modules/@babel/runtime/regenerator/index.js"));
 var _defineProperty2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime/helpers/defineProperty */ "../node_modules/@babel/runtime/helpers/defineProperty.js"));
+var _asyncToGenerator2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime/helpers/asyncToGenerator */ "../node_modules/@babel/runtime/helpers/asyncToGenerator.js"));
 var _slicedToArray2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime/helpers/slicedToArray */ "../node_modules/@babel/runtime/helpers/slicedToArray.js"));
 var _ui = __webpack_require__(/*! @elementor/ui */ "@elementor/ui");
 var _i18n = __webpack_require__(/*! @wordpress/i18n */ "@wordpress/i18n");
 var _propTypes = _interopRequireDefault(__webpack_require__(/*! prop-types */ "../node_modules/prop-types/index.js"));
 var _customizationSettingSection = __webpack_require__(/*! ./customization-setting-section */ "../app/modules/import-export-customization/assets/js/shared/components/customization-setting-section.js");
+var _classesVariablesSection = __webpack_require__(/*! ./classes-variables-section */ "../app/modules/import-export-customization/assets/js/shared/components/classes-variables-section.js");
 var _kitCustomizationDialog = __webpack_require__(/*! ./kit-customization-dialog */ "../app/modules/import-export-customization/assets/js/shared/components/kit-customization-dialog.js");
+var _overrideConfirmationDialog = __webpack_require__(/*! ./override-confirmation-dialog */ "../app/modules/import-export-customization/assets/js/shared/components/override-confirmation-dialog.js");
 var _appsEventTracking = __webpack_require__(/*! elementor-app/event-track/apps-event-tracking */ "../app/assets/js/event-track/apps-event-tracking.js");
 var _useContextDetection2 = _interopRequireDefault(__webpack_require__(/*! ../hooks/use-context-detection */ "../app/modules/import-export-customization/assets/js/shared/hooks/use-context-detection.js"));
+var _useClassesVariablesLimits = __webpack_require__(/*! ../hooks/use-classes-variables-limits */ "../app/modules/import-export-customization/assets/js/shared/hooks/use-classes-variables-limits.js");
 var _upgradeVersionBanner = __webpack_require__(/*! ./upgrade-version-banner */ "../app/modules/import-export-customization/assets/js/shared/components/upgrade-version-banner.js");
 var _analyticsTransformer = __webpack_require__(/*! ../utils/analytics-transformer */ "../app/modules/import-export-customization/assets/js/shared/utils/analytics-transformer.js");
-function _interopRequireWildcard(e, t) { if ("function" == typeof WeakMap) var r = new WeakMap(), n = new WeakMap(); return (_interopRequireWildcard = function _interopRequireWildcard(e, t) { if (!t && e && e.__esModule) return e; var o, i, f = { __proto__: null, default: e }; if (null === e || "object" != _typeof(e) && "function" != typeof e) return f; if (o = t ? n : r) { if (o.has(e)) return o.get(e); o.set(e, f); } for (var _t in e) "default" !== _t && {}.hasOwnProperty.call(e, _t) && ((i = (o = Object.defineProperty) && Object.getOwnPropertyDescriptor(e, _t)) && (i.get || i.set) ? o(f, _t, i) : f[_t] = e[_t]); return f; })(e, t); }
+function _interopRequireWildcard(e, t) { if ("function" == typeof WeakMap) var r = new WeakMap(), n = new WeakMap(); return (_interopRequireWildcard = function _interopRequireWildcard(e, t) { if (!t && e && e.__esModule) return e; var o, i, f = { __proto__: null, default: e }; if (null === e || "object" != _typeof(e) && "function" != typeof e) return f; if (o = t ? n : r) { if (o.has(e)) return o.get(e); o.set(e, f); } for (var _t2 in e) "default" !== _t2 && {}.hasOwnProperty.call(e, _t2) && ((i = (o = Object.defineProperty) && Object.getOwnPropertyDescriptor(e, _t2)) && (i.get || i.set) ? o(f, _t2, i) : f[_t2] = e[_t2]); return f; })(e, t); }
 function ownKeys(e, r) { var t = Object.keys(e); if (Object.getOwnPropertySymbols) { var o = Object.getOwnPropertySymbols(e); r && (o = o.filter(function (r) { return Object.getOwnPropertyDescriptor(e, r).enumerable; })), t.push.apply(t, o); } return t; }
 function _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t = null != arguments[r] ? arguments[r] : {}; r % 2 ? ownKeys(Object(t), !0).forEach(function (r) { (0, _defineProperty2.default)(e, r, t[r]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(e, Object.getOwnPropertyDescriptors(t)) : ownKeys(Object(t)).forEach(function (r) { Object.defineProperty(e, r, Object.getOwnPropertyDescriptor(t, r)); }); } return e; }
+function isExperimentActive(experimentName) {
+  var _elementorCommon;
+  return !!((_elementorCommon = elementorCommon) !== null && _elementorCommon !== void 0 && (_elementorCommon = _elementorCommon.config) !== null && _elementorCommon !== void 0 && (_elementorCommon = _elementorCommon.experimentalFeatures) !== null && _elementorCommon !== void 0 && _elementorCommon[experimentName]);
+}
+function isClassesFeatureActive() {
+  return isExperimentActive('e_classes') && isExperimentActive('e_atomic_elements');
+}
+function isVariablesFeatureActive() {
+  return isExperimentActive('e_variables') && isExperimentActive('e_atomic_elements');
+}
 var transformAnalyticsData = function transformAnalyticsData(payload) {
   var transformed = {};
   for (var _i = 0, _Object$entries = Object.entries(payload); _i < _Object$entries.length; _i++) {
@@ -10212,6 +10479,45 @@ var transformAnalyticsData = function transformAnalyticsData(payload) {
   }
   return transformed;
 };
+function fetchManagerUrl(_x) {
+  return _fetchManagerUrl.apply(this, arguments);
+}
+function _fetchManagerUrl() {
+  _fetchManagerUrl = (0, _asyncToGenerator2.default)(/*#__PURE__*/_regenerator.default.mark(function _callee2(panelId) {
+    var _window$wpApiSettings, _window$wpApiSettings2, _data$data;
+    var baseUrl, nonce, response, data;
+    return _regenerator.default.wrap(function (_context2) {
+      while (1) switch (_context2.prev = _context2.next) {
+        case 0:
+          baseUrl = ((_window$wpApiSettings = window.wpApiSettings) === null || _window$wpApiSettings === void 0 ? void 0 : _window$wpApiSettings.root) || '/wp-json/';
+          nonce = ((_window$wpApiSettings2 = window.wpApiSettings) === null || _window$wpApiSettings2 === void 0 ? void 0 : _window$wpApiSettings2.nonce) || '';
+          _context2.next = 1;
+          return fetch("".concat(baseUrl, "elementor/v1/import-export-customization/manager-url?panel=").concat(panelId), {
+            headers: {
+              'X-WP-Nonce': nonce
+            }
+          });
+        case 1:
+          response = _context2.sent;
+          if (response.ok) {
+            _context2.next = 2;
+            break;
+          }
+          throw new Error('Failed to fetch manager URL');
+        case 2:
+          _context2.next = 3;
+          return response.json();
+        case 3:
+          data = _context2.sent;
+          return _context2.abrupt("return", ((_data$data = data.data) === null || _data$data === void 0 ? void 0 : _data$data.url) || data.url);
+        case 4:
+        case "end":
+          return _context2.stop();
+      }
+    }, _callee2);
+  }));
+  return _fetchManagerUrl.apply(this, arguments);
+}
 function getInitialState(contextData, isImport) {
   var _data$uploadedData;
   var data = contextData.data;
@@ -10229,26 +10535,69 @@ function isExported(contextData) {
   }
   return contextData === null || contextData === void 0 || (_contextData$data2 = contextData.data) === null || _contextData$data2 === void 0 || (_contextData$data2 = _contextData$data2.uploadedData) === null || _contextData$data2 === void 0 || (_contextData$data2 = _contextData$data2.manifest) === null || _contextData$data2 === void 0 || (_contextData$data2 = _contextData$data2['site-settings']) === null || _contextData$data2 === void 0 ? void 0 : _contextData$data2.theme;
 }
+function isClassesExported(contextData) {
+  var _contextData$data3;
+  return !!(contextData !== null && contextData !== void 0 && (_contextData$data3 = contextData.data) !== null && _contextData$data3 !== void 0 && (_contextData$data3 = _contextData$data3.uploadedData) !== null && _contextData$data3 !== void 0 && (_contextData$data3 = _contextData$data3.manifest) !== null && _contextData$data3 !== void 0 && (_contextData$data3 = _contextData$data3['site-settings']) !== null && _contextData$data3 !== void 0 && _contextData$data3.classes);
+}
+function isVariablesExported(contextData) {
+  var _contextData$data4;
+  return !!(contextData !== null && contextData !== void 0 && (_contextData$data4 = contextData.data) !== null && _contextData$data4 !== void 0 && (_contextData$data4 = _contextData$data4.uploadedData) !== null && _contextData$data4 !== void 0 && (_contextData$data4 = _contextData$data4.manifest) !== null && _contextData$data4 !== void 0 && (_contextData$data4 = _contextData$data4['site-settings']) !== null && _contextData$data4 !== void 0 && _contextData$data4.variables);
+}
+function getClassesVariablesInitialState(contextData, isImport) {
+  var _contextData$data5;
+  var includesSettings = contextData === null || contextData === void 0 || (_contextData$data5 = contextData.data) === null || _contextData$data5 === void 0 || (_contextData$data5 = _contextData$data5.includes) === null || _contextData$data5 === void 0 ? void 0 : _contextData$data5.includes('settings');
+  return {
+    classes: includesSettings && (!isImport || isClassesExported(contextData)),
+    variables: includesSettings && (!isImport || isVariablesExported(contextData)),
+    classesOverrideAll: false,
+    variablesOverrideAll: false
+  };
+}
 function KitSettingsCustomizationDialog(_ref) {
-  var _useContextDetection, _contextData$data4;
+  var _useContextDetection, _contextData$data7, _contextData$data8, _contextData$data9, _contextData$data0, _contextData$data$upl, _contextData$data1, _contextData$data$upl2, _contextData$data10, _contextData$data11, _settings$classes, _settings$variables, _settings$classesOver, _settings$variablesOv;
   var open = _ref.open,
     handleClose = _ref.handleClose,
-    _handleSaveChanges = _ref.handleSaveChanges;
+    handleSaveChanges = _ref.handleSaveChanges;
   var _ref2 = (_useContextDetection = (0, _useContextDetection2.default)()) !== null && _useContextDetection !== void 0 ? _useContextDetection : {},
     _ref2$isImport = _ref2.isImport,
     isImport = _ref2$isImport === void 0 ? false : _ref2$isImport,
     _ref2$contextData = _ref2.contextData,
     contextData = _ref2$contextData === void 0 ? {} : _ref2$contextData;
-  var _contextData$data3 = contextData.data,
-    data = _contextData$data3 === void 0 ? null : _contextData$data3;
-  var initialState = getInitialState(contextData, isImport);
+  var _contextData$data6 = contextData.data,
+    data = _contextData$data6 === void 0 ? null : _contextData$data6;
+  var showClassesSection = isClassesFeatureActive();
+  var showVariablesSection = isVariablesFeatureActive();
+  var showClassesVariablesSection = showClassesSection || showVariablesSection;
+  var initialState = (0, _react.useMemo)(function () {
+    return getInitialState(contextData, isImport);
+  }, [contextData === null || contextData === void 0 || (_contextData$data7 = contextData.data) === null || _contextData$data7 === void 0 ? void 0 : _contextData$data7.includes, contextData === null || contextData === void 0 ? void 0 : contextData.isOldExport, contextData === null || contextData === void 0 || (_contextData$data8 = contextData.data) === null || _contextData$data8 === void 0 || (_contextData$data8 = _contextData$data8.uploadedData) === null || _contextData$data8 === void 0 ? void 0 : _contextData$data8.manifest, isImport]);
+  var classesVariablesInitialState = (0, _react.useMemo)(function () {
+    return getClassesVariablesInitialState(contextData, isImport);
+  }, [contextData === null || contextData === void 0 || (_contextData$data9 = contextData.data) === null || _contextData$data9 === void 0 ? void 0 : _contextData$data9.includes, contextData === null || contextData === void 0 || (_contextData$data0 = contextData.data) === null || _contextData$data0 === void 0 || (_contextData$data0 = _contextData$data0.uploadedData) === null || _contextData$data0 === void 0 ? void 0 : _contextData$data0.manifest, isImport]);
+  var _useClassesVariablesL = (0, _useClassesVariablesLimits.useClassesVariablesLimits)({
+      open: open,
+      isImport: isImport
+    }),
+    existingClassesCount = _useClassesVariablesL.existingClassesCount,
+    existingVariablesCount = _useClassesVariablesL.existingVariablesCount,
+    classesLimit = _useClassesVariablesL.classesLimit,
+    variablesLimit = _useClassesVariablesL.variablesLimit,
+    calculateLimitInfo = _useClassesVariablesL.calculateLimitInfo;
+  var importedClassesCount = (_contextData$data$upl = contextData === null || contextData === void 0 || (_contextData$data1 = contextData.data) === null || _contextData$data1 === void 0 || (_contextData$data1 = _contextData$data1.uploadedData) === null || _contextData$data1 === void 0 || (_contextData$data1 = _contextData$data1.manifest) === null || _contextData$data1 === void 0 || (_contextData$data1 = _contextData$data1['site-settings']) === null || _contextData$data1 === void 0 ? void 0 : _contextData$data1.classesCount) !== null && _contextData$data$upl !== void 0 ? _contextData$data$upl : 0;
+  var importedVariablesCount = (_contextData$data$upl2 = contextData === null || contextData === void 0 || (_contextData$data10 = contextData.data) === null || _contextData$data10 === void 0 || (_contextData$data10 = _contextData$data10.uploadedData) === null || _contextData$data10 === void 0 || (_contextData$data10 = _contextData$data10.manifest) === null || _contextData$data10 === void 0 || (_contextData$data10 = _contextData$data10['site-settings']) === null || _contextData$data10 === void 0 ? void 0 : _contextData$data10.variablesCount) !== null && _contextData$data$upl2 !== void 0 ? _contextData$data$upl2 : 0;
+  var classesLimitInfo = (0, _react.useMemo)(function () {
+    return calculateLimitInfo(existingClassesCount, importedClassesCount, classesLimit);
+  }, [existingClassesCount, importedClassesCount, classesLimit, calculateLimitInfo]);
+  var variablesLimitInfo = (0, _react.useMemo)(function () {
+    return calculateLimitInfo(existingVariablesCount, importedVariablesCount, variablesLimit);
+  }, [existingVariablesCount, importedVariablesCount, variablesLimit, calculateLimitInfo]);
   var _useState = (0, _react.useState)(function () {
       if (data.customization.settings) {
         return _objectSpread({}, data.customization.settings);
       }
-      return {
+      return _objectSpread({
         theme: initialState
-      };
+      }, showClassesVariablesSection ? classesVariablesInitialState : {});
     }),
     _useState2 = (0, _slicedToArray2.default)(_useState, 2),
     settings = _useState2[0],
@@ -10258,12 +10607,13 @@ function KitSettingsCustomizationDialog(_ref) {
       if (data.customization.settings) {
         setSettings(_objectSpread({}, data.customization.settings));
       } else {
-        setSettings({
+        setSettings(_objectSpread({
           theme: initialState
-        });
+        }, showClassesVariablesSection ? classesVariablesInitialState : {}));
       }
     }
-  }, [open, data.customization.settings, data === null || data === void 0 ? void 0 : data.uploadedData, initialState]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [open]);
   (0, _react.useEffect)(function () {
     if (open) {
       _appsEventTracking.AppsEventTracking.sendPageViewsWebsiteTemplates(elementorCommon.eventsManager.config.secondaryLocations.kitLibrary.kitExportCustomizationEdit);
@@ -10274,14 +10624,112 @@ function KitSettingsCustomizationDialog(_ref) {
       return _objectSpread(_objectSpread({}, prev), {}, (0, _defineProperty2.default)({}, settingKey, !prev[settingKey]));
     });
   };
-  return /*#__PURE__*/_react.default.createElement(_kitCustomizationDialog.KitCustomizationDialog, {
+  var handleClassesVariablesChange = function handleClassesVariablesChange(settingKey, value) {
+    setSettings(function (prev) {
+      return _objectSpread(_objectSpread({}, prev), {}, (0, _defineProperty2.default)({}, settingKey, value));
+    });
+  };
+  var handleReviewClick = (0, _react.useCallback)(/*#__PURE__*/function () {
+    var _ref3 = (0, _asyncToGenerator2.default)(/*#__PURE__*/_regenerator.default.mark(function _callee(panelId) {
+      var transformedAnalytics, url, _t;
+      return _regenerator.default.wrap(function (_context) {
+        while (1) switch (_context.prev = _context.next) {
+          case 0:
+            transformedAnalytics = transformAnalyticsData(settings);
+            handleSaveChanges('settings', settings, true, transformedAnalytics);
+            handleClose();
+            _context.prev = 1;
+            _context.next = 2;
+            return fetchManagerUrl(panelId);
+          case 2:
+            url = _context.sent;
+            window.open(url, '_blank');
+            _context.next = 4;
+            break;
+          case 3:
+            _context.prev = 3;
+            _t = _context["catch"](1);
+            // eslint-disable-next-line no-console
+            console.error("Failed to open ".concat(panelId, ":"), _t);
+          case 4:
+          case "end":
+            return _context.stop();
+        }
+      }, _callee, null, [[1, 3]]);
+    }));
+    return function (_x2) {
+      return _ref3.apply(this, arguments);
+    };
+  }(), [settings, handleSaveChanges, handleClose]);
+  var handleClassesReviewClick = (0, _react.useCallback)(function () {
+    handleReviewClick('global-classes-manager');
+  }, [handleReviewClick]);
+  var handleVariablesReviewClick = (0, _react.useCallback)(function () {
+    handleReviewClick('variables-manager');
+  }, [handleReviewClick]);
+  var classesNotExported = isImport && !isClassesExported(contextData);
+  var variablesNotExported = isImport && !isVariablesExported(contextData);
+  var classesVariablesNotExported = classesNotExported && variablesNotExported;
+  var classesLimitExceeded = isImport && classesLimitInfo.isExceeded;
+  var variablesLimitExceeded = isImport && variablesLimitInfo.isExceeded;
+  var classesOverLimitCount = classesLimitInfo.overLimitCount;
+  var variablesOverLimitCount = variablesLimitInfo.overLimitCount;
+  var _useState3 = (0, _react.useState)({
+      open: false,
+      type: 'classes'
+    }),
+    _useState4 = (0, _slicedToArray2.default)(_useState3, 2),
+    confirmationDialog = _useState4[0],
+    setConfirmationDialog = _useState4[1];
+  var performSave = (0, _react.useCallback)(function () {
+    var transformedAnalytics = transformAnalyticsData(settings);
+    handleSaveChanges('settings', settings, true, transformedAnalytics);
+    handleClose();
+  }, [settings, handleSaveChanges, handleClose]);
+  var handleSaveClick = (0, _react.useCallback)(function () {
+    var classesOverrideEnabled = settings.classesOverrideAll && settings.classes;
+    var variablesOverrideEnabled = settings.variablesOverrideAll && settings.variables;
+    if (classesOverrideEnabled && variablesOverrideEnabled) {
+      setConfirmationDialog({
+        open: true,
+        type: 'both'
+      });
+      return;
+    }
+    if (classesOverrideEnabled) {
+      setConfirmationDialog({
+        open: true,
+        type: 'classes'
+      });
+      return;
+    }
+    if (variablesOverrideEnabled) {
+      setConfirmationDialog({
+        open: true,
+        type: 'variables'
+      });
+      return;
+    }
+    performSave();
+  }, [settings, performSave]);
+  var handleConfirmationClose = (0, _react.useCallback)(function () {
+    setConfirmationDialog({
+      open: false,
+      type: ''
+    });
+  }, []);
+  var handleConfirmationConfirm = (0, _react.useCallback)(function () {
+    setConfirmationDialog({
+      open: false,
+      type: ''
+    });
+    performSave();
+  }, [performSave]);
+  return /*#__PURE__*/_react.default.createElement(_react.default.Fragment, null, /*#__PURE__*/_react.default.createElement(_kitCustomizationDialog.KitCustomizationDialog, {
     open: open,
     title: (0, _i18n.__)('Edit settings & configurations', 'elementor'),
     handleClose: handleClose,
-    handleSaveChanges: function handleSaveChanges() {
-      var transformedAnalytics = transformAnalyticsData(settings);
-      _handleSaveChanges('settings', settings, true, transformedAnalytics);
-    }
+    handleSaveChanges: handleSaveClick
   }, /*#__PURE__*/_react.default.createElement(_ui.Stack, {
     gap: 2
   }, (contextData === null || contextData === void 0 ? void 0 : contextData.isOldElementorVersion) && /*#__PURE__*/_react.default.createElement(_upgradeVersionBanner.UpgradeVersionBanner, null), isImport && !isExported(contextData) ? /*#__PURE__*/_react.default.createElement(_customizationSettingSection.SettingSection, {
@@ -10295,8 +10743,31 @@ function KitSettingsCustomizationDialog(_ref) {
     description: (0, _i18n.__)('Only public WordPress themes are supported', 'elementor'),
     settingKey: "theme",
     onSettingChange: handleToggleChange,
-    disabled: isImport && !(contextData !== null && contextData !== void 0 && (_contextData$data4 = contextData.data) !== null && _contextData$data4 !== void 0 && (_contextData$data4 = _contextData$data4.uploadedData) !== null && _contextData$data4 !== void 0 && (_contextData$data4 = _contextData$data4.manifest) !== null && _contextData$data4 !== void 0 && (_contextData$data4 = _contextData$data4['site-settings']) !== null && _contextData$data4 !== void 0 && _contextData$data4.theme)
-  })));
+    disabled: isImport && !(contextData !== null && contextData !== void 0 && (_contextData$data11 = contextData.data) !== null && _contextData$data11 !== void 0 && (_contextData$data11 = _contextData$data11.uploadedData) !== null && _contextData$data11 !== void 0 && (_contextData$data11 = _contextData$data11.manifest) !== null && _contextData$data11 !== void 0 && (_contextData$data11 = _contextData$data11['site-settings']) !== null && _contextData$data11 !== void 0 && _contextData$data11.theme)
+  }), showClassesVariablesSection && /*#__PURE__*/_react.default.createElement(_classesVariablesSection.ClassesVariablesSection, {
+    settings: {
+      classes: (_settings$classes = settings.classes) !== null && _settings$classes !== void 0 ? _settings$classes : false,
+      variables: (_settings$variables = settings.variables) !== null && _settings$variables !== void 0 ? _settings$variables : false,
+      classesOverrideAll: (_settings$classesOver = settings.classesOverrideAll) !== null && _settings$classesOver !== void 0 ? _settings$classesOver : false,
+      variablesOverrideAll: (_settings$variablesOv = settings.variablesOverrideAll) !== null && _settings$variablesOv !== void 0 ? _settings$variablesOv : false
+    },
+    onSettingChange: handleClassesVariablesChange,
+    isImport: isImport,
+    classesExported: !classesNotExported && showClassesSection,
+    variablesExported: !variablesNotExported && showVariablesSection,
+    classesLimitExceeded: classesLimitExceeded,
+    variablesLimitExceeded: variablesLimitExceeded,
+    classesOverLimitCount: classesOverLimitCount,
+    variablesOverLimitCount: variablesOverLimitCount,
+    onClassesReviewClick: handleClassesReviewClick,
+    onVariablesReviewClick: handleVariablesReviewClick,
+    notExported: classesVariablesNotExported
+  }))), /*#__PURE__*/_react.default.createElement(_overrideConfirmationDialog.OverrideConfirmationDialog, {
+    open: confirmationDialog.open,
+    onClose: handleConfirmationClose,
+    onConfirm: handleConfirmationConfirm,
+    type: confirmationDialog.type
+  }));
 }
 KitSettingsCustomizationDialog.propTypes = {
   open: _propTypes.default.bool.isRequired,
@@ -10550,9 +11021,9 @@ Object.defineProperty(exports, "__esModule", ({
 exports["default"] = PageHeader;
 var _react = _interopRequireDefault(__webpack_require__(/*! react */ "react"));
 var _extends2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime/helpers/extends */ "../node_modules/@babel/runtime/helpers/extends.js"));
+var _icons = __webpack_require__(/*! @elementor/icons */ "@elementor/icons");
 var _ui = __webpack_require__(/*! @elementor/ui */ "@elementor/ui");
 var _propTypes = _interopRequireDefault(__webpack_require__(/*! prop-types */ "../node_modules/prop-types/index.js"));
-var _icons = __webpack_require__(/*! ../icons */ "../app/modules/import-export-customization/assets/js/shared/components/icons/index.js");
 var _useContextDetection2 = _interopRequireDefault(__webpack_require__(/*! ../../hooks/use-context-detection */ "../app/modules/import-export-customization/assets/js/shared/hooks/use-context-detection.js"));
 var ElementorLogo = function ElementorLogo(props) {
   return /*#__PURE__*/_react.default.createElement(_ui.SvgIcon, (0, _extends2.default)({
@@ -10669,6 +11140,135 @@ function TopBar(props) {
 TopBar.propTypes = {
   children: _propTypes.default.node,
   sx: _propTypes.default.object
+};
+
+/***/ }),
+
+/***/ "../app/modules/import-export-customization/assets/js/shared/components/override-confirmation-dialog.js":
+/*!**************************************************************************************************************!*\
+  !*** ../app/modules/import-export-customization/assets/js/shared/components/override-confirmation-dialog.js ***!
+  \**************************************************************************************************************/
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+"use strict";
+
+
+var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault */ "../node_modules/@babel/runtime/helpers/interopRequireDefault.js");
+Object.defineProperty(exports, "__esModule", ({
+  value: true
+}));
+exports.OverrideConfirmationDialog = OverrideConfirmationDialog;
+var _react = _interopRequireDefault(__webpack_require__(/*! react */ "react"));
+var _ui = __webpack_require__(/*! @elementor/ui */ "@elementor/ui");
+var _icons = __webpack_require__(/*! @elementor/icons */ "@elementor/icons");
+var _i18n = __webpack_require__(/*! @wordpress/i18n */ "@wordpress/i18n");
+var _propTypes = _interopRequireDefault(__webpack_require__(/*! prop-types */ "../node_modules/prop-types/index.js"));
+var getDialogContent = function getDialogContent(type) {
+  switch (type) {
+    case 'both':
+      return {
+        title: (0, _i18n.__)('Override all classes and variables?', 'elementor'),
+        description: (0, _i18n.__)('This will delete all existing classes and variables and replace them with the imported ones. This action cannot be undone.', 'elementor')
+      };
+    case 'variables':
+      return {
+        title: (0, _i18n.__)('Override all variables?', 'elementor'),
+        description: (0, _i18n.__)('This will delete all existing variables and replace them with the imported ones. This action cannot be undone.', 'elementor')
+      };
+    case 'classes':
+    default:
+      return {
+        title: (0, _i18n.__)('Override all classes?', 'elementor'),
+        description: (0, _i18n.__)('This will delete all existing classes and replace them with the imported ones. This action cannot be undone.', 'elementor')
+      };
+  }
+};
+function OverrideConfirmationDialog(_ref) {
+  var open = _ref.open,
+    onClose = _ref.onClose,
+    onConfirm = _ref.onConfirm,
+    _ref$type = _ref.type,
+    type = _ref$type === void 0 ? 'classes' : _ref$type;
+  var _getDialogContent = getDialogContent(type),
+    title = _getDialogContent.title,
+    description = _getDialogContent.description;
+  return /*#__PURE__*/_react.default.createElement(_ui.Dialog, {
+    open: open,
+    onClose: onClose,
+    maxWidth: "xs",
+    fullWidth: true
+  }, /*#__PURE__*/_react.default.createElement(_ui.DialogContent, {
+    sx: {
+      pt: 2,
+      pb: 1.5
+    }
+  }, /*#__PURE__*/_react.default.createElement(_ui.Stack, {
+    spacing: 1.5
+  }, /*#__PURE__*/_react.default.createElement(_ui.Stack, {
+    direction: "row",
+    justifyContent: "space-between",
+    alignItems: "flex-start"
+  }, /*#__PURE__*/_react.default.createElement(_ui.Stack, {
+    direction: "row",
+    spacing: 1.5,
+    alignItems: "flex-start",
+    sx: {
+      flex: 1
+    }
+  }, /*#__PURE__*/_react.default.createElement(_icons.AlertTriangleFilledIcon, {
+    sx: {
+      color: 'warning.dark',
+      fontSize: 24,
+      flexShrink: 0
+    }
+  }), /*#__PURE__*/_react.default.createElement(_ui.Typography, {
+    variant: "subtitle1",
+    sx: {
+      fontWeight: 500
+    }
+  }, title)), /*#__PURE__*/_react.default.createElement(_ui.Button, {
+    onClick: onClose,
+    sx: {
+      minWidth: 'auto',
+      p: 0.5,
+      color: 'text.primary'
+    }
+  }, /*#__PURE__*/_react.default.createElement(_icons.XIcon, {
+    sx: {
+      fontSize: 20
+    }
+  }))), /*#__PURE__*/_react.default.createElement(_ui.Typography, {
+    variant: "body2",
+    color: "text.secondary",
+    sx: {
+      pr: 1
+    }
+  }, description))), /*#__PURE__*/_react.default.createElement(_ui.DialogActions, {
+    sx: {
+      px: 3,
+      pb: 2
+    }
+  }, /*#__PURE__*/_react.default.createElement(_ui.Button, {
+    onClick: onClose,
+    color: "secondary",
+    variant: "text"
+  }, (0, _i18n.__)('Cancel', 'elementor')), /*#__PURE__*/_react.default.createElement(_ui.Button, {
+    onClick: onConfirm,
+    variant: "contained",
+    sx: {
+      color: 'white',
+      backgroundColor: 'warning.main',
+      '&:hover': {
+        backgroundColor: 'warning.dark'
+      }
+    }
+  }, (0, _i18n.__)('Save and override', 'elementor'))));
+}
+OverrideConfirmationDialog.propTypes = {
+  open: _propTypes.default.bool.isRequired,
+  onClose: _propTypes.default.func.isRequired,
+  onConfirm: _propTypes.default.func.isRequired,
+  type: _propTypes.default.oneOf(['classes', 'variables', 'both'])
 };
 
 /***/ }),
@@ -10866,6 +11466,154 @@ var ImportExportError = exports.ImportExportError = /*#__PURE__*/function (_Erro
   (0, _inherits2.default)(ImportExportError, _Error);
   return (0, _createClass2.default)(ImportExportError);
 }(/*#__PURE__*/(0, _wrapNativeSuper2.default)(Error));
+
+/***/ }),
+
+/***/ "../app/modules/import-export-customization/assets/js/shared/hooks/use-classes-variables-limits.js":
+/*!*********************************************************************************************************!*\
+  !*** ../app/modules/import-export-customization/assets/js/shared/hooks/use-classes-variables-limits.js ***!
+  \*********************************************************************************************************/
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+"use strict";
+
+
+var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault */ "../node_modules/@babel/runtime/helpers/interopRequireDefault.js");
+Object.defineProperty(exports, "__esModule", ({
+  value: true
+}));
+exports.useClassesVariablesLimits = useClassesVariablesLimits;
+var _regenerator = _interopRequireDefault(__webpack_require__(/*! @babel/runtime/regenerator */ "../node_modules/@babel/runtime/regenerator/index.js"));
+var _asyncToGenerator2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime/helpers/asyncToGenerator */ "../node_modules/@babel/runtime/helpers/asyncToGenerator.js"));
+var _slicedToArray2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime/helpers/slicedToArray */ "../node_modules/@babel/runtime/helpers/slicedToArray.js"));
+var _react = __webpack_require__(/*! react */ "react");
+var _useTabFocus = __webpack_require__(/*! ./use-tab-focus */ "../app/modules/import-export-customization/assets/js/shared/hooks/use-tab-focus.js");
+var DEFAULT_CLASSES_LIMIT = 100;
+var DEFAULT_VARIABLES_LIMIT = 100;
+function getLimitsFromConfig() {
+  var _window$elementorAppC, _config$limits$classe, _config$limits, _config$limits$variab, _config$limits2;
+  var config = (_window$elementorAppC = window.elementorAppConfig) === null || _window$elementorAppC === void 0 ? void 0 : _window$elementorAppC['import-export-customization'];
+  return {
+    classes: (_config$limits$classe = config === null || config === void 0 || (_config$limits = config.limits) === null || _config$limits === void 0 ? void 0 : _config$limits.classes) !== null && _config$limits$classe !== void 0 ? _config$limits$classe : DEFAULT_CLASSES_LIMIT,
+    variables: (_config$limits$variab = config === null || config === void 0 || (_config$limits2 = config.limits) === null || _config$limits2 === void 0 ? void 0 : _config$limits2.variables) !== null && _config$limits$variab !== void 0 ? _config$limits$variab : DEFAULT_VARIABLES_LIMIT
+  };
+}
+function useClassesVariablesLimits(_ref) {
+  var open = _ref.open,
+    isImport = _ref.isImport;
+  var _useState = (0, _react.useState)(0),
+    _useState2 = (0, _slicedToArray2.default)(_useState, 2),
+    existingClassesCount = _useState2[0],
+    setExistingClassesCount = _useState2[1];
+  var _useState3 = (0, _react.useState)(0),
+    _useState4 = (0, _slicedToArray2.default)(_useState3, 2),
+    existingVariablesCount = _useState4[0],
+    setExistingVariablesCount = _useState4[1];
+  var _useState5 = (0, _react.useState)(false),
+    _useState6 = (0, _slicedToArray2.default)(_useState5, 2),
+    isLoading = _useState6[0],
+    setIsLoading = _useState6[1];
+  var _useState7 = (0, _react.useState)(null),
+    _useState8 = (0, _slicedToArray2.default)(_useState7, 2),
+    error = _useState8[0],
+    setError = _useState8[1];
+  var limits = (0, _react.useMemo)(function () {
+    return getLimitsFromConfig();
+  }, []);
+  var fetchCounts = (0, _react.useCallback)(/*#__PURE__*/(0, _asyncToGenerator2.default)(/*#__PURE__*/_regenerator.default.mark(function _callee() {
+    var _window$wpApiSettings, _window$wpApiSettings2, baseUrl, nonce, _yield$Promise$all, _yield$Promise$all2, classesResponse, variablesResponse, classesData, classesCount, _variablesData$data, variablesData, variablesCount, _t;
+    return _regenerator.default.wrap(function (_context) {
+      while (1) switch (_context.prev = _context.next) {
+        case 0:
+          if (!(!open || !isImport)) {
+            _context.next = 1;
+            break;
+          }
+          return _context.abrupt("return");
+        case 1:
+          setIsLoading(true);
+          setError(null);
+          _context.prev = 2;
+          baseUrl = ((_window$wpApiSettings = window.wpApiSettings) === null || _window$wpApiSettings === void 0 ? void 0 : _window$wpApiSettings.root) || '/wp-json/';
+          nonce = ((_window$wpApiSettings2 = window.wpApiSettings) === null || _window$wpApiSettings2 === void 0 ? void 0 : _window$wpApiSettings2.nonce) || '';
+          _context.next = 3;
+          return Promise.all([fetch("".concat(baseUrl, "elementor/v1/global-classes"), {
+            headers: {
+              'X-WP-Nonce': nonce
+            }
+          }), fetch("".concat(baseUrl, "elementor/v1/variables/list"), {
+            headers: {
+              'X-WP-Nonce': nonce
+            }
+          })]);
+        case 3:
+          _yield$Promise$all = _context.sent;
+          _yield$Promise$all2 = (0, _slicedToArray2.default)(_yield$Promise$all, 2);
+          classesResponse = _yield$Promise$all2[0];
+          variablesResponse = _yield$Promise$all2[1];
+          if (!classesResponse.ok) {
+            _context.next = 5;
+            break;
+          }
+          _context.next = 4;
+          return classesResponse.json();
+        case 4:
+          classesData = _context.sent;
+          classesCount = Object.keys((classesData === null || classesData === void 0 ? void 0 : classesData.data) || {}).length;
+          setExistingClassesCount(classesCount);
+        case 5:
+          if (!variablesResponse.ok) {
+            _context.next = 7;
+            break;
+          }
+          _context.next = 6;
+          return variablesResponse.json();
+        case 6:
+          variablesData = _context.sent;
+          variablesCount = (variablesData === null || variablesData === void 0 || (_variablesData$data = variablesData.data) === null || _variablesData$data === void 0 ? void 0 : _variablesData$data.total) || 0;
+          setExistingVariablesCount(variablesCount);
+        case 7:
+          _context.next = 9;
+          break;
+        case 8:
+          _context.prev = 8;
+          _t = _context["catch"](2);
+          setError(_t);
+        case 9:
+          _context.prev = 9;
+          setIsLoading(false);
+          return _context.finish(9);
+        case 10:
+        case "end":
+          return _context.stop();
+      }
+    }, _callee, null, [[2, 8, 9, 10]]);
+  })), [open, isImport]);
+  (0, _react.useEffect)(function () {
+    fetchCounts();
+  }, [fetchCounts]);
+  (0, _useTabFocus.useTabFocus)(fetchCounts);
+  var calculateLimitInfo = (0, _react.useCallback)(function (existingCount, importedCount, limit) {
+    var totalAfterImport = existingCount + importedCount;
+    var isExceeded = totalAfterImport > limit;
+    var overLimitCount = isExceeded ? totalAfterImport - limit : 0;
+    return {
+      isExceeded: isExceeded,
+      overLimitCount: overLimitCount,
+      totalAfterImport: totalAfterImport
+    };
+  }, []);
+  return {
+    existingClassesCount: existingClassesCount,
+    existingVariablesCount: existingVariablesCount,
+    classesLimit: limits.classes,
+    variablesLimit: limits.variables,
+    isLoading: isLoading,
+    error: error,
+    calculateLimitInfo: calculateLimitInfo,
+    refetch: fetchCounts
+  };
+}
 
 /***/ }),
 
@@ -11214,6 +11962,36 @@ function useReturnToRedirect(returnTo) {
 
 /***/ }),
 
+/***/ "../app/modules/import-export-customization/assets/js/shared/hooks/use-tab-focus.js":
+/*!******************************************************************************************!*\
+  !*** ../app/modules/import-export-customization/assets/js/shared/hooks/use-tab-focus.js ***!
+  \******************************************************************************************/
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", ({
+  value: true
+}));
+exports.useTabFocus = useTabFocus;
+var _react = __webpack_require__(/*! react */ "react");
+function useTabFocus(callback) {
+  (0, _react.useEffect)(function () {
+    var handleVisibilityChange = function handleVisibilityChange() {
+      if ('visible' === document.visibilityState) {
+        callback();
+      }
+    };
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    return function () {
+      return document.removeEventListener('visibilitychange', handleVisibilityChange);
+    };
+  }, [callback]);
+}
+
+/***/ }),
+
 /***/ "../app/modules/import-export-customization/assets/js/shared/kit-content-data.js":
 /*!***************************************************************************************!*\
   !*** ../app/modules/import-export-customization/assets/js/shared/kit-content-data.js ***!
@@ -11258,7 +12036,7 @@ var kitContentData = [{
   data: {
     title: __('Settings & configurations', 'elementor'),
     features: {
-      open: [__('Global Colors', 'elementor'), __('Global Fonts', 'elementor'), __('Theme Style Settings', 'elementor'), __('Layout Settings', 'elementor'), __('Lightbox Settings', 'elementor'), __('Background Settings', 'elementor'), __('Custom Fonts', 'elementor'), __('Icons', 'elementor'), __('Code', 'elementor')]
+      open: [__('Classes', 'elementor'), __('Variables', 'elementor'), __('Global Colors', 'elementor'), __('Global Fonts', 'elementor'), __('Theme Style Settings', 'elementor'), __('Layout Settings', 'elementor'), __('Lightbox Settings', 'elementor'), __('Background Settings', 'elementor'), __('Custom Fonts', 'elementor'), __('Icons', 'elementor'), __('Code', 'elementor')]
     }
   },
   dialog: _kitSettingsCustomizationDialog.KitSettingsCustomizationDialog,
@@ -18391,7 +19169,6 @@ var KitLibrary = exports["default"] = /*#__PURE__*/function () {
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
 "use strict";
-/* provided dependency */ var React = __webpack_require__(/*! react */ "react");
 
 
 var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault */ "../node_modules/@babel/runtime/helpers/interopRequireDefault.js");
@@ -18402,13 +19179,54 @@ exports["default"] = void 0;
 var _createClass2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime/helpers/createClass */ "../node_modules/@babel/runtime/helpers/createClass.js"));
 var _classCallCheck2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime/helpers/classCallCheck */ "../node_modules/@babel/runtime/helpers/classCallCheck.js"));
 var _router = _interopRequireDefault(__webpack_require__(/*! @elementor/router */ "@elementor/router"));
+var _react = _interopRequireDefault(__webpack_require__(/*! react */ "react"));
+var LazyApp = _react.default.lazy(function () {
+  return Promise.resolve(/*! import() */).then(__webpack_require__.t.bind(__webpack_require__, /*! @elementor/onboarding */ "@elementor/onboarding", 23)).then(function (module) {
+    return {
+      default: module.App
+    };
+  });
+});
 var Onboarding = exports["default"] = /*#__PURE__*/(0, _createClass2.default)(function Onboarding() {
   (0, _classCallCheck2.default)(this, Onboarding);
   _router.default.addRoute({
     path: '/onboarding/*',
-    component: React.lazy(function () {
-      return Promise.all(/*! import() | onboarding */[__webpack_require__.e("app_modules_onboarding_assets_js_utils_modules_post-onboarding-tracker_js"), __webpack_require__.e("onboarding")]).then(__webpack_require__.bind(__webpack_require__, /*! ./app */ "../app/modules/onboarding/assets/js/app.js"));
-    })
+    component: LazyApp
+  });
+});
+
+/***/ }),
+
+/***/ "../app/modules/site-builder/assets/js/module.js":
+/*!*******************************************************!*\
+  !*** ../app/modules/site-builder/assets/js/module.js ***!
+  \*******************************************************/
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+"use strict";
+
+
+var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault */ "../node_modules/@babel/runtime/helpers/interopRequireDefault.js");
+Object.defineProperty(exports, "__esModule", ({
+  value: true
+}));
+exports["default"] = void 0;
+var _createClass2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime/helpers/createClass */ "../node_modules/@babel/runtime/helpers/createClass.js"));
+var _classCallCheck2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime/helpers/classCallCheck */ "../node_modules/@babel/runtime/helpers/classCallCheck.js"));
+var _router = _interopRequireDefault(__webpack_require__(/*! @elementor/router */ "@elementor/router"));
+var _react = _interopRequireDefault(__webpack_require__(/*! react */ "react"));
+var LazyApp = _react.default.lazy(function () {
+  return Promise.resolve(/*! import() */).then(__webpack_require__.t.bind(__webpack_require__, /*! @elementor/site-builder */ "@elementor/site-builder", 23)).then(function (module) {
+    return {
+      default: module.App
+    };
+  });
+});
+var SiteBuilder = exports["default"] = /*#__PURE__*/(0, _createClass2.default)(function SiteBuilder() {
+  (0, _classCallCheck2.default)(this, SiteBuilder);
+  _router.default.addRoute({
+    path: '/site-builder/*',
+    component: LazyApp
   });
 });
 
@@ -18506,7 +19324,9 @@ var eventsConfig = {
     aiGenerate: 'ai_generate',
     resultsUpdated: 'results_updated',
     noResults: 'no_results',
-    selected: 'selected'
+    selected: 'selected',
+    promotionViewed: 'promotion_viewed',
+    upgradeNow: 'upgrade_now'
   },
   targetNames: {
     publishDropdown: {
@@ -18553,7 +19373,10 @@ var eventsConfig = {
     structurePanel: 'Structure Panel',
     canvas: 'Canvas',
     leftPanel: 'Left Panel',
-    elementorLibrary: 'Elementor Library'
+    elementorLibrary: 'Elementor Library',
+    components: {
+      instanceEditingPanel: 'Instance Editing Panel'
+    }
   },
   secondaryLocations: {
     layout: 'Layout Section',
@@ -18686,6 +19509,7 @@ var eventsConfig = {
     },
     // ChecklistSteps event names are generated dynamically, based on stepId and action type taken: title, action, done, undone, upgrade
     elementorEditor: {
+      editorLoaded: 'editor_loaded',
       checklist: {
         checklistHeaderClose: 'checklist_header_close_icon',
         checklistFirstPopup: 'checklist popup triggered'
@@ -18702,7 +19526,17 @@ var eventsConfig = {
       save: 'save_new_variable',
       openManager: 'open_variables_manager',
       saveChanges: 'save_variables_changes',
-      delete: 'delete_variable'
+      delete: 'delete_variable',
+      variableSyncToV3: 'variable_sync_to_v3'
+    },
+    design_system: {
+      importOpened: 'design_system_import_opened',
+      fileSelected: 'design_system_file_selected',
+      validationFailed: 'design_system_validation_failed',
+      conflictChoice: 'design_system_conflict_choice',
+      confirmed: 'design_system_import_confirmed',
+      imported: 'design_system_imported',
+      importFailed: 'design_system_import_failed'
     },
     components: {
       createClicked: 'component_create_clicked',
@@ -18713,7 +19547,8 @@ var eventsConfig = {
       propertiesPanelOpened: 'component_properties_panel_opened',
       propertiesGroupCreated: 'component_properties_group_created',
       propertyExposed: 'component_property_exposed',
-      propertyRemoved: 'component_property_removed'
+      propertyRemoved: 'component_property_removed',
+      detached: 'component_detached'
     },
     global_classes: {
       classApplied: 'class_applied',
@@ -18733,7 +19568,10 @@ var eventsConfig = {
       classStyled: 'class_styled',
       classStateClicked: 'class_state_clicked',
       classUsageClicked: 'class_usage_clicked',
-      classDuplicate: 'class_duplicate'
+      classDuplicate: 'class_duplicate',
+      classSyncToV3PopupShown: 'class_sync_to_v3_popup_shown',
+      classSyncToV3: 'class_sync_to_v3',
+      classSyncToV3PopupClick: 'class_sync_to_v3_popup_click'
     },
     editorOne: {
       topBarPublishDropdown: 'top_bar_publish_dropdown',
@@ -18747,6 +19585,13 @@ var eventsConfig = {
       finderResultSelect: 'finder_result_select',
       canvasEmptyBoxAction: 'canvas_empty_box_action',
       widgetPanelSearch: 'widget_panel_search'
+    },
+    interactions: {
+      created: 'interactions_created'
+    },
+    promotions: {
+      viewPromotion: 'view_promotion',
+      upgradePromotionClick: 'upgrade_promotion_click'
     }
   }
 };
@@ -29164,6 +30009,17 @@ module.exports = elementorV2.icons;
 
 /***/ }),
 
+/***/ "@elementor/onboarding":
+/*!*****************************************!*\
+  !*** external "elementorV2.onboarding" ***!
+  \*****************************************/
+/***/ ((module) => {
+
+"use strict";
+module.exports = elementorV2.onboarding;
+
+/***/ }),
+
 /***/ "@elementor/router":
 /*!**********************************************!*\
   !*** external "elementorAppPackages.router" ***!
@@ -29172,6 +30028,17 @@ module.exports = elementorV2.icons;
 
 "use strict";
 module.exports = elementorAppPackages.router;
+
+/***/ }),
+
+/***/ "@elementor/site-builder":
+/*!**********************************************!*\
+  !*** external ["elementorV2","siteBuilder"] ***!
+  \**********************************************/
+/***/ ((module) => {
+
+"use strict";
+module.exports = elementorV2.siteBuilder;
 
 /***/ }),
 
@@ -29272,6 +30139,36 @@ module.exports = ReactDOM;
 /******/ 		};
 /******/ 	})();
 /******/ 	
+/******/ 	/* webpack/runtime/create fake namespace object */
+/******/ 	(() => {
+/******/ 		var getProto = Object.getPrototypeOf ? (obj) => (Object.getPrototypeOf(obj)) : (obj) => (obj.__proto__);
+/******/ 		var leafPrototypes;
+/******/ 		// create a fake namespace object
+/******/ 		// mode & 1: value is a module id, require it
+/******/ 		// mode & 2: merge all properties of value into the ns
+/******/ 		// mode & 4: return value when already ns object
+/******/ 		// mode & 16: return value when it's Promise-like
+/******/ 		// mode & 8|1: behave like require
+/******/ 		__webpack_require__.t = function(value, mode) {
+/******/ 			if(mode & 1) value = this(value);
+/******/ 			if(mode & 8) return value;
+/******/ 			if(typeof value === 'object' && value) {
+/******/ 				if((mode & 4) && value.__esModule) return value;
+/******/ 				if((mode & 16) && typeof value.then === 'function') return value;
+/******/ 			}
+/******/ 			var ns = Object.create(null);
+/******/ 			__webpack_require__.r(ns);
+/******/ 			var def = {};
+/******/ 			leafPrototypes = leafPrototypes || [null, getProto({}), getProto([]), getProto(getProto)];
+/******/ 			for(var current = mode & 2 && value; (typeof current == 'object' || typeof current == 'function') && !~leafPrototypes.indexOf(current); current = getProto(current)) {
+/******/ 				Object.getOwnPropertyNames(current).forEach((key) => (def[key] = () => (value[key])));
+/******/ 			}
+/******/ 			def['default'] = () => (value);
+/******/ 			__webpack_require__.d(ns, def);
+/******/ 			return ns;
+/******/ 		};
+/******/ 	})();
+/******/ 	
 /******/ 	/* webpack/runtime/define property getters */
 /******/ 	(() => {
 /******/ 		// define getter functions for harmony exports
@@ -29303,9 +30200,7 @@ module.exports = ReactDOM;
 /******/ 		__webpack_require__.u = (chunkId) => {
 /******/ 			// return url for filenames not based on template
 /******/ 			if (chunkId === "vendors-node_modules_react-query_devtools_index_js") return "e459c6c89c0c0899c850.bundle.js";
-/******/ 			if (chunkId === "kit-library") return "" + chunkId + ".9c4bbee79edf32c6fcb3.bundle.js";
-/******/ 			if (chunkId === "app_modules_onboarding_assets_js_utils_modules_post-onboarding-tracker_js") return "1144a7ccb8f8bf9d8772.bundle.js";
-/******/ 			if (chunkId === "onboarding") return "" + chunkId + ".1dee18bcb9565fe7a98e.bundle.js";
+/******/ 			if (chunkId === "kit-library") return "" + chunkId + ".b768952e1d4177aa68d8.bundle.js";
 /******/ 			// return url for filenames based on template
 /******/ 			return undefined;
 /******/ 		};
@@ -29520,14 +30415,18 @@ var _module = _interopRequireDefault(__webpack_require__(/*! ../../modules/impor
 var _module2 = _interopRequireDefault(__webpack_require__(/*! ../../modules/import-export-customization/assets/js/module */ "../app/modules/import-export-customization/assets/js/module.js"));
 var _module3 = _interopRequireDefault(__webpack_require__(/*! ../../modules/kit-library/assets/js/module */ "../app/modules/kit-library/assets/js/module.js"));
 var _module4 = _interopRequireDefault(__webpack_require__(/*! ../../modules/onboarding/assets/js/module */ "../app/modules/onboarding/assets/js/module.js"));
+var _module5 = _interopRequireDefault(__webpack_require__(/*! ../../modules/site-builder/assets/js/module */ "../app/modules/site-builder/assets/js/module.js"));
 var _siteEditor = __webpack_require__(/*! @elementor/site-editor */ "@elementor/site-editor");
 var _appContext = _interopRequireDefault(__webpack_require__(/*! ./app-context */ "../app/assets/js/app-context.js"));
-var _elementorCommon;
+var _elementorCommon, _elementorCommon2;
 new _module.default();
 new _module3.default();
 new _siteEditor.Module();
+if ((_elementorCommon = elementorCommon) !== null && _elementorCommon !== void 0 && (_elementorCommon = _elementorCommon.config) !== null && _elementorCommon !== void 0 && (_elementorCommon = _elementorCommon.experimentalFeatures) !== null && _elementorCommon !== void 0 && _elementorCommon['site-builder']) {
+  new _module5.default();
+}
 new _module4.default();
-if ((_elementorCommon = elementorCommon) !== null && _elementorCommon !== void 0 && (_elementorCommon = _elementorCommon.config) !== null && _elementorCommon !== void 0 && (_elementorCommon = _elementorCommon.experimentalFeatures) !== null && _elementorCommon !== void 0 && _elementorCommon['import-export-customization']) {
+if ((_elementorCommon2 = elementorCommon) !== null && _elementorCommon2 !== void 0 && (_elementorCommon2 = _elementorCommon2.config) !== null && _elementorCommon2 !== void 0 && (_elementorCommon2 = _elementorCommon2.experimentalFeatures) !== null && _elementorCommon2 !== void 0 && _elementorCommon2['import-export-customization']) {
   new _module2.default();
 }
 var AppWrapper = _react.default.Fragment;

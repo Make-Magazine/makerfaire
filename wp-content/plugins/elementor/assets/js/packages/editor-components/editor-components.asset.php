@@ -16,7 +16,7 @@ return [
 		'elementor-v2-editor-editing-panel',
 		'elementor-v2-editor-elements',
 		'elementor-v2-editor-elements-panel',
-		'elementor-v2-editor-mcp',
+		'elementor-v2-editor-global-classes',
 		'elementor-v2-editor-notifications',
 		'elementor-v2-editor-panels',
 		'elementor-v2-editor-props',
@@ -32,7 +32,6 @@ return [
 		'elementor-v2-ui',
 		'elementor-v2-utils',
 		'react',
-		'react-dom',
 		'wp-i18n',
 	],
 ];

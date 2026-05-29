@@ -1451,6 +1451,7 @@ var ControlsPopover = exports["default"] = /*#__PURE__*/function () {
     key: "onResetButtonClick",
     value: function onResetButtonClick() {
       this.$popover.hide();
+      this.$popover.trigger('hide');
       var groupControlName = this.child.model.get('groupPrefix') + 'typography',
         args = {
           container: this.child.options.container,

@@ -1,7 +1,7 @@
 @font-face {
   font-family: "eicons";
-  src: url("../fonts/eicons.eot?5.47.0");
-  src: url("../fonts/eicons.eot?5.47.0#iefix") format("embedded-opentype"), url("../fonts/eicons.woff2?5.47.0") format("woff2"), url("../fonts/eicons.woff?5.47.0") format("woff"), url("../fonts/eicons.ttf?5.47.0") format("truetype"), url("../fonts/eicons.svg?5.47.0#eicon") format("svg");
+  src: url("../fonts/eicons.eot?5.49.0");
+  src: url("../fonts/eicons.eot?5.49.0#iefix") format("embedded-opentype"), url("../fonts/eicons.woff2?5.49.0") format("woff2"), url("../fonts/eicons.woff?5.49.0") format("woff"), url("../fonts/eicons.ttf?5.49.0") format("truetype"), url("../fonts/eicons.svg?5.49.0#eicon") format("svg");
   font-weight: normal;
   font-style: normal;
 }
@@ -2025,6 +2025,30 @@
 
 .eicon-atomic-text-area:before {
   content: "\e9f2";
+}
+
+.eicon-atomic-select:before {
+  content: "\e9f3";
+}
+
+.eicon-atomic-checkbox:before {
+  content: "\e9f4";
+}
+
+.eicon-atomic-radiobutton:before {
+  content: "\e9f5";
+}
+
+.eicon-atomic-file-upload:before {
+  content: "\ebe9";
+}
+
+.eicon-atomic-time-picker:before {
+  content: "\ebea";
+}
+
+.eicon-atomic-date-picker:before {
+  content: "\ebeb";
 }
 
 .eicon-eye:before {

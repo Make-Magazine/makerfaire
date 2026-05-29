@@ -94,6 +94,7 @@ class Variables_Service {
 		}
 
 		$variable = Variable::from_array( $data );
+		$variable->validate();
 
 		$collection->add_variable( $variable );
 
@@ -121,6 +122,7 @@ class Variables_Service {
 		}
 
 		$variable->apply_changes( $data );
+		$variable->validate();
 
 		$watermark = $this->repo->save( $collection );
 
@@ -165,13 +167,18 @@ class Variables_Service {
 		$collection = $this->repo->load();
 		$variable = $collection->find_or_fail( $id );
 
-		$collection->assert_limit_not_reached();
+		$label = $variable->label();
 
 		if ( isset( $overrides['label'] ) ) {
-			$collection->assert_label_is_unique( $overrides['label'], $variable->id() );
+			$label = $overrides['label'];
 		}
 
+		$collection->assert_limit_not_reached();
+
+		$collection->assert_label_is_unique( $label, $variable->id() );
+
 		$variable->apply_changes( $overrides );
+		$variable->validate();
 
 		$variable->restore();
 

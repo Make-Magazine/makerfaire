@@ -1,3 +1,4 @@
+__( 'Container', 'elementor' );
 __( 'Direction Column', 'elementor' );
 __( 'Direction Row', 'elementor' );
 __( 'Cancel', 'elementor' );

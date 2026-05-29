@@ -884,7 +884,7 @@ var _scroll = _interopRequireDefault(__webpack_require__(/*! ./imports/utils/scr
 var _forceMethodImplementation = _interopRequireDefault(__webpack_require__(/*! ./imports/force-method-implementation */ "../assets/dev/js/modules/imports/force-method-implementation.js"));
 var _templateRegistryHelpers = __webpack_require__(/*! ../../../../app/modules/import-export-customization/assets/js/shared/utils/template-registry-helpers */ "../app/modules/import-export-customization/assets/js/shared/utils/template-registry-helpers.js");
 var _customizationDialogs = __webpack_require__(/*! ../../../../app/modules/import-export-customization/assets/js/shared/registry/customization-dialogs */ "../app/modules/import-export-customization/assets/js/shared/registry/customization-dialogs.js");
-var _default = exports["default"] = window.elementorModules = {
+var baseModules = {
   Module: _module.default,
   ViewModule: _viewModule.default,
   ArgsObject: _argsObject.default,
@@ -898,6 +898,12 @@ var _default = exports["default"] = window.elementorModules = {
     customizationDialogsRegistry: _customizationDialogs.customizationDialogsRegistry
   }
 };
+if (!window.elementorModules) {
+  window.elementorModules = baseModules;
+} else {
+  Object.assign(window.elementorModules, baseModules);
+}
+var _default = exports["default"] = window.elementorModules;
 
 /***/ }),
 
@@ -929,6 +935,11 @@ var _default = exports["default"] = /*#__PURE__*/function (_Marionette$LayoutVie
   }
   (0, _inherits2.default)(_default, _Marionette$LayoutVie);
   return (0, _createClass2.default)(_default, [{
+    key: "tagName",
+    value: function tagName() {
+      return 'header';
+    }
+  }, {
     key: "className",
     value: function className() {
       return 'elementor-templates-modal__header';

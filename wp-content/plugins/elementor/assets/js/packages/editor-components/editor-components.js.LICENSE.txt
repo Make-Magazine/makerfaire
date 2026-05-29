@@ -1,14 +1,16 @@
-/*! ../../../store/store */
+/*! ../../../prop-types/component-instance-override-prop-type */
+
+/*! ../../../prop-types/component-overridable-prop-type */
+
+/*! ../../../provider/component-instance-context */
+
+/*! ../../../utils/resolve-override-prop-value */
+
+/*! ../../../utils/resolve-overrides-chain */
 
 /*! ../../api */
 
-/*! ../../components/create-component-form/utils/replace-element-with-component */
-
-/*! ../../create-component-type */
-
-/*! ../../hooks/use-canvas-document */
-
-/*! ../../hooks/use-component-instance-settings */
+/*! ../../errors */
 
 /*! ../../hooks/use-components */
 
@@ -16,11 +18,7 @@
 
 /*! ../../hooks/use-controls-by-widget-type */
 
-/*! ../../hooks/use-element-rect */
-
-/*! ../../hooks/use-navigate-back */
-
-/*! ../../prevent-non-atomic-nesting */
+/*! ../../hooks/use-sanitize-overridable-props */
 
 /*! ../../prop-types/component-instance-override-prop-type */
 
@@ -30,79 +28,45 @@
 
 /*! ../../prop-types/component-overridable-prop-type */
 
+/*! ../../provider/component-instance-context */
+
 /*! ../../provider/overridable-prop-context */
-
-/*! ../../store/actions/add-overridable-group */
-
-/*! ../../store/actions/archive-component */
-
-/*! ../../store/actions/create-unpublished-component */
-
-/*! ../../store/actions/delete-overridable-group */
-
-/*! ../../store/actions/delete-overridable-prop */
-
-/*! ../../store/actions/load-components-assets */
-
-/*! ../../store/actions/rename-component */
-
-/*! ../../store/actions/rename-overridable-group */
-
-/*! ../../store/actions/reorder-group-props */
-
-/*! ../../store/actions/reorder-overridable-groups */
-
-/*! ../../store/actions/set-overridable-prop */
-
-/*! ../../store/actions/update-current-component */
 
 /*! ../../store/actions/update-overridable-prop */
 
-/*! ../../store/actions/update-overridable-prop-params */
-
 /*! ../../store/store */
 
-/*! ../../utils/component-name-validation */
+/*! ../../utils/detach-component-instance */
 
 /*! ../../utils/get-component-documents */
 
-/*! ../../utils/get-container-for-new-element */
-
 /*! ../../utils/get-prop-type-for-component-override */
 
-/*! ../../utils/is-pro-user */
+/*! ../../utils/is-pro-components-supported */
+
+/*! ../../utils/overridable-props-utils */
 
 /*! ../../utils/resolve-override-prop-value */
 
-/*! ../../utils/revert-overridable-settings */
-
-/*! ../../utils/switch-to-component */
-
-/*! ../../utils/tracking */
-
 /*! ../api */
 
-/*! ../component-panel-header/use-overridable-props */
+/*! ../component-document-data */
 
-/*! ../component-properties-panel/component-properties-panel */
+/*! ../components-update-alert */
 
-/*! ../components-tab/component-introduction */
-
-/*! ../components/consts */
-
-/*! ../components/create-component-form/utils/component-form-schema */
+/*! ../components-upgrade-alert */
 
 /*! ../consts */
 
 /*! ../control-label */
 
-/*! ../create-component-form/utils/replace-element-with-component */
+/*! ../detach-instance-confirmation-dialog */
 
-/*! ../create-component-type */
+/*! ../dispatchers */
 
 /*! ../errors */
 
-/*! ../overridable-props/overridable-prop-form */
+/*! ../is-component-instance */
 
 /*! ../prop-types/component-instance-override-prop-type */
 
@@ -112,29 +76,21 @@
 
 /*! ../prop-types/component-overridable-prop-type */
 
+/*! ../selectors */
+
 /*! ../store */
-
-/*! ../store/actions/create-unpublished-component */
-
-/*! ../store/actions/delete-overridable-prop */
 
 /*! ../store/actions/load-components-assets */
 
 /*! ../store/store */
 
+/*! ../tracking */
+
+/*! ../utils/filter-valid-overridable-props */
+
 /*! ../utils/get-component-documents */
 
-/*! ../utils/groups-transformers */
-
-/*! ../utils/is-editing-component */
-
-/*! ../utils/revert-overridable-settings */
-
-/*! ../utils/switch-to-component */
-
 /*! ./api */
-
-/*! ./component-badge */
 
 /*! ./component-document-data */
 
@@ -144,15 +100,11 @@
 
 /*! ./component-instance-transformer */
 
-/*! ./component-modal */
-
 /*! ./component-overridable-prop-type */
 
 /*! ./component-overridable-transformer */
 
 /*! ./component-override-transformer */
-
-/*! ./component-properties-panel-content */
 
 /*! ./component-search */
 
@@ -162,43 +114,63 @@
 
 /*! ./components-pro-notification */
 
-/*! ./components/component-panel-header/component-panel-header */
+/*! ./components-update-notification */
 
-/*! ./components/component-properties-panel/component-properties-panel */
+/*! ./components/components-tab/component-search */
 
 /*! ./components/components-tab/components */
 
-/*! ./components/consts */
+/*! ./components/components-tab/components-item */
 
-/*! ./components/create-component-form/create-component-form */
+/*! ./components/components-tab/components-list */
 
-/*! ./components/edit-component/edit-component */
+/*! ./components/components-tab/loading-components */
+
+/*! ./components/components-tab/search-provider */
+
+/*! ./components/detach-instance-confirmation-dialog */
 
 /*! ./components/in-edit-mode */
 
+/*! ./components/instance-editing-panel/detach-action */
+
+/*! ./components/instance-editing-panel/empty-state */
+
 /*! ./components/instance-editing-panel/instance-editing-panel */
+
+/*! ./components/instance-editing-panel/instance-panel-body */
+
+/*! ./components/instance-editing-panel/instance-panel-header */
+
+/*! ./components/instance-editing-panel/use-instance-panel-data */
 
 /*! ./components/load-template-components */
 
-/*! ./components/overridable-props/overridable-prop-control */
-
-/*! ./components/overridable-props/overridable-prop-indicator */
-
 /*! ./create-component-type */
 
-/*! ./create-components-before-save */
+/*! ./detach-action */
 
-/*! ./delete-confirmation-dialog */
+/*! ./detach-component-instance */
 
 /*! ./empty-state */
 
-/*! ./expand-navigator */
+/*! ./extensible-slice */
 
-/*! ./hooks/use-form */
+/*! ./get-container-by-origin-id */
 
-/*! ./indicator */
+/*! ./get-overridable-prop */
+
+/*! ./hooks/use-components */
+
+/*! ./hooks/use-components-permissions */
+
+/*! ./hooks/use-sanitize-overridable-props */
 
 /*! ./init */
+
+/*! ./instance-panel-body */
+
+/*! ./instance-panel-header */
 
 /*! ./is-component-instance */
 
@@ -208,10 +180,6 @@
 
 /*! ./loading-components */
 
-/*! ./mcp */
-
-/*! ./overridable-prop-form */
-
 /*! ./override-prop-control */
 
 /*! ./override-props-group */
@@ -220,33 +188,47 @@
 
 /*! ./prevent-circular-nesting */
 
-/*! ./prevent-non-atomic-nesting */
+/*! ./prop-types/component-instance-override-prop-type */
+
+/*! ./prop-types/component-instance-overrides-prop-type */
+
+/*! ./prop-types/component-instance-prop-type */
 
 /*! ./prop-types/component-overridable-prop-type */
 
-/*! ./properties-empty-state */
+/*! ./provider/component-instance-context */
 
-/*! ./properties-group */
-
-/*! ./property-item */
+/*! ./provider/overridable-prop-context */
 
 /*! ./publish-draft-components-in-page-before-save */
 
-/*! ./save-as-component-tool */
+/*! ./regenerate-local-style-ids */
+
+/*! ./resolve-detached-instance */
+
+/*! ./resolve-element-settings */
+
+/*! ./resolve-overridable-settings */
+
+/*! ./resolve-overrides-chain */
 
 /*! ./search-provider */
 
-/*! ./set-component-overridable-props-settings-before-save */
-
-/*! ./sortable */
-
 /*! ./store */
+
+/*! ./store-types */
 
 /*! ./store/actions/load-components-assets */
 
 /*! ./store/actions/remove-component-styles */
 
+/*! ./store/actions/update-overridable-prop */
+
 /*! ./store/components-styles-provider */
+
+/*! ./store/dispatchers */
+
+/*! ./store/selectors */
 
 /*! ./store/store */
 
@@ -254,45 +236,45 @@
 
 /*! ./sync/before-save */
 
-/*! ./sync/cleanup-overridable-props-on-delete */
-
-/*! ./sync/handle-component-edit-mode-container */
-
 /*! ./sync/load-component-data-after-instance-added */
 
-/*! ./sync/revert-overridables-on-copy-or-duplicate */
+/*! ./sync/publish-draft-components-in-page-before-save */
 
 /*! ./thunks */
 
-/*! ./update-archived-component-before-save */
-
-/*! ./update-component-title-before-save */
-
-/*! ./use-current-editable-item */
-
-/*! ./use-overridable-props */
-
-/*! ./use-resolved-origin-value */
+/*! ./use-instance-panel-data */
 
 /*! ./utils/component-document-data */
 
-/*! ./utils/component-form-schema */
+/*! ./utils/correct-exposed-empty-override */
 
-/*! ./utils/generate-unique-label */
+/*! ./utils/detach-component-instance */
 
-/*! ./utils/get-component-event-data */
+/*! ./utils/filter-valid-overridable-props */
+
+/*! ./utils/format-component-elements-id */
+
+/*! ./utils/get-container-by-origin-id */
 
 /*! ./utils/get-overridable-prop */
 
-/*! ./utils/is-editing-component */
+/*! ./utils/get-prop-type-for-component-override */
+
+/*! ./utils/is-component-instance */
+
+/*! ./utils/is-pro-components-supported */
+
+/*! ./utils/resolve-element-settings */
+
+/*! ./utils/resolve-override-prop-value */
 
 /*! ./utils/switch-to-component */
 
 /*! ./utils/tracking */
 
-/*! ./utils/validate-group-label */
+/*! ./utils/use-override-dependencies */
 
-/*! ./utils/validate-prop-label */
+/*! ./utils/use-resolved-inner-element */
 
 /*! @elementor/editor */
 
@@ -310,7 +292,7 @@
 
 /*! @elementor/editor-elements-panel */
 
-/*! @elementor/editor-mcp */
+/*! @elementor/editor-global-classes */
 
 /*! @elementor/editor-notifications */
 
@@ -344,15 +326,9 @@
 
 /*! react */
 
-/*! react-dom */
-
 /*!**************************!*\
   !*** external ["React"] ***!
   \**************************/
-
-/*!*****************************!*\
-  !*** external ["ReactDOM"] ***!
-  \*****************************/
 
 /*!******************************!*\
   !*** external ["wp","i18n"] ***!
@@ -389,10 +365,6 @@
 /*!*******************************************!*\
   !*** external ["elementorV2","editorUi"] ***!
   \*******************************************/
-
-/*!********************************************!*\
-  !*** external ["elementorV2","editorMcp"] ***!
-  \********************************************/
 
 /*!*********************************************!*\
   !*** external ["elementorV2","httpClient"] ***!
@@ -443,6 +415,10 @@
   \******************************************************/
 
 /*!******************************************************!*\
+  !*** external ["elementorV2","editorGlobalClasses"] ***!
+  \******************************************************/
+
+/*!******************************************************!*\
   !*** external ["elementorV2","editorNotifications"] ***!
   \******************************************************/
 
@@ -462,9 +438,9 @@
   !*** ./packages/packages/core/editor-components/src/index.ts ***!
   \***************************************************************/
 
-/*!*******************************************************************!*\
-  !*** ./packages/packages/core/editor-components/src/mcp/index.ts ***!
-  \*******************************************************************/
+/*!****************************************************************!*\
+  !*** ./packages/packages/core/editor-components/src/consts.ts ***!
+  \****************************************************************/
 
 /*!*********************************************************************!*\
   !*** ./packages/packages/core/editor-components/src/store/store.ts ***!
@@ -482,20 +458,24 @@
   !*** ./packages/packages/core/editor-components/src/utils/tracking.ts ***!
   \************************************************************************/
 
+/*!*************************************************************************!*\
+  !*** ./packages/packages/core/editor-components/src/store/selectors.ts ***!
+  \*************************************************************************/
+
 /*!**************************************************************************!*\
   !*** ./packages/packages/core/editor-components/src/sync/before-save.ts ***!
   \**************************************************************************/
-
-/*!***************************************************************************!*\
-  !*** ./packages/packages/core/editor-components/src/components/consts.ts ***!
-  \***************************************************************************/
 
 /*!***************************************************************************!*\
   !*** ./packages/packages/core/editor-components/src/components/errors.ts ***!
   \***************************************************************************/
 
 /*!***************************************************************************!*\
-  !*** ./packages/packages/core/editor-components/src/utils/is-pro-user.ts ***!
+  !*** ./packages/packages/core/editor-components/src/store/dispatchers.ts ***!
+  \***************************************************************************/
+
+/*!***************************************************************************!*\
+  !*** ./packages/packages/core/editor-components/src/store/store-types.ts ***!
   \***************************************************************************/
 
 /*!******************************************************************************!*\
@@ -507,16 +487,8 @@
   \*******************************************************************************/
 
 /*!********************************************************************************!*\
-  !*** ./packages/packages/core/editor-components/src/hooks/use-element-rect.ts ***!
+  !*** ./packages/packages/core/editor-components/src/store/extensible-slice.ts ***!
   \********************************************************************************/
-
-/*!********************************************************************************!*\
-  !*** ./packages/packages/core/editor-components/src/utils/expand-navigator.ts ***!
-  \********************************************************************************/
-
-/*!*********************************************************************************!*\
-  !*** ./packages/packages/core/editor-components/src/hooks/use-navigate-back.ts ***!
-  \*********************************************************************************/
 
 /*!**********************************************************************************!*\
   !*** ./packages/packages/core/editor-components/src/components/in-edit-mode.tsx ***!
@@ -531,23 +503,11 @@
   \***********************************************************************************/
 
 /*!***********************************************************************************!*\
-  !*** ./packages/packages/core/editor-components/src/hooks/use-canvas-document.ts ***!
-  \***********************************************************************************/
-
-/*!***********************************************************************************!*\
   !*** ./packages/packages/core/editor-components/src/utils/switch-to-component.ts ***!
   \***********************************************************************************/
 
 /*!************************************************************************************!*\
-  !*** ./packages/packages/core/editor-components/src/mcp/save-as-component-tool.ts ***!
-  \************************************************************************************/
-
-/*!************************************************************************************!*\
-  !*** ./packages/packages/core/editor-components/src/prevent-non-atomic-nesting.ts ***!
-  \************************************************************************************/
-
-/*!************************************************************************************!*\
-  !*** ./packages/packages/core/editor-components/src/utils/is-editing-component.ts ***!
+  !*** ./packages/packages/core/editor-components/src/utils/get-overridable-prop.ts ***!
   \************************************************************************************/
 
 /*!*************************************************************************************!*\
@@ -562,6 +522,14 @@
   !*** ./packages/packages/core/editor-components/src/utils/get-component-documents.ts ***!
   \***************************************************************************************/
 
+/*!***************************************************************************************!*\
+  !*** ./packages/packages/core/editor-components/src/utils/overridable-props-utils.ts ***!
+  \***************************************************************************************/
+
+/*!***************************************************************************************!*\
+  !*** ./packages/packages/core/editor-components/src/utils/resolve-overrides-chain.ts ***!
+  \***************************************************************************************/
+
 /*!****************************************************************************************!*\
   !*** ./packages/packages/core/editor-components/src/component-instance-transformer.ts ***!
   \****************************************************************************************/
@@ -570,28 +538,16 @@
   !*** ./packages/packages/core/editor-components/src/component-override-transformer.ts ***!
   \****************************************************************************************/
 
-/*!****************************************************************************************!*\
-  !*** ./packages/packages/core/editor-components/src/store/actions/rename-component.ts ***!
-  \****************************************************************************************/
-
-/*!*****************************************************************************************!*\
-  !*** ./packages/packages/core/editor-components/src/store/actions/archive-component.ts ***!
-  \*****************************************************************************************/
-
-/*!*****************************************************************************************!*\
-  !*** ./packages/packages/core/editor-components/src/store/utils/groups-transformers.ts ***!
-  \*****************************************************************************************/
-
-/*!*****************************************************************************************!*\
-  !*** ./packages/packages/core/editor-components/src/utils/component-name-validation.ts ***!
-  \*****************************************************************************************/
-
 /*!******************************************************************************************!*\
   !*** ./packages/packages/core/editor-components/src/hooks/use-components-permissions.ts ***!
   \******************************************************************************************/
 
 /*!******************************************************************************************!*\
   !*** ./packages/packages/core/editor-components/src/store/components-styles-provider.ts ***!
+  \******************************************************************************************/
+
+/*!******************************************************************************************!*\
+  !*** ./packages/packages/core/editor-components/src/utils/get-container-by-origin-id.ts ***!
   \******************************************************************************************/
 
 /*!*******************************************************************************************!*\
@@ -603,15 +559,11 @@
   \*******************************************************************************************/
 
 /*!*******************************************************************************************!*\
-  !*** ./packages/packages/core/editor-components/src/store/actions/reorder-group-props.ts ***!
+  !*** ./packages/packages/core/editor-components/src/utils/is-pro-components-supported.ts ***!
   \*******************************************************************************************/
 
 /*!*******************************************************************************************!*\
   !*** ./packages/packages/core/editor-components/src/utils/resolve-override-prop-value.ts ***!
-  \*******************************************************************************************/
-
-/*!*******************************************************************************************!*\
-  !*** ./packages/packages/core/editor-components/src/utils/revert-overridable-settings.ts ***!
   \*******************************************************************************************/
 
 /*!********************************************************************************************!*\
@@ -619,23 +571,27 @@
   \********************************************************************************************/
 
 /*!********************************************************************************************!*\
-  !*** ./packages/packages/core/editor-components/src/store/actions/set-overridable-prop.ts ***!
-  \********************************************************************************************/
-
-/*!********************************************************************************************!*\
-  !*** ./packages/packages/core/editor-components/src/sync/create-components-before-save.ts ***!
+  !*** ./packages/packages/core/editor-components/src/utils/format-component-elements-id.ts ***!
   \********************************************************************************************/
 
 /*!*********************************************************************************************!*\
-  !*** ./packages/packages/core/editor-components/src/store/actions/add-overridable-group.ts ***!
-  \*********************************************************************************************/
-
-/*!*********************************************************************************************!*\
-  !*** ./packages/packages/core/editor-components/src/utils/get-container-for-new-element.ts ***!
+  !*** ./packages/packages/core/editor-components/src/components/components-update-alert.tsx ***!
   \*********************************************************************************************/
 
 /*!**********************************************************************************************!*\
+  !*** ./packages/packages/core/editor-components/src/components/components-upgrade-alert.tsx ***!
+  \**********************************************************************************************/
+
+/*!**********************************************************************************************!*\
   !*** ./packages/packages/core/editor-components/src/components/load-template-components.tsx ***!
+  \**********************************************************************************************/
+
+/*!**********************************************************************************************!*\
+  !*** ./packages/packages/core/editor-components/src/hooks/use-sanitize-overridable-props.ts ***!
+  \**********************************************************************************************/
+
+/*!**********************************************************************************************!*\
+  !*** ./packages/packages/core/editor-components/src/provider/component-instance-context.tsx ***!
   \**********************************************************************************************/
 
 /*!**********************************************************************************************!*\
@@ -646,16 +602,12 @@
   !*** ./packages/packages/core/editor-components/src/store/actions/load-components-styles.ts ***!
   \**********************************************************************************************/
 
+/*!**********************************************************************************************!*\
+  !*** ./packages/packages/core/editor-components/src/utils/filter-valid-overridable-props.ts ***!
+  \**********************************************************************************************/
+
 /*!***********************************************************************************************!*\
   !*** ./packages/packages/core/editor-components/src/components/components-tab/components.tsx ***!
-  \***********************************************************************************************/
-
-/*!***********************************************************************************************!*\
-  !*** ./packages/packages/core/editor-components/src/hooks/use-component-instance-settings.ts ***!
-  \***********************************************************************************************/
-
-/*!***********************************************************************************************!*\
-  !*** ./packages/packages/core/editor-components/src/store/actions/delete-overridable-prop.ts ***!
   \***********************************************************************************************/
 
 /*!***********************************************************************************************!*\
@@ -666,45 +618,13 @@
   !*** ./packages/packages/core/editor-components/src/store/actions/update-overridable-prop.ts ***!
   \***********************************************************************************************/
 
-/*!************************************************************************************************!*\
-  !*** ./packages/packages/core/editor-components/src/store/actions/delete-overridable-group.ts ***!
-  \************************************************************************************************/
-
-/*!************************************************************************************************!*\
-  !*** ./packages/packages/core/editor-components/src/store/actions/rename-overridable-group.ts ***!
-  \************************************************************************************************/
-
-/*!************************************************************************************************!*\
-  !*** ./packages/packages/core/editor-components/src/store/actions/update-current-component.ts ***!
-  \************************************************************************************************/
-
-/*!*************************************************************************************************!*\
-  !*** ./packages/packages/core/editor-components/src/components/overridable-props/indicator.tsx ***!
-  \*************************************************************************************************/
+/*!***********************************************************************************************!*\
+  !*** ./packages/packages/core/editor-components/src/utils/detach-component-instance/index.ts ***!
+  \***********************************************************************************************/
 
 /*!*************************************************************************************************!*\
   !*** ./packages/packages/core/editor-components/src/prop-types/component-instance-prop-type.ts ***!
   \*************************************************************************************************/
-
-/*!*************************************************************************************************!*\
-  !*** ./packages/packages/core/editor-components/src/sync/update-component-title-before-save.ts ***!
-  \*************************************************************************************************/
-
-/*!**************************************************************************************************!*\
-  !*** ./packages/packages/core/editor-components/src/store/actions/reorder-overridable-groups.ts ***!
-  \**************************************************************************************************/
-
-/*!**************************************************************************************************!*\
-  !*** ./packages/packages/core/editor-components/src/sync/cleanup-overridable-props-on-delete.ts ***!
-  \**************************************************************************************************/
-
-/*!***************************************************************************************************!*\
-  !*** ./packages/packages/core/editor-components/src/components/edit-component/edit-component.tsx ***!
-  \***************************************************************************************************/
-
-/*!***************************************************************************************************!*\
-  !*** ./packages/packages/core/editor-components/src/sync/handle-component-edit-mode-container.ts ***!
-  \***************************************************************************************************/
 
 /*!****************************************************************************************************!*\
   !*** ./packages/packages/core/editor-components/src/components/components-tab/components-item.tsx ***!
@@ -719,19 +639,7 @@
   \****************************************************************************************************/
 
 /*!****************************************************************************************************!*\
-  !*** ./packages/packages/core/editor-components/src/components/edit-component/component-modal.tsx ***!
-  \****************************************************************************************************/
-
-/*!****************************************************************************************************!*\
   !*** ./packages/packages/core/editor-components/src/prop-types/component-overridable-prop-type.ts ***!
-  \****************************************************************************************************/
-
-/*!****************************************************************************************************!*\
-  !*** ./packages/packages/core/editor-components/src/store/actions/create-unpublished-component.ts ***!
-  \****************************************************************************************************/
-
-/*!****************************************************************************************************!*\
-  !*** ./packages/packages/core/editor-components/src/sync/update-archived-component-before-save.ts ***!
   \****************************************************************************************************/
 
 /*!****************************************************************************************************!*\
@@ -742,10 +650,6 @@
   !*** ./packages/packages/core/editor-components/src/components/components-tab/component-search.tsx ***!
   \*****************************************************************************************************/
 
-/*!******************************************************************************************************!*\
-  !*** ./packages/packages/core/editor-components/src/store/actions/update-overridable-prop-params.ts ***!
-  \******************************************************************************************************/
-
 /*!*******************************************************************************************************!*\
   !*** ./packages/packages/core/editor-components/src/components/components-tab/loading-components.tsx ***!
   \*******************************************************************************************************/
@@ -754,20 +658,12 @@
   !*** ./packages/packages/core/editor-components/src/sync/load-component-data-after-instance-added.ts ***!
   \*******************************************************************************************************/
 
-/*!*******************************************************************************************************!*\
-  !*** ./packages/packages/core/editor-components/src/sync/revert-overridables-on-copy-or-duplicate.ts ***!
-  \*******************************************************************************************************/
-
 /*!********************************************************************************************************!*\
   !*** ./packages/packages/core/editor-components/src/components/instance-editing-panel/empty-state.tsx ***!
   \********************************************************************************************************/
 
 /*!*********************************************************************************************************!*\
-  !*** ./packages/packages/core/editor-components/src/components/component-properties-panel/sortable.tsx ***!
-  \*********************************************************************************************************/
-
-/*!*********************************************************************************************************!*\
-  !*** ./packages/packages/core/editor-components/src/components/create-component-form/hooks/use-form.ts ***!
+  !*** ./packages/packages/core/editor-components/src/components/detach-instance-confirmation-dialog.tsx ***!
   \*********************************************************************************************************/
 
 /*!*********************************************************************************************************!*\
@@ -775,12 +671,12 @@
   \*********************************************************************************************************/
 
 /*!**********************************************************************************************************!*\
-  !*** ./packages/packages/core/editor-components/src/prop-types/component-instance-override-prop-type.ts ***!
+  !*** ./packages/packages/core/editor-components/src/components/instance-editing-panel/detach-action.tsx ***!
   \**********************************************************************************************************/
 
-/*!***********************************************************************************************************!*\
-  !*** ./packages/packages/core/editor-components/src/components/components-tab/component-introduction.tsx ***!
-  \***********************************************************************************************************/
+/*!**********************************************************************************************************!*\
+  !*** ./packages/packages/core/editor-components/src/prop-types/component-instance-override-prop-type.ts ***!
+  \**********************************************************************************************************/
 
 /*!***********************************************************************************************************!*\
   !*** ./packages/packages/core/editor-components/src/prop-types/component-instance-overrides-prop-type.ts ***!
@@ -790,64 +686,28 @@
   !*** ./packages/packages/core/editor-components/src/sync/publish-draft-components-in-page-before-save.ts ***!
   \***********************************************************************************************************/
 
-/*!************************************************************************************************************!*\
-  !*** ./packages/packages/core/editor-components/src/components/component-panel-header/component-badge.tsx ***!
-  \************************************************************************************************************/
-
-/*!*************************************************************************************************************!*\
-  !*** ./packages/packages/core/editor-components/src/components/overridable-props/overridable-prop-form.tsx ***!
-  \*************************************************************************************************************/
-
-/*!**************************************************************************************************************!*\
-  !*** ./packages/packages/core/editor-components/src/components/component-properties-panel/property-item.tsx ***!
-  \**************************************************************************************************************/
-
-/*!***************************************************************************************************************!*\
-  !*** ./packages/packages/core/editor-components/src/components/components-tab/delete-confirmation-dialog.tsx ***!
-  \***************************************************************************************************************/
-
 /*!****************************************************************************************************************!*\
   !*** ./packages/packages/core/editor-components/src/components/components-tab/components-pro-notification.tsx ***!
   \****************************************************************************************************************/
 
 /*!****************************************************************************************************************!*\
-  !*** ./packages/packages/core/editor-components/src/components/overridable-props/overridable-prop-control.tsx ***!
+  !*** ./packages/packages/core/editor-components/src/components/instance-editing-panel/instance-panel-body.tsx ***!
   \****************************************************************************************************************/
-
-/*!****************************************************************************************************************!*\
-  !*** ./packages/packages/core/editor-components/src/components/overridable-props/utils/validate-prop-label.ts ***!
-  \****************************************************************************************************************/
-
-/*!*****************************************************************************************************************!*\
-  !*** ./packages/packages/core/editor-components/src/components/component-panel-header/use-overridable-props.ts ***!
-  \*****************************************************************************************************************/
-
-/*!*****************************************************************************************************************!*\
-  !*** ./packages/packages/core/editor-components/src/components/component-properties-panel/properties-group.tsx ***!
-  \*****************************************************************************************************************/
-
-/*!*****************************************************************************************************************!*\
-  !*** ./packages/packages/core/editor-components/src/components/create-component-form/create-component-form.tsx ***!
-  \*****************************************************************************************************************/
 
 /*!*****************************************************************************************************************!*\
   !*** ./packages/packages/core/editor-components/src/components/instance-editing-panel/override-props-group.tsx ***!
   \*****************************************************************************************************************/
 
-/*!*****************************************************************************************************************!*\
-  !*** ./packages/packages/core/editor-components/src/components/overridable-props/utils/get-overridable-prop.ts ***!
-  \*****************************************************************************************************************/
+/*!******************************************************************************************************************!*\
+  !*** ./packages/packages/core/editor-components/src/components/instance-editing-panel/instance-panel-header.tsx ***!
+  \******************************************************************************************************************/
 
 /*!******************************************************************************************************************!*\
   !*** ./packages/packages/core/editor-components/src/components/instance-editing-panel/override-prop-control.tsx ***!
   \******************************************************************************************************************/
 
-/*!******************************************************************************************************************!*\
-  !*** ./packages/packages/core/editor-components/src/components/overridable-props/overridable-prop-indicator.tsx ***!
-  \******************************************************************************************************************/
-
 /*!*******************************************************************************************************************!*\
-  !*** ./packages/packages/core/editor-components/src/components/component-panel-header/component-panel-header.tsx ***!
+  !*** ./packages/packages/core/editor-components/src/components/components-tab/components-update-notification.tsx ***!
   \*******************************************************************************************************************/
 
 /*!*******************************************************************************************************************!*\
@@ -855,45 +715,37 @@
   \*******************************************************************************************************************/
 
 /*!*******************************************************************************************************************!*\
-  !*** ./packages/packages/core/editor-components/src/sync/set-component-overridable-props-settings-before-save.ts ***!
+  !*** ./packages/packages/core/editor-components/src/components/instance-editing-panel/use-instance-panel-data.ts ***!
   \*******************************************************************************************************************/
 
-/*!**********************************************************************************************************************!*\
-  !*** ./packages/packages/core/editor-components/src/components/create-component-form/utils/component-form-schema.ts ***!
-  \**********************************************************************************************************************/
+/*!*******************************************************************************************************************!*\
+  !*** ./packages/packages/core/editor-components/src/utils/detach-component-instance/detach-component-instance.ts ***!
+  \*******************************************************************************************************************/
+
+/*!*******************************************************************************************************************!*\
+  !*** ./packages/packages/core/editor-components/src/utils/detach-component-instance/resolve-detached-instance.ts ***!
+  \*******************************************************************************************************************/
+
+/*!********************************************************************************************************************!*\
+  !*** ./packages/packages/core/editor-components/src/utils/detach-component-instance/regenerate-local-style-ids.ts ***!
+  \********************************************************************************************************************/
 
 /*!**********************************************************************************************************************!*\
-  !*** ./packages/packages/core/editor-components/src/components/instance-editing-panel/use-resolved-origin-value.tsx ***!
+  !*** ./packages/packages/core/editor-components/src/utils/detach-component-instance/resolve-overridable-settings.ts ***!
   \**********************************************************************************************************************/
-
-/*!***********************************************************************************************************************!*\
-  !*** ./packages/packages/core/editor-components/src/components/component-properties-panel/properties-empty-state.tsx ***!
-  \***********************************************************************************************************************/
-
-/*!*************************************************************************************************************************!*\
-  !*** ./packages/packages/core/editor-components/src/components/component-properties-panel/use-current-editable-item.ts ***!
-  \*************************************************************************************************************************/
-
-/*!*************************************************************************************************************************!*\
-  !*** ./packages/packages/core/editor-components/src/components/create-component-form/utils/get-component-event-data.ts ***!
-  \*************************************************************************************************************************/
 
 /*!**************************************************************************************************************************!*\
-  !*** ./packages/packages/core/editor-components/src/components/component-properties-panel/utils/validate-group-label.ts ***!
+  !*** ./packages/packages/core/editor-components/src/components/instance-editing-panel/utils/resolve-element-settings.ts ***!
   \**************************************************************************************************************************/
 
 /*!***************************************************************************************************************************!*\
-  !*** ./packages/packages/core/editor-components/src/components/component-properties-panel/component-properties-panel.tsx ***!
+  !*** ./packages/packages/core/editor-components/src/components/instance-editing-panel/utils/use-override-dependencies.ts ***!
   \***************************************************************************************************************************/
 
-/*!***************************************************************************************************************************!*\
-  !*** ./packages/packages/core/editor-components/src/components/component-properties-panel/utils/generate-unique-label.ts ***!
-  \***************************************************************************************************************************/
+/*!****************************************************************************************************************************!*\
+  !*** ./packages/packages/core/editor-components/src/components/instance-editing-panel/utils/use-resolved-inner-element.ts ***!
+  \****************************************************************************************************************************/
 
-/*!*******************************************************************************************************************************!*\
-  !*** ./packages/packages/core/editor-components/src/components/create-component-form/utils/replace-element-with-component.ts ***!
-  \*******************************************************************************************************************************/
-
-/*!***********************************************************************************************************************************!*\
-  !*** ./packages/packages/core/editor-components/src/components/component-properties-panel/component-properties-panel-content.tsx ***!
-  \***********************************************************************************************************************************/
+/*!********************************************************************************************************************************!*\
+  !*** ./packages/packages/core/editor-components/src/components/instance-editing-panel/utils/correct-exposed-empty-override.ts ***!
+  \********************************************************************************************************************************/

@@ -12,6 +12,7 @@
 var _frontendHandlers = __webpack_require__(/*! @elementor/frontend-handlers */ "@elementor/frontend-handlers");
 var _alpinejs = __webpack_require__(/*! @elementor/alpinejs */ "@elementor/alpinejs");
 var _utils = __webpack_require__(/*! ./utils */ "../modules/atomic-widgets/elements/atomic-tabs/handlers/utils.js");
+var _editorTabsState = __webpack_require__(/*! ./editor-tabs-state */ "../modules/atomic-widgets/elements/atomic-tabs/handlers/editor-tabs-state.js");
 (0, _frontendHandlers.register)({
   elementType: 'e-tabs',
   id: 'e-tabs-preview-handler',
@@ -33,15 +34,73 @@ var _utils = __webpack_require__(/*! ./utils */ "../modules/atomic-widgets/eleme
         return;
       }
       const targetIndex = (0, _utils.getIndex)(targetElement, type);
-      _alpinejs.Alpine.$data(element).activeTab = (0, _utils.getTabId)(element.dataset.id, targetIndex);
+      (0, _editorTabsState.setActiveTabIndex)(element.dataset.id, targetIndex);
     }, {
       signal
     });
 
     // Re-initialize Alpine to sync with editor DOM manipulations that bypass Alpine's reactivity.
-    listenToChildren([_utils.TAB_ELEMENT_TYPE, _utils.TAB_CONTENT_ELEMENT_TYPE]).render(() => (0, _alpinejs.refreshTree)(element));
+    listenToChildren([_utils.TAB_ELEMENT_TYPE, _utils.TAB_CONTENT_ELEMENT_TYPE]).render(event => {
+      const childElement = event.detail.element;
+      const nearestTabs = childElement.closest('[data-e-type="e-tabs"]');
+      if (nearestTabs !== element) {
+        return;
+      }
+      (0, _alpinejs.refreshTree)(element);
+    });
   }
 });
+
+/***/ }),
+
+/***/ "../modules/atomic-widgets/elements/atomic-tabs/handlers/editor-tabs-state.js":
+/*!************************************************************************************!*\
+  !*** ../modules/atomic-widgets/elements/atomic-tabs/handlers/editor-tabs-state.js ***!
+  \************************************************************************************/
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+
+
+Object.defineProperty(exports, "__esModule", ({
+  value: true
+}));
+exports.getActiveTabId = getActiveTabId;
+exports.setActiveTabIndex = setActiveTabIndex;
+exports.validateActiveTab = validateActiveTab;
+var _alpinejs = __webpack_require__(/*! @elementor/alpinejs */ "@elementor/alpinejs");
+var _utils = __webpack_require__(/*! ./utils */ "../modules/atomic-widgets/elements/atomic-tabs/handlers/utils.js");
+/**
+ * @typedef {Record<string, number>} TabsState - Maps tabsId to the selected tab index.
+ */
+const STORE_NAME = 'editor-atomic-tabs-state';
+function ensureStore() {
+  if (!_alpinejs.Alpine.store(STORE_NAME)) {
+    _alpinejs.Alpine.store(STORE_NAME, /** @type {TabsState} */{});
+  }
+  return /** @type {TabsState} */_alpinejs.Alpine.store(STORE_NAME);
+}
+function getActiveTabId(tabsId, fallback) {
+  const store = ensureStore();
+  const storedIndex = store[tabsId];
+  if (storedIndex === undefined) {
+    return fallback;
+  }
+  return (0, _utils.getTabId)(tabsId, storedIndex);
+}
+function setActiveTabIndex(tabsId, index) {
+  const store = ensureStore();
+  store[tabsId] = index;
+}
+function validateActiveTab(tabsId, tabCount) {
+  const store = ensureStore();
+  const storedIndex = store[tabsId];
+  if (storedIndex === undefined) {
+    return;
+  }
+  if (storedIndex >= tabCount) {
+    delete store[tabsId];
+  }
+}
 
 /***/ }),
 
@@ -56,7 +115,7 @@ var _utils = __webpack_require__(/*! ./utils */ "../modules/atomic-widgets/eleme
 Object.defineProperty(exports, "__esModule", ({
   value: true
 }));
-exports.getTabId = exports.getTabContentId = exports.getNextTab = exports.getIndex = exports.getChildren = exports.TAB_ELEMENT_TYPE = exports.TAB_CONTENT_ELEMENT_TYPE = exports.TABS_MENU_ELEMENT_TYPE = exports.TABS_CONTENT_AREA_ELEMENT_TYPE = void 0;
+exports.getTabId = exports.getTabContentId = exports.getNextTab = exports.getIndex = exports.getDirectTabCount = exports.getChildren = exports.TAB_ELEMENT_TYPE = exports.TAB_CONTENT_ELEMENT_TYPE = exports.TABS_MENU_ELEMENT_TYPE = exports.TABS_CONTENT_AREA_ELEMENT_TYPE = void 0;
 __webpack_require__(/*! core-js/modules/esnext.iterator.constructor.js */ "../node_modules/core-js/modules/esnext.iterator.constructor.js");
 __webpack_require__(/*! core-js/modules/esnext.iterator.filter.js */ "../node_modules/core-js/modules/esnext.iterator.filter.js");
 const TAB_ELEMENT_TYPE = exports.TAB_ELEMENT_TYPE = 'e-tab';
@@ -85,6 +144,10 @@ const getIndex = (el, elementType) => {
   return children.indexOf(el);
 };
 exports.getIndex = getIndex;
+const getDirectTabCount = tabsRootElement => {
+  return tabsRootElement.querySelectorAll(`:scope > [data-element_type="${TABS_MENU_ELEMENT_TYPE}"] > [data-element_type="${TAB_ELEMENT_TYPE}"]`).length;
+};
+exports.getDirectTabCount = getDirectTabCount;
 const getNextTab = (key, tab) => {
   const tabs = getChildren(tab, TAB_ELEMENT_TYPE);
   const tabsLength = tabs.length;

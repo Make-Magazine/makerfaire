@@ -1271,6 +1271,10 @@ body.post-type-attachment table.media .column-title .media-icon img[src$=".svg"]
   --e-context-cta-color-dark: rgb(32.7094972067, 25, 255);
   --e-context-cta-tint-4: rgba(82, 76, 255, 0.4);
   --e-context-cta-tint-1: rgba(82, 76, 255, 0.04);
+  --e-context-promotion-color: #93003f;
+  --e-context-promotion-color-dark: rgb(96, 0, 41.1428571429);
+  --e-context-promotion-tint-4: rgba(147, 0, 63, 0.4);
+  --e-context-promotion-tint-1: rgba(147, 0, 63, 0.04);
 }
 
 :root {
@@ -1400,6 +1404,12 @@ body.post-type-attachment table.media .column-title .media-icon img[src$=".svg"]
   --e-button-context-tint: var(--e-context-cta-tint-1);
   --e-focus-color: var(--e-context-cta-tint-4);
 }
+.e-button--promotion {
+  --e-button-context-color: var(--e-context-promotion-color);
+  --e-button-context-color-dark: var(--e-context-promotion-color-dark);
+  --e-button-context-tint: var(--e-context-promotion-tint-1);
+  --e-focus-color: var(--e-context-promotion-tint-4);
+}
 .e-button.e-button--outline {
   color: var(--e-button-context-color);
   background: none;
@@ -1500,6 +1510,11 @@ fieldset:disabled a.e-button {
   --e-notice-context-color: var(--e-context-cta-color);
   --e-notice-context-color-dark: var(--e-context-cta-color-dark);
   --e-notice-context-tint: var(--e-context-cta-tint-1);
+}
+.e-notice--promotion {
+  --e-notice-context-color: var(--e-context-promotion-color);
+  --e-notice-context-color-dark: var(--e-context-promotion-color-dark);
+  --e-notice-context-tint: var(--e-context-promotion-tint-1);
 }
 .e-notice--extended {
   --e-notice-is-extended: 1;
@@ -2588,9 +2603,6 @@ label[for=e-dashboard-ally-hide] svg {
 #elementor-beta-tester-modal .elementor-templates-modal__header__items-area:hover .elementor-templates-modal__header__item > i {
   color: var(--e-a-color-txt-hover);
 }
-#elementor-beta-tester-modal .elementor-templates-modal__header__items-area .elementor-templates-modal__header__close {
-  border: none;
-}
 #elementor-beta-tester-modal .elementor-templates-modal__header__items-area .elementor-beta-tester-do-not-show-again {
   text-transform: uppercase;
   font-weight: bold;
@@ -2647,6 +2659,7 @@ label[for=e-dashboard-ally-hide] svg {
   display: flex;
   align-items: flex-start;
   flex-direction: column;
+  position: relative;
 }
 .e-experiment__title__indicator {
   position: absolute;

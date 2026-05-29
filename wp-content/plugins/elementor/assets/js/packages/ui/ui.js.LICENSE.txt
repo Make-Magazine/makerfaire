@@ -86,8 +86,6 @@ object-assign
 
 /*! ../../constants/dimensions */
 
-/*! ../../hooks/useSortableItem */
-
 /*! ../../locales/enUS */
 
 /*! ../../utils */
@@ -274,7 +272,9 @@ object-assign
 
 /*! ../SnackbarContent */
 
-/*! ../SortableProvider/SortableProvider */
+/*! ../SortableGroup */
+
+/*! ../SortableProvider/components/SortableBase */
 
 /*! ../Stack */
 
@@ -358,8 +358,6 @@ object-assign
 
 /*! ../colors/red */
 
-/*! ../components/SortableProvider */
-
 /*! ../composeClasses */
 
 /*! ../constants */
@@ -411,6 +409,8 @@ object-assign
 /*! ../hooks/useField/useField.utils */
 
 /*! ../hooks/useGradientUtils */
+
+/*! ../hooks/useSortable */
 
 /*! ../icons */
 
@@ -671,6 +671,8 @@ object-assign
 /*! ../utils/scrollLeft */
 
 /*! ../utils/shouldSpreadAdditionalProps */
+
+/*! ../utils/sortable-utils */
 
 /*! ../utils/time-utils */
 
@@ -936,8 +938,6 @@ object-assign
 
 /*! ./MuiAccordionSummaryText.style */
 
-/*! ./MuiAppBar.style */
-
 /*! ./MuiAutocomplete.style */
 
 /*! ./MuiAvatar.style */
@@ -992,8 +992,6 @@ object-assign
 
 /*! ./MuiListSubheader.style */
 
-/*! ./MuiMenu.style */
-
 /*! ./MuiMenuItem.style */
 
 /*! ./MuiOutlinedInput.style */
@@ -1031,8 +1029,6 @@ object-assign
 /*! ./MuiToggleButton.style */
 
 /*! ./MuiTooltip.style */
-
-/*! ./MuiTypography.style */
 
 /*! ./MultiSectionDigitalClock.utils */
 
@@ -1111,6 +1107,8 @@ object-assign
 /*! ./Snackbar */
 
 /*! ./SnackbarContent */
+
+/*! ./SortableBase */
 
 /*! ./SpeedDial */
 
@@ -1332,11 +1330,19 @@ object-assign
 
 /*! ./components/LinearAngleInput */
 
+/*! ./components/MultipleSortable */
+
 /*! ./components/RadialPositionsSelect */
+
+/*! ./components/SingleSortable */
+
+/*! ./components/SortableGroup */
 
 /*! ./components/SortableItem */
 
 /*! ./components/SortableProvider */
+
+/*! ./components/SortableProvider/Sortable */
 
 /*! ./components/StopInput */
 
@@ -1515,6 +1521,8 @@ object-assign
 /*! ./gridClasses */
 
 /*! ./hasClass */
+
+/*! ./helpers/multiple-groups-coordindate-getter */
 
 /*! ./hide.js */
 
@@ -1794,8 +1802,6 @@ object-assign
 
 /*! ./theme-config/palette-overrides/argon-beta-light-palette */
 
-/*! ./theme-config/palette-overrides/hub-palette */
-
 /*! ./theme-config/palette-overrides/marketing-suite-palette */
 
 /*! ./theme-config/palette-overrides/unstable-dark-palette */
@@ -1929,6 +1935,8 @@ object-assign
 /*! @dnd-kit/utilities */
 
 /*! @elementor/design-tokens */
+
+/*! @elementor/ui/styles */
 
 /*! @emotion/cache */
 
@@ -5723,10 +5731,6 @@ object-assign
   \**********************************************************************/
 
 /*!**********************************************************************!*\
-  !*** ./node_modules/@elementor/ui/unstable/hooks/useSortableItem.js ***!
-  \**********************************************************************/
-
-/*!**********************************************************************!*\
   !*** ./node_modules/@mui/material/AvatarGroup/avatarGroupClasses.js ***!
   \**********************************************************************/
 
@@ -6167,10 +6171,6 @@ object-assign
   \**************************************************************************/
 
 /*!**************************************************************************!*\
-  !*** ./node_modules/@elementor/ui/styles/style-configs/MuiMenu.style.js ***!
-  \**************************************************************************/
-
-/*!**************************************************************************!*\
   !*** ./node_modules/@elementor/ui/styles/style-configs/MuiTabs.style.js ***!
   \**************************************************************************/
 
@@ -6356,10 +6356,6 @@ object-assign
 
 /*!****************************************************************************!*\
   !*** ./node_modules/@elementor/ui/styles/context/theme-config-provider.js ***!
-  \****************************************************************************/
-
-/*!****************************************************************************!*\
-  !*** ./node_modules/@elementor/ui/styles/style-configs/MuiAppBar.style.js ***!
   \****************************************************************************/
 
 /*!****************************************************************************!*\
@@ -6683,10 +6679,6 @@ object-assign
   \********************************************************************************/
 
 /*!********************************************************************************!*\
-  !*** ./node_modules/@elementor/ui/styles/style-configs/MuiTypography.style.js ***!
-  \********************************************************************************/
-
-/*!********************************************************************************!*\
   !*** ./node_modules/@mui/material/AccordionActions/accordionActionsClasses.js ***!
   \********************************************************************************/
 
@@ -6967,6 +6959,10 @@ object-assign
   \*************************************************************************************/
 
 /*!*************************************************************************************!*\
+  !*** ./node_modules/@elementor/ui/unstable/components/SortableProvider/Sortable.js ***!
+  \*************************************************************************************/
+
+/*!*************************************************************************************!*\
   !*** ./node_modules/@emotion/styled/dist/emotion-styled.browser.development.esm.js ***!
   \*************************************************************************************/
 
@@ -7051,6 +7047,10 @@ object-assign
   \***************************************************************************************/
 
 /*!***************************************************************************************!*\
+  !*** ./node_modules/@elementor/ui/unstable/components/SortableGroup/SortableGroup.js ***!
+  \***************************************************************************************/
+
+/*!***************************************************************************************!*\
   !*** ./node_modules/@mui/material/ListItemSecondaryAction/ListItemSecondaryAction.js ***!
   \***************************************************************************************/
 
@@ -7093,10 +7093,6 @@ object-assign
 /*!****************************************************************************************!*\
   !*** ./node_modules/@mui/x-date-pickers/internals/hooks/useDefaultReduceAnimations.js ***!
   \****************************************************************************************/
-
-/*!*****************************************************************************************!*\
-  !*** ./node_modules/@elementor/ui/styles/theme-config/palette-overrides/hub-palette.js ***!
-  \*****************************************************************************************/
 
 /*!*****************************************************************************************!*\
   !*** ./node_modules/@elementor/ui/unstable/components/ColorPicker/components/Picker.js ***!
@@ -7183,6 +7179,10 @@ object-assign
   \**********************************************************************************************/
 
 /*!**********************************************************************************************!*\
+  !*** ./node_modules/@elementor/ui/unstable/components/SortableProvider/hooks/useSortable.js ***!
+  \**********************************************************************************************/
+
+/*!**********************************************************************************************!*\
   !*** ./node_modules/@emotion/react/dist/emotion-element-7a1343fa.browser.development.esm.js ***!
   \**********************************************************************************************/
 
@@ -7258,6 +7258,10 @@ object-assign
   !*** ./node_modules/@elementor/ui/unstable/components/GradientBox/components/GradientSlider.js ***!
   \*************************************************************************************************/
 
+/*!*************************************************************************************************!*\
+  !*** ./node_modules/@elementor/ui/unstable/components/SortableProvider/utils/sortable-utils.js ***!
+  \*************************************************************************************************/
+
 /*!***************************************************************************************************!*\
   !*** ./node_modules/@elementor/ui/styles/theme-config/palette-overrides/unstable-dark-palette.js ***!
   \***************************************************************************************************/
@@ -7268,6 +7272,10 @@ object-assign
 
 /*!****************************************************************************************************!*\
   !*** ./node_modules/@elementor/ui/styles/theme-config/palette-overrides/unstable-light-palette.js ***!
+  \****************************************************************************************************/
+
+/*!****************************************************************************************************!*\
+  !*** ./node_modules/@elementor/ui/unstable/components/SortableProvider/components/SortableBase.js ***!
   \****************************************************************************************************/
 
 /*!*****************************************************************************************************!*\
@@ -7291,6 +7299,10 @@ object-assign
   \******************************************************************************************************/
 
 /*!******************************************************************************************************!*\
+  !*** ./node_modules/@elementor/ui/unstable/components/SortableProvider/components/SingleSortable.js ***!
+  \******************************************************************************************************/
+
+/*!******************************************************************************************************!*\
   !*** ./node_modules/@mui/x-date-pickers/MultiSectionDigitalClock/MultiSectionDigitalClockSection.js ***!
   \******************************************************************************************************/
 
@@ -7304,6 +7316,10 @@ object-assign
 
 /*!********************************************************************************************************!*\
   !*** ./node_modules/@elementor/ui/unstable/components/GradientBox/components/RadialPositionsSelect.js ***!
+  \********************************************************************************************************/
+
+/*!********************************************************************************************************!*\
+  !*** ./node_modules/@elementor/ui/unstable/components/SortableProvider/components/MultipleSortable.js ***!
   \********************************************************************************************************/
 
 /*!***********************************************************************************************************!*\
@@ -7333,6 +7349,10 @@ object-assign
 /*!*******************************************************************************************************************!*\
   !*** ./node_modules/@mui/x-date-pickers/internals/components/PickersArrowSwitcher/pickersArrowSwitcherClasses.js ***!
   \*******************************************************************************************************************/
+
+/*!**********************************************************************************************************************************!*\
+  !*** ./node_modules/@elementor/ui/unstable/components/SortableProvider/components/helpers/multiple-groups-coordindate-getter.js ***!
+  \**********************************************************************************************************************************/
 
 /*!***********************************************************************************************************************************!*\
   !*** ./node_modules/@emotion/use-insertion-effect-with-fallbacks/dist/emotion-use-insertion-effect-with-fallbacks.browser.esm.js ***!

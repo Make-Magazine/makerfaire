@@ -14,8 +14,6 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 class Onboarding {
 
-	const SETTING_ONBOARDING_COMPLETED = Fields::SETTING_PREFIX . 'onboarding_completed';
-
 	/**
 	 * Instance
 	 * @var Onboarding|null
@@ -39,11 +37,8 @@ class Onboarding {
 	 * @return void
 	 */
 	public function on_connect( Facade $facade ): void {
-		$option_updated = update_option( self::SETTING_ONBOARDING_COMPLETED, true );
-		if ( true === $option_updated ) {
-			wp_safe_redirect( $facade->utils()->get_admin_url() . '#/home/onboarding' );
-			exit;
-		}
+		wp_safe_redirect( $facade->utils()->get_admin_url() . '#/home/onboarding' );
+		exit;
 	}
 
 	/**

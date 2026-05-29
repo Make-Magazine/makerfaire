@@ -1,10 +1,11 @@
-.elementor-lightbox {
+:where(.elementor-lightbox) {
   --lightbox-ui-color: rgba(238, 238, 238, 0.9);
   --lightbox-ui-color-hover: #fff;
   --lightbox-text-color: var(--lightbox-ui-color);
   --lightbox-header-icons-size: 20px;
   --lightbox-navigation-icons-size: 25px;
 }
+
 .elementor-lightbox:not(.elementor-popup-modal) .dialog-header,
 .elementor-lightbox:not(.elementor-popup-modal) .dialog-message {
   text-align: center;
@@ -161,7 +162,7 @@
 }
 .elementor-lightbox .swiper .swiper-pagination-fraction {
   width: max-content;
-  color: #ffffff;
+  color: currentColor;
 }
 .elementor-lightbox .elementor-swiper-button:focus {
   outline-width: 1px;

@@ -255,7 +255,9 @@ var eventsConfig = {
     aiGenerate: 'ai_generate',
     resultsUpdated: 'results_updated',
     noResults: 'no_results',
-    selected: 'selected'
+    selected: 'selected',
+    promotionViewed: 'promotion_viewed',
+    upgradeNow: 'upgrade_now'
   },
   targetNames: {
     publishDropdown: {
@@ -302,7 +304,10 @@ var eventsConfig = {
     structurePanel: 'Structure Panel',
     canvas: 'Canvas',
     leftPanel: 'Left Panel',
-    elementorLibrary: 'Elementor Library'
+    elementorLibrary: 'Elementor Library',
+    components: {
+      instanceEditingPanel: 'Instance Editing Panel'
+    }
   },
   secondaryLocations: {
     layout: 'Layout Section',
@@ -435,6 +440,7 @@ var eventsConfig = {
     },
     // ChecklistSteps event names are generated dynamically, based on stepId and action type taken: title, action, done, undone, upgrade
     elementorEditor: {
+      editorLoaded: 'editor_loaded',
       checklist: {
         checklistHeaderClose: 'checklist_header_close_icon',
         checklistFirstPopup: 'checklist popup triggered'
@@ -451,7 +457,17 @@ var eventsConfig = {
       save: 'save_new_variable',
       openManager: 'open_variables_manager',
       saveChanges: 'save_variables_changes',
-      delete: 'delete_variable'
+      delete: 'delete_variable',
+      variableSyncToV3: 'variable_sync_to_v3'
+    },
+    design_system: {
+      importOpened: 'design_system_import_opened',
+      fileSelected: 'design_system_file_selected',
+      validationFailed: 'design_system_validation_failed',
+      conflictChoice: 'design_system_conflict_choice',
+      confirmed: 'design_system_import_confirmed',
+      imported: 'design_system_imported',
+      importFailed: 'design_system_import_failed'
     },
     components: {
       createClicked: 'component_create_clicked',
@@ -462,7 +478,8 @@ var eventsConfig = {
       propertiesPanelOpened: 'component_properties_panel_opened',
       propertiesGroupCreated: 'component_properties_group_created',
       propertyExposed: 'component_property_exposed',
-      propertyRemoved: 'component_property_removed'
+      propertyRemoved: 'component_property_removed',
+      detached: 'component_detached'
     },
     global_classes: {
       classApplied: 'class_applied',
@@ -482,7 +499,10 @@ var eventsConfig = {
       classStyled: 'class_styled',
       classStateClicked: 'class_state_clicked',
       classUsageClicked: 'class_usage_clicked',
-      classDuplicate: 'class_duplicate'
+      classDuplicate: 'class_duplicate',
+      classSyncToV3PopupShown: 'class_sync_to_v3_popup_shown',
+      classSyncToV3: 'class_sync_to_v3',
+      classSyncToV3PopupClick: 'class_sync_to_v3_popup_click'
     },
     editorOne: {
       topBarPublishDropdown: 'top_bar_publish_dropdown',
@@ -496,6 +516,13 @@ var eventsConfig = {
       finderResultSelect: 'finder_result_select',
       canvasEmptyBoxAction: 'canvas_empty_box_action',
       widgetPanelSearch: 'widget_panel_search'
+    },
+    interactions: {
+      created: 'interactions_created'
+    },
+    promotions: {
+      viewPromotion: 'view_promotion',
+      upgradePromotionClick: 'upgrade_promotion_click'
     }
   }
 };

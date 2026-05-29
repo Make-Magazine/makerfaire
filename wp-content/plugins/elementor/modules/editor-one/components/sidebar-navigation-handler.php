@@ -6,7 +6,6 @@ use Elementor\Core\Utils\Promotions\Filtered_Promotions_Manager;
 use Elementor\Modules\EditorOne\Classes\Active_Menu_Resolver;
 use Elementor\Modules\EditorOne\Classes\Menu_Data_Provider;
 use Elementor\Modules\EditorOne\Classes\Url_Matcher;
-use Elementor\Modules\EditorOne\Classes\Menu_Config;
 use Elementor\Utils;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -38,11 +37,7 @@ class Sidebar_Navigation_Handler {
 			return $classes;
 		}
 
-		$classes .= ' e-has-sidebar-navigation';
-
-		if ( Menu_Config::is_elementor_home_menu_available() ) {
-			$classes .= ' e-has-elementor-home-menu';
-		}
+		$classes .= ' e-has-sidebar-navigation e-has-elementor-home-menu';
 
 		return $classes;
 	}

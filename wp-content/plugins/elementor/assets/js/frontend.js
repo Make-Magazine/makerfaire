@@ -1167,6 +1167,7 @@ class SwiperHandler {
   createSwiperInstance(container, config) {
     const SwiperSource = window.Swiper;
     SwiperSource.prototype.adjustConfig = this.adjustConfig;
+    config = this.applyMotionPreferences(config);
     return new SwiperSource(container, config);
   }
 
@@ -1212,6 +1213,16 @@ class SwiperHandler {
       };
     });
     return config;
+  }
+  applyMotionPreferences(config) {
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (!prefersReducedMotion) {
+      return config;
+    }
+    return Object.assign({}, config, {
+      speed: 0,
+      autoplay: false
+    });
   }
 }
 exports["default"] = SwiperHandler;

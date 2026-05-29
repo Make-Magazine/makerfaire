@@ -14,6 +14,12 @@
   --editor-one-sidebar-left-offset: var(--editor-one-sidebar-left-offset-collapsed);
 }
 
+#editor-one-top-bar {
+  --editor-one-sidebar-admin-top-bar-height: 48px;
+}
+#editor-one-top-bar:not(:has(header)) {
+  height: var(--editor-one-sidebar-admin-top-bar-height);
+}
 #editor-one-top-bar > * {
   inset-block-start: var(--editor-one-wordpress-admin-bar-height, 32px);
   inset-inline-start: var(--editor-one-sidebar-left-offset, 160px);

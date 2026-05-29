@@ -1572,6 +1572,78 @@ body.elementor-panel-loading #elementor-panel-state-loading {
   border: 0;
 }
 
+#elementor-panel-elements-widget-creation-area:empty {
+  display: none;
+}
+
+.elementor-panel-elements-widget-creation {
+  text-align: center;
+  padding: 30px 20px;
+}
+.elementor-panel-elements-widget-creation__title {
+  font-size: 14px;
+  font-weight: bold;
+  line-height: 1.4;
+  color: var(--e-a-color-txt);
+}
+.elementor-panel-elements-widget-creation__message {
+  margin-block-start: 8px;
+  font-size: 13px;
+  line-height: 1.6;
+  color: var(--e-a-color-txt-muted);
+}
+.elementor-panel-elements-widget-creation__cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-block-start: 16px;
+  padding: 0;
+  border: none;
+  background: none;
+  color: #C00BB9;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  font-family: var(--e-a-font-family);
+}
+.elementor-panel-elements-widget-creation__cta i {
+  font-size: 16px;
+}
+.elementor-panel-elements-widget-creation__cta:hover {
+  opacity: 0.8;
+}
+.elementor-panel-elements-widget-creation--search-footer {
+  border-block-start: var(--e-a-border);
+}
+
+.elementor-panel-category-custom-widgets-empty {
+  grid-column: 1/-1;
+  width: 100%;
+  padding: 0 16px 16px;
+}
+.elementor-panel-category-custom-widgets-empty__message {
+  margin: 0;
+  font-size: 12px;
+  line-height: 1.6;
+  color: var(--e-a-color-txt-muted);
+}
+
+.elementor-panel-heading.elementor-panel-category-title .elementor-panel-custom-widgets__cta--heading {
+  margin-inline-start: auto;
+  padding: 4px 10px;
+  border: none;
+  background: none;
+  color: #C00BB9;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  font-family: var(--e-a-font-family);
+  flex-shrink: 0;
+}
+.elementor-panel-heading.elementor-panel-category-title .elementor-panel-custom-widgets__cta--heading:hover {
+  opacity: 0.8;
+}
+
 #elementor-panel-inner {
   position: relative;
   height: 100%;
@@ -3016,6 +3088,17 @@ body:not(.elementor-device-mobile) .elementor-control.elementor-control-responsi
 .e-global__preview-items-container::-webkit-scrollbar-thumb {
   background-color: #BABFC5;
   border-radius: 10px;
+}
+.e-global__group-header {
+  padding: 12px 20px 5px;
+  font-weight: 500;
+  font-size: 11px;
+  color: var(--e-a-color-txt-muted);
+}
+.e-global__group-divider {
+  height: 1px;
+  background-color: var(--e-a-border-color);
+  margin: 10px 20px;
 }
 .e-global__manage-button {
   font-weight: 500;
@@ -5016,6 +5099,18 @@ body.e-is-device-mode:not(.elementor-device-desktop) #elementor-preview-responsi
   box-shadow: 0 0 3px rgba(0, 0, 0, 0.3), 0 0 20px rgba(0, 0, 0, 0.15);
 }
 
+#elementor-template-library-modal button:focus-visible,
+#elementor-template-library-modal a:focus-visible,
+#elementor-template-library-modal input:focus-visible,
+#elementor-template-library-modal select:focus-visible,
+#elementor-template-library-modal [tabindex="0"]:focus-visible,
+#elementor-template-library-modal [role=tab]:focus-visible,
+#elementor-template-library-modal [role=radio]:focus-visible,
+#elementor-template-library-modal [role=menuitem]:focus-visible {
+  outline: 2px solid var(--e-a-border-color-focus);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
 #elementor-template-library-modal a.elementor-template-library-blank-footer-link {
   font-style: normal;
   text-decoration: underline;
@@ -5048,12 +5143,19 @@ body.e-is-device-mode:not(.elementor-device-desktop) #elementor-preview-responsi
   padding: 17px 20px;
   border-block-end: 3px solid transparent;
   cursor: pointer;
+  background: transparent;
+  margin: 0;
+  font-size: inherit;
+  font-family: inherit;
+  color: inherit;
+  border: none;
 }
 .elementor-template-library-menu-item:hover {
   background-color: var(--e-a-bg-hover);
   border-color: var(--e-a-bg-hover);
 }
-.elementor-template-library-menu-item.elementor-active {
+.elementor-template-library-menu-item.elementor-active, .elementor-template-library-menu-item[aria-selected=true] {
+  border-block-end: 3px solid;
   border-color: var(--e-a-border-color-accent);
   color: var(--e-a-color-txt-accent);
 }
@@ -5061,8 +5163,22 @@ body.e-is-device-mode:not(.elementor-device-desktop) #elementor-preview-responsi
 #elementor-template-library-header-actions {
   display: flex;
 }
-#elementor-template-library-header-actions > div {
+#elementor-template-library-header-actions > div,
+#elementor-template-library-header-actions > button {
+  background: transparent;
+  margin: 0;
+  font-size: inherit;
+  font-family: inherit;
+  color: inherit;
+  border: none;
   padding-inline-end: 16px;
+  cursor: pointer;
+}
+#elementor-template-library-header-actions > div:focus-visible,
+#elementor-template-library-header-actions > button:focus-visible {
+  outline: 2px solid var(--e-a-border-color-focus);
+  outline-offset: -2px;
+  border-radius: 2px;
 }
 
 #elementor-template-library-header-tools.e-hidden-disabled {
@@ -5086,6 +5202,23 @@ body.e-is-device-mode:not(.elementor-device-desktop) #elementor-preview-responsi
   border-inline-end: var(--e-a-border);
   cursor: pointer;
   transition: color 0.5s;
+}
+#elementor-template-library-header-preview-back .elementor-template-library-header-back-button {
+  background: transparent;
+  margin: 0;
+  font-size: inherit;
+  font-family: inherit;
+  color: inherit;
+  border: none;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+}
+#elementor-template-library-header-preview-back .elementor-template-library-header-back-button:focus-visible {
+  outline: 2px solid var(--e-a-border-color-focus);
+  outline-offset: 2px;
+  border-radius: 2px;
 }
 #elementor-template-library-header-preview-back:hover {
   color: var(--e-a-color-txt-hover);
@@ -5121,6 +5254,11 @@ body.e-is-device-mode:not(.elementor-device-desktop) #elementor-preview-responsi
 #elementor-template-library-templates[data-template-source=cloud] .toolbar-container .quota-progress-container, #elementor-template-library-templates[data-template-source=empty] .toolbar-container .quota-progress-container {
   display: flex;
   align-items: baseline;
+  border-radius: 3px;
+}
+#elementor-template-library-templates[data-template-source=cloud] .toolbar-container .quota-progress-container:focus-visible, #elementor-template-library-templates[data-template-source=empty] .toolbar-container .quota-progress-container:focus-visible {
+  outline: 2px solid var(--e-a-border-color-focus);
+  outline-offset: 2px;
 }
 #elementor-template-library-templates[data-template-source=cloud] .toolbar-container .quota-progress-info, #elementor-template-library-templates[data-template-source=empty] .toolbar-container .quota-progress-info {
   align-items: center;
@@ -5228,6 +5366,12 @@ body.e-is-device-mode:not(.elementor-device-desktop) #elementor-preview-responsi
   gap: 8px;
 }
 #elementor-template-library-templates .elementor-template-library-filter-toolbar-side-actions .elementor-template-library-action-item {
+  background: transparent;
+  margin: 0;
+  font-size: inherit;
+  font-family: inherit;
+  color: inherit;
+  border: none;
   cursor: pointer;
   font-size: 20px;
   padding: 0 5px;
@@ -5269,13 +5413,17 @@ body.e-is-device-mode:not(.elementor-device-desktop) #elementor-preview-responsi
   border: var(--e-a-border);
   border-radius: 3px;
 }
-#elementor-template-library-templates[data-template-view=grid] #elementor-template-library-templates-container .elementor-template-library-template-view-grid:not([data-status=locked]):hover .elementor-template-library-template-preview {
+#elementor-template-library-templates[data-template-view=grid] #elementor-template-library-templates-container .elementor-template-library-template-view-grid:focus-visible {
+  outline: 2px solid var(--e-a-border-color-focus);
+  outline-offset: 2px;
+}
+#elementor-template-library-templates[data-template-view=grid] #elementor-template-library-templates-container .elementor-template-library-template-view-grid:not([data-status=locked]):hover .elementor-template-library-template-preview, #elementor-template-library-templates[data-template-view=grid] #elementor-template-library-templates-container .elementor-template-library-template-view-grid:not([data-status=locked]):focus .elementor-template-library-template-preview, #elementor-template-library-templates[data-template-view=grid] #elementor-template-library-templates-container .elementor-template-library-template-view-grid:not([data-status=locked]):focus-within .elementor-template-library-template-preview {
   display: flex;
 }
-#elementor-template-library-templates[data-template-view=grid] #elementor-template-library-templates-container .elementor-template-library-template-view-grid:not([data-status=locked]):hover .elementor-template-library-card-footer .elementor-template-library-template-name {
+#elementor-template-library-templates[data-template-view=grid] #elementor-template-library-templates-container .elementor-template-library-template-view-grid:not([data-status=locked]):hover .elementor-template-library-card-footer .elementor-template-library-template-name, #elementor-template-library-templates[data-template-view=grid] #elementor-template-library-templates-container .elementor-template-library-template-view-grid:not([data-status=locked]):focus .elementor-template-library-card-footer .elementor-template-library-template-name, #elementor-template-library-templates[data-template-view=grid] #elementor-template-library-templates-container .elementor-template-library-template-view-grid:not([data-status=locked]):focus-within .elementor-template-library-card-footer .elementor-template-library-template-name {
   display: none;
 }
-#elementor-template-library-templates[data-template-view=grid] #elementor-template-library-templates-container .elementor-template-library-template-view-grid:not([data-status=locked]):hover .elementor-template-library-card-footer .elementor-template-library-template-card-footer-overlay {
+#elementor-template-library-templates[data-template-view=grid] #elementor-template-library-templates-container .elementor-template-library-template-view-grid:not([data-status=locked]):hover .elementor-template-library-card-footer .elementor-template-library-template-card-footer-overlay, #elementor-template-library-templates[data-template-view=grid] #elementor-template-library-templates-container .elementor-template-library-template-view-grid:not([data-status=locked]):focus .elementor-template-library-card-footer .elementor-template-library-template-card-footer-overlay, #elementor-template-library-templates[data-template-view=grid] #elementor-template-library-templates-container .elementor-template-library-template-view-grid:not([data-status=locked]):focus-within .elementor-template-library-card-footer .elementor-template-library-template-card-footer-overlay {
   display: flex !important;
 }
 #elementor-template-library-templates[data-template-view=grid] #elementor-template-library-templates-container .elementor-template-library-template-view-grid .elementor-template-library-template-thumbnail {
@@ -5372,13 +5520,26 @@ body.e-is-device-mode:not(.elementor-device-desktop) #elementor-preview-responsi
   align-items: center;
   flex: 1;
 }
+#elementor-template-library-templates .bulk-selection-action-bar button {
+  background: transparent;
+  margin: 0;
+  font-size: inherit;
+  font-family: inherit;
+  color: inherit;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+#elementor-template-library-templates .bulk-selection-action-bar button.disabled {
+  pointer-events: none;
+  opacity: 0.3;
+  cursor: not-allowed;
+}
 #elementor-template-library-templates .bulk-selection-action-bar i {
   cursor: pointer;
   font-size: 18px;
-}
-#elementor-template-library-templates .bulk-selection-action-bar i.disabled {
-  pointer-events: none;
-  opacity: 0.3;
 }
 #elementor-template-library-templates .bulk-selection-action-bar .eicon-editor-close {
   font-size: 20px;
@@ -5463,9 +5624,9 @@ body.e-is-device-mode:not(.elementor-device-desktop) #elementor-preview-responsi
   margin-inline-end: 5px;
 }
 .elementor-template-library-filter-select-source .source-option .new-badge {
-  border: 1px solid var(--e-a-color-primary-bold);
+  border: 1px solid var(--e-a-color-primary-bold-dark);
   padding: 2px 4px;
-  color: var(--e-a-color-primary-bold);
+  color: var(--e-a-color-primary-bold-dark);
   border-radius: 10px;
   font-size: 10px;
   margin-inline-start: 5px;
@@ -5637,17 +5798,30 @@ label.elementor-template-library-order-label:hover {
   border: var(--e-a-border);
   border-radius: 3px;
 }
-.elementor-template-library-template-remote:hover {
+.elementor-template-library-template-remote:focus-visible {
+  outline: 2px solid var(--e-a-border-color-focus);
+  outline-offset: 2px;
+}
+.elementor-template-library-template-remote:hover, .elementor-template-library-template-remote:focus, .elementor-template-library-template-remote:focus-within {
   background-color: var(--e-a-bg-hover);
 }
-.elementor-template-library-template-remote:hover .elementor-template-library-template-name {
+.elementor-template-library-template-remote:hover .elementor-template-library-template-preview, .elementor-template-library-template-remote:focus .elementor-template-library-template-preview, .elementor-template-library-template-remote:focus-within .elementor-template-library-template-preview {
+  opacity: 1;
+}
+.elementor-template-library-template-remote:hover .elementor-template-library-template-name, .elementor-template-library-template-remote:focus .elementor-template-library-template-name, .elementor-template-library-template-remote:focus-within .elementor-template-library-template-name {
   display: none;
 }
-.elementor-template-library-template-remote:not(:hover) .elementor-template-library-template-preview {
+.elementor-template-library-template-remote:hover .elementor-template-library-favorite,
+.elementor-template-library-template-remote:hover .elementor-template-library-template-action, .elementor-template-library-template-remote:focus .elementor-template-library-favorite,
+.elementor-template-library-template-remote:focus .elementor-template-library-template-action, .elementor-template-library-template-remote:focus-within .elementor-template-library-favorite,
+.elementor-template-library-template-remote:focus-within .elementor-template-library-template-action {
+  display: initial;
+}
+.elementor-template-library-template-remote:not(:hover):not(:focus):not(:focus-within) .elementor-template-library-template-preview {
   opacity: 0;
 }
-.elementor-template-library-template-remote:not(:hover) .elementor-template-library-favorite,
-.elementor-template-library-template-remote:not(:hover) .elementor-template-library-template-action {
+.elementor-template-library-template-remote:not(:hover):not(:focus):not(:focus-within) .elementor-template-library-favorite,
+.elementor-template-library-template-remote:not(:hover):not(:focus):not(:focus-within) .elementor-template-library-template-action {
   display: none;
 }
 .elementor-template-library-template-remote.elementor-template-library-pro-template .elementor-template-library-template-body:before {
@@ -5684,7 +5858,7 @@ label.elementor-template-library-order-label:hover {
 .elementor-template-library-template-remote:not(.elementor-template-library-template-page):not(.elementor-template-library-template-lp) .elementor-template-library-template-name {
   display: none;
 }
-.elementor-template-library-template-remote:not(.elementor-template-library-template-page):not(.elementor-template-library-template-lp):not(:hover) .elementor-template-library-template-footer {
+.elementor-template-library-template-remote:not(.elementor-template-library-template-page):not(.elementor-template-library-template-lp):not(:hover):not(:focus):not(:focus-within) .elementor-template-library-template-footer {
   transform: translateY(100%);
 }
 .elementor-template-library-template-remote .elementor-template-library-template-body {
@@ -5735,7 +5909,19 @@ label.elementor-template-library-order-label:hover {
   margin-inline-start: auto;
 }
 .elementor-template-library-template-remote .elementor-template-library-template-favorite-input {
-  display: none;
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+.elementor-template-library-template-remote .elementor-template-library-template-favorite-input:focus-visible + .elementor-template-library-template-favorite-label {
+  outline: 2px solid var(--e-a-border-color-focus);
+  outline-offset: 2px;
 }
 .elementor-template-library-template-remote .elementor-template-library-template-favorite-input:checked + .elementor-template-library-template-favorite-label i:before {
   content: "\e93f";
@@ -5857,32 +6043,39 @@ label.elementor-template-library-order-label:hover {
   inset-block-start: 100%;
   inset-inline-end: 0;
   z-index: 1;
+  list-style: none;
+  margin: 0;
+  padding: 0;
 }
-.elementor-template-library-template-local .elementor-template-library-template-more > div,
-.elementor-template-library-template-cloud .elementor-template-library-template-more > div {
+.elementor-template-library-template-local .elementor-template-library-template-more > li button,
+.elementor-template-library-template-local .elementor-template-library-template-more > li a,
+.elementor-template-library-template-cloud .elementor-template-library-template-more > li button,
+.elementor-template-library-template-cloud .elementor-template-library-template-more > li a {
+  background: transparent;
+  margin: 0;
+  font-size: inherit;
+  font-family: inherit;
+  color: inherit;
+  border: none;
   padding: 10px 20px;
   font-size: 11px;
   cursor: pointer;
   display: flex;
   align-items: center;
   gap: 8px;
+  width: 100%;
 }
-.elementor-template-library-template-local .elementor-template-library-template-more > div.disabled,
-.elementor-template-library-template-cloud .elementor-template-library-template-more > div.disabled {
+.elementor-template-library-template-local .elementor-template-library-template-more > li button.disabled,
+.elementor-template-library-template-local .elementor-template-library-template-more > li a.disabled,
+.elementor-template-library-template-cloud .elementor-template-library-template-more > li button.disabled,
+.elementor-template-library-template-cloud .elementor-template-library-template-more > li a.disabled {
   cursor: not-allowed;
   color: var(--e-a-color-txt-disabled);
 }
-.elementor-template-library-template-local .elementor-template-library-template-more > div.disabled a,
-.elementor-template-library-template-cloud .elementor-template-library-template-more > div.disabled a {
-  color: var(--e-a-color-txt-disabled);
-  cursor: not-allowed;
-}
-.elementor-template-library-template-local .elementor-template-library-template-more a,
-.elementor-template-library-template-cloud .elementor-template-library-template-more a {
+.elementor-template-library-template-local .elementor-template-library-template-more > li a,
+.elementor-template-library-template-cloud .elementor-template-library-template-more > li a {
   color: var(--e-a-color-txt);
-  display: flex;
-  align-items: center;
-  gap: 8px;
+  text-decoration: none;
 }
 .elementor-template-library-template-local .elementor-template-library-template-more .elementor-template-library-template-delete,
 .elementor-template-library-template-cloud .elementor-template-library-template-more .elementor-template-library-template-delete {
@@ -5896,6 +6089,12 @@ label.elementor-template-library-order-label:hover {
 .elementor-template-library-template-cloud .elementor-template-library-template-more-toggle {
   margin-inline-start: auto;
   cursor: pointer;
+  background: none;
+  border: none;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 .elementor-template-library-template-local .elementor-template-library-template-more-toggle i,
 .elementor-template-library-template-cloud .elementor-template-library-template-more-toggle i {
@@ -5964,7 +6163,9 @@ label.elementor-template-library-order-label:hover {
   align-items: center;
 }
 .elementor-template-library-template-local .elementor-template-library-template-controls > div,
-.elementor-template-library-template-cloud:not(.elementor-template-library-template-view-grid) .elementor-template-library-template-controls > div {
+.elementor-template-library-template-local .elementor-template-library-template-controls > button,
+.elementor-template-library-template-cloud:not(.elementor-template-library-template-view-grid) .elementor-template-library-template-controls > div,
+.elementor-template-library-template-cloud:not(.elementor-template-library-template-view-grid) .elementor-template-library-template-controls > button {
   cursor: pointer;
   transition: color 0.5s;
 }
@@ -6088,12 +6289,21 @@ label.elementor-template-library-order-label:hover {
   display: inline;
   background: var(--e-a-bg-hover);
   padding: 0 2px 1px;
+  border: none;
   border-radius: 2px;
   vertical-align: bottom;
   cursor: pointer;
+  font-family: inherit;
+  font-size: inherit;
+  color: inherit;
+  line-height: inherit;
 }
 #elementor-template-library-save-template-form .cloud-library-form-inputs .ellipsis-container:hover {
   background: var(--e-a-bg-active);
+}
+#elementor-template-library-save-template-form .cloud-library-form-inputs .ellipsis-container:focus-visible {
+  outline: 2px solid var(--e-a-border-color-focus);
+  outline-offset: 2px;
 }
 #elementor-template-library-save-template-form .cloud-library-form-inputs.promotion .upgrade-tooltip,
 #elementor-template-library-save-template-form .cloud-library-form-inputs.promotion .connect-badge,
@@ -6160,6 +6370,7 @@ label.elementor-template-library-order-label:hover {
   white-space: nowrap;
   text-overflow: ellipsis;
   overflow: hidden;
+  overflow: visible;
   display: inline-flex;
   align-items: baseline;
   line-height: 27px;
@@ -6240,6 +6451,7 @@ label.elementor-template-library-order-label:hover {
 #elementor-template-library-save-template-form .cloud-library-form-inputs .cloud-folder-selection-dropdown .folder-item {
   padding: 5px 15px;
   cursor: pointer;
+  list-style: none;
 }
 #elementor-template-library-save-template-form .cloud-library-form-inputs .cloud-folder-selection-dropdown .folder-item[data-id="0"] .eicon-folder-o {
   display: none;
@@ -6250,8 +6462,12 @@ label.elementor-template-library-order-label:hover {
 #elementor-template-library-save-template-form .cloud-library-form-inputs .cloud-folder-selection-dropdown .folder-item[data-id="0"] {
   text-decoration: underline;
 }
-#elementor-template-library-save-template-form .cloud-library-form-inputs .cloud-folder-selection-dropdown .folder-item:hover, #elementor-template-library-save-template-form .cloud-library-form-inputs .cloud-folder-selection-dropdown .folder-item.selected {
+#elementor-template-library-save-template-form .cloud-library-form-inputs .cloud-folder-selection-dropdown .folder-item:hover, #elementor-template-library-save-template-form .cloud-library-form-inputs .cloud-folder-selection-dropdown .folder-item.selected, #elementor-template-library-save-template-form .cloud-library-form-inputs .cloud-folder-selection-dropdown .folder-item:focus {
   background: var(--e-a-border-color);
+}
+#elementor-template-library-save-template-form .cloud-library-form-inputs .cloud-folder-selection-dropdown .folder-item:focus-visible {
+  outline: 2px solid var(--e-a-border-color-focus);
+  outline-offset: -2px;
 }
 #elementor-template-library-save-template-form .cloud-library-form-inputs .cloud-folder-selection-dropdown .folder-item.disabled {
   pointer-events: none;
@@ -6772,6 +6988,171 @@ label.elementor-template-library-order-label:hover {
   border-block-start-color: var(--e-a-bg-secondary);
 }
 
+.elementor-global-styles-dialog {
+  --gsd-color-text-primary: #0c0d0e;
+  --gsd-color-text-secondary: #3f444b;
+  --gsd-color-text-tertiary: #69727D;
+  --gsd-color-divider: rgba(0, 0, 0, 0.12);
+  --gsd-color-primary-main: #f0abfc;
+  --gsd-color-primary-hover: #e879f9;
+  --gsd-color-secondary-main: #515962;
+  --gsd-border-radius: 4px;
+  --gsd-spacing-horizontal: 24px;
+  --gsd-font-family: 'Roboto', sans-serif;
+  padding: 16px 0 0;
+  min-width: 444px;
+}
+.elementor-global-styles-dialog__header {
+  padding: 10px var(--gsd-spacing-horizontal) 0;
+  margin-block-end: 16px;
+}
+.elementor-global-styles-dialog__header h2 {
+  margin: 0 0 4px;
+  font-family: var(--gsd-font-family);
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 1.3;
+  color: var(--gsd-color-text-primary);
+  letter-spacing: 0.15px;
+}
+.elementor-global-styles-dialog__header p {
+  margin: 0;
+  font-family: var(--gsd-font-family);
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 20px;
+  color: var(--gsd-color-text-secondary);
+  letter-spacing: 0.15px;
+}
+.elementor-global-styles-dialog__options {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 0 var(--gsd-spacing-horizontal);
+}
+.elementor-global-styles-dialog__radio-card {
+  display: flex;
+  gap: 0;
+  padding: 12px 8px;
+  border: 1px solid var(--gsd-color-divider);
+  border-radius: var(--gsd-border-radius);
+  cursor: pointer;
+  transition: border-color 0.2s ease;
+}
+.elementor-global-styles-dialog__radio-card:has(input[type=radio]:checked) {
+  border: 2px solid var(--gsd-color-text-primary);
+  padding: 11px 7px;
+}
+.elementor-global-styles-dialog__radio-card input[type=radio] {
+  flex-shrink: 0;
+  width: 20px;
+  height: 20px;
+  margin: 9px;
+  cursor: pointer;
+  color: var(--gsd-color-text-tertiary);
+  accent-color: var(--gsd-color-text-primary);
+}
+.elementor-global-styles-dialog__radio-card-content {
+  display: flex;
+  align-items: flex-start;
+  flex-direction: column;
+  flex: 1;
+}
+.elementor-global-styles-dialog__radio-label {
+  font-family: var(--gsd-font-family);
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 18px;
+  color: var(--gsd-color-text-primary);
+  letter-spacing: 0.15px;
+}
+.elementor-global-styles-dialog__radio-description {
+  font-family: var(--gsd-font-family);
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 20px;
+  color: var(--gsd-color-text-secondary);
+  letter-spacing: 0.4px;
+}
+.elementor-global-styles-dialog__checkbox-container {
+  display: flex;
+  align-items: flex-start;
+  gap: 4px;
+  padding: 0;
+  margin-block-start: 0;
+}
+.elementor-global-styles-dialog__checkbox-option {
+  display: flex;
+  align-items: flex-start;
+  gap: 4px;
+  cursor: pointer;
+}
+.elementor-global-styles-dialog__checkbox-option input[type=checkbox] {
+  width: 18px;
+  height: 18px;
+  margin: 4px;
+  cursor: pointer;
+}
+.elementor-global-styles-dialog__checkbox-option input[type=checkbox]:checked {
+  background-color: var(--gsd-color-text-tertiary);
+}
+.elementor-global-styles-dialog__checkbox-label {
+  font-family: var(--gsd-font-family);
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 1.43;
+  color: var(--gsd-color-text-primary);
+  letter-spacing: 0.15px;
+  padding-block-start: 4px;
+  margin-inline-start: 4px;
+}
+.elementor-global-styles-dialog__checkbox-label a {
+  color: #2563eb;
+  text-decoration: underline;
+}
+.elementor-global-styles-dialog__checkbox-label a:hover {
+  color: #2563eb;
+}
+.elementor-global-styles-dialog__footer {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 8px;
+  padding: 16px var(--gsd-spacing-horizontal);
+}
+.elementor-global-styles-dialog__button-cancel {
+  padding: 6px 8px;
+  font-family: var(--gsd-font-family);
+  font-size: 15px;
+  font-weight: 500;
+  line-height: 24px;
+  letter-spacing: 0.4px;
+  color: var(--gsd-color-secondary-main);
+  background: transparent;
+  border: none;
+  border-radius: var(--gsd-border-radius);
+  cursor: pointer;
+}
+.elementor-global-styles-dialog__button-cancel:hover {
+  background: rgba(0, 0, 0, 0.04);
+}
+.elementor-global-styles-dialog__button-insert {
+  padding: 6px 16px;
+  font-family: var(--gsd-font-family);
+  font-size: 15px;
+  font-weight: 500;
+  line-height: 24px;
+  letter-spacing: 0.4px;
+  color: var(--gsd-color-text-primary);
+  background: var(--gsd-color-primary-main);
+  border: none;
+  border-radius: var(--gsd-border-radius);
+  cursor: pointer;
+}
+.elementor-global-styles-dialog__button-insert:hover {
+  background: var(--gsd-color-primary-hover);
+}
+
 .elementor-tags-list {
   display: none;
   position: absolute;
@@ -6957,6 +7338,12 @@ label.elementor-template-library-order-label:hover {
   opacity: 0.5;
   color: var(--e-a-color-disabled);
 }
+.elementor-context-menu-list__item--disabled.elementor-context-menu-list__item--has-shortcut-action {
+  opacity: 1;
+}
+.elementor-context-menu-list__item--disabled.elementor-context-menu-list__item--has-shortcut-action > :not(.elementor-context-menu-list__item__shortcut) {
+  opacity: 0.5;
+}
 .elementor-context-menu-list__item:not(.elementor-context-menu-list__item--disabled):hover, .elementor-context-menu-list__item:not(.elementor-context-menu-list__item--disabled):focus {
   background-color: var(--e-a-bg-hover);
   color: var(--e-a-color-hover);
@@ -6986,6 +7373,18 @@ label.elementor-template-library-order-label:hover {
   color: var(--e-a-color-primary-bold);
   border-radius: 10px;
   font-size: 10px;
+}
+.elementor-context-menu-list__item__shortcut__promotion-badge {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background-color: rgba(214, 16, 124, 0.12);
+  color: var(--e-a-color-accent-promotion, #D6107C);
+  font-size: 16px;
+  cursor: pointer;
 }
 .elementor-context-menu-list__item__title, .elementor-context-menu-list__item__shortcut {
   font-size: 14px;

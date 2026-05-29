@@ -1,7 +1,17 @@
-__( "This widget isn't compatible with components. Use atomic elements instead.", 'elementor' );
 __( "Can't add this component - components that contain each other can't be nested.", 'elementor' );
 __( 'Components', 'elementor' );
+__( 'Editing components requires an active Pro subscription.', 'elementor' );
+__( 'Upgrade Now', 'elementor' );
+__( 'To edit components, update Elementor Pro to the latest version.', 'elementor' );
+__( 'Update Now', 'elementor' );
 __( 'Edit Component', 'elementor' );
+__( 'Detach from Component', 'elementor' );
+__( 'Failed to detach component instance.', 'elementor' );
+__(
+			'You have unpublished component on this page. You need a pro version to publish it.',
+			'elementor'
+		);
+__( 'Upgrade Now', 'elementor' );
 /* translators: %s is the name of the user who is currently editing the document */
 __( '%s is currently editing this document', 'elementor' );
 __(
@@ -9,23 +19,25 @@ __(
 							'elementor'
 						);
 __( 'Close', 'elementor' );
-__( 'Default', 'elementor' );
-__( 'Restore Element', 'elementor' );
-/* translators: %s: component name */
-__( 'Successfully deleted component %s', 'elementor' );
-__( 'Override Property', 'elementor' );
-__( 'Default', 'elementor' );
-__( 'Name', 'elementor' );
-__( 'Group Name', 'elementor' );
-__( 'Create new property', 'elementor' );
-__( 'Update property', 'elementor' );
-__( 'Create', 'elementor' );
-__( 'Update', 'elementor' );
-__( 'Enter value', 'elementor' );
-__( 'Overridable property', 'elementor' );
-__( 'Make prop overridable', 'elementor' );
+__( 'Detach from Component?', 'elementor' );
+__(
+						'Detaching this instance will break its link to the Component. Changes to the Component will no longer apply. Continue?',
+						'elementor'
+					);
+__( 'Detach', 'elementor' );
+__( 'Upgrade now', 'elementor' );
+__( 'Upgrade Now', 'elementor' );
+__( 'Detach from Component', 'elementor' );
+__( 'Instance detached', 'elementor' );
 /* translators: %s: component name. */
 __( 'Edit %s', 'elementor' );
+__( 'Edit Component', 'elementor' );
+__(
+							'To edit components, update Elementor Pro to the latest version.',
+							'elementor'
+						);
+__( 'Edit components', 'elementor' );
+__( 'Editing components requires an active Pro subscription.', 'elementor' );
 __(
 				'Edit the component to add properties, manage them or update the design across all instances.',
 				'elementor'
@@ -36,32 +48,19 @@ __(
 		  );
 __( 'No properties yet', 'elementor' );
 __( 'Edit component', 'elementor' );
-__( 'Exit component editing mode', 'elementor' );
-__( 'Component created successfully.', 'elementor' );
-__( 'Failed to create component. Please try again.', 'elementor' );
-__(
-					'Components require atomic elements only. Remove widgets to create this component.',
-					'elementor'
-				);
-/* translators: %s is the maximum number of components */
-__(
-					`You've reached the limit of %s components. Please remove an existing one to create a new component.`,
-					'elementor'
-				);
-__( 'Create component', 'elementor' );
-__( 'Name', 'elementor' );
-__( 'Cancel', 'elementor' );
-__( 'Create', 'elementor' );
-__( 'Delete this component?', 'elementor' );
-__(
-						'Existing instances on your pages will remain functional. You will no longer find this component in your list.',
-						'elementor'
-					);
-__( 'Try Components for free:', 'elementor' );
-__(
-						'Soon Components will be part of the Pro subscription, but what you create now will remain on your site.',
-						'elementor'
-					);
+__( 'Failed to detach component instance.', 'elementor' );
+__( 'Detach from Component', 'elementor' );
+__( 'Create new Components', 'elementor' );
+__( 'To create new components, update Elementor Pro to the latest version.', 'elementor' );
+__( 'Create new components', 'elementor' );
+__( 'Creating new components requires an active Pro subscription.', 'elementor' );
+__( 'Create Reusable Components', 'elementor' );
+__( 'Create design elements that sync across your entire site.', 'elementor' );
+__( 'Upgrade now', 'elementor' );
+__( 'Create Reusable Components', 'elementor' );
+__( 'Create design elements that sync across your entire site.', 'elementor' );
+__( 'To create components, update Elementor Pro to the latest version.', 'elementor' );
+__( 'Update Elementor Pro', 'elementor' );
 __( 'No components yet', 'elementor' );
 __( 'Components are reusable blocks that sync across your site.', 'elementor' );
 __( 'Create once, use everywhere.', 'elementor' );
@@ -78,45 +77,4 @@ __(
 __( 'Sorry, nothing matched', 'elementor' );
 __( 'Try something else.', 'elementor' );
 __( 'Clear & try again', 'elementor' );
-__( 'Rename', 'elementor' );
-__( 'Delete', 'elementor' );
 __( 'Search', 'elementor' );
-__( 'Add your first property', 'elementor' );
-__( 'Properties make instances flexible.', 'elementor' );
-__(
-								'Select any Element, then in the General tab, click next to any setting you want users to customize - like text, images, or links.',
-								'elementor'
-							);
-__(
-								'Your properties will appear in the Properties panel, where you can organize and manage them anytime.',
-								'elementor'
-							);
-__( 'Learn more', 'elementor' );
-__( 'Got it', 'elementor' );
-__( 'Group ID or component ID is missing', 'elementor' );
-__( 'Group actions', 'elementor' );
-__( 'Rename', 'elementor' );
-__( 'To delete the group, first remove all the properties', 'elementor' );
-__( 'Delete', 'elementor' );
-__( 'Add your first property', 'elementor' );
-__( 'Make instances flexible while keeping design synced.', 'elementor' );
-__( 'Select any element, then click + next to a setting to expose it.', 'elementor' );
-__( 'Learn more', 'elementor' );
-__( 'Something went wrong', 'elementor' );
-__( 'Component properties', 'elementor' );
-__( 'Add new group', 'elementor' );
-__( 'Add new group', 'elementor' );
-__( 'Close panel', 'elementor' );
-__( 'Close panel', 'elementor' );
-__( 'Back', 'elementor' );
-__( 'Back', 'elementor' );
-__( 'Component properties', 'elementor' );
-__( 'Component properties', 'elementor' );
-__( 'Property name is required', 'elementor' );
-__( 'Property name already exists', 'elementor' );
-__( 'Component name is too long. Please keep it under 50 characters.', 'elementor' );
-__( 'Component name already exists', 'elementor' );
-__( 'Component name is required.', 'elementor' );
-__( 'Component name is too short. Please enter at least 2 characters.', 'elementor' );
-__( 'Group name is required', 'elementor' );
-__( 'Group name already exists', 'elementor' );
