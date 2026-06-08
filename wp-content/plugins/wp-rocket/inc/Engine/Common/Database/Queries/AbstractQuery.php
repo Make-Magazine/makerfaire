@@ -452,6 +452,37 @@ class AbstractQuery extends Query implements QueryInterface {
 	}
 
 	/**
+	 * Check if the completed row is the first one by checking if there is any other completed row except itself.
+	 *
+	 * @param int $id DB row ID.
+	 * @return bool
+	 */
+	public function is_first_completed( $id ): bool {
+		$count = $this->query(
+			[
+				'count'      => true,
+				'status'     => 'completed',
+				'id__not_in' => [ $id ],
+			]
+		);
+		return 0 === $count;
+	}
+
+	/**
+	 * Get completed rows IDs.
+	 *
+	 * @return int[]|array
+	 */
+	public function get_completed_ids() {
+		return $this->query(
+			[
+				'fields' => 'ids',
+				'status' => 'completed',
+			]
+		);
+	}
+
+	/**
 	 * Get all failed rows.
 	 *
 	 * @param float  $delay delay before the urls are deleted.
@@ -484,18 +515,26 @@ class AbstractQuery extends Query implements QueryInterface {
 	 * Revert status to pending.
 	 *
 	 * @param integer $id Used CSS id.
+	 * @param array   $additional_details Additional details to be saved into DB.
+	 *
 	 * @return boolean
 	 */
-	public function revert_to_pending( int $id ): bool {
+	public function revert_to_pending( int $id, array $additional_details = [] ): bool {
+		$item_details = [
+			'error_code'    => '',
+			'error_message' => '',
+			'retries'       => 0,
+			'status'        => 'pending',
+			'modified'      => current_time( 'mysql', true ),
+		];
+
+		if ( ! empty( $additional_details ) ) {
+			$item_details['data'] = wp_json_encode( $additional_details );
+		}
+
 		return (bool) $this->update_item(
 			$id,
-			[
-				'error_code'    => '',
-				'error_message' => '',
-				'retries'       => 0,
-				'status'        => 'pending',
-				'modified'      => current_time( 'mysql', true ),
-			]
+			$item_details
 		);
 	}
 

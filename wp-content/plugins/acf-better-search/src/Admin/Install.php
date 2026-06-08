@@ -25,7 +25,7 @@ class Install implements HookableInterface {
 	/**
 	 * {@inheritdoc}
 	 */
-	public function init_hooks() {
+	public function init_hooks(): void {
 		register_activation_hook( $this->plugin_info->get_plugin_file(), [ $this, 'add_default_options' ] );
 	}
 

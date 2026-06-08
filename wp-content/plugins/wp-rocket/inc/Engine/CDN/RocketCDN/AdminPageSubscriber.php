@@ -35,19 +35,28 @@ class AdminPageSubscriber extends Abstract_Render implements Subscriber_Interfac
 	private $beacon;
 
 	/**
+	 * UserClient instance
+	 *
+	 * @var \WP_Rocket\Engine\License\API\UserClient
+	 */
+	private $user_client;
+
+	/**
 	 * Constructor
 	 *
-	 * @param APIClient    $api_client    RocketCDN API Client instance.
-	 * @param Options_Data $options       WP Rocket options instance.
-	 * @param Beacon       $beacon        Beacon instance.
-	 * @param string       $template_path Path to the templates.
+	 * @param APIClient                                $api_client    RocketCDN API Client instance.
+	 * @param Options_Data                             $options       WP Rocket options instance.
+	 * @param Beacon                                   $beacon        Beacon instance.
+	 * @param \WP_Rocket\Engine\License\API\UserClient $user_client   UserClient instance.
+	 * @param string                                   $template_path Path to the templates.
 	 */
-	public function __construct( APIClient $api_client, Options_Data $options, Beacon $beacon, $template_path ) {
+	public function __construct( APIClient $api_client, Options_Data $options, Beacon $beacon, $user_client, $template_path ) {
 		parent::__construct( $template_path );
 
-		$this->api_client = $api_client;
-		$this->options    = $options;
-		$this->beacon     = $beacon;
+		$this->api_client  = $api_client;
+		$this->options     = $options;
+		$this->beacon      = $beacon;
+		$this->user_client = $user_client;
 	}
 
 	/**
@@ -55,11 +64,12 @@ class AdminPageSubscriber extends Abstract_Render implements Subscriber_Interfac
 	 */
 	public static function get_subscribed_events() {
 		return [
-			'rocket_dashboard_after_account_data' => 'display_rocketcdn_status',
-			'rocket_cdn_settings_fields'          => 'rocketcdn_field',
-			'admin_post_rocket_purge_rocketcdn'   => 'purge_cdn_cache',
-			'rocket_settings_page_footer'         => 'add_subscription_modal',
-			'http_request_args'                   => [ 'preserve_authorization_token', PHP_INT_MAX, 2 ],
+			'rocket_dashboard_after_account_data'        => 'display_rocketcdn_status',
+			'rocket_cdn_settings_fields'                 => 'rocketcdn_field',
+			'admin_post_rocket_purge_rocketcdn'          => 'purge_cdn_cache',
+			'rocket_settings_page_footer'                => 'add_subscription_modal',
+			'http_request_args'                          => [ 'preserve_authorization_token', PHP_INT_MAX, 2 ],
+			'rocket_insights_api_recommendations_params' => 'maybe_add_rocketcdn_to_recommendations_api_params',
 		];
 	}
 
@@ -97,7 +107,7 @@ class AdminPageSubscriber extends Abstract_Render implements Subscriber_Interfac
 			$status_class = ' wpr-isValid';
 			$status_text  = date_i18n( get_option( 'date_format' ), strtotime( $subscription_data['subscription_next_date_update'] ) );
 			$is_active    = true;
-		} elseif ( 'cancelled' === $subscription_data['subscription_status'] ) {
+		} else {
 			$status_class    = ' wpr-isInvalid';
 			$container_class = ' wpr-flex--egal';
 			$status_text     = __( 'No Subscription', 'rocket' );
@@ -212,6 +222,26 @@ class AdminPageSubscriber extends Abstract_Render implements Subscriber_Interfac
 			return;
 		}
 
+		// Check if user data has button URL.
+		$button_url = '';
+		$user_data  = $this->user_client->get_user_data();
+
+		if ( false !== $user_data && isset( $user_data->rocketcdn->button->url ) && ! empty( $user_data->rocketcdn->button->url ) ) {
+			$button_url = add_query_arg(
+				'dashboard_url',
+				rawurlencode(
+					add_query_arg(
+						[
+							'page'               => WP_ROCKET_PLUGIN_SLUG,
+							'rocketcdn_checkout' => 'true',
+						],
+						admin_url( 'options-general.php' )
+					)
+				),
+				esc_url_raw( $user_data->rocketcdn->button->url )
+			);
+		}
+
 		$iframe_src = add_query_arg(
 			[
 				'website'  => home_url(),
@@ -221,12 +251,15 @@ class AdminPageSubscriber extends Abstract_Render implements Subscriber_Interfac
 			'https://api.wp-rocket.me/cdn/iframe'
 		);
 		?>
+		<script type="text/javascript">
+			window.rocketcdnButtonUrl = '<?php echo $button_url; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>';
+		</script>
 		<div class="wpr-rocketcdn-modal" id="wpr-rocketcdn-modal" aria-hidden="true">
-			<div class="wpr-rocketcdn-modal__overlay" tabindex="-1">
+			<div class="wpr-rocketcdn-modal__overlay" tabindex="-1" data-micromodal-close>
 				<div class="wpr-loader" id="wpr-rocketcdn-modal-loader"></div>
 				<div class="wpr-rocketcdn-modal__container" role="dialog" aria-modal="true" aria-labelledby="wpr-rocketcdn-modal-title">
 					<div id="wpr-rocketcdn-modal-content">
-						<iframe id="rocketcdn-iframe" src="<?php echo esc_url( $iframe_src ); ?>" loading="lazy" width="674" height="425"></iframe>
+						<iframe id="rocketcdn-iframe" data-src="<?php echo esc_url( $iframe_src ); ?>" loading="lazy" width="674" height="425"></iframe>
 					</div>
 				</div>
 			</div>
@@ -246,6 +279,51 @@ class AdminPageSubscriber extends Abstract_Render implements Subscriber_Interfac
 	 */
 	public function preserve_authorization_token( $args, $url ) {
 		return $this->api_client->preserve_authorization_token( $args, $url );
+	}
+
+	/**
+	 * Adds the 'plugin_rocketcdn' option to the recommendations API parameters if certain conditions are met.
+	 *
+	 * @param array $params The existing API parameters.
+	 * @return array The modified API parameters with 'plugin_rocketcdn' added if applicable.
+	 */
+	public function maybe_add_rocketcdn_to_recommendations_api_params( array $params ): array {
+		if ( ! $this->should_add_to_recommendations_api_params( $params ) ) {
+			return $params;
+		}
+
+		$params['enabled_options'][] = 'plugin_rocketcdn';
+
+		return $params;
+	}
+
+	/**
+	 * Determines whether to add the 'plugin_rocketcdn' option to the recommendations API parameters.
+	 *
+	 * This method checks multiple conditions to decide if the user should be included:
+	 * - Returns true if the account is a white label account.
+	 * - Returns true if the RocketCDN standalone is active.
+	 * - Returns true if CDN option in WP Rocket is enabled.
+	 * - Returns false otherwise.
+	 *
+	 * @param array $params API params.
+	 * @return bool True if the user should be added to the recommendations API parameters, false otherwise.
+	 */
+	private function should_add_to_recommendations_api_params( $params ): bool {
+		// Return true if white label is true.
+		if ( $this->is_white_label_account() ) {
+			return true;
+		}
+
+		if ( ! empty( rocket_get_constant( 'ROCKETCDN_VERSION' ) ) ) {
+			return true;
+		}
+
+		if ( in_array( 'cdn', $params['enabled_options'], true ) ) {
+			return true;
+		}
+
+		return false;
 	}
 
 	/**

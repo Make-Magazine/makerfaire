@@ -112,6 +112,16 @@ $rocket_manual_preload = (bool) get_rocket_option( 'manual_preload', false );
 							<span class="wpr-title3"><?php esc_html_e( 'Expiration Date', 'rocket' ); ?></span>
 							<span class="wpr-infoAccount <?php echo esc_attr( $data['customer_data']['license_class'] ); ?>" id="wpr-expiration-data"><?php echo esc_html( $data['customer_data']['license_expiration'] ); ?></span>
 						</p>
+						<?php if ( ! defined( 'WP_ROCKET_WHITE_LABEL_ACCOUNT' ) || ! WP_ROCKET_WHITE_LABEL_ACCOUNT ) : ?>
+						<p>
+							<span class="wpr-title3"><?php esc_html_e( 'Plugin Updates', 'rocket' ); ?></span>
+							<?php if ( ! empty( $data['customer_data']['can_update_plugin'] ) ) : ?>
+								<span class="wpr-infoAccount wpr-isValid wpr-icon-check" id="wpr-plugin-updates-data"></span>
+							<?php else : ?>
+								<span class="wpr-infoAccount wpr-isInvalid" id="wpr-plugin-updates-data"><?php echo esc_html( $data['customer_data']['update_blocked_reason'] ); ?></span>
+							<?php endif; ?>
+						</p>
+						<?php endif; ?>
 					</div>
 					<div>
 						<?php
@@ -139,74 +149,6 @@ $rocket_manual_preload = (bool) get_rocket_option( 'manual_preload', false );
 			 */
 			do_action( 'rocket_dashboard_after_account_data' );
 			?>
-		</div>
-
-		<div class="wpr-Page-col wpr-Page-col--fixed">
-			<?php
-			/**
-			 * Fires in the dashboard sidebar
-			 */
-			do_action( 'rocket_dashboard_sidebar' );
-			?>
-			<div class="wpr-optionHeader">
-				<h3 class="wpr-title2"><?php esc_html_e( 'Quick Actions', 'rocket' ); ?></h3>
-			</div>
-
-			<div class="wpr-fieldsContainer">
-				<fieldset class="wpr-fieldsContainer-fieldset">
-					<?php if ( current_user_can( 'rocket_purge_cache' ) ) : ?>
-					<div class="wpr-field">
-						<h4 class="wpr-title3"><?php esc_html_e( 'Cache Files', 'rocket' ); ?></h4>
-						<p><?php echo $rocket_manual_preload ? esc_html__( 'Clear and preload all the cache files.', 'rocket' ) : esc_html__( 'Clear all the cache files.', 'rocket' ); ?></p>
-						<?php
-						$this->render_action_button(
-							'link',
-							'purge_cache',
-							[
-								'label'      => $rocket_manual_preload ? __( 'Clear and preload', 'rocket' ) : __( 'Clear', 'rocket' ),
-								'parameters' => [
-									'type' => 'all',
-								],
-								'attributes' => [
-									'class' => 'wpr-button wpr-button--icon wpr-button--small wpr-icon-trash wpr-button--no-min-width',
-								],
-							]
-						);
-						?>
-					</div>
-					<?php endif; ?>
-					<?php if ( 'local' !== wp_get_environment_type() && get_rocket_option( 'async_css' ) && apply_filters( 'do_rocket_critical_css_generation', true ) && current_user_can( 'rocket_regenerate_critical_css' ) ) : // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound ?>
-					<div class="wpr-field">
-						<h4 class="wpr-title3"><?php esc_html_e( 'Regenerate Critical CSS', 'rocket' ); ?></h4>
-						<?php
-						$this->render_action_button(
-							'link',
-							'rocket_generate_critical_css',
-							[
-								'label'      => __( 'Regenerate Critical CSS', 'rocket' ),
-								'attributes' => [
-									'class' => 'wpr-button wpr-button--icon wpr-button--small wpr-icon-refresh',
-								],
-							]
-						);
-						?>
-					</div>
-					<?php endif; ?>
-
-					<?php
-					/**
-					 * Fires in the dasbhoard actions column
-					 *
-					 * @since 3.16
-					 */
-					do_action( 'rocket_dashboard_actions' );
-					?>
-				</fieldset>
-			</div>
-		</div>
-	</div>
-	<div class="wpr-Page-row">
-		<div class="wpr-Page-col">
 			<?php $this->render_part( 'getting-started' ); ?>
 			<div class="wpr-optionHeader">
 				<h3 class="wpr-title2"><?php esc_html_e( 'Frequently Asked Questions', 'rocket' ); ?></h3>
@@ -248,7 +190,16 @@ $rocket_manual_preload = (bool) get_rocket_option( 'manual_preload', false );
 		</div>
 
 		<div class="wpr-Page-col wpr-Page-col--fixed">
-			<?php $this->render_part( 'documentation' ); ?>
+			<?php
+			/**
+			 * Fires in the dashboard sidebar
+			 */
+			do_action( 'rocket_dashboard_sidebar' );
+
+			$this->render_part( 'quick-actions' );
+
+			$this->render_part( 'documentation' );
+			?>
 		</div>
 	</div>
 </div>

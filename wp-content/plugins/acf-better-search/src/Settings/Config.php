@@ -19,14 +19,14 @@ class Config implements HookableInterface {
 	 */
 	private $config;
 
-	public function __construct( Options $options = null ) {
+	public function __construct( ?Options $options = null ) {
 		$this->options = $options ?: new Options();
 	}
 
 	/**
 	 * {@inheritdoc}
 	 */
-	public function init_hooks() {
+	public function init_hooks(): void {
 		add_filter( 'acfbs_config', [ $this, 'get_config' ], 10, 2 );
 	}
 

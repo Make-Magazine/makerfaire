@@ -29,7 +29,7 @@ class NoticeIntegration implements HookableInterface {
 	/**
 	 * {@inheritdoc}
 	 */
-	public function init_hooks() {
+	public function init_hooks(): void {
 		add_action( 'admin_init', [ $this, 'init_notice_hooks' ] );
 
 		if ( $ajax_action = $this->notice->get_ajax_action_to_disable() ) {
@@ -81,7 +81,7 @@ class NoticeIntegration implements HookableInterface {
 	 *
 	 * @return void
 	 */
-	public static function set_default_value( string $notice_name, string $default_value = null ) {
+	public static function set_default_value( string $notice_name, ?string $default_value = null ) {
 		if ( ( $default_value === null ) || ( get_option( $notice_name, false ) !== false ) ) {
 			return;
 		}

@@ -23,7 +23,7 @@ class Where implements HookableInterface {
 	/**
 	 * {@inheritdoc}
 	 */
-	public function init_hooks() {
+	public function init_hooks(): void {
 		add_filter( 'posts_search', [ $this, 'sql_where' ], 0, 2 );
 	}
 

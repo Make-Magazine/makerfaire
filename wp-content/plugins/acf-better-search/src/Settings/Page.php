@@ -23,7 +23,7 @@ class Page implements HookableInterface {
 	 */
 	private $options;
 
-	public function __construct( PluginInfo $plugin_info, Options $options = null ) {
+	public function __construct( PluginInfo $plugin_info, ?Options $options = null ) {
 		$this->plugin_info = $plugin_info;
 		$this->options     = $options ?: new Options();
 	}
@@ -31,7 +31,7 @@ class Page implements HookableInterface {
 	/**
 	 * {@inheritdoc}
 	 */
-	public function init_hooks() {
+	public function init_hooks(): void {
 		add_action( 'admin_menu', [ $this, 'add_settings_page' ] );
 	}
 

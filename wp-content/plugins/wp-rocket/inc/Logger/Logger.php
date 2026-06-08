@@ -37,6 +37,12 @@ class Logger {
 	 */
 	private static $thread_id;
 
+	/**
+	 * Cached debug enabled status for the current request.
+	 *
+	 * @var bool|null
+	 */
+	private static $debug_enabled_cache = null;
 
 	/** ----------------------------------------------------------------------------------------- */
 	/** LOG ===================================================================================== */
@@ -273,11 +279,12 @@ class Logger {
 
 		$entries  = $entries ? number_format_i18n( count( $entries ) ) : '0';
 		$bytes    = $filesystem->size( $file_path );
+		$raw_size = $bytes;
 		$decimals = $bytes > pow( 1024, 3 ) ? 1 : 0;
 		$bytes    = @size_format( $bytes, $decimals ); // phpcs:ignore WordPress.PHP.NoSilencedErrors.Discouraged
 		$bytes    = str_replace( ' ', ' ', $bytes ); // Non-breaking space character.
 
-		return compact( 'entries', 'bytes' );
+		return compact( 'entries', 'bytes', 'raw_size' );
 	}
 
 	/**
@@ -379,12 +386,174 @@ class Logger {
 	/**
 	 * Tell if debug is enabled.
 	 *
+	 * Supports multiple formats for WP_ROCKET_DEBUG:
+	 * - Boolean: true enables logging for all URLs (backward compatible)
+	 *   Example: define( 'WP_ROCKET_DEBUG', true );
+	 *
+	 * - String: Logs only the specified URL
+	 *   Example: define( 'WP_ROCKET_DEBUG', 'https://example.com/page' );
+	 *   Example: define( 'WP_ROCKET_DEBUG', '/page' ); // Relative path
+	 *
+	 * - Array: Logs URLs matching any pattern in the array
+	 *   Example: define( 'WP_ROCKET_DEBUG', [ '/page-1/', '/page-2/', '/page-3/' ] );
+	 *
+	 * URL matching behavior:
+	 * - Trailing slashes are ignored: '/page' matches '/page/'
+	 * - Query strings are ignored: '/page' matches '/page?param=value'
+	 * - Case-insensitive: '/Page' matches '/page'
+	 * - Homepage can be matched with '/' or full site URL
+	 * - Works with both relative and absolute URLs
+	 *
 	 * @since 3.1.4
 	 *
 	 * @return bool
 	 */
 	public static function debug_enabled() {
-		return defined( 'WP_ROCKET_DEBUG' ) && WP_ROCKET_DEBUG;
+		if ( null !== self::$debug_enabled_cache ) {
+			return self::$debug_enabled_cache;
+		}
+
+		$debug_enabled = false;
+
+		$debug_config = defined( 'WP_ROCKET_DEBUG' ) ? constant( 'WP_ROCKET_DEBUG' ) : false;
+
+		if ( true === $debug_config ) {
+			$debug_enabled = true;
+		} elseif ( is_string( $debug_config ) || is_array( $debug_config ) ) {
+			// URL-based filtering.
+			$current_url   = self::get_current_request_url();
+			$debug_enabled = self::url_matches_debug_patterns( $current_url, $debug_config );
+		}
+
+		// Cache the result.
+		self::$debug_enabled_cache = $debug_enabled;
+
+		/**
+		 * Fires before checking if debug is enabled for the logger.
+		 *
+		 * @param boolean $debug_status Returns if debug is enabled.
+		 *
+		 * @since 3.20.4
+		 */
+		do_action( 'rocket_before_debug_status_check', $debug_enabled );
+
+		return $debug_enabled;
+	}
+
+	/**
+	 * Normalize a URL for comparison.
+	 *
+	 * Strips trailing slashes, query strings, fragments, and converts to lowercase.
+	 * Handles both relative and absolute URLs.
+	 *
+	 * @param string $url URL to normalize.
+	 * @return array Array with 'path' and 'host' keys.
+	 */
+	private static function normalize_url( $url ) {
+		if ( empty( $url ) || ! is_string( $url ) ) {
+			return [
+				'path' => '',
+				'host' => '',
+			];
+		}
+
+		$parsed = parse_url( $url ); // phpcs:ignore WordPress.WP.AlternativeFunctions.parse_url_parse_url
+
+		if ( ! $parsed ) {
+			return [
+				'path' => '',
+				'host' => '',
+			];
+		}
+
+		// Extract path, defaulting to '/' for homepage.
+		$path = isset( $parsed['path'] ) ? $parsed['path'] : '/';
+
+		// Remove trailing slash (except for root).
+		$path = '/' === $path ? $path : rtrim( $path, '/' );
+
+		$path = strtolower( $path );
+
+		// Extract and normalize host.
+		$host = isset( $parsed['host'] ) ? strtolower( $parsed['host'] ) : '';
+
+		return [
+			'path' => $path,
+			'host' => $host,
+		];
+	}
+
+	/**
+	 * Get the current request URL.
+	 *
+	 * Builds URL from REQUEST_URI and home_url(), normalizes it.
+	 *
+	 * @return array Normalized current request URL with 'path' and 'host'.
+	 */
+	private static function get_current_request_url() {
+		// Sanitize REQUEST_URI without WordPress functions.
+		$request_uri = isset( $_SERVER['REQUEST_URI'] )
+			? strip_tags( stripslashes( $_SERVER['REQUEST_URI'] ) ) // phpcs:ignore WordPress.WP.AlternativeFunctions.strip_tags_strip_tags, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized, WordPress.Security.ValidatedSanitizedInput.MissingUnslash
+			: '/';
+
+		// Get host from server variables (portable, no WordPress dependency).
+		$host = '';
+		if ( isset( $_SERVER['HTTP_HOST'] ) ) {
+			$host = strtolower( stripslashes( $_SERVER['HTTP_HOST'] ) ); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized, WordPress.Security.ValidatedSanitizedInput.MissingUnslash
+		} elseif ( isset( $_SERVER['SERVER_NAME'] ) ) {
+			$host = strtolower( stripslashes( $_SERVER['SERVER_NAME'] ) ); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized, WordPress.Security.ValidatedSanitizedInput.MissingUnslash
+		}
+
+		// Normalize the request URI.
+		$normalized = self::normalize_url( $request_uri );
+
+		return [
+			'path' => $normalized['path'],
+			'host' => $host,
+		];
+	}
+
+	/**
+	 * Check if current URL matches debug patterns.
+	 *
+	 * @param array        $current_url Current request URL with 'path' and 'host'.
+	 * @param string|array $patterns    Debug pattern(s) to match against.
+	 * @return bool True if URL matches any pattern, false otherwise.
+	 */
+	private static function url_matches_debug_patterns( $current_url, $patterns ) {
+		// Handle empty patterns.
+		if ( empty( $patterns ) ) {
+			return false;
+		}
+
+		// Convert single string to array for uniform processing.
+		if ( ! is_array( $patterns ) ) {
+			$patterns = [ $patterns ];
+		}
+
+		// Check each pattern.
+		foreach ( $patterns as $pattern ) {
+			if ( ! is_string( $pattern ) || '' === $pattern ) {
+				continue;
+			}
+
+			$normalized_pattern = self::normalize_url( $pattern );
+
+			// If pattern has a host (absolute URL), validate domain matches.
+			if ( ! empty( $normalized_pattern['host'] ) ) {
+				// Domain must match current site's domain.
+				if ( $normalized_pattern['host'] !== $current_url['host'] ) {
+					continue;
+				}
+			}
+
+			// Compare paths.
+			if ( $current_url['path'] === $normalized_pattern['path'] ) {
+				return true;
+			}
+		}
+
+		return false;
 	}
 
 	/**
@@ -504,5 +673,58 @@ class Logger {
 		}
 
 		return $cookies;
+	}
+
+	/**
+	 * Automatically deletes the log file if it exceeds a maximum file size.
+	 *
+	 * The maximum file size before deletion is controlled by the 'rocket_debug_log_auto_delete_max_file_size' filter,
+	 * with a default of 30,000,000 bytes (approximately 30MB).
+	 *
+	 * @param bool $debug_enabled Whether debug is enabled and log file auto-delete should proceed.
+	 * @return void
+	 */
+	public static function maybe_delete_log_file( $debug_enabled ): void {
+		// Bail out if debug is not enabled.
+		if ( ! $debug_enabled ) {
+			return;
+		}
+
+		// Bail out if debug.log file does not exist.
+		if ( ! rocket_direct_filesystem()->exists( self::get_log_file_path() ) ) {
+			return;
+		}
+
+		// Bail out if transient cache is still valid.
+		if ( get_transient( 'wp_rocket_log_file_size_check' ) ) {
+			return;
+		}
+
+		// Do transient cache for one hour.
+		set_transient( 'wp_rocket_log_file_size_check', true, HOUR_IN_SECONDS );
+
+		/**
+		 * Filters the maximum file size (in bytes) before the log file is automatically deleted.
+		 *
+		 * @param int $max_file_size The maximum file size in bytes. Default is 30,000,000 (30MB).
+		 *
+		 * @since 3.20.4
+		 */
+		$max_file_size = wpm_apply_filters_typed( 'integer', 'rocket_debug_log_auto_delete_max_file_size', 30000000 );
+
+		$log_file_stats = self::get_log_file_stats();
+
+		// Bail out if there is an error getting the log file stats.
+		if ( is_wp_error( $log_file_stats ) ) {
+			return;
+		}
+
+		$log_file_size = $log_file_stats['raw_size'];
+
+		if ( $log_file_size < $max_file_size ) {
+			return;
+		}
+
+		self::delete_log_file();
 	}
 }

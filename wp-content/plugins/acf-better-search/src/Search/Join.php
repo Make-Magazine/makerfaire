@@ -23,7 +23,7 @@ class Join implements HookableInterface {
 	/**
 	 * {@inheritdoc}
 	 */
-	public function init_hooks() {
+	public function init_hooks(): void {
 		add_filter( 'posts_join', [ $this, 'sql_join' ], 10, 2 );
 	}
 

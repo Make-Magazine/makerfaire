@@ -12,7 +12,7 @@ class Save {
 	 */
 	private $options;
 
-	public function __construct( Options $options = null ) {
+	public function __construct( ?Options $options = null ) {
 		$this->options = $options ?: new Options();
 	}
 
@@ -37,7 +37,7 @@ class Save {
 			return;
 		}
 
-		$value = $_REQUEST['acfbs_fields_types'] ?? []; // phpcs:ignore WordPress.Security
+		$value = ( isset( $_REQUEST['acfbs_fields_types'] ) && is_array( $_REQUEST['acfbs_fields_types'] ) ) ? $_REQUEST['acfbs_fields_types'] : []; // phpcs:ignore WordPress.Security
 		$types = $this->options->get_fields_settings();
 
 		$value = array_filter(
@@ -59,7 +59,7 @@ class Save {
 		);
 
 		foreach ( $features as $key => $label ) {
-			$value = ( isset( $_REQUEST['acfbs_features'] ) && in_array( $key, $_REQUEST['acfbs_features'] ) ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+			$value = ( isset( $_REQUEST['acfbs_features'] ) && is_array( $_REQUEST['acfbs_features'] ) && in_array( $key, $_REQUEST['acfbs_features'] ) ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 			$this->save_option( sprintf( 'acfbs_%s', $key ), $value );
 		}
 	}

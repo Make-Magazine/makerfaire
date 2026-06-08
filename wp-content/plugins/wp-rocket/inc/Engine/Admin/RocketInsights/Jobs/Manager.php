@@ -70,12 +70,9 @@ class Manager implements ManagerInterface, LoggerAwareInterface {
 	 * @return array
 	 */
 	public function get_pending_jobs( int $num_rows ): array {
-		$this->logger::debug( "Rocket Insights: Start getting number of {$num_rows} pending jobs." );
-
 		$pending_jobs = $this->query->get_pending_jobs( $num_rows );
 
 		if ( ! $pending_jobs ) {
-			$this->logger::debug( 'Rocket Insights: No pending jobs are there.' );
 			return [];
 		}
 
@@ -157,24 +154,10 @@ class Manager implements ManagerInterface, LoggerAwareInterface {
 		}
 
 		if ( ! empty( $job_details['status'] ) && 'pending' === $job_details['status'] ) {
-			$this->logger::info(
-				'Rocket Insights: Revert to pending because of API status is pending',
-				[
-					'job_id' => $row_details->job_id,
-				]
-			);
-
 			$this->query->revert_to_pending( $row_details->id );
+
 			return;
 		}
-
-		$this->logger::info(
-			'Rocket Insights: Test completed successfully',
-			[
-				'job_id' => $row_details->job_id,
-				'score'  => $job_details['performance_score'] ?? null,
-			]
-		);
 
 		$this->query->make_status_completed( $row_details->id, 'completed', $this->parse_test_results( $job_details ) );
 
@@ -223,12 +206,18 @@ class Manager implements ManagerInterface, LoggerAwareInterface {
 		$defaults = [
 			'report_url'        => '',
 			'performance_score' => 0,
+			'metric_data'       => null,
 		];
 		if ( ! isset( $api_response['data']['data'] ) ) {
 			return $defaults;
 		}
 
-		return wp_parse_args( $api_response['data']['data'], $defaults );
+		$parsed_data = wp_parse_args( $api_response['data']['data'], $defaults );
+
+		// Save entire API response data for future extensibility.
+		$parsed_data['metric_data'] = $api_response['data']['data'] ?? null;
+
+		return $parsed_data;
 	}
 
 	/**
@@ -267,5 +256,14 @@ class Manager implements ManagerInterface, LoggerAwareInterface {
 	 */
 	public function allow_clean_rows() {
 		return false;
+	}
+
+	/**
+	 * Get the query instance.
+	 *
+	 * @return RocketInsightsQuery
+	 */
+	public function get_query(): RocketInsightsQuery {
+		return $this->query;
 	}
 }

@@ -11,6 +11,10 @@
  *      @type string $nopromo_variant CSS modifier for the no promotion display.
  *      @type string $regular_price RocketCDN regular price.
  *      @type string $current_price RocketCDN current price.
+ *      @type string $regular_price_monthly RocketCDN regular monthly price.
+ *      @type string $regular_price_annual RocketCDN regular annual price.
+ *      @type string $current_price_monthly RocketCDN current monthly price.
+ *      @type string $current_price_annual RocketCDN current annual price.
  * }
  */
 
@@ -20,18 +24,18 @@ $data = isset( $data ) && is_array( $data ) ? $data : []; // phpcs:ignore WordPr
 ?>
 <div class="wpr-rocketcdn-cta <?php echo esc_attr( $data['container_class'] ); ?>" id="wpr-rocketcdn-cta">
 	<?php if ( ! empty( $data['promotion_campaign'] ) ) : ?>
-	<div class="wpr-flex wpr-rocketcdn-promo">
-		<h3 class="wpr-rocketcdn-promo-title"><?php echo esc_html( $data['promotion_campaign'] ); ?></h3>
-		<p class="wpr-title2 wpr-rocketcdn-promo-date">
-			<?php
-			printf(
+		<div class="wpr-flex wpr-rocketcdn-promo">
+			<h3 class="wpr-rocketcdn-promo-title"><?php echo esc_html( $data['promotion_campaign'] ); ?></h3>
+			<p class="wpr-title2 wpr-rocketcdn-promo-date">
+				<?php
+				printf(
 				// Translators: %s = date formatted using date_i18n() and get_option( 'date_format' ).
-				esc_html__( 'Valid until %s only!', 'rocket' ),
-				esc_html( $data['promotion_end_date'] )
-			);
-			?>
-		</p>
-	</div>
+					esc_html__( 'Valid until %s only!', 'rocket' ),
+					esc_html( $data['promotion_end_date'] )
+				);
+				?>
+			</p>
+		</div>
 	<?php endif; ?>
 	<section class="wpr-rocketcdn-cta-content<?php echo esc_attr( $data['nopromo_variant'] ); ?>">
 		<h3 class="wpr-title2">RocketCDN</h3>
@@ -74,19 +78,21 @@ $data = isset( $data ) && is_array( $data ) ? $data : []; // phpcs:ignore WordPr
 			</ul>
 			<div class="wpr-rocketcdn-pricing">
 				<?php if ( ! empty( $data['error'] ) ) : ?>
-				<p><?php echo $data['message']; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></p>
+					<p><?php echo $data['message']; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></p>
 				<?php else : ?>
 					<?php if ( ! empty( $data['regular_price'] ) ) : ?>
-					<h4 class="wpr-title2 wpr-rocketcdn-pricing-regular"><del>$<?php echo esc_html( $data['regular_price'] ); ?></del></h4>
+						<h4 class="wpr-title2 wpr-rocketcdn-pricing-regular"><del>$<?php echo esc_html( $data['regular_price'] ); ?></del></h4>
 					<?php endif; ?>
 					<h4 class="wpr-rocketcdn-pricing-current">
 						<span class="wpr-rocketcdn-cta-currency-minor">$</span>
-						<span class="wpr-rocketcdn-cta-currency-major"><?php echo esc_html( substr( $data['current_price'], 0, strpos( $data['current_price'], '.' ) ) ); ?></span>
-						<span class="wpr-rocketcdn-cta-currency-minor"><?php echo esc_html( substr( $data['current_price'], strpos( $data['current_price'], '.' ) ) ); ?>
+						<span class="wpr-rocketcdn-cta-currency-major"><?php echo esc_html( $data['current_price_array']['major'] ); ?></span>
+						<span class="wpr-rocketcdn-cta-currency-minor">.<?php echo esc_html( $data['current_price_array']['minor'] ); ?>
 						</span>
 					</h4>
 					<p class="wpr-rocketcdn-cta-billing-detail"><?php esc_html_e( 'Billed monthly', 'rocket' ); ?></p>
-					<button class="wpr-button wpr-rocketcdn-open" data-micromodal-trigger="wpr-rocketcdn-modal"><?php esc_html_e( 'Get Started', 'rocket' ); ?></button>
+					<button class="wpr-button wpr-rocketcdn-pricing--cta wpr-rocketcdn-open"<?php echo empty( $data['button_url'] ) ? ' data-micromodal-trigger="wpr-rocketcdn-modal"' : ''; ?>>
+						<?php esc_html_e( 'Get Started', 'rocket' ); ?>
+					</button>
 				<?php endif; ?>
 			</div>
 		</div>

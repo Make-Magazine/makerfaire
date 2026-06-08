@@ -5,9 +5,11 @@ namespace WP_Rocket\Engine\Admin\RocketInsights\PostListing;
 
 use WP_Rocket\Engine\Admin\RocketInsights\{
 	Render,
-	Context\Context
+	Context\Context,
+	Database\Queries\RocketInsights as Query,
 };
 use WP_Rocket\Event_Management\Subscriber_Interface;
+use WP_Rocket\Engine\Tracking\Tracking;
 
 /**
  * Subscriber for enqueuing Rocket Insights assets on post listing pages
@@ -115,7 +117,7 @@ class Subscriber implements Subscriber_Interface {
 	 * @param string   $post_type Post type.
 	 * @return array
 	 */
-	public function add_column_to_posts( $columns, $post_type ): array {
+	public function add_column_to_posts( $columns, $post_type = 'post' ): array {
 		// Don't add for products again, because it's added above.
 		if ( 'product' === $post_type ) {
 			return $columns;
@@ -228,6 +230,7 @@ class Subscriber implements Subscriber_Interface {
 			'rocket_ajax_data',
 			[
 				'is_free_user' => $this->context->is_free_user(),
+				'nonce'        => wp_create_nonce( 'rocket-ajax' ),
 			]
 		);
 	}

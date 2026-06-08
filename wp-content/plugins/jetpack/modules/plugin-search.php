@@ -313,7 +313,7 @@ class Jetpack_Plugin_Search {
 			),
 			'sharing-block' => array(
 				'name'                => esc_html__( 'Sharing buttons block', 'jetpack' ),
-				'search_terms'        => 'share, sharing, sharing block, sharing button, social buttons, buttons, share facebook, share twitter, social share, icons, email, facebook, twitter, x, linkedin, pinterest, pocket, social media',
+				'search_terms'        => 'share, sharing, sharing block, sharing button, social buttons, buttons, share facebook, share twitter, social share, icons, email, facebook, twitter, x, linkedin, pinterest, social media',
 				'short_description'   => esc_html__( 'Add sharing buttons blocks anywhere on your website to help your visitors share your content.', 'jetpack' ),
 				'requires_connection' => false,
 				'module'              => 'sharing-block',
@@ -568,6 +568,7 @@ class Jetpack_Plugin_Search {
 				id="plugin-select-settings"
 				class="jetpack-plugin-search__primary jetpack-plugin-search__get-started button"
 				href="' . esc_url( Redirect::get_url( 'plugin-hint-learn-' . $plugin['module'] ) ) . '"
+				target="_blank"
 				data-module="' . esc_attr( $plugin['module'] ) . '"
 				data-track="get_started"
 				>' . esc_html__( 'Get started', 'jetpack' ) . '</a>';
@@ -605,6 +606,7 @@ class Jetpack_Plugin_Search {
 				id="plugin-select-settings"
 				class="jetpack-plugin-search__primary jetpack-plugin-search__get-started button"
 				href="' . esc_url( Redirect::get_url( 'plugin-hint-learn-' . $plugin['module'] ) ) . '"
+				target="_blank"
 				data-module="' . esc_attr( $plugin['module'] ) . '"
 				data-track="get_started"
 				>' . esc_html__( 'Get started', 'jetpack' ) . '</a>';

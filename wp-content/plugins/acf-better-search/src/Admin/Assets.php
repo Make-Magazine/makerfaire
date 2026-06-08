@@ -25,7 +25,7 @@ class Assets implements HookableInterface {
 	/**
 	 * {@inheritdoc}
 	 */
-	public function init_hooks() {
+	public function init_hooks(): void {
 		add_action( 'admin_enqueue_scripts', [ $this, 'load_styles' ] );
 		add_action( 'admin_enqueue_scripts', [ $this, 'load_scripts' ] );
 	}

@@ -12,7 +12,7 @@ class Query implements HookableInterface {
 	/**
 	 * {@inheritdoc}
 	 */
-	public function init_hooks() {
+	public function init_hooks(): void {
 		add_filter( 'pre_get_posts', [ $this, 'query_args' ] );
 	}
 

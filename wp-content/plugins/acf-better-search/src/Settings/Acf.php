@@ -12,7 +12,7 @@ class Acf implements HookableInterface {
 	/**
 	 * {@inheritdoc}
 	 */
-	public function init_hooks() {
+	public function init_hooks(): void {
 		add_action( 'acf/render_field_settings', [ $this, 'add_field_settings' ] );
 	}
 

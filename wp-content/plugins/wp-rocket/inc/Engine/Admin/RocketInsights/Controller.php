@@ -11,6 +11,7 @@ use WP_Rocket\Engine\Admin\RocketInsights\{GlobalScore,
 };
 use WP_Rocket\Admin\Options_Data;
 use WP_Rocket\Engine\License\API\User;
+use WP_Rocket\Engine\Tracking\Tracking;
 
 class Controller {
 	/**
@@ -63,6 +64,13 @@ class Controller {
 	protected $options;
 
 	/**
+	 * The tracking service.
+	 *
+	 * @var Tracking
+	 */
+	private $tracking;
+
+	/**
 	 * Constructor.
 	 *
 	 * @param Query        $query Query instance.
@@ -72,6 +80,7 @@ class Controller {
 	 * @param GlobalScore  $global_score GlobalScore instance.
 	 * @param User         $user User client API instance.
 	 * @param Options_Data $options Plugin options instance.
+	 * @param Tracking     $tracking The tracking service.
 	 */
 	public function __construct(
 		Query $query,
@@ -80,7 +89,8 @@ class Controller {
 		Plan $plan,
 		GlobalScore $global_score,
 		User $user,
-		Options_Data $options
+		Options_Data $options,
+		Tracking $tracking
 	) {
 		$this->query        = $query;
 		$this->manager      = $manager;
@@ -89,6 +99,7 @@ class Controller {
 		$this->global_score = $global_score;
 		$this->user         = $user;
 		$this->options      = $options;
+		$this->tracking     = $tracking;
 	}
 
 	/**
@@ -409,5 +420,110 @@ class Controller {
 				'dismissible'  => '',
 			]
 		);
+	}
+
+	/**
+	 * Update completed tests to pending with update routine.
+	 *
+	 * @return void
+	 */
+	public function update_completed_tests_to_pending() {
+		$completed_rows = $this->query->get_completed_ids();
+		if ( empty( $completed_rows ) ) {
+			return;
+		}
+		foreach ( $completed_rows as $completed_row_id ) {
+			$this->query->revert_to_pending(
+				(int) $completed_row_id,
+				[
+					'start_time'  => time(),
+					'is_retest'   => false,
+					'source'      => '3.20.4 update',
+					'skip_credit' => true,
+				]
+				);
+		}
+	}
+
+	/**
+	 * Track user actions in Rocket Insights via AJAX.
+	 *
+	 * Handles tracking for events like expanding metrics or viewing reports.
+	 *
+	 * @return void
+	 */
+	public function track_metric_actions(): void {
+		$events = [
+			'expand'     => 'Rocket Insights Metrics Expanded',
+			'see_report' => 'Rocket Insights See Report',
+		];
+
+		check_ajax_referer( 'rocket-ajax' );
+
+		if ( ! $this->context->is_allowed() ) {
+			wp_send_json_error( 'Not allowed' );
+		}
+
+		if ( ! current_user_can( 'rocket_manage_options' ) ) {
+			wp_send_json_error( 'Insufficient permissions to track view details.' );
+		}
+
+		if ( ! isset( $_POST['row_id'], $_POST['event'], $_POST['source'] ) ) {
+			wp_send_json_error( 'Missing parameters' );
+		}
+
+		$row_id_raw = sanitize_text_field( wp_unslash( $_POST['row_id'] ) );
+		$event      = sanitize_text_field( wp_unslash( $_POST['event'] ) );
+		$source     = sanitize_text_field( wp_unslash( $_POST['source'] ) );
+
+		// Handle special case for 'all' (used by "Expand All" action).
+		if ( 'all' === $row_id_raw ) {
+			$row_id = 'all';
+		} else {
+			$row_id = absint( $row_id_raw );
+			if ( ! $this->query->get_row_by_id( $row_id ) ) {
+				wp_send_json_error( 'Invalid row ID' );
+			}
+		}
+
+		$this->tracking->track_rocket_insights_details_action( $events[ $event ], $row_id, $source );
+
+		wp_send_json_success();
+	}
+
+	/**
+	 * Tracks the home page event after the user opts in to analytics.
+	 *
+	 * This method checks if the analytics notice has already been displayed and dismissed to ensure events are not tracked multiple times.
+	 * If not, it triggers the tracking of the Rocket Insights test.
+	 *
+	 * @param bool $status Indicates the current status of the analytics opt-in.
+	 *
+	 * @return void
+	 */
+	public function track_home_after_analytics_optin( bool $status ): void {
+		// Bail out if user disabled analytics.
+		if ( ! $status ) {
+			return;
+		}
+
+		// Bail out if analytics already enabled before and notice was dismissed.
+		if ( 1 === (int) get_option( 'rocket_analytics_notice_displayed' ) ) {
+			return;
+		}
+
+		$row_details = $this->query->get_row( home_url(), true );
+
+		// Bail out if row details is not found.
+		if ( empty( $row_details ) ) {
+			return;
+		}
+
+		// Bail out if test is still in progress.
+		if ( ! in_array( $row_details->status, [ 'completed', 'failed' ], true ) ) {
+			return;
+		}
+
+		$this->tracking->track_rocket_insights_test( $row_details, [], $this->plan->get_current_plan() );
 	}
 }

@@ -93,6 +93,8 @@ class WPRocketUninstall {
 		'wpr_user_information_timeout',
 		'rocket_fonts_data_collection',
 		'wpr_global_score_data',
+		'wp_rocket_log_file_size_check',
+		'wpr_ri_recommendations',
 	];
 
 	/**

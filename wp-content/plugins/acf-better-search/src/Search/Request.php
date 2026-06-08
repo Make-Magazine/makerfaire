@@ -12,7 +12,7 @@ class Request implements HookableInterface {
 	/**
 	 * {@inheritdoc}
 	 */
-	public function init_hooks() {
+	public function init_hooks(): void {
 		add_filter( 'posts_distinct', [ $this, 'set_query_distinct' ], 10, 2 );
 	}
 

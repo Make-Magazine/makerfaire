@@ -4,7 +4,7 @@
  * Plugin Name: ACF: Better Search
  * Plugin URI: https://mattplugins.com
  * Description: Adds to default WordPress search engine the ability to search by content from selected fields of Advanced Custom Fields plugin.
- * Version: 4.4.1
+ * Version: 4.5.0
  * Author: Mateusz Gbiorczyk
  * Author URI: https://gbiorczyk.pl/
  * Text Domain: acf-better-search
@@ -13,5 +13,5 @@
 require_once __DIR__ . '/vendor/autoload.php';
 
 new AcfBetterSearch\AcfBetterSearch(
-	new AcfBetterSearch\PluginInfo( __FILE__, '4.4.1' )
+	new AcfBetterSearch\PluginInfo( __FILE__, '4.5.0' )
 );

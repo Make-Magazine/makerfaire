@@ -16,10 +16,8 @@ interface NoticeInterface {
 
 	/**
 	 * Returns default value for option that specifies whether to display notice.
-	 *
-	 * @return string|null
 	 */
-	public static function get_default_value();
+	public static function get_default_value(): ?string;
 
 	/**
 	 * Returns status if notice is available.
@@ -54,12 +52,10 @@ interface NoticeInterface {
 	 *
 	 * @return mixed[]|null
 	 */
-	public function get_vars_for_view();
+	public function get_vars_for_view(): ?array;
 
 	/**
 	 * Returns name of action using in WP Ajax.
-	 *
-	 * @return string|null
 	 */
-	public function get_ajax_action_to_disable();
+	public function get_ajax_action_to_disable(): ?string;
 }

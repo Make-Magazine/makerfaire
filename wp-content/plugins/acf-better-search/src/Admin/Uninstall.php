@@ -24,7 +24,7 @@ class Uninstall implements HookableInterface {
 	/**
 	 * {@inheritdoc}
 	 */
-	public function init_hooks() {
+	public function init_hooks(): void {
 		register_uninstall_hook(
 			$this->plugin_info->get_plugin_file(),
 			[ 'AcfBetterSearch\Admin\Uninstall', 'remove_plugin_settings' ]

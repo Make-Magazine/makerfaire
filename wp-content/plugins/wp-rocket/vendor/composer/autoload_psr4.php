@@ -13,5 +13,4 @@ return array(
     'WPMedia\\Cloudflare\\' => array($baseDir . '/inc/Addon/Cloudflare'),
     'Symfony\\Polyfill\\Php80\\' => array($vendorDir . '/symfony/polyfill-php80'),
     'Symfony\\Component\\CssSelector\\' => array($vendorDir . '/symfony/css-selector'),
-    'BerlinDB\\' => array($vendorDir . '/berlindb/core/src'),
 );

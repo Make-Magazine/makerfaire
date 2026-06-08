@@ -10,17 +10,6 @@
         'dev' => false,
     ),
     'versions' => array(
-        'berlindb/core' => array(
-            'pretty_version' => 'dev-master',
-            'version' => 'dev-master',
-            'reference' => 'cff87fafedda560dd4ad768d4dd1afb68a36b8c0',
-            'type' => 'library',
-            'install_path' => __DIR__ . '/../berlindb/core',
-            'aliases' => array(
-                0 => '9999999-dev',
-            ),
-            'dev_requirement' => false,
-        ),
         'cloudflare/cf-ip-rewrite' => array(
             'pretty_version' => '1.0.4',
             'version' => '1.0.4.0',
@@ -40,9 +29,9 @@
             'dev_requirement' => false,
         ),
         'symfony/polyfill-php80' => array(
-            'pretty_version' => 'v1.33.0',
-            'version' => '1.33.0.0',
-            'reference' => '0cc9dd0f17f61d8131e7df6b84bd344899fe2608',
+            'pretty_version' => 'v1.37.0',
+            'version' => '1.37.0.0',
+            'reference' => 'dfb55726c3a76ea3b6459fcfda1ec2d80a682411',
             'type' => 'library',
             'install_path' => __DIR__ . '/../symfony/polyfill-php80',
             'aliases' => array(),

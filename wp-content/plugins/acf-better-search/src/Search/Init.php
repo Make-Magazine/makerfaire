@@ -12,7 +12,7 @@ class Init implements HookableInterface {
 	/**
 	 * {@inheritdoc}
 	 */
-	public function init_hooks() {
+	public function init_hooks(): void {
 		add_action( 'init', [ $this, 'init_search' ] );
 	}
 
