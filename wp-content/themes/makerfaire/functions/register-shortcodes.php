@@ -468,3 +468,8 @@ function make_campaign_monitor_form( $atts, $content = null ) {
 	return $output;
 }
 add_shortcode( 'make-compagin-monitor', 'make_campaign_monitor_form' );
+
+add_shortcode('amp', function() { return '&amp;'; });
+
+// Make sure Elementor runs do_shortcode on text widgets
+add_filter('elementor/widget/render_content', 'do_shortcode');
