@@ -1,2 +1,13 @@
-/*! For license information please see ays-beforeunload-shim.js.LICENSE.txt */
-jQuery((function(){navigator.userAgent.toLowerCase().match(/iphone|ipad|ipod|opera/)&&$("a").bind("click",(function(e){var r=$(e.target).closest("a").attr("href");if(void 0!==r&&!r.match(/^#/)&&""!=r.trim()){var a=$(window).triggerHandler("beforeunload",a);return a&&""!=a&&!confirm(a+"\n\nPress OK to leave this page or Cancel to stay.")||(window.location.href=r),!1}}))}));
+/*!
+ * An experimental shim to partially emulate onBeforeUnload on iOS.
+ * Part of https://github.com/codedance/jquery.AreYouSure/
+ *
+ * Copyright (c) 2012-2014, Chris Dance and PaperCut Software http://www.papercut.com/
+ * Dual licensed under the MIT or GPL Version 2 licenses.
+ * http://jquery.org/license
+ *
+ * Author:  chris.dance@papercut.com
+ * Date:    19th May 2014
+ */jQuery(function(){navigator.userAgent.toLowerCase().match(/iphone|ipad|ipod|opera/)&&$("a").bind("click",function(e){var r=$(e.target).closest("a").attr("href");if(r!==void 0&&!(r.match(/^#/)||r.trim()=="")){var a=$(window).triggerHandler("beforeunload",a);if(a&&a!=""){var t=a+`
+
+Press OK to leave this page or Cancel to stay.`;if(!confirm(t))return!1}return window.location.href=r,!1}})});

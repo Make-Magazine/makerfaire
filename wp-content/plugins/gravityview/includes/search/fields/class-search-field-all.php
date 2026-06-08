@@ -4,6 +4,7 @@ namespace GV\Search\Fields;
 
 use GV\Search\Querying\Search_Filter;
 use GV\View;
+use GravityView_Deprecated_Hook_Notices;
 
 /**
  * Represents a search field that searches all fields.
@@ -121,23 +122,63 @@ final class Search_Field_All extends Search_Field {
 			return $filter->with_value( null );
 		}
 
-		$form_ids   = $this->get_form_ids( $filter, $view );
-		$filter     = $filter->with_operator( $filter->operator(), [ 'contains', 'not contains' ] );
-		$conditions = [];
+		$form_ids = $this->get_form_ids( $filter, $view );
+		$filter   = $filter->with_operator( $filter->operator(), [ 'contains', 'not contains', 'ncontains' ] );
 
-		foreach ( $form_ids as $form_id ) {
-			foreach ( $criteria as $criterion ) {
-				$conditions[] = $filter
+		$optional = [];
+		$required = [];
+		$excluded = [];
+
+		foreach ( $criteria as $criterion ) {
+			$is_required = $criterion['required'] ?? false;
+			$operator    = $criterion['operator'] ?? $filter->operator();
+			$is_excluded = in_array( $operator, [ 'not contains', 'ncontains' ], true );
+
+			$form_conditions = [];
+			foreach ( $form_ids as $form_id ) {
+				$form_conditions[] = $filter
 					->with_form_id( $form_id )
-					->with_operator( $criterion['operator'] ?? $filter->operator() )
+					->with_operator( $operator )
 					->with_value( $criterion['value'] ?? '' )
-					->with_required( $criterion['required'] ?? false )
+					->with_required( $is_required )
 					->with_context( self::STATE_PROCESSED, true ) // Prevent circular execution.
 					->as_normalized(); // Prevent normalizing values again, which would remove explicit white spaces.
 			}
+
+			// Each word should match in ANY form (OR across forms).
+			$word_filter = 1 === count( $form_conditions )
+				? $form_conditions[0]
+				: Search_Filter::or( ...$form_conditions );
+
+			if ( $is_required ) {
+				$required[] = $word_filter;
+			} elseif ( $is_excluded ) {
+				$excluded[] = $word_filter;
+			} else {
+				$optional[] = $word_filter;
+			}
 		}
 
-		return Search_Filter::or( ...$conditions );
+		$nested      = [];
+		$search_mode = $filter->context( 'search_mode', Search_Filter::MODE_OR );
+
+		// Todo: Once Query Filters implements this properly with the Global_Search_Condition, adjust to that filter.
+		if ( $optional ) {
+			// In AND mode, ALL words must match. In OR mode, ANY word can match.
+			$nested[] = Search_Filter::MODE_AND === $search_mode
+				? Search_Filter::and( ...$optional )
+				: Search_Filter::or( ...$optional );
+		}
+
+		if ( $required ) {
+			$nested[] = Search_Filter::and( ...$required );
+		}
+
+		if ( $excluded ) {
+			$nested[] = Search_Filter::and( ...$excluded );
+		}
+
+		return Search_Filter::and( ...$nested );
 	}
 
 	/**
@@ -177,10 +218,10 @@ final class Search_Field_All extends Search_Field {
 		/**
 		 * @deprecated $ver$ Use `gk/gravityview/search/field/all/split-words`.
 		 */
-		$split_words = apply_filters_deprecated(
+		$split_words = GravityView_Deprecated_Hook_Notices::apply_filters(
 			'gravityview/search-all-split-words',
 			[ true, $view ],
-			'$ver$',
+			'2.55',
 			'gk/gravityview/search/field/all/split-words'
 		);
 

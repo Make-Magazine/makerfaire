@@ -94,7 +94,7 @@ class GravityView_API {
 		 *
 		 * @deprecated Use the context-aware version `gravityview/template/field/label`
 		 */
-		$label = apply_filters( 'gravityview/template/field_label', $label, $field, $form, $entry );
+		$label = GravityView_Deprecated_Hook_Notices::apply_filters( 'gravityview/template/field_label', [ $label, $field, $form, $entry ], '2.55', 'gravityview/template/field/label' );
 
 		return $label;
 	}
@@ -414,7 +414,7 @@ class GravityView_API {
 		 * @return string The modified text.
 		 * @deprecated Use `gravityview/template/text/no_entries`
 		 */
-		$output = apply_filters( 'gravitview_no_entries_text', $output, $is_search );
+		$output = GravityView_Deprecated_Hook_Notices::apply_filters( 'gravitview_no_entries_text', [ $output, $is_search ], '2.55', 'gravityview/template/text/no_entries' );
 
 		/**
 		 * Modify the text displayed when there are no entries.
@@ -545,7 +545,7 @@ class GravityView_API {
 		 * @param string $link URL to the View's "directory" context (Multiple Entries screen)
 		 * @param int $post_id ID of the post to link to. If the View is embedded, it is the post or page ID
 		 */
-		$link = apply_filters( 'gravityview_directory_link', $link, $post_id );
+		$link = GravityView_Deprecated_Hook_Notices::apply_filters( 'gravityview_directory_link', [ $link, $post_id ], '2.55', 'gravityview/view/links/directory' );
 
 		/**
 		 * Modify the URL to the View "directory" context.
@@ -1047,9 +1047,8 @@ function gravityview_back_link( $context = null ) {
 	 * @since 1.17.5
 	 * @see gv_directory_link() Generated the original back link
 	 * @param string $href Existing label URL
-	 * @deprecated Use `gravityview/template/links/back/url`
 	 */
-	$href = apply_filters( 'gravityview_go_back_url', $href );
+	$href = GravityView_Deprecated_Hook_Notices::apply_filters( 'gravityview_go_back_url', [ $href ], '2.55', 'gravityview/template/links/back/url' );
 
 	/**
 	 * Modify the back link URL.
@@ -1083,9 +1082,8 @@ function gravityview_back_link( $context = null ) {
      *
 	 * @since 1.0.9
 	 * @param string $label Existing label text
-	 * @deprecated Use `gravityview/template/links/back/label`
 	 */
-	$label = apply_filters( 'gravityview_go_back_label', $label );
+	$label = GravityView_Deprecated_Hook_Notices::apply_filters( 'gravityview_go_back_label', [ $label ], '2.55', 'gravityview/template/links/back/label' );
 
 	/**
 	 * Modify the back link text.
@@ -1291,20 +1289,16 @@ function gravityview_before() {
 			 */
 			do_action( 'gravityview/template/before', $gravityview );
 
-			/**
-			 * @deprecated Use `gravityview/template/before`
-			 */
-			return do_action( 'gravityview_before', $gravityview->view->ID );
+			return GravityView_Deprecated_Hook_Notices::do_action( 'gravityview_before', [ $gravityview->view->ID ], '2.55', 'gravityview/template/before' );
 		}
 	}
 
 	/**
 	 * Prepend content to the View container div.
      *
-	 * @deprecated Use `gravityview/template/before`.
 	 * @param int $view_id The ID of the View being displayed
 	 */
-	do_action( 'gravityview_before', gravityview_get_view_id() );
+	GravityView_Deprecated_Hook_Notices::do_action( 'gravityview_before', [ gravityview_get_view_id() ], '2.55', 'gravityview/template/before' );
 }
 
 function gravityview_header() {
@@ -1323,20 +1317,16 @@ function gravityview_header() {
 			 */
 			do_action( 'gravityview/template/header', $gravityview );
 
-			/**
-			 * @deprecated Use `gravityview/template/header`
-			 */
-			return do_action( 'gravityview_header', $gravityview->view->ID );
+			return GravityView_Deprecated_Hook_Notices::do_action( 'gravityview_header', [ $gravityview->view->ID ], '2.55', 'gravityview/template/header' );
 		}
 	}
 
 	/**
 	 * Prepend content to the View container div.
      *
-	 * @deprecated Use `gravityview/template/header`.
 	 * @param int $view_id The ID of the View being displayed
 	 */
-	do_action( 'gravityview_header', gravityview_get_view_id() );
+	GravityView_Deprecated_Hook_Notices::do_action( 'gravityview_header', [ gravityview_get_view_id() ], '2.55', 'gravityview/template/header' );
 }
 
 function gravityview_footer() {
@@ -1355,20 +1345,17 @@ function gravityview_footer() {
 			 */
 			do_action( 'gravityview/template/footer', $gravityview );
 
-			/**
-			 * @deprecated Use `gravityview/template/footer`
-			 */
-			return do_action( 'gravityview_footer', $gravityview->view->ID );
+			/* Documented elsewhere. */
+			return GravityView_Deprecated_Hook_Notices::do_action( 'gravityview_footer', [ $gravityview->view->ID ], '2.55', 'gravityview/template/footer' );
 		}
 	}
 
 	/**
 	 * Display content after a View. Used to render footer widget areas. Rendered outside the View container div.
      *
-	 * @deprecated Use `gravityview/template/footer`.
 	 * @param int $view_id The ID of the View being displayed
 	 */
-	do_action( 'gravityview_footer', gravityview_get_view_id() );
+	GravityView_Deprecated_Hook_Notices::do_action( 'gravityview_footer', [ gravityview_get_view_id() ], '2.55', 'gravityview/template/footer' );
 }
 
 function gravityview_after() {
@@ -1383,10 +1370,8 @@ function gravityview_after() {
 			 */
 			do_action( 'gravityview/template/after', $gravityview );
 
-			/**
-			 * @deprecated Use `gravityview/template/after`
-			 */
-			do_action( 'gravityview_after', $gravityview->view->ID );
+			/* Documented elsewhere. */
+			GravityView_Deprecated_Hook_Notices::do_action( 'gravityview_after', [ $gravityview->view->ID ], '2.55', 'gravityview/template/after' );
 
 			return;
 		}
@@ -1395,10 +1380,9 @@ function gravityview_after() {
 	/**
 	 * Append content to the View container div.
      *
-	 * @deprecated Use `gravityview/template/after`
 	 * @param int $view_id The ID of the View being displayed
 	 */
-	do_action( 'gravityview_after', gravityview_get_view_id() );
+	GravityView_Deprecated_Hook_Notices::do_action( 'gravityview_after', [ gravityview_get_view_id() ], '2.55', 'gravityview/template/after' );
 }
 
 /**
@@ -1572,7 +1556,7 @@ function gravityview_field_output( $passed_args, $context = null ) {
 	 * @param \GV\Template_Context $context The context.
 	 * @deprecated
 	 */
-	$args = apply_filters( 'gravityview/field_output/args', $args, $passed_args, $context );
+	$args = GravityView_Deprecated_Hook_Notices::apply_filters( 'gravityview/field_output/args', [ $args, $passed_args, $context ], '2.55', 'gravityview/template/field_output/context', 'To modify field values, use gravityview/field_output/context/{$tag}. To modify the final HTML, use gravityview/field_output/html.' );
 
 	/**
 	 * Modify the context before generation begins.
@@ -1628,10 +1612,12 @@ function gravityview_field_output( $passed_args, $context = null ) {
 		'row'                    => $args['row'] ?? 0,
 	];
 
-	if ( $context instanceof \GV\Template_Context ) {
+	if ( $context instanceof \GV\Template_Context && array_key_exists( 'value', $args ) ) {
 		$placeholders['value'] = \GV\Utils::get( $args, 'value', '' );
 	} else {
-		// @deprecated path
+		// Falls through here when no context is set (deprecated path) or when a context is
+		// provided without a pre-computed value (legacy renderZone path) — preserves the
+		// original timing of `gv_value()` relative to the field-output filters.
 		$placeholders['value'] = gv_value( $entry, $field );
 	}
 
@@ -1654,10 +1640,11 @@ function gravityview_field_output( $passed_args, $context = null ) {
 	$placeholders['class']    = gv_class( $field, $form, $entry );
 	$placeholders['field_id'] = GravityView_API::field_html_attr_id( $field, $form, $entry );
 
-	if ( $context instanceof \GV\Template_Context ) {
+	if ( $context instanceof \GV\Template_Context && array_key_exists( 'label', $args ) ) {
 		$placeholders['label_value'] = \GV\Utils::get( $args, 'label', '' );
 	} else {
-		// Default Label value
+		// Falls through here when no context is set (deprecated path) or when a context is
+		// provided without a pre-computed label (legacy renderZone path).
 		$placeholders['label_value'] = gv_label( $field, $entry );
 	}
 
@@ -1740,7 +1727,7 @@ function gravityview_field_output( $passed_args, $context = null ) {
 	 * @since 2.0
 	 * @param \GV\Template_Context $context The context.
 	 */
-	$html = apply_filters( 'gravityview_field_output', $html, $args, $context );
+	$html = GravityView_Deprecated_Hook_Notices::apply_filters( 'gravityview_field_output', [ $html, $args, $context ], '2.55', 'gravityview/field_output/html' );
 
 	/**
 	 * Modify field HTML output.

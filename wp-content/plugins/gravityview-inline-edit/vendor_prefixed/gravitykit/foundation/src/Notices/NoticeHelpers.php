@@ -62,7 +62,7 @@ class NoticeHelpers {
 		return [
 			'context'      => [ 'site', 'ms_main', 'ms_subsite' ],
 			'capabilities' => [ 'manage_options' ],
-			'condition'    => static function() {
+			'condition'    => static function () {
 				return ! is_super_admin();
 			},
 		];
@@ -82,7 +82,7 @@ class NoticeHelpers {
 		return [
 			'context'      => [ 'site', 'ms_subsite' ],
 			'capabilities' => [ 'read' ],
-			'condition'    => static function() {
+			'condition'    => static function () {
 				return ! current_user_can( 'manage_options' );
 			},
 		];
@@ -108,7 +108,7 @@ class NoticeHelpers {
 		return [
 			'context'      => [ 'ms_main', 'ms_subsite' ],
 			'capabilities' => [ 'manage_options' ],
-			'condition'    => static function() use ( $site_ids ) {
+			'condition'    => static function () use ( $site_ids ) {
 				return is_multisite() && in_array( get_current_blog_id(), $site_ids, true );
 			},
 		];
@@ -229,7 +229,7 @@ class NoticeHelpers {
 	public static function exclude_super_admin( array $base_config ): array {
 		$existing_condition = $base_config['condition'] ?? null;
 
-		$base_config['condition'] = static function( $notice ) use ( $existing_condition ) {
+		$base_config['condition'] = static function ( $notice ) use ( $existing_condition ) {
 			// First check if super admin.
 			if ( is_super_admin() ) {
 				return false;

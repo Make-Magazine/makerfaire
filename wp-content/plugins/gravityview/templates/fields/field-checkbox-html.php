@@ -34,7 +34,7 @@ if ( ! $is_single_input ) {
 		$output     = GravityView_Field_Checkbox::format_checkbox_csv( $value, $field, $show_label, $entry, $gravityview );
 	} elseif ( 'label' === $display_type ) {
 		// Use standard GF formatting (bulleted list).
-		$output = $field->get_value_entry_detail( $value, '', true );
+		$output = GravityView_GF_Compat::get_entry_detail( $field, $value, $entry, true );
 	} else {
 		$output = gravityview_get_field_value( $entry, $field_id, $display_value );
 	}

@@ -52,7 +52,11 @@ class View_Renderer extends Renderer {
 			 * @param string $slug    The template slug. Default: 'table'.
 			 * @param string $context The current view context: 'directory'.
 			 */
-			$template_slug = apply_filters( 'gravityview_template_slug_' . $view->settings->get( 'template' ), 'table', 'directory' );
+			$hook_name = 'gravityview_template_slug_' . $view->settings->get( 'template' );
+			if ( has_filter( $hook_name ) ) {
+				\GravityView_Deprecated_Hook_Notices::deprecated_hook( $hook_name, '2.55', 'gravityview_get_template_id' );
+			}
+			$template_slug = apply_filters( $hook_name, 'table', 'directory' );
 
 			/**
 			 * Figure out whether to get the entries or not.

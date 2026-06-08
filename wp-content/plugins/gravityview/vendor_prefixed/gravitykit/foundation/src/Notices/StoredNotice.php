@@ -254,9 +254,15 @@ class StoredNotice extends Notice implements StoredNoticeInterface {
 			// Normalize the response to ensure all expected fields exist.
 			$response = array_merge( $context, $response );
 
-			$this->data['live']['progress'] = null !== $response['progress']
-				? $this->clamp_progress( $response['progress'] )
-				: null;
+			// Handle progress: false disables the progress bar; numeric values are clamped 0-100.
+			if ( isset( $response['progress'] ) && false === $response['progress'] ) {
+				$this->data['live']['progress']      = null;
+				$this->data['live']['show_progress'] = false;
+			} elseif ( null !== $response['progress'] ) {
+				$this->data['live']['progress'] = $this->clamp_progress( $response['progress'] );
+			} else {
+				$this->data['live']['progress'] = null;
+			}
 
 			if ( is_string( $response['message'] ) ) {
 				$this->data['message'] = self::sanitize_message( $response['message'] );
@@ -264,6 +270,23 @@ class StoredNotice extends Notice implements StoredNoticeInterface {
 
 			if ( is_array( $response['extra'] ) ) {
 				$this->data['extra'] = $response['extra'];
+			}
+
+			// Allow the callback to change the notice severity (e.g., info → error).
+			$valid_severities = [ 'error', 'warning', 'success', 'info' ];
+
+			if ( isset( $response['severity'] ) && in_array( $response['severity'], $valid_severities, true ) ) {
+				$this->data['severity'] = $response['severity'];
+			}
+
+			// Allow the callback to explicitly show/hide the progress bar.
+			if ( isset( $response['show_progress'] ) && is_bool( $response['show_progress'] ) ) {
+				$this->data['live']['show_progress'] = $response['show_progress'];
+			}
+
+			// Allow the callback to signal polling should stop.
+			if ( ! empty( $response['disable_polling'] ) ) {
+				$this->data['live']['disable_polling'] = true;
 			}
 
 			// Handle auto-dismissal.

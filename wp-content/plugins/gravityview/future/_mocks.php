@@ -92,9 +92,11 @@ function GravityView_frontend_get_view_entries( $args, $form_id, $parameters, $c
 	/** ...and all the (now deprecated) filters that usually follow `gravityview_get_entries` */
 
 	/**
-	 * @deprecated
-	 * Do not use this filter anymore.
+	 * @deprecated 2.55.0 `gravityview/view/entries` instead.
 	 */
+	if ( has_filter( 'gravityview_before_get_entries' ) ) {
+		\GravityView_Deprecated_Hook_Notices::deprecated_hook( 'gravityview_before_get_entries', '2.55', 'gravityview/view/entries' );
+	}
 	$entries = apply_filters_ref_array( 'gravityview_before_get_entries', array( null, $criteria, $parameters, &$count ) );
 
 	if ( ! is_null( $entries ) ) {
@@ -133,9 +135,11 @@ function GravityView_frontend_get_view_entries( $args, $form_id, $parameters, $c
 	/** Just one more filter, for compatibility's sake! */
 
 	/**
-	 * @deprecated
-	 * Do not use this filter anymore.
+	 * @deprecated 2.55.0 `gravityview/view/entries` instead.
 	 */
+	if ( has_filter( 'gravityview_entries' ) ) {
+		\GravityView_Deprecated_Hook_Notices::deprecated_hook( 'gravityview_entries', '2.55', 'gravityview/view/entries' );
+	}
 	$entries = apply_filters_ref_array( 'gravityview_entries', array( $entries, $criteria, $parameters, &$count ) );
 
 	return array( $entries, $paging, $count );
@@ -760,7 +764,7 @@ final class Legacy_Context {
 
 /** Add some global fix for field capability discrepancies. */
 add_filter(
-	'gravityview/configuration/fields',
+	'gravityview/view/configuration/fields',
 	function ( $fields ) {
 		if ( empty( $fields ) ) {
 			return $fields;

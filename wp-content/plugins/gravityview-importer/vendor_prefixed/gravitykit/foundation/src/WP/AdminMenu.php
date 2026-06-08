@@ -196,8 +196,8 @@ class AdminMenu {
 		}
 
 		// Add top-level menu.
-		$page_title         = esc_html__( 'GravityKit', 'gk-gravityimport' );
-		$menu_title         = esc_html__( 'GravityKit', 'gk-gravityimport' );
+		$page_title         = esc_html__( 'GravityKit', 'gk-foundation' );
+		$menu_title         = esc_html__( 'GravityKit', 'gk-foundation' );
 		$menu_temp_position = (float) base_convert( substr( md5( self::WP_ADMIN_MENU_SLUG ), -4 ), 16, 10 ) * 0.00001; // Taken from WP's add_menu_page() code.
 		$gk_settings        = SettingsFramework::get_instance()->get_plugin_settings( Core::ID );
 

@@ -41,7 +41,11 @@ class View_Legacy_Template extends View_Template {
 
 		$template = \GravityView_View::getInstance();
 
-		$slug = apply_filters( 'gravityview_template_slug_' . $this->view->settings->get( 'template' ), 'table', 'directory' );
+		$hook_name = 'gravityview_template_slug_' . $this->view->settings->get( 'template' );
+		if ( has_filter( $hook_name ) ) {
+			\GravityView_Deprecated_Hook_Notices::deprecated_hook( $hook_name, '2.55', 'gravityview_get_template_id' );
+		}
+		$slug = apply_filters( $hook_name, 'table', 'directory' );
 
 		foreach ( $sections as $section ) {
 			$template->render( $slug, $section, false );

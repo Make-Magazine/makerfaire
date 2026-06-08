@@ -26,8 +26,12 @@ class GPPA_GF_Query_Condition extends GF_Query_Condition {
 		/**
 		 * Handle multi-input (but not choice-based) fields such as Name and concatenate the values so the entire
 		 * value can be searched.
+		 *
+		 * Use get_input_type() to exclude choice-based multi-input fields like Checkbox where each input
+		 * corresponds to a choice. Do not use empty($field->choices) as Name fields can have choices for the
+		 * prefix sub-input when custom prefix choices are configured.
 		 */
-		if ( $field->get_entry_inputs() && empty( $field->choices ) ) {
+		if ( $field->get_entry_inputs() && $field->get_input_type() !== 'checkbox' ) {
 			// phpcs:ignore WordPress.DB.PreparedSQLPlaceholders.ReplacementsWrongNumber
 			$subquery = $wpdb->prepare(
 				sprintf( "SELECT

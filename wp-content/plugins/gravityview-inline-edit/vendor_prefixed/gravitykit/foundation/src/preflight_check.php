@@ -103,7 +103,7 @@ function meets_min_php_version_requirement( $plugin_file, $min_php_version = MIN
 
 	if ( ! $meets_requirement ) {
 		$notice = strtr(
-			esc_html_x( '[plugin] requires PHP [version] or newer.', 'Placeholders inside [] are not to be translated.', 'gk-gravityedit' ),
+			esc_html_x( '[plugin] requires PHP [version] or newer.', 'Placeholders inside [] are not to be translated.', 'gk-foundation' ),
 			[
 				'[plugin]'  => $plugin_data['Name'],
 				'[version]' => $min_php_version,

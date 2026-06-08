@@ -40,21 +40,46 @@ function members_admin_register_scripts() {
 
 	$min = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min';
 
-	wp_register_script( 'members-settings',  members_plugin()->uri . "js/settings{$min}.js",  array( 'jquery'  ), '', true );
-	wp_register_script( 'members-edit-post', members_plugin()->uri . "js/edit-post{$min}.js", array( 'jquery'  ), '', true );
-	wp_register_script( 'members-edit-role', members_plugin()->uri . "js/edit-role{$min}.js", array( 'postbox', 'wp-util' ), '', true );
+	$settings_file = members_plugin()->dir . "js/settings{$min}.js";
+	$settings_ver  = file_exists( $settings_file ) ? filemtime( $settings_file ) : false;
+	wp_register_script( 'members-settings', members_plugin()->uri . "js/settings{$min}.js", array( 'jquery' ), $settings_ver, true );
+
+	$edit_post_file = members_plugin()->dir . "js/edit-post{$min}.js";
+	$edit_post_ver  = file_exists( $edit_post_file ) ? filemtime( $edit_post_file ) : false;
+	wp_register_script( 'members-edit-post', members_plugin()->uri . "js/edit-post{$min}.js", array( 'jquery' ), $edit_post_ver, true );
+
+	$edit_role_file = members_plugin()->dir . "js/edit-role{$min}.js";
+	$edit_role_ver  = file_exists( $edit_role_file ) ? filemtime( $edit_role_file ) : false;
+	wp_register_script( 'members-edit-role', members_plugin()->uri . "js/edit-role{$min}.js", array( 'postbox', 'wp-util', 'wp-i18n' ), $edit_role_ver, true );
+
+	// Load JSON translations for `wp.i18n._n()` / `wp.i18n.__()` calls used by
+	// the capability filter. Strings still translated via PHP `__()` continue to
+	// flow through `wp_localize_script()` below for backward compatibility.
+	if ( function_exists( 'wp_set_script_translations' ) ) {
+		wp_set_script_translations( 'members-edit-role', 'members' );
+	}
 
 	// Localize our script with some text we want to pass in.
 	$i18n = array(
-		'button_role_edit' => esc_html__( 'Edit',                'members' ),
-		'button_role_ok'   => esc_html__( 'OK',                  'members' ),
-		'label_grant_cap'  => esc_html__( 'Grant %s capability', 'members' ),
-		'label_deny_cap'   => esc_html__( 'Deny %s capability',  'members' ),
-		'ays_delete_role'  => esc_html__( 'Are you sure you want to delete this role? This is a permanent action and cannot be undone.', 'members' ),
-		'hidden_caps'      => members_get_hidden_caps(),
+		'button_role_edit'       => esc_html__( 'Edit',                'members' ),
+		'button_role_ok'         => esc_html__( 'OK',                  'members' ),
+		'label_grant_cap'        => esc_html__( 'Grant %s capability', 'members' ),
+		'label_deny_cap'         => esc_html__( 'Deny %s capability',  'members' ),
+		'ays_delete_role'        => esc_html__( 'Are you sure you want to delete this role? This is a permanent action and cannot be undone.', 'members' ),
+		'hidden_caps'            => members_get_hidden_caps(),
+		'cap_filter_no_results'         => esc_html__( 'No capabilities match your filter.', 'members' ),
+		'cap_filter_no_results_on_tab'  => esc_html__( 'No capabilities match your filter on this tab.', 'members' ),
+		'cap_filter_elsewhere_one'      => esc_html__( '%d capability match on other tabs.', 'members' ),
+		'cap_filter_elsewhere_other'    => esc_html__( '%d capabilities match on other tabs.', 'members' ),
+		'cap_filter_match'              => esc_html__( '%d match', 'members' ),
+		'cap_filter_matches'            => esc_html__( '%d matches', 'members' ),
 	);
 
 	wp_localize_script( 'members-edit-role', 'members_i18n', $i18n );
+
+	$import_export_file = members_plugin()->dir . "js/import-export{$min}.js";
+	$import_export_ver  = file_exists( $import_export_file ) ? filemtime( $import_export_file ) : false;
+	wp_register_script( 'members-import-export', members_plugin()->uri . "js/import-export{$min}.js", array( 'jquery' ), $import_export_ver, true );
 }
 
 /**
@@ -111,6 +136,9 @@ function members_delete_role( $role ) {
 
 	// Remove the role.
 	remove_role( $role );
+
+	// Stop tracking as Members-created (if it was).
+	members_untrack_created_role( $role );
 
 	// Remove the role from the role factory.
 	members_unregister_role( $role );
@@ -187,24 +215,28 @@ add_action( 'in_admin_header', 'members_admin_header', 0 );
  */
 function members_admin_header() {
 
-	if ( members_is_memberpress_active() || empty( $_GET['page'] ) || ! in_array( $_GET['page'], array( 'roles', 'members', 'members-settings', 'members-about' ) ) ) {
+	if ( members_is_memberpress_active() || empty( $_GET['page'] ) || ! in_array( $_GET['page'], array( 'roles', 'members', 'members-settings', 'members-about', 'members-payments', 'members-growth-tools' ) ) ) {
 		return;
 	}
 
 	$dismissed = get_option( 'members_dismiss_upgrade_header', false );
 
-	if ( ! empty( $dismissed ) ) {
-		return;
-	}
-
     ?>
 
+    <?php if ( empty( $dismissed ) ) : ?>
     <div class="members-upgrade-header" id="members-upgrade-header">
     	<span id="close-members-upgrade-header">X</span>
     	<?php _e( 'You\'re using Members. To unlock more features, consider <a href="https://memberpress.com/plans/pricing/?utm_source=members_plugin&utm_medium=link&utm_campaign=in_plugin&utm_content=pro_features">adding MemberPress.</a>' ); ?>
     </div>
+    <?php endif; ?>
 
-    <div id="members-admin-header"><img class="members-logo" src="<?php echo members_plugin()->uri . 'img/Members-header.svg'; ?>" /></div>
+    <div id="members-admin-header">
+        <img class="members-logo" src="<?php echo members_plugin()->uri . 'img/Members-header.svg'; ?>" />
+        <a class="members-by-mp" href="https://memberpress.com/?utm_source=members_plugin&utm_medium=link&utm_campaign=header_logo&utm_content=link_1" target="_blank" rel="noopener">
+            <span class="members-by-label">by</span>
+            <img class="members-mp-logo" src="<?php echo members_plugin()->uri . 'img/memberpress-logo-white.png'; ?>" />
+        </a>
+    </div>
 
     <script>
     	jQuery(document).ready(function($) {
@@ -298,5 +330,16 @@ function members_dismiss_upgrade_header() {
  */
 function members_is_admin_page() {
 	$screen = get_current_screen();
-	return ! empty( $screen->id ) && ! empty( Members\Admin\Settings_Page::get_instance()->admin_pages ) && in_array( $screen->id, Members\Admin\Settings_Page::get_instance()->admin_pages );
+
+	if ( ! empty( $screen->id ) && ! empty( Members\Admin\Settings_Page::get_instance()->admin_pages ) && in_array( $screen->id, Members\Admin\Settings_Page::get_instance()->admin_pages ) ) {
+		return true;
+	}
+
+	// Fallback: pages registered outside Settings_Page (e.g. the Growth Tools
+	// submenu is registered by the caseproof/growth-tools composer package).
+	if ( ! empty( $_GET['page'] ) && in_array( $_GET['page'], array( 'roles', 'members', 'members-settings', 'members-about', 'members-payments', 'members-growth-tools' ), true ) ) {
+		return true;
+	}
+
+	return false;
 }

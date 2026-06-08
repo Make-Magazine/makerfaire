@@ -16,20 +16,15 @@ use GravityKit\GravityEdit\Foundation\Logger\Framework as LoggerFramework;
 use GravityKit\GravityEdit\Foundation\Settings\Framework as SettingsFramework;
 use GravityKit\GravityEdit\Foundation\Encryption\Encryption;
 use GravityKit\GravityEdit\Foundation\Helpers\Arr;
+use GravityKit\GravityEdit\Foundation\Notices\ServerNoticeHandler;
 use GFForms;
 use GFFormsModel;
 use GravityKit\GravityEdit\Foundation\WP\AdminMenu;
 
 class LicenseManager {
-	const EDD_LICENSES_API_ENDPOINT = 'https://www.gravitykit.com';
+	const STORE_API_ENDPOINT = 'https://store.gravitykit.com';
 
-	const EDD_LICENSES_API_VERSION = 3;
-
-	const EDD_ACTION_CHECK_LICENSE = 'check_license';
-
-	const EDD_ACTION_ACTIVATE_LICENSE = 'activate_license';
-
-	const EDD_ACTION_DEACTIVATE_LICENSE = 'deactivate_license';
+	const STORE_API_VERSION = 3;
 
 	const HARDCODED_LICENSE_CONSTANTS = [ 'GRAVITYVIEW_LICENSE_KEY', 'GRAVITYKIT_LICENSES' ];
 
@@ -60,6 +55,15 @@ class LicenseManager {
 	 * @var bool
 	 */
 	public $is_decryptable = true;
+
+	/**
+	 * Whether license rechecks should rebuild the WordPress plugin update transient.
+	 *
+	 * @since 1.19.0
+	 *
+	 * @var bool
+	 */
+	private $refresh_update_plugins_transient_after_license_recheck = true;
 
 	/**
 	 * Returns class instance.
@@ -140,7 +144,7 @@ class LicenseManager {
 	 */
 	public function ajax_get_licenses_data( array $payload ) {
 		if ( ! Framework::get_instance()->current_user_can( 'view_licenses' ) ) {
-			throw new Exception( esc_html__( 'You do not have a permission to perform this action.', 'gk-gravityedit' ) );
+			throw new Exception( esc_html__( 'You do not have a permission to perform this action.', 'gk-foundation' ) );
 		}
 
 		$payload = wp_parse_args(
@@ -270,56 +274,82 @@ class LicenseManager {
 	 */
 	public function get_license_key_status_message( $status ) {
 		$statuses = [
-			'site_inactive'       => esc_html__( 'The license key is valid, but it has not been activated for this site.', 'gk-gravityedit' ),
-			'inactive'            => esc_html__( 'The license key is valid, but it has not been activated for this site.', 'gk-gravityedit' ),
-			'no_activations_left' => esc_html__( 'This license has reached its activation limit.', 'gk-gravityedit' ),
-			'deactivated'         => esc_html__( 'This license has been deactivated.', 'gk-gravityedit' ),
-			'valid'               => esc_html__( 'This license key is valid and active.', 'gk-gravityedit' ),
-			'invalid'             => esc_html__( 'This license key is invalid.', 'gk-gravityedit' ),
-			'missing'             => esc_html__( 'This license key is invalid.', 'gk-gravityedit' ),
-			'revoked'             => esc_html__( 'This license key has been revoked.', 'gk-gravityedit' ),
-			'expired'             => esc_html__( 'This license key has expired.', 'gk-gravityedit' ),
+			'site_inactive'       => esc_html__( 'The license key is valid, but it has not been activated for this site.', 'gk-foundation' ),
+			'inactive'            => esc_html__( 'The license key is valid, but it has not been activated for this site.', 'gk-foundation' ),
+			'no_activations_left' => esc_html__( 'This license has reached its activation limit.', 'gk-foundation' ),
+			'deactivated'         => esc_html__( 'This license has been deactivated.', 'gk-foundation' ),
+			'valid'               => esc_html__( 'This license key is valid and active.', 'gk-foundation' ),
+			'invalid'             => esc_html__( 'This license key is invalid.', 'gk-foundation' ),
+			'missing'             => esc_html__( 'This license key is invalid.', 'gk-foundation' ),
+			'disabled'            => esc_html__( 'This license key has been disabled.', 'gk-foundation' ),
+			'revoked'             => esc_html__( 'This license key has been revoked.', 'gk-foundation' ),
+			'expired'             => esc_html__( 'This license key has expired.', 'gk-foundation' ),
 		];
 
 		if ( empty( $statuses[ $status ] ) ) {
 			LoggerFramework::get_instance()->warning( 'Unknown license status: ' . $status );
 
-			return esc_html__( 'License status could not be determined.', 'gk-gravityedit' );
+			return esc_html__( 'License status could not be determined.', 'gk-foundation' );
 		}
 
 		return $statuses[ $status ];
 	}
 
 	/**
-	 * Performs remote call to the EDD API.
+	 * Returns a short license status label for display.
 	 *
-	 * @sice 1.0
+	 * @since 1.19.0
 	 *
-	 * @param string|array $license    License key or array of license keys.
-	 * @param string       $edd_action EDD action.
+	 * @param string $status EDD status code.
+	 *
+	 * @return string
+	 */
+	private function get_license_key_status_label( $status ) {
+		$statuses = [
+			'site_inactive'       => esc_html__( 'Active', 'gk-foundation' ),
+			'inactive'            => esc_html__( 'Active', 'gk-foundation' ),
+			'no_activations_left' => esc_html__( 'Limit Reached', 'gk-foundation' ),
+			'deactivated'         => esc_html__( 'Deactivated', 'gk-foundation' ),
+			'valid'               => esc_html__( 'Active', 'gk-foundation' ),
+			'invalid'             => esc_html__( 'Invalid', 'gk-foundation' ),
+			'missing'             => esc_html__( 'Invalid', 'gk-foundation' ),
+			'disabled'            => esc_html__( 'Disabled', 'gk-foundation' ),
+			'revoked'             => esc_html__( 'Revoked', 'gk-foundation' ),
+			'expired'             => esc_html__( 'Expired', 'gk-foundation' ),
+		];
+
+		return $statuses[ $status ] ?? esc_html__( 'Unknown', 'gk-foundation' );
+	}
+
+	/**
+	 * Calls the Store API and normalizes the license response.
+	 *
+	 * @since 1.15.0
+	 *
+	 * @param string       $path    API endpoint path (e.g., '/licenses/check').
+	 * @param string|array $license License key or array of license keys.
+	 * @param array        $extra   Additional payload fields (e.g., site_data).
 	 *
 	 * @throws Exception
 	 *
-	 * @return array Response body.
+	 * @return array Normalized response data.
 	 */
-	public function perform_remote_license_call( $license, $edd_action ) {
+	private function call_store_api( string $path, $license, array $extra = [] ) {
 		$multiple_licenses = is_array( $license );
 
-		$payload = [
-			'edd_action'  => $edd_action,
-			'url'         => is_multisite() ? network_home_url() : home_url(),
-			'api_version' => self::EDD_LICENSES_API_VERSION,
-			'license'     => $license,
-			'environment' => function_exists( 'wp_get_environment_type' ) ? wp_get_environment_type() : 'production',
-		];
-
-		if ( self::EDD_ACTION_CHECK_LICENSE === $edd_action ) {
-			$payload['site_data'] = $this->get_site_data();
-		}
+		$payload = array_merge(
+            [
+				'url'         => is_multisite() ? network_home_url() : home_url(),
+				'api_version' => self::STORE_API_VERSION,
+				'license'     => $license,
+				'environment' => CoreHelpers::get_environment_type(),
+			],
+            $extra
+        );
 
 		try {
 			$response = Helpers::query_api(
-				self::EDD_LICENSES_API_ENDPOINT,
+				self::STORE_API_ENDPOINT . $path,
 				$payload
 			);
 		} catch ( Exception $e ) {
@@ -340,7 +370,7 @@ class LicenseManager {
 
 		foreach ( (array) $response as $license_key => $data ) {
 			if ( ! isset( $data['success'] ) || ! isset( $data['license'] ) || ! isset( $data['checksum'] ) ) {
-				throw new Exception( esc_html__( 'License data received from the API is incomplete.', 'gk-gravityedit' ) );
+				throw new Exception( esc_html__( 'License data received from the API is incomplete.', 'gk-foundation' ) );
 			}
 
 			if ( ! in_array( $license_key, $license_keys, true ) ) {
@@ -360,6 +390,7 @@ class LicenseManager {
 				'name'             => $data['customer_name'] ?? null,
 				'email'            => $data['customer_email'] ?? null,
 				'license_name'     => $data['license_name'] ?? null,
+				'status'           => $data['license'],
 				'expiry'           => $expiry,
 				'key'              => $license_key,
 				'products'         => [],
@@ -376,9 +407,12 @@ class LicenseManager {
 					}
 
 					$normalized_license_data['products'][ $product['id'] ] = [
-						'id'          => $product['id'],
-						'text_domain' => $product['text_domain'],
-						'download'    => $product['files'][0]['file'],
+						'id'              => $product['id'],
+						'text_domain'     => $product['text_domain'],
+						'download'        => $product['files'][0]['file'],
+						'channels'        => $product['channels'] ?? [],
+						'product_notices' => $product['product_notices'] ?? [],
+						'integrity'       => $product['integrity'] ?? [],
 					];
 				}
 			}
@@ -406,7 +440,13 @@ class LicenseManager {
 	 */
 	public function check_license( $license_key ) {
 		try {
-			return $this->perform_remote_license_call( $license_key, self::EDD_ACTION_CHECK_LICENSE );
+			return $this->call_store_api(
+                '/licenses/check',
+                $license_key,
+                [
+					'site_data' => $this->get_site_data(),
+				]
+            );
 		} catch ( Exception $e ) {
 			throw new Exception( $e->getMessage() );
 		}
@@ -425,7 +465,13 @@ class LicenseManager {
 	 */
 	public function check_licenses( array $license_keys ) {
 		try {
-			return $this->perform_remote_license_call( $license_keys, self::EDD_ACTION_CHECK_LICENSE );
+			return $this->call_store_api(
+                '/licenses/check',
+                $license_keys,
+                [
+					'site_data' => $this->get_site_data(),
+				]
+            );
 		} catch ( Exception $e ) {
 			throw new Exception( $e->getMessage() );
 		}
@@ -444,11 +490,11 @@ class LicenseManager {
 	 */
 	public function ajax_activate_license( array $payload ) {
 		if ( ! Framework::get_instance()->current_user_can( 'manage_licenses' ) ) {
-			throw new Exception( esc_html__( 'You do not have a permission to perform this action.', 'gk-gravityedit' ) );
+			throw new Exception( esc_html__( 'You do not have a permission to perform this action.', 'gk-foundation' ) );
 		}
 
 		if ( empty( $payload['key'] ) ) {
-			throw new Exception( esc_html__( 'Missing license key.', 'gk-gravityedit' ) );
+			throw new Exception( esc_html__( 'Missing license key.', 'gk-foundation' ) );
 		}
 
 		$this->activate_license( $payload['key'] );
@@ -469,17 +515,17 @@ class LicenseManager {
 	 */
 	public function activate_license( $license_key ) {
 		if ( ! Framework::get_instance()->current_user_can( 'manage_licenses' ) ) {
-			throw new Exception( esc_html__( 'You do not have a permission to perform this action.', 'gk-gravityedit' ) );
+			throw new Exception( esc_html__( 'You do not have a permission to perform this action.', 'gk-foundation' ) );
 		}
 
 		$licenses_data = $this->get_licenses_data();
 
 		if ( isset( $licenses_data[ $license_key ] ) ) {
-			throw new Exception( esc_html__( 'This license is already activated.', 'gk-gravityedit' ) );
+			throw new Exception( esc_html__( 'This license is already activated.', 'gk-foundation' ) );
 		}
 
 		try {
-			$response = $this->perform_remote_license_call( $license_key, self::EDD_ACTION_ACTIVATE_LICENSE );
+			$response = $this->call_store_api( '/licenses/' . $license_key . '/activate', $license_key );
 
 			if ( ! $response['_raw']['success'] ) {
 				throw new Exception( $this->get_license_key_status_message( $response['_raw']['error'] ) );
@@ -495,7 +541,7 @@ class LicenseManager {
 		$this->save_licenses_data( $licenses_data );
 
 		if ( CoreHelpers::is_network_admin() ) {
-			delete_site_transient( 'update_plugins ' );
+			delete_site_transient( 'update_plugins' );
 		} else {
 			delete_transient( 'update_plugins' );
 		}
@@ -527,7 +573,7 @@ class LicenseManager {
 		$payload['force_removal'] = true;
 
 		if ( ! $payload['key'] ) {
-			throw new Exception( esc_html__( 'Missing license key.', 'gk-gravityedit' ) );
+			throw new Exception( esc_html__( 'Missing license key.', 'gk-foundation' ) );
 		}
 
 		$licenses_data = $this->get_licenses_data();
@@ -535,7 +581,7 @@ class LicenseManager {
 		$license_key = Encryption::get_instance()->decrypt( $payload['key'] );
 
 		if ( empty( $licenses_data[ $license_key ] ) ) {
-			throw new Exception( esc_html__( 'The license key is invalid.', 'gk-gravityedit' ) );
+			throw new Exception( esc_html__( 'The license key is invalid.', 'gk-foundation' ) );
 		}
 
 		$this->deactivate_license( $license_key, (bool) $payload['force_removal'] );
@@ -560,13 +606,13 @@ class LicenseManager {
 		$licenses_data = $this->get_licenses_data();
 
 		try {
-			$response = $this->perform_remote_license_call( $license_key, self::EDD_ACTION_DEACTIVATE_LICENSE );
+			$response = $this->call_store_api( '/licenses/' . $license_key . '/deactivate', $license_key );
 
 			if ( ! $force_removal && ! Arr::get( $response, '_raw.success' ) ) {
 				// Unsuccessful deactivation can happen when the license has expired, in which case we should treat it as a "success" and remove from our list.
 				// If the license hasn't expired, then there is a problem deactivating it, and we should throw an exception.
 				if ( ! Arr::get( $response, 'expiry' ) || ! $this->is_expired_license( Arr::get( $response, 'expiry' ) ) ) {
-					throw new Exception( esc_html__( 'Failed to deactivate license.', 'gk-gravityedit' ) );
+					throw new Exception( esc_html__( 'Failed to deactivate license.', 'gk-foundation' ) );
 				}
 			}
 		} catch ( Exception $e ) {
@@ -578,7 +624,7 @@ class LicenseManager {
 		unset( $licenses_data[ $license_key ] );
 
 		if ( CoreHelpers::is_network_admin() ) {
-			delete_site_transient( 'update_plugins ' );
+			delete_site_transient( 'update_plugins' );
 		} else {
 			delete_transient( 'update_plugins' );
 		}
@@ -606,9 +652,11 @@ class LicenseManager {
 			$expired = $this->is_expired_license( $expiry );
 
 			$expiry = $expired
-				? human_time_diff( $expiry, current_time( 'timestamp' ) ) . ' ' . esc_html_x( 'ago', 'Indicates "time ago"', 'gk-gravityedit' ) // phpcs:ignore WordPress.DateTime.CurrentTimeTimestamp
+				? human_time_diff( $expiry, current_time( 'timestamp' ) ) . ' ' . esc_html_x( 'ago', 'Indicates "time ago"', 'gk-foundation' ) // phpcs:ignore WordPress.DateTime.CurrentTimeTimestamp
 				: date_i18n( get_option( 'date_format' ), $expiry );
 		}
+
+		$status = $this->get_license_status_for_frontend( $license, $expiry, $expired );
 
 		try {
 			$encrypted_key = Encryption::get_instance()->encrypt( $license['key'], false, Core::get_request_unique_string() );
@@ -637,12 +685,40 @@ class LicenseManager {
 		return array_merge(
 			$license,
 			[
-				'expiry'     => $expiry,
-				'expired'    => $expired,
-				'key'        => $encrypted_key,
-				'masked_key' => $this->mask_license_key( $license['key'] ),
+				'expiry'         => $expiry,
+				'expired'        => $expired,
+				'key'            => $encrypted_key,
+				'masked_key'     => $this->mask_license_key( $license['key'] ),
+				'status'         => $status,
+				'status_label'   => $this->get_license_key_status_label( $status ),
+				'status_message' => $this->get_license_key_status_message( $status ),
 			]
 		);
+	}
+
+	/**
+	 * Returns the status code the frontend should display for a license.
+	 *
+	 * @since 1.19.0
+	 *
+	 * @param array  $license License data.
+	 * @param string $expiry  Formatted or symbolic expiry value.
+	 * @param bool   $expired Whether the license is expired.
+	 *
+	 * @return string
+	 */
+	private function get_license_status_for_frontend( array $license, $expiry, bool $expired ) {
+		if ( $expired ) {
+			return 'expired';
+		}
+
+		$status = $license['status'] ?? $license['license'] ?? null;
+
+		if ( is_string( $status ) && '' !== $status ) {
+			return strtolower( $status );
+		}
+
+		return 'invalid' === $expiry ? 'invalid' : 'valid';
 	}
 
 	/**
@@ -696,7 +772,7 @@ class LicenseManager {
 
 		foreach ( $licenses_data as $key => $license ) {
 			if ( ! empty( $license['hardcoded'] ) && ! in_array( $key, $hardcoded_license_keys, true ) ) {
-				$removed_hardcoded_licenses++;
+				++$removed_hardcoded_licenses;
 
 				unset( $licenses_data[ $key ] );
 			}
@@ -884,28 +960,117 @@ class LicenseManager {
 			$license_check_result = $this->check_licenses( array_keys( $licenses_data ) );
 
 			foreach ( $license_check_result as $key => $license ) {
-				if ( ! $license['_raw']['success'] ) {
+				$is_valid = ! empty( $license['_raw']['success'] );
+
+				if ( ! $is_valid ) {
 					LoggerFramework::get_instance()->warning( "License {$key} is invalid." );
-
-					continue;
 				}
 
-				unset( $license['_raw'] );
-
-				if ( ! empty( $licenses_data[ $key ]['hardcoded'] ) ) {
-					$license['hardcoded'] = true;
-				}
-
-				$revalidated_licenses[ $key ] = $license;
+				$revalidated_licenses[ $key ] = $this->prepare_rechecked_license_for_storage( $license, $licenses_data[ $key ] ?? [] );
 			}
 		} catch ( Exception $e ) {
 			LoggerFramework::get_instance()->error( "Failed to revalidate all licenses. {$e->getMessage()}." );
 		}
 
-		WP::set_site_transient( $cache_id, current_time( 'timestamp' ), DAY_IN_SECONDS ); // phpcs:ignore WordPress.DateTime.CurrentTimeTimestamp
+		WP::set_site_transient( $cache_id, current_time( 'timestamp' ), 12 * HOUR_IN_SECONDS ); // phpcs:ignore WordPress.DateTime.CurrentTimeTimestamp
 
 		if ( ! empty( $revalidated_licenses ) ) {
 			$this->save_licenses_data( $revalidated_licenses );
+
+			if ( $this->refresh_update_plugins_transient_after_license_recheck ) {
+				// Rebuild the update_plugins transient with fresh product/channel data.
+				// EDD::check_for_product_updates() hooks into pre_set_site_transient_update_plugins,
+				// so re-setting the transient triggers our hook to inject channel updates.
+				// Without this, the Plugins badge shows stale counts until the next WP update check.
+				set_site_transient( 'update_plugins', get_site_transient( 'update_plugins' ) );
+			}
+
+			$this->sync_server_notices( $revalidated_licenses );
+		}
+	}
+
+	/**
+	 * Prepares remotely rechecked license data for local storage.
+	 *
+	 * @since 1.19.0
+	 *
+	 * @param array $license          Rechecked license data.
+	 * @param array $existing_license Existing locally stored license data.
+	 *
+	 * @return array
+	 */
+	private function prepare_rechecked_license_for_storage( array $license, array $existing_license ) {
+		$is_valid = ! empty( $license['_raw']['success'] );
+
+		unset( $license['_raw'] );
+
+		if ( ! empty( $existing_license['hardcoded'] ) ) {
+			$license['hardcoded'] = true;
+		}
+
+		if ( ! $is_valid ) {
+			foreach ( [ 'name', 'email', 'license_name', 'license_limit', 'site_count', 'activations_left', 'expiry' ] as $field ) {
+				if ( ( ! isset( $license[ $field ] ) || '' === $license[ $field ] ) && array_key_exists( $field, $existing_license ) ) {
+					$license[ $field ] = $existing_license[ $field ];
+				}
+			}
+
+			if ( empty( $license['status'] ) ) {
+				$license['status'] = 'invalid';
+			}
+
+			$license['products'] = [];
+		}
+
+		return $license;
+	}
+
+	/**
+	 * Rechecks all licenses without rebuilding the WordPress plugin update transient.
+	 *
+	 * @since 1.19.0
+	 *
+	 * @param bool $skip_cache Whether to skip returning products from cache.
+	 *
+	 * @return void
+	 */
+	public function recheck_all_licenses_without_update_plugins_refresh( $skip_cache = false ) {
+		$previous = $this->refresh_update_plugins_transient_after_license_recheck;
+
+		$this->refresh_update_plugins_transient_after_license_recheck = false;
+
+		try {
+			$this->recheck_all_licenses( $skip_cache );
+		} finally {
+			$this->refresh_update_plugins_transient_after_license_recheck = $previous;
+		}
+	}
+
+	/**
+	 * Syncs server-driven product notices from license data.
+	 *
+	 * Deduplicates products across licenses (keyed by text_domain) and delegates
+	 * to ServerNoticeHandler for reconciliation with stored notices.
+	 *
+	 * @since 1.13.0
+	 *
+	 * @param array $licenses License data with products.
+	 */
+	private function sync_server_notices( array $licenses ): void {
+		$products = [];
+
+		foreach ( $licenses as $license ) {
+			foreach ( $license['products'] ?? [] as $product ) {
+				$td = $product['text_domain'] ?? '';
+
+				if ( $td ) {
+					$products[ $td ] = $product;
+				}
+			}
+		}
+
+		if ( ! empty( $products ) ) {
+			ServerNoticeHandler::sync( $products, Core::notices() );
 		}
 	}
 
@@ -998,7 +1163,7 @@ class LicenseManager {
 
 		$plugins = CoreHelpers::get_installed_plugins();
 		foreach ( $plugins as &$plugin ) {
-			$plugin = Arr::only( $plugin, [ 'name', 'version', 'active', 'network_activated' ] );
+			$plugin = Arr::only( $plugin, [ 'name', 'version', 'active', 'network_activated', 'text_domain' ] );
 			$plugin = array_filter( $plugin ); // Don't include active/network activated if false.
 		}
 
@@ -1040,7 +1205,7 @@ class LicenseManager {
 			}
 
 			if ( $product['installed'] && ! $product['free'] && empty( $product['licenses'] ) ) {
-				$update_count++;
+				++$update_count;
 			}
 		}
 

@@ -6,11 +6,14 @@
 class GravityView_GF_Entries_List {
 
 	function __construct() {
+		if ( GravityView_GF_Compat::has_native_entry_edit_link() ) {
+			return;
+		}
 
-		// Add Edit link to the entry actions
+		// Add Edit link to the entry actions.
 		add_action( 'gform_entries_first_column_actions', array( $this, 'add_edit_link' ), 10, 5 );
 
-		// Add script to enable edit link
+		// Add script to enable edit link.
 		add_action( 'admin_head', array( $this, 'add_edit_script' ) );
 	}
 

@@ -63,6 +63,8 @@ class GravityView_Edit_Entry_Admin {
 
 		GravityView_Render_Settings::render_setting_row( 'edit_redirect_url', $current_settings );
 
+		GravityView_Render_Settings::render_setting_row( 'edit_entry_title', $current_settings );
+
 		GravityView_Render_Settings::render_setting_row( 'action_label_update', $current_settings );
 
 		GravityView_Render_Settings::render_setting_row( 'edit_cancel_lightbox_action', $current_settings );

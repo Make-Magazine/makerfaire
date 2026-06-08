@@ -44,7 +44,12 @@ if ( ! empty( $field_settings ) && ! empty( $field_settings['date_display'] ) &&
 	// If there is a custom PHP date format passed via the date_display setting,
 	// use PHP's date format
 	$format = $field_settings['date_display'];
-	$output = date_i18n( $format, strtotime( $value ) );
+
+	// Normalize to Y-m-d using the field's dateFormat so strtotime() handles values
+	// stored by writers that bypass GF's prepare_date().
+	$normalized = GFCommon::date_display( $value, \GV\Utils::get( $field, 'dateFormat' ), 'ymd_dash' );
+
+	$output = date_i18n( $format, strtotime( $normalized ) );
 
 } else {
 

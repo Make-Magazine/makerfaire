@@ -2,7 +2,7 @@
 /**
  * @license MIT
  *
- * Modified by gravitykit on 20-February-2026 using {@see https://github.com/BrianHenryIE/strauss}.
+ * Modified by gravitykit on 28-April-2026 using {@see https://github.com/BrianHenryIE/strauss}.
  */
 
 namespace GravityKit\AdvancedFilter\QueryFilters\Condition;
@@ -16,6 +16,7 @@ use GF_Query_Call;
 use GF_Query_Condition;
 use GFCommon;
 use GFFormsModel;
+use GravityKit\AdvancedFilter\QueryFilters\Condition\FactoryHandler\CreatedByFactoryHandler;
 use GravityKit\AdvancedFilter\QueryFilters\Filter\Filter;
 
 /**
@@ -63,7 +64,6 @@ final class ConditionFactory {
 		], true );
 	}
 
-
 	/**
 	 * @param Filter $filter
 	 * @param int    $form_id
@@ -76,7 +76,46 @@ final class ConditionFactory {
 		}
 
 		// Take the form ID from the filter if available.
-		$form_id  = $filter->form_id() ?: $form_id;
+		$form_id = $filter->form_id() ?: $form_id;
+
+		// Allow external handlers to claim this filter.
+		$filter_array            = $filter->to_array();
+		$filter_array['form_id'] = $form_id;
+
+		/**
+		 * Modifies the list of condition factory handlers for a filter.
+		 *
+		 * Each handler is a callable that receives the filter as a plain array and returns one of the following:
+		 * - `false`              — does not handle this filter; the next handler is tried.
+		 * - `null`               — claims this filter but produces no condition; built-in logic is skipped.
+		 * - `GF_Query_Condition` — claims this filter with the given condition; built-in logic is skipped.
+		 *
+		 * @since 2.10
+		 *
+		 * @param array<callable(array $filter_array): false|null|GF_Query_Condition> $handlers Ordered list of condition factory handler callables.
+		 */
+		$handlers = apply_filters(
+			'gk/query-filters/condition/factory-handlers',
+			[ new CreatedByFactoryHandler() ]
+		);
+
+		// Locked filters are not handled by custom handlers.
+		if ( is_array( $handlers ) && ! $filter->equals( Filter::locked() ) ) {
+			foreach ( $handlers as $handler ) {
+				if ( ! is_callable( $handler ) ) {
+					continue;
+				}
+
+				$result = $handler( $filter_array );
+
+				if ( null !== $result && ! $result instanceof GF_Query_Condition ) {
+					continue;
+				}
+
+				return $result;
+			}
+		}
+
 		$value    = $filter->value();
 		$operator = $filter->operator();
 
@@ -85,12 +124,16 @@ final class ConditionFactory {
 			$operator = GF_Query_Condition::NLIKE;
 		}
 
+		$field      = GFAPI::get_field( $form_id, $filter->key() ) ?: null;
+		$is_numeric = $field && $this->is_numeric_field( $field ) && is_numeric( $value );
+
 		$condition = array_filter(
 			[
-				'key'      => $filter->key(),
+				'key'        => $filter->key(),
 				// Value needs to be `-1` to avoid database results.
-				'value'    => $filter->equals( Filter::locked() ) ? - 1 : $value,
-				'operator' => $operator,
+				'value'      => $filter->equals( Filter::locked() ) ? - 1 : $value,
+				'operator'   => $operator,
+				'is_numeric' => $is_numeric,
 			],
 			static function ( $v, $k ) {
 				return 'value' === $k || is_numeric( $v ) || ! empty( $v );
@@ -110,9 +153,12 @@ final class ConditionFactory {
 
 		if ( $field ) {
 			$where = $this->update_empty_numeric_filter_condition( $filter, $where, $field );
+			if ( $is_numeric ) {
+				$where = $this->update_product_condition( $where, $field );
+			}
 		}
 
-		if ( ! is_numeric( $filter->key() ) ) {
+		if ( ! is_numeric( $filter->key() ) || 0 === (int) $filter->key() ) {
 			return $where;
 		}
 
@@ -241,5 +287,66 @@ final class ConditionFactory {
 	 */
 	private function is_not_contains( Filter $filter ): bool {
 		return in_array( $filter->operator(), [ 'ncontains', 'notcontains' ], true );
+	}
+
+	/**
+	 * Wraps the condition in a product price condition if applicable.
+	 *
+	 * @since 2.9.0
+	 *
+	 * @param GF_Query_Condition $condition The condition to update.
+	 * @param GF_Field           $field     The Gravity Forms field.
+	 *
+	 * @return GF_Query_Condition The updated condition.
+	 */
+	private function update_product_condition(
+		GF_Query_Condition $condition,
+		GF_Field $field
+	): GF_Query_Condition {
+		if (
+			! $this->is_product_field( $field )
+			|| in_array( $field->type, [ 'quantity', 'total' ], true )
+		) {
+			return $condition;
+		}
+
+		return Product_Price_Condition::wraps( $condition );
+	}
+
+	/**
+	 * Whether this product is split up into multiple fields.
+	 *
+	 * @since 2.9.0
+	 *
+	 * @param GF_Field $field The Gravity Forms field.
+	 *
+	 * @return bool
+	 */
+	private function is_multipart_product_field( GF_Field $field ): bool {
+		return in_array( $field->get_input_type(), [ 'singleproduct', 'hiddenproduct' ], true );
+	}
+
+	/**
+	 * Returns whether the field is a product field.
+	 *
+	 * @since 2.9.0
+	 *
+	 * @param GF_Field $field The Gravity Forms field.
+	 *
+	 * @return bool
+	 */
+	private function is_product_field( GF_Field $field ): bool {
+		if ( 'quantity' === $field->type ) {
+			return false;
+		}
+
+		if (
+			'number' === $field->get_input_type()
+			&& 'currency' === ( $field->numberFormat ?? null )
+		) {
+			return true;
+		}
+
+		return GFCommon::is_product_field( $field->type ?? '' );
 	}
 }

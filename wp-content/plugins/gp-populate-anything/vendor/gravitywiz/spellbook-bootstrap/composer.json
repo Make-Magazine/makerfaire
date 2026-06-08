@@ -1,0 +1,30 @@
+{
+    "name": "gravitywiz/spellbook-bootstrap",
+    "description": "Shared bootstrapper for Gravity Wiz plugins.",
+    "version": "0.0.6",
+    "type": "library",
+    "license": [
+        "GPL-2.0-or-later"
+    ],
+	"scripts": {
+		"lint": "phpcs",
+		"lint:fix": "phpcbf"
+	},
+    "require-dev": {
+		"dealerdirect/phpcodesniffer-composer-installer": "^1.1.2",
+		"wp-coding-standards/wpcs": "^3.2.0",
+		"phpcompatibility/phpcompatibility-wp": "^2.1",
+        "php-stubs/wordpress-stubs": "^6.9"
+
+	},
+    "config": {
+        "allow-plugins": {
+            "dealerdirect/phpcodesniffer-composer-installer": true
+        }
+    },
+    "autoload": {
+        "psr-4": {
+            "Spellbook\\": "src"
+		}
+    }
+}

@@ -51,7 +51,7 @@ use GravityKit\GravityImport\Foundation\Scheduler\JobScheduler;
  * @method static JobOverview job_overview()
  */
 class Core {
-	const VERSION = '1.12.0';
+	const VERSION = '1.21.0';
 
 	const ID = 'gk_foundation';
 
@@ -259,17 +259,17 @@ class Core {
 						'[plugins] did not load correctly. Please deactivate and reactivate it to resolve this issue.',
 						'[plugins] did not load correctly. Please deactivate and reactivate them to resolve this issue.',
 						$count,
-						'gk-gravityimport'
+						'gk-foundation'
 					),
 					[ '[plugins]' => '<strong>' . esc_html( $list ) . '</strong>' ]
 				);
 
 				$support_link = '<a href="https://www.gravitykit.com/support/" target="_blank" rel="noopener noreferrer">'
-					. esc_html__( 'contact support', 'gk-gravityimport' ) . '</a>';
+					. esc_html__( 'contact support', 'gk-foundation' ) . '</a>';
 
 				// translators: [link] is replaced with a support link.
 				$message .= ' ' . strtr(
-					esc_html__( 'If the problem persists, [link].', 'gk-gravityimport' ),
+					esc_html__( 'If the problem persists, [link].', 'gk-foundation' ),
 					[ '[link]' => $support_link ]
 				);
 
@@ -459,6 +459,8 @@ class Core {
 			$this->detect_namespace_conflict();
 		}
 
+		Licenses\Integrity\PackageVerifier::init();
+
 		class_alias( __CLASS__, 'GravityKitFoundation' );
 
 		/**
@@ -534,10 +536,10 @@ class Core {
 
 				// TODO: This is a temporary notice. To be removed once GravityView is updated to v2.16.
 				if ( defined( 'GV_PLUGIN_VERSION' ) && CoreHelpers::version_compare( GV_PLUGIN_VERSION, '2.16', '<' ) ) {
-					$notice_1 = esc_html__( 'You are using a version of GravityView that does not yet support the new GravityKit settings framework.', 'gk-gravityimport' );
+					$notice_1 = esc_html__( 'You are using a version of GravityView that does not yet support the new GravityKit settings framework.', 'gk-foundation' );
 
 					$notice_2 = strtr(
-						esc_html_x( 'As such, the settings below will not apply to GravityView pages and you will have to continue using the [link]old settings[/link] until an updated version of the plugin is available. We apologize for the inconvenience as we work to update our products in a timely fashion.', 'Placeholders inside [] are not to be translated.', 'gk-gravityimport' ),
+						esc_html_x( 'As such, the settings below will not apply to GravityView pages and you will have to continue using the [link]old settings[/link] until an updated version of the plugin is available. We apologize for the inconvenience as we work to update our products in a timely fashion.', 'Placeholders inside [] are not to be translated.', 'gk-foundation' ),
 						[
 							'[link]'  => '<a href="' . admin_url( 'edit.php?post_type=gravityview&page=gravityview_settings' ) . '" class="text-blue-gv underline hover:text-gray-900 focus:text-gray-900 focus:no-underline focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-900">',
 							'[/link]' => '</a>',
@@ -588,14 +590,14 @@ HTML;
 							'type'        => 'checkbox',
 							'value'       => Arr::get( $gk_settings, 'group_gk_products', $default_settings['group_gk_products'] ),
 							'choices'     => $top_level_menu_action_choices,
-							'title'       => esc_html__( 'Group GravityKit Products', 'gk-gravityimport' ),
-							'description' => esc_html__( 'Aggregate all GravityKit products into a single entry on the Plugins page for a cleaner view and easier management.', 'gk-gravityimport' ),
+							'title'       => esc_html__( 'Group GravityKit Products', 'gk-foundation' ),
+							'description' => esc_html__( 'Aggregate all GravityKit products into a single entry on the Plugins page for a cleaner view and easier management.', 'gk-foundation' ),
 						],
 						[
 							'id'          => 'top_level_menu_position',
 							'type'        => 'select',
-							'title'       => esc_html__( 'GravityKit Menu Position', 'gk-gravityimport' ),
-							'description' => esc_html__( 'Select the menu below which to place the GravityKit menu.', 'gk-gravityimport' ),
+							'title'       => esc_html__( 'GravityKit Menu Position', 'gk-foundation' ),
+							'description' => esc_html__( 'Select the menu below which to place the GravityKit menu.', 'gk-foundation' ),
 							'value'       => Arr::get( $gk_settings, 'top_level_menu_position', $default_settings['top_level_menu_position'] ),
 							'choices'     => $gravitykit_menu_position_choices,
 						],
@@ -604,23 +606,23 @@ HTML;
 							'type'        => 'select',
 							'value'       => $top_level_menu_action_value,
 							'choices'     => $top_level_menu_action_choices,
-							'title'       => esc_html__( 'GravityKit Menu Page', 'gk-gravityimport' ),
-							'description' => esc_html__( 'Select the page to open when clicking the GravityKit menu.', 'gk-gravityimport' ),
+							'title'       => esc_html__( 'GravityKit Menu Page', 'gk-foundation' ),
+							'description' => esc_html__( 'Select the page to open when clicking the GravityKit menu.', 'gk-foundation' ),
 						],
 						[
 							'id'          => 'powered_by',
 							'type'        => 'checkbox',
 							'value'       => Arr::get( $gk_settings, 'powered_by', $default_settings['powered_by'] ),
-							'title'       => esc_html__( 'Display "Powered By" Link', 'gk-gravityimport' ),
-							'description' => esc_html__( 'A "Powered by GravityKit" link will be displayed below some GravityKit products. Help us spread the word!', 'gk-gravityimport' ),
+							'title'       => esc_html__( 'Display "Powered By" Link', 'gk-foundation' ),
+							'description' => esc_html__( 'A "Powered by GravityKit" link will be displayed below some GravityKit products. Help us spread the word!', 'gk-foundation' ),
 						],
 						[
 							'id'          => 'affiliate_id',
 							'type'        => 'number',
 							'value'       => Arr::get( $gk_settings, 'affiliate_id' ),
-							'title'       => esc_html__( 'Affiliate ID', 'gk-gravityimport' ),
+							'title'       => esc_html__( 'Affiliate ID', 'gk-foundation' ),
 							'description' => strtr(
-								esc_html_x( 'Earn money when people clicking your links become GravityKit customers. [link]Register as an affiliate[/link]!', 'Placeholders inside [] are not to be translated.', 'gk-gravityimport' ),
+								esc_html_x( 'Earn money when people clicking your links become GravityKit customers. [link]Register as an affiliate[/link]!', 'Placeholders inside [] are not to be translated.', 'gk-foundation' ),
 								[
 									'[link]'  => '<a href="https://www.gravitykit.com/account/affiliates/?utm_source=in-plugin&utm_medium=setting&utm_content=Register%20as%20an%20affiliate" class="underline" rel="external">',
 									'[/link]' => '</a>',
@@ -636,8 +638,8 @@ HTML;
 							'id'          => 'beta',
 							'type'        => 'checkbox',
 							'value'       => Arr::get( $gk_settings, 'beta', $default_settings['beta'] ),
-							'title'       => esc_html__( 'Become a Beta Tester', 'gk-gravityimport' ),
-							'description' => esc_html__( 'You will have early access to the latest GravityKit products. There may be bugs! If you encounter an issue, report it to help make GravityKit products better!', 'gk-gravityimport' ),
+							'title'       => esc_html__( 'Become a Beta Tester', 'gk-foundation' ),
+							'description' => esc_html__( 'You will have early access to the latest GravityKit products. There may be bugs! If you encounter an issue, report it to help make GravityKit products better!', 'gk-foundation' ),
 						],
 					]
 				);
@@ -648,16 +650,16 @@ HTML;
 						'type'        => 'text',
 						'required'    => true,
 						'value'       => Arr::get( $gk_settings, 'support_email', $default_settings['support_email'] ),
-						'title'       => esc_html__( 'Support Email', 'gk-gravityimport' ),
-						'description' => esc_html__( 'In order to provide responses to your support requests, please provide your email address.', 'gk-gravityimport' ),
+						'title'       => esc_html__( 'Support Email', 'gk-foundation' ),
+						'description' => esc_html__( 'In order to provide responses to your support requests, please provide your email address.', 'gk-foundation' ),
 						'validation'  => [
 							[
 								'rule'    => 'required',
-								'message' => esc_html__( 'Support email is required', 'gk-gravityimport' ),
+								'message' => esc_html__( 'Support email is required', 'gk-foundation' ),
 							],
 							[
 								'rule'    => 'email',
-								'message' => esc_html__( 'Please provide a valid email address', 'gk-gravityimport' ),
+								'message' => esc_html__( 'Please provide a valid email address', 'gk-foundation' ),
 							],
 						],
 					],
@@ -665,10 +667,10 @@ HTML;
 						'id'          => 'support_port',
 						'type'        => 'checkbox',
 						'value'       => Arr::get( $gk_settings, 'support_port', $default_settings['support_port'] ),
-						'title'       => esc_html__( 'Show Support Port', 'gk-gravityimport' ),
-						'description' => ( esc_html__( 'The Support Port provides quick access to how-to articles and tutorials. For administrators, it also makes it easy to contact support.', 'gk-gravityimport' ) .
+						'title'       => esc_html__( 'Show Support Port', 'gk-foundation' ),
+						'description' => ( esc_html__( 'The Support Port provides quick access to how-to articles and tutorials. For administrators, it also makes it easy to contact support.', 'gk-foundation' ) .
 						                   strtr(
-							                   esc_html_x( '[image]Support Port icon[/image]', 'Placeholders inside [] are not to be translated.', 'gk-gravityimport' ),
+							                   esc_html_x( '[image]Support Port icon[/image]', 'Placeholders inside [] are not to be translated.', 'gk-foundation' ),
 							                   [
 								                   '[image]'  => '<div style="margin-top: 1em; width: 7em;">![',
 								                   '[/image]' => '](' . CoreHelpers::get_assets_url( 'support-port-icon.jpg' ) . ')</div>',
@@ -683,23 +685,23 @@ HTML;
 						'id'          => 'no_conflict_mode',
 						'type'        => 'checkbox',
 						'value'       => Arr::get( $gk_settings, 'no_conflict_mode', $default_settings['no_conflict_mode'] ),
-						'title'       => esc_html__( 'Enable No-Conflict Mode', 'gk-gravityimport' ),
-						'description' => esc_html__( 'No-conflict mode prevents extraneous scripts and styles from being printed on GravityKit admin pages, reducing conflicts with other plugins and themes.', 'gk-gravityimport' ),
+						'title'       => esc_html__( 'Enable No-Conflict Mode', 'gk-foundation' ),
+						'description' => esc_html__( 'No-conflict mode prevents extraneous scripts and styles from being printed on GravityKit admin pages, reducing conflicts with other plugins and themes.', 'gk-foundation' ),
 					],
 					[
 						'id'          => 'background_processing',
 						'type'        => 'checkbox',
 						'value'       => Arr::get( $gk_settings, 'background_processing', $default_settings['background_processing'] ),
-						'title'       => esc_html__( 'Enable Background Processing', 'gk-gravityimport' ),
+						'title'       => esc_html__( 'Enable Background Processing', 'gk-foundation' ),
 						'description' => strtr(
                             esc_html_x(
                                 'Allow GravityKit products to [url]process jobs in the background[/url]. Disable to stop background jobs from running.',
                                 'Placeholders inside [] are not to be translated.',
-                                'gk-gravityimport'
+                                'gk-foundation'
                             ),
                             [
 								'[url]'  => '<a class="underline" href="https://docs.gravitykit.com/article/2150-background-processing" rel="noopener noreferrer" target="_blank">',
-								'[/url]' => '<span class="screen-reader-text"> ' . esc_html__( '(This link opens in a new window.)', 'gk-gravityimport' ) . '</span></a>',
+								'[/url]' => '<span class="screen-reader-text"> ' . esc_html__( '(This link opens in a new window.)', 'gk-foundation' ) . '</span></a>',
                             ]
                         ),
 					],
@@ -707,8 +709,8 @@ HTML;
 						'id'          => 'show_background_jobs',
 						'type'        => 'checkbox',
 						'value'       => Arr::get( $gk_settings, 'show_background_jobs', $default_settings['show_background_jobs'] ),
-						'title'       => esc_html__( 'Show Background Jobs', 'gk-gravityimport' ),
-						'description' => esc_html__( 'Show the Background Jobs page in the GravityKit menu, where you can view jobs and their execution status.', 'gk-gravityimport' ),
+						'title'       => esc_html__( 'Show Background Jobs', 'gk-foundation' ),
+						'description' => esc_html__( 'Show the Background Jobs page in the GravityKit menu, where you can view jobs and their execution status.', 'gk-foundation' ),
 						'requires'    => [
 							'id'       => 'background_processing',
 							'operator' => '=',
@@ -719,8 +721,8 @@ HTML;
 						'id'          => 'scheduler_loopback_url',
 						'type'        => 'text',
 						'value'       => Arr::get( $gk_settings, 'scheduler_loopback_url', $default_settings['scheduler_loopback_url'] ),
-						'title'       => esc_html__( 'Loopback URL Override', 'gk-gravityimport' ),
-						'description' => esc_html__( 'Override the base URL used for internal HTTP requests. Leave empty to use the site URL. Only change this if background jobs fail because the server cannot reach itself.', 'gk-gravityimport' ),
+						'title'       => esc_html__( 'Loopback URL Override', 'gk-foundation' ),
+						'description' => esc_html__( 'Override the base URL used for internal HTTP requests. Leave empty to use the site URL. Only change this if background jobs fail because the server cannot reach itself.', 'gk-foundation' ),
 						'placeholder' => 'https://example.com',
 						'requires'    => [
 							'id'       => 'background_processing',
@@ -738,15 +740,15 @@ HTML;
 						'icon'     => CoreHelpers::get_assets_url( 'gravitykit-icon.png' ),
 						'sections' => [
 							[
-								'title'    => esc_html__( 'General', 'gk-gravityimport' ),
+								'title'    => esc_html__( 'General', 'gk-foundation' ),
 								'settings' => $general_settings,
 							],
 							[
-								'title'    => esc_html__( 'Support', 'gk-gravityimport' ),
+								'title'    => esc_html__( 'Support', 'gk-foundation' ),
 								'settings' => $support_settings,
 							],
 							[
-								'title'    => esc_html__( 'Technical', 'gk-gravityimport' ),
+								'title'    => esc_html__( 'Technical', 'gk-foundation' ),
 								'settings' => $technical_settings,
 							],
 						],
@@ -950,9 +952,9 @@ HTML;
 
 		$version            = $foundation_source['foundation_version'];
 		$source_plugin      = CoreHelpers::get_plugin_data( $foundation_source['plugin_file'] );
-		$source_plugin_name = $source_plugin['Name'] ?? __( 'Unknown Plugin', 'gk-gravityimport' );
+		$source_plugin_name = $source_plugin['Name'] ?? __( 'Unknown Plugin', 'gk-foundation' );
 		$loaded_by_message  = strtr(
-			_x( 'GravityKit Foundation [version] (loaded by [plugin]).', 'Placeholders inside [] are not to be translated.', 'gk-gravityimport' ),
+			_x( 'GravityKit Foundation [version] (loaded by [plugin]).', 'Placeholders inside [] are not to be translated.', 'gk-foundation' ),
 			[
 				'[version]' => $version,
 				'[plugin]'  => $source_plugin_name,
@@ -1107,7 +1109,7 @@ HTML;
 						'[plugins] contains both namespaced and non-namespaced Foundation, which may cause conflicts with the standalone Foundation plugin.',
 						'[plugins] contain both namespaced and non-namespaced Foundation, which may cause conflicts with the standalone Foundation plugin.',
 						count( $conflicting_plugins ),
-						'gk-gravityimport'
+						'gk-foundation'
 					),
 					[ '[plugins]' => '<strong>' . implode( ', ', $conflicting_plugins ) . '</strong>' ]
 				),

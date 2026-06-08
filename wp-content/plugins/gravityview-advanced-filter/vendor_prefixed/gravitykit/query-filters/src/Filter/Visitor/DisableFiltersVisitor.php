@@ -2,7 +2,7 @@
 /**
  * @license MIT
  *
- * Modified by gravitykit on 20-February-2026 using {@see https://github.com/BrianHenryIE/strauss}.
+ * Modified by gravitykit on 28-April-2026 using {@see https://github.com/BrianHenryIE/strauss}.
  */
 
 namespace GravityKit\AdvancedFilter\QueryFilters\Filter\Visitor;
@@ -25,16 +25,21 @@ final class DisableFiltersVisitor implements FilterVisitor {
 	private $disabled_filters;
 
 	/**
-	 * Creates the filter.
-     *
-     * To disable a group, you add the group number. To disable a field, provide the field number inside the group.
-     * For example: `['2', '3.4']` would disable the second group completely and the 4th field in the 3rd group.
-     *
-	 * Add disabled filters.
-     *
+	 * Creates the visitor.
+	 *
 	 * @since 2.0.0
 	 */
 	public function __construct() {
+		/**
+		 * Modifies the list of filter indexes to disable.
+		 *
+		 * To disable a group, add the group number. To disable a field, provide the field number inside the group.
+		 * For example: `['2', '3.4']` would disable the second group completely and the 4th field in the 3rd group.
+		 *
+		 * @since 2.0.0
+		 *
+		 * @param array $disabled_filters The filter positions to disable.
+		 */
 		$this->disabled_filters = apply_filters( 'gk/query-filters/filter/disable-filters', [] );
 	}
 

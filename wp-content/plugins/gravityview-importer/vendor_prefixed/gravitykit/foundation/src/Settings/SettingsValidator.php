@@ -182,7 +182,7 @@ class SettingsValidator {
 
 			throw new ValidatorException(
 				strtr(
-					esc_html_x( 'Missing settings: [settings].', 'Placeholders inside [] are not to be translated.', 'gk-gravityimport' ),
+					esc_html_x( 'Missing settings: [settings].', 'Placeholders inside [] are not to be translated.', 'gk-foundation' ),
 					[ '[settings]' => implode( ', ', $missing_settings_title ) ]
 				)
 			);
@@ -217,7 +217,7 @@ class SettingsValidator {
 				if ( empty( $validation_rule['rule'] ) ) {
 					throw new ValidatorException(
 						strtr(
-							esc_html_x( 'Validation rule for setting [setting] is missing.', 'Placeholders inside [] are not to be translated.', 'gk-gravityimport' ),
+							esc_html_x( 'Validation rule for setting [setting] is missing.', 'Placeholders inside [] are not to be translated.', 'gk-foundation' ),
 							[ '[setting]' => $setting['id'] ]
 						)
 					);
@@ -241,7 +241,7 @@ class SettingsValidator {
 				} catch ( ValidatorException $e ) {
 					throw new ValidatorException(
 						strtr(
-							esc_html_x( 'Validation for setting [setting] failed: [reason].', 'Placeholders inside [] are not to be translated.', 'gk-gravityimport' ),
+							esc_html_x( 'Validation for setting [setting] failed: [reason].', 'Placeholders inside [] are not to be translated.', 'gk-foundation' ),
 							[
 								'[setting]' => $setting['id'],
 								'[reason]'  => $e->getMessage(),
@@ -261,7 +261,7 @@ class SettingsValidator {
 		if ( ! empty( $settings_failed_validation ) ) {
 			throw new ValidatorException(
 				strtr(
-					esc_html_x( 'Settings that failed validation: [settings].', 'Placeholders inside [] are not to be translated.', 'gk-gravityimport' ),
+					esc_html_x( 'Settings that failed validation: [settings].', 'Placeholders inside [] are not to be translated.', 'gk-foundation' ),
 					[ '[settings]' => implode( ', ', $settings_failed_validation ) ]
 				)
 			);

@@ -15,7 +15,7 @@
 		</div>
 
 		<div class="gpfup__file-actions">
-			<button @click.prevent="deleteFile(file, $event)" class="gpfup__delete gform-theme-no-framework" :data-gpfup-filename="file.name">
+			<button type="button" @click.prevent="deleteFile(file, $event)" class="gpfup__delete gform-theme-no-framework" :data-gpfup-filename="file.name">
 				<svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg" viewBox="-2 -2 16 16" role="img"
 				     aria-hidden="true" focusable="false">
 					<path

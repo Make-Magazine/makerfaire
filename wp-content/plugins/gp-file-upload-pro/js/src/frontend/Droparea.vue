@@ -1,6 +1,6 @@
 <template>
 	<div ref="droparea"
-		:class="{ 'gpfup__droparea': true, 'gpfup__droparea--over': dropareaCounter, 'gpfup__droprea--maxed': reachedMaxFiles }"
+		:class="{ 'gpfup__droparea': true, 'gpfup__droparea--over': dropareaCounter, 'gpfup__droparea--maxed': reachedMaxFiles }"
 		@drop.prevent="drop"
 		@dragenter.prevent="allowDrop"
 		@dragleave.prevent="dragleave"

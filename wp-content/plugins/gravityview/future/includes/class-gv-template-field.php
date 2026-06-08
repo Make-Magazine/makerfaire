@@ -293,24 +293,17 @@ abstract class Field_Template extends Template {
 				$value = implode( ', ', array_filter( $value ) );
 			}
 
-			// GF 2.9.29+ expects the full entry array; older versions expect a currency string.
-			$entry_or_currency = version_compare( \GFForms::$version, '2.9.28', '>' ) ? $entry->as_entry() : $entry['currency'];
-
-			$display_value = \GFCommon::get_lead_field_display( $this->field->field, $value, $entry_or_currency, false, 'html' );
+			$display_value = \GravityView_GF_Compat::get_field_display( $this->field->field, $value, $entry->as_entry() );
 
 			if ( $errors = ob_get_clean() ) {
-				gravityview()->log->error( 'Errors when calling GFCommon::get_lead_field_display()', array( 'data' => $errors ) );
+				gravityview()->log->error( 'Errors when calling get_field_display()', array( 'data' => $errors ) );
 			}
 
-			// `gform_entry_field_value` expects a GF_Field, but $this->field->field can be NULL
-			if ( ! $this->field->field instanceof GF_Field ) {
-				$gf_field = \GF_Fields::create( $this->field->field );
-			}
+			// `gform_entry_field_value` expects a GF_Field, but $this->field->field can be NULL.
+			$gf_field = $this->field->field instanceof \GF_Field ? $this->field->field : \GF_Fields::create( $this->field->field );
 
 			/** Call the Gravity Forms field value filter. */
 			$display_value = apply_filters( 'gform_entry_field_value', $display_value, $gf_field, $entry->as_entry(), $this->source->form );
-
-			unset( $gf_field );
 
 			/** Replace merge tags for admin-only fields. */
 			if ( ! empty( $this->field->field->adminOnly ) ) {
@@ -343,7 +336,7 @@ abstract class Field_Template extends Template {
 			 *
 			 * @param string $value (empty string).
 			 */
-			$output = apply_filters( 'gravityview_empty_value', $output );
+			$output = \GravityView_Deprecated_Hook_Notices::apply_filters( 'gravityview_empty_value', [ $output ], '2.55', 'gravityview/field/value/empty' );
 
 			/**
 			 * What to display when this field is empty.
@@ -406,7 +399,7 @@ abstract class Field_Template extends Template {
 			 *
 			 * @deprecated Use the `gravityview/field/{$field_type}/output` or `gravityview/field/output` filters instead.
 			 */
-			$output = apply_filters( "gravityview_field_entry_value_{$field->type}_pre_link", $output, $context->entry->as_entry(), $field->as_configuration(), $field_compat );
+			$output = \GravityView_Deprecated_Hook_Notices::apply_filters( "gravityview_field_entry_value_{$field->type}_pre_link", [ $output, $context->entry->as_entry(), $field->as_configuration(), $field_compat ], '2.55', "gravityview/template/field/{$field->type}/output" );
 
 			$output = apply_filters( 'gravityview_field_entry_value_pre_link', $output, $context->entry->as_entry(), $field->as_configuration(), $field_compat );
 
@@ -432,7 +425,7 @@ abstract class Field_Template extends Template {
 				 * @param array  $entry          The GF entry array.
 				 * @param array  $field_settings Settings for the particular GV field.
 				 */
-				$output = apply_filters( 'gravityview_field_entry_link', $output, $permalink, $context->entry->as_entry(), $field->as_configuration() );
+				$output = \GravityView_Deprecated_Hook_Notices::apply_filters( 'gravityview_field_entry_link', [ $output, $permalink, $context->entry->as_entry(), $field->as_configuration() ], '2.55', 'gravityview/template/field/entry_link' );
 
 				/**
 				 * Modify the link HTML.
@@ -464,7 +457,7 @@ abstract class Field_Template extends Template {
 			 *
 			 * @deprecated Use the `gravityview/field/{$field_type}/output` or `gravityview/field/output` filters instead.
 			 */
-			$output = apply_filters( "gravityview_field_entry_value_{$field->type}", $output, $context->entry->as_entry(), $field->as_configuration(), $field_compat );
+			$output = \GravityView_Deprecated_Hook_Notices::apply_filters( "gravityview_field_entry_value_{$field->type}", [ $output, $context->entry->as_entry(), $field->as_configuration(), $field_compat ], '2.55', "gravityview/template/field/{$field->type}/output" );
 
 			/**
 			 * Modify the field value output for all field types.
@@ -478,7 +471,7 @@ abstract class Field_Template extends Template {
 			 * @param array  $field_settings Settings for the particular GV field.
 			 * @param array  $field_data     Field data array.
 			 */
-			$output = apply_filters( 'gravityview_field_entry_value', $output, $context->entry->as_entry(), $field->as_configuration(), $field_compat );
+			$output = \GravityView_Deprecated_Hook_Notices::apply_filters( 'gravityview_field_entry_value', [ $output, $context->entry->as_entry(), $field->as_configuration(), $field_compat ], '2.55', "gravityview/template/field/{$field->type}/output" );
 
 			/**
 			 * Modify the field output for a field type.

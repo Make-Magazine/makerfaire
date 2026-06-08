@@ -274,6 +274,35 @@ final class NoticeManager {
 	}
 
 	/**
+	 * Returns all stored notices whose slug starts with the given prefix.
+	 *
+	 * @since 1.13.0
+	 *
+	 * @param string $slug_prefix Slug prefix to match (e.g., 'server-').
+	 *
+	 * @return StoredNoticeInterface[] Keyed by notice ID.
+	 */
+	public function get_stored_by_slug_prefix( string $slug_prefix ): array {
+		if ( null === $this->stored_notices ) {
+			$this->stored_notices = [];
+
+			foreach ( $this->repository->get_all_stored() as $notice ) {
+				$this->stored_notices[ $notice->get_id() ] = $notice;
+			}
+		}
+
+		$matches = [];
+
+		foreach ( $this->stored_notices as $id => $notice ) {
+			if ( str_starts_with( $notice->get_slug(), $slug_prefix ) ) {
+				$matches[ $id ] = $notice;
+			}
+		}
+
+		return $matches;
+	}
+
+	/**
 	 * Removes a stored notice from persistent storage.
 	 *
 	 * Deletes the notice from both global options and all user meta where it may

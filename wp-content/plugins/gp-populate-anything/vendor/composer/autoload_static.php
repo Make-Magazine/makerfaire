@@ -4,16 +4,66 @@
 
 namespace Composer\Autoload;
 
-class ComposerStaticInit288f9ac4b556a06c2a997481be1e03b9
+class ComposerStaticInit5706dc9906e2ddba1a38a647b5c6d54a
 {
+    public static $files = array (
+        '933d091b1c4b91a3fdb0dfae5c3ced54' => __DIR__ . '/../..' . '/includes/class-compatibility-gravityflow.php',
+        '7352f18743962c7a63b989b33396b99b' => __DIR__ . '/../..' . '/includes/class-compatibility-gravitypdf.php',
+        '4536a3a0eabad61498749ebe55afff19' => __DIR__ . '/../..' . '/includes/class-compatibility-gravityview.php',
+        '3cab2adb6b5f30298f9fcc62451e8140' => __DIR__ . '/../..' . '/includes/class-compatibility-jetsloth-image-choices.php',
+        '923eaaacbd49070826a9cb5529d00e52' => __DIR__ . '/../..' . '/includes/class-compatibility-wc-product-addons.php',
+        '92c53e35ec3beb723396bbdcca8ea95a' => __DIR__ . '/../..' . '/includes/class-gppa-export.php',
+        '79667749ed3ce80089a399fc6e1fd564' => __DIR__ . '/../..' . '/includes/functions.php',
+    );
+
+    public static $prefixLengthsPsr4 = array (
+        'S' =>
+        array (
+            'Spellbook\\' => 10,
+        ),
+        'A' =>
+        array (
+            'Automattic\\Jetpack\\Autoloader\\' => 30,
+        ),
+    );
+
+    public static $prefixDirsPsr4 = array (
+        'Spellbook\\' =>
+        array (
+            0 => __DIR__ . '/..' . '/gravitywiz/spellbook-bootstrap/src',
+        ),
+        'Automattic\\Jetpack\\Autoloader\\' =>
+        array (
+            0 => __DIR__ . '/..' . '/automattic/jetpack-autoloader/src',
+        ),
+    );
+
     public static $classMap = array (
+        'Automattic\\Jetpack\\Autoloader\\AutoloadGenerator' => __DIR__ . '/..' . '/automattic/jetpack-autoloader/src/AutoloadGenerator.php',
         'Composer\\InstalledVersions' => __DIR__ . '/..' . '/composer/InstalledVersions.php',
+        'GPPA_Compatibility_GravityFlow' => __DIR__ . '/../..' . '/includes/class-compatibility-gravityflow.php',
+        'GPPA_Compatibility_GravityPDF' => __DIR__ . '/../..' . '/includes/class-compatibility-gravitypdf.php',
+        'GPPA_Compatibility_GravityView' => __DIR__ . '/../..' . '/includes/class-compatibility-gravityview.php',
+        'GPPA_Compatibility_JetSloth_Image_Choices' => __DIR__ . '/../..' . '/includes/class-compatibility-jetsloth-image-choices.php',
+        'GPPA_Compatibility_WC_Product_Addons' => __DIR__ . '/../..' . '/includes/class-compatibility-wc-product-addons.php',
+        'GPPA_Export' => __DIR__ . '/../..' . '/includes/class-gppa-export.php',
+        'GPPA_GF_Query_Condition' => __DIR__ . '/../..' . '/includes/class-gppa-gf-query-condition.php',
+        'GPPA_Object_Type' => __DIR__ . '/../..' . '/includes/class-object-type.php',
+        'GPPA_Object_Type_Database' => __DIR__ . '/../..' . '/includes/class-object-type-database.php',
+        'GPPA_Object_Type_GF_Entry' => __DIR__ . '/../..' . '/includes/class-object-type-gf-entry.php',
+        'GPPA_Object_Type_Post' => __DIR__ . '/../..' . '/includes/class-object-type-post.php',
+        'GPPA_Object_Type_Term' => __DIR__ . '/../..' . '/includes/class-object-type-term.php',
+        'GPPA_Object_Type_User' => __DIR__ . '/../..' . '/includes/class-object-type-user.php',
+        'GP_Populate_Anything' => __DIR__ . '/../..' . '/class-gp-populate-anything.php',
+        'GP_Populate_Anything_Live_Merge_Tags' => __DIR__ . '/../..' . '/includes/class-live-merge-tags.php',
     );
 
     public static function getInitializer(ClassLoader $loader)
     {
         return \Closure::bind(function () use ($loader) {
-            $loader->classMap = ComposerStaticInit288f9ac4b556a06c2a997481be1e03b9::$classMap;
+            $loader->prefixLengthsPsr4 = ComposerStaticInit5706dc9906e2ddba1a38a647b5c6d54a::$prefixLengthsPsr4;
+            $loader->prefixDirsPsr4 = ComposerStaticInit5706dc9906e2ddba1a38a647b5c6d54a::$prefixDirsPsr4;
+            $loader->classMap = ComposerStaticInit5706dc9906e2ddba1a38a647b5c6d54a::$classMap;
 
         }, null, ClassLoader::class);
     }

@@ -162,7 +162,7 @@ class AdminMenu {
 				 */
 				$badge_count = (int) apply_filters( "gk/foundation/admin-menu/submenu/{$submenu_item['id']}/counter", 0 );
 
-				if ( Arr::get( $submenu, 'hide' ) ) {
+				if ( Arr::get( $submenu_item, 'hide' ) ) {
 					$badge_count = 0;
 				}
 
@@ -196,16 +196,23 @@ class AdminMenu {
 		}
 
 		// Add top-level menu.
-		$page_title         = esc_html__( 'GravityKit', 'gk-gravityedit' );
-		$menu_title         = esc_html__( 'GravityKit', 'gk-gravityedit' );
+		$page_title         = esc_html__( 'GravityKit', 'gk-foundation' );
+		$menu_title         = esc_html__( 'GravityKit', 'gk-foundation' );
 		$menu_temp_position = (float) base_convert( substr( md5( self::WP_ADMIN_MENU_SLUG ), -4 ), 16, 10 ) * 0.00001; // Taken from WP's add_menu_page() code.
 		$gk_settings        = SettingsFramework::get_instance()->get_plugin_settings( Core::ID );
 
 		$saved_menu_position = self::get_menu_position_by_id( $gk_settings['top_level_menu_position'] ?? '' );
 
-		// If saved menu position doesn't exist, fall back to Media (or GF position if GF is active).
+		// If saved menu position doesn't exist, fall back to a sensible default.
 		if ( null === $saved_menu_position ) {
-			$saved_menu_position = class_exists( 'GFForms' ) ? apply_filters( 'gform_menu_position', '16.9' ) : self::get_menu_position_by_id( 'upload.php' );
+			if ( CoreHelpers::is_network_admin() ) {
+				// Network admin: after Plugins (position 20).
+				$saved_menu_position = self::get_menu_position_by_id( 'plugins.php' );
+			} elseif ( class_exists( 'GFForms' ) ) {
+				$saved_menu_position = apply_filters( 'gform_menu_position', '16.9' );
+			} else {
+				$saved_menu_position = self::get_menu_position_by_id( 'upload.php' );
+			}
 		}
 
 		/**

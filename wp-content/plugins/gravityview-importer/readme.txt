@@ -1,7 +1,7 @@
 === GravityImport ===
 Tags: gravitykit, gravityview, gravity forms, import
 Requires at least: 6.2
-Tested up to: 6.9.4
+Tested up to: 7.0.0
 Stable tag: trunk
 Contributors: The GravityKit Team
 License: GPL 3 or higher
@@ -20,6 +20,63 @@ Easily import Gravity Forms entries from a CSV file. Learn more on [gravitykit.c
 3. Follow the instructions
 
 == Changelog ==
+
+= 2.11.2 on June 4, 2026 =
+
+This hotfix resolves an issue affecting the Map Fields step when importing large CSV files.
+
+#### 🐛 Fixed
+* The Map Fields step could appear blank when importing very large CSV files.
+
+#### 🔧 Updated
+* [Foundation](https://www.gravitykit.com/foundation/) to version 1.21.0.
+
+= 2.11.1 on May 28, 2026 =
+
+This release fixes imports that failed on certain configurations.
+
+#### 🐛 Fixed
+* Imports failed on hosts where uploaded files are not served from the local filesystem (for example, `vip://` on WP VIP or `s3://` on sites using object storage).
+
+#### 💻 Developer Updates
+* Added `gk/gravityimport/source/allowed-wrappers` filter to control which PHP stream-wrapper schemes are accepted as import sources.
+
+#### 🔧 Updated
+* [Foundation](https://www.gravitykit.com/foundation/) to version 1.20.0.
+
+= 2.11.0 on May 21, 2026 =
+
+This release adds the ability to save and reuse import configurations, run imports via WP-CLI, and disable background processing site-wide.
+
+#### 🚀 Added
+* Ability to save field mappings and import options as a downloadable file that can be loaded to restore the same configuration on subsequent imports.
+* Support for importing files from the command line via WP-CLI.
+* "Enable Background Processing" setting under GravityKit → Settings → GravityImport to turn off background imports site-wide and force synchronous processing.
+
+#### ✨ Improved
+* On the import completion screen, the "Modify Import Configuration" and "Change Field Mapping" buttons are now labeled "Retry N Failed Records" and "Remap & Retry N Failed Records" to make it clearer that the retry action applies only to failed rows.
+* Faster loading of the form picker on the importer page.
+
+#### 💻 Developer Updates
+* Added `gk/gravityimport/processor/background/enabled` filter to programmatically control whether background processing runs for an import, either site-wide or per form. The filter receives the resolved boolean and an optional form ID.
+
+#### 🔧 Updated
+* [Foundation](https://www.gravitykit.com/foundation/) to version 1.19.0.
+
+= 2.10.0 on April 23, 2026 =
+
+This release enables background imports on sites protected by HTTP Basic Authentication, resolves issues that could cause imports to fail on certain hosting environments, and fixes import notifications on Gravity Forms 2.9.31.3 and later.
+
+#### 🚀 Added
+* Background imports can now run on sites protected by HTTP Basic Authentication, such as password-protected staging and development environments.
+
+#### 🐛 Fixed
+* Large imports could end with an "Import Incomplete" error when the dataset required multiple execution cycles to finish.
+* Imports could be incorrectly marked as failed mid-execution on certain hosting environments.
+* Import notifications were not sent when async notifications were enabled in Gravity Forms 2.9.31.3 or later.
+
+#### 🔧 Updated
+* [Foundation](https://www.gravitykit.com/foundation/) to version 1.16.0.
 
 = 2.9.0 on March 12, 2026 =
 

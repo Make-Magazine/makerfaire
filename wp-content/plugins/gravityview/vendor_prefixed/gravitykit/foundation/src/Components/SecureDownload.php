@@ -54,6 +54,15 @@ class SecureDownload {
 	private $encryption;
 
 	/**
+	 * Last token validation failure code.
+	 *
+	 * @since 1.21.0
+	 *
+	 * @var string|null
+	 */
+	private $last_failure_code = null;
+
+	/**
 	 * Buffer size for file streaming (1MB).
 	 *
 	 * @since 1.3.0
@@ -562,7 +571,7 @@ class SecureDownload {
 			$token_data = $this->validate_token( $token );
 
 			if ( ! $token_data ) {
-				throw new Exception( esc_html__( 'Invalid or expired download token.', 'gk-gravityview' ), 403 );
+				throw new Exception( esc_html__( 'Invalid or expired download token.', 'gk-gravityview' ), $this->get_invalid_token_response_code() );
 			}
 
 			$token_data['token_id'] = $this->get_token_id( $token );
@@ -648,14 +657,10 @@ class SecureDownload {
 
 			// Default error handling.
 			if ( is_array( $error_response ) && isset( $error_response['code'], $error_response['message'] ) ) {
-				status_header( $error_response['code'] );
-
-				wp_die( esc_html( $error_response['message'] ) );
+				wp_die( esc_html( $error_response['message'] ), '', [ 'response' => (int) $error_response['code'] ] );
 			} else {
 				// Fallback if filter returns invalid data.
-				status_header( $error_code );
-
-				wp_die( esc_html( $error_message ) );
+				wp_die( esc_html( $error_message ), '', [ 'response' => (int) $error_code ] );
 			}
 		}
 	}
@@ -672,6 +677,8 @@ class SecureDownload {
 	 * @return array|false The decrypted token data or false if invalid.
 	 */
 	public function validate_token( $token ) {
+		$this->last_failure_code = null;
+
 		$token_data        = null;
 		$validation_result = false;
 		$exception         = null;
@@ -743,7 +750,8 @@ class SecureDownload {
 
 			$validation_result = $token_data;
 		} catch ( Exception $e ) {
-			$failure_code = $e->getMessage();
+			$failure_code            = $e->getMessage();
+			$this->last_failure_code = $failure_code;
 
 			$exception = $e;
 		}
@@ -769,6 +777,21 @@ class SecureDownload {
 			$failure_code,
 			$exception
 		);
+	}
+
+	/**
+	 * Returns the HTTP status code for the last invalid token failure.
+	 *
+	 * @since 1.21.0
+	 *
+	 * @return int
+	 */
+	private function get_invalid_token_response_code() {
+		if ( in_array( $this->last_failure_code, [ 'expired', 'download_limit_exceeded', 'limit_reached' ], true ) ) {
+			return 404;
+		}
+
+		return 403;
 	}
 
 	/**
@@ -949,7 +972,7 @@ class SecureDownload {
 		}
 
 		if ( headers_sent() ) {
-			wp_die( esc_html__( 'Cannot stream file: headers already sent.', 'gk-gravityview' ) );
+			wp_die( esc_html__( 'Cannot stream file: headers already sent.', 'gk-gravityview' ), '', [ 'response' => 500 ] );
 		}
 
 		// Disable WordPress output buffering for large downloads.
@@ -973,7 +996,7 @@ class SecureDownload {
 
 		if ( false === $file_size ) {
 			// File might have been deleted between token validation and now.
-			wp_die( esc_html__( 'File not found or cannot be accessed.', 'gk-gravityview' ), 404 );
+			wp_die( esc_html__( 'File not found or cannot be accessed.', 'gk-gravityview' ), '', [ 'response' => 404 ] );
 		}
 		$file_name = ! empty( $token_data['filename'] ) ? $token_data['filename'] : basename( $file_path );
 		$mime_type = wp_check_filetype( $file_path );
@@ -1043,13 +1066,13 @@ class SecureDownload {
 		}
 
 		// Use direct file operations for performance reasons.
-		// phpcs:disable WordPress.WP.AlternativeFunctions.file_system_read_fopen
-		// phpcs:disable WordPress.WP.AlternativeFunctions.file_system_read_fread
-		// phpcs:disable WordPress.WP.AlternativeFunctions.file_system_read_fclose
+		// phpcs:disable WordPress.WP.AlternativeFunctions.file_system_operations_fopen
+		// phpcs:disable WordPress.WP.AlternativeFunctions.file_system_operations_fread
+		// phpcs:disable WordPress.WP.AlternativeFunctions.file_system_operations_fclose
 		$handle = fopen( $file_path, 'rb' );
 
 		if ( ! $handle ) {
-			wp_die( esc_html__( 'File not found or cannot be opened.', 'gk-gravityview' ), 404 );
+			wp_die( esc_html__( 'File not found or cannot be opened.', 'gk-gravityview' ), '', [ 'response' => 404 ] );
 		}
 
 		// Seek to start position.
@@ -1081,7 +1104,7 @@ class SecureDownload {
 
 				wp_die(
 					esc_html__( 'An error occurred while reading the file. Please try again.', 'gk-gravityview' ),
-					500,
+					'',
 					[ 'response' => 500 ]
 				);
 			}
@@ -1096,7 +1119,7 @@ class SecureDownload {
 				// Inform the user about the corruption.
 				wp_die(
 					esc_html__( 'The file appears to be corrupted or was modified during download.', 'gk-gravityview' ),
-					500,
+					'',
 					[ 'response' => 500 ]
 				);
 			}
@@ -1104,7 +1127,7 @@ class SecureDownload {
 			echo $chunk; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 
 			$bytes_remaining -= strlen( $chunk );
-			$chunk_count++;
+			++$chunk_count;
 
 			// Check for client disconnect after each chunk for better resource management.
 			if ( connection_aborted() ) {
@@ -1123,9 +1146,9 @@ class SecureDownload {
 
 		fclose( $handle );
 
-		// phpcs:enable WordPress.WP.AlternativeFunctions.file_system_read_fopen
-		// phpcs:enable WordPress.WP.AlternativeFunctions.file_system_read_fread
-		// phpcs:enable WordPress.WP.AlternativeFunctions.file_system_read_fclose
+		// phpcs:enable WordPress.WP.AlternativeFunctions.file_system_operations_fopen
+		// phpcs:enable WordPress.WP.AlternativeFunctions.file_system_operations_fread
+		// phpcs:enable WordPress.WP.AlternativeFunctions.file_system_operations_fclose
 	}
 
 	/**
@@ -1195,7 +1218,8 @@ class SecureDownload {
 						[ '[error]' => $response->get_error_message() ]
 					)
 				),
-				500
+				'',
+				[ 'response' => 500 ]
 			);
 		}
 
@@ -1206,7 +1230,7 @@ class SecureDownload {
 			@unlink( $tmp_file );
 
 			$http_status = ( $status >= 400 && $status < 500 ) ? 404 : 500;
-			wp_die( esc_html__( 'Remote file not available.', 'gk-gravityview' ), (int) $http_status );
+			wp_die( esc_html__( 'Remote file not available.', 'gk-gravityview' ), '', [ 'response' => (int) $http_status ] );
 		}
 
 		// Validate file size to prevent disk exhaustion attacks.
@@ -1216,7 +1240,7 @@ class SecureDownload {
 			// phpcs:ignore WordPress.PHP.NoSilencedErrors.Discouraged -- File may not exist.
 			@unlink( $tmp_file );
 
-			wp_die( esc_html__( 'Failed to read downloaded file.', 'gk-gravityview' ), 500 );
+			wp_die( esc_html__( 'Failed to read downloaded file.', 'gk-gravityview' ), '', [ 'response' => 500 ] );
 		}
 
 		/**
@@ -1245,7 +1269,8 @@ class SecureDownload {
 						]
 					)
 				),
-				413 // Payload Too Large.
+				'',
+				[ 'response' => 413 ]
 			);
 		}
 
@@ -1463,7 +1488,7 @@ class SecureDownload {
 		if ( ! is_null( $args['user_id'] ) ) {
 			$history = array_filter(
 				$history,
-				function( $record ) use ( $args ) {
+				function ( $record ) use ( $args ) {
 					return isset( $record['user_id'] ) && $record['user_id'] === $args['user_id'];
 				}
 			);
@@ -1475,7 +1500,7 @@ class SecureDownload {
 
 			$history = array_filter(
 				$history,
-				function( $record ) use ( $after_timestamp ) {
+				function ( $record ) use ( $after_timestamp ) {
 					return isset( $record['timestamp'] ) && $record['timestamp'] > $after_timestamp;
 				}
 			);
@@ -1486,7 +1511,7 @@ class SecureDownload {
 
 			$history = array_filter(
 				$history,
-				function( $record ) use ( $before_timestamp ) {
+				function ( $record ) use ( $before_timestamp ) {
 					return isset( $record['timestamp'] ) && $record['timestamp'] < $before_timestamp;
 				}
 			);
@@ -1495,7 +1520,7 @@ class SecureDownload {
 		// Sort by timestamp descending (newest first).
 		usort(
 			$history,
-			function( $a, $b ) {
+			function ( $a, $b ) {
 				$time_a = isset( $a['timestamp'] ) ? $a['timestamp'] : 0;
 				$time_b = isset( $b['timestamp'] ) ? $b['timestamp'] : 0;
 
@@ -1615,7 +1640,7 @@ class SecureDownload {
 		if ( ! is_null( $args['user_id'] ) ) {
 			$all_history = array_filter(
 				$all_history,
-				function( $record ) use ( $args ) {
+				function ( $record ) use ( $args ) {
 					return isset( $record['user_id'] ) && $record['user_id'] === $args['user_id'];
 				}
 			);
@@ -1627,7 +1652,7 @@ class SecureDownload {
 
 			$all_history = array_filter(
 				$all_history,
-				function( $record ) use ( $after_timestamp ) {
+				function ( $record ) use ( $after_timestamp ) {
 					return isset( $record['timestamp'] ) && $record['timestamp'] > $after_timestamp;
 				}
 			);
@@ -1638,7 +1663,7 @@ class SecureDownload {
 
 			$all_history = array_filter(
 				$all_history,
-				function( $record ) use ( $before_timestamp ) {
+				function ( $record ) use ( $before_timestamp ) {
 					return isset( $record['timestamp'] ) && $record['timestamp'] < $before_timestamp;
 				}
 			);
@@ -1647,7 +1672,7 @@ class SecureDownload {
 		// Sort by timestamp descending (newest first).
 		usort(
 			$all_history,
-			function( $a, $b ) {
+			function ( $a, $b ) {
 				$time_a = isset( $a['timestamp'] ) ? $a['timestamp'] : 0;
 				$time_b = isset( $b['timestamp'] ) ? $b['timestamp'] : 0;
 
@@ -1744,5 +1769,4 @@ class SecureDownload {
 
 		return $ip;
 	}
-
 }

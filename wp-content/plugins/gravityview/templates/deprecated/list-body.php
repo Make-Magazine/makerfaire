@@ -79,14 +79,16 @@ if ( ! $this->getTotalEntries() ) {
 					foreach ( $this->getField( 'directory_list-title' ) as $field ) {
 						$title_args['field'] = $field;
 
+						$context = $this->build_legacy_field_context( $field, $title_args['entry'] );
+
 						// The first field in the title zone is the main
 						if ( 0 == $i ) {
 							$title_args['markup'] = '<h3 class="{{class}}">{{label}}{{value}}</h3>';
-							echo gravityview_field_output( $title_args );
+							echo gravityview_field_output( $title_args, $context );
 							unset( $title_args['markup'] );
 						} else {
 							$title_args['wpautop'] = true;
-							echo gravityview_field_output( $title_args );
+							echo gravityview_field_output( $title_args, $context );
 						}
 
 						++$i;

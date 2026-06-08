@@ -6,6 +6,9 @@ use GV\Admin_Request;
 use GV\CLI_Request;
 use GV\Mock_Request;
 use GV\Request;
+use GV\Search\Fields\Search_Field;
+use GV\View;
+use GravityView_Deprecated_Hook_Notices;
 
 /**
  * Represents a search request, which can be created in multiple ways.
@@ -41,6 +44,15 @@ final class Search_Request {
 	private string $mode = Search_Filter::MODE_OR;
 
 	/**
+	 * The current View, if available.
+	 *
+	 * @since 2.55.0
+	 *
+	 * @var View|null
+	 */
+	private ?View $view = null;
+
+	/**
 	 * Creates the instance.
 	 *
 	 * @since $ver$
@@ -51,14 +63,17 @@ final class Search_Request {
 	/**
 	 * Creates a search request from the legacy `$_REQUEST` structure.
 	 *
-	 * @param Request $request The request object.
+	 * @since 2.55.0
 	 *
-	 * @return self
+	 * @param Request   $request The request object.
+	 * @param View|null $view    The current View, if available.
+	 *
+	 * @return self|null
 	 */
-	public static function from_request( Request $request ): ?self {
+	public static function from_request( Request $request, ?View $view = null ): ?self {
 		$request_arguments = self::get_request_arguments( $request );
 
-		return self::from_arguments( $request_arguments );
+		return self::from_arguments( $request_arguments, $view );
 	}
 
 	/**
@@ -93,18 +108,20 @@ final class Search_Request {
 	 *
 	 * @since $ver$
 	 *
-	 * @param array $arguments The request arguments.
+	 * @param array     $arguments The request arguments.
+	 * @param View|null $view      The current View, if available.
 	 *
 	 * @return self|null The search request object.
 	 */
-	public static function from_arguments( array $arguments ): ?self {
-		$search_arguments = self::get_search_arguments( $arguments );
+	public static function from_arguments( array $arguments, ?View $view = null ): ?self {
+		$search_arguments = self::get_search_arguments( $arguments, $view );
 		if ( [] === $search_arguments ) {
 			return null;
 		}
 
 		$instance = new self();
 
+		$instance->view      = $view;
 		$instance->arguments = $search_arguments;
 		$instance->set_mode( $arguments );
 
@@ -143,19 +160,21 @@ final class Search_Request {
 			$arguments = gv_map_deep( $arguments, 'rawurldecode' );
 		}
 
+		$arguments = gv_map_deep( $arguments, [ Search_Field::class, 'normalize_quotes' ] );
+
 		return $arguments;
 	}
 
 	/**
-	 * Returns whether the request has a GV field key.
+	 * Returns the search arguments from the request arguments.
 	 *
 	 * @since 2.0.7
 	 *
-	 * @param array $arguments the request arguments.
+	 * @param array $arguments The request arguments.
 	 *
 	 * @return array The search arguments.
 	 */
-	private static function get_search_arguments( array $arguments ): array {
+	private static function get_search_arguments( array $arguments, ?View $view = null ): array {
 		$search_keys        = [ 'gv_search', 'gv_start', 'gv_end', 'gv_by', 'gv_id' ];
 		$search_field_regex = self::get_search_field_regex();
 
@@ -183,6 +202,26 @@ final class Search_Request {
 
 			$operator                             = ( $arguments[ $key . '|op' ] ?? null );
 			$search_arguments[ $key ]['operator'] = $operator;
+		}
+
+		/**
+		 * Modifies the parsed search arguments before they are used.
+		 *
+		 * @since 2.55.0
+		 *
+		 * @param array     $search_arguments The parsed search arguments.
+		 * @param array     $arguments        The raw request arguments.
+		 * @param View|null $view             The View.
+		 */
+		$search_arguments = apply_filters(
+			'gk/gravityview/search/request/search-arguments',
+			$search_arguments,
+			$arguments,
+			$view,
+		);
+
+		if ( ! is_array( $search_arguments ) ) {
+			$search_arguments = [];
 		}
 
 		return $search_arguments;
@@ -248,10 +287,10 @@ final class Search_Request {
 		/**
 		 * @deprecated $ver$ Use `gk/gravityview/search/request/method`.
 		 */
-		$search_method = apply_filters_deprecated(
+		$search_method = GravityView_Deprecated_Hook_Notices::apply_filters(
 			'gravityview/search/method',
 			[ 'get' ],
-			'$ver$',
+			'2.55',
 			'gk/gravityview/search/request/method'
 		);
 
@@ -277,8 +316,16 @@ final class Search_Request {
 	private function get_filters_data(): array {
 		$filters = [];
 
+		// Todo: when new search keys are introduced, move this over to strategy pattern.
 		foreach ( $this->arguments as $key => $data ) {
 			$operator = (string) ( $data['operator'] ?? '' );
+			$value    = $data['value'] ?? '';
+
+			if ( empty( $value ) && in_array( $key, [ 'gv_search', 'gv_id', 'gv_by' ], true ) ) {
+				// Empty values are ignored for these fields.
+				continue;
+			}
+
 			if ( in_array( $key, [ 'gv_start', 'gv_end' ], true ) ) {
 				// We handle these further down the line as a single filter.
 				continue;
@@ -289,7 +336,7 @@ final class Search_Request {
 					'key'         => 'search_all',
 					'request_key' => $key,
 					'operator'    => $operator ?: 'contains',
-					'value'       => $data['value'],
+					'value'       => $value,
 				];
 				continue;
 			}
@@ -299,8 +346,9 @@ final class Search_Request {
 					'key'         => 'entry_id',
 					'request_key' => $key,
 					'operator'    => '=',
-					'value'       => absint( $data['value'] ?? 0 ),
+					'value'       => absint( $value ),
 				];
+
 				continue;
 			}
 
@@ -309,7 +357,7 @@ final class Search_Request {
 					'key'         => 'created_by',
 					'request_key' => $key,
 					'operator'    => '=',
-					'value'       => $data['value'] ?? '',
+					'value'       => $value,
 				];
 				continue;
 			}
@@ -324,7 +372,7 @@ final class Search_Request {
 			$filter = [
 				'key'      => $key,
 				'operator' => $operator,
-				'value'    => $data['value'] ?? '',
+				'value'    => $value,
 			];
 
 			$filter_key = explode( ':', $key ); // When the key is provided as <field_id>:<form_id>.
@@ -357,6 +405,20 @@ final class Search_Request {
 			}
 
 			$filters[] = $date_filter;
+		}
+
+		/**
+		 * Modifies the normalized filters before they are used to build the search filter.
+		 *
+		 * @since 2.55.0
+		 *
+		 * @param array          $filters The normalized filters array.
+		 * @param Search_Request $request The current Search_Request instance.
+		 */
+		$filtered = apply_filters( 'gk/gravityview/search/request/filters', $filters, $this );
+
+		if ( is_array( $filtered ) ) {
+			$filters = $filtered;
 		}
 
 		return $filters;
@@ -503,5 +565,35 @@ final class Search_Request {
 	 */
 	public function mode(): string {
 		return $this->mode;
+	}
+
+	/**
+	 * Returns the filter data for a specific key, or null if not found.
+	 *
+	 * @since 2.57.0
+	 *
+	 * @param string $key The filter key to look up.
+	 *
+	 * @return array|null The filter data, or null if not present.
+	 */
+	public function get_filter( string $key ): ?array {
+		foreach ( $this->get_filters_data() as $filter ) {
+			if ( ( $filter['key'] ?? null ) === $key ) {
+				return $filter;
+			}
+		}
+
+		return null;
+	}
+
+	/**
+	 * Returns the current View, if available.
+	 *
+	 * @since 2.55.0
+	 *
+	 * @return View|null The current View, or null if not available.
+	 */
+	public function get_view(): ?View {
+		return $this->view;
 	}
 }

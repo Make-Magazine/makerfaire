@@ -73,7 +73,7 @@ class WPUpgraderSkin extends WP_Upgrader_Skin {
 	public function error( $errors ) {
 		if ( is_wp_error( $errors ) ) {
 			// One error is enough to get a sense of why the installation failed.
-			$output = $errors->get_error_messages()[0] ?? esc_html__( 'Unknown WordPress error', 'gk-gravityedit' );
+			$output = $errors->get_error_messages()[0] ?? esc_html__( 'Unknown WordPress error', 'gk-foundation' );
 		} else {
 			$output = $errors;
 		}

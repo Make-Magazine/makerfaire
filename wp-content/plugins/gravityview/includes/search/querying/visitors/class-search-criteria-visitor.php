@@ -6,6 +6,7 @@ use GV\Logger;
 use GV\Search\Querying\Search_Filter;
 use GV\Search\Querying\Search_Filter_Visitor;
 use GV\View;
+use GravityView_Deprecated_Hook_Notices;
 
 /**
  * Converts a {@see Search_Request} into various filter options.
@@ -23,34 +24,21 @@ final class Search_Criteria_Visitor extends Abstract_Search_Filter_Visitor {
 	private array $search_criteria;
 
 	/**
-	 * The search mode.
-	 *
-	 * @since $ver$
-	 *
-	 * @var string
-	 */
-	private string $mode;
-
-	/**
 	 * Creates the visitor.
 	 *
 	 * @since $ver$
 	 *
 	 * @param View|null   $view            The View.
-	 * @param string      $mode            The search mode.
 	 * @param array       $search_criteria The initial search criteria.
 	 * @param Logger|null $logger          The logger.
 	 */
 	public function __construct(
 		?View $view = null,
-		string $mode = Search_Filter::MODE_OR,
 		array $search_criteria = [],
 		?Logger $logger = null
 	) {
 		parent::__construct( $view, $logger );
-
 		$this->search_criteria = $search_criteria;
-		$this->mode            = $mode;
 	}
 
 	/**
@@ -61,15 +49,15 @@ final class Search_Criteria_Visitor extends Abstract_Search_Filter_Visitor {
 	 * @return "any"|"all" The search mode.
 	 */
 	public function get_mode(): string {
-		$mode = Search_Filter::MODE_AND === $this->mode ? 'all' : 'any';
+		$mode = Search_Filter::MODE_AND === $this->search_mode ? 'all' : 'any';
 
 		/**
 		 * @deprecated $ver$ Use `gk/gravityview/search/criteria/mode`.
 		 */
-		$mode = apply_filters_deprecated(
+		$mode = GravityView_Deprecated_Hook_Notices::apply_filters(
 			'gravityview/search/mode',
 			[ $mode ],
-			'$ver$',
+			'2.55',
 			'gk/gravityview/search/criteria/mode'
 		);
 
@@ -186,7 +174,22 @@ final class Search_Criteria_Visitor extends Abstract_Search_Filter_Visitor {
 		if ( $this->is_range_search( $filter ) ) {
 			$this->logger->debug( 'Switched mode to AND ("all") due to range search.' );
 
-			$this->mode = Search_Filter::MODE_AND;
+			$this->search_mode = Search_Filter::MODE_AND;
+
+			return;
+		}
+
+		/**
+		 * If OR group (e.g., repeater subfield expansion), switch search mode to OR.
+		 *
+		 * GF's flat search criteria cannot express nested groups, so when a repeater
+		 * field expands into OR'd subfields, we must switch the entire mode to OR.
+		 * Same trade-off as the range search override above.
+		 */
+		if ( Search_Filter::MODE_OR === $filter->mode() ) {
+			$this->logger->debug( 'Switched mode to OR ("any") due to OR group (e.g., repeater field).' );
+
+			$this->set_search_mode( Search_Filter::MODE_OR );
 		}
 	}
 
@@ -199,6 +202,11 @@ final class Search_Criteria_Visitor extends Abstract_Search_Filter_Visitor {
 		if ( $search_filter->is_group() ) {
 			$this->handle_group( $search_filter );
 
+			return;
+		}
+
+		if ( null === $search_filter->key() ) {
+			// Empty filter (e.g., a group with no conditions, or `search_all` with no value); nothing to apply.
 			return;
 		}
 
@@ -228,7 +236,12 @@ final class Search_Criteria_Visitor extends Abstract_Search_Filter_Visitor {
 		$criteria = $this->search_criteria;
 		unset( $criteria['field_filters']['mode'] );
 
-		$criteria['field_filters'] = array_merge( [ 'mode' => $this->get_mode() ], $criteria['field_filters'] ?? [] );
+		$criteria['field_filters'] = array_merge(
+			[ 'mode' => $this->get_mode() ],
+			array_values( array_unique( $criteria['field_filters'] ?? [], SORT_REGULAR ) )
+		);
+
+		$this->logger->debug( 'Returned Search Criteria: ', [ 'data' => $criteria ] );
 
 		return $criteria;
 	}

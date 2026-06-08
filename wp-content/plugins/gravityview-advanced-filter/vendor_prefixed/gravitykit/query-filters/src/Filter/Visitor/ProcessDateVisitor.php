@@ -2,7 +2,7 @@
 /**
  * @license MIT
  *
- * Modified by gravitykit on 20-February-2026 using {@see https://github.com/BrianHenryIE/strauss}.
+ * Modified by gravitykit on 28-April-2026 using {@see https://github.com/BrianHenryIE/strauss}.
  */
 
 namespace GravityKit\AdvancedFilter\QueryFilters\Filter\Visitor;
@@ -193,9 +193,7 @@ final class ProcessDateVisitor implements FilterVisitor {
 		/**
 		 * Modifies the date field's format.
 		 *
-		 * @filter `gk/query-filters/filter/process-date/date-format`
-		 *
-		 * @since  2.0.3
+		 * @since 2.0.3
 		 *
 		 * @param string   $date_format The date format.
 		 * @param GF_Field $field       The field.

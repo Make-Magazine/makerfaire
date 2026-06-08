@@ -65,7 +65,7 @@ class ExecutionNotice {
 				'severity'     => 'warning',
 				'dismissible'  => true,
 				'snooze'       => [
-					__( '24 hours', 'gk-gravityimport' ) => DAY_IN_SECONDS,
+					__( '24 hours', 'gk-foundation' ) => DAY_IN_SECONDS,
 				],
 				'capabilities' => [ 'manage_options' ],
 				'context'      => [ 'site', 'ms_main', 'ms_subsite' ],
@@ -85,15 +85,15 @@ class ExecutionNotice {
 	 */
 	protected function build_message( HealthCheck $health, array $product_names ): string {
 		$read_more = '<a href="https://docs.gravitykit.com/article/2150-background-processing#Troubleshooting-lsCWB" target="_blank">'
-			. esc_html__( 'Read more', 'gk-gravityimport' ) . '</a>.';
+			. esc_html__( 'Read more', 'gk-foundation' ) . '</a>.';
 
 		if ( ! empty( $product_names ) ) {
 			$message = strtr(
-				esc_html__( 'Background tasks scheduled by [products] cannot run due to a server configuration issue.', 'gk-gravityimport' ),
+				esc_html__( 'Background tasks scheduled by [products] cannot run due to a server configuration issue.', 'gk-foundation' ),
 				[ '[products]' => '<strong>' . implode( ', ', $product_names ) . '</strong>' ]
 			);
 		} else {
-			$message = esc_html__( 'Background tasks cannot run due to a server configuration issue.', 'gk-gravityimport' );
+			$message = esc_html__( 'Background tasks cannot run due to a server configuration issue.', 'gk-foundation' );
 		}
 
 		return $message . ' ' . $read_more;

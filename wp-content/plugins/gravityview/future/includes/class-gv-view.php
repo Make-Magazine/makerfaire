@@ -10,6 +10,7 @@ use GF_Query;
 use GravityKitFoundation;
 use GravityView_Compatibility;
 use GravityView_Cache;
+use GV\Search\Querying\Search_Request;
 use GravityView_frontend;
 use GVCommon;
 
@@ -486,7 +487,7 @@ class View implements \ArrayAccess {
 			 * @param boolean `true`: allow Views to be accessible directly. `false`: Only allow Views to be embedded. Default: `true`
 			 * @param int $view_id The ID of the View currently being requested. `0` for general setting
 			 */
-			$direct_access = apply_filters( 'gravityview_direct_access', true, $this->ID );
+			$direct_access = \GravityView_Deprecated_Hook_Notices::apply_filters( 'gravityview_direct_access', [ true, $this->ID ], '2.55', 'gravityview/view/output/direct' );
 
 			/**
 			 * Should this View be directly accessible?
@@ -742,7 +743,7 @@ class View implements \ArrayAccess {
 		 * @param $fields array Multi-array of fields with first level being the field zones.
 		 * @param $view_id int The View the fields are being pulled for.
 		 */
-		$configuration = apply_filters( 'gravityview/configuration/fields', (array) $view->_gravityview_directory_fields, $view->ID );
+		$configuration = \GravityView_Deprecated_Hook_Notices::apply_filters( 'gravityview/configuration/fields', [ (array) $view->_gravityview_directory_fields, $view->ID ], '2.55', 'gravityview/view/configuration/fields' );
 
 		/**
 		 * Filter the View fields' configuration array.
@@ -1162,6 +1163,11 @@ class View implements \ArrayAccess {
 			return apply_filters( 'gravityview/view/entries', $entries, $this, $request );
 		}
 
+		// Withhold entries when Advanced Filter is configured but the plugin is deactivated.
+		if ( \GravityView_Plugin_Hooks_GravityView_Advanced_Filtering::has_inactive_configuration( $this->ID ?? 0 ) ) {
+			return $entries;
+		}
+
 		$parameters = $this->settings->as_atts();
 
 		/**
@@ -1190,6 +1196,24 @@ class View implements \ArrayAccess {
 
 		if ( ! is_array( $parameters['search_criteria'] ) ) {
 			$parameters['search_criteria'] = array();
+		}
+
+		// When overwriting is allowed, remove View date constraints for dates the user is actively searching on.
+		if ( $this->settings->get( 'allow_date_range_overwrite' ) ) {
+			$search_request = Search_Request::from_request( $request ?? new Frontend_Request(), $this );
+			$entry_date     = $search_request ? $search_request->get_filter( 'entry_date' ) : null;
+
+			if ( $entry_date ) {
+				$is_day = 'day' === ( $entry_date['type'] ?? null );
+
+				if ( ! empty( $entry_date['start_date'] ) || $is_day ) {
+					unset( $parameters['search_criteria']['start_date'] );
+				}
+
+				if ( ! empty( $entry_date['end_date'] ) || $is_day ) {
+					unset( $parameters['search_criteria']['end_date'] );
+				}
+			}
 		}
 
 		if ( ( ! isset( $parameters['search_criteria']['field_filters'] ) ) || ( ! is_array( $parameters['search_criteria']['field_filters'] ) ) ) {

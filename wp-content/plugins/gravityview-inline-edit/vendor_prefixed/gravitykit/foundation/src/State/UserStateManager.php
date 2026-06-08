@@ -142,7 +142,7 @@ final class UserStateManager implements StateManager {
 	 * @since 1.2.14
 	 *
 	 * @return void
-	 * @throws BaseException When user meta update fails.
+	 * @throws BaseException When no user is set.
 	 */
 	private function save(): void {
 		if ( ! $this->user ) {
@@ -155,16 +155,7 @@ final class UserStateManager implements StateManager {
 
 		$state = $this->internal_state->all();
 
-		if ( ! update_user_meta( $this->user->ID, $this->meta_key, $state, null ) ) {
-			throw new BaseException(
-				'user_state_save_failed',
-				'Failed to save user state to meta table',
-				[
-					'user_id'  => $this->user->ID,
-					'meta_key' => $this->meta_key,
-				]
-			);
-		}
+		update_user_meta( $this->user->ID, $this->meta_key, $state, null );
 	}
 
 	/**

@@ -44,7 +44,7 @@ class Entry_List_Template extends Entry_Template {
 		 * @deprecated Here for back-compatibility.
 		 */
 		$label = apply_filters( 'gravityview_render_after_label', $field->get_label( $this->view, $form, $entry ), $field->as_configuration() );
-		$label = apply_filters( 'gravityview/template/field_label', $label, $field->as_configuration(), is_numeric( $field->ID ) ? ( $source->form ? $source->form : null ) : null, $entry->as_entry() );
+		$label = \GravityView_Deprecated_Hook_Notices::apply_filters( 'gravityview/template/field_label', [ $label, $field->as_configuration(), is_numeric( $field->ID ) ? ( $source->form ? $source->form : null ) : null, $entry->as_entry() ], '2.55', 'gravityview/template/field/label' );
 
 		/**
 		 * Override the field label.

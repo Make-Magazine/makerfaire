@@ -3,7 +3,7 @@
  * Plugin Name: GravityImport
  * Plugin URI:  https://www.gravitykit.com/extensions/gravity-forms-entry-importer/
  * Description: The best way to import entries into Gravity Forms. Proud to be a Gravity Forms Certified Add-On.
- * Version:     2.9.0
+ * Version:     2.11.2
  * Author:      GravityKit
  * Author URI:  https://www.gravitykit.com
  * Text Domain: gk-gravityimport
@@ -12,15 +12,19 @@
  * Domain Path: /languages
  */
 
+use GravityKit\GravityImport\Core as ImportCore;
+use GravityKit\GravityImport\Foundation\Core as FoundationCore;
+use function GravityKit\GravityImport\Foundation\should_load;
+
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
 require_once __DIR__ . '/vendor_prefixed/gravitykit/foundation/src/preflight_check.php';
 
-if ( ! GravityKit\GravityImport\Foundation\should_load( __FILE__ ) ) {
+if ( ! should_load( __FILE__ ) ) {
 	return;
 }
 
-define( 'GV_IMPORT_ENTRIES_VERSION', '2.9.0' );
+define( 'GV_IMPORT_ENTRIES_VERSION', '2.11.2' );
 
 define( 'GV_IMPORT_ENTRIES_FILE', __FILE__ );
 
@@ -32,7 +36,7 @@ define( 'GV_IMPORT_ENTRIES_MIN_WP', '6.2' );
 require_once __DIR__ . '/vendor/autoload.php';
 require_once __DIR__ . '/vendor_prefixed/autoload.php';
 
-GravityKit\GravityImport\Foundation\Core::register( GV_IMPORT_ENTRIES_FILE );
+FoundationCore::register( GV_IMPORT_ENTRIES_FILE );
 
 add_action( 'plugins_loaded', 'gv_import_entries_load', 1 );
 
@@ -58,7 +62,7 @@ function gv_import_entries_load() {
 		return;
 	}
 
-	call_user_func( array( '\GravityKit\GravityImport\Core', 'bootstrap' ) );
+	call_user_func( array( ImportCore::class, 'bootstrap' ) );
 }
 
 /**

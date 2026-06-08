@@ -64,7 +64,7 @@ class GP_Field_Nested_Form extends GF_Field {
 		$nested_form_id = rgar( $this, 'gpnfForm' );
 
 		$nested_form = $nested_form_id ? gp_nested_forms()->get_nested_form( $nested_form_id ) : false;
-		if ( $nested_form && GFForms::get_page() !== 'form_editor' && rgpost( 'action' ) !== 'rg_refresh_field_preview' ) {
+		if ( $nested_form && GFForms::get_page() !== 'form_editor' && rgpost( 'action' ) !== 'rg_refresh_field_preview' && ! rgpost( 'partial_entry_id' ) ) {
 			$nested_form = gf_apply_filters( array( 'gform_pre_render', $nested_form_id ), gp_nested_forms()->get_nested_form( $nested_form_id ), false, null );
 		}
 

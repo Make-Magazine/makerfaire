@@ -2,7 +2,7 @@
 /**
  * @license MIT
  *
- * Modified by gravitykit on 20-February-2026 using {@see https://github.com/BrianHenryIE/strauss}.
+ * Modified by gravitykit on 28-April-2026 using {@see https://github.com/BrianHenryIE/strauss}.
  */
 
 namespace GravityKit\AdvancedFilter\QueryFilters\Aggregate;
@@ -12,6 +12,7 @@ use GF_Query_Call;
 use GF_Query_Column;
 use GF_Query_Condition;
 use GFCommon;
+use GravityKit\AdvancedFilter\QueryFilters\Util\QueryHelper;
 use InvalidArgumentException;
 use RGCurrency;
 
@@ -461,24 +462,7 @@ final class Query {
 	 * @return array|null The SQL parts.
 	 */
 	private function get_sql_from_query( GF_Query $query ): array {
-		$sql = [];
-
-		add_filter(
-			'gform_gf_query_sql',
-			$select = function ( $original_sql ) use ( &$sql ) {
-				// get a copy of the query;
-				$sql = $original_sql;
-
-				// Prevent the original query from running.
-				return [];
-			}
-		);
-
-		// Trigger SQL.
-		$clone = clone $query; // Prevent any action on the original query.
-		$clone->get();
-
-		remove_filter( 'gform_gf_query_sql', $select );
+		$sql = QueryHelper::get_sql_from_query( $query );
 
 		unset ( $sql['paginate'], $sql['order'] );
 

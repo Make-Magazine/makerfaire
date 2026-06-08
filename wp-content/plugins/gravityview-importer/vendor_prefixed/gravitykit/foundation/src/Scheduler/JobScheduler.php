@@ -11,11 +11,14 @@
 namespace GravityKit\GravityImport\Foundation\Scheduler;
 
 use Exception;
+use Throwable;
 use GravityKit\GravityImport\Foundation\Scheduler\Handlers\JobHandler;
 use GravityKit\GravityImport\Foundation\Scheduler\Handlers\RequestHandler;
 use GravityKit\GravityImport\Foundation\Scheduler\Handlers\JobHistoryHandler;
 use GravityKit\GravityImport\Foundation\Scheduler\Handlers\ScheduleHandler;
 use GravityKit\GravityImport\Foundation\Scheduler\Models\HealthCheck;
+use GravityKit\GravityImport\Foundation\Scheduler\Models\NextRunRules;
+use GravityKit\GravityImport\Foundation\Scheduler\Models\Task;
 use GravityKit\GravityImport\Foundation\Core;
 use GravityKit\GravityImport\Foundation\Scheduler\Notices\ExecutionNotice;
 use GravityKit\GravityImport\Foundation\Scheduler\Store\DbStore;
@@ -94,6 +97,9 @@ class JobScheduler {
 		( new ExecutionNotice() )->register();
 
 		$this->register_loopback_url_override();
+
+		// Register the task sentinel check for dead process detection.
+		$this->manager()->register_sentinel_check();
 	}
 
 	/**
@@ -297,6 +303,81 @@ class JobScheduler {
 	}
 
 	/**
+	 * Checks whether a task callback should continue processing within its time budget.
+	 *
+	 * Compares the current wall-clock time against the task's injected deadline.
+	 * Call this in loops or before expensive operations to support cooperative
+	 * time budgeting. Returns true (keep going) when no deadline is set, so
+	 * tasks work correctly even without time budget enforcement.
+	 *
+	 * @since 1.16.0
+	 *
+	 * @param array $args   The task args (deadline lives in `$args['_meta']['deadline']`).
+	 * @param int   $margin Seconds before the deadline to stop. Default: 2.
+	 *
+	 * @return bool True if there is still time remaining.
+	 */
+	public static function should_continue( array $args, int $margin = 2 ): bool {
+		$deadline = $args[ Task::META_KEY ]['deadline'] ?? null;
+
+		if ( null === $deadline ) {
+			return true;
+		}
+
+		return microtime( true ) < ( (float) $deadline - max( 0, $margin ) );
+	}
+
+	/**
+	 * Creates a NextRunRules object to checkpoint and continue in a new execution.
+	 *
+	 * Convenience factory for the common pattern of returning a rerun with
+	 * updated args. Pass only the keys that changed (e.g., offset); existing
+	 * args are merged automatically by the scheduler.
+	 *
+	 * Resolves through the winning Foundation instance so the returned object
+	 * lives in the same namespace as the Task that will consume it, even when
+	 * multiple vendored Foundation copies coexist.
+	 *
+	 * @since 1.16.0
+	 *
+	 * @param array $next_args Keys to merge for the next execution (e.g., `['offset' => 500]`).
+	 *
+	 * @return NextRunRules
+	 */
+	public static function checkpoint( array $next_args = [] ): NextRunRules {
+		$rules = new NextRunRules();
+		$rules->rerun( true );
+
+		if ( ! empty( $next_args ) ) {
+			$rules->set_next_task_args( $next_args );
+		}
+
+		return $rules;
+	}
+
+	/**
+	 * Checkpoints with both updated task args and shared job data.
+	 *
+	 * Like `checkpoint()`, but also updates the job-level data shared across
+	 * all tasks in the job. Use this when a task needs to both save its own
+	 * progress (e.g., offset) and pass results to downstream tasks (e.g.,
+	 * processed count, generated file path).
+	 *
+	 * @since 1.16.0
+	 *
+	 * @param array $next_args Keys to merge into task args for the next execution.
+	 * @param array $job_data  Keys to merge into job-level shared data.
+	 *
+	 * @return NextRunRules
+	 */
+	public static function checkpoint_with_data( array $next_args, array $job_data ): NextRunRules {
+		$rules = self::checkpoint( $next_args );
+		$rules->set_job_data( $job_data );
+
+		return $rules;
+	}
+
+	/**
 	 * Cleans up all scheduler data when no GravityKit plugins remain active.
 	 *
 	 * Hooked into `update_option_active_plugins` which fires after WordPress
@@ -387,12 +468,23 @@ class JobScheduler {
 	 * it overrides the loopback URL for Foundation HealthCheck, Foundation RequestHandler,
 	 * Action Scheduler's async runner, and WP-Cron's spawn requests.
 	 *
+	 * The saved URL may embed HTTP Basic Auth credentials in RFC 3986 userinfo syntax
+	 * (`https://user:pass@host.example.com`). Credentials are stripped from the URL
+	 * and injected as an `Authorization` header on matching outbound requests, keeping
+	 * credentials out of logs and any downstream URL handling.
+	 *
 	 * @since 1.12.0
 	 *
 	 * @return void
 	 */
 	private function register_loopback_url_override(): void {
-		$get_base_url = static function () {
+		$get_base_url_parts = static function (): array {
+			$empty = [
+				'clean_url'   => '',
+				'host'        => '',
+				'auth_header' => '',
+			];
+
 			$saved = (string) SettingsFramework::get_instance()->get_plugin_setting( Core::ID, 'scheduler_loopback_url', '' );
 
 			/**
@@ -400,13 +492,37 @@ class JobScheduler {
 			 *
 			 * Return a full base URL (e.g. `http://host.docker.internal:8896`) to override the
 			 * default WordPress site URL used for loopback connections by Foundation, Action Scheduler,
-			 * and WP-Cron.
+			 * and WP-Cron. Credentials may be embedded (`https://user:pass@host`) for sites behind
+			 * HTTP Basic Authentication (e.g. Flywheel staging).
 			 *
 			 * @since 1.12.0
 			 *
 			 * @param string $base_url The base URL for loopback requests. Default: saved setting value.
 			 */
-			return (string) apply_filters( 'gk/foundation/scheduler/loopback-base-url', $saved );
+			$saved = (string) apply_filters( 'gk/foundation/scheduler/loopback-base-url', $saved );
+
+			if ( '' === $saved ) {
+				return $empty;
+			}
+
+			$parts = wp_parse_url( $saved );
+
+			if ( ! is_array( $parts ) || empty( $parts['host'] ) ) {
+				return $empty;
+			}
+
+			$scheme = $parts['scheme'] ?? 'https';
+			$host   = $parts['host'];
+			$port   = isset( $parts['port'] ) ? ':' . $parts['port'] : '';
+			$user   = $parts['user'] ?? '';
+			$pass   = $parts['pass'] ?? '';
+
+			return [
+				'clean_url'   => $scheme . '://' . $host . $port,
+				'host'        => $host,
+				// phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions.obfuscation_base64_encode -- Encoding HTTP Basic Auth credentials per RFC 7617; not obfuscation.
+				'auth_header' => '' !== $user ? 'Basic ' . base64_encode( $user . ':' . $pass ) : '',
+			];
 		};
 
 		$replace_url = static function ( string $original_url, string $base_url ): string {
@@ -417,10 +533,10 @@ class JobScheduler {
 			return $base_url . $path . ( $query ? '?' . $query : '' );
 		};
 
-		$override_url = static function ( $url ) use ( $get_base_url, $replace_url ) {
-			$base_url = $get_base_url();
+		$override_url = static function ( $url ) use ( $get_base_url_parts, $replace_url ) {
+			$parts = $get_base_url_parts();
 
-			return $base_url ? $replace_url( (string) $url, $base_url ) : $url;
+			return $parts['clean_url'] ? $replace_url( (string) $url, $parts['clean_url'] ) : $url;
 		};
 
 		// Foundation RequestHandler async dispatch (filter built dynamically in WP_Async_Request::get_query_url()).
@@ -432,16 +548,74 @@ class JobScheduler {
 		// WP-Cron spawn request.
 		add_filter(
 			'cron_request',
-			static function ( $cron_request ) use ( $get_base_url, $replace_url ) {
-				$base_url = $get_base_url();
+			static function ( $cron_request ) use ( $get_base_url_parts, $replace_url ) {
+				$parts = $get_base_url_parts();
 
-				if ( $base_url ) {
-					$cron_request['url'] = $replace_url( $cron_request['url'], $base_url );
+				if ( '' === $parts['clean_url'] ) {
+					return $cron_request;
+				}
+
+				$cron_request['url'] = $replace_url( $cron_request['url'], $parts['clean_url'] );
+
+				if ( '' !== $parts['auth_header'] ) {
+					if ( ! isset( $cron_request['args']['headers'] ) || ! is_array( $cron_request['args']['headers'] ) ) {
+						$cron_request['args']['headers'] = [];
+					}
+
+					$cron_request['args']['headers']['Authorization'] = $parts['auth_header'];
 				}
 
 				return $cron_request;
 			}
 		);
-	}
 
+		// Inject Basic Auth header on outbound requests targeting the configured
+		// loopback host. Only registered when the saved URL actually has
+		// credentials — `http_request_args` fires on every outbound HTTP call
+		// (feeds, updates, REST), so the filter stays off the critical path
+		// when Basic Auth isn't configured.
+		try {
+			$initial_parts = $get_base_url_parts();
+		} catch ( Throwable $e ) {
+			// Settings unavailable during init (e.g., in isolated test runs).
+			// Skip registration; the URL-override filters above already bail
+			// safely when settings can't be read at filter-fire time.
+			return;
+		}
+
+		if ( '' === $initial_parts['auth_header'] ) {
+			return;
+		}
+
+		add_filter(
+			'http_request_args',
+			static function ( $args, $url ) use ( $get_base_url_parts ) {
+				$parts = $get_base_url_parts();
+
+				// Filter reads settings fresh on every invocation; guard the
+				// runtime case where the loopback URL lost its credentials
+				// after this filter was registered.
+				// @phpstan-ignore-next-line PHPStan narrows auth_header to non-empty from the registration-time guard, but each call re-evaluates the setting.
+				if ( '' === $parts['auth_header'] || '' === $parts['host'] ) {
+					return $args;
+				}
+
+				$request_host = wp_parse_url( (string) $url, PHP_URL_HOST );
+
+				if ( $request_host !== $parts['host'] ) {
+					return $args;
+				}
+
+				if ( ! isset( $args['headers'] ) || ! is_array( $args['headers'] ) ) {
+					$args['headers'] = [];
+				}
+
+				$args['headers']['Authorization'] = $parts['auth_header'];
+
+				return $args;
+			},
+			10,
+			2
+		);
+	}
 }

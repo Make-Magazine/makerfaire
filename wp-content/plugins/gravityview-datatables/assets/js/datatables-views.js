@@ -64,7 +64,7 @@ window.gvDTFixedHeaderColumns = window.gvDTFixedHeaderColumns || {};
 				}
 
 				input = $( '<input/>' )
-					.attr( 'type', column.atts.field_type )
+					.attr( 'type', column.atts.type )
 					.attr( 'placeholder', column.atts.placeholder )
 					.attr( 'min', ( column.atts.min || null ) )
 					.attr( 'max', ( column.atts.max || null ) )
@@ -245,9 +245,14 @@ window.gvDTFixedHeaderColumns = window.gvDTFixedHeaderColumns || {};
 						window.gvEntryNotes.init();
 					}
 
-					if ( data.json && data.json.inlineEditTemplatesData ) {
-						$( window ).trigger( 'gravityview-inline-edit/extend-template-data', data.json.inlineEditTemplatesData );
+					// In server-side mode, templates come from the AJAX response (data.json).
+					// In preloaded (client-side) mode, there is no AJAX response, so templates are in the config object.
+					var templates = ( data.json && data.json.inlineEditTemplatesData ) || options.inlineEditTemplatesData;
+
+					if ( templates ) {
+						$( window ).trigger( 'gravityview-inline-edit/extend-template-data', templates );
 					}
+
 					$( window ).trigger( 'gravityview-inline-edit/init' );
 				};
 

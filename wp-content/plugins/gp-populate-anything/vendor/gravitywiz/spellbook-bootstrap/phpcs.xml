@@ -1,0 +1,145 @@
+<?xml version="1.0"?>
+<ruleset name="Gravity Wiz Coding Standards">
+	<!-- See https://github.com/squizlabs/PHP_CodeSniffer/wiki/Annotated-ruleset.xml -->
+	<!-- See https://github.com/WordPress/WordPress-Coding-Standards -->
+
+	<arg name="extensions" value="php"/>
+	<arg value="sp"/> <!-- Show sniff and progress -->
+	<arg name="colors"/>
+	<arg name="parallel" value="8"/>
+
+	<file>.</file>
+
+	<!-- Exclude directories -->
+	<exclude-pattern>*/vendor/*</exclude-pattern>
+	<exclude-pattern>*/vendor-scoped/*</exclude-pattern>
+	<exclude-pattern>*/php-scoper/*</exclude-pattern>
+	<exclude-pattern>*/assets/*</exclude-pattern>
+	<exclude-pattern>*/node_modules/*</exclude-pattern>
+
+	<!-- Exclude Packages (Action Scheduler, etc) -->
+	<exclude-pattern>*/packages/*</exclude-pattern>
+
+	<!-- Handled by ESLint -->
+	<exclude-pattern>*.js</exclude-pattern>
+
+	<!-- PHP Compatibility -->
+	<config name="testVersion" value="8.0-"/>
+	<rule ref="PHPCompatibilityWP"/>
+
+	<!-- WordPress Coding Standards -->
+	<config name="minimum_supported_wp_version" value="6.0"/>
+
+	<rule ref="WordPress-Core">
+		<exclude name="WordPress.PHP.YodaConditions.NotYoda" />
+		<exclude name="WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase" />
+		<exclude name="WordPress.NamingConventions.ValidVariableName.VariableNotSnakeCase" />
+		<exclude name="WordPress.Files.FileName.InvalidClassFileName" />
+		<exclude name="PEAR.Functions.FunctionCallSignature.MultipleArguments" />
+		<exclude name="PEAR.Functions.FunctionCallSignature.ContentAfterOpenBracket" />
+		<exclude name="PEAR.Functions.FunctionCallSignature.CloseBracketLine" />
+
+		<!-- https://github.com/WordPress/WordPress-Coding-Standards/issues/1836 -->
+		<exclude name="WordPress.NamingConventions.PrefixAllGlobals"/>
+
+		<!-- We frequently get form/field IDs back as different types, so sometimes non-strict is needed. -->
+		<exclude name="Universal.Operators.StrictComparisons.LooseEqual" />
+		<exclude name="Universal.Operators.StrictComparisons.LooseNotEqual" />
+		<exclude name="WordPress.PHP.StrictComparisons.LooseComparison" />
+		<exclude name="WordPress.PHP.StrictInArray.MissingTrueStrict" />
+
+		<!-- Switch to square bracket array syntax -->
+		<exclude name="WordPress.Arrays.ArrayDeclarationSpacing"/>
+		<exclude name="Generic.Arrays.DisallowShortArraySyntax"/>
+		<exclude name="Universal.Arrays.DisallowShortArraySyntax"/>
+
+		<!-- Allow short ternaries -->
+		<exclude name="WordPress.PHP.DisallowShortTernary.Found"/>
+		<exclude name="Universal.Operators.DisallowShortTernary.Found"/>
+
+		<!-- Allow snake case in properties for things like GF's formId -->
+		<exclude name="WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase"/>
+		<exclude name="WordPress.NamingConventions.ValidVariableName.PropertyNotSnakeCase"/>
+
+		<!-- Disable these stupid rules -->
+		<exclude name="Squiz.Commenting.InlineComment.InvalidEndChar" />
+		<exclude name="Squiz.Commenting.FunctionComment.ParamCommentFullStop" />
+		<exclude name="Squiz.Commenting.FileComment.Missing" />
+		<exclude name="Squiz.Commenting.ClassComment.Missing" />
+		<exclude name="Generic.Commenting.DocComment.MissingShort" />
+		<exclude name="Squiz.Commenting.FileComment.MissingPackageTag" />
+
+		<!-- Needed for a lot of GF classes -->
+		<exclude name="PSR2.Classes.PropertyDeclaration.Underscore" />
+
+		<!-- Allow $resource-->
+		<exclude name="PHPCompatibility.Keywords.ForbiddenNamesAsDeclared.resourceFound" />
+		<exclude name="Universal.NamingConventions.NoReservedKeywordParameterNames.resourceFound" />
+
+		<!-- Disable barking about DB caching, we can implement this down the road. -->
+		<exclude name="WordPress.DB.DirectDatabaseQuery.NoCaching" />
+
+		<!-- Disable this rule because we're using psr4 autoloading. -->
+		<exclude name="WordPress.Files.FileName.NotHyphenatedLowercase" />
+
+		<!-- Allow certain names for parameters. -->
+		<exclude name="Universal.NamingConventions.NoReservedKeywordParameterNames.objectFound" />
+		<exclude name="Universal.NamingConventions.NoReservedKeywordParameterNames.arrayFound" />
+	</rule>
+
+	<!-- Configure text domain -->
+	<rule ref="WordPress.WP.I18n">
+		<properties>
+			<property name="text_domain" type="array">
+				<element value="spellbook"/>
+			</property>
+		</properties>
+	</rule>
+
+	<!-- Modern PHP preferences -->
+	<rule ref="Generic.ControlStructures.DisallowYodaConditions.Found">
+		<type>warning</type>
+	</rule>
+
+	<!-- Switch to square bracket array syntax -->
+	<rule ref="Generic.Arrays.DisallowLongArraySyntax">
+		<type>warning</type>
+	</rule>
+
+	<!-- Test specific exclusions -->
+	<rule ref="Squiz.Commenting.FunctionComment.Missing">
+   		<exclude-pattern>/tests/unit/*</exclude-pattern>
+	</rule>
+
+	<rule ref="Squiz.Commenting.FunctionComment.MissingParamTag">
+   		<exclude-pattern>/tests/unit/*</exclude-pattern>
+	</rule>
+
+	<rule ref="WordPress.Files.FileName.NotHyphenatedLowercase">
+   		<exclude-pattern>/tests/unit/*</exclude-pattern>
+	</rule>
+
+	<rule ref="WordPress.DB.PreparedSQL.NotPrepared">
+   		<exclude-pattern>/tests/unit/*</exclude-pattern>
+	</rule>
+
+	<rule ref="Squiz.Commenting.VariableComment.Missing">
+   		<exclude-pattern>/tests/unit/*</exclude-pattern>
+	</rule>
+
+	<rule ref="WordPress.DB.PreparedSQL.InterpolatedNotPrepared">
+   		<exclude-pattern>/tests/unit/*</exclude-pattern>
+	</rule>
+
+	<rule ref="WordPress.DateTime.RestrictedFunctions.date_date">
+   		<exclude-pattern>/tests/unit/*</exclude-pattern>
+	</rule>
+
+	<rule ref="Squiz.Commenting.FunctionCommentThrowTag.Missing">
+   		<exclude-pattern>/tests/unit/*</exclude-pattern>
+	</rule>
+
+	<rule ref="Generic.Files.OneObjectStructurePerFile.MultipleFound">
+   		<exclude-pattern>/tests/unit/*</exclude-pattern>
+	</rule>
+</ruleset>

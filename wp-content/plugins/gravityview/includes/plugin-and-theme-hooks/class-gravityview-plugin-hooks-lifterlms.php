@@ -81,7 +81,7 @@ add_filter( 'lifterlms_integrations', function ( $integrations = [] ) {
 
 			// Append the LifterLMS GravityView endpoint to the directory link.
 			add_filter( 'gravityview_directory_link', [ $this, 'add_endpoint_to_directory_link' ] );
-			add_filter( 'gravityview_go_back_url', [ $this, 'single_entry_go_back_url' ] );
+			add_filter( 'gravityview/template/links/back/url', [ $this, 'single_entry_go_back_url' ] );
 		}
 
 		/**
@@ -240,7 +240,7 @@ add_filter( 'lifterlms_integrations', function ( $integrations = [] ) {
 
 			// Append the LifterLMS GravityView endpoint to the directory link.
 			add_filter( 'gravityview_directory_link', [ $this, 'add_endpoint_to_directory_link' ] );
-			add_filter( 'gravityview_go_back_url', [ $this, 'single_entry_go_back_url' ] );
+			add_filter( 'gravityview/template/links/back/url', [ $this, 'single_entry_go_back_url' ] );
 
 			echo do_shortcode( $content );
 

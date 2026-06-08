@@ -9,10 +9,8 @@
 namespace GravityKit\GravityEdit\Foundation\CLI\Commands;
 
 use GravityKit\GravityEdit\Foundation\CLI\AbstractCommand;
-use GravityKitFoundation;
+use GravityKit\GravityEdit\Foundation\Core as GravityKitFoundation;
 use WP_CLI;
-use WP_CLI_Command;
-use function WP_CLI\Utils\format_items;
 
 /**
  * Manage GravityKit products and licenses.

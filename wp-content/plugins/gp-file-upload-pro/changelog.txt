@@ -1,5 +1,13 @@
 # Changelog
 
+## 1.5.12 | May 13, 2026
+
+- Fixed issue where pressing enter in a text field after cropping an image would reopen the cropper.
+
+## 1.5.11 | May 7, 2026
+
+- Fixed typo in CSS class `gpfup__droparea--maxed` that was preventing proper styling when max number of files is reached.
+
 ## 1.5.10 | December 2, 2025
 
 - Added Dutch translation. Credit: Koen Slagter.

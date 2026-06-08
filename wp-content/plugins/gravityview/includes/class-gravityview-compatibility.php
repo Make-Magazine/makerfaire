@@ -77,6 +77,10 @@ class GravityView_Compatibility {
 
 		foreach ( self::$notices as $notice ) {
 			try {
+				if ( is_callable( $notice['message'] ) ) {
+					$notice['message'] = $notice['message']();
+				}
+
 				$notice_manager->add_runtime( $notice );
 			} catch ( Throwable $e ) {
 				gravityview()->log->debug( 'Failed to register compatibility notice with Foundation: ' . $e->getMessage(), [ 'notice' => $notice ] );
@@ -184,7 +188,8 @@ class GravityView_Compatibility {
 		$message = esc_html__( 'You are seeing this notice because you are an administrator. Other users of the site will see nothing.', 'gk-gravityview' );
 
 		foreach ( $notices as $notice ) {
-			$message .= wpautop( $notice['message'] );
+			$msg = is_callable( $notice['message'] ) ? $notice['message']() : $notice['message'];
+			$message .= wpautop( $msg );
 		}
 		$message .= '</div>';
 
@@ -207,7 +212,9 @@ class GravityView_Compatibility {
 			self::$notices[ $key ] = [
 				'namespace'            => 'gk-gravityview',
 				'slug'                 => $key,
-				'message'              => sprintf( __( "%1\$sGravityView will soon require PHP Version %2\$s.%3\$s \n\nYou're using Version %4\$s. Please ask your host to upgrade your server's PHP.", 'gk-gravityview' ), '', GV_FUTURE_MIN_PHP_VERSION, '', '<strong>' . phpversion() . '</strong>' ),
+				'message'              => static function () {
+					return sprintf( __( "%1\$sGravityView will soon require PHP Version %2\$s.%3\$s \n\nYou're using Version %4\$s. Please ask your host to upgrade your server's PHP.", 'gk-gravityview' ), '', GV_FUTURE_MIN_PHP_VERSION, '', '<strong>' . phpversion() . '</strong>' );
+				},
 				'severity'             => 'warning',
 				'capabilities'         => [ 'manage_options' ],
 				'dismissible'          => true,
@@ -237,7 +244,9 @@ class GravityView_Compatibility {
 			self::$notices['wp_version'] = [
 				'namespace'    => 'gk-gravityview',
 				'slug'         => 'wp_version',
-				'message'      => sprintf( __( "%1\$sGravityView requires WordPress %2\$s or newer.%3\$s \n\nYou're using Version %4\$s. Please upgrade your WordPress installation.", 'gk-gravityview' ), '', GV_MIN_WP_VERSION, '', '<strong>' . $wp_version . '</strong>' ),
+				'message'      => static function () use ( $wp_version ) {
+					return sprintf( __( "%1\$sGravityView requires WordPress %2\$s or newer.%3\$s \n\nYou're using Version %4\$s. Please upgrade your WordPress installation.", 'gk-gravityview' ), '', GV_MIN_WP_VERSION, '', '<strong>' . $wp_version . '</strong>' );
+				},
 				'severity'     => 'error',
 				'capabilities' => [ 'update_core' ],
 				'dismissible'  => true,
@@ -254,7 +263,9 @@ class GravityView_Compatibility {
 		self::$notices[ $key ] = [
 			'namespace'    => 'gk-gravityview',
 			'slug'         => $key,
-			'message'      => sprintf( __( "%1\$sGravityView will soon require WordPress %2\$s%3\$s \n\nYou're using Version %4\$s. Please upgrade your WordPress installation.", 'gk-gravityview' ), '', GV_FUTURE_MIN_WP_VERSION, '', '<strong>' . $wp_version . '</strong>' ),
+			'message'      => static function () use ( $wp_version ) {
+				return sprintf( __( "%1\$sGravityView will soon require WordPress %2\$s%3\$s \n\nYou're using Version %4\$s. Please upgrade your WordPress installation.", 'gk-gravityview' ), '', GV_FUTURE_MIN_WP_VERSION, '', '<strong>' . $wp_version . '</strong>' );
+			},
 			'severity'     => 'warning',
 			'capabilities' => [ 'update_core' ],
 			'dismissible'  => true,
@@ -284,29 +295,33 @@ class GravityView_Compatibility {
 			// Does it meet minimum requirements?
 			$meets_minimum = gravityview()->plugin->is_compatible_gravityforms();
 
-			$messages = [];
+			$version = $meets_minimum ? GV_FUTURE_MIN_GF_VERSION : GV_MIN_GF_VERSION;
 
-			if ( $meets_minimum ) {
-				/* translators: first placeholder is the future required version of Gravity Forms. The second placeholder is the current version of Gravity Forms. */
-				$messages[] = sprintf( __( 'In the future, GravityView will require Gravity Forms Version %s or newer.', 'gk-gravityview' ), GV_FUTURE_MIN_GF_VERSION );
-				$version    = GV_FUTURE_MIN_GF_VERSION;
-			} else {
-				/* translators: the placeholder is the required version of Gravity Forms. */
-				$messages[] = sprintf( __( 'GravityView requires Gravity Forms Version %s or newer.', 'gk-gravityview' ), GV_MIN_GF_VERSION );
-				$version    = GV_MIN_GF_VERSION;
-			}
-
-			/* translators: the placeholder is the current version of Gravity Forms. */
-			$messages[] = sprintf( esc_html__( "You're using Version %s. Please update your Gravity Forms or purchase a license.", 'gk-gravityview' ), '<strong>' . GFCommon::$version . '</strong>' );
-
-			/* translators: In this context, "get" means purchase */
-			$messages[] = '<a href="https://www.gravitykit.com/gravityforms/">' . esc_html__( 'Get the latest Gravity Forms.', 'gk-gravityview' ) . '</a>';
+			$gf_version = GFCommon::$version;
 
 			// Show the notice even if the future version requirements aren't met.
 			self::$notices['gf_version'] = [
 				'namespace'    => 'gk-gravityview',
 				'slug'         => 'gf_version_' . $version,
-				'message'      => join( ' ', $messages ),
+				'message'      => static function () use ( $meets_minimum, $version, $gf_version ) {
+					$messages = [];
+
+					if ( $meets_minimum ) {
+						/* translators: first placeholder is the future required version of Gravity Forms. The second placeholder is the current version of Gravity Forms. */
+						$messages[] = sprintf( __( 'In the future, GravityView will require Gravity Forms Version %s or newer.', 'gk-gravityview' ), GV_FUTURE_MIN_GF_VERSION );
+					} else {
+						/* translators: the placeholder is the required version of Gravity Forms. */
+						$messages[] = sprintf( __( 'GravityView requires Gravity Forms Version %s or newer.', 'gk-gravityview' ), GV_MIN_GF_VERSION );
+					}
+
+					/* translators: the placeholder is the current version of Gravity Forms. */
+					$messages[] = sprintf( esc_html__( "You're using Version %s. Please update your Gravity Forms or purchase a license.", 'gk-gravityview' ), '<strong>' . $gf_version . '</strong>' );
+
+					/* translators: In this context, "get" means purchase */
+					$messages[] = '<a href="https://www.gravitykit.com/gravityforms/">' . esc_html__( 'Get the latest Gravity Forms.', 'gk-gravityview' ) . '</a>';
+
+					return join( ' ', $messages );
+				},
 				'severity'     => $meets_minimum ? 'warning' : 'error',
 				'capabilities' => [ 'update_plugins' ],
 				'dismissible'  => false,
@@ -351,7 +366,9 @@ class GravityView_Compatibility {
 				self::$notices['gf_inactive'] = [
 					'namespace'    => 'gk-gravityview',
 					'slug'         => 'gf_inactive',
-					'message'      => sprintf( __( '%1$sGravityView requires Gravity Forms to be active. %2$sActivate Gravity Forms%3$s to use the GravityView plugin.', 'gk-gravityview' ), '', $button, '</a></strong>' ),
+					'message'      => static function () use ( $button ) {
+						return sprintf( __( '%1$sGravityView requires Gravity Forms to be active. %2$sActivate Gravity Forms%3$s to use the GravityView plugin.', 'gk-gravityview' ), '', $button, '</a></strong>' );
+					},
 					'severity'     => 'error',
 					'capabilities' => [ 'activate_plugins' ],
 					'dismissible'  => false,
@@ -364,7 +381,9 @@ class GravityView_Compatibility {
 				self::$notices['gf_installed'] = [
 					'namespace'    => 'gk-gravityview',
 					'slug'         => 'gf_installed',
-					'message'      => sprintf( __( '%1$sGravityView requires Gravity Forms to be installed in order to run properly. %2$sGet Gravity Forms%3$s - starting at $59%4$s%5$s', 'gk-gravityview' ), '', '<a href="https://www.gravitykit.com/gravityforms/">', '', '', '</a>' ),
+					'message'      => static function () {
+						return sprintf( __( '%1$sGravityView requires Gravity Forms to be installed in order to run properly. %2$sGet Gravity Forms%3$s - starting at $59%4$s%5$s', 'gk-gravityview' ), '', '<a href="https://www.gravitykit.com/gravityforms/">', '', '', '</a>' );
+					},
 					'severity'     => 'error',
 					'capabilities' => [ 'install_plugins' ],
 					'dismissible'  => false,
@@ -391,7 +410,9 @@ class GravityView_Compatibility {
 		self::$notices['gf_directory'] = [
 			'namespace'    => 'gk-gravityview',
 			'slug'         => 'gf_directory',
-			'message'      => __( 'GravityView and Gravity Forms Directory are both active. This may cause problems. If you experience issues, disable the Gravity Forms Directory plugin.', 'gk-gravityview' ),
+			'message'      => static function () {
+				return __( 'GravityView and Gravity Forms Directory are both active. This may cause problems. If you experience issues, disable the Gravity Forms Directory plugin.', 'gk-gravityview' );
+			},
 			'severity'     => 'warning',
 			'capabilities' => [ 'activate_plugins' ],
 			'dismissible'  => true,

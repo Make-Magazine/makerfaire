@@ -1,6 +1,30 @@
 
 # Changelog
 
+## 1.2.27 | June 4, 2026
+
+- Improved compatibility of file upload fields in Nested Forms for Gravity Forms 2.10.3.
+
+## 1.2.26 | May 13, 2026
+
+- Fixed issue where globally enabled Cache Buster broke Nested Forms child form rendering.
+- Fixed issue where child entry feeds could be processed before the parent entry's feeds when the parent form's feeds were delayed.
+
+## 1.2.25 | April 22, 2026
+
+- Fixed an issue where post-payment action checkboxes were duplicated when the same feed add-on existed on both parent and nested forms.
+- Updated the Nested Form modal to use Gravity Forms theme colors by default.
+
+## 1.2.24 | March 25, 2026
+
+- Fixed an issue where the Nested Form field displayed "Configuration required" when resuming partial entries via Gravity Flow.
+- Fixed an issue where the French translations did not work after recent updates.
+- Fixed an issue where editing a child entry after resuming via Save & Continue with Partial Entries enabled would create a new entry instead of updating the existing one.
+
+## 1.2.23 | March 19, 2026
+
+- Added support for `:sum` merge tag calculations on child product fields.
+
 ## 1.2.22 | March 11, 2026
 
 - Updated French translations. Credit: Sébastien Canat.

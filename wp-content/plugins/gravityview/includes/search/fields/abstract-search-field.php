@@ -647,8 +647,33 @@ abstract class Search_Field extends \GravityView_Admin_View_Item {
 		}
 
 		$value = gv_map_deep( $value, '_wp_specialchars' );
+		$value = gv_map_deep( $value, [ __CLASS__, 'normalize_quotes' ] );
 
 		return $value;
+	}
+
+	/**
+	 * Normalizes smart/curly quotes to their ASCII equivalents.
+	 *
+	 * Mobile keyboards (iOS, Android) automatically convert straight quotes to
+	 * typographic "smart" quotes, causing search mismatches when the database
+	 * stores straight ASCII quotes.
+	 *
+	 * @since 2.56.0
+	 *
+	 * @param mixed $value The value to normalize.
+	 *
+	 * @return mixed The normalized value with smart quotes replaced by ASCII equivalents.
+	 */
+	public static function normalize_quotes( $value ) {
+		if ( ! is_string( $value ) ) {
+			return $value;
+		}
+
+		$search  = [ "\u{2018}", "\u{2019}", "\u{201C}", "\u{201D}" ];
+		$replace = [ "'", "'", '"', '"' ];
+
+		return str_replace( $search, $replace, $value );
 	}
 
 	/**

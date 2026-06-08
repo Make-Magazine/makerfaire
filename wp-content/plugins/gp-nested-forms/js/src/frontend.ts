@@ -154,7 +154,7 @@ const ko = window.ko;
 				footer: true,
 				stickyFooter: self.modalStickyFooter,
 				closeMethods: [ 'button' ],
-				cssClass: [ self.modalClass, 'gpnf-modal', `gpnf-modal-${self.formId}-${self.fieldId}` ],
+				cssClass: [ self.modalClass, 'gpnf-modal', 'gform-theme--api', `gpnf-modal-${self.formId}-${self.fieldId}` ],
 				onOpen: function() {
 					self.isActive = true;
 
@@ -473,7 +473,7 @@ const ko = window.ko;
 
 			$( self.modal.modalBoxContent )
 				.html( typeof html !== 'undefined' ? html : self.formHtml )
-				.prepend( `<div class="gpnf-modal-header" style="background-color:${self.modalHeaderColor}">${self.getModalTitle()}</div>` );
+				.prepend( `<div class="gpnf-modal-header">${self.getModalTitle()}</div>` );
 
 			self.$modal.find( 'input[name="gpnf_nested_form_field_id"]' ).val( self.fieldId );
 
@@ -664,16 +664,50 @@ const ko = window.ko;
 			return self.getModalTitle();
 		}
 
+		self.getThemeColor = function( propertyName, fallbackValue ) {
+			var themeElement = self.$parentFormContainer.closest( '.gform-theme--framework, .gform-theme--api' )[0];
+			var propertyValue = '';
+
+			if ( themeElement ) {
+				propertyValue = window.getComputedStyle( themeElement ).getPropertyValue( propertyName ).trim();
+			}
+
+			// Fall back to the modal's own `gform-theme--api` wrapper, which guarantees
+			// API-theme defaults are always available when the parent form has no theme.
+			if ( ! propertyValue && self.modal && self.modal.modal ) {
+				propertyValue = window.getComputedStyle( self.modal.modal ).getPropertyValue( propertyName ).trim();
+			}
+
+			return propertyValue || fallbackValue;
+		}
+
+		self.getModalColors = function() {
+			return {
+				primary: self.modalHeaderColor || self.modalArgs.colors.primary || self.getThemeColor( '--gf-color-primary' ),
+				primaryContrast: self.getThemeColor( '--gf-ctrl-btn-color-primary', self.getThemeColor( '--gf-color-primary-contrast' ) ),
+				secondary: self.modalArgs.colors.secondary,
+				primaryDarker: self.getThemeColor( '--gf-color-primary-darker' ),
+				danger: self.modalArgs.colors.danger || self.getThemeColor( '--gf-color-danger' ),
+				dangerContrast: self.getThemeColor( '--gf-color-danger-contrast' ),
+			};
+		}
+
 		self.addColorStyles = function() {
+			var modalColors = self.getModalColors();
 
 			if ( self.$style && typeof self.$style.remove === 'function' ) {
 				self.$style.remove();
 			}
 
 			self.$style = `<style type="text/css">
-					.gpnf-modal-${self.formId}-${self.fieldId} .tingle-btn--primary { background-color: ${self.modalArgs.colors.primary}; }
-					.gpnf-modal-${self.formId}-${self.fieldId} .tingle-btn--default { background-color: ${self.modalArgs.colors.secondary}; }
-					.gpnf-modal-${self.formId}-${self.fieldId} .tingle-btn--danger { background-color: ${self.modalArgs.colors.danger}; }
+					.gpnf-modal-${self.formId}-${self.fieldId} {
+						--gpnf-modal-color-primary: ${modalColors.primary};
+						--gpnf-modal-color-primary-contrast: ${modalColors.primaryContrast};
+						${modalColors.secondary ? `--gpnf-modal-color-secondary: ${modalColors.secondary};` : ''}
+						--gpnf-modal-color-primary-darker: ${modalColors.primaryDarker};
+						--gpnf-modal-color-danger: ${modalColors.danger};
+						--gpnf-modal-color-danger-contrast: ${modalColors.dangerContrast};
+					}
 				</style>`;
 
 			$( 'head' ).append( self.$style );
@@ -1106,6 +1140,46 @@ const ko = window.ko;
 			$( document ).trigger( 'gform_post_conditional_logic', [ self.formId, [], false ] );
 		};
 
+		self.isProductCalcTarget = function( targetFieldId ) {
+			if ( ! Array.isArray( self.productFieldIds ) ) {
+				return false;
+			}
+
+			return self.productFieldIds.map( String ).indexOf( String( targetFieldId ) ) > -1;
+		};
+
+		self.getProductCalcValue = function( entry, targetFieldId ) {
+			if ( typeof entry[ targetFieldId ] === 'undefined' ) {
+				return 0;
+			}
+
+			const fieldValue      = entry[ targetFieldId ].value;
+			let price             = fieldValue;
+			let quantity          = 1;
+			const quantityFieldId = self.productQuantityFieldMap && self.productQuantityFieldMap[ targetFieldId ];
+
+			if ( fieldValue && typeof fieldValue === 'object' ) {
+				price = fieldValue[ `${targetFieldId}.2` ];
+
+				if ( typeof fieldValue[ `${targetFieldId}.3` ] !== 'undefined' ) {
+					quantity = fieldValue[ `${targetFieldId}.3` ] ? gformToNumber( fieldValue[ `${targetFieldId}.3` ] ) : 0;
+				}
+			} else if ( typeof fieldValue === 'string' && fieldValue.indexOf( '|' ) > -1 ) {
+				const parts = fieldValue.split( '|' );
+				price = parts.pop();
+			}
+
+			if ( typeof quantityFieldId !== 'undefined' && typeof entry[ quantityFieldId ] !== 'undefined' ) {
+				quantity = entry[ quantityFieldId ].value ? gformToNumber( entry[ quantityFieldId ].value ) : 0;
+			}
+
+			if ( ! price && price !== 0 && price !== '0' ) {
+				return 0;
+			}
+
+			return gformToNumber( price ) * parseFloat( quantity );
+		};
+
 		self.parseCalcs = function( formula, formulaField, formId, calcObj ) {
 
 			if ( formId != self.formId ) {
@@ -1171,7 +1245,11 @@ const ko = window.ko;
 						entries.forEach( function( entry ) {
 							var value = 0;
 							if ( typeof entry[ targetFieldId ] !== 'undefined' ) {
-								value = entry[ targetFieldId ].value ? gformToNumber( entry[ targetFieldId ].value ) : 0;
+								if ( self.isProductCalcTarget( targetFieldId ) ) {
+									value = self.getProductCalcValue( entry, targetFieldId );
+								} else {
+									value = entry[ targetFieldId ].value ? gformToNumber( entry[ targetFieldId ].value ) : 0;
+								}
 							}
 							total += parseFloat( value );
 						} );

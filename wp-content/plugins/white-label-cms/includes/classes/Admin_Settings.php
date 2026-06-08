@@ -35,7 +35,9 @@ class WLCMS_Admin_Settings
         $image = $this->get_editor_wp_logo();
 
         wlcms_set_hidden_css('.edit-post-header .edit-post-fullscreen-mode-close svg');
+        wlcms_set_css('.editor-header__back-button:has(.wlcms_icon)', array('background' => '#000'));
         wlcms_add_js(' var wlcms_change_back = setInterval(function() {if(jQuery(".edit-post-fullscreen-mode-close .wlcms_icon").length == 0 ){ jQuery(".edit-post-fullscreen-mode-close").html("' . $image . '");}if(jQuery(".edit-post-fullscreen-mode-close_site-icon").length > 0){jQuery(".edit-post-fullscreen-mode-close_site-icon").remove();}}, 1000);');
+
     }
 
     private function get_editor_wp_logo()

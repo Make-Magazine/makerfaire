@@ -229,7 +229,7 @@ class Framework {
 		];
 
 		if ( ! $this->current_user_can( 'view_products' ) && ! $this->current_user_can( 'view_licenses' ) ) {
-			throw new Exception( esc_html__( 'You do not have permission to view this page.', 'gk-gravityimport' ) );
+			throw new Exception( esc_html__( 'You do not have permission to view this page.', 'gk-foundation' ) );
 		}
 
 		// When skipping cache, we need to first refresh licenses and then products since the products data depends on the licenses' data.
@@ -271,7 +271,7 @@ class Framework {
 			return '';
 		}
 
-		return esc_html__( 'Manage Your Kit', 'gk-gravityimport' );
+		return esc_html__( 'Manage Your Kit', 'gk-foundation' );
 	}
 
 	/**

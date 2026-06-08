@@ -2,13 +2,16 @@
 /**
  * @license MIT
  *
- * Modified by gravitykit on 20-February-2026 using {@see https://github.com/BrianHenryIE/strauss}.
+ * Modified by gravitykit on 28-April-2026 using {@see https://github.com/BrianHenryIE/strauss}.
  */
 
 namespace GravityKit\AdvancedFilter\QueryFilters;
 
+use DateTimeInterface;
 use Exception;
 use GF_Query_Condition;
+use GravityKit\AdvancedFilter\QueryFilters\Clock\Clock;
+use GravityKit\AdvancedFilter\QueryFilters\Clock\SystemClock;
 use GravityKit\AdvancedFilter\QueryFilters\Condition\ConditionFactory;
 use GravityKit\AdvancedFilter\QueryFilters\Filter\EntryFilterService;
 use GravityKit\AdvancedFilter\QueryFilters\Filter\Filter;
@@ -71,6 +74,15 @@ class QueryFilters {
 	 * @var EntryFilterService
 	 */
 	private $entry_filter_service;
+
+	/**
+	 * An optional date range filter.
+	 *
+	 * @since 2.9.0
+	 *
+	 * @var Filter|null
+	 */
+	private $date_range_filter;
 
 	/**
 	 * @since 2.0.0
@@ -168,6 +180,25 @@ class QueryFilters {
 	}
 
 	/**
+	 * Creates an immutable instance with a date range filter.
+	 *
+	 * @since 2.9.0
+	 *
+	 * @param DateTimeInterface|null $start          The start of the date range.
+	 * @param DateTimeInterface|null $end            The end of the date range.
+	 * @param bool                   $use_exact_time Whether to preserve the exact time from the provided objects.
+	 *
+	 * @return self The new instance.
+	 * @throws \InvalidArgumentException When no date was provided.
+	 */
+	public function with_date_range( ?DateTimeInterface $start = null, ?DateTimeInterface $end = null, bool $use_exact_time = false ): self {
+		$clone                    = clone $this;
+		$clone->date_range_filter = $this->filter_factory->date_range( $start, $end, 'date_created', $use_exact_time );
+
+		return $clone;
+	}
+
+	/**
 	 * Converts filters and returns GF Query conditions.
 	 *
 	 * @since 1.0
@@ -181,7 +212,7 @@ class QueryFilters {
 			throw new RuntimeException( 'Missing form object.' );
 		}
 
-		if ( ! $this->filters instanceof Filter ) {
+		if ( ! $this->filters instanceof Filter && ! $this->date_range_filter ) {
 			return null;
 		}
 
@@ -197,7 +228,7 @@ class QueryFilters {
 	 *
 	 * @since  2.0.0
 	 *
-	 * @return FilterVisitor[] The visitors.
+	 * @return FilterVisitor[]|EntryAwareFilterVisitor[]|callable[] The visitors.
 	 */
 	private function get_filter_visitors(): array {
 		$visitors = [
@@ -213,14 +244,17 @@ class QueryFilters {
 		/**
 		 * Modifies the filters to be applied to the query.
 		 *
-		 * @param FilterVisitor[] $visitors The visitors.
-		 * @param int $form_id The form ID.
+		 * @since 2.0.0
+		 *
+		 * @param FilterVisitor[]|EntryAwareFilterVisitor[]|callable[] $visitors The visitors.
+		 * @param array                                                $form     The GF form object.
 		 */
 		$visitors = apply_filters( 'gk/query-filters/filter/visitors', $visitors, $this->form );
 
-		return array_filter( $visitors, static function ( $visitor ): bool {
-			return $visitor instanceof FilterVisitor;
-		} );
+		return array_filter(
+			$visitors,
+			static fn( $visitor ): bool => Filter::is_valid_visitor( $visitor ),
+		);
 	}
 
 	/**
@@ -233,7 +267,13 @@ class QueryFilters {
 	 * @return array
 	 */
 	public function get_field_filters( ?int $form_id = null ): array {
-		return $this->repository->get_field_filters( $form_id ?? $this->form['id'] );
+		$form_id = $form_id ?? $this->form['id'] ?? null;
+
+		if ( ! $form_id ) {
+			return [];
+		}
+
+		return $this->repository->get_field_filters( $form_id );
 	}
 
 	/**
@@ -252,7 +292,15 @@ class QueryFilters {
 
 		$forms = $form ? [ [ 'id' => $form['id'], 'title' => $form['title'] ] ] : [];
 
-		return apply_filters( 'gk/query-filters/forms', $forms, $this->form['id'] );
+		/**
+		 * Modifies the list of forms available for the Query Filters UI.
+		 *
+		 * @since 2.7.0
+		 *
+		 * @param array{id:string, title:string}[] $forms   The available forms.
+		 * @param int                              $form_id The current form ID.
+		 */
+		return apply_filters( 'gk/query-filters/forms', $forms, $this->form['id'] ?? 0 );
 	}
 
 	/**
@@ -277,24 +325,14 @@ class QueryFilters {
 		/**
 		 * Modify default translation strings.
 		 *
-		 * @since  1.0
+		 * @since 1.0
 		 *
 		 * @param array $translations Translation strings.
-		 *
 		 */
 		$translations = apply_filters( 'gk/query-filters/translations', [
-			'internet_explorer_notice'      => esc_html__(
-				'Internet Explorer is not supported. Please upgrade to another browser.',
-				'gravityview-advanced-filter'
-			),
-			'fields_not_available'          => esc_html__(
-				'Form fields are not available. Please try refreshing the page.',
-				'gravityview-advanced-filter'
-			),
-			'confirm_remove_group'          => esc_html__(
-				'This action will delete the entire group of conditions. Do you want to continue?',
-				'gravityview-advanced-filter'
-			),
+			'internet_explorer_notice'      => esc_html__( 'Internet Explorer is not supported. Please upgrade to another browser.', 'gravityview-advanced-filter' ),
+			'fields_not_available'          => esc_html__( 'Form fields are not available. Please try refreshing the page.', 'gravityview-advanced-filter' ),
+			'confirm_remove_group'          => esc_html__( 'This action will delete the entire group of conditions. Do you want to continue?', 'gravityview-advanced-filter' ),
 			'toggle_group_mode'             => esc_html__( 'Click to Toggle the Group Mode', 'gravityview-advanced-filter' ),
 			'add_group_label'               => esc_html__( 'Add a New Condition Group', 'gravityview-advanced-filter' ),
 			'add_condition_label'           => esc_html__( 'Add a New Condition', 'gravityview-advanced-filter' ),
@@ -327,10 +365,7 @@ class QueryFilters {
 			'remove_condition'              => esc_html__( 'Remove Condition', 'gravityview-advanced-filter' ),
 			'remove_group'                  => esc_html__( 'Remove Group', 'gravityview-advanced-filter' ),
 			'available_choices'             => esc_html__( 'Return to Field Choices', 'gravityview-advanced-filter' ),
-			'available_choices_label'       => esc_html__(
-				'Return to the list of choices defined by the field.',
-				'gravityview-advanced-filter'
-			),
+			'available_choices_label'       => esc_html__( 'Return to the list of choices defined by the field.', 'gravityview-advanced-filter' ),
 			'custom_is_operator_input'      => esc_html__( 'Custom Choice', 'gravityview-advanced-filter' ),
 			'untitled'                      => esc_html__( 'Untitled', 'gravityview-advanced-filter' ),
 			'form_fields'                   => esc_html__( 'Form Fields', 'gravityview-advanced-filter' ),
@@ -339,10 +374,7 @@ class QueryFilters {
 			'select_field'                  => esc_html__( 'Select Field', 'gravityview-advanced-filter' ),
 			'select_operator'               => esc_html__( 'Select Operator', 'gravityview-advanced-filter' ),
 			'select_form'                   => esc_html__( 'Select Form', 'gravityview-advanced-filter' ),
-			'field_not_available'           => esc_html__(
-				'Form field ID #%d is no longer available. Please remove this condition.',
-				'gravityview-advanced-filter'
-			),
+			'field_not_available'           => esc_html__( 'Form field ID #%d is no longer available. Please remove this condition.', 'gravityview-advanced-filter' ),
 		] );
 
 		return $translations;
@@ -366,7 +398,7 @@ class QueryFilters {
 
 		wp_enqueue_script( $handle, $src, $deps, $ver );
 
-		$variable_name = $meta['variable_name'] ?? sprintf( 'gkQueryFilters_%s', uniqid() );
+		$variable_name = $meta['variable_name'] ?? sprintf( 'gkQueryFilters_%s', bin2hex( random_bytes( 8 ) ) );
 		wp_localize_script(
 			$handle,
 			$variable_name,
@@ -388,6 +420,148 @@ class QueryFilters {
 				remove_action( 'admin_head', $cb );
 				echo '<meta class="merge-tag-support mt-initialized" style="display:none" />';
 			} );
+	}
+
+	/**
+	 * Enqueues date range picker scripts.
+	 *
+	 * @since 2.9.0
+	 *
+	 * @param array      $meta  Meta data.
+	 * @param Clock|null $clock Optional clock instance.
+	 *
+	 * @return void
+	 */
+	public static function enqueue_date_range_picker( array $meta = [], ?Clock $clock = null ) {
+		$variable_name = $meta['variable_name'] ?? null;
+		if ( ! $variable_name ) {
+			return;
+		}
+
+		$clock = $clock ?? new SystemClock();
+		$now   = $clock->now();
+
+		$script = 'assets/js/date-range-picker.js';
+		$style  = 'assets/css/date-range-picker.css';
+
+		$handle     = $meta['handle'] ?? 'gk-date-range-picker';
+		$ver        = $meta['ver'] ?? filemtime( plugin_dir_path( __DIR__ ) . $script );
+		$script_src = $meta['src'] ?? plugins_url( $script, __DIR__ );
+		$style_src  = $meta['src'] ?? plugins_url( $style, __DIR__ );
+		$deps       = $meta['deps'] ?? [];
+
+		$label      = trim( $meta['label'] ?? '' );
+		$value      = [ 'start' => $meta['start'] ?? null, 'end' => $meta['end'] ?? null ];
+		$input_name = $meta['input_element_name'] ?? null;
+
+		wp_enqueue_script( $handle, $script_src, $deps, $ver );
+		wp_enqueue_style( $handle, $style_src, [], $ver );
+
+		/**
+		 * Modifies the date format for the date range picker.
+		 *
+		 * @since 2.9.0
+		 *
+		 * @param string $date_format The date format.
+		 *                            Any combination of `mdy`, and optionally `_dot` or `_dash`. Slash by default.
+		 *                            eg. `mdy`, `dmy_dash`, `ymd_dot`, etc.
+		 */
+		$date_format = apply_filters(
+			'gk/query-filters/date-range-picker/date-format',
+			$meta['date_format'] ?? 'mdy'
+		);
+
+		/**
+		 * Modifies the date range picker value.
+		 *
+		 * @since 2.9.0
+		 *
+		 * @param array{start: ?string, end: ?string} $value  The date range picker value.
+		 *                                                    Values should be in YYYY-mm-dd.
+		 */
+		$value = apply_filters( 'gk/query-filters/date-range-picker/value', $value );
+
+		/**
+		 * Modifies the date range picker translation strings.
+		 *
+		 * @since 2.9.0
+		 *
+		 * @param array $translations Translation strings.
+		 */
+		$translations = apply_filters(
+			'gk/query-filters/date-range-picker/translations',
+			[
+				'presets' => esc_html__( 'Presets', 'gravityview-advanced-filter' ),
+			]
+		);
+
+		/**
+		 * Modifies the date range picker presets.
+		 *
+		 * @since 2.9.0
+		 *
+		 * @param array              $presets Preset configurations with label and range keys.
+		 * @param \DateTimeInterface $now     The current date and time, used to compute preset ranges.
+		 */
+		$presets = apply_filters(
+			'gk/query-filters/date-range-picker/presets',
+			[
+				[
+					'label' => esc_html__( 'Today', 'gravityview-advanced-filter' ),
+					'range' => [
+						'start' => $now->format( 'Y-m-d' ),
+						'end'   => $now->format( 'Y-m-d' ),
+					],
+				],
+				[
+					'label' => esc_html__( 'Last 7 Days', 'gravityview-advanced-filter' ),
+					'range' => [
+						'start' => $now->modify( '-6 days' )->format( 'Y-m-d' ),
+						'end'   => $now->format( 'Y-m-d' ),
+					],
+				],
+				[
+					'label' => esc_html__( 'Last 30 Days', 'gravityview-advanced-filter' ),
+					'range' => [
+						'start' => $now->modify( '-29 days' )->format( 'Y-m-d' ),
+						'end'   => $now->format( 'Y-m-d' ),
+					],
+				],
+				[
+					'label' => esc_html__( 'This Month', 'gravityview-advanced-filter' ),
+					'range' => [
+						'start' => $now->modify( 'first day of this month' )->format( 'Y-m-d' ),
+						'end'   => $now->modify( 'last day of this month' )->format( 'Y-m-d' ),
+					],
+				],
+				[
+					'label' => esc_html__( 'Last Month', 'gravityview-advanced-filter' ),
+					'range' => [
+						'start' => $now->modify( 'first day of last month' )->format( 'Y-m-d' ),
+						'end'   => $now->modify( 'last day of last month' )->format( 'Y-m-d' ),
+					],
+				],
+			],
+			$now
+		);
+
+		wp_localize_script(
+			$handle,
+			$variable_name,
+			array_filter(
+				[
+					'label'            => $label,
+					'dateFormat'       => $date_format,
+					'value'            => $value,
+					'translations'     => $translations,
+					'presets'          => $presets,
+					'inputElementName' => $input_name,
+				],
+				static function ( $value ): bool {
+					return ! is_null( $value ) && $value !== [] && $value !== '';
+				}
+			)
+		);
 	}
 
 	/**
@@ -496,11 +670,27 @@ class QueryFilters {
 	 * @return Filter
 	 */
 	final public function get_filters( bool $as_unprocessed = false, array $entry = [] ): Filter {
-		$clone = clone $this->filters;
+		// Check if we have any filters at all.
+		if ( ! $this->filters instanceof Filter && ! $this->date_range_filter instanceof Filter ) {
+			throw new RuntimeException( 'Missing filter object.' );
+		}
+
+		// Clone existing filters if present.
+		$filter = $this->filters instanceof Filter ? $this->filters : null;
+
+		// Combine with the date range filter if both exist.
+		if ( $filter instanceof Filter && $this->date_range_filter instanceof Filter ) {
+			$filter = $filter->and( $this->date_range_filter );
+		} elseif ( ! $filter instanceof Filter ) {
+			// Only the date range filter exists.
+			$filter = $this->date_range_filter;
+		}
+
+		$clone = clone $filter;
 
 		if ( ! $as_unprocessed ) {
 			foreach ( $this->get_filter_visitors() as $visitor ) {
-				if ( $visitor instanceof EntryAwareFilterVisitor ) {
+				if ( $entry && Filter::is_entry_aware_visitor( $visitor ) ) {
 					$visitor->set_entry( $entry );
 				}
 

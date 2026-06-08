@@ -1164,7 +1164,7 @@ class GravityView_frontend {
 		 * @param array $entries Array of entries to be displayed
 		 * @param array $args View settings associative array
 		 */
-		$entries = apply_filters( 'gravityview_view_entries', $entries, $args );
+		$entries = GravityView_Deprecated_Hook_Notices::apply_filters( 'gravityview_view_entries', [ $entries, $args ], '2.55', 'gravityview/view/entries' );
 
 		$return = array(
 			'count'   => $count,
@@ -1584,7 +1584,7 @@ class GravityView_frontend {
 					 *
 					 * @param string $script_slug If you want to use a different lightbox script, return the name of it here.
 					 */
-					$js_dependency = apply_filters_deprecated( 'gravity_view_lightbox_script', array( 'thickbox' ), '2.5.1', 'gravityview_lightbox_script' );
+					$js_dependency = GravityView_Deprecated_Hook_Notices::apply_filters( 'gravity_view_lightbox_script', array( 'thickbox' ), '2.5.1', 'gravityview_lightbox_script' );
 
 					/**
 					 * Override the lightbox script to enqueue. Default: `thickbox`.
@@ -1604,7 +1604,7 @@ class GravityView_frontend {
 					 *
 					 * @param string $script_slug If you want to use a different lightbox script, return the name of its CSS file here.
 					 */
-					$css_dependency = apply_filters_deprecated( 'gravity_view_lightbox_style', array( 'thickbox' ), '2.5.1', 'gravityview_lightbox_style' );
+					$css_dependency = GravityView_Deprecated_Hook_Notices::apply_filters( 'gravity_view_lightbox_style', array( 'thickbox' ), '2.5.1', 'gravityview_lightbox_style' );
 
 					/**
 					 * Override the lightbox style to enqueue. Default: `thickbox`.
@@ -1845,7 +1845,7 @@ class GravityView_frontend {
 		 * @depecated 2.14
 		 * @since 1.7
 		 */
-		$not_sortable = apply_filters_deprecated( 'gravityview/sortable/field_blacklist', array( $not_sortable, $field_type, $form ), '2.14', 'gravityview/sortable/field_blocklist' );
+		$not_sortable = GravityView_Deprecated_Hook_Notices::apply_filters( 'gravityview/sortable/field_blacklist', array( $not_sortable, $field_type, $form ), '2.14', 'gravityview/sortable/field_blocklist' );
 
 		/**
 		 * Modify what fields should never be sortable.

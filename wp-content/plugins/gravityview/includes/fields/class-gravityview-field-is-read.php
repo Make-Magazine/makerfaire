@@ -85,7 +85,7 @@ class GravityView_Field_Is_Read extends GravityView_Field {
 		/** @see Field::get_value_filters */
 		add_filter( 'gravityview/field/is_read/value', [ $this, 'get_value' ], 10, 5 );
 		add_action( 'gravityview/template/before', [ $this, 'maybe_mark_entry_as_read' ] );
-		add_action( 'gravityview_default_args', [ $this, 'modify_single_entry_view_settings' ] );
+		add_filter( 'gravityview/view/settings/defaults', [ $this, 'modify_single_entry_view_settings' ] );
 	}
 
 	/**

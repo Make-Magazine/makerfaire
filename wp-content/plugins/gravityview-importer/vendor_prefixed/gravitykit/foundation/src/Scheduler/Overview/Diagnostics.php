@@ -132,7 +132,7 @@ class Diagnostics {
 	 * @return array
 	 */
 	public static function add_site_health_section( array $info ): array {
-		$section_label = __( 'GravityKit Background Processing', 'gk-gravityimport' );
+		$section_label = __( 'GravityKit Background Processing', 'gk-foundation' );
 
 		try {
 			$rows = self::cached() ?? self::collect();
@@ -141,8 +141,8 @@ class Diagnostics {
 				'label'  => $section_label,
 				'fields' => [
 					'status' => [
-						'label' => __( 'Status', 'gk-gravityimport' ),
-						'value' => __( 'Unable to collect diagnostics.', 'gk-gravityimport' ),
+						'label' => __( 'Status', 'gk-foundation' ),
+						'value' => __( 'Unable to collect diagnostics.', 'gk-foundation' ),
 					],
 				],
 			];
@@ -180,7 +180,7 @@ class Diagnostics {
 	 * @return array{key: string, label: string, value: string, status: string}
 	 */
 	private function diagnose_queue_runner(): array {
-		$label = __( 'Queue Runner', 'gk-gravityimport' );
+		$label = __( 'Queue Runner', 'gk-foundation' );
 
 		// Check if there are active claims (GK actions being processed right now).
 		$claim_count = $this->store->get_gk_claim_count();
@@ -190,7 +190,7 @@ class Diagnostics {
 				'key'    => 'queue-runner',
 				'label'  => $label,
 				/* translators: [count]: the number of active action claims. */
-				'value'  => strtr( _n( 'Processing ([count] claim)', 'Processing ([count] claims)', $claim_count, 'gk-gravityimport' ), [ '[count]' => $claim_count ] ),
+				'value'  => strtr( _n( 'Processing ([count] claim)', 'Processing ([count] claims)', $claim_count, 'gk-foundation' ), [ '[count]' => $claim_count ] ),
 				'status' => 'ok',
 			];
 		}
@@ -203,7 +203,7 @@ class Diagnostics {
 				return [
 					'key'    => 'queue-runner',
 					'label'  => $label,
-					'value'  => __( 'Recently active', 'gk-gravityimport' ),
+					'value'  => __( 'Recently active', 'gk-foundation' ),
 					'status' => 'ok',
 				];
 			}
@@ -219,7 +219,7 @@ class Diagnostics {
 				'key'    => 'queue-runner',
 				'label'  => $label,
 				/* translators: [count]: the number of stuck in-progress jobs. */
-				'value'  => strtr( _n( 'Idle ([count] stuck)', 'Idle ([count] stuck)', $running, 'gk-gravityimport' ), [ '[count]' => $running ] ),
+				'value'  => strtr( _n( 'Idle ([count] stuck)', 'Idle ([count] stuck)', $running, 'gk-foundation' ), [ '[count]' => $running ] ),
 				'status' => 'warning',
 			];
 		}
@@ -229,7 +229,7 @@ class Diagnostics {
 				'key'    => 'queue-runner',
 				'label'  => $label,
 				/* translators: [count]: the number of pending actions. */
-				'value'  => strtr( _n( 'Idle ([count] pending)', 'Idle ([count] pending)', $pending, 'gk-gravityimport' ), [ '[count]' => $pending ] ),
+				'value'  => strtr( _n( 'Idle ([count] pending)', 'Idle ([count] pending)', $pending, 'gk-foundation' ), [ '[count]' => $pending ] ),
 				'status' => 'neutral',
 			];
 		}
@@ -237,7 +237,7 @@ class Diagnostics {
 		return [
 			'key'    => 'queue-runner',
 			'label'  => $label,
-			'value'  => __( 'Idle', 'gk-gravityimport' ),
+			'value'  => __( 'Idle', 'gk-foundation' ),
 			'status' => 'neutral',
 		];
 	}
@@ -252,7 +252,7 @@ class Diagnostics {
 	 * @return array{key: string, label: string, value: string, status: string}
 	 */
 	private function diagnose_wp_cron( HealthCheck $health ): array {
-		$label          = __( 'WP-Cron', 'gk-gravityimport' );
+		$label          = __( 'WP-Cron', 'gk-foundation' );
 		$cron_disabled  = defined( 'DISABLE_WP_CRON' ) && DISABLE_WP_CRON;
 		$alternate_cron = defined( 'ALTERNATE_WP_CRON' ) && ALTERNATE_WP_CRON;
 
@@ -272,7 +272,7 @@ class Diagnostics {
 				];
 			}
 
-			$parts[] = 'ALTERNATE_WP_CRON: ' . __( 'not set', 'gk-gravityimport' );
+			$parts[] = 'ALTERNATE_WP_CRON: ' . __( 'not set', 'gk-foundation' );
 
 			// Red only when loopback is also blocked (no execution path).
 			// Yellow when loopback works (scheduler can dispatch directly).
@@ -301,10 +301,10 @@ class Diagnostics {
 
 			if ( $diff > 0 ) {
 				// translators: [time] is replaced with a human-readable time difference (e.g., "45 seconds").
-				$value = strtr( __( 'OK (next run in [time])', 'gk-gravityimport' ), [ '[time]' => human_time_diff( time(), $next ) ] );
+				$value = strtr( __( 'OK (next run in [time])', 'gk-foundation' ), [ '[time]' => human_time_diff( time(), $next ) ] );
 			} else {
 				// translators: [time] is replaced with a human-readable time difference (e.g., "2 minutes").
-				$value = strtr( __( 'Overdue by [time]', 'gk-gravityimport' ), [ '[time]' => human_time_diff( $next ) ] );
+				$value = strtr( __( 'Overdue by [time]', 'gk-foundation' ), [ '[time]' => human_time_diff( $next ) ] );
 			}
 
 			return [
@@ -318,7 +318,7 @@ class Diagnostics {
 		return [
 			'key'    => 'wp-cron',
 			'label'  => $label,
-			'value'  => __( 'Not scheduled', 'gk-gravityimport' ),
+			'value'  => __( 'Not scheduled', 'gk-foundation' ),
 			'status' => 'warning',
 		];
 	}
@@ -333,13 +333,13 @@ class Diagnostics {
 	 * @return array{key: string, label: string, value: string, status: string}
 	 */
 	private function diagnose_loopback( HealthCheck $health ): array {
-		$label = __( 'Loopback', 'gk-gravityimport' );
+		$label = __( 'Loopback', 'gk-foundation' );
 
 		if ( ! $health->is_loopback_blocked() ) {
 			return [
 				'key'    => 'loopback',
 				'label'  => $label,
-				'value'  => __( 'OK', 'gk-gravityimport' ),
+				'value'  => __( 'OK', 'gk-foundation' ),
 				'status' => 'ok',
 			];
 		}
@@ -348,7 +348,7 @@ class Diagnostics {
 		return [
 			'key'    => 'loopback',
 			'label'  => $label,
-			'value'  => __( 'Blocked', 'gk-gravityimport' ),
+			'value'  => __( 'Blocked', 'gk-foundation' ),
 			'status' => $health->has_failure() ? 'error' : 'warning',
 		];
 	}
@@ -361,7 +361,7 @@ class Diagnostics {
 	 * @return array{key: string, label: string, value: string, status: string}
 	 */
 	private function diagnose_recovery(): array {
-		$label = __( 'Recovery', 'gk-gravityimport' );
+		$label = __( 'Recovery', 'gk-foundation' );
 
 		// Check last heartbeat from the DB.
 		$last_heartbeat = $this->store->get_last_recovery_heartbeat();
@@ -374,7 +374,7 @@ class Diagnostics {
 				return [
 					'key'    => 'recovery',
 					'label'  => $label,
-					'value'  => __( 'Scheduled (no heartbeat yet)', 'gk-gravityimport' ),
+					'value'  => __( 'Scheduled (no heartbeat yet)', 'gk-foundation' ),
 					'status' => 'neutral',
 				];
 			}
@@ -382,7 +382,7 @@ class Diagnostics {
 			return [
 				'key'    => 'recovery',
 				'label'  => $label,
-				'value'  => __( 'Inactive', 'gk-gravityimport' ),
+				'value'  => __( 'Inactive', 'gk-foundation' ),
 				'status' => 'neutral',
 			];
 		}
@@ -390,7 +390,7 @@ class Diagnostics {
 		$ago = time() - $last_heartbeat;
 
 		// translators: [time] is replaced with a human-readable time difference (e.g., "32 seconds").
-		$value = strtr( __( 'Last heartbeat [time] ago', 'gk-gravityimport' ), [ '[time]' => human_time_diff( $last_heartbeat ) ] );
+		$value = strtr( __( 'Last heartbeat [time] ago', 'gk-foundation' ), [ '[time]' => human_time_diff( $last_heartbeat ) ] );
 
 		// Recovery runs every 2 minutes. If >5 minutes since last heartbeat while jobs are active, warn.
 		if ( $ago > 300 ) {
@@ -401,7 +401,7 @@ class Diagnostics {
 				return [
 					'key'    => 'recovery',
 					'label'  => $label,
-					'value'  => $value . ' ' . __( '(stale)', 'gk-gravityimport' ),
+					'value'  => $value . ' ' . __( '(stale)', 'gk-foundation' ),
 					'status' => 'warning',
 				];
 			}
@@ -423,7 +423,7 @@ class Diagnostics {
 	 * @return array{key: string, label: string, value: string, status: string}
 	 */
 	private function diagnose_php_limits(): array {
-		$label    = __( 'PHP', 'gk-gravityimport' );
+		$label    = __( 'PHP', 'gk-foundation' );
 		$max_exec = (int) ini_get( 'max_execution_time' );
 		$memory   = (string) ini_get( 'memory_limit' );
 
@@ -432,7 +432,7 @@ class Diagnostics {
 		if ( $max_exec > 0 ) {
 			$parts[] = 'max_execution_time: ' . $max_exec . 's';
 		} else {
-			$parts[] = 'max_execution_time: ' . __( 'unlimited', 'gk-gravityimport' );
+			$parts[] = 'max_execution_time: ' . __( 'unlimited', 'gk-foundation' );
 		}
 
 		$parts[] = 'memory_limit: ' . $memory;
@@ -464,7 +464,7 @@ class Diagnostics {
 
 		return [
 			'key'    => 'time-budget',
-			'label'  => __( 'Task Time Budget', 'gk-gravityimport' ),
+			'label'  => __( 'Task Time Budget', 'gk-foundation' ),
 			'value'  => rtrim( rtrim( number_format( $budget, 1, '.', '' ), '0' ), '.' ) . 's',
 			'status' => 'neutral',
 		];
@@ -484,7 +484,7 @@ class Diagnostics {
 	 * @return array{key: string, label: string, value: string, status: string}
 	 */
 	private function diagnose_last_activity(): array {
-		$label = __( 'Last Activity', 'gk-gravityimport' );
+		$label = __( 'Last Activity', 'gk-foundation' );
 
 		$gk_time = $this->store->get_last_activity_time();
 		$as_time = $this->store->get_last_as_activity_time();
@@ -493,16 +493,16 @@ class Diagnostics {
 
 		if ( $gk_time ) {
 			// translators: [time] is replaced with a human-readable time difference (e.g., "3 minutes").
-			$parts[] = 'GravityKit: ' . strtr( __( '[time] ago', 'gk-gravityimport' ), [ '[time]' => human_time_diff( $gk_time ) ] );
+			$parts[] = 'GravityKit: ' . strtr( __( '[time] ago', 'gk-foundation' ), [ '[time]' => human_time_diff( $gk_time ) ] );
 		} else {
-			$parts[] = 'GravityKit: ' . __( 'never', 'gk-gravityimport' );
+			$parts[] = 'GravityKit: ' . __( 'never', 'gk-foundation' );
 		}
 
 		if ( $as_time ) {
 			// translators: [time] is replaced with a human-readable time difference (e.g., "45 seconds").
-			$parts[] = 'Action Scheduler: ' . strtr( __( '[time] ago', 'gk-gravityimport' ), [ '[time]' => human_time_diff( $as_time ) ] );
+			$parts[] = 'Action Scheduler: ' . strtr( __( '[time] ago', 'gk-foundation' ), [ '[time]' => human_time_diff( $as_time ) ] );
 		} else {
-			$parts[] = 'Action Scheduler: ' . __( 'never', 'gk-gravityimport' );
+			$parts[] = 'Action Scheduler: ' . __( 'never', 'gk-foundation' );
 		}
 
 		$status        = 'neutral';
@@ -512,7 +512,7 @@ class Diagnostics {
 			$status = 'warning';
 
 			/* translators: [count]: the number of overdue jobs. */
-			$parts[] = strtr( _n( '[count] overdue', '[count] overdue', $overdue_count, 'gk-gravityimport' ), [ '[count]' => $overdue_count ] );
+			$parts[] = strtr( _n( '[count] overdue', '[count] overdue', $overdue_count, 'gk-foundation' ), [ '[count]' => $overdue_count ] );
 		}
 
 		return [

@@ -490,7 +490,7 @@ final class GravityView_Delete_Entry {
 		 *
 		 * @param string $delete_mode Delete mode: `trash` or `delete`. Default: `delete`.
 		 */
-		$delete_mode = apply_filters( 'gravityview/delete-entry/mode', 'delete' );
+		$delete_mode = GravityView_Deprecated_Hook_Notices::apply_filters( 'gravityview/delete-entry/mode', [ 'delete' ], '2.55', 'gk/gravityview/delete-entry/mode' );
 
 		/**
 		 * Delete mode: permanently delete, or move to trash?
@@ -549,7 +549,7 @@ final class GravityView_Delete_Entry {
 				 * @param int   $entry_id ID of the Gravity Forms entry.
 				 * @param array $entry    Deleted entry array.
 				 */
-				do_action( 'gravityview/delete-entry/deleted', $entry_id, $entry );
+				GravityView_Deprecated_Hook_Notices::do_action( 'gravityview/delete-entry/deleted', [ $entry_id, $entry ], '2.55', 'gk/gravityview/delete-entry/deleted' );
 
 				/**
 				 * Triggered when an entry is deleted.
@@ -585,7 +585,7 @@ final class GravityView_Delete_Entry {
 				 * @param int   $entry_id ID of the Gravity Forms entry.
 				 * @param array $entry    Trashed entry array.
 				 */
-				do_action( 'gravityview/delete-entry/trashed', $entry_id, $entry );
+				GravityView_Deprecated_Hook_Notices::do_action( 'gravityview/delete-entry/trashed', [ $entry_id, $entry ], '2.55', 'gk/gravityview/delete-entry/trashed' );
 
 				/**
 				 * Triggered when an entry is trashed.
@@ -630,7 +630,7 @@ final class GravityView_Delete_Entry {
 		 *
 		 * @param bool $delete_post If trashing an entry, trash the post. If deleting an entry, delete the post. Default: true.
 		 */
-		$delete_post = apply_filters( 'gravityview/delete-entry/delete-connected-post', true );
+		$delete_post = GravityView_Deprecated_Hook_Notices::apply_filters( 'gravityview/delete-entry/delete-connected-post', [ true ], '2.55', 'gk/gravityview/delete-entry/delete-connected-post' );
 
 		/**
 		 * Should posts connected to an entry be deleted when the entry is deleted?

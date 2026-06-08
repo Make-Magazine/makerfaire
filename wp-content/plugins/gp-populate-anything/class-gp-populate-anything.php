@@ -127,6 +127,7 @@ class GP_Populate_Anything extends GP_Plugin {
 		/* Template Replacement */
 		add_filter( 'gppa_process_template', array( $this, 'convert_wp_error_in_template_to_null' ), 8, 1 );
 		add_filter( 'gppa_process_template', array( $this, 'maybe_convert_array_value_to_text' ), 9, 8 );
+		add_filter( 'gppa_process_template', array( $this, 'maybe_extract_price_from_product_field' ), 9, 7 );
 		add_filter( 'gppa_process_template', array( $this, 'replace_template_generic_gf_merge_tags' ), 15, 1 );
 		add_filter( 'gppa_process_template', array( $this, 'replace_template_object_merge_tags' ), 10, 6 );
 		add_filter( 'gppa_process_template', array( $this, 'replace_template_count_merge_tags' ), 10, 7 );
@@ -1338,6 +1339,7 @@ class GP_Populate_Anything extends GP_Plugin {
 				$object_id ? $object_id : '',
 				rgar( $field, 'id' ),
 				$populate,
+				$template_name,
 			)
 		), $field, $object, $template, $template_name, $object_type, $primary_property );
 
@@ -1687,6 +1689,36 @@ class GP_Populate_Anything extends GP_Plugin {
 
 		return $result;
 
+	}
+
+	/**
+	 * When populating choice prices from GF Entry product fields, extract the price value
+	 * from product field display text (e.g. "Fourth Choice 2 X 4 |$4.00" to "4.00").
+	 *
+	 * @param string|string[] $template_value
+	 * @param \GF_Field $field
+	 * @param string $template_name
+	 * @param string $populate
+	 * @param mixed $object
+	 * @param GPPA_Object_Type $object_type
+	 * @param mixed[] $objects
+	 *
+	 * @return string
+	 */
+	public function maybe_extract_price_from_product_field( $template_value, $field, $template_name, $populate, $object, $object_type, $objects ) {
+
+		// Only process for price templates in GF Entry objects as that's the only time we know the template value will be in the format of "Label|Price".
+		if ( $template_name !== 'price' || rgobj( $object_type, 'id' ) !== 'gf_entry' ) {
+			return $template_value;
+		}
+
+		// Use the last segment so a pipe in the label (e.g. "Widget | Blue|100") doesn't yield the wrong price.
+		if ( is_string( $template_value ) && false !== strpos( $template_value, '|' ) ) {
+			$parts = explode( '|', $template_value );
+			return trim( end( $parts ) );
+		}
+
+		return $template_value;
 	}
 
 	/**
@@ -3794,7 +3826,15 @@ class GP_Populate_Anything extends GP_Plugin {
 				$value[ $index ] = $this->get_submitted_choice_label( $choice_value, $field, $lead['id'] );
 			}
 
-			return GFCommon::get_lead_field_display( $field, $value, $lead['currency'] );
+			if ( method_exists( 'GF_Field', 'get_value_all_fields_merge_tag' ) ) {
+				return $field->get_value_all_fields_merge_tag( $value, $lead, false, 'html' );
+			}
+
+			if ( version_compare( GFForms::$version, '2.9.29', '>=' ) ) {
+				return GFCommon::get_lead_field_display( $field, $value, $lead );
+			}
+
+			return GFCommon::get_lead_field_display( $field, $value, rgar( $lead, 'currency' ) );
 		}
 
 		return $this->get_submitted_choice_label( $display_value, $field, $lead['id'] );
@@ -5206,10 +5246,6 @@ class GP_Populate_Anything extends GP_Plugin {
 		return $field->choices;
 	}
 
-}
-
-function gp_populate_anything() {
-	return GP_Populate_Anything::get_instance();
 }
 
 GFAddOn::register( 'GP_Populate_Anything' );

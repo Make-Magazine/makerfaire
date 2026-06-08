@@ -210,6 +210,19 @@ class UI {
 				'auto_map_fields'                              => esc_html__( 'Auto-map', 'gk-gravityimport' ),
 				'auto_map_fields_desc'                         => esc_html__( 'Reset all mappings to auto-detected values', 'gk-gravityimport' ),
 				'auto_map_fields_warning'                      => esc_html__( 'This will reset all field mappings to auto-detected values. Any manual changes will be lost. Do you want to continue?', 'gk-gravityimport' ),
+				'load_import_profile'                      => esc_html__( 'Load Import Profile', 'gk-gravityimport' ),
+				'load_profile_overwrite_warning'           => esc_html__( 'Loading this profile will replace your current field mappings. Any manual changes will be lost. Do you want to continue?', 'gk-gravityimport' ),
+				'profile_applied'                          => esc_html__( 'Import profile applied successfully.', 'gk-gravityimport' ),
+				'profile_form_changed'                     => esc_html__( 'Form fields have changed since this profile was saved. Please review the mappings.', 'gk-gravityimport' ),
+				'profile_form_mismatch_title'              => esc_html__( 'Form Mismatch', 'gk-gravityimport' ),
+				'profile_form_mismatch'                    => esc_html_x( 'This profile was saved for "%1$s" (Form #%2$s), but you selected "%3$s" (Form #%4$s). Do you want to continue anyway?', '%s are replaced with form names and IDs', 'gk-gravityimport' ),
+				'profile_invalid'                          => esc_html__( 'The selected file is not a valid import profile.', 'gk-gravityimport' ),
+				'profile_partial_match'                    => esc_html_x( '%1$d columns matched by name, %2$d matched by position. Please review highlighted columns.', '%d are replaced with counts', 'gk-gravityimport' ),
+				'position_match'                           => esc_html_x( 'Position match', 'Badge indicating a column was matched by position rather than name', 'gk-gravityimport' ),
+				'profile_modified_notice'                  => esc_html_x( 'Loaded from %s. Mapping has been modified — download a new profile to preserve your changes.', '%s is replaced with profile filename', 'gk-gravityimport' ),
+				'clear_loaded_profile'                     => esc_html__( 'Clear', 'gk-gravityimport' ),
+				'profile_mapping_warnings'                 => esc_html__( 'Some profile mappings could not be applied.', 'gk-gravityimport' ),
+				'change_form'                              => esc_html__( 'Change Form', 'gk-gravityimport' ),
 				'show_all_columns'                             => esc_html__( 'Show All Columns', 'gk-gravityimport' ),
 				'show_errors'                                  => esc_html__( 'Show Errors', 'gk-gravityimport' ),
 				'show_error_singular'                          => esc_html__( 'Show %d Error', 'gk-gravityimport' ),
@@ -342,6 +355,7 @@ class UI {
 			'configure'          => array(
 				'configure_options'   => esc_html__( 'Configure Import Options', 'gk-gravityimport' ),
 				'create_and_continue' => esc_html__( 'Create Form and Continue With Import', 'gk-gravityimport' ),
+				'download_import_profile'                  => esc_html__( 'Download Import Profile', 'gk-gravityimport' ),
 				'process_feeds'       => array(
 					'title'              => esc_html__( 'Process Feeds', 'gk-gravityimport' ),
 					'description'        => esc_html__( 'available form feeds will be executed for each entry', 'gk-gravityimport' ),
@@ -1040,16 +1054,35 @@ class UI {
 	}
 
 	/**
-	 * Get available GF forms
+	 * Gets available Gravity Forms forms as a lightweight `[id, title]` list for the form picker.
+	 *
+	 * Uses `GFFormsModel::get_forms_columns()` (Gravity Forms 2.7.5+), which fetches the
+	 * requested columns in a single SQL query and skips the per-form `display_meta` JSON
+	 * decode that `GFAPI::get_forms()` performs. On sites with many forms this avoids
+	 * roughly one query and one JSON decode per form on every importer page load.
+	 *
+	 * @since 2.11.0 Reworked to use `GFFormsModel::get_forms_columns()` when available.
 	 *
 	 * @return array
 	 */
 	public function get_forms() {
 
+		if ( method_exists( '\GFFormsModel', 'get_forms_columns' ) ) {
+			$rows = \GFFormsModel::get_forms_columns( true, false, 'id', 'ASC', array( 'id', 'title' ) );
+		} else {
+			// Direct lightweight query for Gravity Forms 2.2 – 2.7.4, which lacks
+			// `GFFormsModel::get_forms_columns()`. Avoids the per-form
+			// `display_meta` load that `GFAPI::get_forms()` would perform.
+			global $wpdb;
+
+			$table = \GFFormsModel::get_form_table_name();
+			$rows  = $wpdb->get_results( "SELECT id, title FROM {$table} WHERE is_active = 1 AND is_trash = 0 ORDER BY id ASC", ARRAY_A ) ?: array();
+		}
+
 		return array_map( function ( $form ) {
 
-			return array( 'id' => $form['id'], 'title' => $form['title'] );
-		}, \GFAPI::get_forms() );
+			return array( 'id' => (int) $form['id'], 'title' => $form['title'] );
+		}, $rows );
 	}
 
 	/**

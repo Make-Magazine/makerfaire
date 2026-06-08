@@ -1,6 +1,10 @@
 
 # Changelog
 
+## 1.3.23 | April 10, 2026
+
+- Fixed issue where checkbox limits were re-evaluated for every field with conditional logic, causing poor performance on large forms.
+
 ## 1.3.22 | February 4, 2026
 
 - Fixed an issue where spanned checkbox limits were not re-applied after conditional logic ran.

@@ -13,13 +13,13 @@ $content = ob_get_clean();
 $anchor_id = $gravityview->view->get_anchor_id();
 
 /**
- * Modify the wrapper container.
+ * Modify the wrapper container HTML markup used to render the View.
  *
  * @since 2.7
  *
  * @param string   $wrapper_container Wrapper container HTML markup.
- * @param string   $anchor_id         (optional) Unique anchor ID to identify the view.
- * @param \GV\View $view              The View.
+ * @param string   $anchor_id         Unique anchor ID to identify the View.
+ * @param \GV\View $view              The View being rendered.
  */
 $wrapper_container = apply_filters(
 	'gravityview/view/wrapper_container',

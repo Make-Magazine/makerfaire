@@ -13,6 +13,7 @@
 
 /** If this file is called directly, abort. */
 
+use GravityKit\GravityView\QueryFilters\Aggregate;
 use GV\Field_Collection;
 use GV\Grid;
 use GV\Plugin;
@@ -33,6 +34,15 @@ class GravityView_Admin_Views {
 	 * @var self
 	 */
 	private static self $instance;
+
+	/**
+	 * Cached entry counts per form ID, fetched in a single query.
+	 *
+	 * @since 2.55.0
+	 *
+	 * @var array<int, int>|null
+	 */
+	private ?array $entry_counts = null;
 
 	/**
 	 * Returns the singleton.
@@ -257,7 +267,13 @@ class GravityView_Admin_Views {
 			return;
 		}
 
-		$forms        = gravityview_get_forms( true, false, 'title' );
+		$forms = GVCommon::get_forms_columns( true, false, 'title', 'ASC', array( 'id', 'title' ) );
+
+		// Match the case-insensitive natural-order sort that GVCommon::get_forms() applies for $order_by = 'title'.
+		uasort( $forms, static function ( $a, $b ) {
+			return strnatcasecmp( $a['title'] ?? '', $b['title'] ?? '' );
+		} );
+
 		$current_form = \GV\Utils::_GET( 'gravityview_form_id' );
 
 		// If there are no forms to select, show no forms.
@@ -370,21 +386,6 @@ class GravityView_Admin_Views {
 			$priority = 790;
 		}
 
-		if ( empty( $connected_views ) ) {
-			$menu_items['gravityview'] = [
-				'label'        => esc_attr__( 'Create a View', 'gk-gravityview' ),
-				'icon'         => '<i class="fa fa-lg gv-icon-astronaut-head gv-icon"></i>',
-				// Only appears in GF pre-2.5
-				'title'        => esc_attr__( 'Create a View using this form as a data source', 'gk-gravityview' ),
-				'url'          => admin_url( 'post-new.php?post_type=gravityview&form_id=' . $id ),
-				'menu_class'   => 'gv_connected_forms gf_form_toolbar_settings',
-				'priority'     => $priority,
-				'capabilities' => [ 'edit_gravityviews' ],
-			];
-
-			return $menu_items;
-		}
-
 		$sub_menu_items = [];
 		foreach ( (array) $connected_views as $view ) {
 			if ( ! GVCommon::has_cap( 'edit_gravityview', $view->ID ) ) {
@@ -401,36 +402,47 @@ class GravityView_Admin_Views {
 			];
 		}
 
-		// If there were no items added, then let's create the parent menu
-		if ( $sub_menu_items ) {
-			$sub_menu_items[] = [
+		if ( empty( $sub_menu_items ) ) {
+			$menu_items['gravityview'] = [
 				'label'        => esc_attr__( 'Create a View', 'gk-gravityview' ),
-				'icon'         => '<span class="dashicons dashicons-plus"></span>',
+				'icon'         => '<i class="fa fa-lg gv-icon-astronaut-head gv-icon"></i>',
 				'title'        => esc_attr__( 'Create a View using this form as a data source', 'gk-gravityview' ),
 				'url'          => admin_url( 'post-new.php?post_type=gravityview&form_id=' . $id ),
+				'menu_class'   => 'gv_connected_forms gf_form_toolbar_settings',
+				'priority'     => $priority,
 				'capabilities' => [ 'edit_gravityviews' ],
 			];
 
-			// Make sure Gravity Forms uses the submenu; if there's only one item, it uses a link instead of a dropdown
-			$sub_menu_items[] = [
-				'url'          => '#',
-				'label'        => '',
-				'menu_class'   => 'hidden',
-				'capabilities' => '',
-			];
-
-			$menu_items['gravityview'] = [
-				'label'          => __( 'Connected Views', 'gk-gravityview' ),
-				'icon'           => '<i class="fa fa-lg gv-icon-astronaut-head gv-icon"></i>',
-				'title'          => __( 'GravityView Views using this form as a data source', 'gk-gravityview' ),
-				'url'            => '#',
-				'onclick'        => 'return false;',
-				'menu_class'     => 'gv_connected_forms gf_form_toolbar_settings',
-				'sub_menu_items' => $sub_menu_items,
-				'priority'       => $priority,
-				'capabilities'   => [ 'edit_gravityviews' ],
-			];
+			return $menu_items;
 		}
+
+		$sub_menu_items[] = [
+			'label'        => esc_attr__( 'Create a View', 'gk-gravityview' ),
+			'icon'         => '<span class="dashicons dashicons-plus"></span>',
+			'title'        => esc_attr__( 'Create a View using this form as a data source', 'gk-gravityview' ),
+			'url'          => admin_url( 'post-new.php?post_type=gravityview&form_id=' . $id ),
+			'capabilities' => [ 'edit_gravityviews' ],
+		];
+
+		// Make sure Gravity Forms uses the submenu; if there's only one item, it uses a link instead of a dropdown.
+		$sub_menu_items[] = [
+			'url'          => '#',
+			'label'        => '',
+			'menu_class'   => 'hidden',
+			'capabilities' => '',
+		];
+
+		$menu_items['gravityview'] = [
+			'label'          => __( 'Connected Views', 'gk-gravityview' ),
+			'icon'           => '<i class="fa fa-lg gv-icon-astronaut-head gv-icon"></i>',
+			'title'          => __( 'GravityView Views using this form as a data source', 'gk-gravityview' ),
+			'url'            => '#',
+			'onclick'        => 'return false;',
+			'menu_class'     => 'gv_connected_forms gf_form_toolbar_settings',
+			'sub_menu_items' => $sub_menu_items,
+			'priority'       => $priority,
+			'capabilities'   => [ 'edit_gravityviews' ],
+		];
 
 		return $menu_items;
 	}
@@ -508,7 +520,7 @@ class GravityView_Admin_Views {
 		 *
 		 * @param array $gv_tooltips Associative array with unique keys containing array of `title` and `value` keys, as expected by `gform_tooltips` filter.
 		 */
-		$gv_tooltips = apply_filters( 'gravityview_tooltips', $gv_tooltips );
+		$gv_tooltips = GravityView_Deprecated_Hook_Notices::apply_filters( 'gravityview_tooltips', [ $gv_tooltips ], '2.55', 'gravityview/metaboxes/tooltips' );
 
 		/**
 		 * The tooltips GravityView adds to the Gravity Forms tooltip array.
@@ -592,6 +604,26 @@ class GravityView_Admin_Views {
 				}
 
 				break;
+			case 'gv_entry_count':
+				if ( ! GVCommon::has_cap( 'gravityforms_view_entries' ) ) {
+					break;
+				}
+
+				$form_id = gravityview_get_form_id( $post_id );
+
+				if ( empty( $form_id ) ) {
+					$output = '&mdash;';
+					break;
+				}
+
+				$entry_counts = $this->get_entry_counts();
+				$count        = $entry_counts[ (int) $form_id ] ?? 0;
+
+				$entries_url = admin_url( sprintf( 'admin.php?page=gf_entries&id=%d', $form_id ) );
+				$output      = sprintf( '<a href="%s">%s</a>', esc_url( $entries_url ), number_format_i18n( $count ) );
+
+				break;
+
 			case 'shortcode':
 				$view = \GV\View::by_id( $post_id );
 				if ( ! $view ) {
@@ -732,6 +764,10 @@ HTML;
 			$columns['gv_connected_form'] = __( 'Data Source', 'gk-gravityview' );
 		}
 
+		if ( GVCommon::has_cap( 'gravityforms_view_entries' ) ) {
+			$columns['gv_entry_count'] = __( 'Entries', 'gk-gravityview' );
+		}
+
 		$columns['gv_template'] = _x( 'Template',
 			'Column title that shows what template is being used for Views',
 			'gk-gravityview' );
@@ -742,6 +778,62 @@ HTML;
 		$columns['date'] = $date;
 
 		return $columns;
+	}
+
+	/**
+	 * Returns entry counts for all forms connected to Views on the current page.
+	 *
+	 * Fetches counts per unique form ID to avoid N+1 queries when rendering the column.
+	 *
+	 * @since 2.55.0
+	 *
+	 * @return array<int, int> Map of form ID to active entry count.
+	 */
+	private function get_entry_counts(): array {
+		if ( null !== $this->entry_counts ) {
+			return $this->entry_counts;
+		}
+
+		global $wp_query;
+
+		$this->entry_counts = [];
+
+		if ( empty( $wp_query->posts ) ) {
+			return $this->entry_counts;
+		}
+
+		$form_ids = [];
+		foreach ( $wp_query->posts as $post ) {
+			$form_id = gravityview_get_form_id( $post->ID );
+			if ( $form_id ) {
+				$form_ids[] = (int) $form_id;
+			}
+		}
+
+		$form_ids = array_unique( $form_ids );
+
+		if ( empty( $form_ids ) ) {
+			return $this->entry_counts;
+		}
+
+		$form_id_field = Aggregate\Field::from_field(
+			new \GF_Field(
+				[
+					'id'     => 'form_id',
+					'formId' => 0,
+				]
+			)
+		)->with_alias( 'form_id' );
+
+		$results = Aggregate\Query::from( new \GF_Query( $form_ids, [ 'status' => 'active' ] ) )
+			->group_by( $form_id_field )
+			->count();
+
+		foreach ( $results as $row ) {
+			$this->entry_counts[ (int) $row['form_id'] ] = (int) $row['count'];
+		}
+
+		return $this->entry_counts;
 	}
 
 	/**
@@ -920,7 +1012,7 @@ HTML;
 		/**
 		 * @deprecated 2.9
 		 */
-		$blocklist_field_types = apply_filters_deprecated( 'gravityview_blacklist_field_types',
+		$blocklist_field_types = GravityView_Deprecated_Hook_Notices::apply_filters( 'gravityview_blacklist_field_types',
 			[ [], $context ],
 			'2.14',
 			'gravityview_blocklist_field_types' );

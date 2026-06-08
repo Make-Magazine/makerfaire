@@ -36,12 +36,15 @@
 					);
 					foreach ( $fields as $field ) {
 						$title_args['field'] = $field;
+
+						$context = $this->build_legacy_field_context( $field, $title_args['entry'] );
+
 						if ( 0 === $i ) {
 							$title_args['markup'] = '<h3 id="{{ field_id }}" class="{{class}}">{{label}}{{value}}</h3>';
-							echo gravityview_field_output( $title_args );
+							echo gravityview_field_output( $title_args, $context );
 						} else {
 							$title_args['wpautop'] = true;
-							echo gravityview_field_output( $title_args );
+							echo gravityview_field_output( $title_args, $context );
 						}
 						++$i;
 					}

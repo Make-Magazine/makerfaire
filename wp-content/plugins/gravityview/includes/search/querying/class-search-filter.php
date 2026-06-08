@@ -130,7 +130,7 @@ final class Search_Filter {
 	 *
 	 * @var array|string[]
 	 */
-	private array $allowed_operators;
+	private array $allowed_operators = [];
 
 	/**
 	 * Whether this filter's value has been normalized.
@@ -156,6 +156,92 @@ final class Search_Filter {
 	 * @since $ver$
 	 */
 	private function __construct() {
+	}
+
+	/**
+	 * Creates a Search_Filter from a flat search_criteria array.
+	 *
+	 * This is the inverse of the Search_Criteria_Visitor output, enabling round-trip conversion:
+	 * Search_Filter → search_criteria → Search_Filter.
+	 *
+	 * @since 2.55.0
+	 *
+	 * @param array $criteria The search criteria array with optional 'field_filters', 'start_date', 'end_date'.
+	 *
+	 * @return self The Search_Filter group, or an empty group (not considered a group by {@see is_group()})
+	 *              when no filters could be extracted.
+	 */
+	public static function from_search_criteria( array $criteria ): self {
+		$filters       = [];
+		$field_filters = $criteria['field_filters'] ?? [];
+
+		// Extract the mode from the field_filters array.
+		$mode = self::MODE_OR;
+		if ( isset( $field_filters['mode'] ) ) {
+			$mode = self::normalize_mode( (string) $field_filters['mode'] );
+		}
+
+		// Process individual field filters.
+		foreach ( $field_filters as $key => $field_filter ) {
+			// Skip the mode entry and non-array entries.
+			if ( 'mode' === $key || ! is_array( $field_filter ) ) {
+				continue;
+			}
+
+			// Skip entries that were set to false (e.g., by created_by text mode handling).
+			if ( false === $field_filter ) {
+				continue;
+			}
+
+			// Build the leaf filter data.
+			$filter_data = [
+				'key'   => $field_filter['key'] ?? null,
+				'value' => $field_filter['value'] ?? '',
+			];
+
+			if ( isset( $field_filter['operator'] ) ) {
+				$filter_data['operator'] = $field_filter['operator'];
+			}
+
+			if ( isset( $field_filter['form_id'] ) ) {
+				$filter_data['form_id'] = (int) $field_filter['form_id'];
+			}
+
+			if ( ! empty( $field_filter['is_numeric'] ) ) {
+				$filter_data['is_numeric'] = true;
+			}
+
+			if ( ! empty( $field_filter['required'] ) ) {
+				$filter_data['required'] = true;
+			}
+
+			// Filters without a key are global search words; include them as-is.
+			if ( null === $filter_data['key'] ) {
+				$filter_data['key'] = '';
+			}
+
+			$filters[] = self::from_array( $filter_data );
+		}
+
+		// Handle start_date.
+		if ( ! empty( $criteria['start_date'] ) ) {
+			$filters[] = self::create( 'entry_date', $criteria['start_date'], '>=' );
+		}
+
+		// Handle end_date.
+		if ( ! empty( $criteria['end_date'] ) ) {
+			$filters[] = self::create( 'entry_date', $criteria['end_date'], '<=' );
+		}
+
+		if ( [] === $filters ) {
+			// Return an empty group.
+			$filter       = new self();
+			$filter->mode = $mode;
+
+			return $filter;
+		}
+
+		return self::group( $mode, ...$filters );
 	}
 
 	/**
@@ -192,8 +278,12 @@ final class Search_Filter {
 			return $filter;
 		}
 
+		$key = (string) $data['key'];
+		if ( '' === $key ) {
+			$key = 'search_all';
+		}
 		// Leaf filter properties.
-		$filter->key   = (string) $data['key'];
+		$filter->key   = $key;
 		$filter->value = $data['value'];
 		$operator      = (string) ( $data['operator'] ?? '' );
 
@@ -616,7 +706,7 @@ final class Search_Filter {
 	 * @return string[] The allowed operators.
 	 */
 	public function allowed_operators(): array {
-		return array_values( $this->allowed_operators ?? [ self::DEFAULT_OPERATOR ] );
+		return array_values( $this->allowed_operators ?: [ self::DEFAULT_OPERATOR ] );
 	}
 
 	/**

@@ -26,9 +26,13 @@ class Helpers {
 	 * @return array|null Response body.
 	 */
 	public static function query_api( $url, array $args = [] ) {
+		// This is an EXTERNAL call to gravitykit.com — strict cert verification in production
+		// protects against MitM on customer networks. Loopback probes intentionally use a
+		// different knob (`https_local_ssl_verify`); do NOT "unify" these without understanding
+		// the distinction. See HealthCheck::probe_loopback() and Core::is_site_accessible().
 		$request_parameters = [
 			'timeout'   => 15,
-			'sslverify' => false,
+			'sslverify' => CoreHelpers::is_production_environment(),
 			'body'      => $args,
 		];
 
@@ -64,8 +68,8 @@ class Helpers {
 			throw new Exception( $http_response->get_error_message() );
 		}
 
-		$body         = wp_remote_retrieve_body( $http_response );
-		$http_status  = wp_remote_retrieve_response_code( $http_response );
+		$body         = (string) wp_remote_retrieve_body( $http_response );
+		$http_status  = (int) wp_remote_retrieve_response_code( $http_response );
 		$http_headers = wp_remote_retrieve_headers( $http_response );
 		$response     = json_decode( $body, true );
 
@@ -83,11 +87,16 @@ class Helpers {
 		}
 
 		if ( $http_status < 200 || $http_status >= 300 ) {
+			// The EDD API returns non-2xx status codes (e.g., 404 for invalid keys) with a valid JSON body. Distinguish genuine EDD responses from WAF/CDN blocks by checking for the `license` field.
+			if ( is_array( $response ) && isset( $response['license'] ) && ! empty( $response['message'] ) ) {
+				throw new Exception( esc_html( $response['message'] ) );
+			}
+
 			throw new Exception( self::get_http_error_message( (int) $http_status, $http_headers, $body ) );
 		}
 
 		if ( json_last_error() !== JSON_ERROR_NONE ) {
-			throw new Exception( esc_html__( 'Unable to process remote request. Invalid response body.', 'gk-gravityedit' ) );
+			throw new Exception( esc_html__( 'Unable to process remote request. Invalid response body.', 'gk-foundation' ) );
 		}
 
 		return $response;
@@ -114,7 +123,7 @@ class Helpers {
 		if ( false !== $blocked_by ) {
 			return sprintf(
 				/* translators: %s is the name of the security software (e.g., "Monarx", "Wordfence"). */
-				esc_html__( 'Security software (%s) is blocking the connection to the GravityKit license server. Please contact GravityKit support for assistance.', 'gk-gravityedit' ),
+				esc_html__( 'Security software (%s) is blocking the connection to the GravityKit license server. Please contact GravityKit support for assistance.', 'gk-foundation' ),
 				$blocked_by
 			);
 		}
@@ -122,20 +131,20 @@ class Helpers {
 		switch ( $http_status ) {
 			case 403:
 				if ( false !== stripos( $body, 'cloudflare' ) ) {
-					return esc_html__( 'The request to the GravityKit license server was blocked by Cloudflare. Please try again later or contact GravityKit support if the issue persists.', 'gk-gravityedit' );
+					return esc_html__( 'The request to the GravityKit license server was blocked by Cloudflare. Please try again later or contact GravityKit support if the issue persists.', 'gk-foundation' );
 				}
 
-				return esc_html__( 'The request to the GravityKit license server was blocked (HTTP 403). This is typically caused by a firewall or security plugin. Please contact GravityKit support for assistance.', 'gk-gravityedit' );
+				return esc_html__( 'The request to the GravityKit license server was blocked (HTTP 403). This is typically caused by a firewall or security plugin. Please contact GravityKit support for assistance.', 'gk-foundation' );
 
 			case 500:
 			case 502:
 			case 503:
-				return esc_html__( 'The GravityKit license server is temporarily unavailable. Please try again later.', 'gk-gravityedit' );
+				return esc_html__( 'The GravityKit license server is temporarily unavailable. Please try again later.', 'gk-foundation' );
 
 			default:
 				return sprintf(
 					/* translators: %d is the HTTP status code. */
-					esc_html__( 'The GravityKit license server returned an unexpected response (HTTP %d). Please try again later or contact support if the issue persists.', 'gk-gravityedit' ),
+					esc_html__( 'The GravityKit license server returned an unexpected response (HTTP %d). Please try again later or contact support if the issue persists.', 'gk-foundation' ),
 					$http_status
 				);
 		}

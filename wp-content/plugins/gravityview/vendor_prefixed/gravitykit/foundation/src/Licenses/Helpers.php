@@ -25,9 +25,13 @@ class Helpers {
 	 * @return array|null Response body.
 	 */
 	public static function query_api( $url, array $args = [] ) {
+		// This is an EXTERNAL call to gravitykit.com — strict cert verification in production
+		// protects against MitM on customer networks. Loopback probes intentionally use a
+		// different knob (`https_local_ssl_verify`); do NOT "unify" these without understanding
+		// the distinction. See HealthCheck::probe_loopback() and Core::is_site_accessible().
 		$request_parameters = [
 			'timeout'   => 15,
-			'sslverify' => false,
+			'sslverify' => CoreHelpers::is_production_environment(),
 			'body'      => $args,
 		];
 
@@ -63,8 +67,8 @@ class Helpers {
 			throw new Exception( $http_response->get_error_message() );
 		}
 
-		$body         = wp_remote_retrieve_body( $http_response );
-		$http_status  = wp_remote_retrieve_response_code( $http_response );
+		$body         = (string) wp_remote_retrieve_body( $http_response );
+		$http_status  = (int) wp_remote_retrieve_response_code( $http_response );
 		$http_headers = wp_remote_retrieve_headers( $http_response );
 		$response     = json_decode( $body, true );
 
@@ -82,6 +86,11 @@ class Helpers {
 		}
 
 		if ( $http_status < 200 || $http_status >= 300 ) {
+			// The EDD API returns non-2xx status codes (e.g., 404 for invalid keys) with a valid JSON body. Distinguish genuine EDD responses from WAF/CDN blocks by checking for the `license` field.
+			if ( is_array( $response ) && isset( $response['license'] ) && ! empty( $response['message'] ) ) {
+				throw new Exception( esc_html( $response['message'] ) );
+			}
+
 			throw new Exception( self::get_http_error_message( (int) $http_status, $http_headers, $body ) );
 		}
 

@@ -191,7 +191,7 @@ final class Plugin {
 		 *
 		 * @deprecated Use `gravityview/loaded` along with \GV\Request::is_admin(), etc.
 		 */
-		do_action( 'gravityview_include_frontend_actions' );
+		\GravityView_Deprecated_Hook_Notices::do_action( 'gravityview_include_frontend_actions', [], '2.55', 'gravityview/loaded' );
 	}
 
 	/**

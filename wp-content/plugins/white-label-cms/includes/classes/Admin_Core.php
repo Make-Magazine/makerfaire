@@ -2,6 +2,10 @@
 
 class WLCMS_Admin_Core
 {
+    private function asset_version($file) {
+        $path = WLCMS_ASSETS_DIR . $file;
+        return file_exists($path) ? (string) filemtime($path) : WLCMS_VERSION;
+    }
 
     function __construct()
     {
@@ -60,12 +64,12 @@ class WLCMS_Admin_Core
     {
 
         $setting_js = 'js/admin.js';
-        
+
         wp_register_script(
             'wlcms-admin',
             WLCMS_ASSETS_URL . $setting_js,
             array('jquery'),
-            WLCMS_VERSION
+            $this->asset_version($setting_js)
         );
         wp_enqueue_script(['wlcms-admin']);
     }
@@ -79,16 +83,16 @@ class WLCMS_Admin_Core
             'wlcms-admin-settings',
             WLCMS_ASSETS_URL . $setting_js,
             array('jquery', 'select2', 'wp-color-picker', 'jquery-validate'),
-            WLCMS_VERSION . '2'
+            $this->asset_version($setting_js)
         );
 
-        $jquery_validate = 'js/jquery.validate.min.js';
+        $jquery_validate = 'js/jquery.validatev1.19.5.min.js';
 
         wp_register_script(
             'jquery-validate',
             WLCMS_ASSETS_URL . $jquery_validate,
             array('jquery'),
-            WLCMS_VERSION
+            $this->asset_version($jquery_validate)
         );
 
         $ays_before_js = 'js/ays-beforeunload-shim.js';
@@ -96,7 +100,7 @@ class WLCMS_Admin_Core
             'ays-beforeunload-shim',
             WLCMS_ASSETS_URL . $ays_before_js,
             array('jquery'),
-            WLCMS_VERSION
+            $this->asset_version($ays_before_js)
         );
 
         $areyousure_js = 'js/jquery-areyousure.js';
@@ -104,7 +108,7 @@ class WLCMS_Admin_Core
             'jquery-areyousure',
             WLCMS_ASSETS_URL . $areyousure_js,
             array('jquery'),
-            WLCMS_VERSION
+            $this->asset_version($areyousure_js)
         );
 
         $setting_css = 'css/admin-settings.css';
@@ -112,7 +116,7 @@ class WLCMS_Admin_Core
             'wlcms-admin-settings',
             WLCMS_ASSETS_URL . $setting_css,
             array('select2', 'wp-color-picker'),
-            WLCMS_VERSION . '2'
+            $this->asset_version($setting_css)
         );
 
         wp_register_style('select2', WLCMS_ASSETS_URL . 'css/select2.min.css');

@@ -53,6 +53,15 @@ class TaskExecutor {
 	const RECOVERY_INTERVAL = 120;
 
 	/**
+	 * Option name for the task sentinel (dead man's switch).
+	 *
+	 * @since 1.13.0
+	 *
+	 * @var string
+	 */
+	const TASK_SENTINEL = 'gk_scheduler_task_sentinel';
+
+	/**
 	 * Hard cap on PHP execution time (seconds) for individual tasks.
 	 *
 	 * Generous safety net — the cooperative deadline (_meta.deadline) is the
@@ -347,29 +356,33 @@ class TaskExecutor {
 			return;
 		}
 
-		// Layer 2: Hard cap via set_time_limit(). Catches CPU-bound runaways
-		// that ignore the cooperative deadline. On Linux this only counts CPU
-		// time — sleep/I/O don't count. May be disabled via disable_functions.
-		// Skipped under CLI (WP-CLI, system cron) where there is no execution
-		// time limit and CPU-heavy tasks may legitimately run for minutes.
-		if ( function_exists( 'set_time_limit' ) && ! CoreHelpers::is_cli() && ! CoreHelpers::is_wp_cli() ) {
-			@set_time_limit( self::TASK_TIME_LIMIT ); // phpcs:ignore WordPress.PHP.NoSilencedErrors.Discouraged
-		}
-
-		// Register shutdown handler to detect timeout kills (E_ERROR from
-		// set_time_limit) and mark the task as failed in the DB.
-		$this->register_timeout_handler( $task, $job );
-
-		// Layer 1: Inject cooperative deadline into task args. Well-behaved
-		// callbacks check gk_scheduler_should_continue() and checkpoint via
-		// gk_scheduler_checkpoint() when time runs low.
-		$task->set_meta( 'deadline', microtime( true ) + $this->get_task_time_budget() );
-
 		$job_failed = false;
 
 		$ok_statuses = [ DbStore::STATUS_RUNNING, \ActionScheduler_Store::STATUS_COMPLETE ];
 
 		try {
+			// Layer 2: Hard cap via set_time_limit(). Catches CPU-bound runaways
+			// that ignore the cooperative deadline. On Linux this only counts CPU
+			// time — sleep/I/O don't count. May be disabled via disable_functions.
+			// Skipped under CLI (WP-CLI, system cron) where there is no execution
+			// time limit and CPU-heavy tasks may legitimately run for minutes.
+			if ( function_exists( 'set_time_limit' ) && ! CoreHelpers::is_cli() && ! CoreHelpers::is_wp_cli() ) {
+				@set_time_limit( self::TASK_TIME_LIMIT ); // phpcs:ignore WordPress.PHP.NoSilencedErrors.Discouraged
+			}
+
+			// Register shutdown handler to detect timeout kills (E_ERROR from
+			// set_time_limit) and mark the task as failed in the DB.
+			$this->register_timeout_handler( $task, $job );
+
+			// Layer 1: Inject cooperative deadline into task args. Well-behaved
+			// callbacks check Core::scheduler()->should_continue() and checkpoint via
+			// Core::scheduler()->checkpoint() when time runs low.
+			$task->set_meta( 'deadline', microtime( true ) + $this->get_task_time_budget() );
+
+			// Write sentinel before execution. If the process dies, the sentinel
+			// persists and is detected on the next admin page load.
+			$this->set_task_sentinel( $job_id, $job_name );
+
 			$this->schedule_handler->execute_task( $task, $job );
 
 			// Check if execute_task failed the job (e.g., retry exhaustion on can_fail=false).
@@ -386,6 +399,9 @@ class TaskExecutor {
 				$job_failed = true;
 			}
 		}
+
+		// Task finished (success or caught exception) — clear the sentinel.
+		$this->clear_task_sentinel();
 
 		// Disarm the timeout handler so it won't falsely fail this task if a
 		// later action in the same PHP process hits a timeout.
@@ -658,6 +674,9 @@ class TaskExecutor {
 				$error_msg = sprintf( 'Fatal error: %s in %s:%d', $error['message'], $error['file'], $error['line'] );
 			}
 
+			// Mark the sentinel as failed so the next admin page load detects it.
+			$this->fail_task_sentinel( $job_id, $job->name(), $error_msg );
+
 			// Store the error in task meta so the serializer can read it directly.
 			$task_obj = $job->get_task( $task_name );
 
@@ -685,14 +704,14 @@ class TaskExecutor {
 					// the serializer to hide it when the task has a dedicated Error field.
 					// translators: [error] is replaced with the error message.
 					'[task:' . $task_name . '] [task_failed] ' . strtr(
-						__( 'Killed: [error]', 'gk-gravityimport' ),
+						__( 'Killed: [error]', 'gk-foundation' ),
 						[ '[error]' => $error_msg ]
 					)
 				);
 
 				ActionScheduler::logger()->log(
 					$job_id,
-					'[job_failed] ' . __( 'Job failed.', 'gk-gravityimport' )
+					'[job_failed] ' . __( 'Job failed.', 'gk-foundation' )
 				);
 			}
 		};
@@ -709,5 +728,220 @@ class TaskExecutor {
 	 */
 	protected function disarm_timeout_handler(): void {
 		$this->timeout_armed = false;
+	}
+
+	/**
+	 * Writes the task sentinel before execution begins.
+	 *
+	 * Uses a raw INSERT ... ON DUPLICATE KEY UPDATE to bypass the options API
+	 * and ensure the sentinel is written even under constrained shutdown conditions.
+	 *
+	 * @since 1.13.0
+	 *
+	 * @param int    $job_id   The job ID.
+	 * @param string $job_name The job name.
+	 *
+	 * @return void
+	 */
+	protected function set_task_sentinel( int $job_id, string $job_name ): void {
+		global $wpdb;
+
+		$value = maybe_serialize(
+            [
+				'job_id'   => $job_id,
+				'job_name' => $job_name,
+				'time'     => time(),
+				'pid'      => function_exists( 'getmypid' ) ? ( getmypid() ?: 0 ) : 0,
+			]
+        );
+
+		$wpdb->query(
+            $wpdb->prepare(
+                "INSERT INTO {$wpdb->options} (option_name, option_value, autoload) VALUES (%s, %s, 'no')
+			ON DUPLICATE KEY UPDATE option_value = VALUES(option_value)",
+                self::TASK_SENTINEL,
+                $value
+            )
+        );
+
+		wp_cache_delete( self::TASK_SENTINEL, 'options' );
+	}
+
+	/**
+	 * Marks the sentinel as failed after a fatal error.
+	 *
+	 * Called from the shutdown handler when a PHP fatal is detected. Adds the
+	 * `failed` flag and error message to the existing sentinel row.
+	 *
+	 * @since 1.13.0
+	 *
+	 * @param int    $job_id    The job ID.
+	 * @param string $job_name  The job name.
+	 * @param string $error_msg The error message from the fatal.
+	 *
+	 * @return void
+	 */
+	protected function fail_task_sentinel( int $job_id, string $job_name, string $error_msg ): void {
+		global $wpdb;
+
+		$value = maybe_serialize(
+            [
+				'job_id'   => $job_id,
+				'job_name' => $job_name,
+				'time'     => time(),
+				'failed'   => true,
+				'error'    => $error_msg,
+			]
+        );
+
+		$wpdb->query(
+            $wpdb->prepare(
+                "UPDATE {$wpdb->options} SET option_value = %s WHERE option_name = %s",
+                $value,
+                self::TASK_SENTINEL
+            )
+        );
+
+		wp_cache_delete( self::TASK_SENTINEL, 'options' );
+	}
+
+	/**
+	 * Clears the task sentinel after successful execution.
+	 *
+	 * @since 1.13.0
+	 *
+	 * @return void
+	 */
+	protected function clear_task_sentinel(): void {
+		global $wpdb;
+
+		$wpdb->query(
+            $wpdb->prepare(
+                "DELETE FROM {$wpdb->options} WHERE option_name = %s",
+                self::TASK_SENTINEL
+            )
+        );
+
+		wp_cache_delete( self::TASK_SENTINEL, 'options' );
+	}
+
+	/**
+	 * Checks for a stale task sentinel on admin page load.
+	 *
+	 * Two detection modes:
+	 * 1. Failed flag: the shutdown handler ran and set `failed = true` on the
+	 *    sentinel before PHP exited. Definitive crash signal — PHP itself
+	 *    detected a fatal (memory exhaustion, timeout, uncaught Throwable).
+	 * 2. Age timeout: sentinel is older than `max(60, budget * 3)` seconds,
+	 *    capped at 600s. Catches SIGKILL-class kills (kernel OOM-killer,
+	 *    worker restart, segfault) where the shutdown handler could not run.
+	 *    A healthy task clears the sentinel within one budget cycle, so this
+	 *    threshold only trips on truly dead processes.
+	 *
+	 * @since 1.13.0
+	 *
+	 * @param ScheduleHandler $schedule_handler The schedule handler.
+	 *
+	 * @return void
+	 */
+	public static function check_stale_sentinel( ScheduleHandler $schedule_handler ): void {
+		$sentinel = get_option( self::TASK_SENTINEL );
+
+		if ( ! $sentinel || ! is_array( $sentinel ) ) {
+			return;
+		}
+
+		$job_id   = (int) ( $sentinel['job_id'] ?? 0 );
+		$job_name = (string) ( $sentinel['job_name'] ?? '' );
+
+		if ( ! $job_id ) {
+			delete_option( self::TASK_SENTINEL );
+
+			return;
+		}
+
+		// Mode 1: shutdown handler already ran — act immediately.
+		if ( ! empty( $sentinel['failed'] ) ) {
+			$error = (string) ( $sentinel['error'] ?? __( 'Task failed (sentinel).', 'gk-foundation' ) );
+
+			self::handle_stale_sentinel( $schedule_handler, $job_id, $error );
+
+			return;
+		}
+
+		// Age-based timeout. 3× cooperative budget, floor 60s, ceiling 600s
+		// (10 min) so a misconfigured budget filter can't stretch recovery
+		// indefinitely. A healthy task clears its sentinel within one budget
+		// cycle; anything older than the timeout is presumed dead.
+		$age     = time() - (int) ( $sentinel['time'] ?? 0 );
+		$budget  = (int) self::get_task_time_budget();
+		$timeout = min( 600, max( 60, $budget * 3 ) );
+
+		if ( $age >= $timeout ) {
+			$error = strtr(
+				__( 'Task did not complete within [seconds]s (sentinel timeout).', 'gk-foundation' ),
+				[ '[seconds]' => $age ]
+			);
+
+			self::handle_stale_sentinel( $schedule_handler, $job_id, $error );
+		}
+	}
+
+	/**
+	 * Fails a job detected by a stale sentinel and fires the failed hook.
+	 *
+	 * @since 1.13.0
+	 *
+	 * @param ScheduleHandler $schedule_handler The schedule handler.
+	 * @param int             $job_id           The job ID.
+	 * @param string          $error            The error description.
+	 *
+	 * @return void
+	 */
+	private static function handle_stale_sentinel( ScheduleHandler $schedule_handler, int $job_id, string $error ): void {
+		delete_option( self::TASK_SENTINEL );
+
+		$job = $schedule_handler->get_job( $job_id );
+
+		if ( ! $job ) {
+			return;
+		}
+
+		$status = $job->status();
+
+		// Already completed or cancelled — nothing to do.
+		if ( in_array( $status, [ \ActionScheduler_Store::STATUS_COMPLETE, \ActionScheduler_Store::STATUS_CANCELED ], true ) ) {
+			return;
+		}
+
+		// If the shutdown handler already failed the job, just fire the hook.
+		if ( \ActionScheduler_Store::STATUS_FAILED !== $status ) {
+			// Set error on the running task so products can read it.
+			$running_tasks = array_keys( $job->progress()->running() );
+
+			if ( ! empty( $running_tasks ) ) {
+				$crashed_task = $job->get_task( $running_tasks[0] );
+
+				if ( $crashed_task && ! $crashed_task->meta( 'error' ) ) {
+					$crashed_task->set_meta( 'error', $error );
+				}
+			}
+
+			try {
+				$schedule_handler->fail_job( $job );
+			} catch ( Throwable $e ) { // phpcs:ignore Generic.CodeAnalysis.EmptyStatement.DetectedCatch
+				// fail_job() failed — don't fire hook with inconsistent state.
+				return;
+			}
+		}
+
+		/**
+		 * Fires after a job is marked as failed.
+		 *
+		 * @since 1.12.0
+		 *
+		 * @param JobInstance $job The failed job instance.
+		 */
+		do_action( 'gk/foundation/scheduler/job/failed', $job );
 	}
 }

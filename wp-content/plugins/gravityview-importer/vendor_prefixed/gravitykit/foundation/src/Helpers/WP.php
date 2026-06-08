@@ -140,6 +140,95 @@ class WP {
 	}
 
 	/**
+	 * Inserts an option only when the option does not already exist.
+	 *
+	 * This is intentionally insert-only. Use it for lock and mutex rows where
+	 * updating an existing option would incorrectly grant ownership to another
+	 * request. Use WordPress option APIs for normal option writes.
+	 *
+	 * @since 1.19.0
+	 *
+	 * @param string $option   Option name.
+	 * @param mixed  $value    Option value.
+	 * @param bool   $autoload Whether to autoload the option.
+	 *
+	 * @return bool Whether the option was inserted.
+	 */
+	public static function insert_option_if_absent( string $option, $value, bool $autoload = false ): bool {
+		/**
+		 * @var wpdb $wpdb
+		 */
+		global $wpdb;
+
+		if ( ! is_object( $wpdb ) ) {
+			return false;
+		}
+
+		$option = trim( $option );
+
+		if ( '' === $option ) {
+			return false;
+		}
+
+		wp_protect_special_option( $option );
+
+		if ( is_object( $value ) ) {
+			$value = clone $value;
+		}
+
+		$serialized_value = maybe_serialize( $value );
+		$autoload_value   = $autoload ? 'yes' : 'no';
+
+		$inserted = (int) $wpdb->query(
+			$wpdb->prepare(
+				/** @phpstan-ignore-next-line */
+				"INSERT IGNORE INTO `$wpdb->options` (`option_name`, `option_value`, `autoload`) VALUES (%s, %s, %s)",
+				$option,
+				$serialized_value,
+				$autoload_value
+			)
+		);
+
+		if ( 1 !== $inserted ) {
+			self::clear_option_cache_after_insert_miss( $option );
+
+			return false;
+		}
+
+		self::update_option_cache_after_insert( $option, $serialized_value, $autoload_value );
+
+		return true;
+	}
+
+	/**
+	 * Clears stale option caches after an insert-only write misses.
+	 *
+	 * A missed insert usually means the row already exists. If this request had
+	 * previously cached the option as missing, follow-up get_option() calls must
+	 * be allowed to read the row that another request inserted.
+	 *
+	 * @since 1.19.0
+	 *
+	 * @param string $option Option name.
+	 *
+	 * @return void
+	 */
+	private static function clear_option_cache_after_insert_miss( string $option ): void {
+		if ( wp_installing() ) {
+			return;
+		}
+
+		wp_cache_delete( $option, 'options' );
+
+		$notoptions = wp_cache_get( 'notoptions', 'options' );
+
+		if ( is_array( $notoptions ) && isset( $notoptions[ $option ] ) ) {
+			unset( $notoptions[ $option ] );
+			wp_cache_set( 'notoptions', $notoptions, 'options' );
+		}
+	}
+
+	/**
 	 * Wrapper around {@see get_site_transient()}. Transient is stored as an option {@see self::set_site_transient()} in order to avoid object caching issues.
 	 * Raw SQL query (taken from WP's core) is used in order to avoid object caching issues, such as with the Redis Object Cache plugin.
 	 *
@@ -347,6 +436,38 @@ class WP {
 			'expiration' => 0 === $expiration ? $expiration : time() + $expiration,
 			'value'      => $value,
 		];
+	}
+
+	/**
+	 * Updates WordPress option caches after an insert-only option write.
+	 *
+	 * @since 1.19.0
+	 *
+	 * @param string $option           Option name.
+	 * @param string $serialized_value Serialized option value.
+	 * @param string $autoload         Autoload value.
+	 *
+	 * @return void
+	 */
+	private static function update_option_cache_after_insert( string $option, string $serialized_value, string $autoload ): void {
+		if ( wp_installing() ) {
+			return;
+		}
+
+		if ( 'yes' === $autoload ) {
+			$alloptions            = wp_load_alloptions( true );
+			$alloptions[ $option ] = $serialized_value;
+			wp_cache_set( 'alloptions', $alloptions, 'options' );
+		} else {
+			wp_cache_set( $option, $serialized_value, 'options' );
+		}
+
+		$notoptions = wp_cache_get( 'notoptions', 'options' );
+
+		if ( is_array( $notoptions ) && isset( $notoptions[ $option ] ) ) {
+			unset( $notoptions[ $option ] );
+			wp_cache_set( 'notoptions', $notoptions, 'options' );
+		}
 	}
 
 	/**

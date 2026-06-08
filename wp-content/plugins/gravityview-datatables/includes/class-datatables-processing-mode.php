@@ -157,9 +157,9 @@ class GV_Extension_DataTables_Processing_Mode extends GV_DataTables_Extension {
 		$shadow_data                         = [];
 
 		foreach ( $fields as $column_index => $field ) {
-			$type = $field->type ?: $field->field->type;
+			$type = $field->type ?: ( $field->field->type ?? null );
 
-			if ( ! in_array( $type, $field_types_with_special_processing, true ) ) {
+			if ( ! $type || ! in_array( $type, $field_types_with_special_processing, true ) ) {
 				continue;
 			}
 

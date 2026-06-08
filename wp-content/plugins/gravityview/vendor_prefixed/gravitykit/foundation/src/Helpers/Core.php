@@ -140,7 +140,7 @@ class Core {
 	 *
 	 * @since 1.0.0
 	 * @since 1.2.0 Added $skip_cache parameter.
-	 * @since TODO  Use static variable to cache plugins data.
+	 * @since 1.15.0  Use static variable to cache plugins data.
 	 *
 	 * @param bool $skip_cache (optional) Whether to skip cache when getting plugins data. Default: false.
 	 *
@@ -393,8 +393,67 @@ class Core {
 	}
 
 	/**
-	 * Compares two version strings after trimming any trailing Git-style commit hashes.
-	 * Uses PHP's built-in version_compare() function.
+	 * Determines whether the site is running in a production environment.
+	 *
+	 * Uses WordPress's environment type API (wp_get_environment_type(), WP 5.5+). When that API is
+	 * unavailable the result defaults to "production" — the conservative choice, because every
+	 * consumer of this helper uses it to decide whether to enforce a security control (e.g.
+	 * TLS certificate verification on outbound HTTP requests).
+	 *
+	 * Call this from any site where a setting should be strict in production and permissive in
+	 * dev/staging/local — the canonical example being `sslverify` on `wp_remote_*` calls, which
+	 * must be enforced on real sites but would break loopback probes and dev installs that run
+	 * with self-signed certificates.
+	 *
+	 * The result is filterable via `gk/foundation/is-production-environment` so site owners can
+	 * override in edge cases (e.g. a production host with a genuinely broken CA bundle).
+	 *
+	 * @since 1.15.0
+	 *
+	 * @return bool True when wp_get_environment_type() returns 'production' or is unavailable.
+	 */
+	public static function is_production_environment(): bool {
+		/**
+		 * Filters whether the site is considered a production environment for Foundation's
+		 * security-sensitive defaults (e.g. outbound `sslverify`). Return true to enforce the
+		 * strict production behavior, false to opt out (useful on production hosts with broken
+		 * CA bundles, or when testing non-production hardening locally).
+		 *
+		 * @since 1.15.0
+		 *
+		 * @param bool $is_production Whether the detected environment is production.
+		 */
+		return (bool) apply_filters( 'gk/foundation/is-production-environment', 'production' === self::get_environment_type() );
+	}
+
+	/**
+	 * Returns the WordPress environment type, defaulting to `'production'` when
+	 * `wp_get_environment_type()` is unavailable (WP < 5.5).
+	 *
+	 * Centralises the `function_exists` guard so every caller in Foundation reads the same value
+	 * and agrees on the fallback. Was previously duplicated inline in several places.
+	 *
+	 * @since 1.15.0
+	 *
+	 * @return string One of `'local'`, `'development'`, `'staging'`, `'production'`.
+	 */
+	public static function get_environment_type(): string {
+		return function_exists( 'wp_get_environment_type' )
+			? wp_get_environment_type()
+			: 'production';
+	}
+
+	/**
+	 * Compares two version strings after stripping Git-style commit-hash suffixes.
+	 *
+	 * This helper is intentionally context-free: it strips ONLY suffixes that look like a
+	 * Git commit hash (7–40 lowercase hex characters). Any other non-numeric suffix (channel
+	 * identifier, custom label) is preserved and handed to PHP's `version_compare`, which
+	 * understands semver pre-release ordering on its own.
+	 *
+	 * Channel-aware comparisons (where "custom label" vs "channel name" matters) should go
+	 * through `ChannelManager::strip_build_suffix()` first so the caller can pass the product's
+	 * actual channel list — `version_compare` has no product context to distinguish the two.
 	 *
 	 * @since 1.2.24
 	 *
@@ -408,7 +467,7 @@ class Core {
 		$sanitize = function ( $version ) {
 			$version = trim( (string) $version );
 
-			return preg_replace( '/-[a-zA-Z0-9]{7,40}$/', '', $version );
+			return preg_replace( '/-[0-9a-f]{7,40}$/', '', $version );
 		};
 
 		$clean1 = $sanitize( $version1 );
@@ -497,11 +556,16 @@ class Core {
 			$checks_to_try = array_merge( $checks_to_try, $args['custom_checks'] );
 		}
 
-		// Prepare default request arguments.
+		// Prepare default request arguments. Loopback requests follow WordPress core's convention
+		// — default off, filterable via `https_local_ssl_verify` so a site overriding it for Site
+		// Health picks up the same behaviour here. See wp-admin/includes/class-wp-site-health.php
+		// and wp-includes/cron.php, both of which unconditionally disable sslverify on loopback.
+		//
+		// See https://developer.wordpress.org/reference/hooks/https_local_ssl_verify/.
 		$default_request_args = [
 			'timeout'     => 3,
 			'redirection' => 0,
-			'sslverify'   => false,
+			'sslverify'   => apply_filters( 'https_local_ssl_verify', false ),
 			'headers'     => [
 				'Cache-Control' => 'no-cache',
 			],

@@ -161,7 +161,7 @@ class AdminMenu {
 				 */
 				$badge_count = (int) apply_filters( "gk/foundation/admin-menu/submenu/{$submenu_item['id']}/counter", 0 );
 
-				if ( Arr::get( $submenu, 'hide' ) ) {
+				if ( Arr::get( $submenu_item, 'hide' ) ) {
 					$badge_count = 0;
 				}
 
@@ -202,9 +202,16 @@ class AdminMenu {
 
 		$saved_menu_position = self::get_menu_position_by_id( $gk_settings['top_level_menu_position'] ?? '' );
 
-		// If saved menu position doesn't exist, fall back to Media (or GF position if GF is active).
+		// If saved menu position doesn't exist, fall back to a sensible default.
 		if ( null === $saved_menu_position ) {
-			$saved_menu_position = class_exists( 'GFForms' ) ? apply_filters( 'gform_menu_position', '16.9' ) : self::get_menu_position_by_id( 'upload.php' );
+			if ( CoreHelpers::is_network_admin() ) {
+				// Network admin: after Plugins (position 20).
+				$saved_menu_position = self::get_menu_position_by_id( 'plugins.php' );
+			} elseif ( class_exists( 'GFForms' ) ) {
+				$saved_menu_position = apply_filters( 'gform_menu_position', '16.9' );
+			} else {
+				$saved_menu_position = self::get_menu_position_by_id( 'upload.php' );
+			}
 		}
 
 		/**

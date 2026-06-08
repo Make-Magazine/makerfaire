@@ -92,14 +92,30 @@
 				self.bindTriggerEvents();
 			} );
 
-			// Re-evaluate limits after conditional logic runs.
-			$(document).on( 'gform_post_conditional_logic', function( event, formId ) {
-				if (formId != self.formId) {
-					return;
-				}
-
-				self.bindTriggerEvents();
+			// Re-evaluate limits after conditional logic runs. Only needed when limits
+			// span multiple fields, as single-field limits are unaffected by CL changes.
+			var hasSpannedGroups = self.groups.some( function( group ) {
+				return group.fields.length > 1;
 			} );
+
+			if ( hasSpannedGroups ) {
+				$( document ).off( 'gform_post_conditional_logic.gplc_' + self.formId );
+				$( document ).on( 'gform_post_conditional_logic.gplc_' + self.formId, function( event, formId ) {
+					if (formId != self.formId) {
+						return;
+					}
+
+					// GF fires gform_post_conditional_logic once per field. Use requestAnimationFrame
+					// to coalesce these into a single bindTriggerEvents() call before the next paint.
+					if ( ! self._clPending ) {
+						self._clPending = true;
+						requestAnimationFrame( function() {
+							self._clPending = false;
+							self.bindTriggerEvents();
+						} );
+					}
+				} );
+			}
 		}
 
 		self.handleCheckboxClick = function( $elem ) {

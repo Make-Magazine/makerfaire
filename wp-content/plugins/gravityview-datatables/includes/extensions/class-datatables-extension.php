@@ -14,7 +14,7 @@ abstract class GV_DataTables_Extension {
 	function __construct() {
 
 		/**
-		 * Enqueue scripts and styles when GV shortcode is manually processed (e.g., by calling `do_shortcode()`)
+		 * Enqueue scripts and styles when GV shortcode is manually processed (e.g., by calling `do_shortcode()`).
 		 *
 		 * @since 2.6
 		 *
@@ -22,6 +22,10 @@ abstract class GV_DataTables_Extension {
 		 * @param \WP_Post $post Associated WP post
 		 */
 		add_action( 'gravityview/shortcode/before-processing', function ( $view, $post ) {
+			if ( ! wp_script_is( 'gv-datatables', 'registered' ) ) {
+				return;
+			}
+
 			$this->add_scripts( array(), array(), $post );
 		}, 10, 2 );
 

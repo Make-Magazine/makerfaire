@@ -7,7 +7,9 @@
   min-width: 300px;
   max-width: 680px;
   display: block;
-  margin: 30px auto;
+  margin-block-start: 12px;
+  margin-block-end: 48px;
+  margin-inline: max(24px, (100% - 680px) / 2);
   font-size: 1em;
   text-align: center;
   zoom: 1;
@@ -380,6 +382,40 @@
   padding: 0;
 }
 
+.tl-gk_foundation_trustedlogin-auth__actions--unavailable {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+
+.tl-gk_foundation_trustedlogin-auth__retry-wrap {
+  margin: 0;
+  padding: 0;
+}
+
+.tl-gk_foundation_trustedlogin-auth__retry {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25em;
+  color: rgb(120.5454545455, 131.0909090909, 142.9545454545);
+  font-size: 0.95em;
+  text-decoration: none;
+  border-bottom: 1px dotted rgb(148.3636363636, 156.7272727273, 166.1363636364);
+  padding-bottom: 1px;
+}
+.tl-gk_foundation_trustedlogin-auth__retry:hover, .tl-gk_foundation_trustedlogin-auth__retry:focus {
+  color: #555D66;
+  border-bottom-style: solid;
+}
+.tl-gk_foundation_trustedlogin-auth__retry .dashicons {
+  font-size: 18px;
+  width: 18px;
+  height: 18px;
+  line-height: 18px;
+  vertical-align: middle;
+}
+
 .button-trustedlogin-gk_foundation_trustedlogin {
   position: relative;
   text-align: center;
@@ -452,6 +488,7 @@
   text-align: center;
   margin-left: 20px;
   margin-right: 20px;
+  width: calc(100% - 40px);
   margin-bottom: 24px;
 }
 .button-trustedlogin-gk_foundation_trustedlogin.button-hero small {

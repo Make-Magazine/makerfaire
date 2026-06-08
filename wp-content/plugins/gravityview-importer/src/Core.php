@@ -2,6 +2,8 @@
 
 namespace GravityKit\GravityImport;
 
+use GravityKit\GravityImport\CLI\ImportCommand;
+
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
 class Core {
@@ -38,6 +40,12 @@ class Core {
 		add_action( 'init', array( '\GravityKit\GravityImport\Batch', 'register_post_type' ) );
 		add_action( 'rest_api_init', array( __CLASS__, 'rest_api_init' ) );
 
+		if ( defined( 'WP_CLI' ) && WP_CLI ) {
+			add_filter( 'gk/foundation/cli/commands', array( __CLASS__, 'register_cli_commands' ) );
+		}
+
+		FoundationSettings::bootstrap();
+
 		// Enable compatability with third-party plugins
 		new Compat();
 
@@ -52,6 +60,21 @@ class Core {
 
 		// Initialize UI.
 		new UI( self::version );
+	}
+
+	/**
+	 * Registers Foundation CLI commands.
+	 *
+	 * @since 2.11.0
+	 *
+	 * @param array $commands Command map.
+	 *
+	 * @return array Command map.
+	 */
+	public static function register_cli_commands( $commands ) {
+		return $commands + array(
+			'import' => ImportCommand::class,
+		);
 	}
 
 	/**

@@ -2,7 +2,7 @@
 /**
  * @license MIT
  *
- * Modified by gravitykit on 20-February-2026 using {@see https://github.com/BrianHenryIE/strauss}.
+ * Modified by gravitykit on 28-April-2026 using {@see https://github.com/BrianHenryIE/strauss}.
  */
 
 namespace GravityKit\AdvancedFilter\QueryFilters\Filter\Visitor;
@@ -65,7 +65,7 @@ final class ProcessMergeTagsVisitor implements EntryAwareFilterVisitor {
 			return;
 		}
 
-		$form = $this->getForm( $filter );
+		$form = $this->get_form( $filter );
 
 		// Track the original value to detect merge tag processing.
 		$original_values = $value;
@@ -186,20 +186,18 @@ final class ProcessMergeTagsVisitor implements EntryAwareFilterVisitor {
 	/**
 	 * Returns the proper form object.
 	 *
-	 * @since $ver4
+	 * @since 2.0.0
 	 *
 	 * @param Filter $filter The filter.
 	 *
 	 * @return array
 	 */
-	private function getForm( Filter $filter ): array {
+	private function get_form( Filter $filter ): array {
 		$form = $this->form;
 
-		// Todo: can this be removed?
-
-//		if ( isset( $filter['form_id'] ) ) {
-//			$form = GFAPI::get_form( $filter['form_id'] );
-//		}
+		if ( $filter->form_id() ) {
+			$form = $this->form_repository->get_form( $filter->form_id() );
+		}
 
 		if ( ! $form ) {
 			$form = $this->form_repository->get_form();

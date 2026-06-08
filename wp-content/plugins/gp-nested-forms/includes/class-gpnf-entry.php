@@ -197,6 +197,44 @@ class GPNF_Entry {
 			}
 		}
 
+		/*
+		 * Prevent re-parenting an already linked child entry.
+		 *
+		 * Newer payment flows (e.g. Stripe Card Element) may create multiple parent entries for the same
+		 * session due to retries. If a child entry has already been linked to a numeric parent entry ID, do not
+		 * overwrite that relationship with a new parent entry ID by default.
+		 *
+		 * @param bool       $allow          Whether to allow re-parenting.
+		 * @param int        $child_entry_id The child entry ID being updated.
+		 * @param int|string $existing_parent The current parent entry ID/hash stored on the child entry.
+		 * @param int|string $new_parent     The parent entry ID/hash that would be set.
+		 * @param int        $parent_form_id The parent form ID.
+		 */
+		$existing_parent = gform_get_meta( $this->_entry_id, self::ENTRY_PARENT_KEY );
+		if (
+			$existing_parent
+			&& $parent_entry_id
+			&& $existing_parent != $parent_entry_id
+			&& is_numeric( $existing_parent )
+			&& ! gf_apply_filters(
+				array( 'gpnf_allow_child_entry_reparenting', $parent_form_id ),
+				false,
+				$this->_entry_id,
+				$existing_parent,
+				$parent_entry_id,
+				$parent_form_id
+			)
+		) {
+			// Ensure parent form meta is set even when we refuse to re-parent.
+			$existing_parent_form = gform_get_meta( $this->_entry_id, self::ENTRY_PARENT_FORM_KEY );
+			if ( (int) $existing_parent_form !== (int) $parent_form_id ) {
+				gform_update_meta( $this->_entry_id, self::ENTRY_PARENT_FORM_KEY, $parent_form_id );
+				$this->_entry[ self::ENTRY_PARENT_FORM_KEY ] = $parent_form_id;
+			}
+
+			return $existing_parent;
+		}
+
 		// Set either temporary parent hashcode or actual parent entry ID
 		gform_update_meta( $this->_entry_id, self::ENTRY_PARENT_KEY, $parent_entry_id );
 		$this->_entry[ self::ENTRY_PARENT_KEY ] = $parent_entry_id;

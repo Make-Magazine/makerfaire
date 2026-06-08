@@ -60,7 +60,11 @@ class View_DataTable_Template extends View_Template {
 		}
 
 		// Add hidden column headers for sort fields that aren't in the visible columns.
-		$sort_field_setting = (array) $this->view->settings->get( 'sort_field', array() );
+		// Read from saved post meta to stay in sync with the JS config and AJAX data,
+		// which also read from post meta via get_original_sort_field_setting().
+		$original_settings  = get_post_meta( $this->view->ID, '_gravityview_template_settings', true );
+		$sort_field_setting = (array) ( isset( $original_settings['sort_field'] ) ? $original_settings['sort_field'] : [] );
+		$sort_field_setting = array_unique( $sort_field_setting );
 
 		foreach ( $sort_field_setting as $sort_field ) {
 			if ( empty( $sort_field ) || in_array( $sort_field, $visible_field_ids ) ) {

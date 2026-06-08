@@ -724,7 +724,13 @@ class GravityView_View extends \GV\Gamajo_Template_Loader {
 			 * @param array             $fields Array of field configurations.
 			 * @param \GravityView_View $this   The current View object.
 			 */
-			$fields = apply_filters( 'gravityview_table_cells', $fields, $this );
+			$fields = GravityView_Deprecated_Hook_Notices::apply_filters( 'gravityview_table_cells', [ $fields, $this ], '2.55', 'gravityview/template/table/fields' );
+
+			// The `gravityview/template/table/fields` hook is intentionally NOT applied here.
+			// Its signature requires a `\GV\Template_Context` as the 2nd arg, which is unavailable
+			// in this legacy rendering path (only a `\GravityView_View` exists). The new hook is
+			// applied in the 2.0 templates: class-gv-template-entry-table.php and
+			// class-gv-template-view-table.php.
 		}
 
 		if ( empty( $fields ) ) {
@@ -738,7 +744,9 @@ class GravityView_View extends \GV\Gamajo_Template_Loader {
 		foreach ( $fields as $field ) {
 			$final_atts['field'] = $field;
 
-			$field_output .= gravityview_field_output( $final_atts );
+			$context = $this->build_legacy_field_context( $field, $final_atts['entry'] );
+
+			$field_output .= gravityview_field_output( $final_atts, $context );
 		}
 
 		/**
@@ -817,6 +825,69 @@ class GravityView_View extends \GV\Gamajo_Template_Loader {
 		} else {
 			return null;
 		}
+	}
+
+	/**
+	 * Wraps the singleton's legacy state into a modern \GV\Template_Context for a single field.
+	 *
+	 * Used by the deprecated `GravityView_View::renderZone()` rendering path and the legacy list
+	 * templates so the new `gravityview/template/field_output/context`,
+	 * `gravityview/field_output/context/{$tag}`, `gravityview/field_output/html`, etc. filters
+	 * receive a usable context instead of null. Returns null when the legacy state cannot be
+	 * wrapped, in which case `gravityview_field_output()` falls back to its deprecated path.
+	 *
+	 * Handles joined Views by resolving the field's source form via `$field['form_id']` against
+	 * `$gv_view->joins`, mirroring `\GV\View::get_source()`.
+	 *
+	 * @since 2.60.0
+	 *
+	 * @param array $field A GravityView field configuration array, with at least an `id` key.
+	 * @param array $entry The Gravity Forms entry array currently being rendered.
+	 *
+	 * @return \GV\Template_Context|null The wrapped context, or null when wrapping isn't possible.
+	 */
+	public function build_legacy_field_context( array $field, array $entry ): ?\GV\Template_Context {
+		if ( empty( $entry['id'] ) || ! isset( $field['id'] ) ) {
+			return null;
+		}
+
+		$gv_view = \GV\View::by_id( $this->getViewId() );
+
+		if ( ! $gv_view ) {
+			return null;
+		}
+
+		$gv_entry = \GV\GF_Entry::from_entry( $entry );
+
+		if ( ! $gv_entry ) {
+			return null;
+		}
+
+		// Resolve the field's source form so joined-form fields aren't silently misrouted.
+		$field_form = $gv_view->form;
+
+		if ( ! empty( $field['form_id'] ) && isset( $gv_view->form->ID ) && $field['form_id'] != $gv_view->form->ID ) {
+			foreach ( $gv_view->joins as $join ) {
+				if ( isset( $join->join_on->ID ) && $join->join_on->ID == $field['form_id'] ) {
+					$field_form = $join->join_on;
+					break;
+				}
+			}
+		}
+
+		$gv_field = is_numeric( $field['id'] )
+			? \GV\GF_Field::by_id( $field_form, $field['id'] )
+			: \GV\Internal_Field::by_id( $field['id'] );
+
+		if ( ! $gv_field ) {
+			return null;
+		}
+
+		return \GV\Template_Context::from_template( [
+			'view'  => $gv_view,
+			'field' => $gv_field,
+			'entry' => $gv_entry,
+		] );
 	}
 
 	/**

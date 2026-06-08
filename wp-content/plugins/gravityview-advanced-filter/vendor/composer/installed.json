@@ -2,28 +2,28 @@
     "packages": [
         {
             "name": "gravitykit/query-filters",
-            "version": "v2.8.2",
-            "version_normalized": "2.8.2.0",
+            "version": "v2.10.2",
+            "version_normalized": "2.10.2.0",
             "source": {
                 "type": "git",
                 "url": "git@github.com:GravityKit/Query-Filters.git",
-                "reference": "671544ddb6bc766f6f7634dabb7f94ae27036f49"
+                "reference": "7ebac6b9dbbaeadfd04886d28fa3f98743e70b5f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/GravityKit/Query-Filters/zipball/671544ddb6bc766f6f7634dabb7f94ae27036f49",
-                "reference": "671544ddb6bc766f6f7634dabb7f94ae27036f49",
+                "url": "https://api.github.com/repos/GravityKit/Query-Filters/zipball/7ebac6b9dbbaeadfd04886d28fa3f98743e70b5f",
+                "reference": "7ebac6b9dbbaeadfd04886d28fa3f98743e70b5f",
                 "shasum": ""
             },
             "require": {
                 "ext-json": "*",
-                "php": ">=7.2"
+                "php": ">=7.4"
             },
             "require-dev": {
-                "phpunit/phpunit": "~8.5",
+                "phpunit/phpunit": "^9.6.33",
                 "yoast/phpunit-polyfills": "^1.1.0"
             },
-            "time": "2026-02-19T20:20:56+00:00",
+            "time": "2026-04-28T00:42:23+00:00",
             "type": "library",
             "installation-source": "dist",
             "autoload": {
@@ -47,7 +47,7 @@
             ],
             "description": "Advanced filtering functionality for Gravity Forms' GF_Query and form fields.",
             "support": {
-                "source": "https://github.com/GravityKit/Query-Filters/tree/v2.8.2",
+                "source": "https://github.com/GravityKit/Query-Filters/tree/v2.10.2",
                 "issues": "https://github.com/GravityKit/Query-Filters/issues"
             },
             "install-path": "../gravitykit/query-filters"

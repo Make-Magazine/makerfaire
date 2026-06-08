@@ -51,7 +51,7 @@ final class View_Layout_Builder_Template extends View_Template {
          * @param array            $entry Current entry being displayed.
          * @param \GravityView_View $view  Current GravityView_View object.
          */
-        $class = apply_filters( 'gravityview_entry_class', $class, $entry->as_entry(), \GravityView_View::getInstance() );
+        $class = \GravityView_Deprecated_Hook_Notices::apply_filters( 'gravityview_entry_class', [ $class, $entry->as_entry(), \GravityView_View::getInstance() ], '2.55', 'gravityview/template/layout-builder/entry/class' );
 
         /**
          * Modify the class applied to the entry row.

@@ -51,4 +51,3 @@ class AdminNotifier {
 		throw new Exception( 'Test exception' );
 	}
 }
-

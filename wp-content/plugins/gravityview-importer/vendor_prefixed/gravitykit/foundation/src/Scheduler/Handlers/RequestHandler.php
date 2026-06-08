@@ -57,7 +57,7 @@ class RequestHandler extends WP_Async_Request {
 	 *
 	 * @return array|null
 	 */
-	public function dispatch(): ? array {
+	public function dispatch(): ?array {
 		$this->logger()->debug( __METHOD__ );
 
 		// Modify the timeout via filters since WordPress enforces a minimum of 1 second.

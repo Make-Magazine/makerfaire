@@ -1,7 +1,8 @@
 === GravityView - Advanced Filter Extension ===
 Tags: GravityView, Gravity Forms, filtering, conditional logic
 Requires at least: 4.4
-Tested up to: 6.9.1
+Requires PHP: 7.4
+Tested up to: 6.9.4
 Contributors: GravityKit
 License: GPLv3 or later
 
@@ -14,6 +15,40 @@ Filter which entries are shown in a View based on their values.
 3. Follow the instructions
 
 == Changelog ==
+
+= 4.6.1 on April 27, 2026 =
+
+This hotfix restores the controls for adding new conditional logic rules.
+
+#### 🐛 Fixed
+Conditional logic controls missing in the Filter & Sort tab and field settings when no rules had been configured.
+
+= 4.6.0 on April 23, 2026 =
+
+This release improves conditional logic handling for empty date values, missing forms, and admin-only filters, and fixes field-level conditional logic on joined forms.
+
+#### ✨ Improved
+* Enhanced conditional logic:
+  - Empty field values are no longer treated as today's date when using `is on`, `is not on`, `is before`, or `is after` filters;
+  - Filters on deleted or missing forms (e.g. when viewing feed settings for a removed form) no longer trigger errors;
+  - Admin-only filters (those suffixed `:disabled_admin`) no longer error out when applied to multi-value fields.
+
+#### 🐛 Fixed
+* Field-level conditional logic targeting a field on a joined form (via the [Multiple Forms](https://www.gravitykit.com/extensions/multiple-forms/) extension) evaluated against the main form's row instead of the joined sub-entry, causing the field to incorrectly render or hide.
+
+= 4.5.0 on March 19, 2026 =
+
+This update improves Conditional Logic with better author search, numeric comparisons, and Multiple Forms compatibility.
+
+**Note: Advanced Filter now requires PHP 7.4 or newer.**
+
+#### ✨ Improved
+* Enhanced conditional logic:
+  - "Created By" filter now supports searching by username, display name, email, or login;
+  - Product and pricing field filters now correctly compare numeric values, ignoring currency formatting;
+  - Filters for fields on joined forms (via [Multiple Forms](https://www.gravitykit.com/extensions/multiple-forms/)) now correctly resolve field types and merge tags;
+  - Fixed "Approval Status" filter option appearing twice in the dropdown;
+  - Fixed CSS scoping to prevent style collisions with other GravityKit products.
 
 = 4.4.0 on February 19, 2026 =
 

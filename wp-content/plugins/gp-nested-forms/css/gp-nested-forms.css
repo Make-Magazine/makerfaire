@@ -411,7 +411,8 @@ body .gpnf-dialog .gform_wrapper ul li.gfield:first-child {
 	margin: -3rem -3rem 3rem;
 	padding: 0 3rem;
 	line-height: 4.5rem;
-	color: #fff;
+	background-color: var(--gpnf-modal-color-primary);
+	color: var(--gpnf-modal-color-primary-contrast);
 	border-radius: 3px 3px 0 0;
 	font-size: 1.2rem;
 }
@@ -434,6 +435,33 @@ body .gpnf-dialog .gform_wrapper ul li.gfield:first-child {
 
 .gpnf-modal .tingle-btn {
 	border-radius: 3px;
+}
+
+.gpnf-modal .tingle-btn--primary {
+	background-color: var(--gpnf-modal-color-primary);
+	color: var(--gpnf-modal-color-primary-contrast);
+}
+
+.gpnf-modal .tingle-btn--default {
+	background-color: var(--gpnf-modal-color-secondary, var(--gpnf-modal-color-primary-darker));
+	color: var(--gpnf-modal-color-primary-contrast);
+}
+
+/* Honor an explicit secondary override for the Cancel button when provided.
+ * Otherwise keep the primary color's luminance-adjusted shade when color-mix() is supported,
+ * and fall back to Gravity Forms' darker primary color when color-mix() is unavailable.
+ */
+@supports ( background-color: color-mix( in srgb, black, white ) ) {
+
+	.gpnf-modal .tingle-btn--default {
+		background-color: var(--gpnf-modal-color-secondary, color-mix( in srgb, var(--gpnf-modal-color-primary), black 50% ));
+	}
+
+}
+
+.gpnf-modal .tingle-btn--danger {
+	background-color: var(--gpnf-modal-color-danger);
+	color: var(--gpnf-modal-color-danger-contrast);
 }
 
 .gpnf-modal .tingle-btn:disabled {

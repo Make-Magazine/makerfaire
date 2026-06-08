@@ -281,9 +281,9 @@ class GPPA_Object_Type_User extends GPPA_Object_Type {
 		$this->meta_query_counter++;
 		$as_table = 'mq' . $this->meta_query_counter;
 
+		// Use EXISTS to avoid large intermediate results from multiple meta joins.
 		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.ReplacementsWrongNumber
-		$query_builder_args['where'][ $filter_group_index ][] = $wpdb->prepare( "( {$as_table}.meta_key = %s AND {$as_table}.meta_value {$meta_operator} {$meta_specification} )", rgar( $property, 'value' ), $meta_value );
-		$query_builder_args['joins'][ $as_table ]             = "LEFT JOIN {$wpdb->usermeta} AS {$as_table} ON ( {$wpdb->users}.ID = {$as_table}.user_id )";
+		$query_builder_args['where'][ $filter_group_index ][] = $wpdb->prepare( "EXISTS (SELECT 1 FROM {$wpdb->usermeta} AS {$as_table} WHERE {$as_table}.user_id = {$wpdb->users}.ID AND {$as_table}.meta_key = %s AND {$as_table}.meta_value {$meta_operator} {$meta_specification})", rgar( $property, 'value' ), $meta_value );
 
 		return $query_builder_args;
 

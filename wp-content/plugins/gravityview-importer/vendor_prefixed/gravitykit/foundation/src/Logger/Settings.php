@@ -123,7 +123,7 @@ class Settings {
 		 */
 		$filtered_settings = array_filter(
             $existing_settings,
-            function( $setting ) {
+            function ( $setting ) {
 				return ! isset( $setting['id'] ) || ! in_array( $setting['id'], self::LOGGER_SETTING_IDS, true );
 			}
         );
@@ -178,15 +178,15 @@ class Settings {
 		$base_settings[] = [
 			'id'    => 'logger',
 			'type'  => 'checkbox',
-			'title' => esc_html__( 'Enable Logging', 'gk-gravityimport' ),
+			'title' => esc_html__( 'Enable Logging', 'gk-foundation' ),
 			'value' => $logger_enabled,
 		];
 
 		$base_settings[] = [
 			'id'          => 'logger_level',
 			'type'        => 'select',
-			'title'       => esc_html__( 'Log Level', 'gk-gravityimport' ),
-			'description' => esc_html__( 'What severity of events to log.', 'gk-gravityimport' ),
+			'title'       => esc_html__( 'Log Level', 'gk-foundation' ),
+			'description' => esc_html__( 'What severity of events to log.', 'gk-foundation' ),
 			'value'       => Arr::get( $saved_settings, 'logger_level', self::DEFAULT_SETTINGS['logger_level'] ),
 			'choices'     => $this->get_log_level_choices(),
 			'requires'    => [
@@ -199,20 +199,20 @@ class Settings {
 		$base_settings[] = [
 			'id'          => 'logger_type',
 			'type'        => 'select',
-			'title'       => esc_html__( 'Log Type', 'gk-gravityimport' ),
-			'description' => esc_html__( 'Where to store log output.', 'gk-gravityimport' ),
+			'title'       => esc_html__( 'Log Type', 'gk-foundation' ),
+			'description' => esc_html__( 'Where to store log output.', 'gk-foundation' ),
 			'value'       => $logger_type,
 			'choices'     => [
 				[
-					'title' => esc_html__( 'File', 'gk-gravityimport' ),
+					'title' => esc_html__( 'File', 'gk-foundation' ),
 					'value' => 'file',
 				],
 				[
-					'title' => esc_html__( 'Query Monitor', 'gk-gravityimport' ),
+					'title' => esc_html__( 'Query Monitor', 'gk-foundation' ),
 					'value' => 'query_monitor',
 				],
 				[
-					'title' => esc_html__( 'Chrome Logger', 'gk-gravityimport' ),
+					'title' => esc_html__( 'Chrome Logger', 'gk-foundation' ),
 					'value' => 'chrome_logger',
 				],
 			],
@@ -245,23 +245,23 @@ class Settings {
 	private function get_log_level_choices() {
 		return [
 			[
-				'title' => esc_html__( 'Minimal (Critical Issues Only)', 'gk-gravityimport' ),
+				'title' => esc_html__( 'Minimal (Critical Issues Only)', 'gk-foundation' ),
 				'value' => 'critical',
 			],
 			[
-				'title' => esc_html__( 'Standard (Problems & Errors)', 'gk-gravityimport' ),
+				'title' => esc_html__( 'Standard (Problems & Errors)', 'gk-foundation' ),
 				'value' => 'warning',
 			],
 			[
-				'title' => esc_html__( 'Detailed (Including Notices)', 'gk-gravityimport' ),
+				'title' => esc_html__( 'Detailed (Including Notices)', 'gk-foundation' ),
 				'value' => 'notice',
 			],
 			[
-				'title' => esc_html__( 'Verbose (All Activity)', 'gk-gravityimport' ),
+				'title' => esc_html__( 'Verbose (All Activity)', 'gk-foundation' ),
 				'value' => 'info',
 			],
 			[
-				'title' => esc_html__( 'Debug (Everything + Technical Details)', 'gk-gravityimport' ),
+				'title' => esc_html__( 'Debug (Everything + Technical Details)', 'gk-foundation' ),
 				'value' => 'debug',
 			],
 		];
@@ -311,7 +311,7 @@ class Settings {
 	private function get_rotation_settings( $saved_settings ) {
 		$rotation_choices = [
 			[
-				'title' => esc_html__( 'Daily', 'gk-gravityimport' ),
+				'title' => esc_html__( 'Daily', 'gk-foundation' ),
 				'value' => 'Y-m-d',
 			],
 		];
@@ -319,18 +319,18 @@ class Settings {
 		// Only show weekly option if supported.
 		if ( class_exists( __NAMESPACE__ . '\WeeklyRotatingFileHandler' ) ) {
 			$rotation_choices[] = [
-				'title' => esc_html__( 'Weekly', 'gk-gravityimport' ),
+				'title' => esc_html__( 'Weekly', 'gk-foundation' ),
 				'value' => 'Y-\WW',
 			];
 		}
 
 		$rotation_choices[] = [
-			'title' => esc_html__( 'Monthly', 'gk-gravityimport' ),
+			'title' => esc_html__( 'Monthly', 'gk-foundation' ),
 			'value' => 'Y-m',
 		];
 
 		$rotation_choices[] = [
-			'title' => esc_html__( 'Yearly', 'gk-gravityimport' ),
+			'title' => esc_html__( 'Yearly', 'gk-foundation' ),
 			'value' => 'Y',
 		];
 
@@ -345,8 +345,8 @@ class Settings {
 			[
 				'id'          => 'logger_rotation_period',
 				'type'        => 'select',
-				'title'       => esc_html__( 'Log cleanup schedule', 'gk-gravityimport' ),
-				'description' => esc_html__( 'How often to start a new log file. Previous log files will be kept according to the retention setting below.', 'gk-gravityimport' ),
+				'title'       => esc_html__( 'Log cleanup schedule', 'gk-foundation' ),
+				'description' => esc_html__( 'How often to start a new log file. Previous log files will be kept according to the retention setting below.', 'gk-foundation' ),
 				'value'       => $saved_rotation_period,
 				'choices'     => $rotation_choices,
 				'requires'    => [
@@ -365,28 +365,28 @@ class Settings {
 			[
 				'id'          => 'logger_max_files',
 				'type'        => 'select',
-				'title'       => esc_html__( 'Number of log files to keep', 'gk-gravityimport' ),
-				'description' => esc_html__( 'Maximum number of log files to keep. Older files will be automatically deleted to save disk space.', 'gk-gravityimport' ),
+				'title'       => esc_html__( 'Number of log files to keep', 'gk-foundation' ),
+				'description' => esc_html__( 'Maximum number of log files to keep. Older files will be automatically deleted to save disk space.', 'gk-foundation' ),
 				'value'       => (string) Arr::get( $saved_settings, 'logger_max_files', self::DEFAULT_SETTINGS['logger_max_files'] ),
 				'choices'     => [
 					[
-						'title' => esc_html__( '3 files', 'gk-gravityimport' ),
+						'title' => esc_html__( '3 files', 'gk-foundation' ),
 						'value' => '3',
 					],
 					[
-						'title' => esc_html__( '7 files', 'gk-gravityimport' ),
+						'title' => esc_html__( '7 files', 'gk-foundation' ),
 						'value' => '7',
 					],
 					[
-						'title' => esc_html__( '14 files', 'gk-gravityimport' ),
+						'title' => esc_html__( '14 files', 'gk-foundation' ),
 						'value' => '14',
 					],
 					[
-						'title' => esc_html__( '30 files', 'gk-gravityimport' ),
+						'title' => esc_html__( '30 files', 'gk-foundation' ),
 						'value' => '30',
 					],
 					[
-						'title' => esc_html__( 'Keep all files', 'gk-gravityimport' ),
+						'title' => esc_html__( 'Keep all files', 'gk-foundation' ),
 						'value' => '0',
 					],
 				],
@@ -524,7 +524,7 @@ class Settings {
 
 		return strtr(
 			// Translators: Do not translate the placeholders inside [].
-			esc_html__( 'Download [link]log file[/link] ([size] / [date_modified]).', 'gk-gravityimport' ),
+			esc_html__( 'Download [link]log file[/link] ([size] / [date_modified]).', 'gk-foundation' ),
 			[
 				'[link]'          => '<a href="' . esc_url( $download_link ) . '" class="font-medium underline text-blue-700 hover:text-blue-600">',
 				'[/link]'         => '</a>',
@@ -547,7 +547,7 @@ class Settings {
 		// Sort files by date (newest first), with migrated files last.
 		usort(
 			$rotated_files,
-			function( $a, $b ) {
+			function ( $a, $b ) {
 				// Check if either file is migrated.
 				$a_is_migrated = (bool) preg_match( '/-migrated\.log$/', $a );
 				$b_is_migrated = (bool) preg_match( '/-migrated\.log$/', $b );
@@ -727,7 +727,7 @@ class Settings {
 				'[date] [status]',
 				[
 					'[date]'   => $raw_date,
-					'[status]' => esc_html_x( '(migrated)', 'Indicates the log file that existed before log rotation was enabled.', 'gk-gravityimport' ),
+					'[status]' => esc_html_x( '(migrated)', 'Indicates the log file that existed before log rotation was enabled.', 'gk-foundation' ),
 				]
 			);
 		}
@@ -738,7 +738,7 @@ class Settings {
 				'[date] [status]',
 				[
 					'[date]'   => $raw_date,
-					'[status]' => esc_html_x( '(current)', 'Indicates the log file that is currently being used.', 'gk-gravityimport' ),
+					'[status]' => esc_html_x( '(current)', 'Indicates the log file that is currently being used.', 'gk-foundation' ),
 				]
 			);
 		}
@@ -762,7 +762,7 @@ class Settings {
 			$remaining_files = $total_files - self::MAX_DISPLAY_FILES;
 			$summary_text    = strtr(
 				// Translators: Do not translate the placeholders inside [].
-				esc_html__( '[remaining] older files not shown. Total: [count] files, [total_size]', 'gk-gravityimport' ),
+				esc_html__( '[remaining] older files not shown. Total: [count] files, [total_size]', 'gk-foundation' ),
 				[
 					'[remaining]'  => $remaining_files,
 					'[count]'      => $total_files,
@@ -772,7 +772,7 @@ class Settings {
 		} else {
 			$summary_text = strtr(
 				// Translators: Do not translate the placeholders inside [].
-				esc_html__( 'Total size: [total_size]', 'gk-gravityimport' ),
+				esc_html__( 'Total size: [total_size]', 'gk-foundation' ),
 				[
 					'[total_size]' => size_format( $total_size, 2 ),
 				]
@@ -804,7 +804,7 @@ class Settings {
 
 		$migration_notice = strtr(
 			// Translators: Do not translate the placeholders inside [].
-			esc_html__( 'Your existing log file ([old_size]) has been archived as [new_file]. Log rotation is now active.', 'gk-gravityimport' ),
+			esc_html__( 'Your existing log file ([old_size]) has been archived as [new_file]. Log rotation is now active.', 'gk-foundation' ),
 			[
 				'[old_size]' => $migration_data['old_size'],
 				'[new_file]' => $migration_data['new_file'],
@@ -849,7 +849,7 @@ class Settings {
 				[
 					'%color%'  => 'red',
 					'%icon%'   => $this->get_info_icon(),
-					'%notice%' => wp_kses( __( '<code>CRITICAL</code> level only - logs system failures, alerts, and emergencies. You may miss important warnings and errors that could help troubleshoot issues.', 'gk-gravityimport' ), [ 'code' => [] ] ),
+					'%notice%' => wp_kses( __( '<code>CRITICAL</code> level only - logs system failures, alerts, and emergencies. You may miss important warnings and errors that could help troubleshoot issues.', 'gk-foundation' ), [ 'code' => [] ] ),
 				]
 			),
 			'requires'        => [
@@ -876,7 +876,7 @@ class Settings {
 				[
 					'%color%'  => 'blue',
 					'%icon%'   => $this->get_checkmark_icon(),
-					'%notice%' => wp_kses( __( '<code>WARNING</code> level and above (<code>WARNING</code>, <code>CRITICAL</code>) - logs warnings, errors, and critical issues. This is the recommended level for most production websites as it captures problems without excessive noise.', 'gk-gravityimport' ), [ 'code' => [] ] ),
+					'%notice%' => wp_kses( __( '<code>WARNING</code> level and above (<code>WARNING</code>, <code>CRITICAL</code>) - logs warnings, errors, and critical issues. This is the recommended level for most production websites as it captures problems without excessive noise.', 'gk-foundation' ), [ 'code' => [] ] ),
 				]
 			),
 			'requires'        => [
@@ -903,7 +903,7 @@ class Settings {
 				[
 					'%color%'  => 'blue',
 					'%icon%'   => $this->get_info_icon(),
-					'%notice%' => wp_kses( __( '<code>NOTICE</code> level and above (<code>NOTICE</code>, <code>WARNING</code>, <code>CRITICAL</code>) - includes notices along with all warnings and errors. Good for monitoring site health and catching potential issues before they become problems.', 'gk-gravityimport' ), [ 'code' => [] ] ),
+					'%notice%' => wp_kses( __( '<code>NOTICE</code> level and above (<code>NOTICE</code>, <code>WARNING</code>, <code>CRITICAL</code>) - includes notices along with all warnings and errors. Good for monitoring site health and catching potential issues before they become problems.', 'gk-foundation' ), [ 'code' => [] ] ),
 				]
 			),
 			'requires'        => [
@@ -930,7 +930,7 @@ class Settings {
 				[
 					'%color%'  => 'yellow',
 					'%icon%'   => $this->get_info_icon(),
-					'%notice%' => wp_kses( __( '<code>INFO</code> level and above (<code>INFO</code>, <code>NOTICE</code>, <code>WARNING</code>, <code>CRITICAL</code>) - logs general information and all higher priority events. Useful for detailed site monitoring but may create more log entries than needed for typical use.', 'gk-gravityimport' ), [ 'code' => [] ] ),
+					'%notice%' => wp_kses( __( '<code>INFO</code> level and above (<code>INFO</code>, <code>NOTICE</code>, <code>WARNING</code>, <code>CRITICAL</code>) - logs general information and all higher priority events. Useful for detailed site monitoring but may create more log entries than needed for typical use.', 'gk-foundation' ), [ 'code' => [] ] ),
 				]
 			),
 			'requires'        => [
@@ -957,7 +957,7 @@ class Settings {
 				[
 					'%color%'  => 'yellow',
 					'%icon%'   => $this->get_info_icon(),
-					'%notice%' => wp_kses( __( '<code>DEBUG</code> level and above (<code>DEBUG</code>, <code>INFO</code>, <code>NOTICE</code>, <code>WARNING</code>, <code>CRITICAL</code>) - logs everything including detailed technical information. Only use temporarily for troubleshooting as it creates high volume logs and may impact performance.', 'gk-gravityimport' ), [ 'code' => [] ] ),
+					'%notice%' => wp_kses( __( '<code>DEBUG</code> level and above (<code>DEBUG</code>, <code>INFO</code>, <code>NOTICE</code>, <code>WARNING</code>, <code>CRITICAL</code>) - logs everything including detailed technical information. Only use temporarily for troubleshooting as it creates high volume logs and may impact performance.', 'gk-foundation' ), [ 'code' => [] ] ),
 				]
 			),
 			'requires'        => [
@@ -1058,7 +1058,7 @@ class Settings {
 	private function get_gravity_forms_notice() {
 		$gravity_forms_logger_tip = strtr(
 			// Translators: Do not translate the placeholders inside [].
-			esc_html__( 'Logging is currently handled by [link]Gravity Forms[/link].', 'gk-gravityimport' ),
+			esc_html__( 'Logging is currently handled by [link]Gravity Forms[/link].', 'gk-foundation' ),
 			[
 				'[link]'  => '<a href="' . admin_url( 'admin.php?page=gf_settings&subview=gravityformslogging' ) . '" class="font-medium underline text-yellow-700 hover:text-yellow-600">',
 				'[/link]' => '</a>',
@@ -1093,7 +1093,7 @@ class Settings {
 	private function get_chrome_logger_tip() {
 		return strtr(
 			// Translators: Do not translate the placeholders inside [].
-			esc_html__( 'You must install [link]Chrome Logger[/link] browser extension to use this option.', 'gk-gravityimport' ),
+			esc_html__( 'You must install [link]Chrome Logger[/link] browser extension to use this option.', 'gk-foundation' ),
 			[
 				'[link]'  => '<a href="https://craig.is/writing/chrome-logger" class="font-medium underline text-yellow-700 hover:text-yellow-600">',
 				'[/link]' => '</a>',
@@ -1111,7 +1111,7 @@ class Settings {
 	private function get_query_monitor_notice() {
 		return strtr(
 			// Translators: Do not translate the placeholders inside [].
-			esc_html__( 'You must install [link]Query Monitor[/link] WordPress plugin to use this option.', 'gk-gravityimport' ),
+			esc_html__( 'You must install [link]Query Monitor[/link] WordPress plugin to use this option.', 'gk-foundation' ),
 			[
 				'[link]'  => '<a href="https://wordpress.org/plugins/query-monitor/" class="font-medium underline text-yellow-700 hover:text-yellow-600">',
 				'[/link]' => '</a>',
@@ -1132,7 +1132,7 @@ class Settings {
 	private function update_gk_settings( &$gk_settings, $logger_settings ) {
 		// Create a new Logging section in GravityKit settings.
 		$logging_section = [
-			'title'    => esc_html__( 'Logging', 'gk-gravityimport' ),
+			'title'    => esc_html__( 'Logging', 'gk-foundation' ),
 			'settings' => $logger_settings,
 		];
 
@@ -1161,7 +1161,7 @@ class Settings {
 	 * @return string
 	 */
 	private function get_notice_template() {
-		return <<<HTML
+		return <<<'HTML'
 <div class="bg-%color%-50 p-4">
 	<div class="flex">
 		<div class="flex-shrink-0">
@@ -1185,7 +1185,7 @@ HTML;
 	 * @return string
 	 */
 	private function get_info_icon() {
-		return <<<HTML
+		return <<<'HTML'
 <svg class="h-5 w-5 text-yellow-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
 	<path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd" />
 </svg>
@@ -1200,7 +1200,7 @@ HTML;
 	 * @return string
 	 */
 	private function get_checkmark_icon() {
-		return <<<HTML
+		return <<<'HTML'
 <svg class="h-5 w-5 text-blue-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
 	<path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
 </svg>
@@ -1218,7 +1218,7 @@ HTML;
 		add_filter(
 			'gk/foundation/inline-styles',
 			function ( $styles ) {
-				$css      = <<<CSS
+				$css      = <<<'CSS'
 .bg-yellow-50 {
     --tw-bg-opacity: 1;
     background-color: rgba(255, 251, 235, var(--tw-bg-opacity))

@@ -113,7 +113,7 @@ class TrustedLogin {
 		$tl_logging = new TrustedLoginLogging( $tl_config );
 		$tl_form    = new TrustedLoginForm( $tl_config, $tl_logging, new TrustedLoginSupportUser( $tl_config, $tl_logging ), new TrustedLoginSiteAccess( $tl_config, $tl_logging ) );
 
-		$page_title = esc_html__( 'Grant Support Access', 'gk-gravityimport' );
+		$page_title = esc_html__( 'Grant Support Access', 'gk-foundation' );
 		$menu_title = $page_title;
 
 		AdminMenu::add_submenu_item(
@@ -210,7 +210,7 @@ class TrustedLogin {
 		$vendor_title = $this->get_config()['vendor']['title'];
 
 		// translators: %s is replaced with the company name.
-		$message = sprintf( esc_html__( '%s access revoked.', 'gk-gravityimport' ), '<strong>' . esc_html( $vendor_title ) . '</strong>' );
+		$message = sprintf( esc_html__( '%s access revoked.', 'gk-foundation' ), '<strong>' . esc_html( $vendor_title ) . '</strong>' );
 
 		Core::notices()->add_stored(
 			[
@@ -230,5 +230,4 @@ class TrustedLogin {
 
 		exit;
 	}
-
 }

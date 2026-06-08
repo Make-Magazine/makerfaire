@@ -273,6 +273,56 @@ final class NoticeManager {
 	}
 
 	/**
+	 * Returns all stored notices whose slug starts with the given prefix.
+	 *
+	 * @since 1.13.0
+	 *
+	 * @param string $slug_prefix Slug prefix to match (e.g., 'server-').
+	 *
+	 * @return StoredNoticeInterface[] Keyed by notice ID.
+	 */
+	public function get_stored_by_slug_prefix( string $slug_prefix ): array {
+		if ( null === $this->stored_notices ) {
+			$this->stored_notices = [];
+
+			foreach ( $this->repository->get_all_stored() as $notice ) {
+				$this->stored_notices[ $notice->get_id() ] = $notice;
+			}
+		}
+
+		$matches = [];
+
+		foreach ( $this->stored_notices as $id => $notice ) {
+			if ( str_starts_with( $notice->get_slug(), $slug_prefix ) ) {
+				$matches[ $id ] = $notice;
+			}
+		}
+
+		return $matches;
+	}
+
+	/**
+	 * Removes a stored notice from persistent storage.
+	 *
+	 * Deletes the notice from both global options and all user meta where it may
+	 * be stored. Also clears the internal cache so the notice is no longer returned
+	 * by get_active() or get_notice().
+	 *
+	 * @since 1.12.0
+	 *
+	 * @param string $notice_id Notice ID (namespace/slug).
+	 *
+	 * @throws NoticeException When removal fails.
+	 *
+	 * @return void
+	 */
+	public function remove( string $notice_id ): void {
+		$this->repository->remove( $notice_id );
+
+		$this->flush_cache();
+	}
+
+	/**
 	 * Updates a persisted stored notice definition with partial changes.
 	 * Runtime notices cannot be updated as they live only in memory.
 	 *
@@ -533,10 +583,6 @@ final class NoticeManager {
 
 		foreach ( $notices as $notice ) {
 			if ( $notice instanceof StoredNotice ) {
-				if ( isset( $this->stored_notices[ $notice->get_id() ] ) ) {
-					continue;
-				}
-
 				// Trigger live updates only for notices that weren't added during this request.
 				$notice->apply_live_updates( $this->repository );
 			}

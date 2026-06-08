@@ -2,6 +2,7 @@
 
 namespace GV\Search\Querying\Visitors;
 
+use DateTimeZone;
 use GV\GF_Form;
 use GV\Logger;
 use GV\Search\Fields\Search_Field;
@@ -84,7 +85,7 @@ abstract class Abstract_Search_Filter_Visitor implements Search_Filter_Visitor {
 		}
 
 		return Search_Policy::should_ignore_empty(
-			$filter->key(),
+			(string) $filter->key(),
 			$this->view ? $this->view->ID ?? null : null,
 			$filter->form_id()
 		);
@@ -132,6 +133,37 @@ abstract class Abstract_Search_Filter_Visitor implements Search_Filter_Visitor {
 	}
 
 	/**
+	 * The search mode.
+	 *
+	 * @since 2.55.0
+	 *
+	 * @var string
+	 */
+	protected string $search_mode = Search_Filter::MODE_OR;
+
+	/**
+	 * Sets the search mode for the current request.
+	 *
+	 * @since 2.55.0
+	 *
+	 * @param string $mode The search mode.
+	 */
+	public function set_search_mode( string $mode ): void {
+		$this->search_mode = $mode;
+	}
+
+	/**
+	 * Returns the search mode for the current request.
+	 *
+	 * @since 2.55.0
+	 *
+	 * @return string The search mode.
+	 */
+	protected function get_search_mode(): string {
+		return $this->search_mode;
+	}
+
+	/**
 	 * Adjusts the filter through the search field.
 	 *
 	 * @since $ver$
@@ -173,8 +205,11 @@ abstract class Abstract_Search_Filter_Visitor implements Search_Filter_Visitor {
 			return null;
 		}
 
-		// Add the current visitor as context.
-		$filter = $filter->with_context( 'current_visitor', $this );
+		// Add context for the search field.
+		$filter = $filter
+			->with_context( 'current_visitor', $this )
+			->with_context( 'search_mode', $this->get_search_mode() );
+
 		// Allow the search field to adjust the filter.
 		$filter = $search_field->adjust_filter( $filter, $this->view );
 
@@ -262,6 +297,14 @@ abstract class Abstract_Search_Filter_Visitor implements Search_Filter_Visitor {
 				->with_value( [ $value, $date_only ] );
 		}
 
+		$form = $this->resolve_form( $filter );
+		if ( $form ) {
+			$search_field = $this->find_search_field( (int) $form->ID, $filter->key() );
+			if ( $search_field ) {
+				$filter = $search_field->adjust_filter( $filter, $this->view );
+			}
+		}
+
 		$adjust_tz = Search_Policy::should_adjust_timezone();
 
 		$dates = [
@@ -289,32 +332,9 @@ abstract class Abstract_Search_Filter_Visitor implements Search_Filter_Visitor {
 				continue;
 			}
 
-			$date = Search_Policy::resolve_date( $dates[ $key ] );
+			$date = $dates[ $key ];
 			if ( '' === $date ) {
 				continue;
-			}
-
-			// Clamp against View settings if the provided date is outside the stored range.
-			if ( $this->view ) {
-				$stored_date    = $this->view->settings->get( $key );
-				$date_timestamp = strtotime( $date );
-				if (
-					( $stored_date && $date_timestamp )
-					&& (
-						( 'start_date' === $key && $date_timestamp < strtotime( $stored_date ) )
-						|| ( 'end_date' === $key && $date_timestamp > strtotime( $stored_date ) )
-					)
-				) {
-					$this->logger->debug(
-						'Entry date {key} constrained by View setting: "{date}".',
-						[
-							'key'  => $key,
-							'date' => $stored_date,
-						]
-					);
-
-					$date = $stored_date;
-				}
 			}
 
 			// Only append time if the original date doesn't already have one.
@@ -327,7 +347,10 @@ abstract class Abstract_Search_Filter_Visitor implements Search_Filter_Visitor {
 			}
 
 			try {
-				$result[ $index ] = new \DateTimeImmutable( $date );
+				$result[ $index ] = new \DateTimeImmutable(
+					$date,
+					$adjust_tz ? new DateTimeZone( 'UTC' ) : wp_timezone()
+				);
 			} catch ( \Exception $e ) { // phpcs:ignore Generic.CodeAnalysis.EmptyStatement.DetectedCatch
 				// Invalid date, leave as null.
 			}

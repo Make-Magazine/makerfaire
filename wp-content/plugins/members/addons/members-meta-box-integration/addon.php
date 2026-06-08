@@ -6,18 +6,6 @@ namespace Members\Integration\MetaBox;
 defined( 'ABSPATH' ) || exit;
 
 /**
- * Registers the plugin activation callback.
- *
- * @since  1.0.0
- * @access public
- * @return void
- */
-register_activation_hook( __FILE__, function() {
-	require_once 'src/Activator.php';
-	Activator::activate();
-} );
-
-/**
  * Wrapper for the plugin instance.
  *
  * @since  1.0.0
@@ -35,9 +23,9 @@ function plugin() {
 }
 
 # Bootstrap plugin.
-require_once 'src/Plugin.php';
-require_once 'src/functions-caps.php';
-require_once 'src/functions-roles.php';
+require_once __DIR__ . '/src/Plugin.php';
+require_once __DIR__ . '/src/functions-caps.php';
+require_once __DIR__ . '/src/functions-roles.php';
 
 # Boot the plugin.
 plugin()->boot();

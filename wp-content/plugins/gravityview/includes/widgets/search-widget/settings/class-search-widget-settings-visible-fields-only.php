@@ -10,8 +10,8 @@
  */
 
 use GV\Field;
-use GV\GF_Form;
 use GV\Internal_Field;
+use GV\Search\Policies\Search_Fields_Policy;
 use GV\View;
 
 if ( ! defined( 'WPINC' ) ) {
@@ -137,21 +137,7 @@ final class GravityView_Search_Widget_Settings_Visible_Fields_Only {
 			return false;
 		}
 
-		$is_visible_fields_only = $view->settings->get( 'search_visible_fields', 0 );
-
-		/**
-		 * Modifies the search capability of "Search Everything".
-		 *
-		 * @since 2.42
-		 *
-		 * @param bool $is_visible_fields_only Whether the search capability of "Search Everything" is limited to visible fields only.
-		 * @param View $view                   The View.
-		 */
-		return (bool) apply_filters(
-			'gk/gravityview/widget/search/visible_fields_only',
-			$is_visible_fields_only,
-			$view
-		);
+		return ( new Search_Fields_Policy( $view ) )->is_search_visible_fields_only();
 	}
 
 	/**
@@ -165,36 +151,6 @@ final class GravityView_Search_Widget_Settings_Visible_Fields_Only {
 	 */
 	private function is_condition_group( GF_Query_Condition $condition ): bool {
 		return in_array( $condition->operator, [ GF_Query_Condition::_AND, GF_Query_Condition::_OR ], true );
-	}
-
-	/**
-	 * Returns if the condition is an excluded field.
-	 *
-	 * @since 2.42
-	 *
-	 * @param GF_Query_Condition $condition The condition to check.
-	 * @param array              $fields    The visible fields.
-	 *
-	 * @return bool Whether the condition is an excluded field.
-	 */
-	private function is_excluded_field( GF_Query_Condition $condition, array $fields ): bool {
-		$left  = $condition->left ?? null;
-		$right = $condition->right ?? null;
-
-		if (
-			null === $right // Might be used for a join.
-			|| ! $left instanceof GF_Query_Column // Broken condition.
-			|| GF_Query_Column::META === $left->field_id // Search everything.
-		) {
-			return false;
-		}
-
-		// Check for field ID or field wild card in visible fields.
-		$ids   = [ $left->field_id, $left->field_id . '.%' ];
-		$found = array_intersect( $ids, $fields[ $condition->left->source ] ?? [] );
-
-		// If neither is found, the field is excluded.
-		return [] === $found;
 	}
 
 	/**
@@ -239,7 +195,7 @@ final class GravityView_Search_Widget_Settings_Visible_Fields_Only {
 		GF_Query $query,
 		GF_Query_Condition $condition,
 		array $fields
-	): ?GF_Query_Condition {
+	): GF_Query_Condition {
 		// Traverse down the condition tree when it is a group.
 		if ( $this->is_condition_group( $condition ) ) {
 			$expressions = array_map(
@@ -255,11 +211,6 @@ final class GravityView_Search_Widget_Settings_Visible_Fields_Only {
 		// If the form is not configured explicitly, include regular condition.
 		if ( ! $this->is_in_configured_forms( $condition, $fields ) ) {
 			return $condition;
-		}
-
-		// Remove excluded fields from the condition.
-		if ( $this->is_excluded_field( $condition, $fields ) ) {
-			return null;
 		}
 
 		// If the condition is not a "Search Everything" condition, we don't need to do anything.

@@ -242,11 +242,11 @@ class GPPA_Object_Type_Post extends GPPA_Object_Type {
 			is_array( $meta_value ) ? $meta_value : array( $meta_value )
 		);
 
-		$where_clause = "( {$as_table}.meta_key = %s AND {$as_table}.meta_value {$meta_operator} {$meta_specification} )";
+		// Use EXISTS to avoid large intermediate results from multiple meta joins.
+		$where_clause = "EXISTS (SELECT 1 FROM {$wpdb->postmeta} AS {$as_table} WHERE {$as_table}.post_id = {$wpdb->posts}.ID AND {$as_table}.meta_key = %s AND {$as_table}.meta_value {$meta_operator} {$meta_specification})";
 
 		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQLPlace
 		$query_builder_args['where'][ $filter_group_index ][] = $wpdb->prepare( $where_clause, $prepare_args );
-		$query_builder_args['joins'][ $as_table ]             = "LEFT JOIN {$wpdb->postmeta} AS {$as_table} ON ( {$wpdb->posts}.ID = {$as_table}.post_id )";
 
 		return $query_builder_args;
 

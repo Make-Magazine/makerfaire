@@ -198,6 +198,7 @@ final class NoticeRepository {
 			try {
 				$usm->add( self::USER_META_DEFS_KEY, $defs );
 			} catch ( BaseException $e ) {
+				Logger::get_instance()->error( "Failed to persist notice '{$notice_id}' for user ID #{$user_id}: {$e->getMessage()}", $e->get_data() );
 				throw NoticeException::persistence(
 					__METHOD__,
 					[
@@ -284,9 +285,10 @@ final class NoticeRepository {
 		$removed_from_users  = false;
 
 		// Try to remove from global storage.
-		$all = $this->global_state_manager->all();
+		$all        = $this->global_state_manager->all();
+		$global_def = $all[ $notice_id ] ?? null;
 
-		if ( isset( $all[ $notice_id ] ) ) {
+		if ( $global_def ) {
 			try {
 				$this->global_state_manager->remove( $notice_id );
 
@@ -301,37 +303,30 @@ final class NoticeRepository {
 					]
 				);
 			}
-		}
 
-		// Also remove from all users' storage if it's a user-scoped notice.
-		// This ensures complete removal even if the notice was stored per-user.
-		$users = get_users( [ 'fields' => 'ID' ] );
+			// If the notice was stored as global scope (not a user notice converted
+			// via exclusions), there's nothing to clean from user meta.
+			$is_purely_global = isset( $global_def['scope'] )
+				&& 'global' === $global_def['scope']
+				&& empty( $global_def['excluded_users'] );
 
-		foreach ( $users as $user_id ) {
-			$user = Users::get( $user_id );
+			if ( $is_purely_global ) {
+				// No user defs to clean, but dismissal state may exist.
+				$this->remove_from_user_meta( $notice_id, false, true );
 
-			if ( $user instanceof UserException ) {
-				continue;
-			}
+				do_action( 'gk/foundation/notices/removed', $notice_id );
 
-			$user_meta = $this->state_factory->make_user( $user, self::OPTION_PERSISTED );
-			$defs      = (array) $user_meta->get( self::USER_META_DEFS_KEY );
-
-			if ( isset( $defs[ $notice_id ] ) ) {
-				unset( $defs[ $notice_id ] );
-
-				try {
-					$user_meta->add( self::USER_META_DEFS_KEY, $defs );
-
-					$removed_from_users = true;
-				} catch ( BaseException $e ) {
-					Logger::get_instance()->error( "Failed to remove notice '{$notice_id}' from user ID #{$user_id}: {$e->getMessage()}" );
-				}
+				return;
 			}
 		}
+
+		// Remove definitions and dismissal state from user meta. Needed for
+		// user-scoped notices or global notices converted from user exclusions.
+		$removed_from_users = $this->remove_from_user_meta( $notice_id );
 
 		// Only fire the action if something was actually removed.
 		if ( $removed_from_global || $removed_from_users ) {
+
 			/**
 			 * Fires after a notice has been removed from storage.
 			 *
@@ -343,6 +338,98 @@ final class NoticeRepository {
 			 */
 			do_action( 'gk/foundation/notices/removed', $notice_id );
 		}
+	}
+
+	/**
+	 * Removes a notice from all users' meta storage.
+	 *
+	 * Uses a direct meta query to find only users who actually have the notice
+	 * stored, avoiding a full user table scan.
+	 *
+	 * @since 1.12.0
+	 *
+	 * @param string $notice_id Notice ID.
+	 *
+	 * @return bool True if the notice was removed from at least one user.
+	 */
+	/**
+	 * Removes a notice definition and/or dismissal state from user meta.
+	 *
+	 * Performs a single query to find all users with GK notices meta, then
+	 * cleans up both the notice definition and any dismissed/snoozed state
+	 * in one pass per user.
+	 *
+	 * @since 1.12.0
+	 *
+	 * @param string $notice_id       Notice ID to remove.
+	 * @param bool   $remove_defs     Whether to remove notice definitions.
+	 * @param bool   $clear_dismissals Whether to clear dismissal/snooze state.
+	 *
+	 * @return bool True if at least one user's data was modified.
+	 */
+	private function remove_from_user_meta( string $notice_id, bool $remove_defs = true, bool $clear_dismissals = true ): bool {
+		global $wpdb;
+
+		$modified = false;
+
+		// Query only users who have GK notices meta, rather than loading all users.
+		$user_ids = $wpdb->get_col(
+			$wpdb->prepare(
+				"SELECT user_id FROM {$wpdb->usermeta} WHERE meta_key = %s",
+				self::OPTION_PERSISTED
+			)
+		);
+
+		foreach ( $user_ids as $user_id ) {
+			$user = Users::get( (int) $user_id );
+
+			if ( $user instanceof UserException ) {
+				continue;
+			}
+
+			$user_meta    = $this->state_factory->make_user( $user, self::OPTION_PERSISTED );
+			$user_changed = false;
+
+			// Remove the notice definition.
+			if ( $remove_defs ) {
+				$defs = (array) $user_meta->get( self::USER_META_DEFS_KEY );
+
+				if ( isset( $defs[ $notice_id ] ) ) {
+					unset( $defs[ $notice_id ] );
+
+					try {
+						$user_meta->add( self::USER_META_DEFS_KEY, $defs );
+
+						$user_changed = true;
+					} catch ( BaseException $e ) {
+						Logger::get_instance()->error( "Failed to remove notice '{$notice_id}' from user ID #{$user_id}: {$e->getMessage()}" );
+					}
+				}
+			}
+
+			// Clear dismissal/snooze state.
+			if ( $clear_dismissals ) {
+				$state = (array) $user_meta->get( self::USER_META_STATE_KEY );
+
+				if ( isset( $state[ $notice_id ] ) ) {
+					unset( $state[ $notice_id ] );
+
+					try {
+						$user_meta->add( self::USER_META_STATE_KEY, $state );
+
+						$user_changed = true;
+					} catch ( BaseException $e ) {
+						Logger::get_instance()->error( "Failed to clear dismissal state for notice '{$notice_id}' from user ID #{$user_id}: {$e->getMessage()}" );
+					}
+				}
+			}
+
+			if ( $user_changed ) {
+				$modified = true;
+			}
+		}
+
+		return $modified;
 	}
 
 	/**

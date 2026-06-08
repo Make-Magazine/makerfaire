@@ -508,10 +508,11 @@ class GravityView_Welcome {
 				$changelog_html = '';
 
 				if ( class_exists( 'GravityKitFoundation' ) && is_callable( [ 'GravityKitFoundation', 'licenses' ] ) ) {
-					$product_manager = GravityKitFoundation::licenses()->product_manager();
+					$licenses = GravityKitFoundation::licenses();
+					$product_manager = $licenses ? $licenses->product_manager() : null;
 
 					try {
-						$products_data = $product_manager->get_products_data( [ 'key_by' => 'id' ] );
+						$products_data = $product_manager ? $product_manager->get_products_data( [ 'key_by' => 'id' ] ) : [];
 					} catch ( Exception $e ) {
 						$products_data = [];
 					}
@@ -606,18 +607,6 @@ class GravityView_Welcome {
 				</div>
 
 				<div class="col">
-					<h3><?php esc_html_e( 'Rafael Ehlers', 'gk-gravityview' ); ?> <a href="https://twitter.com/rafaehlers" title="<?php esc_attr_e( 'Follow Rafael on Twitter', 'gk-gravityview' ); ?>"><span class="dashicons dashicons-twitter"></span></a> <a href="https://heropress.com/essays/journey-resilience/" title="<?php esc_attr_e( 'View Rafael&rsquo;s WordPress Journey', 'gk-gravityview' ); ?>"><span class="dashicons dashicons-admin-site"></span></a></h3>
-					<h4><?php esc_html_e( 'Project Manager, Support Lead &amp; Customer&nbsp;Advocate', 'gk-gravityview' ); ?></h4>
-					<p><img alt="<?php esc_attr_e( 'Rafael Ehlers', 'gk-gravityview' ); ?>"  class="alignleft avatar" src="<?php echo plugins_url( 'assets/images/team/Ehlers.jpg', GRAVITYVIEW_FILE ); ?>" width="94" height="94" /><?php
-						// translators: %s is a link to Porto Alegre, Brazil
-						printf(
-							esc_html__( 'Rafael helps guide GravityKit development priorities and keep us on track. He&rsquo;s the face of our customer support and helps customers get the most out of the product. Rafael hails from %s.', 'gk-gravityview' ),
-							'<a href="https://wikipedia.org/wiki/Porto_Alegre">Porto Alegre, Brazil</a>'
-						);
-					?></p>
-				</div>
-
-				<div class="col">
 					<h3><?php esc_html_e( 'Vlad K.', 'gk-gravityview' ); ?></h3>
 					<h4><?php esc_html_e( 'Head of Development', 'gk-gravityview' ); ?></h4>
 					<p><img alt="<?php esc_attr_e( 'Vlad K.', 'gk-gravityview' ); ?>"  class="alignleft avatar" src="<?php echo plugins_url( 'assets/images/team/Vlad.jpg', GRAVITYVIEW_FILE ); ?>" width="94" height="94" /><?php esc_html_e( 'Vlad is GravityKit&rsquo;s lead developer. Known for his versatility, Vlad handles both front-end and back-end programming, as well as testing and DevOps. He lives in Ottawa, Canada, and frequently travels the world in pursuit of unique experiences that fuel his creativity and broaden his worldview.', 'gk-gravityview' ); ?></p>
@@ -625,11 +614,11 @@ class GravityView_Welcome {
 
 				<div class="col">
 					<h3><?php esc_html_e( 'Rafael Bennemann', 'gk-gravityview' ); ?> <a href="https://x.com/rafaelbe" title="<?php esc_attr_e( 'Follow Rafael on X', 'gk-gravityview' ); ?>"><span class="dashicons dashicons-twitter"></span></a></h3>
-					<h4><?php esc_html_e( 'Support Specialist', 'gk-gravityview' ); ?></h4>
+					<h4><?php esc_html_e( 'Support Manager', 'gk-gravityview' ); ?></h4>
 					<p><img alt="<?php esc_attr_e( 'Rafael Bennemann', 'gk-gravityview' ); ?>"  class="alignleft avatar" src="<?php echo plugins_url( 'assets/images/team/Bennemann.jpg', GRAVITYVIEW_FILE ); ?>" width="94" height="94" /><?php
 						// translators: %s is a link to Spritz Veneziano
 						printf(
-							esc_html__( 'Rafael dedicated most of his adult life to helping people and companies take their ideas to the web, first as a developer and now as a Customer Advocate at GravityKit. He will do his best to help you too, all the while sipping a %s in Northern Italy, where he currently lives with his family.', 'gk-gravityview' ),
+							esc_html__( 'Rafael dedicated most of his adult life to helping people and companies take their ideas to the web, first as a developer and now as a customer advocate at GravityKit. He will do his best to help you too, all the while sipping a %s in Northern Italy, where he currently lives with his family.', 'gk-gravityview' ),
 							'<a href="https://en.wikipedia.org/wiki/Spritz_Veneziano">Spritz Veneziano</a>'
 						);
 					?></p>
@@ -637,8 +626,8 @@ class GravityView_Welcome {
 
 				<div class='col'>
 					<h3><?php esc_html_e( 'Casey Burridge', 'gk-gravityview' ); ?></h3>
-					<h4><?php esc_html_e( 'Content Creator', 'gk-gravityview' ); ?></h4>
-					<p><img alt="<?php esc_attr_e( 'Casey Burridge', 'gk-gravityview' ); ?>" class="alignleft avatar" src="<?php echo plugins_url( 'assets/images/team/Casey.jpg', GRAVITYVIEW_FILE ); ?>" width="94" height="94"/><?php esc_html_e( 'Casey is GravityKit&rsquo;s resident content creator. He&rsquo;s been a WordPress lover ever since launching his first blog more than 6 years ago. Casey has lived and worked in London and Beijing, but feels most at home in Cape Town, South Africa, where he&rsquo;s originally from.', 'gk-gravityview' ); ?></p>
+					<h4><?php esc_html_e( 'Strategic Growth & Operations', 'gk-gravityview' ); ?></h4>
+					<p><img alt="<?php esc_attr_e( 'Casey Burridge', 'gk-gravityview' ); ?>" class="alignleft avatar" src="<?php echo plugins_url( 'assets/images/team/Casey.jpg', GRAVITYVIEW_FILE ); ?>" width="94" height="94"/><?php esc_html_e( 'Casey is a true \'full-stack\' marketer, adept at effectively navigating multiple marketing disciplines. His expertise spans marketing strategy, analytics, content & SEO, email marketing, and paid ads.', 'gk-gravityview' ); ?></p>
 				</div>
 
 				<div class='col'>
@@ -691,11 +680,12 @@ class GravityView_Welcome {
 
 				<h3><?php esc_html_e( 'Want to contribute?', 'gk-gravityview' ); ?></h3>
 				<p><?php
-					// translators: %1$s and %2$s are the opening and closing tags for the GitHub link
-					printf(
-						esc_html__( 'If you want to contribute to the code, %1$syou can on Github%2$s. If your contributions are accepted, you will be thanked here.', 'gk-gravityview' ),
-						'<a href="https://github.com/gravityview/GravityView">',
-						'</a>'
+					echo strtr(
+						esc_html__( "We welcome contributions from licensed developers. If you're interested in contributing, please [link]contact support[/link] so we can coordinate the best path forward.", 'gk-gravityview' ),
+						array(
+							'[link]'  => '<a href="https://www.gravitykit.com/support/">',
+							'[/link]' => '</a>',
+						)
 					);
 				?></p>
 			</div>

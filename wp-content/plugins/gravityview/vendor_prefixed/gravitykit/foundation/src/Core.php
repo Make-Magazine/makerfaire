@@ -1,9 +1,4 @@
 <?php
-/**
- * @license GPL-2.0-or-later
- *
- * Modified using {@see https://github.com/BrianHenryIE/strauss}.
- */
 
 namespace GravityKit\GravityView\Foundation;
 
@@ -12,6 +7,7 @@ use GravityKit\GravityView\Foundation\Components\SecureDownload;
 use GravityKit\GravityView\Foundation\Integrations\GravityForms;
 use GravityKit\GravityView\Foundation\Integrations\HelpScout;
 use GravityKit\GravityView\Foundation\Integrations\TrustedLogin;
+use GravityKit\GravityView\Foundation\Scheduler\Overview\JobOverview;
 use GravityKit\GravityView\Foundation\WP\AdminMenu;
 use GravityKit\GravityView\Foundation\Logger\Framework as LoggerFramework;
 use GravityKit\GravityView\Foundation\WP\AjaxRouter;
@@ -26,6 +22,7 @@ use GravityKit\GravityView\Foundation\Helpers\Arr;
 use GravityKit\GravityView\Foundation\WP\RESTController;
 use GravityKit\GravityView\Foundation\Notices\NoticeManager as Notices;
 use GravityKit\GravityView\Foundation\Settings\WPDebugSettings;
+use GravityKit\GravityView\Foundation\Scheduler\JobScheduler;
 
 /**
  * Core class that initializes Foundation.
@@ -44,9 +41,11 @@ use GravityKit\GravityView\Foundation\Settings\WPDebugSettings;
  * @method static PluginActivationHandler plugin_activation_handler()
  * @method static Notices notices()
  * @method static SecureDownload secure_download()
+ * @method static JobScheduler scheduler()
+ * @method static JobOverview job_overview()
  */
 class Core {
-	const VERSION = '1.11.0';
+	const VERSION = '1.21.0';
 
 	const ID = 'gk_foundation';
 
@@ -295,6 +294,12 @@ class Core {
 	 * @return void
 	 */
 	public static function register( $plugin_file, $arguments = [] ) {
+		// Action Scheduler must be loaded early, before 'plugins_loaded' priority 0.
+		// Composer's files autoload handles this for standalone Foundation, but
+		// consuming plugins using Strauss may strip the files entry. This
+		// require_once is a no-op if Loader.php was already autoloaded.
+		require_once __DIR__ . '/Scheduler/Loader.php';
+
 		if ( wp_doing_ajax() &&
 		     ( LicensesFramework::AJAX_ROUTER === ( $_REQUEST['ajaxRouter'] ?? '' ) ) && // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 		     CoreHelpers::version_compare( $_REQUEST['frontendFoundationVersion'] ?? 0, self::VERSION, '<' ) // phpcs:ignore WordPress.Security.NonceVerification.Recommended
@@ -423,6 +428,8 @@ class Core {
 			'helpscout'       => HelpScout::get_instance(),
 			'gravityforms'    => GravityForms::get_instance(),
 			'secure_download' => SecureDownload::get_instance(),
+			'scheduler'       => JobScheduler::get_instance(),
+			'job_overview'    => JobOverview::get_instance(),
 		];
 
 		foreach ( $this->_components as $instance ) {
@@ -445,6 +452,8 @@ class Core {
 
 			$this->detect_namespace_conflict();
 		}
+
+		Licenses\Integrity\PackageVerifier::init();
 
 		class_alias( __CLASS__, 'GravityKitFoundation' );
 
@@ -489,6 +498,9 @@ class Core {
 					'support_email'           => get_bloginfo( 'admin_email' ),
 					'support_port'            => 1,
 					'no_conflict_mode'        => 1,
+					'background_processing'   => 1,
+					'show_background_jobs'    => 0,
+					'scheduler_loopback_url'  => '',
 					'powered_by'              => 0,
 					'beta'                    => 0,
 				];
@@ -669,6 +681,48 @@ HTML;
 						'value'       => Arr::get( $gk_settings, 'no_conflict_mode', $default_settings['no_conflict_mode'] ),
 						'title'       => esc_html__( 'Enable No-Conflict Mode', 'gk-gravityview' ),
 						'description' => esc_html__( 'No-conflict mode prevents extraneous scripts and styles from being printed on GravityKit admin pages, reducing conflicts with other plugins and themes.', 'gk-gravityview' ),
+					],
+					[
+						'id'          => 'background_processing',
+						'type'        => 'checkbox',
+						'value'       => Arr::get( $gk_settings, 'background_processing', $default_settings['background_processing'] ),
+						'title'       => esc_html__( 'Enable Background Processing', 'gk-gravityview' ),
+						'description' => strtr(
+                            esc_html_x(
+                                'Allow GravityKit products to [url]process jobs in the background[/url]. Disable to stop background jobs from running.',
+                                'Placeholders inside [] are not to be translated.',
+                                'gk-gravityview'
+                            ),
+                            [
+								'[url]'  => '<a class="underline" href="https://docs.gravitykit.com/article/2150-background-processing" rel="noopener noreferrer" target="_blank">',
+								'[/url]' => '<span class="screen-reader-text"> ' . esc_html__( '(This link opens in a new window.)', 'gk-gravityview' ) . '</span></a>',
+                            ]
+                        ),
+					],
+					[
+						'id'          => 'show_background_jobs',
+						'type'        => 'checkbox',
+						'value'       => Arr::get( $gk_settings, 'show_background_jobs', $default_settings['show_background_jobs'] ),
+						'title'       => esc_html__( 'Show Background Jobs', 'gk-gravityview' ),
+						'description' => esc_html__( 'Show the Background Jobs page in the GravityKit menu, where you can view jobs and their execution status.', 'gk-gravityview' ),
+						'requires'    => [
+							'id'       => 'background_processing',
+							'operator' => '=',
+							'value'    => '1',
+						],
+					],
+					[
+						'id'          => 'scheduler_loopback_url',
+						'type'        => 'text',
+						'value'       => Arr::get( $gk_settings, 'scheduler_loopback_url', $default_settings['scheduler_loopback_url'] ),
+						'title'       => esc_html__( 'Loopback URL Override', 'gk-gravityview' ),
+						'description' => esc_html__( 'Override the base URL used for internal HTTP requests. Leave empty to use the site URL. Only change this if background jobs fail because the server cannot reach itself.', 'gk-gravityview' ),
+						'placeholder' => 'https://example.com',
+						'requires'    => [
+							'id'       => 'background_processing',
+							'operator' => '=',
+							'value'    => '1',
+						],
 					],
 				];
 

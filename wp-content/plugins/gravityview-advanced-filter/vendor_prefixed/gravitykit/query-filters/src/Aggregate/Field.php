@@ -2,7 +2,7 @@
 /**
  * @license MIT
  *
- * Modified by gravitykit on 20-February-2026 using {@see https://github.com/BrianHenryIE/strauss}.
+ * Modified by gravitykit on 28-April-2026 using {@see https://github.com/BrianHenryIE/strauss}.
  */
 
 namespace GravityKit\AdvancedFilter\QueryFilters\Aggregate;
@@ -136,7 +136,7 @@ final class Field {
 	 * @return GF_Query_Column The query column.
 	 */
 	public function as_column(): GF_Query_Column {
-		return new GF_Query_Column( $this->field_id, $this->gf_field->formId );
+		return new GF_Query_Column( (string) $this->field_id, (int) abs( $this->gf_field->formId ) );
 	}
 
 	/**
@@ -286,8 +286,8 @@ final class Field {
 
 		if (
 			'number' === $this->gf_field->get_input_type()
-			&& 'currency' === ($this->gf_field->numberFormat ?? null)
-		){
+			&& 'currency' === ( $this->gf_field->numberFormat ?? null )
+		) {
 			return true;
 		}
 

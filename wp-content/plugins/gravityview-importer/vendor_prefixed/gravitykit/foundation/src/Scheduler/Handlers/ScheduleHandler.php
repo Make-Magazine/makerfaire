@@ -30,8 +30,46 @@ class ScheduleHandler {
 
 	use LoggerTrait;
 
-	const TYPE_ASYNC     = 'async';
-	const TYPE_SINGLE    = 'single';
+	const TYPE_ASYNC  = 'async';
+	const TYPE_SINGLE = 'single';
+
+	/**
+	 * Per-request identifier for correlating task runs in the activity log.
+	 *
+	 * Set once per PHP process. Runs sharing the same ID executed within
+	 * one Action Scheduler batch (same HTTP request). A different ID means
+	 * a new HTTP request was dispatched.
+	 *
+	 * @since 1.13.0
+	 *
+	 * @var string
+	 */
+	private static $request_id;
+
+	/**
+	 * Returns a short identifier for the current PHP execution context.
+	 *
+	 * Stable within one HTTP request (PHP-FPM resets static properties
+	 * between requests). Changes when Action Scheduler dispatches a new
+	 * loopback request for the next batch.
+	 *
+	 * Uses the process ID + request start time to produce a deterministic
+	 * ID that is unique per request without relying on randomness.
+	 *
+	 * @since 1.13.0
+	 *
+	 * @return string 8-character hex ID.
+	 */
+	public static function get_request_id(): string {
+		if ( ! self::$request_id ) {
+			$pid              = function_exists( 'getmypid' ) ? ( getmypid() ?: 0 ) : 0;
+			$start            = $_SERVER['REQUEST_TIME_FLOAT'] ?? microtime( true );
+			self::$request_id = substr( md5( $pid . '|' . $start ), 0, 8 );
+		}
+
+		return self::$request_id;
+	}
+
 	const TYPE_RECURRING = 'recurring';
 	const TYPE_CRON      = 'cron';
 
@@ -263,7 +301,7 @@ class ScheduleHandler {
 		if ( $this->should_skip_overlapping_instance( $job_id, $job ) ) {
 			ActionScheduler::logger()->log(
 				$job_id,
-				'[job_skipped] ' . __( 'Skipped: previous instance still running.', 'gk-gravityimport' )
+				'[job_skipped] ' . __( 'Skipped: previous instance still running.', 'gk-foundation' )
 			);
 
 			return;
@@ -275,7 +313,7 @@ class ScheduleHandler {
 		$task_id = $this->task_executor()->schedule_task( $job_id, $job->name(), false );
 
 		if ( ! $task_id ) {
-			ActionScheduler::logger()->log( $job_id, __( 'Failed to schedule the first task action.', 'gk-gravityimport' ) );
+			ActionScheduler::logger()->log( $job_id, __( 'Failed to schedule the first task action.', 'gk-foundation' ) );
 			$this->fail_job( $job );
 
 			return;
@@ -292,7 +330,7 @@ class ScheduleHandler {
 		// fires before schedule_next_instance(), and AS only re-claims pending actions.
 		$this->store()->update_instance_status( $job_id, DbStore::STATUS_RUNNING );
 
-		ActionScheduler::logger()->log( $job_id, '[job_started] ' . __( 'Job started.', 'gk-gravityimport' ) );
+		ActionScheduler::logger()->log( $job_id, '[job_started] ' . __( 'Job started.', 'gk-foundation' ) );
 	}
 
 	/**
@@ -373,7 +411,7 @@ class ScheduleHandler {
 		$this->update_progress( $job, $task, Task::STATUS_SKIPPED );
 
 		// translators: [task] is replaced with the task name.
-		ActionScheduler::logger()->log( $job->id(), '[task_skipped] ' . strtr( __( 'Skipped task [task].', 'gk-gravityimport' ), [ '[task]' => $task->name() ] ) );
+		ActionScheduler::logger()->log( $job->id(), '[task_skipped] ' . strtr( __( 'Skipped task [task].', 'gk-foundation' ), [ '[task]' => $task->name() ] ) );
 	}
 
 	/**
@@ -426,7 +464,7 @@ class ScheduleHandler {
 			}
 		}
 
-		$error_text = $e->getMessage() ?: __( 'unknown error', 'gk-gravityimport' );
+		$error_text = $e->getMessage() ?: __( 'unknown error', 'gk-foundation' );
 
 		// Store the error message in task meta so the serializer can read it
 		// directly without parsing translated log messages.
@@ -440,13 +478,13 @@ class ScheduleHandler {
 			// [error_raw:...] stores the raw error for machine parsing by get_action_error().
 			// translators: [error] is replaced with the error message.
 			$msg = '[task:' . $task->name() . '] [task_failed] ' . strtr(
-				__( 'Failed: [error].', 'gk-gravityimport' ),
+				__( 'Failed: [error].', 'gk-foundation' ),
 				[ '[error]' => $error_text ]
 			) . ' [error_raw:' . $error_text . ']';
 		} else {
 			// translators: [error] is replaced with the error message.
 			$msg = '[task:' . $task->name() . '] ' . strtr(
-				__( 'Retrying (error: [error]).', 'gk-gravityimport' ),
+				__( 'Retrying (error: [error]).', 'gk-foundation' ),
 				[ '[error]' => $error_text ]
 			);
 		}
@@ -544,13 +582,17 @@ class ScheduleHandler {
 		// real-time status instead of "pending" during long-running callbacks.
 		$this->update_progress( $job, $task, Task::STATUS_RUNNING );
 
+		$task_prefix = '[task:' . $task->name() . '] ';
+
 		// Only log "Started." on the first attempt. Reruns already have a
-		// "Rerunning (callback requested)." or "Retrying (error: ...)" entry
+		// "Continuing (run N)." or "Retrying (error: ...)" entry
 		// that makes a duplicate "Started." redundant noise.
 		if ( ! $task->meta( 'reruns' ) && ! $task->get_retry_count() ) {
+			$task->set_meta( 'batch_id', self::get_request_id() );
+
 			ActionScheduler::logger()->log(
 				$job->id(),
-				'[task:' . $task->name() . '] [started] ' . __( 'Started.', 'gk-gravityimport' )
+				$task_prefix . __( 'Started.', 'gk-foundation' )
 			);
 		}
 
@@ -585,10 +627,24 @@ class ScheduleHandler {
 			}
 		}
 
-		$rerun_msg = __( 'Rerunning (callback requested).', 'gk-gravityimport' );
+		$rerun_count    = (int) ( $task->meta( 'reruns' ) ?? 0 );
+		$current_batch  = self::get_request_id();
+		$previous_batch = $task->meta( 'batch_id' ) ?? $current_batch;
+		$is_new_request = $current_batch !== $previous_batch;
 
-		// Append compact checkpoint args to the rerun message so the activity
-		// log shows what changed between reruns (e.g. {"processed":6}).
+		// Track the batch ID so the next rerun can detect a request boundary.
+		$task->set_meta( 'batch_id', $current_batch );
+
+		if ( Task::STATUS_COMPLETED === $status ) {
+			$status_msg = __( 'Completed.', 'gk-foundation' );
+		} elseif ( $is_new_request ) {
+			$status_msg = strtr( __( 'Run [count] (new request).', 'gk-foundation' ), [ '[count]' => $rerun_count ] );
+		} else {
+			$status_msg = strtr( __( 'Run [count].', 'gk-foundation' ), [ '[count]' => $rerun_count ] );
+		}
+
+		// Append compact checkpoint args so the activity log shows what
+		// changed between reruns (e.g. {"offset":6000}).
 		$checkpoint_args = $next_rules ? $next_rules->next_task_args() : null;
 
 		if ( Task::STATUS_PENDING === $status && $checkpoint_args ) {
@@ -601,13 +657,11 @@ class ScheduleHandler {
 			);
 
 			if ( $checkpoint ) {
-				$rerun_msg .= ' — ' . wp_json_encode( $checkpoint, JSON_UNESCAPED_UNICODE );
+				$status_msg .= ' — ' . wp_json_encode( $checkpoint, JSON_UNESCAPED_UNICODE );
 			}
 		}
 
-		$msg = '[task:' . $task->name() . '] ' . ( Task::STATUS_COMPLETED === $status ?
-			'[completed] ' . __( 'Completed.', 'gk-gravityimport' ) :
-			$rerun_msg );
+		$msg = $task_prefix . $status_msg;
 
 		ActionScheduler::logger()->log( $job->id(), $msg );
 
@@ -729,7 +783,7 @@ class ScheduleHandler {
 			]
 		);
 
-		ActionScheduler::logger()->log( $job->id(), '[job_completed] ' . __( 'Job completed.', 'gk-gravityimport' ) );
+		ActionScheduler::logger()->log( $job->id(), '[job_completed] ' . __( 'Job completed.', 'gk-foundation' ) );
 
 		$this->store()->mark_job_completed( $job->name(), $job->id() );
 
@@ -1291,7 +1345,7 @@ class ScheduleHandler {
 
 		$this->failing_job = true;
 
-		ActionScheduler::logger()->log( $job->id(), '[job_failed] ' . __( 'Job failed.', 'gk-gravityimport' ) );
+		ActionScheduler::logger()->log( $job->id(), '[job_failed] ' . __( 'Job failed.', 'gk-foundation' ) );
 
 		global $wpdb;
 
@@ -1604,7 +1658,7 @@ class ScheduleHandler {
 					'Stopped — no progress after [count] attempt.',
 					'Stopped — no progress after [count] attempts.',
 					$count,
-					'gk-gravityimport'
+					'gk-foundation'
 				),
 				[ '[count]' => $count ]
 			)
@@ -1713,5 +1767,21 @@ class ScheduleHandler {
 		}
 
 		return $this->task_executor;
+	}
+
+	/**
+	 * Registers the stale sentinel check on admin page loads.
+	 *
+	 * @since 1.13.0
+	 *
+	 * @return void
+	 */
+	public function register_sentinel_check(): void {
+		add_action(
+            'admin_init',
+            function () {
+				TaskExecutor::check_stale_sentinel( $this );
+			}
+        );
 	}
 }

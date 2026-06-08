@@ -150,12 +150,23 @@ class GP_Easy_Passthrough extends GP_Feed_Plugin {
 	protected $passed_through_entries = array();
 
 	/**
-	 * Flag to determine if an entry was loaded using the "ep_token" GET param.
+	 * Flag to determine if an entry was loaded using the token GET param.
 	 *
 	 * @since  1.9.22
 	 * @var array
 	 */
 	protected $current_token = null;
+
+	/**
+	 * Get the query parameter name used for passing a token.
+	 *
+	 * @since  1.10.2
+	 *
+	 * @return string
+	 */
+	protected function get_token_param_name() {
+		return apply_filters( 'gpep_token_param_name', 'ep_token' );
+	}
 
 	/**
 	* Get instance of this class.
@@ -207,7 +218,7 @@ class GP_Easy_Passthrough extends GP_Feed_Plugin {
 
 		add_action( 'gform_after_submission', array( $this, 'store_entry_id' ), 10, 2 );
 
-		add_filter( 'gform_pre_render', array( $this, 'populate_fields' ), 5 );
+		add_filter( 'gform_pre_render', array( $this, 'populate_fields' ), 9 );
 
 		add_filter( 'gform_admin_pre_render', array( $this, 'add_merge_tags' ) );
 		add_action( 'gform_pre_replace_merge_tags', array( $this, 'replace_merge_tags' ), 6, 3 );
@@ -531,7 +542,7 @@ class GP_Easy_Passthrough extends GP_Feed_Plugin {
 			$allow_same_form = apply_filters( 'gpep_populate_same_form', true );
 
 			// If form is the current form, skip it.
-			if ( $form['id'] == $current_form['id'] && ! $allow_same_form ) {
+			if ( rgar( $form, 'id' ) == rgar( $current_form, 'id' ) && ! $allow_same_form ) {
 				continue;
 			}
 
@@ -973,8 +984,10 @@ class GP_Easy_Passthrough extends GP_Feed_Plugin {
 	*/
 	public function load_entry_token() {
 
+		$token_param = $this->get_token_param_name();
+
 		// If token is not set, return.
-		if ( ! rgget( 'ep_token' ) ) {
+		if ( ! rgget( $token_param ) ) {
 			return;
 		}
 
@@ -986,7 +999,7 @@ class GP_Easy_Passthrough extends GP_Feed_Plugin {
 		nocache_headers();
 
 		// Get token.
-		$token = sanitize_text_field( rgget( 'ep_token' ) );
+		$token = sanitize_text_field( rgget( $token_param ) );
 
 		// Get entry for token.
 		$entry = $this->get_entry_for_token( $token );
@@ -1016,8 +1029,10 @@ class GP_Easy_Passthrough extends GP_Feed_Plugin {
 			return $can_edit;
 		}
 
+		$token_param = $this->get_token_param_name();
+
 		// Get entry for token.
-		$parent_entry = $this->get_entry_for_token( sanitize_text_field( rgget( 'ep_token' ) ) );
+		$parent_entry = $this->get_entry_for_token( sanitize_text_field( rgget( $token_param ) ) );
 		if ( ! $parent_entry ) {
 			return $can_edit;
 		}

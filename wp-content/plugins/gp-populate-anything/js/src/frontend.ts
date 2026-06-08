@@ -86,6 +86,40 @@ window.gform.addAction('gppa_register_form', (formId: number) => {
 });
 
 /**
+ * Prevent partial/incomplete masked phone inputs from triggering GPPA updates.
+ *
+ * @since 2.1.64
+ */
+window.gform.addFilter(
+	'gppa_should_trigger_change',
+	(
+		triggerChange: boolean,
+		_formId: any,
+		_inputId: any,
+		$el: JQuery,
+		_event: JQuery.Event
+	) => {
+		if (!triggerChange) {
+			return triggerChange;
+		}
+
+		if (
+			$el.is('input[type="tel"]') &&
+			$el.closest('.gfield--type-phone').length
+		) {
+			const value = String($el.val() || '');
+
+			// Skip updates when the input mask is incomplete (e.g. contains "_").
+			if (value && value.indexOf('_') !== -1) {
+				return false;
+			}
+		}
+
+		return triggerChange;
+	}
+);
+
+/**
  * This is a workaround for the issue where the conditional logic action
  * does not trigger the input event on the field.
  *
@@ -107,23 +141,36 @@ window.gform.addAction('gform_post_conditional_logic_field_action', function(
 
 	const $targetField = jQuery(targetId).find('input, select, textarea');
 
-	if (
-		$targetField.length &&
-		!$targetField.hasClass('gf_coupon_code') &&
-		!jQuery(targetId).hasClass('gfield--type-phone') &&
-		defaultValues &&
-		typeof defaultValues === 'string' &&
-		action === 'show' &&
-		!$targetField.data('gppa-triggered') // Early exit if already triggered
-	) {
-		$targetField.data('gppa-triggered', true);
-
-		// Trigger the input and change events.
-		if (!$targetField.val() && !$targetField.is('[type="file"]')) {
-			$targetField.val(defaultValues);
-		}
-		$targetField.trigger('input').trigger('change');
+	if (!$targetField.length) {
+		return;
 	}
+
+	if (action === 'hide') {
+		$targetField.removeData('gppa-triggered');
+		return;
+	}
+
+	if (action !== 'show' || $targetField.data('gppa-triggered')) {
+		return;
+	}
+
+	$targetField.data('gppa-triggered', true);
+
+	if (shouldApplyConditionalDefault($targetField, defaultValues, targetId)) {
+		$targetField.val(defaultValues);
+	}
+
+	const isPhoneField = jQuery(targetId).hasClass('gfield--type-phone');
+
+	// Skip phone fields. The mask placeholder (e.g. "(___) ___-____") shows as unwanted
+	// formatting on initial show, and dispatching `input` on a masked field crashes
+	// jquery.maskedinput on mobile, aborting GF's multi-page render.
+	if (isPhoneField) {
+		return;
+	}
+
+	// GF does not always emit these events when a field becomes visible.
+	$targetField.trigger('input').trigger('change');
 });
 
 /**
@@ -164,4 +211,28 @@ function patchConditionalLogicDefaults() {
 
 		formConfig.defaults = defaults;
 	}
+}
+
+function shouldApplyConditionalDefault(
+	$targetField: JQuery,
+	defaultValues:
+		| string
+		| number
+		| string[]
+		| ((this: HTMLElement, index: number, value: string) => string),
+	targetId: any
+) {
+	if (
+		typeof defaultValues !== 'string' ||
+		!defaultValues ||
+		$targetField.val() ||
+		$targetField.is('[type="file"]') ||
+		$targetField.hasClass('gf_coupon_code') ||
+		jQuery(targetId).hasClass('gfield--type-phone')
+	) {
+		return false;
+	}
+
+	// Do not inject unresolved merge tag placeholders as literal values.
+	return !/@\{:[^}]+\}/.test(defaultValues);
 }

@@ -183,7 +183,7 @@ class NoticeException extends BaseException {
 	public static function not_found( string $what, array $data = [] ): self {
 		return new self(
             self::NOT_FOUND,
-            strtr( __( '[object] not found.', 'gk-gravityimport' ), [ '[object]' => $what ] ),
+            strtr( __( '[object] not found.', 'gk-foundation' ), [ '[object]' => $what ] ),
             $data + [ 'target' => $what ]
         );
 	}

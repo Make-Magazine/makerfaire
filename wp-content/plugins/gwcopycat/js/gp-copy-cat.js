@@ -70,7 +70,7 @@
 				}
 			);
 
-			$formWrapper.find( '.gwcopy:not(.gfield--type-list)' ).find( 'input, textarea, select, button' ).each(
+			$formWrapper.find( '.gwcopy:not(.gfield--type-list)' ).find( 'input, textarea, select, button' ).not('button[id*="_select_all"]').each(
 				function () {
 					// `.gfield_chainedselect` as a parent indicates a GFCS field that should not be copied during init
 					// this is due to a race condition where we and GFCS may try to update the next dropdown field in the chain.
@@ -148,6 +148,7 @@
 			 * We then clear it out at the end of our `gform_post_conditional_logic` callback.
 			 */
 			var triggerIds = [];
+			var conditionalVisibilityByField = {};
 
 			/**
 			 * We use `gform_post_conditional_logic` instead of `gform_post_conditional_logic_field_action` as the
@@ -185,9 +186,24 @@
 				});
 
 				fieldsToProcess.forEach( function ( fieldId ) {
-					// Only process fields that have copy operations directly defined on them
-					// Don't process target fields that become visible - this prevents infinite loops
-					var fieldSettings = typeof self.fields[ fieldId ] !== 'undefined' ? self.fields[ fieldId ] : [];
+					var visibilityKey = formId + '_' + fieldId;
+					var isConditionallyHidden = $( '#field_' + formId + '_' + fieldId ).attr( 'data-conditional-logic' ) === 'hidden';
+					var wasConditionallyHidden = conditionalVisibilityByField[ visibilityKey ] === true;
+					var hasDirectSettings = typeof self.fields[ fieldId ] !== 'undefined' && self.fields[ fieldId ].length > 0;
+					var becameVisible = wasConditionallyHidden && ! isConditionallyHidden;
+					var fieldSettings = [];
+
+					/**
+					 * Process source fields always, but only process target-only fields when they transition
+					 * from hidden to visible to avoid conditional logic recursion loops.
+					 */
+					if ( hasDirectSettings ) {
+						fieldSettings = self.fields[ fieldId ];
+					} else if ( becameVisible ) {
+						fieldSettings = self.getFieldSettings( fieldId );
+					}
+
+					conditionalVisibilityByField[ visibilityKey ] = isConditionallyHidden;
 
 					if ( ! fieldSettings || fieldSettings.length === 0 ) {
 						return;
@@ -276,6 +292,17 @@
 			return [];
 		};
 
+		self.isConditionallyHiddenField = function ( formId, fieldId ) {
+			var parsedFieldId = parseInt( fieldId, 10 ),
+				$field = $( '#field_' + formId + '_' + parsedFieldId );
+
+			if ( window.gf_check_field_rule ) {
+				return window.gf_check_field_rule( formId, parsedFieldId, true, '' ) === 'hide';
+			}
+
+			return $field.attr( 'data-conditional-logic' ) === 'hidden';
+		};
+
 		self.copyValues = function (elem, isOverwrite, forceEmptyCopy) {
 
 			var fieldId = gf_get_input_id_by_html_id( $( elem ).parents( '.gfield' ).attr( 'id' ) ),
@@ -333,6 +360,37 @@
 					if ( ! doesFormInputHaveValue( conditionFormId, fieldId, inputId ) ) {
 						continue;
 					}
+				}
+
+				/**
+				 * Filter to control whether copying from conditionally hidden source fields should be allowed.
+				 *
+				 * @param bool   copyConditionallyHiddenSource  Whether to copy from conditionally hidden source fields. Default true.
+				 * @param object args                           Arguments object.
+				 * @param number args.formId                    The form ID.
+				 * @param number args.sourceFieldId             The source field ID.
+				 * @param object args.field                     The Copy Cat field configuration object containing source, target, etc.
+				 * @param object args.elem                      The element that triggered the copy.
+				 * @param object args.sourceGroup               The source group of elements.
+				 * @param object args.targetGroup               The target group of elements.
+				 *
+				 * @since 1.4.97
+				 */
+				var copyConditionallyHiddenSource = gform.applyFilters(
+					'gpcc_copy_conditionally_hidden_field',
+					true,
+					{
+						formId: self.formId,
+						sourceFieldId,
+						field,
+						elem,
+						sourceGroup,
+						targetGroup
+					}
+				);
+
+				if ( ! copyConditionallyHiddenSource && self.isConditionallyHiddenField( self.formId, sourceFieldId ) ) {
+					continue;
 				}
 
 				/**

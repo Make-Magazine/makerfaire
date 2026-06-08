@@ -1,7 +1,7 @@
 === GravityView - DataTables Layout ===
 Tags: gravityview
 Requires at least: 4.4
-Tested up to: 6.9
+Tested up to: 7.0.0
 Stable tag: trunk
 Contributors: The GravityKit Team
 License: GPL 3 or higher
@@ -15,6 +15,46 @@ Display entries in a dynamic table powered by DataTables & GravityView.
 3. Follow the instructions
 
 == Changelog ==
+
+= 3.8.1 on June 4, 2026 =
+
+This update fixes DataTables scripts not loading in some embed locations.
+
+#### 🐛 Fixed
+* Export buttons (Copy, CSV, Excel, Print) and other DataTables scripts did not load when a View was placed outside the main page content, such as in a theme template, widget, or page builder.
+
+= 3.8.0 on May 14, 2026 =
+
+This release adds per-column filtering for Gravity Forms fields with multiple sub-inputs in server-side processing mode and fixes invisible filter inputs on Hidden field columns.
+
+#### 🚀 Added
+* Server-side per-column filtering for Gravity Forms fields with multiple sub-inputs, such as Name, Address, and Email with Confirmation enabled.
+
+#### 🐛 Fixed
+* Per-column filter inputs on DataTables columns bound to Gravity Forms Hidden fields were rendered as `<input type="hidden">` and therefore invisible to the user.
+
+= 3.7.5 on April 23, 2026 =
+
+This release fixes DataTables pagination state persisting when search filters change.
+
+#### 🐛 Fixed
+* DataTables pagination state persisted when switching between different search filter values, causing tables to open on the wrong page or show no results.
+
+= 3.7.4 on March 26, 2026 =
+
+This update fixes GravityEdit inline editing in client-side processing mode.
+
+#### 🐛 Fixed
+* GravityEdit inline edit popups for radio buttons, checkboxes, and other complex fields were empty when DataTables was set to Preloaded (client-side) processing mode.
+
+= 3.7.3 on March 19, 2026 =
+
+This release resolves a DataTables loading issue caused by shortcode sort field overrides, a PHP warning when rendering deleted form fields, and a PHP notice for an unregistered script dependency.
+
+#### 🐛 Fixed
+* DataTables getting stuck on "Loading data…" when the `sort_field` shortcode attribute points to a column not visible in the View.
+* PHP warning triggered when a View renders a field that no longer exists in the Gravity Forms form.
+* PHP notice logged due to an unregistered `gv-datatables` script dependency on Single Entry and Edit Entry pages.
 
 = 3.7.2 on January 22, 2026 =
 

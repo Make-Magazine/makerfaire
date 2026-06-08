@@ -187,6 +187,9 @@ class GravityView_Edit_Entry_Render {
 
 		add_filter( 'gravityview_is_edit_entry', array( $this, 'is_edit_entry' ) );
 
+		add_filter( 'the_title', array( $this, 'filter_edit_entry_title' ), 2, 2 );
+		add_filter( 'document_title_parts', array( $this, 'filter_edit_entry_document_title_parts' ) );
+
 		add_action( 'gravityview_edit_entry', array( $this, 'init' ), 10, 4 );
 
 		// Disable conditional logic if needed (since 1.9)
@@ -261,6 +264,200 @@ class GravityView_Edit_Entry_Render {
 	 */
 	public function is_edit_entry_submission() {
 		return ! empty( $_POST[ self::$nonce_field ] );
+	}
+
+	/**
+	 * Returns the Edit Entry title derived from the `edit_entry_title` View setting (with merge tags
+	 * resolved) and filtered through `gk/gravityview/edit-entry/title`.
+	 *
+	 * Used by the heading, {@see filter_edit_entry_title()}, and {@see filter_edit_entry_document_title_parts()}.
+	 * Returns an empty string when the setting is unconfigured AND no filter callback supplies a value,
+	 * so callers can decide their own fallback behavior.
+	 *
+	 * @since 2.59.0
+	 *
+	 * @param \GV\View $view  The View being edited.
+	 * @param array    $form  The Gravity Forms form.
+	 * @param array    $entry The Gravity Forms entry.
+	 *
+	 * @return string The processed title, or empty string when unconfigured.
+	 */
+	protected function get_edit_entry_title( $view, $form, $entry ) {
+		$setting = (string) $view->settings->get( 'edit_entry_title', '' );
+
+		// Strip HTML from the stored template before merge-tag expansion. The value flows into
+		// the_title (which many themes echo unescaped) and into the <title> tag, so authored
+		// markup in the setting would otherwise execute in the theme context. Merge-tag values
+		// are still escaped inside replace_variables() via its default $esc_html behavior.
+		$setting = wp_strip_all_tags( $setting );
+
+		$base = '' === $setting
+			? ''
+			: GravityView_API::replace_variables( $setting, $form, $entry );
+
+		/**
+		 * The title used on the Edit Entry screen.
+		 *
+		 * Receives the merge-tag-processed `edit_entry_title` View setting, or an empty string when
+		 * the setting is unconfigured. Drives the `<h2>` heading, the `the_title` override for the
+		 * theme post title, and the default for `gk/gravityview/edit-entry/document-title` (browser
+		 * tab title). Returning a non-empty string overrides all three places; returning empty
+		 * leaves each of them at its WordPress default.
+		 *
+		 * @since 2.59.0
+		 *
+		 * @param string   $title The merge-tag-processed `edit_entry_title` setting, or an empty string.
+		 * @param array    $entry The Gravity Forms entry being edited.
+		 * @param \GV\View $view  The View being edited.
+		 */
+		return (string) apply_filters( 'gk/gravityview/edit-entry/title', $base, $entry, $view );
+	}
+
+	/**
+	 * Overrides the post title on an Edit Entry screen with the value from
+	 * {@see get_edit_entry_title()}. Registered on the `the_title` filter.
+	 *
+	 * @since 2.59.0
+	 *
+	 * @param string   $passed_title   Original title from WordPress.
+	 * @param int|null $passed_post_id Post ID.
+	 *
+	 * @return string
+	 */
+	public function filter_edit_entry_title( $passed_title, $passed_post_id = null ) {
+		// `the_title` fires for every rendered post title on the page — including nav menu items,
+		// widgets, related-post lists, and ad-hoc `apply_filters( 'the_title', $str )` calls that
+		// omit a post id. Only override when the caller supplied a post id AND the global post
+		// confirms we are rendering that same post. Without this guard the override leaks.
+		if ( empty( $passed_post_id ) ) {
+			return $passed_title;
+		}
+
+		global $post;
+
+		if ( ! is_object( $post ) || (int) $post->ID !== (int) $passed_post_id ) {
+			return $passed_title;
+		}
+
+		$context = $this->resolve_edit_entry_title_context();
+
+		if ( ! $context ) {
+			return $passed_title;
+		}
+
+		$title = $this->get_edit_entry_title( $context['view'], $context['form'], $context['entry'] );
+
+		return '' === $title ? $passed_title : $title;
+	}
+
+	/**
+	 * Overrides the `title` portion of `document_title_parts` (the browser tab title) on an Edit Entry
+	 * screen. Defaults to `gk/gravityview/edit-entry/title` and then runs through the dedicated
+	 * `gk/gravityview/edit-entry/document-title` filter so the browser tab title can diverge from the
+	 * on-page heading if desired.
+	 *
+	 * @since 2.59.0
+	 *
+	 * @param array $title_parts Document title parts (title, page, tagline, site).
+	 *
+	 * @return array
+	 */
+	public function filter_edit_entry_document_title_parts( $title_parts ) {
+		$context = $this->resolve_edit_entry_title_context();
+
+		if ( ! $context ) {
+			return $title_parts;
+		}
+
+		$base = $this->get_edit_entry_title( $context['view'], $context['form'], $context['entry'] );
+
+		/**
+		 * The document (browser tab) title on the Edit Entry screen.
+		 *
+		 * Defaults to the value of {@see 'gk/gravityview/edit-entry/title'}. Returning a value
+		 * different from the default lets the browser tab title diverge from the on-page heading
+		 * and the theme's post title. Return an empty string to leave the document title at its
+		 * WordPress default.
+		 *
+		 * @since 2.59.0
+		 *
+		 * @param string   $title Default: the value of `gk/gravityview/edit-entry/title`.
+		 * @param array    $entry The Gravity Forms entry being edited.
+		 * @param \GV\View $view  The View being edited.
+		 */
+		$document_title = (string) apply_filters( 'gk/gravityview/edit-entry/document-title', $base, $context['entry'], $context['view'] );
+
+		if ( '' === $document_title ) {
+			return $title_parts;
+		}
+
+		$title_parts['title'] = $document_title;
+
+		return $title_parts;
+	}
+
+	/**
+	 * Resolves the View, form, and entry for the current Edit Entry screen, or returns null when
+	 * the current request is not an Edit Entry request or no entry/view can be determined.
+	 *
+	 * Callers that need a post-id match guard (e.g. `the_title`) must perform it themselves.
+	 *
+	 * @since 2.59.0
+	 *
+	 * @return array{view:\GV\View,form:array,entry:array}|null
+	 */
+	private function resolve_edit_entry_title_context() {
+		if ( ! class_exists( '\GV\Entry' ) ) {
+			return null;
+		}
+
+		if ( ! $this->is_edit_entry() ) {
+			return null;
+		}
+
+		// After init()/setup_vars() has run, prefer the view/form/entry that were passed through
+		// `gk/gravityview/edit-entry/init/data`. Before init(), these properties are not yet set
+		// and we fall through to resolving from the request.
+		if ( $this->view instanceof \GV\View && is_array( $this->form ) && is_array( $this->entry ) ) {
+			return array(
+				'view'  => $this->view,
+				'form'  => $this->form,
+				'entry' => $this->entry,
+			);
+		}
+
+		global $post;
+
+		$view_id = (int) \GV\Utils::_GET( 'gvid' );
+
+		if ( ! $view_id && is_object( $post ) ) {
+			$view_id = (int) $post->ID;
+		}
+
+		if ( ! $view_id ) {
+			return null;
+		}
+
+		$view = \GV\View::by_id( $view_id );
+
+		if ( ! $view ) {
+			return null;
+		}
+
+		$gventry = gravityview()->request->is_entry();
+
+		if ( ! $gventry ) {
+			return null;
+		}
+
+		$entry = $gventry->as_entry();
+		$form  = GVCommon::get_form( $entry['form_id'] );
+
+		return array(
+			'view'  => $view,
+			'form'  => $form,
+			'entry' => $entry,
+		);
 	}
 
 	/**
@@ -989,6 +1186,7 @@ class GravityView_Edit_Entry_Render {
 			$img_title       = count( $ary ) > 1 ? $ary[1] : '';
 			$img_caption     = count( $ary ) > 2 ? $ary[2] : '';
 			$img_description = count( $ary ) > 3 ? $ary[3] : '';
+			$img_alt         = count( $ary ) > 4 ? $ary[4] : '';
 
 			$image_meta = array(
 				'post_excerpt' => $img_caption,
@@ -1007,18 +1205,24 @@ class GravityView_Edit_Entry_Render {
 			require_once GRAVITYVIEW_DIR . 'includes/class-gravityview-gfformsmodel.php';
 			$media_id = GravityView_GFFormsModel::media_handle_upload( $img_url, $post_id, $image_meta );
 
-			// is this field set as featured image?
-			if ( $media_id && $field->postFeaturedImage ) {
-				set_post_thumbnail( $post_id, $media_id );
+			if ( $media_id ) {
+				// Copy the alt text to the attachment, matching how Gravity Forms stores it on initial post creation.
+				update_post_meta( $media_id, '_wp_attachment_image_alt', $img_alt );
+
+				// is this field set as featured image?
+				if ( $field->postFeaturedImage ) {
+					set_post_thumbnail( $post_id, $media_id );
+				}
 			}
 		} elseif ( ! empty( $_POST[ $input_name ] ) && is_array( $value ) ) {
 
 			$img_url         = stripslashes_deep( $_POST[ $input_name ] );
 			$img_title       = stripslashes_deep( \GV\Utils::_POST( $input_name . '_1' ) );
+			$img_alt         = stripslashes_deep( \GV\Utils::_POST( $input_name . '_2' ) );
 			$img_caption     = stripslashes_deep( \GV\Utils::_POST( $input_name . '_4' ) );
 			$img_description = stripslashes_deep( \GV\Utils::_POST( $input_name . '_7' ) );
 
-			$value = ! empty( $img_url ) ? $img_url . '|:|' . $img_title . '|:|' . $img_caption . '|:|' . $img_description : '';
+			$value = ! empty( $img_url ) ? $img_url . '|:|' . $img_title . '|:|' . $img_caption . '|:|' . $img_description . '|:|' . $img_alt : '';
 
 			if ( $field->postFeaturedImage ) {
 
@@ -1031,6 +1235,9 @@ class GravityView_Edit_Entry_Render {
 
 				// update image title, caption or description
 				wp_update_post( $image_meta );
+
+				// Copy the alt text to the attachment, matching how Gravity Forms stores it on initial post creation.
+				update_post_meta( $image_meta['ID'], '_wp_attachment_image_alt', $img_alt );
 			}
 		} else {
 
@@ -1290,7 +1497,9 @@ class GravityView_Edit_Entry_Render {
 	 */
 	public function edit_entry_form() {
 
-		$view = \GV\View::by_id( $this->view_id );
+		// Prefer the View instance that was passed through `gk/gravityview/edit-entry/init/data`
+		// so any integration that mutated the view/form/entry in that filter is reflected here.
+		$view = $this->view instanceof \GV\View ? $this->view : \GV\View::by_id( $this->view_id );
 
 		if ( $view->settings->get( 'edit_locking' ) ) {
 			$locking = new GravityView_Edit_Entry_Locking();
@@ -1322,15 +1531,29 @@ class GravityView_Edit_Entry_Render {
 				<span>
                 <?php
 
+					$edit_entry_title = $this->get_edit_entry_title( $view, $this->form, $this->entry );
+
+					if ( '' === $edit_entry_title ) {
+						$edit_entry_title = __( 'Edit Entry', 'gk-gravityview' );
+					}
+
 					/**
 					 * Modify the edit entry title.
 					 *
-					 * @param string $edit_entry_title Modify the "Edit Entry" title
-					 * @param GravityView_Edit_Entry_Render $this This object
+					 * @since 1.1
+					 * @deprecated 2.59.0 Use {@see 'gk/gravityview/edit-entry/title'} instead.
+					 *
+					 * @param string                        $edit_entry_title Modify the "Edit Entry" title.
+					 * @param GravityView_Edit_Entry_Render $this             This object.
 					 */
-					$edit_entry_title = apply_filters( 'gravityview_edit_entry_title', __( 'Edit Entry', 'gk-gravityview' ), $this );
+					$edit_entry_title = GravityView_Deprecated_Hook_Notices::apply_filters(
+						'gravityview_edit_entry_title',
+						array( $edit_entry_title, $this ),
+						'2.59.0',
+						'gk/gravityview/edit-entry/title'
+					);
 
-					echo esc_attr( $edit_entry_title );
+					echo esc_html( $edit_entry_title );
 				?>
                     </span>
 			</h2>
@@ -1911,28 +2134,28 @@ class GravityView_Edit_Entry_Render {
 
 					// If this is a single upload file.
                     if ( ! \GV\Utils::get( $field, 'multipleFiles' ) ) {
-                        if ( ! empty( $_FILES[ $input_name ] ) ) {
-                            // Always remove the old file, if the <input type=file> is not disabled.
+                        if ( ! empty( $_FILES[ $input_name ][ 'name' ] ) ) {
+                            // A new file is being uploaded; replace the old one.
                             $this->record_files_for_removal( $field, $value );
-                            // The new value to validate is now empty.
+
                             $value = '';
-                            // Mark the old value as removed, to prevent Max Files Exceeded error.
+
                             $this->entry[ '' . $field->id ] = '';
-                            if ( ! empty( $_FILES[ $input_name ][ 'name' ] ) ) {
-                                // Uploading a new file.
-                                $file_path = GFFormsModel::get_file_upload_path(
-                                    $form_id,
-                                    $_FILES[ $input_name ][ 'name' ]
-                                );
-                                $value     = $file_path[ 'url' ];
-                            }
+
+                            $file_path = GFFormsModel::get_file_upload_path(
+                                $form_id,
+                                $_FILES[ $input_name ][ 'name' ]
+                            );
+
+                            $value = $file_path[ 'url' ];
                         } else {
-                            // Fix PHP warning on line 1498 of form_display.php for post_image fields
-                            // Fix PHP Notice:  Undefined index:  size in form_display.php on line 1511.
+                            // No new file uploaded. Preserve the existing value through validation and save.
+                            // PHP populates $_FILES even for empty file inputs, so its presence cannot signal intent.
+                            // Mark the field as disabled here so save_field_value() returns the original entry value.
                             $_FILES[ $input_name ] = [
                                 'name'                        => '',
                                 'size'                        => '',
-                                self::GV_FILE_UPLOAD_DISABLED => true, // Custom marker to indicate field was disabled.
+                                self::GV_FILE_UPLOAD_DISABLED => true,
                             ];
                         }
                     } elseif ( \GV\Utils::get( $field, 'multipleFiles' ) ) {

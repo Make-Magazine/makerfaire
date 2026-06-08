@@ -33,7 +33,8 @@ class GravityView_Inline_Edit_Field_Number extends GravityView_Inline_Edit_Field
 
 		$form = GFAPI::get_form( $form_id );
 
-		$display_value = \GFCommon::get_lead_field_display( $gf_field, $entry[ $gf_field->id ], $entry['currency'], false, 'html' );
+		$entry_or_currency = version_compare( \GFForms::$version, '2.9.29', '>=' ) ? $entry : $entry['currency'];
+		$display_value = \GFCommon::get_lead_field_display( $gf_field, $entry[ $gf_field->id ], $entry_or_currency, false, 'html' );
 
 		$response = array(
 			array(

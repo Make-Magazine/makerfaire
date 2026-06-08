@@ -573,6 +573,7 @@ class GP_Populate_Anything_Live_Merge_Tags {
 		 */
 		if (
 			( ! count( $matches ) )
+			|| ! is_string( $field->defaultValue )
 			|| ! preg_match( '/@{.*?:?.+?}/', $field->defaultValue )
 		) {
 			return $content;
@@ -715,7 +716,7 @@ class GP_Populate_Anything_Live_Merge_Tags {
 			if ( is_array( $default_value ) ) {
 				continue;
 			}
-			if ( preg_match( '/@{.*?:?.+?}/', $default_value ) ) {
+			if ( is_string( $default_value ) && preg_match( '/@{.*?:?.+?}/', $default_value ) ) {
 				$has_lmt = true;
 				break;
 			}
@@ -884,10 +885,18 @@ class GP_Populate_Anything_Live_Merge_Tags {
 		 * @param mixed $value   The Live Merge Tag value being sanitized.
 		 *
 		 * @example Modify the allowed HTML tags to include <a> and <strong> tags.
+		 * <code>
 		 * add_filter( 'gppa_lmt_kses_allowed_html', function( $allowed, $value ) {
-		 *     $allowed = array( 'a', 'strong' );
+		 *     $allowed = array(
+		 *         'a'      => array(
+		 *             'href'  => true,
+		 *             'title' => true,
+		 *         ),
+		 *         'strong' => array(),
+		 *     );
 		 *     return $allowed;
 		 * }, 10, 2 );
+		 * </code>
 		 *
 		 * @since 2.1.54
 		 *
@@ -1353,9 +1362,13 @@ class GP_Populate_Anything_Live_Merge_Tags {
 	 * In some cases, live merge tags should be replaced statically without the need to make them "live" (i.e. in field
 	 * labels when rendering the {all_fields} merge tag).
 	 *
-	 * @return string $text
+	 * @return mixed
 	 */
 	public function replace_live_merge_tags_static( $text, $form, $entry = null, $url_encode = false, $esc_html = false, $nl2br = false, $format = 'html' ) {
+
+		if ( ! is_string( $text ) ) {
+			return $text;
+		}
 
 		// GPNF {parent} on an HTML may show raw value, so if there isn't any text value to replace. Show empty character
 		if ( preg_match( '/\{\%?(?:GPNF:)?parent:(.*?)\%?\}/i', $text ) && ! $entry ) {

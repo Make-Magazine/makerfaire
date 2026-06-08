@@ -525,6 +525,18 @@ class GravityView_Lightbox_Entry {
 	}
 
 	/**
+	 * Suppresses the "go back" link URL while the lightbox renders an entry.
+	 *
+	 * The lightbox renders an entry in isolation, so there is no directory destination
+	 * to return to. Registering `__return_false` on the replacement hook hides the link.
+	 *
+	 * @since 2.60.2
+	 */
+	private function suppress_back_link_url() {
+		add_filter( 'gravityview/template/links/back/url', '__return_false' );
+	}
+
+	/**
 	 * Renders the single or edit entry lightbox view.
 	 *
 	 * @since   2.29.0
@@ -542,7 +554,7 @@ class GravityView_Lightbox_Entry {
 
 		$post = $post ?? get_post( $view->ID );
 
-		add_filter( 'gravityview_go_back_url', '__return_false' );
+		$this->suppress_back_link_url();
 
 		$view_data = GravityView_View_Data::getInstance();
 		$view_data->add_view( $view->ID );

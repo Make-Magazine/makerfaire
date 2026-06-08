@@ -1,6 +1,10 @@
 
 # Changelog
 
+## 1.3.25 | April 29, 2026
+
+- Updated to use `GF_Field::get_value_all_fields_merge_tag()` as `GFCommon::get_lead_field_display()` was deprecated in GF 2.9.31.
+
 ## 1.3.24 | May 14, 2025
 
 - Removed redundant check for Gravity Perks in preparation for Spellbook.

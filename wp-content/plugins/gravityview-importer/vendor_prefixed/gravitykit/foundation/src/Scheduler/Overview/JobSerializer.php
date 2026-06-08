@@ -43,17 +43,6 @@ class JobSerializer {
 
 		$default_label = ( $row['args']['label'] ?? '' ) ?: $this->humanize_hook( $hook );
 
-		$serialized_tasks = [];
-
-		foreach ( $tasks as $name => $definition ) {
-			$serialized_tasks[] = $this->serialize_task(
-				(string) $name,
-				$definition,
-				$progress,
-				$logs['task_logs'][ $name ] ?? []
-			);
-		}
-
 		$schedule = $this->serialize_schedule( $row );
 
 		// For completed/failed jobs, use the actual execution timestamp
@@ -71,19 +60,52 @@ class JobSerializer {
 			}
 		}
 
-		// Detect overlap-skipped jobs: the only meaningful event is [job_skipped].
-		// Override the AS "complete" status to "skipped" so the UI shows the real state.
+		// Override AS "complete" status when Foundation's task chain is still active.
+		// AS marks the trigger action as complete after execute_job() returns, but
+		// the actual task chain runs via separate gk_scheduler_run_task actions.
+		// Between chunks, tasks are in "pending" state (waiting for next AS action).
+		//
+		// This block must run BEFORE task serialization so that task-level statuses
+		// (e.g., mark_remaining_skipped) are reflected in the serialized output.
 		if ( 'complete' === $status ) {
+			$has_running = ! empty( $progress->running() );
+			$has_pending = ! empty( $progress->pending() );
+			$job_started = false;
+
 			foreach ( $logs['job_events'] as $event ) {
-				if ( 'job_skipped' === ( $event['type'] ?? '' ) ) {
-					$status = 'skipped';
-
-					// Mark all pending tasks as skipped to match the job state.
-					$progress->mark_remaining_skipped();
-
+				if ( 'job_started' === ( $event['type'] ?? '' ) ) {
+					$job_started = true;
 					break;
 				}
 			}
+
+			if ( $has_running || ( $has_pending && $job_started ) ) {
+				// Task chain is in progress — show "running" regardless of AS status.
+				$status = 'in-progress';
+			} else {
+				// Detect overlap-skipped jobs: the only meaningful event is [job_skipped].
+				foreach ( $logs['job_events'] as $event ) {
+					if ( 'job_skipped' === ( $event['type'] ?? '' ) ) {
+						$status = 'skipped';
+
+						// Mark all pending tasks as skipped to match the job state.
+						$progress->mark_remaining_skipped();
+
+						break;
+					}
+				}
+			}
+		}
+
+		$serialized_tasks = [];
+
+		foreach ( $tasks as $name => $definition ) {
+			$serialized_tasks[] = $this->serialize_task(
+				(string) $name,
+				$definition,
+				$progress,
+				$logs['task_logs'][ $name ] ?? []
+			);
 		}
 
 		return [
@@ -441,44 +463,44 @@ class JobSerializer {
 	protected function humanize_interval( int $seconds ): string {
 		if ( $seconds < 60 ) {
 			/* translators: [count]: number of seconds. */
-			return strtr( _n( 'Every [count] second', 'Every [count] seconds', $seconds, 'gk-gravityimport' ), [ '[count]' => $seconds ] );
+			return strtr( _n( 'Every [count] second', 'Every [count] seconds', $seconds, 'gk-foundation' ), [ '[count]' => $seconds ] );
 		}
 
 		$minutes = (int) round( $seconds / 60 );
 
 		if ( 0 === $seconds % 60 && $minutes < 60 ) {
 			if ( 1 === $minutes ) {
-				return __( 'Every minute', 'gk-gravityimport' );
+				return __( 'Every minute', 'gk-foundation' );
 			}
 
 			/* translators: [count]: number of minutes. */
-			return strtr( _n( 'Every [count] minute', 'Every [count] minutes', $minutes, 'gk-gravityimport' ), [ '[count]' => $minutes ] );
+			return strtr( _n( 'Every [count] minute', 'Every [count] minutes', $minutes, 'gk-foundation' ), [ '[count]' => $minutes ] );
 		}
 
 		$hours = (int) round( $seconds / 3600 );
 
 		if ( 0 === $seconds % 3600 ) {
 			if ( 1 === $hours ) {
-				return __( 'Every hour', 'gk-gravityimport' );
+				return __( 'Every hour', 'gk-foundation' );
 			}
 
 			/* translators: [count]: number of hours. */
-			return strtr( _n( 'Every [count] hour', 'Every [count] hours', $hours, 'gk-gravityimport' ), [ '[count]' => $hours ] );
+			return strtr( _n( 'Every [count] hour', 'Every [count] hours', $hours, 'gk-foundation' ), [ '[count]' => $hours ] );
 		}
 
 		$days = (int) round( $seconds / 86400 );
 
 		if ( 0 === $seconds % 86400 ) {
 			if ( 1 === $days ) {
-				return __( 'Every day', 'gk-gravityimport' );
+				return __( 'Every day', 'gk-foundation' );
 			}
 
 			/* translators: [count]: number of days. */
-			return strtr( _n( 'Every [count] day', 'Every [count] days', $days, 'gk-gravityimport' ), [ '[count]' => $days ] );
+			return strtr( _n( 'Every [count] day', 'Every [count] days', $days, 'gk-foundation' ), [ '[count]' => $days ] );
 		}
 
 		/* translators: [count]: number of minutes. */
-		return strtr( _n( 'Every [count] minute', 'Every [count] minutes', $minutes, 'gk-gravityimport' ), [ '[count]' => $minutes ] );
+		return strtr( _n( 'Every [count] minute', 'Every [count] minutes', $minutes, 'gk-foundation' ), [ '[count]' => $minutes ] );
 	}
 
 	/**
@@ -498,14 +520,14 @@ class JobSerializer {
 
 		if ( ! $parts || count( $parts ) !== 5 ) {
 			/* translators: [cron]: raw cron expression. */
-			return strtr( __( 'Cron: [cron]', 'gk-gravityimport' ), [ '[cron]' => $cron ] );
+			return strtr( __( 'Cron: [cron]', 'gk-foundation' ), [ '[cron]' => $cron ] );
 		}
 
 		list( $min, $hour, $day, $month, $weekday ) = $parts;
 
 		// Every minute: * * * * *.
 		if ( '*' === $min && '*' === $hour && '*' === $day && '*' === $month && '*' === $weekday ) {
-			return __( 'Every minute', 'gk-gravityimport' );
+			return __( 'Every minute', 'gk-foundation' );
 		}
 
 		// Every N minutes: */N * * * *.
@@ -513,12 +535,12 @@ class JobSerializer {
 			$n = (int) $m[1];
 
 			/* translators: [count]: number of minutes. */
-			return strtr( _n( 'Every [count] minute', 'Every [count] minutes', $n, 'gk-gravityimport' ), [ '[count]' => $n ] );
+			return strtr( _n( 'Every [count] minute', 'Every [count] minutes', $n, 'gk-foundation' ), [ '[count]' => $n ] );
 		}
 
 		// Every hour at minute N: N * * * *.
 		if ( is_numeric( $min ) && '*' === $hour && '*' === $day && '*' === $month && '*' === $weekday ) {
-			return __( 'Every hour', 'gk-gravityimport' );
+			return __( 'Every hour', 'gk-foundation' );
 		}
 
 		// Every N hours: 0 */N * * *.
@@ -526,31 +548,31 @@ class JobSerializer {
 			$n = (int) $m[1];
 
 			/* translators: [count]: number of hours. */
-			return strtr( _n( 'Every [count] hour', 'Every [count] hours', $n, 'gk-gravityimport' ), [ '[count]' => $n ] );
+			return strtr( _n( 'Every [count] hour', 'Every [count] hours', $n, 'gk-foundation' ), [ '[count]' => $n ] );
 		}
 
 		// Daily at specific time: N N * * *.
 		if ( is_numeric( $min ) && is_numeric( $hour ) && '*' === $day && '*' === $month && '*' === $weekday ) {
 			/* translators: [time]: time of day (e.g. "03:00"). */
-			return strtr( __( 'Daily at [time]', 'gk-gravityimport' ), [ '[time]' => sprintf( '%02d:%02d', (int) $hour, (int) $min ) ] );
+			return strtr( __( 'Daily at [time]', 'gk-foundation' ), [ '[time]' => sprintf( '%02d:%02d', (int) $hour, (int) $min ) ] );
 		}
 
 		// Weekly: N N * * N.
 		if ( is_numeric( $min ) && is_numeric( $hour ) && '*' === $day && '*' === $month && is_numeric( $weekday ) ) {
 			$day_names = [
-				__( 'Sunday', 'gk-gravityimport' ),
-				__( 'Monday', 'gk-gravityimport' ),
-				__( 'Tuesday', 'gk-gravityimport' ),
-				__( 'Wednesday', 'gk-gravityimport' ),
-				__( 'Thursday', 'gk-gravityimport' ),
-				__( 'Friday', 'gk-gravityimport' ),
-				__( 'Saturday', 'gk-gravityimport' ),
+				__( 'Sunday', 'gk-foundation' ),
+				__( 'Monday', 'gk-foundation' ),
+				__( 'Tuesday', 'gk-foundation' ),
+				__( 'Wednesday', 'gk-foundation' ),
+				__( 'Thursday', 'gk-foundation' ),
+				__( 'Friday', 'gk-foundation' ),
+				__( 'Saturday', 'gk-foundation' ),
 			];
 			$day_name  = $day_names[ (int) $weekday % 7 ] ?? $weekday;
 
 			/* translators: [day]: day of week, [time]: time of day. */
 			return strtr(
-				__( 'Weekly on [day] at [time]', 'gk-gravityimport' ),
+				__( 'Weekly on [day] at [time]', 'gk-foundation' ),
 				[
 					'[day]'  => $day_name,
 					'[time]' => sprintf( '%02d:%02d', (int) $hour, (int) $min ),
@@ -559,7 +581,7 @@ class JobSerializer {
 		}
 
 		/* translators: [cron]: raw cron expression. */
-		return strtr( __( 'Cron: [cron]', 'gk-gravityimport' ), [ '[cron]' => $cron ] );
+		return strtr( __( 'Cron: [cron]', 'gk-foundation' ), [ '[cron]' => $cron ] );
 	}
 
 	/**
@@ -877,20 +899,20 @@ class JobSerializer {
 	protected function relative_time( int $seconds ): string {
 		if ( $seconds < 60 ) {
 			/* translators: [count]: number of seconds. */
-			return strtr( _n( 'in [count] second', 'in [count] seconds', $seconds, 'gk-gravityimport' ), [ '[count]' => $seconds ] );
+			return strtr( _n( 'in [count] second', 'in [count] seconds', $seconds, 'gk-foundation' ), [ '[count]' => $seconds ] );
 		}
 
 		$minutes = (int) round( $seconds / 60 );
 
 		if ( $minutes < 60 ) {
 			/* translators: [count]: number of minutes. */
-			return strtr( _n( 'in [count] minute', 'in [count] minutes', $minutes, 'gk-gravityimport' ), [ '[count]' => $minutes ] );
+			return strtr( _n( 'in [count] minute', 'in [count] minutes', $minutes, 'gk-foundation' ), [ '[count]' => $minutes ] );
 		}
 
 		$hours = (int) round( $minutes / 60 );
 
 		/* translators: [count]: number of hours. */
-		return strtr( _n( 'in [count] hour', 'in [count] hours', $hours, 'gk-gravityimport' ), [ '[count]' => $hours ] );
+		return strtr( _n( 'in [count] hour', 'in [count] hours', $hours, 'gk-foundation' ), [ '[count]' => $hours ] );
 	}
 
 	/**
@@ -904,16 +926,16 @@ class JobSerializer {
 	 */
 	protected function status_label( string $status_key ): string {
 		$labels = [
-			Task::STATUS_PENDING   => _x( 'pending', 'task_status', 'gk-gravityimport' ),
-			Task::STATUS_RUNNING   => _x( 'running', 'task_status', 'gk-gravityimport' ),
-			Task::STATUS_COMPLETED => _x( 'completed', 'task_status', 'gk-gravityimport' ),
-			Task::STATUS_FAILED    => _x( 'failed', 'task_status', 'gk-gravityimport' ),
-			Task::STATUS_SKIPPED   => _x( 'skipped', 'task_status', 'gk-gravityimport' ),
-			DbStore::STATUS_PAUSED => _x( 'paused', 'task_status', 'gk-gravityimport' ),
-			'in-progress'          => _x( 'in progress', 'task_status', 'gk-gravityimport' ),
-			'complete'             => _x( 'completed', 'task_status', 'gk-gravityimport' ),
-			'canceled'             => _x( 'canceled', 'task_status', 'gk-gravityimport' ),
-			'scheduled'            => _x( 'scheduled', 'task_status', 'gk-gravityimport' ),
+			Task::STATUS_PENDING   => _x( 'pending', 'task_status', 'gk-foundation' ),
+			Task::STATUS_RUNNING   => _x( 'running', 'task_status', 'gk-foundation' ),
+			Task::STATUS_COMPLETED => _x( 'completed', 'task_status', 'gk-foundation' ),
+			Task::STATUS_FAILED    => _x( 'failed', 'task_status', 'gk-foundation' ),
+			Task::STATUS_SKIPPED   => _x( 'skipped', 'task_status', 'gk-foundation' ),
+			DbStore::STATUS_PAUSED => _x( 'paused', 'task_status', 'gk-foundation' ),
+			'in-progress'          => _x( 'in progress', 'task_status', 'gk-foundation' ),
+			'complete'             => _x( 'completed', 'task_status', 'gk-foundation' ),
+			'canceled'             => _x( 'canceled', 'task_status', 'gk-foundation' ),
+			'scheduled'            => _x( 'scheduled', 'task_status', 'gk-foundation' ),
 		];
 
 		return $labels[ $status_key ] ?? '';

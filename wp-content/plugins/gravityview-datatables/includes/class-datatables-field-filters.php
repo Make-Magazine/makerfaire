@@ -211,11 +211,6 @@ class GV_Extension_DataTables_Field_Filters extends GV_DataTables_Extension {
 			$field_column['searchable'] = true;
 		}
 
-		// For now, don't support complex field types that have inputs (Address, Name, etc).
-		if ( $is_server_side && ! empty( $field->field->inputs ) && floor( $field->ID ) === (float) $field->ID ) {
-			$field_column['searchable'] = false;
-		}
-
 		if ( 'id' === $field_id ) {
 			$field_column['searchable'] = true;
 			$atts['type']               = 'number';

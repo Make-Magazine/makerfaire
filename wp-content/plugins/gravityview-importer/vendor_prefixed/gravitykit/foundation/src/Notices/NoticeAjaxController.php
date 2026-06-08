@@ -105,7 +105,7 @@ final class NoticeAjaxController {
 			$notice_id = $payload['id'] ?? null;
 
 			if ( ! $notice_id ) {
-				throw NoticeException::validation( __( 'Missing "id" parameter', 'gk-gravityimport' ) );
+				throw NoticeException::validation( __( 'Missing "id" parameter', 'gk-foundation' ) );
 			}
 
 			$notice_ids = [ (string) $notice_id ];
@@ -169,7 +169,7 @@ final class NoticeAjaxController {
 			$notice_id = $payload['id'] ?? null;
 
 			if ( ! $notice_id ) {
-				throw NoticeException::validation( __( 'Missing "id" parameter', 'gk-gravityimport' ) );
+				throw NoticeException::validation( __( 'Missing "id" parameter', 'gk-foundation' ) );
 			}
 
 			$notice_ids = [ (string) $notice_id ];
@@ -295,7 +295,7 @@ final class NoticeAjaxController {
 		$seconds   = (int) ( $payload['in'] ?? 0 );
 
 		if ( ! $notice_id || $seconds <= 0 ) {
-			throw NoticeException::validation( __( 'Missing "id" or invalid "in" parameter.', 'gk-gravityimport' ) );
+			throw NoticeException::validation( __( 'Missing "id" or invalid "in" parameter.', 'gk-foundation' ) );
 		}
 
 		$user_id = Users::current_id();
@@ -369,7 +369,7 @@ final class NoticeAjaxController {
 		$notice_id = $payload['id'] ?? '';
 
 		if ( ! is_string( $notice_id ) || '' === $notice_id ) {
-			throw NoticeException::validation( __( 'Missing "id" parameter', 'gk-gravityimport' ) );
+			throw NoticeException::validation( __( 'Missing "id" parameter', 'gk-foundation' ) );
 		}
 
 		$notice = $this->manager->get_notice( $notice_id );
@@ -380,13 +380,13 @@ final class NoticeAjaxController {
 
 		// Capability guard: ensure current user is allowed to see the notice.
 		if ( ! $this->manager->get_evaluator()->check_capabilities( $notice ) ) {
-			throw NoticeException::forbidden( __( 'Insufficient permissions.', 'gk-gravityimport' ) );
+			throw NoticeException::forbidden( __( 'Insufficient permissions.', 'gk-foundation' ) );
 		}
 
 		$live = method_exists( $notice, 'get_live_config' ) ? $notice->get_live_config() : null;
 
 		if ( ! is_array( $live ) || empty( $live['callback'] ) || ! is_callable( $live['callback'] ) ) {
-			throw NoticeException::validation( __( 'Invalid configuration.', 'gk-gravityimport' ) );
+			throw NoticeException::validation( __( 'Invalid configuration.', 'gk-foundation' ) );
 		}
 
 		$notice->apply_live_updates( $this->repository );

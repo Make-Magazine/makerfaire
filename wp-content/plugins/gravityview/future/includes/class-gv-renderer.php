@@ -44,6 +44,8 @@ class Renderer {
 		self::maybe_print_configuration_notice( $gravityview );
 
 		self::maybe_print_entry_approval_notice( $gravityview );
+
+		\GravityView_Plugin_Hooks_GravityView_Advanced_Filtering::maybe_print_inactive_notice( $gravityview->view->ID ?? 0 );
 	}
 
 

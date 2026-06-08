@@ -2,7 +2,7 @@
 /**
  * @license MIT
  *
- * Modified by gravitykit on 20-February-2026 using {@see https://github.com/BrianHenryIE/strauss}.
+ * Modified by gravitykit on 28-April-2026 using {@see https://github.com/BrianHenryIE/strauss}.
  */
 
 namespace GravityKit\AdvancedFilter\QueryFilters\Filter;
@@ -91,6 +91,8 @@ final class EntryFilterService {
 		$entry_value  = $entry[ $filter->key() ] ?? '';
 		$filter_value = $filter->value();
 
+		$entry_value = $this->maybe_match_user( $entry_value, $filter );
+
 		if ( $field ) {
 			if ( $field->inputs && $field->choices ) {
 				$input_id = null;
@@ -125,14 +127,34 @@ final class EntryFilterService {
 			}
 		}
 
+		$operator = $filter->operator();
+
 		if (
 			( $field && ProcessDateVisitor::get_date_format( $field, $filter ) )
 			|| ProcessDateVisitor::is_native_date_filter( $filter )
 		) {
+			$entry_empty  = '' === (string) $entry_value;
+			$filter_empty = '' === (string) $filter_value;
+
+			// When either side is empty we short-circuit — `new DateTimeImmutable('')` returns *now*,
+			// which would silently turn an empty entry into a match against today's date below.
+			if ( $entry_empty || $filter_empty ) {
+				// Both sides empty means the entry is empty AND the filter asked for empty (via the
+				// `isempty` proxy that rewrites to `is` with an empty value). Only equality matches;
+				// every other comparison on two empties is falsy.
+				if ( $entry_empty && $filter_empty ) {
+					return 'is' === $operator;
+				}
+
+				// Exactly one side is empty. An empty value isn't equal to a real date and can't be
+				// ordered against one, so only `isnot` is trivially true — all other operators are false.
+				return 'isnot' === $operator;
+			}
+
 			try {
 				// For 'is' and 'isnot' operators, strip the time component so that
 				// relative dates like "today" match entries from any time that day.
-				if ( in_array( $filter->operator(), [ 'is', 'isnot' ], true ) ) {
+				if ( in_array( $operator, [ 'is', 'isnot' ], true ) ) {
 					$filter_value = ( new DateTimeImmutable( (string) $filter_value ) )->format( 'Y-m-d' );
 					$entry_value  = ( new DateTimeImmutable( (string) $entry_value ) )->format( 'Y-m-d' );
 				}
@@ -145,7 +167,7 @@ final class EntryFilterService {
 			}
 		}
 
-		return $this->matches_operation( $entry_value, $filter_value, $filter->operator() );
+		return $this->matches_operation( $entry_value, $filter_value, $operator );
 	}
 
 	/**
@@ -262,5 +284,74 @@ final class EntryFilterService {
 		}
 
 		return GFFormsModel::matches_operation( $value_1, $value_2, $operation );
+	}
+
+	/**
+	 * Resolves the entry value for created_by filters by matching against user data.
+	 *
+	 * When the filter targets `created_by`, the raw entry value is a numeric user ID.
+	 * This method looks up the user and checks whether any of their data fields match
+	 * the filter value using the filter's operator. If a match is found, the matching
+	 * user field value is returned so the caller's comparison succeeds.
+	 *
+	 * @since 2.9.0
+	 *
+	 * @param string $value  The raw entry value (user ID for created_by filters).
+	 * @param Filter $filter The filter being evaluated.
+	 *
+	 * @return string The matched user field value, or the original value if no match.
+	 */
+	private function maybe_match_user( $value, Filter $filter ): string {
+		if ( 'created_by' !== $filter->key() ) {
+			return $value;
+		}
+
+		$user = get_user( $value );
+		if ( false === $user ) {
+			return $value;
+		}
+
+		$user_fields = [
+			'nickname',
+			'first_name',
+			'last_name',
+			'user_nicename',
+			'user_login',
+			'display_name',
+			'user_email',
+		];
+
+		/**
+		 * Modifies the user fields to search in the created_by condition.
+		 *
+		 * @since  2.9.0
+		 *
+		 * @param array  $user_fields The user fields.
+		 * @param Filter $filter      The form ID.
+		 */
+		$user_fields = apply_filters(
+			'gk/query-filters/entry-filter/created-by/user-fields',
+			$user_fields,
+			$filter,
+		);
+
+		if ( ! is_array( $user_fields ) ) {
+			return $value;
+		}
+
+		$data         = array_filter(
+			(array) $user->data,
+			static fn( $key ) => in_array( $key, $user_fields, true ),
+			ARRAY_FILTER_USE_KEY
+		);
+		$filter_value = $filter->value() ?? '';
+
+		foreach ( $data as $user_value ) {
+			if ( $this->matches_operation( $user_value, $filter_value, $filter->operator() ) ) {
+				return $user_value;
+			}
+		}
+
+		return $value;
 	}
 }

@@ -250,7 +250,7 @@ abstract class Widget {
 		 * @deprecated 2.0: Use gravityview/widget/active_areas instead
 		 * @param array $default_areas Definition for default widget areas
 		 */
-		$default_areas = apply_filters( 'gravityview_widget_active_areas', $default_areas );
+		$default_areas = \GravityView_Deprecated_Hook_Notices::apply_filters( 'gravityview_widget_active_areas', [ $default_areas ], '2.55', 'gravityview/widget/active_areas' );
 
 		/**
 		 * Array of zones available for widgets to be dropped into.
@@ -428,7 +428,7 @@ abstract class Widget {
 		/**
 		 * @deprecated 2.14 In favor of allowlist.
 		 */
-		$allowlist = apply_filters_deprecated( 'gravityview/widget/hide_until_searched/whitelist', array( $allowlist ), '2.14', 'gravityview/widget/hide_until_searched/allowlist' );
+		$allowlist = \GravityView_Deprecated_Hook_Notices::apply_filters( 'gravityview/widget/hide_until_searched/whitelist', array( $allowlist ), '2.14', 'gravityview/widget/hide_until_searched/allowlist' );
 
 		/**
 		 * Some widgets have got to stay shown.
@@ -545,7 +545,7 @@ abstract class Widget {
 		 * @deprecated Use `gravityview/widgets/register`
 		 * @param array $registered_widgets Empty array
 		 */
-		$registered_widgets = apply_filters( 'gravityview_register_directory_widgets', array() );
+		$registered_widgets = \GravityView_Deprecated_Hook_Notices::apply_filters( 'gravityview_register_directory_widgets', [ array() ], '2.55', 'gravityview/widgets/register' );
 
 		/**
 		 * Each item is used to instantiate a GravityView_Admin_View_Widget object.

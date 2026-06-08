@@ -146,7 +146,7 @@ class JobQueryService {
 				// Verify the action matches the product filter before injecting it.
 				if ( ! $product || self::action_matches_product( $action, $product ) ) {
 					array_unshift( $action_ids, (int) $search );
-					$total_items++;
+					++$total_items;
 				}
 			}
 		}
@@ -569,7 +569,7 @@ class JobQueryService {
 			return (string) $schedule->get_recurrence();
 		}
 
-		return __( 'Non-repeating', 'gk-gravityimport' );
+		return __( 'Non-repeating', 'gk-foundation' );
 	}
 
 	/**

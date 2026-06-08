@@ -46,10 +46,11 @@ class GravityView_Field_Post_Image extends GravityView_Field {
 	 *
 	 * @since 1.16.2
 	 * @since 1.19.2 Converted from private to static public method
+	 * @since 2.61.1 Added the alt value.
 	 *
 	 * @param string $value The stored value of an image, impoded with `|:|` values
 	 *
-	 * @return array with `url`, `title`, `caption` and `description` values
+	 * @return array with `url`, `title`, `caption`, `description` and `alt` values
 	 */
 	public static function explode_value( $value ) {
 
@@ -58,11 +59,11 @@ class GravityView_Field_Post_Image extends GravityView_Field {
 			return $value;
 		}
 
-		$url = $title = $caption = $description = '';
+		$url = $title = $caption = $description = $alt = '';
 
 		// If there's a |:| match, process. Otherwise, empty array!
 		if ( preg_match( '/\|\:\|/', $value ) ) {
-			list( $url, $title, $caption, $description ) = array_pad( explode( '|:|', $value ), 4, false );
+			list( $url, $title, $caption, $description, $alt ) = array_pad( explode( '|:|', $value ), 5, false );
 		}
 
 		return array(
@@ -70,6 +71,7 @@ class GravityView_Field_Post_Image extends GravityView_Field {
 			'title'       => $title,
 			'caption'     => $caption,
 			'description' => $description,
+			'alt'         => $alt,
 		);
 	}
 
@@ -120,6 +122,7 @@ class GravityView_Field_Post_Image extends GravityView_Field {
 
 		$input_value = array(
 			"{$id}.1" => \GV\Utils::get( $img_array, 'title' ),
+			"{$id}.2" => \GV\Utils::get( $img_array, 'alt' ),
 			"{$id}.4" => \GV\Utils::get( $img_array, 'caption' ),
 			"{$id}.7" => \GV\Utils::get( $img_array, 'description' ),
 		);
@@ -140,7 +143,14 @@ class GravityView_Field_Post_Image extends GravityView_Field {
 		 */
 		if ( null !== $img_name ) {
 			$current_file               = sprintf( "<input name='%s' id='%s' type='hidden' value='%s' />", $input_name, $field_id, esc_url_raw( $img_array['url'] ) );
-			$gf_post_image_field_output = str_replace( '<span class=\'ginput_preview\'>', '<span class=\'ginput_preview\'>' . $current_file, $gf_post_image_field_output );
+			$gf_post_image_field_output = preg_replace_callback(
+				'/(<(?:div|span)\b(?=[^>]*\bclass=([\'"])[^\'"]*\bginput_preview\b[^\'"]*\2)[^>]*>)/',
+				static function ( $matches ) use ( $current_file ) {
+					return $matches[1] . $current_file;
+				},
+				$gf_post_image_field_output,
+				1
+			);
 		}
 
 		return $gf_post_image_field_output;

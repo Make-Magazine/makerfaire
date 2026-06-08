@@ -213,6 +213,11 @@ class WLCMS_Admin_Menus
 
         if (is_array($menu) && count($menu) > 0) {
             foreach ($menu as $menu_item) {
+
+                if (!isset($menu_item[0], $menu_item[2])) {
+                    continue;
+                }
+                
                 // some menu items are seperators, skip them
                 if ($menu_item[0] == '') {
                     continue;

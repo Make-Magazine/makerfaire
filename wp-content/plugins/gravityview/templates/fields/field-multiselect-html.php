@@ -28,6 +28,6 @@ $field_settings = $gravityview->field->as_configuration();
  */
 $show_label = apply_filters( 'gravityview/fields/select/output_label', ( 'label' === \GV\Utils::get( $field_settings, 'choice_display' ) ), $entry, $field, $gravityview );
 
-$output = $field->get_value_entry_detail( $gravityview->value, '', $show_label );
+$output = GravityView_GF_Compat::get_entry_detail( $field, $gravityview->value, $entry, $show_label );
 
 echo $output;

@@ -4,7 +4,7 @@
 
 namespace Composer\Autoload;
 
-class ComposerStaticInit652bbb00a4b2068d74d23ff0587c41a4
+class ComposerStaticInit98383f697cfaddfc83060d46e76af5c8
 {
     public static $prefixLengthsPsr4 = array (
         'G' => 
@@ -28,11 +28,17 @@ class ComposerStaticInit652bbb00a4b2068d74d23ff0587c41a4
         'GravityKit\\AdvancedFilter\\QueryFilters\\Clock\\Clock' => __DIR__ . '/../..' . '/vendor_prefixed/gravitykit/query-filters/src/Clock/Clock.php',
         'GravityKit\\AdvancedFilter\\QueryFilters\\Clock\\SystemClock' => __DIR__ . '/../..' . '/vendor_prefixed/gravitykit/query-filters/src/Clock/SystemClock.php',
         'GravityKit\\AdvancedFilter\\QueryFilters\\Condition\\ConditionFactory' => __DIR__ . '/../..' . '/vendor_prefixed/gravitykit/query-filters/src/Condition/ConditionFactory.php',
+        'GravityKit\\AdvancedFilter\\QueryFilters\\Condition\\Created_By_Condition' => __DIR__ . '/../..' . '/vendor_prefixed/gravitykit/query-filters/src/Condition/Created_By_Condition.php',
+        'GravityKit\\AdvancedFilter\\QueryFilters\\Condition\\FactoryHandler\\CreatedByFactoryHandler' => __DIR__ . '/../..' . '/vendor_prefixed/gravitykit/query-filters/src/Condition/FactoryHandler/CreatedByFactoryHandler.php',
+        'GravityKit\\AdvancedFilter\\QueryFilters\\Condition\\Global_Search_Condition' => __DIR__ . '/../..' . '/vendor_prefixed/gravitykit/query-filters/src/Condition/Global_Search_Condition.php',
+        'GravityKit\\AdvancedFilter\\QueryFilters\\Condition\\Product_Price_Condition' => __DIR__ . '/../..' . '/vendor_prefixed/gravitykit/query-filters/src/Condition/Product_Price_Condition.php',
         'GravityKit\\AdvancedFilter\\QueryFilters\\Filter\\EntryFilterService' => __DIR__ . '/../..' . '/vendor_prefixed/gravitykit/query-filters/src/Filter/EntryFilterService.php',
         'GravityKit\\AdvancedFilter\\QueryFilters\\Filter\\Filter' => __DIR__ . '/../..' . '/vendor_prefixed/gravitykit/query-filters/src/Filter/Filter.php',
         'GravityKit\\AdvancedFilter\\QueryFilters\\Filter\\FilterFactory' => __DIR__ . '/../..' . '/vendor_prefixed/gravitykit/query-filters/src/Filter/FilterFactory.php',
         'GravityKit\\AdvancedFilter\\QueryFilters\\Filter\\FilterIdGenerator' => __DIR__ . '/../..' . '/vendor_prefixed/gravitykit/query-filters/src/Filter/FilterIdGenerator.php',
         'GravityKit\\AdvancedFilter\\QueryFilters\\Filter\\RandomFilterIdGenerator' => __DIR__ . '/../..' . '/vendor_prefixed/gravitykit/query-filters/src/Filter/RandomFilterIdGenerator.php',
+        'GravityKit\\AdvancedFilter\\QueryFilters\\Filter\\Source\\FilterSource' => __DIR__ . '/../..' . '/vendor_prefixed/gravitykit/query-filters/src/Filter/Source/FilterSource.php',
+        'GravityKit\\AdvancedFilter\\QueryFilters\\Filter\\Source\\JsonFilterSource' => __DIR__ . '/../..' . '/vendor_prefixed/gravitykit/query-filters/src/Filter/Source/JsonFilterSource.php',
         'GravityKit\\AdvancedFilter\\QueryFilters\\Filter\\Visitor\\CurrentUserVisitor' => __DIR__ . '/../..' . '/vendor_prefixed/gravitykit/query-filters/src/Filter/Visitor/CurrentUserVisitor.php',
         'GravityKit\\AdvancedFilter\\QueryFilters\\Filter\\Visitor\\DisableAdminVisitor' => __DIR__ . '/../..' . '/vendor_prefixed/gravitykit/query-filters/src/Filter/Visitor/DisableAdminVisitor.php',
         'GravityKit\\AdvancedFilter\\QueryFilters\\Filter\\Visitor\\DisableFiltersVisitor' => __DIR__ . '/../..' . '/vendor_prefixed/gravitykit/query-filters/src/Filter/Visitor/DisableFiltersVisitor.php',
@@ -48,14 +54,15 @@ class ComposerStaticInit652bbb00a4b2068d74d23ff0587c41a4
         'GravityKit\\AdvancedFilter\\QueryFilters\\Repository\\FormRepository' => __DIR__ . '/../..' . '/vendor_prefixed/gravitykit/query-filters/src/Repository/FormRepository.php',
         'GravityKit\\AdvancedFilter\\QueryFilters\\Repository\\UserRepository' => __DIR__ . '/../..' . '/vendor_prefixed/gravitykit/query-filters/src/Repository/UserRepository.php',
         'GravityKit\\AdvancedFilter\\QueryFilters\\Sql\\SqlAdjustmentCallbacks' => __DIR__ . '/../..' . '/vendor_prefixed/gravitykit/query-filters/src/Sql/SqlAdjustmentCallbacks.php',
+        'GravityKit\\AdvancedFilter\\QueryFilters\\Util\\QueryHelper' => __DIR__ . '/../..' . '/vendor_prefixed/gravitykit/query-filters/src/Util/QueryHelper.php',
     );
 
     public static function getInitializer(ClassLoader $loader)
     {
         return \Closure::bind(function () use ($loader) {
-            $loader->prefixLengthsPsr4 = ComposerStaticInit652bbb00a4b2068d74d23ff0587c41a4::$prefixLengthsPsr4;
-            $loader->prefixDirsPsr4 = ComposerStaticInit652bbb00a4b2068d74d23ff0587c41a4::$prefixDirsPsr4;
-            $loader->classMap = ComposerStaticInit652bbb00a4b2068d74d23ff0587c41a4::$classMap;
+            $loader->prefixLengthsPsr4 = ComposerStaticInit98383f697cfaddfc83060d46e76af5c8::$prefixLengthsPsr4;
+            $loader->prefixDirsPsr4 = ComposerStaticInit98383f697cfaddfc83060d46e76af5c8::$prefixDirsPsr4;
+            $loader->classMap = ComposerStaticInit98383f697cfaddfc83060d46e76af5c8::$classMap;
 
         }, null, ClassLoader::class);
     }

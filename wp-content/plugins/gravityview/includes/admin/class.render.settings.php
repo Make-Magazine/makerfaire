@@ -281,7 +281,7 @@ class GravityView_Render_Settings {
 		 * @param string $input_type    (textarea, list, select, etc.).
 		 * @param int    $form_id       The form ID. {@since 2.5}
 		 */
-		$field_options = apply_filters( "gravityview_template_{$field_type}_options", $field_options, $template_id, $field_id, $context, $input_type, $form_id );
+		$field_options = GravityView_Deprecated_Hook_Notices::apply_filters( "gravityview_template_{$field_type}_options", [ $field_options, $template_id, $field_id, $context, $input_type, $form_id ], '2.55', 'gk/gravityview/template/options' );
 
 		/**
 		 * Filters the field options by input type (`$input_type` examples: `textarea`, `list`, `select`, etc.)
@@ -295,7 +295,7 @@ class GravityView_Render_Settings {
 		 * @param string $input_type    (textarea, list, select, etc.).
 		 * @param int    $form_id       The form ID. {@since 2.5}
 		 */
-		$field_options = apply_filters( "gravityview_template_{$input_type}_options", $field_options, $template_id, $field_id, $context, $input_type, $form_id );
+		$field_options = GravityView_Deprecated_Hook_Notices::apply_filters( "gravityview_template_{$input_type}_options", [ $field_options, $template_id, $field_id, $context, $input_type, $form_id ], '2.55', 'gk/gravityview/template/options' );
 
 		// Filter out any fields that are not in the provided context.
 		$_context = 'directory' === $context ? 'multiple' : $context;
@@ -312,9 +312,8 @@ class GravityView_Render_Settings {
 		/**
 		 * Filters the field options.
 		 *
-		 * @since  2.32.0
-		 *
-		 * @filter `gk/gravityview/template/options`
+		 * @since 2.32.0
+		 * @since 2.57.0 Added `$field_id` and `$input_type` parameters.
 		 *
 		 * @param array            $field_options Array of field options with `label`, `value`, `type`, `default` keys.
 		 * @param 'widget'|'field' $field_type    The field type (`widget` or `field`).
@@ -322,6 +321,8 @@ class GravityView_Render_Settings {
 		 * @param string           $context       The context (`single` or `directory`).
 		 * @param bool             $grouped       Whether the options should be grouped.
 		 * @param int              $form_id       The form ID.
+		 * @param string           $field_id      GF Field ID. Example: `3`, `5.2`, `entry_link`, `created_by`.
+		 * @param string           $input_type    The input type (`textarea`, `list`, `select`, etc.).
 		 */
 		return apply_filters(
 			'gk/gravityview/template/options',
@@ -330,7 +331,9 @@ class GravityView_Render_Settings {
 			(string) $template_id,
 			(string) $context,
 			(bool) $grouped,
-			(int) $form_id
+			(int) $form_id,
+			(string) $field_id,
+			(string) $input_type
 		);
 	}
 

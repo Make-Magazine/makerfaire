@@ -127,7 +127,7 @@ final class JobAjaxController {
 	 */
 	private function verify_capability(): void {
 		if ( ! current_user_can( 'manage_options' ) ) {
-			throw new Exception( esc_html__( 'You do not have permission to perform this action.', 'gk-gravityimport' ) );
+			throw new Exception( esc_html__( 'You do not have permission to perform this action.', 'gk-foundation' ) );
 		}
 	}
 
@@ -155,7 +155,7 @@ final class JobAjaxController {
 	 */
 	private function verify_network_capability(): void {
 		if ( ! current_user_can( 'manage_network' ) ) {
-			throw new Exception( esc_html__( 'You do not have permission to perform this action.', 'gk-gravityimport' ) );
+			throw new Exception( esc_html__( 'You do not have permission to perform this action.', 'gk-foundation' ) );
 		}
 	}
 
@@ -231,17 +231,17 @@ final class JobAjaxController {
 		$action = $payload['action'] ?? '';
 
 		if ( ! $id ) {
-			throw new Exception( esc_html__( 'Missing required parameter: id', 'gk-gravityimport' ) );
+			throw new Exception( esc_html__( 'Missing required parameter: id', 'gk-foundation' ) );
 		}
 
 		if ( ! $action ) {
-			throw new Exception( esc_html__( 'Missing required parameter: action', 'gk-gravityimport' ) );
+			throw new Exception( esc_html__( 'Missing required parameter: action', 'gk-foundation' ) );
 		}
 
 		if ( ! in_array( $action, self::ALLOWED_ACTIONS, true ) ) {
 			throw new Exception(
 				/* translators: [action]: the invalid action name. */
-				strtr( esc_html__( 'Invalid action: [action]', 'gk-gravityimport' ), [ '[action]' => $action ] )
+				strtr( esc_html__( 'Invalid action: [action]', 'gk-foundation' ), [ '[action]' => $action ] )
 			);
 		}
 
@@ -291,13 +291,13 @@ final class JobAjaxController {
 		$all_matching = ! empty( $payload['all_matching'] );
 
 		if ( ! $action ) {
-			throw new Exception( esc_html__( 'Missing required parameter: action', 'gk-gravityimport' ) );
+			throw new Exception( esc_html__( 'Missing required parameter: action', 'gk-foundation' ) );
 		}
 
 		if ( ! in_array( $action, self::ALLOWED_BULK_ACTIONS, true ) ) {
 			throw new Exception(
 				/* translators: [action]: the invalid action name. */
-				strtr( esc_html__( 'Invalid action: [action]', 'gk-gravityimport' ), [ '[action]' => $action ] )
+				strtr( esc_html__( 'Invalid action: [action]', 'gk-foundation' ), [ '[action]' => $action ] )
 			);
 		}
 
@@ -307,7 +307,7 @@ final class JobAjaxController {
 			$ids = $payload['ids'] ?? null;
 
 			if ( ! is_array( $ids ) || empty( $ids ) ) {
-				throw new Exception( esc_html__( 'Missing required parameter: ids', 'gk-gravityimport' ) );
+				throw new Exception( esc_html__( 'Missing required parameter: ids', 'gk-foundation' ) );
 			}
 		}
 
@@ -318,9 +318,9 @@ final class JobAjaxController {
 			$success = $this->execute_action( (int) $id, $action );
 
 			if ( $success ) {
-				$processed++;
+				++$processed;
 			} else {
-				$failed++;
+				++$failed;
 			}
 		}
 		$this->invalidate_product_cache();
@@ -582,16 +582,16 @@ final class JobAjaxController {
 		$action       = $payload['action'] ?? '';
 
 		if ( ! $composite_id ) {
-			throw new Exception( esc_html__( 'Missing required parameter: id', 'gk-gravityimport' ) );
+			throw new Exception( esc_html__( 'Missing required parameter: id', 'gk-foundation' ) );
 		}
 
 		if ( ! $action ) {
-			throw new Exception( esc_html__( 'Missing required parameter: action', 'gk-gravityimport' ) );
+			throw new Exception( esc_html__( 'Missing required parameter: action', 'gk-foundation' ) );
 		}
 
 		if ( ! in_array( $action, self::ALLOWED_ACTIONS, true ) ) {
 			throw new Exception(
-				strtr( esc_html__( 'Invalid action: [action]', 'gk-gravityimport' ), [ '[action]' => $action ] )
+				strtr( esc_html__( 'Invalid action: [action]', 'gk-foundation' ), [ '[action]' => $action ] )
 			);
 		}
 
@@ -634,12 +634,12 @@ final class JobAjaxController {
 		$all_matching = ! empty( $payload['all_matching'] );
 
 		if ( ! $action ) {
-			throw new Exception( esc_html__( 'Missing required parameter: action', 'gk-gravityimport' ) );
+			throw new Exception( esc_html__( 'Missing required parameter: action', 'gk-foundation' ) );
 		}
 
 		if ( ! in_array( $action, self::ALLOWED_BULK_ACTIONS, true ) ) {
 			throw new Exception(
-				strtr( esc_html__( 'Invalid action: [action]', 'gk-gravityimport' ), [ '[action]' => $action ] )
+				strtr( esc_html__( 'Invalid action: [action]', 'gk-foundation' ), [ '[action]' => $action ] )
 			);
 		}
 
@@ -657,7 +657,7 @@ final class JobAjaxController {
 			$ids = $payload['ids'] ?? null;
 
 			if ( ! is_array( $ids ) || empty( $ids ) ) {
-				throw new Exception( esc_html__( 'Missing required parameter: ids', 'gk-gravityimport' ) );
+				throw new Exception( esc_html__( 'Missing required parameter: ids', 'gk-foundation' ) );
 			}
 		}
 
@@ -669,12 +669,12 @@ final class JobAjaxController {
 				$success = $network_action_service->execute( (string) $composite_id, $action );
 
 				if ( $success ) {
-					$processed++;
+					++$processed;
 				} else {
-					$failed++;
+					++$failed;
 				}
 			} catch ( \Throwable $e ) {
-				$failed++;
+				++$failed;
 			}
 		}
 

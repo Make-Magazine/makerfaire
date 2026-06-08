@@ -42,7 +42,7 @@ class GravityView_HTML_Elements {
 
 		$args = wp_parse_args( $args, $defaults );
 
-		$forms = gravityview_get_forms( (bool) $args['active'], (bool) $args['trash'] );
+		$forms = GVCommon::get_forms_columns( (bool) $args['active'], (bool) $args['trash'], 'date_created', 'ASC', array( 'id', 'title' ) );
 
 		if ( array() === $args['options'] ) {
 			foreach ( $forms as $form ) {

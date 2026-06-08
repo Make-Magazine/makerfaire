@@ -4,6 +4,7 @@ namespace GV\Search;
 
 use GV\Search\Policies\Search_Fields_Policy;
 use GV\View;
+use GravityView_Deprecated_Hook_Notices;
 
 /**
  * The Search Policy enforces/defines the rules of search.
@@ -102,7 +103,7 @@ final class Search_Policy {
 		/**
 		 * @deprecated 2.14 Use `gk/gravityview/search/operators/allowed`.
 		 */
-		$allowed = apply_filters_deprecated(
+		$allowed = GravityView_Deprecated_Hook_Notices::apply_filters(
 			'gravityview/search/operator_whitelist',
 			[ $defaults, $key ],
 			'2.14',
@@ -112,10 +113,10 @@ final class Search_Policy {
 		/**
 		 * @deprecated $ver$ Use `gk/gravityview/search/operators/allowed`.
 		 */
-		$allowed = apply_filters_deprecated(
+		$allowed = GravityView_Deprecated_Hook_Notices::apply_filters(
 			'gravityview/search/operator_allowlist',
 			[ $allowed, $key ],
-			'$ver$',
+			'2.55',
 			'gk/gravityview/search/operators/allowed'
 		);
 
@@ -233,10 +234,10 @@ final class Search_Policy {
 		/**
 		 * @deprecated $ver$ Use `gk/gravityview/search/datepicker/format`.
 		 */
-		$format = apply_filters_deprecated(
+		$format = GravityView_Deprecated_Hook_Notices::apply_filters(
 			'gravityview/widgets/search/datepicker/format',
 			[ self::DEFAULT_DATE_FORMAT ],
-			'$ver$',
+			'2.55',
 			'gk/gravityview/search/datepicker/format'
 		);
 
@@ -273,10 +274,10 @@ final class Search_Policy {
 		/**
 		 * @deprecated $ver$ Use `gk/gravityview/search/date/adjust-timezone`.
 		 */
-		$adjust_tz = apply_filters_deprecated(
+		$adjust_tz = GravityView_Deprecated_Hook_Notices::apply_filters(
 			'gravityview_date_created_adjust_timezone',
 			[ false, $context ],
-			'$ver$',
+			'2.55',
 			'gk/gravityview/search/date/adjust-timezone'
 		);
 
@@ -342,10 +343,10 @@ final class Search_Policy {
 		/**
 		 * @deprecated $ver$ Use `gk/gravityview/search/value/trim`.
 		 */
-		$trim = apply_filters_deprecated(
+		$trim = GravityView_Deprecated_Hook_Notices::apply_filters(
 			'gravityview/search-trim-input',
 			[ true, $view ],
-			'$ver$',
+			'2.55',
 			'gk/gravityview/search/value/trim'
 		);
 
@@ -381,10 +382,10 @@ final class Search_Policy {
 		/**
 		 * @deprecated $ver$ Use `gk/gravityview/search/value/ignore-empty`.
 		 */
-		$ignore_empty = apply_filters_deprecated(
+		$ignore_empty = GravityView_Deprecated_Hook_Notices::apply_filters(
 			'gravityview/search/ignore-empty-values',
 			[ true, $key, $view_id, $form_id ],
-			'$ver$',
+			'2.55',
 			'gk/gravityview/search/value/ignore-empty'
 		);
 

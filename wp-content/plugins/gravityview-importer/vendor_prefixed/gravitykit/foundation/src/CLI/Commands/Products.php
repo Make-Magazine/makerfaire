@@ -151,17 +151,11 @@ class Products extends AbstractCommand {
 
 				if ( $product['installed'] ) {
 					WP_CLI::warning( "{$product['name']} is already installed.\n" );
-
-					continue;
-				}
-
-				if ( ! $product['free'] && empty( $product['licenses'] ) ) {
+				} elseif ( ! $product['free'] && empty( $product['licenses'] ) ) {
 					WP_CLI::warning( "{$product['name']} is not licensed.\n" );
 
 					continue;
-				}
-
-				if ( ! isset( $assoc_args['skip-dependency-check'] ) && ( ! empty( $product['checked_dependencies']['unmet']['system'] ) || ! empty( $product['checked_dependencies']['unmet']['plugin'] ) ) ) {
+				} elseif ( ! isset( $assoc_args['skip-dependency-check'] ) && ( ! empty( $product['checked_dependencies']['unmet']['system'] ) || ! empty( $product['checked_dependencies']['unmet']['plugin'] ) ) ) {
 					WP_CLI::error( "{$product['name']} has unmet dependencies. Please resolve them first.\n", false );
 
 					// @phpstan-ignore-next-line
@@ -173,11 +167,13 @@ class Products extends AbstractCommand {
 				}
 
 				try {
-					ProductManager::get_instance()->install_product( $product );
+					if ( ! $product['installed'] ) {
+						ProductManager::get_instance()->install_product( $product );
 
-					WP_CLI::success( "{$product['name']} installed.\n" );
+						WP_CLI::success( "{$product['name']} installed.\n" );
+					}
 
-					if ( $assoc_args['activate'] ?? false ) {
+					if ( ( $assoc_args['activate'] ?? false ) && ! $product['active'] ) {
 						ProductManager::get_instance()->activate_product( $product );
 
 						WP_CLI::success( "{$product['name']} activated.\n" );
@@ -748,7 +744,6 @@ class Products extends AbstractCommand {
 		}
 
 		WP_CLI::line( sprintf( "Found %s product%s:\n", count( $products ), count( $products ) > 1 ? 's' : '' ) );
-
 	}
 
 	/**

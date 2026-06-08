@@ -116,7 +116,7 @@ class View_Collection extends Collection {
 			 * @deprecated
 			 * @see The `gravityview/view_collection/from_post/meta_keys` filter.
 			 */
-			$meta_keys = (array) apply_filters_deprecated( 'gravityview/data/parse/meta_keys', array( $meta_keys, $post->ID ), '2.0.7', 'gravityview/view_collection/from_post/meta_keys' );
+			$meta_keys = (array) \GravityView_Deprecated_Hook_Notices::apply_filters( 'gravityview/data/parse/meta_keys', array( $meta_keys, $post->ID ), '2.0.7', 'gravityview/view_collection/from_post/meta_keys' );
 
 			/** What about inside post meta values? */
 			foreach ( $meta_keys as $meta_key ) {

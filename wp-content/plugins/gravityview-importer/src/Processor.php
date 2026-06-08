@@ -1625,6 +1625,7 @@ class Processor {
 		$single_fileupload_fields = array();
 
 		$notifications_callback = null;
+		$disable_async_notifications = null;
 
 		$validate_callbacks = array();
 
@@ -1642,16 +1643,25 @@ class Processor {
 		 *
 		 * etc.
 		 */
-		add_filter( 'gform_pre_process', $pre_process_validate_callback = function ( $form ) use ( $batch, &$single_fileupload_fields, &$notifications_callback, &$validate_callbacks ) {
+		add_filter( 'gform_pre_process', $pre_process_validate_callback = function ( $form ) use ( $batch, &$single_fileupload_fields, &$notifications_callback, &$disable_async_notifications, &$validate_callbacks ) {
 			$form['is_active']    = true;
 			$form['is_trash']     = false;
 			$form['requireLogin'] = false;
 			$form['scheduleForm'] = false;
 			$form['limitEntries'] = false;
 
-			// Evidently disables submission notifications
+			// Evidently disables submission notifications.
 			if ( ! in_array( 'notify', $batch['flags'] ) ) {
 				add_filter( 'gform_disable_notification', $notifications_callback = '__return_true' );
+			} else {
+				// Force synchronous delivery during import. The import context (batch
+				// state, temporary data) may not be available when a background queue
+				// processes the notifications.
+				$disable_async_notifications = static function () {
+					return false;
+				};
+
+				add_filter( 'gform_is_asynchronous_notifications_enabled', $disable_async_notifications );
 			}
 
 			foreach ( $form['fields'] as $field_id => &$field ) {
@@ -2820,6 +2830,8 @@ class Processor {
 
 			if ( ! in_array( 'notify', $batch['flags'] ) ) {
 				remove_filter( 'gform_disable_notification', $notifications_callback );
+			} elseif ( $disable_async_notifications ) {
+				remove_filter( 'gform_is_asynchronous_notifications_enabled', $disable_async_notifications );
 			}
 
 			foreach ( $validate_callbacks as $callback ) {
@@ -2856,6 +2868,8 @@ class Processor {
 
 		if ( ! in_array( 'notify', $batch['flags'] ) ) {
 			remove_filter( 'gform_disable_notification', $notifications_callback );
+		} elseif ( $disable_async_notifications ) {
+			remove_filter( 'gform_is_asynchronous_notifications_enabled', $disable_async_notifications );
 		}
 
 		foreach ( $validate_callbacks as $callback ) {
@@ -3121,7 +3135,17 @@ class Processor {
 	 * @return \WP_Error|void
 	 */
 	public function _handle_check_source( $batch ) {
-		if ( ! is_array( $batch ) || empty( $batch['source'] ) || ! is_readable( $batch['source'] ) ) {
+		if ( ! is_array( $batch ) || empty( $batch['source'] ) ) {
+			return new \WP_Error( 'gravityview/import/errors/invalid_source', __( 'Source is no longer readable.', 'gk-gravityimport' ) );
+		}
+
+		// is_readable() is unreliable on stream wrappers whose url_stat() is incomplete; for
+		// allowed wrappers, fall back to the same fopen() probe to_local() uses.
+		$is_readable = $this->is_allowed_stream_wrapper_source( $batch['source'] )
+			? $this->is_source_readable( $batch['source'] )
+			: is_readable( $batch['source'] );
+
+		if ( ! $is_readable ) {
 			return new \WP_Error( 'gravityview/import/errors/invalid_source', __( 'Source is no longer readable.', 'gk-gravityimport' ) );
 		}
 	}
@@ -3167,9 +3191,19 @@ class Processor {
 		/**
 		 * Is this a remote?
 		 */
-		if ( preg_match( '#^(?!file)([a-z]+):\/\/#i', $source, $matches ) ) {
-			$scheme = $matches[1];
-			if ( ! in_array( $scheme, array( 'http', 'https' ) ) ) {
+		// PHP stream wrapper protocol names may contain digits and `+`, `-`, `.` (see the PHP manual
+		// for stream_wrapper_register()), so the captured scheme allows them too — otherwise
+		// schemes like s3:// would fall through to the local-file branch and fail.
+		if ( preg_match( '#^(?!file)([a-z][a-z0-9+\-.]*):\/\/#i', $source, $matches ) ) {
+			$scheme = strtolower( $matches[1] );
+			if ( ! in_array( $scheme, array( 'http', 'https' ), true ) ) {
+				// Accept allowlisted registered stream wrappers (e.g. vip:// on WP VIP). The
+				// allowlist intentionally excludes wrappers that would let an authenticated user
+				// read arbitrary content (phar://, data://, php://, glob://, compress.zlib://, ...).
+				if ( $this->is_allowed_stream_wrapper_source( $source ) && $this->is_source_readable( $source ) ) {
+					return $source;
+				}
+
 				return new \WP_Error( 'gravityview/import/errors/invalid_source', __( 'Source protocol not supported.', 'gk-gravityimport' ) );
 			}
 
@@ -3197,6 +3231,77 @@ class Processor {
 		}
 
 		return $source;
+	}
+
+	/**
+	 * Checks whether a source URI uses an allowlisted, registered PHP stream wrapper.
+	 *
+	 * Used by {@see to_local()} and {@see _handle_check_source()} as the single source of truth for
+	 * "is this a wrapper we trust as an import source." The allowlist exists to keep authenticated
+	 * users from pointing the importer at wrappers that can read arbitrary content (phar://, data://,
+	 * php://, glob://, compress.zlib://, …) even when those wrappers are registered by PHP itself.
+	 *
+	 * @since 2.11.1
+	 *
+	 * @param string $source The source URI.
+	 *
+	 * @return bool
+	 */
+	private function is_allowed_stream_wrapper_source( $source ) {
+		if ( ! preg_match( '#^(?!file)([a-z][a-z0-9+\-.]*):\/\/#i', (string) $source, $matches ) ) {
+			return false;
+		}
+
+		$scheme = strtolower( $matches[1] );
+
+		/**
+		 * Filters the stream-wrapper schemes accepted as import sources.
+		 *
+		 * Default list covers the object-storage wrappers we deliberately support
+		 * (vip:// on WP VIP, s3://, gs://, azure://). Add other wrappers here only if
+		 * the source they expose is trusted — wrappers like phar://, data://, php://,
+		 * glob://, and compress.zlib:// must NOT be enabled.
+		 *
+		 * @since 2.11.1
+		 *
+		 * @param string[] $allowed Lower-cased stream-wrapper schemes.
+		 * @param string   $source  The full source URI being checked.
+		 */
+		$allowed = (array) apply_filters(
+			'gk/gravityimport/source/allowed-wrappers',
+			array( 'vip', 's3', 's3a', 's3n', 'gs', 'azure' ),
+			$source
+		);
+
+		if ( ! in_array( $scheme, $allowed, true ) ) {
+			return false;
+		}
+
+		return in_array( $scheme, array_map( 'strtolower', stream_get_wrappers() ), true );
+	}
+
+	/**
+	 * Checks whether a stream-wrapper source can be opened for reading.
+	 *
+	 * Uses a brief fopen() probe rather than is_readable(), because the latter relies on the
+	 * wrapper implementing url_stat() — which is unreliable for non-local schemes such as vip://.
+	 *
+	 * @since 2.11.1
+	 *
+	 * @param string $source The source URI.
+	 *
+	 * @return bool
+	 */
+	private function is_source_readable( $source ) {
+		$handle = @fopen( $source, 'r' );
+
+		if ( ! $handle ) {
+			return false;
+		}
+
+		fclose( $handle );
+
+		return true;
 	}
 
 	/**

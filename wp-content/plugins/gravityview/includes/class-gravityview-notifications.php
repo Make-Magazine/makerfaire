@@ -42,10 +42,21 @@ final class GravityView_Notifications {
 			return;
 		}
 
-		if ( $form ) {
-			$form = gf_apply_filters( [ 'gform_pre_render', $form['id'] ], $form, false, [] );
-		}
+		$form = gf_apply_filters( [ 'gform_pre_render', $form['id'] ], $form, false, [] );
 
-		GFAPI::send_notifications( $form, $entry, $event );
+		// Force synchronous delivery for GV notification events. GV notifications
+		// are triggered by admin actions (delete, approve) where the entry may no
+		// longer exist by the time a background request processes the queue.
+		$disable_async = static function () {
+			return false;
+		};
+
+		add_filter( 'gform_is_asynchronous_notifications_enabled', $disable_async );
+
+		try {
+			GFAPI::send_notifications( $form, $entry, $event );
+		} finally {
+			remove_filter( 'gform_is_asynchronous_notifications_enabled', $disable_async );
+		}
 	}
 }

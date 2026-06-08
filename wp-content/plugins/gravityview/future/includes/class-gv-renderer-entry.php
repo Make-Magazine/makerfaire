@@ -96,7 +96,11 @@ class Entry_Renderer extends Renderer {
 		 * @param string $slug    The template slug. Default: 'table'.
 		 * @param string $context The current view context: 'single'.
 		 */
-		$template_slug = apply_filters( 'gravityview_template_slug_' . $view->settings->get( 'template_single_entry' ), 'table', 'single' );
+		$hook_name = 'gravityview_template_slug_' . $view->settings->get( 'template_single_entry' );
+		if ( has_filter( $hook_name ) ) {
+			\GravityView_Deprecated_Hook_Notices::deprecated_hook( $hook_name, '2.55', 'gravityview_get_template_id' );
+		}
+		$template_slug = apply_filters( $hook_name, 'table', 'single' );
 
 		/**
 		 * Load a legacy override template if exists.

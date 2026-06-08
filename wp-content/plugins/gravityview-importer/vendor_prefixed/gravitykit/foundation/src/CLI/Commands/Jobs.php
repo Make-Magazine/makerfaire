@@ -134,7 +134,10 @@ class Jobs extends AbstractCommand {
 			return;
 		}
 
-		format_items( $format, $jobs, array_keys( reset( $jobs ) ) );
+		/** @var string[] $fields */
+		$fields = array_keys( reset( $jobs ) );
+
+		format_items( $format, $jobs, $fields );
 	}
 
 	/**
@@ -770,7 +773,7 @@ class Jobs extends AbstractCommand {
 		foreach ( $jobs as $job ) {
 			try {
 				$actions->delete( $job['id'] );
-				$deleted++;
+				++$deleted;
 			} catch ( Exception $e ) {
 				WP_CLI::warning( "Failed to delete job {$job['id']}: " . $e->getMessage() );
 			}
@@ -868,7 +871,7 @@ class Jobs extends AbstractCommand {
 
 				break;
 			}
-			$iteration++;
+			++$iteration;
 
 			$task_action_id = $this->find_pending_task( $id );
 
@@ -879,7 +882,7 @@ class Jobs extends AbstractCommand {
 					break;
 				}
 
-				$empty_polls++;
+				++$empty_polls;
 
 				if ( $empty_polls >= $max_empty ) {
 					break;

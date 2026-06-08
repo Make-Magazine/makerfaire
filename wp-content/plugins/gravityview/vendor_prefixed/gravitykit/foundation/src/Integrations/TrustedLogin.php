@@ -16,6 +16,7 @@ use GravityKit\GravityView\Foundation\ThirdParty\TrustedLogin\SiteAccess as Trus
 use GravityKit\GravityView\Foundation\ThirdParty\TrustedLogin\Logging as TrustedLoginLogging;
 use GravityKit\GravityView\Foundation\ThirdParty\TrustedLogin\Config as TrustedLoginConfig;
 use GravityKit\GravityView\Foundation\ThirdParty\TrustedLogin\Client as TrustedLoginClient;
+use GravityKit\GravityView\Foundation\Core;
 use GravityKit\GravityView\Foundation\Logger\Framework as LoggerFramework;
 use GravityKit\GravityView\Foundation\WP\AdminMenu;
 use Exception;
@@ -79,6 +80,7 @@ class TrustedLogin {
 		}
 
 		add_filter( 'gk/foundation/integrations/helpscout/configuration', [ $this, 'add_tl_key_to_helpscout_beacon' ] );
+		add_action( 'trustedlogin/' . self::ID . '/admin/access_revoked', [ $this, 'replace_revoked_notice' ], 11 );
 	}
 
 	/**
@@ -193,5 +195,38 @@ class TrustedLogin {
 		Arr::set( $configuration, 'identify.tl_access_key', $this->_trustedlogin_client->get_access_key() );
 
 		return $configuration;
+	}
+
+	/**
+	 * Replaces TrustedLogin's native WordPress admin notice with a Foundation notice
+	 * and redirects to strip the revoke query parameters from the URL.
+	 *
+	 * @since 1.12.0
+	 *
+	 * @return void
+	 */
+	public function replace_revoked_notice() {
+		$vendor_title = $this->get_config()['vendor']['title'];
+
+		// translators: %s is replaced with the company name.
+		$message = sprintf( esc_html__( '%s access revoked.', 'gk-gravityview' ), '<strong>' . esc_html( $vendor_title ) . '</strong>' );
+
+		Core::notices()->add_stored(
+			[
+				'namespace' => 'trustedlogin',
+				'slug'      => 'access-revoked',
+				'message'   => $message,
+				'severity'  => 'success',
+				'flash'     => true,
+				'scope'     => 'user',
+				'screens'   => [ 'dashboard' ],
+				'context'   => [ 'site', 'ms_main', 'ms_subsite' ],
+			]
+		);
+
+		// Redirect to dashboard to strip revoke query params and prevent re-firing.
+		wp_safe_redirect( admin_url() );
+
+		exit;
 	}
 }

@@ -14,6 +14,7 @@ use GravityKit\GravityImport\Foundation\Helpers\Arr;
 use GravityKit\GravityImport\Foundation\Helpers\Core as CoreHelpers;
 use GravityKit\GravityImport\Foundation\Scheduler\Models\HealthCheck;
 use GravityKit\GravityImport\Foundation\Scheduler\Store\DbStore;
+use GravityKit\GravityImport\Foundation\Translations\Framework as TranslationsFramework;
 use GravityKit\GravityImport\Foundation\WP\AjaxRouter;
 
 /**
@@ -150,8 +151,8 @@ class JobOverview {
 		}
 
 		$submenus[ $submenu_position ][ $page_id ] = [
-			'page_title'         => esc_html__( 'Background Jobs', 'gk-gravityimport' ),
-			'menu_title'         => esc_html__( 'Background Jobs', 'gk-gravityimport' ),
+			'page_title'         => esc_html__( 'Background Jobs', 'gk-foundation' ),
+			'menu_title'         => esc_html__( 'Background Jobs', 'gk-foundation' ),
 			'capability'         => CoreHelpers::is_network_admin() ? 'manage_network' : 'manage_options',
 			'id'                 => self::PAGE_ID,
 			'order'              => 3,
@@ -189,7 +190,7 @@ class JobOverview {
 	 */
 	public function render_job_overview(): void {
 		echo '<div class="wrap">';
-		echo '<h1 class="wp-heading-inline">' . esc_html__( 'Background Jobs', 'gk-gravityimport' ) . '</h1>';
+		echo '<h1 class="wp-heading-inline">' . esc_html__( 'Background Jobs', 'gk-foundation' ) . '</h1>';
 		echo '<hr class="wp-header-end">';
 		echo '<div id="gk-background-jobs"></div>';
 		echo '</div>';
@@ -235,6 +236,15 @@ class JobOverview {
 			self::ASSETS_HANDLE,
 			'gkBackgroundJobs',
 			[ 'data' => $this->get_initial_data() ]
+		);
+
+		// Load UI translations.
+		$foundation_information = Core::get_instance()->get_foundation_information();
+
+		TranslationsFramework::get_instance()->load_frontend_translations(
+			$foundation_information['source_plugin']['TextDomain'],
+			'',
+			'gk-foundation'
 		);
 	}
 

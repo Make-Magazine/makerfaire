@@ -341,7 +341,7 @@ class GravityView_Edit_Entry {
 		/**
 		 * @depecated 2.14
 		 */
-		$fields = apply_filters_deprecated( 'gravityview/edit_entry/field_blacklist', array( $fields, $entry ), '2.14', 'gravityview/edit_entry/field_blocklist' );
+		$fields = GravityView_Deprecated_Hook_Notices::apply_filters( 'gravityview/edit_entry/field_blacklist', array( $fields, $entry ), '2.14', 'gravityview/edit_entry/field_blocklist' );
 
 		/**
 		 * Array of fields that should not be displayed in Edit Entry.

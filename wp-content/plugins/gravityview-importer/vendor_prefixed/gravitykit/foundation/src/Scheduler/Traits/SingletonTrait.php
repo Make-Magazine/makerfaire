@@ -61,6 +61,6 @@ trait SingletonTrait {
 	 * @since 1.12.0
 	 */
 	public function __wakeup() {
-		_doing_it_wrong( __FUNCTION__, esc_html__( 'Unserializing is forbidden.', 'gk-gravityimport' ), '%ver%' );
+		_doing_it_wrong( __FUNCTION__, esc_html__( 'Unserializing is forbidden.', 'gk-foundation' ), '%ver%' );
 	}
 }

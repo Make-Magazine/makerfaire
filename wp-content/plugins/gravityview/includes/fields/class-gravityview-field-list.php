@@ -172,7 +172,7 @@ class GravityView_Field_List extends GravityView_Field {
 		}
 		// Return the Gravity Forms Field output
 		else {
-			return $field->get_value_entry_detail( serialize( $column_values ), '', false, $format );
+			return $field->get_value_entry_detail( serialize( $column_values ), [], false, $format );
 		}
 	}
 

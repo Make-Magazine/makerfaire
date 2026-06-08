@@ -81,7 +81,10 @@ class Encryption {
 		$this->options = wp_parse_args( $options, $this->get_default_options() );
 
 		if ( strlen( $secret_key ) < $this->options['crypto_secretbox_keybytes'] ) {
-			$secret_key = hash_hmac( $this->options['hash_algo'], $secret_key, self::DEFAULT_NONCE );
+			// Cast matches the sibling derivation at line 138. `hash_algo` defaults to `sha256` and
+			// no caller overrides it; the cast narrows the type for static analysis without adding
+			// runtime logic.
+			$secret_key = (string) hash_hmac( $this->options['hash_algo'], $secret_key, self::DEFAULT_NONCE );
 		}
 
 		if ( strlen( $secret_key ) > $this->options['crypto_secretbox_keybytes'] ) {
@@ -137,7 +140,10 @@ class Encryption {
 		}
 
 		if ( strlen( $nonce ) < $this->options['crypto_secretbox_noncebytes'] ) {
-			$nonce = hash_hmac( $this->options['hash_algo'], $nonce, self::DEFAULT_NONCE ) ?: $nonce;
+			// Cast to string so PHPStan treats the result as non-nullable. `hash_algo` defaults
+			// to `sha256` (line 52) and no caller overrides it, so `hash_hmac()` never returns
+			// false in practice; the cast is a type-narrowing belt rather than runtime logic.
+			$nonce = (string) hash_hmac( $this->options['hash_algo'], $nonce, self::DEFAULT_NONCE );
 		}
 
 		if ( strlen( $nonce ) > $this->options['crypto_secretbox_noncebytes'] ) {

@@ -102,6 +102,8 @@ class GPNF_Feed_Processing {
 				foreach ( $addons as $addon ) {
 					$addon = call_user_func( array( $addon, 'get_instance' ) );
 					if ( $addon instanceof GFFeedAddOn ) {
+						// Reset leaked _bypass_feed_delay state so child feeds respect their own delay/async settings.
+						$addon->set_bypass_feed_delay( false );
 						foreach ( $nested_entries as $nested_entry ) {
 							$this->_parent_form_data = compact( 'form', 'field' );
 							$addon->maybe_process_feed( $nested_entry, $nested_form );
@@ -178,6 +180,9 @@ class GPNF_Feed_Processing {
 						foreach ( $nested_entries as $nested_entry ) {
 							$addon->action_trigger_payment_delayed_feeds( $transaction_id, $payment_feed, $nested_entry, $nested_form );
 						}
+						// action_trigger_payment_delayed_feeds() leaves _bypass_feed_delay = true
+						// on the singleton, so we need to reset it.
+						$addon->set_bypass_feed_delay( false );
 					}
 				}
 			}
@@ -204,6 +209,17 @@ class GPNF_Feed_Processing {
 			if ( ! $addon instanceof GFFeedAddOn ) {
 				continue;
 			}
+
+			/*
+			 * If this add-on already has a feed on the parent form, its delayed-payment choice has
+			 * already been added by Gravity Forms for the parent context.
+			 *
+			 * Adding it again for child forms would duplicate the same checkbox (same "delay_{slug}" name).
+			 */
+			if ( $addon->has_feed( $parent_form_id ) ) {
+				continue;
+			}
+
 			foreach ( $nested_form_fields as $nested_form_field ) {
 				$nested_form = gp_nested_forms()->get_nested_form( $nested_form_field->gpnfForm );
 				//If Nested Form wasn't specified in form setup, skip it.

@@ -194,24 +194,62 @@ class BackgroundProcessor {
 	 * Checks whether the background scheduler is available and reliable.
 	 *
 	 * Uses Foundation's HealthCheck to probe loopback connectivity and
-	 * WP-Cron configuration. Returns true only when loopback works —
-	 * ALTERNATE_WP_CRON is too unreliable (page-visit-dependent) for imports.
+	 * WP-Cron configuration. The Foundation setting and the
+	 * `gk/gravityimport/processor/background/enabled` filter can override
+	 * the health check result.
 	 *
 	 * @since 2.9.0
+	 * @since 2.11.0 Added $form_id parameter, setting check, and filter.
+	 * @since 2.11.0 Added $skip_health_check parameter for callers that have already
+	 *           paid the health-check cost on the same request.
+	 *
+	 * @param int|null $form_id           Optional form ID for per-form filter overrides.
+	 * @param bool     $skip_health_check When true, treats the scheduler as healthy without
+	 *                                    re-running `HealthCheck::run()`. Use only when the
+	 *                                    caller has already established health on the same
+	 *                                    request (e.g. the schedule REST endpoint, reached
+	 *                                    only after the JS-side flag was set by a prior
+	 *                                    full check at page load).
 	 *
 	 * @return bool True if background scheduling should be used.
 	 */
-	public static function is_available() {
-		try {
-			// Flush cached result so config changes (DISABLE_WP_CRON, loopback) are detected immediately.
-			HealthCheck::flush();
+	public static function is_available( $form_id = null, $skip_health_check = false ) {
+		$setting = FoundationSettings::get( FoundationSettings::SETTING_BACKGROUND_PROCESSING, true );
 
-			$health = HealthCheck::run();
+		if ( ! $setting ) {
+			$enabled = false;
+		} elseif ( $skip_health_check ) {
+			$enabled = true;
+		} else {
+			try {
+				// Flush cached result so config changes (DISABLE_WP_CRON, loopback) are detected immediately.
+				HealthCheck::flush();
 
-			return ! $health->has_failure() && ! $health->is_loopback_blocked();
-		} catch ( \Throwable $e ) {
-			return false;
+				$health = HealthCheck::run();
+
+				$enabled = ! $health->has_failure() && ! $health->is_loopback_blocked();
+			} catch ( \Throwable $e ) {
+				$enabled = false;
+			}
 		}
+
+		/**
+		 * Filters whether background import processing is available.
+		 *
+		 * Use this filter to force-disable background processing site-wide or per form,
+		 * regardless of system health or the Foundation setting. Return false to force
+		 * synchronous (in-browser) processing.
+		 *
+		 * The decision is evaluated at scheduling time (when the user starts an import).
+		 * Imports already running in the background are not re-evaluated when paused/resumed
+		 * — to stop an in-flight job, cancel it from the import page.
+		 *
+		 * @since 2.11.0
+		 *
+		 * @param bool     $enabled True if background processing should be used.
+		 * @param int|null $form_id The form ID when known, or null when called outside a form context.
+		 */
+		return (bool) apply_filters( 'gk/gravityimport/processor/background/enabled', $enabled, $form_id );
 	}
 
 	// -------------------------------------------------------------------------
@@ -315,6 +353,17 @@ class BackgroundProcessor {
 			return new \WP_Error( 'gravityview/import/errors/not_found', __( 'Batch not found.', 'gk-gravityimport' ) );
 		}
 
+		// Re-check the setting and filter with the batch's form ID so the
+		// `gk/gravityimport/processor/background/enabled` filter can veto
+		// background processing on a per-form basis. We skip the health
+		// check here because the JS would not have reached this endpoint
+		// unless the site-wide check at page load already established the
+		// scheduler as healthy — re-probing would add a synchronous
+		// loopback HTTP request to every schedule call.
+		if ( ! self::is_available( isset( $batch['form_id'] ) ? (int) $batch['form_id'] : null, true ) ) {
+			return new \WP_Error( 'gravityview/import/errors/scheduling_disabled', __( 'Background processing is disabled for this import.', 'gk-gravityimport' ) );
+		}
+
 		// Remove any previous import notices before scheduling a new one.
 		ImportNotices::get_instance()->remove_all();
 
@@ -393,7 +442,7 @@ class BackgroundProcessor {
 				return false;
 			}
 
-			return gk_scheduler_should_continue( $args, 2 );
+			return \GravityKitFoundation::scheduler()->should_continue( $args, 2 );
 		};
 
 		add_filter( 'gravityview/import/has_resources', $resource_filter, 10, 2 );
@@ -438,7 +487,7 @@ class BackgroundProcessor {
 		$progress  = $batch['progress'] ?? [];
 		$processed = ( $progress['processed'] ?? 0 ) + ( $progress['skipped'] ?? 0 ) + ( $progress['error'] ?? 0 );
 
-		return gk_scheduler_checkpoint( [ 'processed' => $processed ] );
+		return \GravityKitFoundation::scheduler()->checkpoint( [ 'processed' => $processed ] );
 	}
 
 	// -------------------------------------------------------------------------

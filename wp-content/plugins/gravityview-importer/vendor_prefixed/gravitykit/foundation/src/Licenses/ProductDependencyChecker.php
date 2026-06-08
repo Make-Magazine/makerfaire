@@ -342,7 +342,7 @@ class ProductDependencyChecker {
 			}
 
 			$missing_name_placeholder = strtr(
-				_x( "Product with '[text_domain]' text domain", 'Placeholders inside [] are not to be translated.', 'gk-gravityimport' ),
+				_x( "Product with '[text_domain]' text domain", 'Placeholders inside [] are not to be translated.', 'gk-foundation' ),
 				[ '[text_domain]' => $product_text_domain ]
 			);
 

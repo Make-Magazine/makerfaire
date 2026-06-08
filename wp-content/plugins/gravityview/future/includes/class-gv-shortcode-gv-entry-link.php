@@ -79,7 +79,7 @@ class gv_entry_link extends \GV\Shortcode {
 	 *    @type string $link_atts Pass anchor tag attributes (`target=_blank` to open Edit Entry link in a new window, for example)
 	 *    @type bool   $lightbox When true, opens the entry link in a lightbox/modal with iframe. Default: false
 	 *    @type string $return What should the shortcode return: link HTML (`html`) or the URL (`url`). Default: `html`
-	 *    @type string $field_values Only used for `action="edit"`. Parameters to pass in to the prefill data in Edit Entry form. Uses the same format as Gravity Forms "Allow field to be populated dynamically" {@see https://www.gravityhelp.com/documentation/article/allow-field-to-be-populated-dynamically/ }
+	 *    @type string $field_values Parameters to pass as query args to the entry URL. Uses the same format as Gravity Forms "Allow field to be populated dynamically" {@see https://www.gravityhelp.com/documentation/article/allow-field-to-be-populated-dynamically/ }
 	 * }
 	 *
 	 * @param string|null $content Used as link anchor text, if specified.
@@ -308,7 +308,7 @@ class gv_entry_link extends \GV\Shortcode {
 
 		switch ( $this->settings['action'] ) {
 			case 'edit':
-				$url = GravityView_Edit_Entry::get_edit_link( $this->entry, $this->view_id, $post_id, $this->settings['field_values'] ?? '' );
+				$url = GravityView_Edit_Entry::get_edit_link( $this->entry, $this->view_id, $post_id );
 
 				break;
 			case 'delete':
@@ -320,7 +320,7 @@ class gv_entry_link extends \GV\Shortcode {
 				$url = GravityView_API::entry_link( $this->entry, $post_id, true, $this->view_id );
 		}
 
-		return $url;
+		return $this->maybe_add_field_values_query_args( $url );
 	}
 
 	/**
@@ -398,12 +398,12 @@ class gv_entry_link extends \GV\Shortcode {
 	}
 
 	/**
-	 * Allow passing URL params to dynamically populate the Edit Entry form.
+	 * Append field_values query args to an entry URL.
 	 *
-	 * If `field_values` key is set, run it through `parse_str()` and add the values to $url
+	 * If `field_values` key is set, run it through `parse_str()` and add the values to $url.
 	 *
-	 * @param string $url URL
-	 * @return string Modified URL
+	 * @param string $url URL.
+	 * @return string Modified URL.
 	 */
 	private function maybe_add_field_values_query_args( $url ) {
 		if ( $url && ! empty( $this->settings['field_values'] ) ) {

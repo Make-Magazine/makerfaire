@@ -226,7 +226,7 @@ class View_Table_Template extends View_Template {
 		 * @deprecated Here for back-compatibility.
 		 */
 		$column_label = apply_filters( 'gravityview_render_after_label', $field->get_label( $context->view, $form ), $field->as_configuration() );
-		$column_label = apply_filters( 'gravityview/template/field_label', $column_label, $field->as_configuration(), ( $form && $form->form ) ? $form->form : null, null );
+		$column_label = \GravityView_Deprecated_Hook_Notices::apply_filters( 'gravityview/template/field_label', [ $column_label, $field->as_configuration(), ( $form && $form->form ) ? $form->form : null, null ], '2.55', 'gravityview/template/field/label' );
 
 		/**
 		 * Override the field label.
@@ -271,7 +271,7 @@ class View_Table_Template extends View_Template {
 		 * @param \GravityView_View $gravityview_view The GravityView_View object.
 		 * @deprecated Use `gravityview/template/table/fields`
 		 */
-		$fields = apply_filters( 'gravityview_table_cells', $fields->as_configuration(), \GravityView_View::getInstance() );
+		$fields = \GravityView_Deprecated_Hook_Notices::apply_filters( 'gravityview_table_cells', [ $fields->as_configuration(), \GravityView_View::getInstance() ], '2.55', 'gravityview/template/table/fields' );
 		$fields = Field_Collection::from_configuration( $fields );
 
 		/**
@@ -337,7 +337,7 @@ class View_Table_Template extends View_Template {
 				 *
 				 * @deprecated Use `gravityview/template/table/cells/before`
 				 */
-				do_action( 'gravityview_table_cells_before', \GravityView_View::getInstance() );
+				\GravityView_Deprecated_Hook_Notices::do_action( 'gravityview_table_cells_before', [ \GravityView_View::getInstance() ], '2.55', 'gravityview/template/table/cells/before' );
 
 				foreach ( $fields->all() as $field ) {
 					if ( isset( $this->view->unions[ $entry['form_id'] ] ) ) {
@@ -369,7 +369,7 @@ class View_Table_Template extends View_Template {
 				 *
 				 * @deprecated Use `gravityview/template/table/cells/after`
 				 */
-				do_action( 'gravityview_table_cells_after', \GravityView_View::getInstance() );
+				\GravityView_Deprecated_Hook_Notices::do_action( 'gravityview_table_cells_after', [ \GravityView_View::getInstance() ], '2.55', 'gravityview/template/table/cells/after' );
 
 				?>
 			</tr>
@@ -460,7 +460,7 @@ class View_Table_Template extends View_Template {
 		* @since 1.0.7
 		* @param \GravityView_View $gravityview_view Current GravityView_View object.
 		*/
-		do_action( 'gravityview_table_body_before', \GravityView_View::getInstance() /** ugh! */ );
+		\GravityView_Deprecated_Hook_Notices::do_action( 'gravityview_table_body_before', [ \GravityView_View::getInstance() ], '2.55', 'gravityview/template/table/body/before' );
 	}
 
 	/**
@@ -489,7 +489,7 @@ class View_Table_Template extends View_Template {
 		* @since 1.0.7
 		* @param \GravityView_View $gravityview_view Current GravityView_View object.
 		*/
-		do_action( 'gravityview_table_body_after', \GravityView_View::getInstance() /** ugh! */ );
+		\GravityView_Deprecated_Hook_Notices::do_action( 'gravityview_table_body_after', [ \GravityView_View::getInstance() ], '2.55', 'gravityview/template/table/body/after' );
 	}
 
 	/**
@@ -517,7 +517,7 @@ class View_Table_Template extends View_Template {
 		 * @deprecated Use `gravityview/template/table/tr/before`
 		 * @param \GravityView_View $gravityview_view Current GravityView_View object.
 		 */
-		do_action( 'gravityview_table_tr_before', \GravityView_View::getInstance() /** ugh! */ );
+		\GravityView_Deprecated_Hook_Notices::do_action( 'gravityview_table_tr_before', [ \GravityView_View::getInstance() ], '2.55', 'gravityview/template/table/tr/before' );
 	}
 
 	/**
@@ -545,7 +545,7 @@ class View_Table_Template extends View_Template {
 		 * @deprecated Use `gravityview/template/table/tr/after`
 		 * @param \GravityView_View $gravityview_view Current GravityView_View object.
 		 */
-		do_action( 'gravityview_table_tr_after', \GravityView_View::getInstance() /** ugh! */ );
+		\GravityView_Deprecated_Hook_Notices::do_action( 'gravityview_table_tr_after', [ \GravityView_View::getInstance() ], '2.55', 'gravityview/template/table/tr/after' );
 	}
 
 	/**
@@ -569,7 +569,7 @@ class View_Table_Template extends View_Template {
 		 * @deprecated Use `gravityview/template/table/entry/class`
 		 * @return string The modified class.
 		 */
-		$class = apply_filters( 'gravityview_entry_class', $class, $entry->as_entry(), \GravityView_View::getInstance() );
+		$class = \GravityView_Deprecated_Hook_Notices::apply_filters( 'gravityview_entry_class', [ $class, $entry->as_entry(), \GravityView_View::getInstance() ], '2.55', 'gravityview/template/table/entry/class' );
 
 		/**
 		 * Modify the class applied to the entry row.

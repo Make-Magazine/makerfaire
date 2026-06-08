@@ -8,6 +8,7 @@
 
 namespace GravityKit\GravityImport\Foundation\Components;
 
+use GravityKit\GravityImport\Foundation\Helpers\Core as CoreHelpers;
 use GravityKit\GravityImport\Foundation\Licenses\Framework;
 use GravityKit\GravityImport\Foundation\State\StateManager;
 use GravityKit\GravityImport\Foundation\State\UserStateManager;
@@ -219,14 +220,18 @@ final class NewsletterSignup {
 
 		if ( ! is_email( $email ) ) {
 			throw new InvalidArgumentException(
-				esc_html__( 'The provided email address is not valid.', 'gk-gravityimport' )
+				esc_html__( 'The provided email address is not valid.', 'gk-foundation' )
 			);
 		}
 
+		// This is an EXTERNAL call to the newsletter form endpoint — strict cert verification
+		// in production protects against MitM on customer networks. Loopback probes use a
+		// different knob (`https_local_ssl_verify`); do NOT "unify" these without understanding
+		// the distinction.
 		$result = wp_remote_post(
 			$this->form_endpoint,
 			[
-				'sslverify' => false,
+				'sslverify' => CoreHelpers::is_production_environment(),
 				'headers'   => [
 					self::SIGNING_HEADER => '1',
 				],
@@ -247,7 +252,7 @@ final class NewsletterSignup {
 		}
 
 		if ( 401 === wp_remote_retrieve_response_code( $result ) ) {
-			throw new RuntimeException( __( 'Something went wrong on our end. Please try again later.', 'gk-gravityimport' ) );
+			throw new RuntimeException( __( 'Something went wrong on our end. Please try again later.', 'gk-foundation' ) );
 		}
 
 		if ( 200 !== wp_remote_retrieve_response_code( $result ) ) {

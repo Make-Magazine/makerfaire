@@ -56,7 +56,7 @@ class Entry_Table_Template extends Entry_Template {
 		 * @param \GravityView_View $this
 		 * @deprecated Use `gravityview/template/table/fields`
 		 */
-		$fields = apply_filters( 'gravityview_table_cells', $fields->as_configuration(), \GravityView_View::getInstance() );
+		$fields = \GravityView_Deprecated_Hook_Notices::apply_filters( 'gravityview_table_cells', [ $fields->as_configuration(), \GravityView_View::getInstance() ], '2.55', 'gravityview/template/table/fields' );
 		$fields = Field_Collection::from_configuration( $fields );
 
 		/**
@@ -88,12 +88,11 @@ class Entry_Table_Template extends Entry_Template {
 				$field->as_configuration()
 			);
 
-			$column_label = apply_filters(
+			$column_label = \GravityView_Deprecated_Hook_Notices::apply_filters(
 				'gravityview/template/field_label',
-				$column_label,
-				$field->as_configuration(),
-				$form->form ? $form->form : null,
-				$entry->as_entry()
+				[ $column_label, $field->as_configuration(), $form->form ? $form->form : null, $entry->as_entry() ],
+				'2.55',
+				'gravityview/template/field/label'
 			);
 
 			/** @var GF_Field $field */

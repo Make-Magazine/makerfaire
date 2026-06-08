@@ -120,8 +120,11 @@ final class Core {
 		require_once $this->plugin->dir( 'includes/class-common.php' );
 		require_once $this->plugin->dir( 'includes/connector-functions.php' );
 		require_once $this->plugin->dir( 'includes/class-gravityview-compatibility.php' );
+		require_once $this->plugin->dir( 'includes/class-gravityview-gf-compat.php' );
 		require_once $this->plugin->dir( 'includes/class-gravityview-roles-capabilities.php' );
 		require_once $this->plugin->dir( 'includes/class-gravityview-admin-notices.php' );
+		require_once $this->plugin->dir( 'includes/class-gravityview-deprecated-hook-notices.php' );
+		\GravityView_Deprecated_Hook_Notices::init();
 		require_once $this->plugin->dir( 'includes/class-admin.php' );
 		require_once $this->plugin->dir( 'includes/class-post-types.php' );
 		require_once $this->plugin->dir( 'includes/class-cache.php' );

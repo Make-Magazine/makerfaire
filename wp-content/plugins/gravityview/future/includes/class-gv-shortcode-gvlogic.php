@@ -61,6 +61,10 @@ class gvlogic extends \GV\Shortcode {
 		$operator = $this->get_operator( $atts );
 		$value    = $this->get_value( $atts );
 
+		// Decode HTML entities so comparisons work when merge tag values were escaped by esc_html().
+		$atts['if'] = is_string( $atts['if'] ) ? wp_specialchars_decode( $atts['if'], ENT_QUOTES ) : $atts['if'];
+		$value      = is_string( $value ) ? wp_specialchars_decode( $value, ENT_QUOTES ) : $value;
+
 		if ( false === $operator && is_null( $value ) ) {
 			if ( false !== $atts['if'] ) { // Only-if test
 				$match = $authed && ! in_array( strtolower( $atts['if'] ), array( '', '0', 'false', 'no' ) );

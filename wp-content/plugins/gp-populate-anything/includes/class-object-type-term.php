@@ -110,6 +110,14 @@ class GPPA_Object_Type_Term extends GPPA_Object_Type {
 					'orderby'   => false,
 					'operators' => $this->supported_operators(),
 				),
+				'count'     => array(
+					'label'     => esc_html__( 'Post Count', 'gp-populate-anything' ),
+					'value'     => 'count',
+					'callable'  => array( $this, 'get_col_rows' ),
+					'args'      => array( $wpdb->term_taxonomy, 'count' ),
+					'orderby'   => true,
+					'operators' => $this->supported_operators(),
+				),
 				'term_id'   => array(
 					'label'     => esc_html__( 'Term ID', 'gp-populate-anything' ),
 					'value'     => 'term_id',
@@ -156,6 +164,7 @@ class GPPA_Object_Type_Term extends GPPA_Object_Type {
 		add_filter( 'gppa_object_type_term_filter', array( $this, 'process_filter_default' ), 10, 2 );
 		add_filter( 'gppa_object_type_term_filter_parent', array( $this, 'process_filter_with_term_taxonomy' ), 10, 2 );
 		add_filter( 'gppa_object_type_term_filter_taxonomy', array( $this, 'process_filter_with_term_taxonomy' ), 10, 2 );
+		add_filter( 'gppa_object_type_term_filter_count', array( $this, 'process_filter_with_term_taxonomy' ), 10, 2 );
 		add_filter( 'gppa_object_type_term_filter_object_id', array( $this, 'process_filter_object_id' ), 10, 2 );
 		add_filter( 'gppa_object_type_term_filter_group_meta', array( $this, 'process_filter_meta' ), 10, 2 );
 	}
@@ -254,9 +263,9 @@ class GPPA_Object_Type_Term extends GPPA_Object_Type {
 			 * Traditional meta where
 			 */
 		} else {
+			// Use EXISTS to avoid large intermediate results from multiple meta joins.
 			// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.ReplacementsWrongNumber
-			$query_builder_args['where'][ $filter_group_index ][] = $wpdb->prepare( "( {$as_table}.meta_key = %s AND {$as_table}.meta_value {$meta_operator} {$meta_specification} )", rgar( $property, 'value' ), $meta_value );
-			$query_builder_args['joins'][ $as_table ]             = "LEFT JOIN {$wpdb->termmeta} AS {$as_table} ON ( {$wpdb->terms}.term_id = {$as_table}.term_id )";
+			$query_builder_args['where'][ $filter_group_index ][] = $wpdb->prepare( "EXISTS (SELECT 1 FROM {$wpdb->termmeta} AS {$as_table} WHERE {$as_table}.term_id = {$wpdb->terms}.term_id AND {$as_table}.meta_key = %s AND {$as_table}.meta_value {$meta_operator} {$meta_specification})", rgar( $property, 'value' ), $meta_value );
 		}
 
 		return $query_builder_args;
@@ -390,7 +399,7 @@ class GPPA_Object_Type_Term extends GPPA_Object_Type {
 
 		// Specify the table name for ordering since we're joinging terms and term_taxonomy
 		$orderby_table = $wpdb->terms;
-		if ( in_array( $orderby, array( 'taxonomy', 'parent' ), true ) ) {
+		if ( in_array( $orderby, array( 'taxonomy', 'parent', 'count' ), true ) ) {
 			$orderby_table = $wpdb->term_taxonomy;
 		}
 

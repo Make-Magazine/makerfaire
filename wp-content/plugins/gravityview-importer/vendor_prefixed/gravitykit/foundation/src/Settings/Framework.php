@@ -390,7 +390,7 @@ class Framework {
 	 * @return void
 	 */
 	public function add_gk_submenu_item() {
-		$page_title = esc_html__( 'Settings', 'gk-gravityimport' );
+		$page_title = esc_html__( 'Settings', 'gk-foundation' );
 		$menu_title = $page_title;
 
 		AdminMenu::add_submenu_item(
@@ -591,7 +591,7 @@ class Framework {
 		$ui_settings = ! empty( $settings_data['settings'] ) ? $settings_data['settings'] : null;
 
 		if ( ! $plugin_id || ! $ui_settings ) {
-			throw new Exception( esc_html__( 'Invalid request.', 'gk-gravityimport' ) );
+			throw new Exception( esc_html__( 'Invalid request.', 'gk-foundation' ) );
 		}
 
 		// Store payload for use in filters/actions.
@@ -615,7 +615,7 @@ class Framework {
 			}
 
 			if ( empty( $plugin_data['sections'] ) ) {
-				throw new ValidatorException( esc_html__( 'Plugin settings data not found.', 'gk-gravityimport' ) );
+				throw new ValidatorException( esc_html__( 'Plugin settings data not found.', 'gk-foundation' ) );
 			}
 
 			foreach ( $ui_settings as $value ) {
@@ -646,7 +646,7 @@ class Framework {
 
 						throw new Exception(
 							strtr(
-								esc_html_x( 'Setting [setting] has unmet requirements.', 'Placeholders inside [] are not to be translated.', 'gk-gravityimport' ),
+								esc_html_x( 'Setting [setting] has unmet requirements.', 'Placeholders inside [] are not to be translated.', 'gk-foundation' ),
 								[ '[setting]' => $plugin_setting['title'] ]
 							)
 						);
@@ -693,9 +693,9 @@ class Framework {
 
 			$this->save_plugin_settings( $plugin_id, $ui_settings );
 
-			return esc_html__( 'Settings were successfully saved.', 'gk-gravityimport' );
+			return esc_html__( 'Settings were successfully saved.', 'gk-foundation' );
 		} catch ( ValidatorException $e ) {
-			throw new Exception( sprintf( '%s %s', esc_html__( 'Error saving settings.', 'gk-gravityimport' ), $e->getMessage() ) );
+			throw new Exception( sprintf( '%s %s', esc_html__( 'Error saving settings.', 'gk-foundation' ), $e->getMessage() ) );
 		}
 	}
 

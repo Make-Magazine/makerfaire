@@ -39,8 +39,32 @@
 
 			self.setupTippy();
 
-			$( '.toggleApproved' ).on( 'click', self.toggleApproved );
+			// Delegated so the click handler survives content updates inside the entries list.
+			$( '#lead_form' )
+				.off( 'click.gvapprove', '.toggleApproved' )
+				.on( 'click.gvapprove', '.toggleApproved', self.toggleApproved );
 		}
+
+		// Public refresh hook: trigger `gravityview/approve-entries/refresh` on document to
+		// re-inject the approval column and re-bind controls after a content update.
+		$( document )
+			.off( 'gravityview/approve-entries/refresh.gvapprove' )
+			.on( 'gravityview/approve-entries/refresh.gvapprove', self.refresh );
+	};
+
+	/**
+	 * Re-run the column injection, per-row state, and popover setup after the entries list content has been updated.
+	 *
+	 * @since 2.60.2
+	 */
+	self.refresh = function () {
+		if ( ! ( gvGlobals.show_column * 1 ) ) {
+			return;
+		}
+
+		self.addApprovedColumn();
+		self.setInitialApprovedEntries();
+		self.setupTippy();
 	};
 
 	self.setupTippy = function() {
@@ -55,6 +79,13 @@
 				.find('a').removeClass('selected').off().end()
 				.find('a[data-approved="' + status + '"]').addClass('selected');
 		};
+
+		// Destroy any existing instances so re-running after a content update doesn't duplicate them.
+		$( '.toggleApproved' ).each( function () {
+			if ( this._tippy ) {
+				this._tippy.destroy();
+			}
+		} );
 
 		tippy( '.toggleApproved', {
 			interactive: true,
@@ -160,6 +191,7 @@
 			var class_and_title = self.getClassAndTitleFromApprovalStatus( $input.val() );
 
 			$( this ).find( 'a.toggleApproved' )
+				.removeClass( 'approved unapproved disapproved loading' )
 				.addClass( class_and_title[ 0 ] )
 				.prop( 'title', class_and_title[ 1 ] )
 				.attr( 'data-current-status', $input.val() );
@@ -215,12 +247,20 @@
 		/**
 		 * inject approve/disapprove buttons into the first column of table
 		 */
-		$( 'thead th.check-column:eq(1), tfoot th.check-column:eq(1), thead .column-is_starred, tfoot .column-is_starred' ).after( '<th scope="col" class="manage-column column-cb gv-approve-column column-is_approved">' + link + '</th>' );
+		$( 'thead th.check-column:eq(1), tfoot th.check-column:eq(1), thead .column-is_starred, tfoot .column-is_starred' )
+			.filter( function () {
+				return $( this ).next( '.gv-approve-column' ).length === 0;
+			} )
+			.after( '<th scope="col" class="manage-column column-cb gv-approve-column column-is_approved">' + link + '</th>' );
 
 		/**
 		 * Add column for each entry
 		 */
-		$( 'th.check-column[scope=row]:has(img[src*="star"]),td:has(img[src*="star"]),tbody th.column-is_starred' ).after( '<th scope="row" class="column-is_approved gv-approve-column"><a href="#" class="toggleApproved" title="' + gvGlobals.approve_title + '"></a></th>' );
+		$( 'th.check-column[scope=row]:has(img[src*="star"]),td:has(img[src*="star"]),tbody th.column-is_starred' )
+			.filter( function () {
+				return $( this ).next( '.gv-approve-column' ).length === 0;
+			} )
+			.after( '<th scope="row" class="column-is_approved gv-approve-column"><a href="#" class="toggleApproved" title="' + gvGlobals.approve_title + '"></a></th>' );
 
 	};
 

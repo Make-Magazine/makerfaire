@@ -3,7 +3,7 @@
  * Plugin Name: GP Populate Anything
  * Description: Populate fields from posts, users, entries, or databases.
  * Plugin URI: https://gravitywiz.com/documentation/gravity-forms-populate-anything/
- * Version: 2.1.61
+ * Version: 2.1.71
  * Author: Gravity Wiz
  * Author URI: https://gravitywiz.com/
  * License: GPL2
@@ -13,22 +13,13 @@
  * Domain Path: /languages
  */
 
-define( 'GPPA_VERSION', '2.1.61' );
+define( 'GPPA_VERSION', '2.1.71' );
 
-require plugin_dir_path( __FILE__ ) . 'includes/class-gp-bootstrap.php';
-require plugin_dir_path( __FILE__ ) . 'includes/functions.php';
-require plugin_dir_path( __FILE__ ) . 'includes/class-object-type.php';
-require plugin_dir_path( __FILE__ ) . 'includes/class-object-type-post.php';
-require plugin_dir_path( __FILE__ ) . 'includes/class-object-type-term.php';
-require plugin_dir_path( __FILE__ ) . 'includes/class-object-type-user.php';
-require plugin_dir_path( __FILE__ ) . 'includes/class-object-type-gf-entry.php';
-require plugin_dir_path( __FILE__ ) . 'includes/class-object-type-database.php';
-require plugin_dir_path( __FILE__ ) . 'includes/class-compatibility-gravityview.php';
-require plugin_dir_path( __FILE__ ) . 'includes/class-compatibility-gravityflow.php';
-require plugin_dir_path( __FILE__ ) . 'includes/class-compatibility-gravitypdf.php';
-require plugin_dir_path( __FILE__ ) . 'includes/class-compatibility-jetsloth-image-choices.php';
-require plugin_dir_path( __FILE__ ) . 'includes/class-compatibility-wc-product-addons.php';
-require plugin_dir_path( __FILE__ ) . 'includes/class-live-merge-tags.php';
-require plugin_dir_path( __FILE__ ) . 'includes/class-gppa-export.php';
+require_once plugin_dir_path( __FILE__ ) . 'vendor/autoload_packages.php';
 
-$gp_populate_anything_bootstrap = new GP_Bootstrap( 'class-gp-populate-anything.php', __FILE__ );
+\Spellbook\Bootstrap::register( __FILE__ );
+
+function gp_populate_anything() {
+	return \GP_Populate_Anything::get_instance();
+}
+

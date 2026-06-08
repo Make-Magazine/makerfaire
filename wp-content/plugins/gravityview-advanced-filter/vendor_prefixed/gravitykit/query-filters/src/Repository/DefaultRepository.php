@@ -2,7 +2,7 @@
 /**
  * @license MIT
  *
- * Modified by gravitykit on 20-February-2026 using {@see https://github.com/BrianHenryIE/strauss}.
+ * Modified by gravitykit on 28-April-2026 using {@see https://github.com/BrianHenryIE/strauss}.
  */
 
 namespace GravityKit\AdvancedFilter\QueryFilters\Repository;
@@ -324,10 +324,10 @@ final class DefaultRepository implements FormRepository, UserRepository {
 		 *
 		 * If the `operators` key is empty for a choice it will be applied to all operators.
 		 *
-		 * @since  2.6.0
+		 * @since 2.6.0
 		 *
 		 * @param array<int, array{text: string, value: string, operators?: string[]}> $choices Array of relative date choices.
-		 *
+		 * @param int                                                                  $form_id The form ID.
 		 */
 		return apply_filters( 'gk/query-filters/relative-date-choices', $choices, $form_id );
 	}
@@ -533,11 +533,10 @@ final class DefaultRepository implements FormRepository, UserRepository {
 		/**
 		 * Modify available field filters.
 		 *
-		 * @since  2.0.0
+		 * @since 2.0.0
 		 *
+		 * @param array $field_filters The configured filters.
 		 * @param int   $form_id       The form ID.
-		 *
-		 * @param array $field_filters configured filters
 		 */
 		$field_filters = (array) apply_filters( 'gk/query-filters/field-filters', $field_filters, $form_id );
 
@@ -663,6 +662,11 @@ final class DefaultRepository implements FormRepository, UserRepository {
 			return $filters;
 		}
 
+		$keys = array_column( $filters, 'key' );
+		if ( in_array( 'is_approved', $keys, true ) ) {
+			return $filters;
+		}
+
 		$approval_choices = GravityView_Entry_Approval_Status::get_all();
 		$approval_values  = [];
 
@@ -699,11 +703,10 @@ final class DefaultRepository implements FormRepository, UserRepository {
 		/**
 		 * Customise the capabilities that define an Administrator able to view entries in frontend when filtered by "Created By".
 		 *
-		 * @since  1.0
-		 *
-		 * @param array $form         GF form.
+		 * @since 1.0
 		 *
 		 * @param array $capabilities List of admin capabilities.
+		 * @param array $form         The GF form object.
 		 */
 		$view_all_entries_caps = apply_filters(
 			'gk/query-filters/admin-capabilities',

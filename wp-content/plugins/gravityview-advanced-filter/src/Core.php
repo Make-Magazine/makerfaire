@@ -359,7 +359,7 @@ HTML;
 			return;
 		}
 
-		QueryFilters::enqueue_styles();
+		QueryFilters::enqueue_styles( [ 'handle' => 'gk_advanced_filters_query_filters' ] );
 		QueryFilters::create()
 		            ->with_form( $form )
 		            ->enqueue_scripts( [
@@ -531,16 +531,38 @@ HTML;
 		}
 
 		/**
-		 * Advanced filters currently only supports conditional logic on the main form.
-		 * However, a `MultiEntryWithContext` for example will return the entry from its own form.
-		 * To combat this, we temporarily force the source to be the main form.
+		 * Force the base entry data to come from the main form, even if the current
+		 * source is a joined form. `MultiEntryWithContext::as_entry()` returns only
+		 * the source form's sub-entry, so without this, conditional logic targeting
+		 * a main-form field would see the wrong row.
 		 *
 		 * @since 4.0.4
 		 */
-		$_source = $context->source;
+		$_source         = $context->source;
 		$context->source = $context->view->form;
-		$entry = $context->entry->as_entry();
+		$entry           = $context->entry->as_entry();
 		$context->source = $_source;
+
+		/**
+		 * Attach every joined sub-entry under `_multi[form_id]` so filters that
+		 * target a joined form's field can recurse to the correct row via
+		 * {@see EntryFilterService::handle_filter()}. `MultiEntryWithContext`
+		 * strips this on purpose for rendering, so we rebuild it here for the
+		 * filter evaluation only. Skipped when `_multi` is already populated
+		 * (e.g., plain `Multi_Entry::as_entry()` builds it itself) to avoid
+		 * redundant work.
+		 *
+		 * @since 4.6.0
+		 */
+		if ( $context->entry instanceof Multi_Entry && empty( $entry['_multi'] ) ) {
+			foreach ( $context->entry->entries as $form_id => $sub_entry ) {
+				if ( ! $sub_entry instanceof \GV\Entry ) {
+					continue;
+				}
+
+				$entry['_multi'][ $form_id ] = $sub_entry->as_entry();
+			}
+		}
 
 		if ( $query_filters->meets_filters( $entry ) ) {
 			return $field_output;

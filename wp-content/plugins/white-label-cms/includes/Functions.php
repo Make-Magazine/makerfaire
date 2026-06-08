@@ -128,9 +128,18 @@ if (!function_exists('is_wlcms_admin')) {
 if (!function_exists('wlcms_current_user_roles')) {
     function wlcms_current_user_roles()
     {
-        $roles = wp_get_current_user()->roles;
-        $role = array_shift($roles);
-        return $role;
+        $user = wp_get_current_user();
+        $roles = (array) $user->roles;
+        $role = $roles[0] ?? '';
+
+        /**
+         * Allow overriding the "primary" role used by WLCMS when user has multiple roles.
+         *
+         * @param string   $role  Selected role (default: first role).
+         * @param string[] $roles All user roles.
+         * @param WP_User  $user  Current user.
+         */
+        return apply_filters('wlcms_primary_role', $role, $roles, $user);
     }
 }
 

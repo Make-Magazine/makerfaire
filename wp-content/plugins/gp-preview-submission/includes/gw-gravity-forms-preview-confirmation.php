@@ -279,11 +279,17 @@ class GWPreviewConfirmation {
 		// entries via the Nested Form field merge tag and {all_fields}).
 		$_modifiers = self::parse_modifiers( $modifiers );
 		$entry_id   = rgar( $_modifiers, 'entry' );
-		$entry = $entry_id ? GFAPI::get_entry( $entry_id ) : self::create_lead( $form );
+		$entry      = $entry_id ? GFAPI::get_entry( $entry_id ) : self::create_lead( $form );
 
 		if ( is_array( rgar( $field, 'inputs' ) ) ) {
 			$value = GFFormsModel::get_lead_field_value( $entry, $field );
-			$value = GFCommon::get_lead_field_display( $field, $value, $currency, ! rgar( $_modifiers, 'value' ) );
+			if ( method_exists( 'GF_Field', 'get_value_all_fields_merge_tag' ) ) {
+				$value = $field->get_value_all_fields_merge_tag( $value, $entry, ! rgar( $_modifiers, 'value' ), 'html' );
+			} elseif ( version_compare( GFForms::$version, '2.9.29', '>=' ) ) {
+				$value = GFCommon::get_lead_field_display( $field, $value, $entry, ! rgar( $_modifiers, 'value' ) );
+			} else {
+				$value = GFCommon::get_lead_field_display( $field, $value, $currency, ! rgar( $_modifiers, 'value' ) );
+			}
 		} else {
 
 			switch ( $input_type ) {
@@ -305,6 +311,8 @@ class GWPreviewConfirmation {
 
 							if ( is_a( $field, 'GF_Field' ) ) {
 								$value = $field->get_value_entry_detail( json_encode( array_filter( (array) $value ) ) );
+							} elseif ( method_exists( 'GF_Field', 'get_value_all_fields_merge_tag' ) ) {
+								$value = $field->get_value_all_fields_merge_tag( $value, $entry, false, 'html' );
 							} else {
 								$value = GFCommon::get_lead_field_display( $field, json_encode( $value ) );
 							}
@@ -332,7 +340,13 @@ class GWPreviewConfirmation {
 					break;
 				default:
 					$value = self::preview_image_value( "input_{$field['id']}", $field, $form, $entry );
-					$value = GFCommon::get_lead_field_display( $field, $value, $currency );
+					if ( method_exists( 'GF_Field', 'get_value_all_fields_merge_tag' ) ) {
+						$value = $field->get_value_all_fields_merge_tag( $value, $entry, false, 'html' );
+					} elseif ( version_compare( GFForms::$version, '2.9.29', '>=' ) ) {
+						$value = GFCommon::get_lead_field_display( $field, $value, $entry );
+					} else {
+						$value = GFCommon::get_lead_field_display( $field, $value, $currency );
+					}
 					break;
 			}
 		}

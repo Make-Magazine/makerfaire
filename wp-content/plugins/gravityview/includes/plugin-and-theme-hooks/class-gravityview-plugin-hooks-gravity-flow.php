@@ -52,6 +52,8 @@ class GravityView_Plugin_Hooks_Gravity_Flow extends GravityView_Plugin_and_Theme
 		add_filter( 'gravityview/extension/search/input_type', [ $this, 'add_workflow_user_fields_to_search' ], 10, 2 );
 
 		add_filter( 'gk/gravityview/search/available-fields', [ $this, 'add_workflow_search_fields' ], 10, 2 );
+
+		add_filter( 'gk/gravityview/search/field/choices', [ $this, 'add_assignee_field_choices' ], 10, 2 );
 	}
 
 	/**
@@ -74,6 +76,7 @@ class GravityView_Plugin_Hooks_Gravity_Flow extends GravityView_Plugin_and_Theme
 				[
 					'workflow_user',
 					'workflow_role',
+					'workflow_assignee_select',
 				],
 				true
 			)
@@ -82,6 +85,43 @@ class GravityView_Plugin_Hooks_Gravity_Flow extends GravityView_Plugin_and_Theme
 		}
 
 		return $input_type;
+	}
+
+	/**
+	 * Supplies Search Bar choices for the Gravity Flow Assignee Select field.
+	 *
+	 * The Assignee field stores composite values (`user_id|123`, `role|administrator`)
+	 * but, unlike Workflow User and Workflow Role, does not populate
+	 * `$field->choices` on the field object. Without choices, GravityView's
+	 * Search Bar cannot render a dropdown, so this filter supplies the same
+	 * users + roles the field exposes natively.
+	 *
+	 * @since 2.59.0
+	 *
+	 * @see https://linear.app/gravitykit/issue/DEV-4165
+	 *
+	 * @param array{value: string, text: string}[] $choices The current choices.
+	 * @param GF_Field|null                        $field   The Gravity Forms field.
+	 *
+	 * @return array{value: string, text: string}[] The choices.
+	 */
+	public function add_assignee_field_choices( array $choices, $field ): array {
+		if ( $choices ) {
+			return $choices;
+		}
+
+		if ( ! class_exists( 'Gravity_Flow_Field_Assignee_Select' ) ) {
+			return $choices;
+		}
+
+		if ( ! $field instanceof Gravity_Flow_Field_Assignee_Select ) {
+			return $choices;
+		}
+
+		return array_merge(
+			(array) $field->get_account_choices( $field->formId ),
+			(array) Gravity_Flow_Common::get_roles_as_choices( true, true, true )
+		);
 	}
 
 	/**

@@ -233,6 +233,84 @@ class GV_Extension_DataTables_Data {
 	}
 
 	/**
+	 * Builds a server-side per-column search condition for a DataTables field filter.
+	 *
+	 * @param string        $field_id_or_meta_name Field ID or entry meta key.
+	 * @param int           $form_id               Gravity Forms form ID.
+	 * @param GF_Field|null $field                 Gravity Forms field object, if available.
+	 * @param string        $search_value          Sanitized search value.
+	 * @param string        $query_literal_class   GF query literal class name.
+	 *
+	 * @return GF_Query_Condition
+	 */
+	private function get_column_search_condition( $field_id_or_meta_name, $form_id, $field, $search_value, $query_literal_class ) {
+		$tokens = $this->get_parent_complex_field_search_tokens( $field_id_or_meta_name, $field, $search_value );
+
+		if ( count( $tokens ) > 1 ) {
+			$conditions = array();
+
+			foreach ( $tokens as $token ) {
+				$conditions[] = new \GF_Query_Condition(
+					new \GF_Query_Column( $field_id_or_meta_name, $form_id ),
+					\GF_Query_Condition::LIKE,
+					new $query_literal_class( '%' . $token . '%' )
+				);
+			}
+
+			return call_user_func_array( array( '\GF_Query_Condition', '_and' ), $conditions );
+		}
+
+		return new \GF_Query_Condition(
+			// Passing the form ID lets GF_Query resolve parent complex fields to their stored entry inputs.
+			// Cast to int before calling this method because GF_Query_Column silently ignores non-int/non-array sources.
+			new \GF_Query_Column( $field_id_or_meta_name, $form_id ),
+			\GF_Query_Condition::LIKE,
+			new $query_literal_class( '%' . $search_value . '%' )
+		);
+	}
+
+	/**
+	 * Normalizes a DataTables per-column search value before building query conditions.
+	 *
+	 * @param string $value Search value.
+	 *
+	 * @return string
+	 */
+	private function normalize_column_search_value( $value ) {
+		$value = sanitize_text_field( $value );
+
+		// Normalize pasted Unicode separators/invisible format marks (NBSP, ZWSP, BOM, etc.) to spaces so token boundaries survive.
+		$normalized = preg_replace( '/[\x{200B}\x{FEFF}\p{Z}\s]+/u', ' ', $value );
+
+		return trim( null === $normalized ? $value : $normalized );
+	}
+
+	/**
+	 * Splits search text for text-like parent complex fields whose values may span sub-input rows.
+	 *
+	 * @param string        $field_id_or_meta_name Field ID or entry meta key.
+	 * @param GF_Field|null $field                 Gravity Forms field object, if available.
+	 * @param string        $search_value          Sanitized search value.
+	 *
+	 * @return array
+	 */
+	private function get_parent_complex_field_search_tokens( $field_id_or_meta_name, $field, $search_value ) {
+		if ( ! $field || ! in_array( $field->type, array( 'address', 'name' ), true ) ) {
+			return array();
+		}
+
+		if ( ! is_numeric( $field_id_or_meta_name ) || floor( (float) $field_id_or_meta_name ) !== (float) $field_id_or_meta_name ) {
+			return array();
+		}
+
+		if ( empty( $search_value ) || ! $field->get_entry_inputs() ) {
+			return array();
+		}
+
+		return preg_split( '/ +/', $search_value, -1, PREG_SPLIT_NO_EMPTY );
+	}
+
+	/**
 	 * main AJAX logic to retrieve DataTables data
 	 */
 	function get_datatables_data() {
@@ -426,12 +504,13 @@ class GV_Extension_DataTables_Data {
 
 					// Use JSON literal for fields that are stored as JSON and where certain characters are escaped in the DB (e.g., Multi-Select field with an option that contains "ä").
 					$query_literal_class = $field && 'json' === $field->storageType ? '\GF_Query_JSON_Literal' : '\GF_Query_Literal';
+					$search_value        = $this->normalize_column_search_value( $dt_column['search']['value'] );
 
-					$condition = new \GF_Query_Condition(
-						new \GF_Query_Column( $field_id_or_meta_name ),
-						\GF_Query_Condition::LIKE,
-						new $query_literal_class( '%' . sanitize_text_field( $dt_column['search']['value'] ) . '%' )
-					);
+					if ( '' === $search_value ) {
+						continue;
+					}
+
+					$condition = $this->get_column_search_condition( $field_id_or_meta_name, (int) $view->form->ID, $field, $search_value, $query_literal_class );
 
 					$q = $query->_introspect();
 
@@ -760,7 +839,27 @@ class GV_Extension_DataTables_Data {
 	private function get_original_sort_field_setting( $view ) {
 		$original_settings = get_post_meta( $view->ID, '_gravityview_template_settings', true );
 
-		return (array) ( isset( $original_settings['sort_field'] ) ? $original_settings['sort_field'] : [] );
+		// array_unique() must NOT be followed by array_values() — the original keys must be
+		// preserved so that $sort_direction[$index] lookups remain paired with the correct field.
+		return array_unique( (array) ( isset( $original_settings['sort_field'] ) ? $original_settings['sort_field'] : [] ) );
+	}
+
+	/**
+	 * Get the original sort_direction setting from saved View meta.
+	 *
+	 * This retrieves the sort_direction from the saved post meta rather than from
+	 * runtime settings, which may have been modified by shortcode attributes.
+	 *
+	 * @since 3.7.3
+	 *
+	 * @param View $view The View object.
+	 *
+	 * @return array The sort_direction setting as an array.
+	 */
+	private function get_original_sort_direction_setting( $view ) {
+		$original_settings = get_post_meta( $view->ID, '_gravityview_template_settings', true );
+
+		return (array) ( isset( $original_settings['sort_direction'] ) ? $original_settings['sort_direction'] : [] );
 	}
 
 	/**
@@ -1139,6 +1238,20 @@ class GV_Extension_DataTables_Data {
 		}
 		$config_data['visible_fields'] = $visible_field_ids;
 
+		// Include search parameters so that switching filters resets DataTables pagination state.
+		$search_params = array_filter(
+			$_GET ?? [],
+			static function ( $key ) {
+				return 0 === strpos( $key, 'filter_' ) || 'mode' === $key;
+			},
+			ARRAY_FILTER_USE_KEY
+		);
+
+		if ( ! empty( $search_params ) ) {
+			ksort( $search_params );
+			$config_data['search_params'] = $search_params;
+		}
+
 		return substr( md5( wp_json_encode( $config_data ) ), 0, 8 );
 	}
 
@@ -1321,15 +1434,17 @@ class GV_Extension_DataTables_Data {
 		}
 
 		// set default order
+		$sort_direction = $this->get_original_sort_direction_setting( $view );
+
 		foreach ( $sort_field_setting as $l => $sort_field ) {
 			foreach ( $columns as $k => $column ) {
 				if ( $column['name'] === 'gv_' . $sort_field ) {
-					$dir = (array) $view->settings->get( 'sort_direction', 'asc' );
-
 					$dt_config['order'][] = array(
 						$k,
-						strtolower( \GV\Utils::get( $dir, $l, 'asc' ) ),
+						strtolower( \GV\Utils::get( $sort_direction, $l, 'asc' ) ),
 					);
+
+					break;
 				}
 			}
 		}
@@ -1405,7 +1520,9 @@ class GV_Extension_DataTables_Data {
 		}
 
 		/**
-		 * Modify the DataTables core script used
+		 * Modify the DataTables core script used by the plugin.
+		 *
+		 * If you have another DataTables script on the page, you can use this filter to enqueue that script instead.
 		 *
 		 * @param string $path Full URL to the jQuery DataTables file
 		 */
@@ -1438,6 +1555,11 @@ class GV_Extension_DataTables_Data {
 		// include DataTables custom script
 		wp_enqueue_script( 'gv-datatables-cfg', plugins_url( 'assets/js/datatables-views' . $script_debug . '.js', GV_DT_FILE ), array( 'gv-datatables' ), GV_Extension_DataTables::version, true );
 
+		// Extensions detect the View via View_Collection::from_post(), which fails when do_shortcode()
+		// embeds it in a page whose content has no [gravityview] shortcode; passing the rendered View's
+		// own post resolves it directly, per View (the hook fires once per render).
+		$scripts_post = $gravityview->view instanceof View ? get_post( $gravityview->view->ID ) : $post;
+
 		/**
 		 * Extend datatables by including other scripts and styles.
 		 *
@@ -1448,7 +1570,7 @@ class GV_Extension_DataTables_Data {
 		 * @param array   $empty_array_2 Empty array (deprecated).
 		 * @param WP_Post $post          Current View or post/page where View is embedded.
 		 */
-		do_action( 'gravityview_datatables_scripts_styles', array(), array(), $post );
+		do_action( 'gravityview_datatables_scripts_styles', array(), array(), $scripts_post );
 	}
 
 	/**

@@ -1028,8 +1028,9 @@ class GP_Nested_Forms extends GP_Plugin {
 				continue;
 			}
 
-			$nested_form = $this->get_nested_form( $nested_form_field->gpnfForm );
-			$replace     = '';
+			$nested_form  = $this->get_nested_form( $nested_form_field->gpnfForm );
+			$target_field = GFFormsModel::get_field( $nested_form, $target_field_id );
+			$replace      = '';
 
 			$_entry = new GPNF_Entry( $entry );
 
@@ -1057,7 +1058,11 @@ class GP_Nested_Forms extends GP_Plugin {
 				case 'sum':
 					$total = 0;
 					foreach ( $child_entries as $child_entry ) {
-						$total += (float) GFCommon::to_number( rgar( $child_entry, $target_field_id ), $entry['currency'] );
+						if ( $target_field && $target_field->type === 'product' ) {
+							$total += (float) $this->get_product_sum_value( $target_field, $child_entry, $nested_form, $entry['currency'] );
+						} else {
+							$total += (float) GFCommon::to_number( rgar( $child_entry, $target_field_id ), $entry['currency'] );
+						}
 					}
 					$replace = $total;
 					break;
@@ -1114,6 +1119,40 @@ class GP_Nested_Forms extends GP_Plugin {
 		}
 
 		return $formula;
+	}
+
+	/**
+	 * Get the numeric value used by :sum when targeting a Product field.
+	 *
+	 * @param GF_Field $product_field Product field object.
+	 * @param array    $entry Child entry.
+	 * @param array    $form Child form.
+	 * @param string   $currency Currency code.
+	 *
+	 * @return float
+	 */
+	public function get_product_sum_value( $product_field, $entry, $form, $currency ) {
+
+		$product_value = GFFormsModel::get_lead_field_value( $entry, $product_field );
+		$quantity      = $this->get_product_quantity( $product_field, $entry, $form );
+		$price         = '';
+
+		if ( is_array( $product_value ) ) {
+			$price = rgar( $product_value, "{$product_field->id}.2" );
+		} elseif ( is_string( $product_value ) && strpos( $product_value, '|' ) !== false ) {
+			$parts = explode( '|', $product_value );
+			$price = array_pop( $parts );
+		} elseif ( ! is_array( $product_value ) ) {
+			$price = $product_value;
+		}
+
+		if ( rgblank( $price ) || empty( $quantity ) ) {
+			return 0;
+		}
+
+		$unit_price = (float) GFCommon::to_number( $price, $currency );
+
+		return $unit_price * (float) $quantity;
 	}
 
 	public function add_nested_form_field_total_merge_tag( $merge_tags ) {
@@ -1995,7 +2034,7 @@ class GP_Nested_Forms extends GP_Plugin {
 	 * @return array
 	 */
 	public function prepare_submission_files_for_save( $files, $field, $entry, $form ) {
-		if ( ! $this->is_nested_form_edit_submission() || ! $this->supports_modern_file_upload_handling( $field ) || empty( $files['existing'] ) || ! $field->multipleFiles ) {
+		if ( ! $this->is_nested_form_edit_submission() || ! $this->supports_modern_file_upload_handling( $field ) || ! $field->multipleFiles ) {
 			return $files;
 		}
 
@@ -2016,19 +2055,53 @@ class GP_Nested_Forms extends GP_Plugin {
 			return $files;
 		}
 
-		foreach ( $files['existing'] as &$existing_file ) {
-			$url = rgar( $existing_file, 'url' );
-			if ( empty( $url ) ) {
-				continue;
+		if ( version_compare( GFForms::$version, '2.10.3', '<' ) ) {
+			// GF 2.9.18 – 2.10.2: existing files arrive in $files['existing'] with a 'url' key (added by
+			// populate_file_urls_from_value).
+			if ( empty( $files['existing'] ) ) {
+				return $files;
 			}
 
-			// When GF sees a URL without a temp filename it treats the file as dynamically populated and drops it.
-			if ( in_array( $url, $original_urls, true ) && empty( $existing_file['temp_filename'] ) ) {
-				unset( $existing_file['url'] );
+			foreach ( $files['existing'] as &$existing_file ) {
+				$url = rgar( $existing_file, 'url' );
+				if ( empty( $url ) ) {
+					continue;
+				}
+
+				if ( in_array( $url, $original_urls, true ) && empty( $existing_file['temp_filename'] ) ) {
+					unset( $existing_file['url'] );
+				}
+			}
+			unset( $existing_file );
+
+			return $files;
+		}
+
+		// GF 2.10.3+ strips files with a 'url' key before our filter runs, preventing existing files from reaching $files['existing'].
+		// Re-inject retained files from the raw gform_uploaded_files payload so get_multifile_value() can match them as existing files.
+		$posted        = GFCommon::json_decode( rgpost( 'gform_uploaded_files' ) );
+		$input_name    = 'input_' . absint( $field->id );
+		$posted_for_field = rgar( is_array( $posted ) ? $posted : array(), $input_name );
+
+		if ( ! is_array( $posted_for_field ) ) {
+			return $files;
+		}
+
+		$to_restore = array();
+		foreach ( $posted_for_field as $posted_file ) {
+			if ( ! is_array( $posted_file ) || ! isset( $posted_file['url'] ) ) {
+				continue;
+			}
+			// Only restore files whose URL actually belongs to this entry (prevents URL-injection attacks).
+			if ( in_array( $posted_file['url'], $original_urls, true ) ) {
+				$to_restore[] = array( 'uploaded_filename' => wp_basename( $posted_file['url'] ) );
 			}
 		}
 
-		unset( $existing_file );
+		if ( ! empty( $to_restore ) ) {
+			// Prepend so existing files appear before any newly uploaded ones.
+			$files['existing'] = array_merge( $to_restore, $files['existing'] );
+		}
 
 		return $files;
 	}
@@ -2082,7 +2155,13 @@ class GP_Nested_Forms extends GP_Plugin {
 				}
 			}
 
-			$value = GFCommon::get_lead_field_display( $field, $raw_value, $entry['currency'], true );
+			if ( method_exists( 'GF_Field', 'get_value_all_fields_merge_tag' ) ) {
+				$value = $field->get_value_all_fields_merge_tag( $raw_value, $entry, true, 'html' );
+			} elseif ( version_compare( GFForms::$version, '2.9.29', '>=' ) ) {
+				$value = GFCommon::get_lead_field_display( $field, $raw_value, $entry, true );
+			} else {
+				$value = GFCommon::get_lead_field_display( $field, $raw_value, rgar( $entry, 'currency' ), true );
+			}
 
 			// Run $value through same filter GF uses before displaying on the entry detail view.
 			$value = apply_filters( 'gform_entry_field_value', $value, $field, $entry, $form );
@@ -2152,8 +2231,10 @@ class GP_Nested_Forms extends GP_Plugin {
 		} else {
 			if ( is_array( $product_value ) && ! $product_field->disableQuantity ) {
 				$quantity = rgar( $product_value, "{$product_field->id}.3" );
-			} elseif ( empty( array_filter( $product_value ) ) ) {
+			} elseif ( is_array( $product_value ) && empty( array_filter( $product_value ) ) ) {
 				// product_value is made up of all empty values, it shouldn't be populated with a value of 1.
+				$quantity = 0;
+			} elseif ( ! is_array( $product_value ) && rgblank( $product_value ) ) {
 				$quantity = 0;
 			} else {
 				$quantity = 1;
@@ -2161,6 +2242,27 @@ class GP_Nested_Forms extends GP_Plugin {
 		}
 
 		return (int) ( ! $quantity ? 0 : $quantity );
+	}
+
+	/**
+	 * Get map of Product field IDs to Quantity field IDs for the given form.
+	 *
+	 * @param array $form Child form.
+	 *
+	 * @return array
+	 */
+	public function get_product_quantity_field_map( $form ) {
+		$map = array();
+
+		foreach ( GFCommon::get_fields_by_type( $form, array( 'quantity' ) ) as $field ) {
+			if ( rgblank( $field->productField ) ) {
+				continue;
+			}
+
+			$map[ (string) $field->productField ] = (int) $field->id;
+		}
+
+		return $map;
 	}
 
 
@@ -2245,6 +2347,7 @@ class GP_Nested_Forms extends GP_Plugin {
 		add_filter( 'gform_form_tag', array( $this, 'add_nested_inputs' ), 10, 2 );
 		add_filter( 'gform_pre_render', array( $this, 'remove_extra_other_choices' ) );
 		add_filter( 'gform_form_args', array( $this, 'force_child_form_ajax' ), PHP_INT_MAX );
+		add_filter( 'gfcb_enable_cache_buster', array( $this, 'disable_cache_buster_for_nested_forms' ), 99, 2 );
 
 		if ( $this->use_jquery_ui_dialog() ) {
 			// Force scripts to load in the footer so that they are not reincluded in the fetched form markup.
@@ -2324,12 +2427,30 @@ class GP_Nested_Forms extends GP_Plugin {
 		remove_filter( 'gform_form_tag', array( $this, 'add_nested_inputs' ) );
 		remove_filter( 'gform_pre_render', array( $this, 'remove_extra_other_choices' ) );
 		remove_filter( 'gform_form_args', array( $this, 'force_child_form_ajax' ), PHP_INT_MAX );
+		remove_filter( 'gfcb_enable_cache_buster', array( $this, 'disable_cache_buster_for_nested_forms' ), 99 );
 
 		do_action( 'gpnf_unload_nested_form_hooks', rgar( $form_or_id, 'id', $form_or_id ), $this->parent_form_id );
 
 		$this->parent_form_id = null;
 
 		return $form_string;
+	}
+
+	/**
+	 * Disable GF Cache Buster while rendering child forms.
+	 *
+	 * Cache Buster replaces form markup with a loader and a DOMContentLoaded AJAX
+	 * request. Nested Forms already loads child form markup via AJAX for the modal,
+	 * so that loader script is inserted too late to run and the modal never finishes
+	 * loading.
+	 *
+	 * @param bool $enabled Whether Cache Buster is enabled for the form.
+	 * @param int  $form_id The form ID.
+	 *
+	 * @return bool
+	 */
+	public function disable_cache_buster_for_nested_forms( $enabled, $form_id ) {
+		return false;
 	}
 
 	/**
@@ -2495,10 +2616,10 @@ class GP_Nested_Forms extends GP_Plugin {
 			/**
 			 * @var GP_Field_Nested_Form $field
 			 */
-			$nested_form    = $this->get_nested_form( rgar( $field, 'gpnfForm' ) );
-			$display_fields = rgar( $field, 'gpnfFields' );
-			$entries        = $this->get_submitted_nested_entries( $form, $field->id );
-			$primary_color  = $field->gpnfModalHeaderColor ? $field->gpnfModalHeaderColor : '#3498db';
+			$nested_form        = $this->get_nested_form( rgar( $field, 'gpnfForm' ) );
+			$display_fields     = rgar( $field, 'gpnfFields' );
+			$entries            = $this->get_submitted_nested_entries( $form, $field->id );
+			$custom_modal_color = $field->gpnfModalHeaderColor ? $field->gpnfModalHeaderColor : '';
 
 			$ajax_context = array(
 				'post_id'      => get_queried_object_id(),
@@ -2527,11 +2648,11 @@ class GP_Nested_Forms extends GP_Plugin {
 					'closeScreenReaderLabel' => esc_html__( 'Close', 'gp-nested-forms' ),
 				),
 				'modalColors'         => array(
-					'primary'   => $primary_color,
-					'secondary' => $this->color_luminance( $primary_color, -0.5 ),
-					'danger'    => '#e74c3c',
+					'primary'   => $custom_modal_color,
+					'secondary' => $custom_modal_color ? $this->color_luminance( $custom_modal_color, -0.5 ) : '',
+					'danger'    => '',
 				),
-				'modalHeaderColor'    => $primary_color,
+				'modalHeaderColor'    => $custom_modal_color,
 				'modalClass'          => $this->use_jquery_ui_dialog() ? 'gpnf-dialog' : 'gpnf-modal',
 				'modalStickyFooter'   => true,
 				'entryLimitMin'       => $field->gpnfEntryLimitMin,
@@ -2546,6 +2667,8 @@ class GP_Nested_Forms extends GP_Plugin {
 				'modalWidth'          => 700,
 				'modalHeight'         => 'auto',
 				'hasConditionalLogic' => GFFormDisplay::has_conditional_logic( $nested_form ),
+				'productFieldIds'     => wp_list_pluck( GFCommon::get_fields_by_type( $nested_form, array( 'product' ) ), 'id' ),
+				'productQuantityFieldMap' => $this->get_product_quantity_field_map( $nested_form ),
 				'isGF25'              => $this->is_gf_version_gte( '2.5-beta-1' ),
 				'enableFocusTrap'     => true,
 				'ajaxContext'         => $ajax_context,
@@ -2600,6 +2723,8 @@ class GP_Nested_Forms extends GP_Plugin {
 			 *     modalWidth: int, // The default width of the modal; defaults to 700.
 			 *     modalHeight: string|int, // The default height of the modal; defaults to 'auto' which will automatically size the modal based on its contents.
 			 *     hasConditionalLogic: bool, // Indicate whether the current form has conditional logic enabled.
+			 *     productFieldIds: array, // Field IDs for Product fields in the child form.
+			 *     productQuantityFieldMap: array, // Map of Product field IDs to related Quantity field IDs.
 			 *     isGF25: bool, // Whether Gravity Forms version is 2.5 or higher.
 			 *     enableFocusTrap: bool, // Whether the nested form should use a focus trap when open to prevent tabbing outside the nested form.
 			 *     ajaxContext: array, // Context data for AJAX requests including post_id, path, field_values, and request.
@@ -2915,7 +3040,22 @@ class GP_Nested_Forms extends GP_Plugin {
 
 		if ( ! empty( $entry_ids ) ) {
 			$first_entry_id = rgars( array_values( $entry_ids ), '0/0' );
-			return gform_get_meta( $first_entry_id, GPNF_Entry::ENTRY_PARENT_KEY );
+			$parent_entry_id = gform_get_meta( $first_entry_id, GPNF_Entry::ENTRY_PARENT_KEY );
+
+			/**
+			 * If the parent entry ID is numeric, the child entry was already adopted by a Partial Entry.
+			 * In this case, retrieve the original session hash stored on the partial entry so the session
+			 * can be properly restored. A numeric hash would be rejected by can_current_user_edit_entry()
+			 * which would prevent editing child entries after resuming via Save & Continue.
+			 */
+			if ( is_numeric( $parent_entry_id ) ) {
+				$session_hash = gform_get_meta( $parent_entry_id, GPNF_Session::SESSION_HASH_META_KEY );
+				if ( $session_hash ) {
+					return $session_hash;
+				}
+			}
+
+			return $parent_entry_id;
 		}
 
 		return false;
@@ -3357,7 +3497,7 @@ class GP_Nested_Forms extends GP_Plugin {
 				$entry_value          = is_array( $entry_value ) ? $entry_value : array();
 				$existing_entry_value = json_decode( $existing_entry[ $field['id'] ] );
 				$existing_entry_value = is_array( $existing_entry_value ) ? $existing_entry_value : array();
-				$files_to_delete      = is_array( $$files_to_delete ) ? $files_to_delete : array();
+				$files_to_delete      = is_array( $files_to_delete ) ? $files_to_delete : array();
 
 				$files_to_delete = array_merge( $files_to_delete, array_diff( $existing_entry_value, $entry_value ) );
 

@@ -786,6 +786,9 @@ class GVCommon {
 			 * @param array    $passed_criteria The original search criteria passed to `GVCommon::get_entries()`.
 			 * @param int|null $total           Optional. An output parameter containing the total number of entries.
 			 */
+			if ( has_filter( 'gravityview_before_get_entries' ) ) {
+				GravityView_Deprecated_Hook_Notices::deprecated_hook( 'gravityview_before_get_entries', '2.55', 'gravityview/view/entries' );
+			}
 			$entries = apply_filters_ref_array( 'gravityview_before_get_entries', array( null, $criteria, $passed_criteria, &$total ) );
 
 			// No entries returned from gravityview_before_get_entries
@@ -833,6 +836,9 @@ class GVCommon {
 		 * @param array      $passed_criteria The original search criteria passed to `GVCommon::get_entries()`.
 		 * @param int|null   $total           Optional. An output parameter containing the total number of entries. Pass a non-null value to generate.
 		 */
+		if ( has_filter( 'gravityview_entries' ) ) {
+			GravityView_Deprecated_Hook_Notices::deprecated_hook( 'gravityview_entries', '2.55', 'gravityview/view/entries' );
+		}
 		$return = apply_filters_ref_array( 'gravityview_entries', array( $return, $criteria, $passed_criteria, &$total ) );
 
 		return $return;
@@ -1660,7 +1666,7 @@ class GVCommon {
 			 * @param int   $post_id Post ID.
 			 * @param int   $form_id The main form ID for the View.
 			 */
-			$fields = apply_filters( 'gravityview/configuration/fields', $fields, $post_id, $form_id );
+			$fields = GravityView_Deprecated_Hook_Notices::apply_filters( 'gravityview/configuration/fields', [ $fields, $post_id, $form_id ], '2.55', 'gravityview/view/configuration/fields' );
 
 			/**
 			 * Filter the View fields' configuration array.
@@ -1729,7 +1735,7 @@ class GVCommon {
 
 			$blocklist_field_types = array( 'list', 'textarea' );
 
-			$blocklist_field_types = apply_filters_deprecated( 'gravityview_blacklist_field_types', array( $blocklist_field_types, null ), '2.14', 'gravityview_blocklist_field_types' );
+			$blocklist_field_types = GravityView_Deprecated_Hook_Notices::apply_filters( 'gravityview_blacklist_field_types', array( $blocklist_field_types, null ), '2.14', 'gravityview_blocklist_field_types' );
 
 			/**
 			 * Modify the list of field types that should not be sortable.
@@ -1784,7 +1790,7 @@ class GVCommon {
 
 		$blocklist_field_types = $blocklist;
 
-		$blocklist_field_types = apply_filters_deprecated( 'gravityview_blacklist_field_types', array( $blocklist_field_types, null ), '2.14', 'gravityview_blocklist_field_types' );
+		$blocklist_field_types = GravityView_Deprecated_Hook_Notices::apply_filters( 'gravityview_blacklist_field_types', array( $blocklist_field_types, null ), '2.14', 'gravityview_blocklist_field_types' );
 
 		$blocklist_field_types = apply_filters( 'gravityview_blocklist_field_types', $blocklist_field_types, null );
 
@@ -2123,7 +2129,7 @@ class GVCommon {
 		 *
 		 * @param array $settings Settings array, with `number` key defining the # of users to display.
 		 */
-		$get_users_settings = apply_filters( 'gravityview/get_users/' . $context, apply_filters( 'gravityview_change_entry_creator_user_parameters', $get_users_settings ) );
+		$get_users_settings = apply_filters( 'gravityview/get_users/' . $context, GravityView_Deprecated_Hook_Notices::apply_filters( 'gravityview_change_entry_creator_user_parameters', [ $get_users_settings ], '2.55', 'gravityview/get_users/{$context}' ) );
 
 		return get_users( $get_users_settings );
 	}

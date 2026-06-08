@@ -156,11 +156,23 @@ abstract class Entry {
 		 * Modify the URL to the View "directory" context.
 		 *
 		 * @since 1.19.4
+		 * @deprecated 2.55.0 `gravityview/view/links/directory` instead.
 		 *
 		 * @param string $permalink URL to the View's "directory" context (Multiple Entries screen).
 		 * @param int $post_id ID of the post to link to. If the View is embedded, it is the post or page ID.
 		 */
-		$permalink = apply_filters( 'gravityview_directory_link', $permalink, $request->is_view( false ) ? $view_id : ( $post ? $post->ID : null ) );
+		$post_id = $request->is_view( false ) ? $view_id : ( $post ? $post->ID : null );
+		$permalink = \GravityView_Deprecated_Hook_Notices::apply_filters( 'gravityview_directory_link', [ $permalink, $post_id ], '2.55', 'gravityview/view/links/directory' );
+
+		/**
+		 * Modify the URL to the View "directory" context.
+		 *
+		 * @since 2.55.0
+		 *
+		 * @param string        $permalink URL to the View's "directory" context (Multiple Entries screen).
+		 * @param \GV\View|null $view      The View context.
+		 */
+		$permalink = apply_filters( 'gravityview/view/links/directory', $permalink, $view );
 
 		$entry_endpoint_name = self::get_endpoint_name();
 

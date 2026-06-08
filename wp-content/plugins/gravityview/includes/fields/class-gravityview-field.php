@@ -171,12 +171,21 @@ abstract class GravityView_Field {
 		}
 
 		/**
-		 * Auto-assign label from Gravity Forms label, if exists
+		 * Auto-assign label from Gravity Forms label, if exists.
+		 * Deferred to 'init' to avoid triggering translations too early.
 		 *
 		 * @since 1.20
 		 */
-		if ( empty( $this->label ) && ! empty( $this->_gf_field_class_name ) && class_exists( $this->_gf_field_class_name ) ) {
-			$this->label = ucfirst( GF_Fields::get( $this->name )->get_form_editor_field_title() );
+		if ( empty( $this->label ) && ! empty( $this->_gf_field_class_name ) ) {
+			$field = $this;
+
+			add_action( 'init', static function () use ( $field ) {
+				if ( ! empty( $field->label ) || ! class_exists( $field->_gf_field_class_name ) ) {
+					return;
+				}
+
+				$field->label = ucfirst( GF_Fields::get( $field->name )->get_form_editor_field_title() );
+			}, 1 );
 		}
 
 		try {

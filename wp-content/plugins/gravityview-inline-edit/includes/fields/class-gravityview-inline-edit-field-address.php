@@ -107,7 +107,8 @@ class GravityView_Inline_Edit_Field_Address extends GravityView_Inline_Edit_Fiel
 
 		// Code taken from GravityView core (see `templates/fields/fields-address-html.php`)
 		add_filter( 'gform_disable_address_map_link', '__return_true' );
-		$formatted_address = GFCommon::get_lead_field_display( $gf_field, $address, "", false, 'html' );
+		$entry_or_currency = version_compare( \GFForms::$version, '2.9.29', '>=' ) ? $entry : '';
+		$formatted_address = \GFCommon::get_lead_field_display( $gf_field, $address, $entry_or_currency, false, 'html' );
 		remove_filter( 'gform_disable_address_map_link', '__return_true' );
 		if ( empty( $formatted_address ) ) {
 			return array();

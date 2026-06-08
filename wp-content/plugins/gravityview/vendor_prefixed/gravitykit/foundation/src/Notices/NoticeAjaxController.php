@@ -395,7 +395,18 @@ final class NoticeAjaxController {
 		$response = [
 			'message'  => $notice->get_message(),
 			'progress' => $live['progress'] ?? 0,
+			'severity' => $notice->get_severity(),
 		];
+
+		// Include show_progress so the frontend can dynamically show/hide the progress bar.
+		if ( isset( $live['show_progress'] ) ) {
+			$response['show_progress'] = (bool) $live['show_progress'];
+		}
+
+		// Signal frontend to stop polling this notice.
+		if ( ! empty( $live['disable_polling'] ) ) {
+			$response['disable_polling'] = true;
+		}
 
 		if ( isset( $live['_error'] ) ) {
 			$response['error'] = $live['_error'];

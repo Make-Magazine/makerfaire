@@ -4,7 +4,7 @@
 
 namespace Composer\Autoload;
 
-class ComposerStaticInit8278b35ded190da4816445181d670841
+class ComposerStaticInit1b8eef2edf8311e1cc43f96c6b3b7cb2
 {
     public static $classMap = array (
         'Composer\\InstalledVersions' => __DIR__ . '/..' . '/composer/InstalledVersions.php',
@@ -86,6 +86,7 @@ class ComposerStaticInit8278b35ded190da4816445181d670841
         'GV\\Search\\Querying\\Search_Filter_Visitor' => __DIR__ . '/../..' . '/includes/search/querying/interface-search-filter-visitor.php',
         'GV\\Search\\Querying\\Search_Request' => __DIR__ . '/../..' . '/includes/search/querying/class-search-request.php',
         'GV\\Search\\Querying\\Visitors\\Abstract_Search_Filter_Visitor' => __DIR__ . '/../..' . '/includes/search/querying/visitors/abstract-search-filter-visitor.php',
+        'GV\\Search\\Querying\\Visitors\\Query_Filter_Visitor' => __DIR__ . '/../..' . '/includes/search/querying/visitors/class-query-filter-visitor.php',
         'GV\\Search\\Querying\\Visitors\\Search_Criteria_Visitor' => __DIR__ . '/../..' . '/includes/search/querying/visitors/class-search-criteria-visitor.php',
         'GV\\Search\\Search_Field_Collection' => __DIR__ . '/../..' . '/includes/search/class-search-field-collection.php',
         'GV\\Search\\Search_Policy' => __DIR__ . '/../..' . '/includes/search/class-search-policy.php',
@@ -144,6 +145,7 @@ class ComposerStaticInit8278b35ded190da4816445181d670841
         'GravityView_Default_Template_Table' => __DIR__ . '/../..' . '/includes/presets/default-table/class-gravityview-default-template-table.php',
         'GravityView_Delete_Entry' => __DIR__ . '/../..' . '/includes/extensions/delete-entry/class-delete-entry.php',
         'GravityView_Delete_Entry_Admin' => __DIR__ . '/../..' . '/includes/extensions/delete-entry/class-delete-entry-admin.php',
+        'GravityView_Deprecated_Hook_Notices' => __DIR__ . '/../..' . '/includes/class-gravityview-deprecated-hook-notices.php',
         'GravityView_Duplicate_Entry' => __DIR__ . '/../..' . '/includes/extensions/duplicate-entry/class-duplicate-entry.php',
         'GravityView_Edit_Entry' => __DIR__ . '/../..' . '/includes/extensions/edit-entry/class-edit-entry.php',
         'GravityView_Edit_Entry_Admin' => __DIR__ . '/../..' . '/includes/extensions/edit-entry/class-edit-entry-admin.php',
@@ -253,6 +255,7 @@ class ComposerStaticInit8278b35ded190da4816445181d670841
         'GravityView_Field_Workflow_Step' => __DIR__ . '/../..' . '/includes/fields/class-gravityview-field-workflow_step.php',
         'GravityView_Fields' => __DIR__ . '/../..' . '/includes/fields/class-gravityview-fields.php',
         'GravityView_GFFormsModel' => __DIR__ . '/../..' . '/includes/class-gravityview-gfformsmodel.php',
+        'GravityView_GF_Compat' => __DIR__ . '/../..' . '/includes/class-gravityview-gf-compat.php',
         'GravityView_GF_Entries_List' => __DIR__ . '/../..' . '/includes/admin/entry-list.php',
         'GravityView_HTML_Elements' => __DIR__ . '/../..' . '/includes/class-gravityview-html-elements.php',
         'GravityView_Image' => __DIR__ . '/../..' . '/includes/class-gravityview-image.php',
@@ -358,7 +361,7 @@ class ComposerStaticInit8278b35ded190da4816445181d670841
         'GravityView_Widget_Pagination_Info' => __DIR__ . '/../..' . '/includes/widgets/class-gravityview-widget-pagination-info.php',
         'GravityView_Widget_Poll' => __DIR__ . '/../..' . '/includes/widgets/poll/class-gravityview-widget-poll.php',
         'GravityView_Widget_Search' => __DIR__ . '/../..' . '/includes/widgets/search-widget/class-search-widget.php',
-        'GravityView_Widget_Search_Author_GF_Query_Condition' => __DIR__ . '/../..' . '/includes/widgets/search-widget/class-search-widget.php',
+        'GravityView_Widget_Search_Author_GF_Query_Condition' => __DIR__ . '/../..' . '/includes/widgets/search-widget/conditions/class-gravityview-widget-search-author-condition.php',
         'GravityView_frontend' => __DIR__ . '/../..' . '/includes/class-frontend-views.php',
         'GravityView_oEmbed' => __DIR__ . '/../..' . '/includes/class-oembed.php',
         'LLMS_Integration_GravityView' => __DIR__ . '/../..' . '/includes/plugin-and-theme-hooks/class-gravityview-plugin-hooks-lifterlms.php',
@@ -372,7 +375,7 @@ class ComposerStaticInit8278b35ded190da4816445181d670841
     public static function getInitializer(ClassLoader $loader)
     {
         return \Closure::bind(function () use ($loader) {
-            $loader->classMap = ComposerStaticInit8278b35ded190da4816445181d670841::$classMap;
+            $loader->classMap = ComposerStaticInit1b8eef2edf8311e1cc43f96c6b3b7cb2::$classMap;
 
         }, null, ClassLoader::class);
     }

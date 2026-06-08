@@ -6,5 +6,21 @@ $vendorDir = dirname(__DIR__);
 $baseDir = dirname($vendorDir);
 
 return array(
+    'Automattic\\Jetpack\\Autoloader\\AutoloadGenerator' => $vendorDir . '/automattic/jetpack-autoloader/src/AutoloadGenerator.php',
     'Composer\\InstalledVersions' => $vendorDir . '/composer/InstalledVersions.php',
+    'GPPA_Compatibility_GravityFlow' => $baseDir . '/includes/class-compatibility-gravityflow.php',
+    'GPPA_Compatibility_GravityPDF' => $baseDir . '/includes/class-compatibility-gravitypdf.php',
+    'GPPA_Compatibility_GravityView' => $baseDir . '/includes/class-compatibility-gravityview.php',
+    'GPPA_Compatibility_JetSloth_Image_Choices' => $baseDir . '/includes/class-compatibility-jetsloth-image-choices.php',
+    'GPPA_Compatibility_WC_Product_Addons' => $baseDir . '/includes/class-compatibility-wc-product-addons.php',
+    'GPPA_Export' => $baseDir . '/includes/class-gppa-export.php',
+    'GPPA_GF_Query_Condition' => $baseDir . '/includes/class-gppa-gf-query-condition.php',
+    'GPPA_Object_Type' => $baseDir . '/includes/class-object-type.php',
+    'GPPA_Object_Type_Database' => $baseDir . '/includes/class-object-type-database.php',
+    'GPPA_Object_Type_GF_Entry' => $baseDir . '/includes/class-object-type-gf-entry.php',
+    'GPPA_Object_Type_Post' => $baseDir . '/includes/class-object-type-post.php',
+    'GPPA_Object_Type_Term' => $baseDir . '/includes/class-object-type-term.php',
+    'GPPA_Object_Type_User' => $baseDir . '/includes/class-object-type-user.php',
+    'GP_Populate_Anything' => $baseDir . '/class-gp-populate-anything.php',
+    'GP_Populate_Anything_Live_Merge_Tags' => $baseDir . '/includes/class-live-merge-tags.php',
 );

@@ -221,7 +221,7 @@ class DbStore extends ActionScheduler_DBStore {
 		$defaults = parent::get_status_labels();
 
 		$insert = [
-			self::STATUS_PAUSED => __( 'Paused', 'gk-gravityimport' ),
+			self::STATUS_PAUSED => __( 'Paused', 'gk-foundation' ),
 		];
 
 		return array_merge( $insert, $defaults );
@@ -561,7 +561,7 @@ class DbStore extends ActionScheduler_DBStore {
 
 		if ( ! $updated ) {
 			// translators: [id] is replaced with the run ID.
-			throw new Exception( strtr( __( 'Unable to pause run [id]. It may have been changed by another process.', 'gk-gravityimport' ), [ '[id]' => $instance_id ] ) );
+			throw new Exception( strtr( __( 'Unable to pause run [id]. It may have been changed by another process.', 'gk-foundation' ), [ '[id]' => $instance_id ] ) );
 		}
 
 		return true;
@@ -594,7 +594,7 @@ class DbStore extends ActionScheduler_DBStore {
 		if ( ! $updated ) {
 			// translators: [id] is replaced with the run ID.
 			throw new Exception(
-				strtr( esc_html__( 'Unidentified run [id]: we were unable to unpause this run. It may have been changed by another process.', 'gk-gravityimport' ), [ '[id]' => intval( $instance_id ) ] )
+				strtr( esc_html__( 'Unidentified run [id]: we were unable to unpause this run. It may have been changed by another process.', 'gk-foundation' ), [ '[id]' => intval( $instance_id ) ] )
 			);
 		}
 
@@ -639,6 +639,10 @@ class DbStore extends ActionScheduler_DBStore {
 	 * @return bool True if there is a pending or running job instances, false otherwise.
 	 */
 	public function is_scheduled( string $name, ?array $args = null ): bool {
+		if ( ! function_exists( 'as_has_scheduled_action' ) ) {
+			return false;
+		}
+
 		return as_has_scheduled_action( $name, $args, self::GROUP_ID );
 	}
 

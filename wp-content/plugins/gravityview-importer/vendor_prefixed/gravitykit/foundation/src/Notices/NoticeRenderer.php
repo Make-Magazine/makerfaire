@@ -402,9 +402,9 @@ final class NoticeRenderer {
 
 		foreach ( $notices as $notice ) {
 			if ( $notice->is_sticky() ) {
-				$sticky_count++;
+				++$sticky_count;
 			} else {
-				$non_sticky_count++;
+				++$non_sticky_count;
 			}
 
 			if ( $notice->is_dismissible() ) {

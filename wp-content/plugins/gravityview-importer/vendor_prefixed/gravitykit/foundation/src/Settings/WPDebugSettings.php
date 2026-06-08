@@ -139,7 +139,7 @@ class WPDebugSettings {
 				$fields[] = [
 					'id'    => 'wp_debug_enabled',
 					'type'  => 'checkbox',
-					'title' => esc_html__( 'Enable WordPress Debug Logging', 'gk-gravityimport' ),
+					'title' => esc_html__( 'Enable WordPress Debug Logging', 'gk-foundation' ),
 					'value' => $debug_status['is_enabled'],
 				];
 
@@ -168,7 +168,7 @@ class WPDebugSettings {
 		// Add WP Debug section at the end.
 		$sections[] = [
 			'id'       => 'wp_debug',
-			'title'    => esc_html__( 'WP Debug', 'gk-gravityimport' ),
+			'title'    => esc_html__( 'WP Debug', 'gk-foundation' ),
 			'settings' => $fields,
 		];
 
@@ -642,11 +642,11 @@ class WPDebugSettings {
 	 */
 	private function build_log_file_info( $log_path, $nest_under_toggle = true ) {
 		if ( ! file_exists( $log_path ) ) {
-			$message = esc_html__( 'The log file is empty.', 'gk-gravityimport' );
+			$message = esc_html__( 'The log file is empty.', 'gk-foundation' );
 			$color   = 'blue';
 		} elseif ( ! is_readable( $log_path ) ) {
 			// File exists but is not readable.
-			$message = esc_html__( 'Debug log file exists but is not accessible.', 'gk-gravityimport' );
+			$message = esc_html__( 'Debug log file exists but is not accessible.', 'gk-foundation' );
 			$color   = 'yellow';
 		} else {
 			$download_link = $this->get_secure_download_url( $log_path );
@@ -657,7 +657,7 @@ class WPDebugSettings {
 
 				$message = strtr(
 					// Translators: Do not translate the placeholders inside [].
-					esc_html__( 'Download [link]debug log[/link] ([size] / [date_modified]).', 'gk-gravityimport' ),
+					esc_html__( 'Download [link]debug log[/link] ([size] / [date_modified]).', 'gk-foundation' ),
 					[
 						'[link]'          => '<a href="' . esc_url( $download_link ) . '" class="font-medium underline text-blue-700 hover:text-blue-600">',
 						'[/link]'         => '</a>',
@@ -668,7 +668,7 @@ class WPDebugSettings {
 				$color = 'blue';
 			} else {
 				// Secure download link could not be generated.
-				$message = esc_html__( 'Debug log file exists but download link could not be generated.', 'gk-gravityimport' );
+				$message = esc_html__( 'Debug log file exists but download link could not be generated.', 'gk-foundation' );
 				$color   = 'yellow';
 			}
 		}
@@ -733,7 +733,7 @@ class WPDebugSettings {
 			$fields[] = $this->build_log_file_info( $log_path, $nest_under_toggle );
 		} else {
 			// Debug is enabled but no log file exists yet at the custom path.
-			$message = esc_html__( 'WordPress debugging is enabled by the host, but the log file is empty.', 'gk-gravityimport' );
+			$message = esc_html__( 'WordPress debugging is enabled by the host, but the log file is empty.', 'gk-foundation' );
 
 			$fields[] = [
 				'id'   => 'wp_debug_no_log_notice',
@@ -751,7 +751,7 @@ class WPDebugSettings {
 	 */
 	private function build_readonly_notice() {
 		$message = strtr(
-			esc_html__( 'The [code]wp-config.php[/code] file is not writable. Debug settings cannot be modified.', 'gk-gravityimport' ),
+			esc_html__( 'The [code]wp-config.php[/code] file is not writable. Debug settings cannot be modified.', 'gk-foundation' ),
 			[
 				'[code]'  => '<code>',
 				'[/code]' => '</code>',

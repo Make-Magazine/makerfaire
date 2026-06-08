@@ -9,6 +9,7 @@
 
 namespace GravityKit\GravityImport\Foundation\Scheduler\Models;
 
+use GravityKit\GravityImport\Foundation\Helpers\Core as CoreHelpers;
 use GravityKit\GravityImport\Foundation\Helpers\WP;
 
 /**
@@ -216,7 +217,13 @@ class HealthCheck {
 			$url,
 			[
 				'timeout'     => self::PROBE_TIMEOUT,
-				'sslverify'   => false,
+				// Loopback requests follow WordPress core's convention — default off, filterable
+				// via `https_local_ssl_verify` so anyone overriding it for Site Health picks up
+				// the same behaviour here. See wp-admin/includes/class-wp-site-health.php and
+				// wp-includes/cron.php — both unconditionally disable sslverify on loopback.
+				//
+				// See https://developer.wordpress.org/reference/hooks/https_local_ssl_verify/.
+				'sslverify'   => \apply_filters( 'https_local_ssl_verify', false ),
 				'redirection' => 0,
 			]
 		);
@@ -307,7 +314,7 @@ class HealthCheck {
 		$message = $this->message();
 
 		if ( $message ) {
-			$message = esc_html__( $message, 'gk-gravityimport' ); // phpcs:ignore WordPress.WP.I18n.NonSingularStringLiteralText -- Stored untranslated so cached transients are language-neutral.
+			$message = esc_html__( $message, 'gk-foundation' ); // phpcs:ignore WordPress.WP.I18n.NonSingularStringLiteralText -- Stored untranslated so cached transients are language-neutral.
 		}
 
 		return [

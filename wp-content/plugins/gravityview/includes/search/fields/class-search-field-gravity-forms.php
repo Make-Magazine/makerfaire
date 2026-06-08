@@ -39,6 +39,22 @@ final class Search_Field_Gravity_Forms extends Search_Field_Choices {
 	public array $form_field = [];
 
 	/**
+	 * Per-instance memoization of resolved choices.
+	 *
+	 * `has_choices()` and `get_choices()` are called multiple times during a single
+	 * Search Bar render (via `is_sievable()`, `should_be_sieved()`, `get_options()`,
+	 * `collect_template_data()`). Choice resolution can be expensive (taxonomy
+	 * queries for `post_category`, `get_users(2000)` for the Gravity Flow Assignee
+	 * field via the `gk/gravityview/search/field/choices` filter), so resolve once
+	 * per field instance.
+	 *
+	 * @since 2.59.0
+	 *
+	 * @var array{value: string, text: string}[]|null
+	 */
+	private ?array $choices_cache = null;
+
+	/**
 	 * @inheritDoc
 	 *
 	 * Make only allow named constructors for this field, due to the dependencies.
@@ -273,25 +289,7 @@ final class Search_Field_Gravity_Forms extends Search_Field_Choices {
 	 * @since 2.42
 	 */
 	public function has_choices(): bool {
-		$field = $this->get_gf_field();
-
-		if ( $field ) {
-			$choices = $field->choices ?? [];
-
-			$has_choices = is_array( $choices ) && count( $choices ) > 0;
-			if ( $has_choices ) {
-				return true;
-			}
-		}
-
-		return in_array(
-			$field ? $field->type : $this->get_field_id(),
-			[
-				'payment_status',
-				'post_category',
-			],
-			true
-		);
+		return $this->get_choices() !== [];
 	}
 
 	/**
@@ -367,20 +365,48 @@ final class Search_Field_Gravity_Forms extends Search_Field_Choices {
 	 * @since 2.42
 	 */
 	protected function get_choices(): array {
-		$field = $this->get_gf_field();
-		if ( $field && ! empty( $field->choices ?? [] ) ) {
-			return $field->choices;
+		// The constructor's `setting_keys()` calls `get_options()` -> `is_sievable()`
+		// -> here before `from_configuration()` has populated `form_field`. Skip
+		// caching during that pre-init pass; otherwise the empty result would
+		// stick and freeze the field's choices to `[]` forever.
+		if ( empty( $this->form_field ) ) {
+			return [];
 		}
 
-		$field_type = $field ? $field->type : $this->get_field_id();
-		switch ( $field_type ) {
-			case 'payment_status':
-				return GFCommon::get_entry_payment_statuses_as_choices();
-			case 'post_category':
-				return gravityview_get_terms_choices();
-			default:
-				return [];
+		if ( null !== $this->choices_cache ) {
+			return $this->choices_cache;
 		}
+
+		$field      = $this->get_gf_field();
+		$field_type = $field ? $field->type : $this->get_field_id();
+		$choices    = ( $field && ! empty( $field->choices ) ) ? (array) $field->choices : [];
+
+		if ( ! $choices ) {
+			switch ( $field_type ) {
+				case 'payment_status':
+					$choices = GFCommon::get_entry_payment_statuses_as_choices();
+					break;
+				case 'post_category':
+					$choices = gravityview_get_terms_choices();
+					break;
+			}
+		}
+
+		/**
+		 * Filters the choices for a Gravity Forms-backed search field.
+		 *
+		 * Allows integrations to supply choices for field types that don't expose
+		 * them on `$field->choices` (e.g., the Gravity Flow Assignee Select field).
+		 *
+		 * @since 2.59.0
+		 *
+		 * @param array{value: string, text: string}[] $choices      The current choices.
+		 * @param GF_Field|null                        $field        The Gravity Forms field, or null for entry-meta types like `payment_status`.
+		 * @param Search_Field_Gravity_Forms           $search_field The search field instance.
+		 */
+		$this->choices_cache = (array) apply_filters( 'gk/gravityview/search/field/choices', $choices, $field, $this );
+
+		return $this->choices_cache;
 	}
 
 	/**
@@ -488,19 +514,19 @@ final class Search_Field_Gravity_Forms extends Search_Field_Choices {
 	 * @since 2.42
 	 */
 	protected function get_input_value() {
-		$value = parent::get_input_value();
-		if ( empty( $value ) ) {
-			if ( 'date_range' === $this->get_input_type() ) {
-				$value = [
-					'start' => '',
-					'end'   => '',
-				];
-			} elseif ( 'number_range' === $this->get_input_type() ) {
-				$value = [
-					'min' => '',
-					'max' => '',
-				];
-			}
+		$value      = parent::get_input_value();
+		$input_type = $this->get_input_type();
+
+		if ( 'date_range' === $input_type ) {
+			$value = is_array( $value ) ? $value : [];
+
+			return $value + [ 'start' => '', 'end' => '' ];
+		}
+
+		if ( 'number_range' === $input_type ) {
+			$value = is_array( $value ) ? $value : [];
+
+			return $value + [ 'min' => '', 'max' => '' ];
 		}
 
 		return $value;
@@ -588,6 +614,8 @@ final class Search_Field_Gravity_Forms extends Search_Field_Choices {
 			case 'total':
 				return $this->adjust_numeric_filter( $filter );
 
+			case 'repeater':
+				return $this->adjust_repeater_filter( $filter );
 			default:
 				return $filter;
 		}
@@ -603,7 +631,11 @@ final class Search_Field_Gravity_Forms extends Search_Field_Choices {
 	 * @return Search_Filter The adjusted filter.
 	 */
 	private function adjust_select_filter( Search_Filter $filter ): Search_Filter {
-		return $filter->with_operator( $filter->operator(), [ 'is' ] );
+		if ( ! is_array( $filter->value() ) ) {
+			$filter = $filter->with_operator( $filter->operator(), [ 'is' ] );
+		}
+
+		return $filter;
 	}
 
 	/**

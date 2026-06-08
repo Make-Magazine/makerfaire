@@ -11,6 +11,7 @@ namespace GravityKit\GravityImport\Foundation\WP;
 use GravityKit\GravityImport\Foundation\Helpers\Core as CoreHelpers;
 use GravityKit\GravityImport\Foundation\Helpers\Arr;
 use Exception;
+use Throwable;
 
 class AjaxRouter {
 	const WP_AJAX_ACTION = 'gk_foundation_do_ajax';
@@ -32,6 +33,12 @@ class AjaxRouter {
 	 * @since 1.0.11
 	 */
 	private function __construct() {
+		// Process Foundation AJAX on early admin_init to run before other plugins'
+		// admin_init callbacks that may redirect and exit (e.g., activation welcome pages).
+		if ( wp_doing_ajax() && ( $_REQUEST['action'] ?? '' ) === self::WP_AJAX_ACTION ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+			add_action( 'admin_init', [ $this, 'process_ajax_request' ], PHP_INT_MIN );
+		}
+
 		add_action( 'wp_ajax_' . self::WP_AJAX_ACTION, [ $this, 'process_ajax_request' ] );
 	}
 
@@ -138,37 +145,50 @@ class AjaxRouter {
 			do_action( 'gk/foundation/ajax/before', $router, $route, $payload );
 
 			$result = call_user_func( $route_callback, $payload );
-		} catch ( Exception $e ) {
+		} catch ( Throwable $e ) {
+			// Widen to Throwable so PHP 7+ Error subclasses (TypeError, etc.) are caught
+			// and routed through the same failure path as Exceptions, rather than bubbling
+			// uncaught and bypassing the /result filter and /after guard below.
 			$result = new Exception( $e->getMessage() );
 		}
 
 		/**
-		 * Modifies Ajax call result.
+		 * Modifies Ajax call result. Listeners can transform the response, including
+		 * converting a success to an error or vice versa. Receives the raw Exception or
+		 * WP_Error when the route failed.
 		 *
-		 * @action gk/foundation/ajax/result
+		 * @filter gk/foundation/ajax/result
 		 *
 		 * @since  1.0.11
 		 *
-		 * @param mixed|Exception $result
-		 * @param string          $router
-		 * @param string          $route
-		 * @param array           $payload
+		 * @param mixed|Exception|\WP_Error $result
+		 * @param string                    $router
+		 * @param string                    $route
+		 * @param array                     $payload
 		 */
 		$result = apply_filters( 'gk/foundation/ajax/result', $result, $router, $route, $payload );
 
-		/**
-		 * Fires after the Ajax call is processed.
-		 *
-		 * @action gk/foundation/ajax/after
-		 *
-		 * @since  1.0.11
-		 *
-		 * @param string          $router
-		 * @param string          $route
-		 * @param array           $payload
-		 * @param mixed|Exception $result
-		 */
-		do_action( 'gk/foundation/ajax/after', $router, $route, $payload, $result );
+		// Skip the /after hook when the route threw or returned an error. Listeners cannot safely
+		// act on a failed result, and a blanket fire-on-failure invites bugs in listeners that
+		// forget to check $result (a prior sleep() listener allowed an authenticated DoS).
+		if ( ! ( $result instanceof Exception ) && ! is_wp_error( $result ) ) {
+			/**
+			 * Fires after the Ajax call is processed successfully. Does not fire when the route
+			 * throws or the /result filter transforms the response into an Exception or WP_Error.
+			 *
+			 * @action gk/foundation/ajax/after
+			 *
+			 * @since  1.0.11
+			 * @since  1.15.0 Only fires on successful results. Listeners no longer need to defend
+			 *             against Exception/WP_Error being passed as $result.
+			 *
+			 * @param string $router
+			 * @param string $route
+			 * @param array  $payload
+			 * @param mixed  $result
+			 */
+			do_action( 'gk/foundation/ajax/after', $router, $route, $payload, $result );
+		}
 
 		CoreHelpers::process_return( $result );
 	}

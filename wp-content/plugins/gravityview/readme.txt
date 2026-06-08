@@ -1,7 +1,7 @@
 === GravityView ===
 Tags: gravity forms, directory, gravity forms directory
 Requires at least: 4.7
-Tested up to: 6.9.1
+Tested up to: 7.0.0
 Requires PHP: 7.4.0
 Stable tag: trunk
 Contributors: The GravityKit Team
@@ -20,6 +20,224 @@ Beautifully display your Gravity Forms entries. Learn more on [gravitykit.com](h
 3. Follow the instructions
 
 == Changelog ==
+
+= 2.61.1 on June 4, 2026 =
+
+This update resolves several Post Image field issues when editing entries.
+
+#### 🐛 Fixed
+* Issues with the Post Image field's Alternative Text:
+  - Not shown when editing an entry;
+  - Discarded when saving;
+  - Not copied to the image in the Media Library.
+
+#### 🔧 Updated
+* [Foundation](https://www.gravitykit.com/foundation/) to version 1.21.0.
+
+= 2.61.0 on May 28, 2026 =
+
+This release adapts the View editor and GravityKit admin pages to the admin color scheme changes in WordPress 7.
+
+#### ✨ Improved
+* The View editor and the GravityKit Settings, Manage Your Kit, and Background Jobs pages now follow the active WordPress admin color scheme.
+
+#### 🔧 Updated
+* [Foundation](https://www.gravitykit.com/foundation/) to version 1.20.0.
+
+= 2.60.2 on May 21, 2026 =
+
+This release fixes a JavaScript error that could disable interactive features on View pages, an Unapproved entries filter that returned all results when combined with a search, a regression where single-file upload fields could fail Edit Entry validation or silently lose their existing file, and incorrectly blocked Gravity PDF updates.
+
+#### 🐛 Fixed
+* A JavaScript error on View pages could disable interactive features (datepickers, the Search Bar widget, sorting, multi-page Edit Entry forms) in certain plugin or optimizer configurations.
+* The Unapproved entries filter on the Gravity Forms Entries list returned all entries when combined with a search query.
+* Single-file upload fields in Edit Entry: required fields could fail validation on submit, and optional fields could silently clear an existing file, even when no new file was uploaded.
+* Updates to Gravity PDF were incorrectly blocked because it was misidentified as a GravityKit product.
+
+#### 💻 Developer Updates
+* Added `gravityview/approve-entries/refresh` JavaScript event on `document`. Trigger it after the Gravity Forms Entries list table is re-rendered (e.g., AJAX updates) to re-inject the approval column and re-bind the approval controls.
+
+#### 🔧 Updated
+* [Foundation](https://www.gravitykit.com/foundation/) to version 1.19.0.
+
+= 2.60.1 on May 14, 2026 =
+
+This release fixes a fatal error triggered by empty Search Bar submissions, incorrect Date field display with custom formats, and a stray deprecated hook notice in the admin.
+
+#### 🐛 Fixed
+* An empty search keyword submitted via the Search Bar widget could trigger a fatal error on the View page.
+* Date fields could display today's date instead of the entry's actual date when a custom Date Format was used.
+* A deprecated hook notice could appear in the WordPress admin when viewing entries in a lightbox.
+
+#### 🔧 Updated
+* [Foundation](https://www.gravitykit.com/foundation/) to version 1.18.0.
+
+= 2.60.0 on May 7, 2026 =
+
+This release speeds up the Views list page on form-heavy sites and fixes File Upload fields rendering blank in Views.
+
+#### ✨ Improved
+* Faster loading of the Views list page on sites with a large number of forms.
+
+#### 🐛 Fixed
+* File Upload fields rendered blank in Views on Gravity Forms 2.10.0 and later
+
+#### 💻 Developer Updates
+* Restored `$context` argument passed to `gravityview/field_output/*` filters in the legacy table and list templates.
+
+#### 🔧 Updated
+* [Foundation](https://www.gravitykit.com/foundation/) to version 1.17.0.
+
+= 2.59.0 on April 28, 2026 =
+
+This release adds a setting to modify the Edit Entry page title, adds support for the Gravity Flow Assignee field in the Search Bar widget, and resolves a fatal error on PHP 8+.
+
+#### 🚀 Added
+* View setting to customize the title shown on the Edit Entry screen.
+* Search Bar widget now renders the Gravity Flow Assignee field as a dropdown of users and roles.
+
+#### 🐛 Fixed
+* Fatal error that could occur on PHP 8+ when an unexpected URL value was passed to a date-range or number-range field in the Search Bar widget.
+
+#### 💻 Developer Updates
+* Added `gk/gravityview/edit-entry/title` filter to modify the title shown on the Edit Entry screen.
+* Added `gk/gravityview/edit-entry/document-title` filter to override the browser tab title on Edit Entry independently of the page heading.
+* Added `gk/gravityview/search/field/choices` filter to supply Search Bar choices for Gravity Forms-backed fields that don't populate `$field->choices` natively (e.g., the Gravity Flow Assignee field).
+* Deprecated the `gravityview_edit_entry_title` filter in favor of `gk/gravityview/edit-entry/title`.
+
+#### 🔧 Updated
+* [Foundation](https://www.gravitykit.com/foundation/) to version 1.16.1.
+
+= 2.58.0 on April 23, 2026 =
+
+This update includes internal code improvements.
+
+#### 🔧 Updated
+* [Foundation](https://www.gravitykit.com/foundation/) to version 1.16.0.
+
+= 2.57.0 on April 16, 2026 =
+
+This release adds a View setting to extend searches beyond configured date ranges and a live-updating Search Bar configuration summary, and resolves compatibility issues with Gravity Forms 2.9.31.3+.
+
+#### 🚀 Added
+* View setting to allow searching beyond the configured start and end date range.
+* Live-updating Search Bar configuration summary in the View editor that shows field count and search mode without opening the settings dialog.
+
+#### 🐛 Fixed
+* `?filter_<ID>=value` request arguments could bypass the "Search in visible fields only" setting.
+* Gravity Forms 2.9.31.3 compatibility:
+  - Duplicate "Edit" action link on the Gravity Forms entries page;
+  - GravityView notifications for entry deletion and approval status changes were not sent when async notifications were enabled.
+
+#### 💻 Developer Updates
+* Added `gk/gravityview/admin/widget-info` filter to allow widgets to add custom summary information in the View editor.
+
+#### 🔧 Updated
+* [Foundation](https://www.gravitykit.com/foundation/) to version 1.15.0.
+
+= 2.56.1 on April 2, 2026 =
+
+This release resolves an issue where the "Search in visible fields only" setting could interfere with unrelated query conditions, and a separate issue where `[gv_entry_link]` URLs were missing pre-populated field values.
+
+#### 🐛 Fixed
+* "Search in visible fields only" setting was incorrectly removing non-search conditions (such as approval status) from queries, allowing unapproved entries to appear and breaking Single Entry access.
+* The `field_values` attribute in the `[gv_entry_link]` shortcode was not being appended to URLs when using read or delete link types.
+
+#### 🔧 Updated
+* [Foundation](https://www.gravitykit.com/foundation/) to version 1.14.0.
+
+= 2.56 on March 30, 2026 =
+
+This release adds a safeguard against unfiltered entry display when Advanced Filtering is inactive, and fixes issues with the Connected Views dropdown and search queries containing typographic quotes.
+
+#### 🚀 Added
+* A safeguard that prevents unfiltered entries from being displayed when a View has Advanced Filtering conditional logic configured but the extension is not active.
+
+#### 🐛 Fixed
+* The "Connected Views" dropdown on Gravity Forms pages did not appear for users with multiple WordPress roles.
+* Search not returning results when queries contain typographic ("smart") quotes, commonly entered from mobile keyboards.
+
+= 2.55 on March 26, 2026 =
+
+This release adds an Entries column to the Views list and fixes issues with `[gvlogic]`, global search, and empty search filters.
+
+#### 🚀 Added
+* An `Entries` column on the admin Views list that displays the number of entries for each View’s Data Source.
+
+#### 🐛 Fixed
+* `[gvlogic]` conditions silently failed when field values contained HTML special characters like `&`, `>`, or `<`.
+* Inclusive (+) and exclusive (-) global search words are now correctly handled on fields from joined Multiple Forms.
+* Empty search values for `gv_id`, `gv_search` and `gv_by` are ignored as filters.
+
+#### 💻 Developer Updates
+* Added `gk/gravityview/search/request/filters` to modify the search filters before the search happens.
+* Added `gk/gravityview/search/request/method` to modify the search method.
+* Added `gk/gravityview/search/request/search-arguments` to modify parsed search arguments before processing.
+* Deprecated `gravityview_fe_search_criteria` in favor of `gk/gravityview/search/request/filters`.
+* Deprecated `gravityview/widgets/search/created_by/user_meta_fields` in favor of `gk/query-filters/condition/created-by/user-meta-fields`.
+* Deprecated `gravityview/widgets/search/created_by/user_fields` in favor of `gk/query-filters/condition/created-by/user-fields`.
+* Deprecated `GravityView_Widget_Search_Author_GF_Query_Condition` in favor of Query Filters' `Created_By_Condition`.
+* Deprecated legacy `gravityview_*` hooks in favor of modern namespaced equivalents:
+  - `gravitview_no_entries_text` > `gravityview/template/text/no_entries`;
+  - `gravityview_directory_link` > `gravityview/view/links/directory`;
+  - `gravityview_go_back_url` > `gravityview/template/links/back/url`;
+  - `gravityview_go_back_label` > `gravityview/template/links/back/label`;
+  - `gravityview_before` > `gravityview/template/before`;
+  - `gravityview_header` > `gravityview/template/header`;
+  - `gravityview_footer` > `gravityview/template/footer`;
+  - `gravityview_after` > `gravityview/template/after`;
+  - `gravityview_field_output` > `gravityview/field_output/html`;
+  - `gravityview_table_cells` > `gravityview/template/table/fields`;
+  - `gravityview_table_cells_before` > `gravityview/template/table/cells/before`;
+  - `gravityview_table_cells_after` > `gravityview/template/table/cells/after`;
+  - `gravityview_table_body_before` > `gravityview/template/table/body/before`;
+  - `gravityview_table_body_after` > `gravityview/template/table/body/after`;
+  - `gravityview_table_tr_before` > `gravityview/template/table/tr/before`;
+  - `gravityview_table_tr_after` > `gravityview/template/table/tr/after`;
+  - `gravityview_entry_class` > `gravityview/template/{template}/entry/class`;
+  - `gravityview_list_body_before` > `gravityview/template/list/body/before`;
+  - `gravityview_list_body_after` > `gravityview/template/list/body/after`;
+  - `gravityview_list_entry_{zone}_before` > `gravityview/template/list/entry/{zone}/before`;
+  - `gravityview_list_entry_{zone}_after` > `gravityview/template/list/entry/{zone}/after`;
+  - `gravityview_default_args` > `gravityview/view/settings/defaults`;
+  - `gravityview_direct_access` > `gravityview/view/output/direct`;
+  - `gravityview_widget_active_areas` > `gravityview/widget/active_areas`;
+  - `gravityview_register_directory_widgets` > `gravityview/widgets/register`;
+  - `gravityview_empty_value` > `gravityview/field/value/empty`;
+  - `gravityview_field_entry_value_{type}_pre_link` > `gravityview/template/field/{type}/output`;
+  - `gravityview_field_entry_link` > `gravityview/template/field/entry_link`;
+  - `gravityview_field_entry_value_{type}` > `gravityview/template/field/{type}/output`;
+  - `gravityview_field_entry_value` > `gravityview/template/field/{type}/output`;
+  - `gravityview_include_frontend_actions` > `gravityview/loaded`;
+  - `gravityview_view_entries` > `gravityview/view/entries`;
+  - `gravityview_before_get_entries` > `gravityview/view/entries`;
+  - `gravityview_entries` > `gravityview/view/entries`;
+  - `gravityview_tooltips` > `gravityview/metaboxes/tooltips`;
+  - `gravityview_change_entry_creator_user_parameters` > `gravityview/get_users/{$context}`;
+  - `gravityview_template_slug_{$template_slug}` > `gravityview_get_template_id`;
+  - `gravityview_template_{$field_type}_options` > `gk/gravityview/template/options`;
+  - `gravityview_template_{$input_type}_options` > `gk/gravityview/template/options`.
+* Deprecated hooks with corrected namespacing:
+  - `gravityview/field_output/args` > `gravityview/template/field_output/context`;
+  - `gravityview/template/field_label` > `gravityview/template/field/label`;
+  - `gravityview/configuration/fields` > `gravityview/view/configuration/fields`.
+* Deprecated hooks in favor of `gk/gravityview/` namespaced replacements:
+  - `gravityview/delete-entry/mode` > `gk/gravityview/delete-entry/mode`;
+  - `gravityview/delete-entry/deleted` > `gk/gravityview/delete-entry/deleted`;
+  - `gravityview/delete-entry/trashed` > `gk/gravityview/delete-entry/trashed`;
+  - `gravityview/delete-entry/delete-connected-post` > `gk/gravityview/delete-entry/delete-connected-post`;
+  - `gravityview/search/operator_allowlist` > `gk/gravityview/search/operators/allowed`;
+  - `gravityview/widgets/search/datepicker/format` > `gk/gravityview/search/datepicker/format`;
+  - `gravityview_date_created_adjust_timezone` > `gk/gravityview/search/date/adjust-timezone`;
+  - `gravityview/search-trim-input` > `gk/gravityview/search/value/trim`;
+  - `gravityview/search/ignore-empty-values` > `gk/gravityview/search/value/ignore-empty`;
+  - `gravityview/search/method` > `gk/gravityview/search/request/method`;
+  - `gravityview/search/mode` > `gk/gravityview/search/criteria/mode`;
+  - `gravityview/search/searchable_fields/allowlist` > `gk/gravityview/search/searchable-fields/allowed`;
+  - `gravityview/search-all-split-words` > `gk/gravityview/search/field/all/split-words`.
+
+#### 🔧 Updated
+* [Foundation](https://www.gravitykit.com/foundation/) to version 1.13.0.
 
 = 2.54.2 on February 26, 2026 =
 
@@ -462,12 +680,12 @@ This update delivers a major overhaul of the Search Bar widget, offering signifi
 * Added `gk/gravityview/widget/search/visible_fields_only` filter to modify whether "Search Everything" searches are limited for a View.
 * Added a fourth `$data` attribute to `\GravityView_View::render()` for setting a `$data` global in View templates.
 * Updated Search Bar templates to use the new global `$data` variable instead of `$gravityview_view`:
-  - `$gravityview_view->search_fields` → `$data['search_fields']`
-  - `$gravityview_view->permalink_fields` → `$data['permalink_fields']`
-  - `$gravityview_view->search_layout` → `$data['search_layout']`
-  - `$gravityview_view->search_mode` → `$data['search_mode']`
-  - `$gravityview_view->search_class` → `$data['search_class']`
-  - `$gravityview_view->search_clear` → `$data['search_clear']`
+  - `$gravityview_view->search_fields` > `$data['search_fields']`
+  - `$gravityview_view->permalink_fields` > `$data['permalink_fields']`
+  - `$gravityview_view->search_layout` > `$data['search_layout']`
+  - `$gravityview_view->search_mode` > `$data['search_mode']`
+  - `$gravityview_view->search_class` > `$data['search_class']`
+  - `$gravityview_view->search_clear` > `$data['search_clear']`
 * Added `gk/gravityview/search/additional-reserved-args` filter to add additional reserved arguments for the Search Bar widget.
 
 = 2.41 on July 3, 2025 =
@@ -1351,7 +1569,7 @@ __Developer Updates:__
 
 * Added: New WordPress admin menu where you can now centrally manage all your GravityKit product licenses and settings ([learn more about the new GravityKit menu](https://www.gravitykit.com/foundation/))
     - Go to the WordPress sidebar and check out the GravityKit menu!
-    - We have automatically migrated your existing licenses and settings, which were previously entered in the Views→Settings page
+    - We have automatically migrated your existing licenses and settings, which were previously entered in the Views > Settings page
     - Request support using the "Grant Support Access" menu item
 * Added: Support for defining `alt` text in File Upload fields
 * Added: "Pre-Filter Choices" Search Bar setting will only display choices that exist in submitted entries ([learn more about Pre-Filter Choices](https://docs.gravitykit.com/article/701-s))

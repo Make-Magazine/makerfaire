@@ -81,7 +81,7 @@ class Views_Route extends Route {
 		);
 
 		if ( empty( $items ) ) {
-			return new \WP_Error( 'gravityview-no-views', __( 'No Views found.', 'gk-gravityview' ) ); // @todo message
+			return new \WP_Error( 'gravityview-no-views', __( 'No Views found.', 'gk-gravityview' ), array( 'status' => 404 ) );
 		}
 
 		$data = array(
@@ -118,7 +118,7 @@ class Views_Route extends Route {
 			return new \WP_REST_Response( $data, 200 );
 		}
 
-		return new \WP_Error( 'code', sprintf( 'A View with ID #%d was not found.', $view_id ) );
+		return new \WP_Error( 'gravityview-view-not-found', sprintf( 'A View with ID #%d was not found.', $view_id ), array( 'status' => 404 ) );
 	}
 
 	/**
@@ -269,13 +269,13 @@ class Views_Route extends Route {
 			$post = get_post( $post_id );
 
 			if ( ! $post || is_wp_error( $post ) ) {
-				return new \WP_Error( 'gravityview-post-not-found', sprintf( 'A post with ID #%d was not found.', $post_id ) );
+				return new \WP_Error( 'gravityview-post-not-found', sprintf( 'A post with ID #%d was not found.', $post_id ), array( 'status' => 404 ) );
 			}
 
 			$collection = \GV\View_Collection::from_post( $post );
 
 			if ( ! $collection->contains( $view_id ) ) {
-				return new \WP_Error( 'gravityview-post-not-contains', sprintf( 'The post with ID #%d does not contain a View with ID #%d', $post_id, $view_id ) );
+				return new \WP_Error( 'gravityview-post-not-contains', sprintf( 'The post with ID #%d does not contain a View with ID #%d', $post_id, $view_id ), array( 'status' => 404 ) );
 			}
 		}
 
@@ -507,7 +507,7 @@ class Views_Route extends Route {
 		}
 
 		if ( ! $view = View::by_id( $view_id ) ) {
-			return new \WP_Error( 'rest_forbidden', __( 'You are not allowed to access this content.', 'gk-gravityview' ) );
+			return new \WP_Error( 'rest_forbidden', __( 'You are not allowed to access this content.', 'gk-gravityview' ), array( 'status' => 403 ) );
 		}
 
 		while ( $error = $view->can_render( array( 'rest' ), $request ) ) {
@@ -516,7 +516,7 @@ class Views_Route extends Route {
 				break;
 			}
 
-			return new \WP_Error( 'rest_forbidden', \GravityView_Error_Messages::get( $error->get_error_code(), $view, 'rest' ) );
+			return new \WP_Error( 'rest_forbidden', \GravityView_Error_Messages::get( $error->get_error_code(), $view, 'rest' ), array( 'status' => 403 ) );
 		}
 
 		/**
@@ -528,7 +528,7 @@ class Views_Route extends Route {
 		 * @param View $view   The View being accessed.
 		 */
 		if ( ! apply_filters( 'gravityview/view/output/rest', true, $view ) ) {
-			return new \WP_Error( 'rest_forbidden', \GravityView_Error_Messages::get( 'rest_disabled', $view, 'rest' ) );
+			return new \WP_Error( 'rest_forbidden', \GravityView_Error_Messages::get( 'rest_disabled', $view, 'rest' ), array( 'status' => 403 ) );
 		}
 
 		return true;
@@ -547,16 +547,16 @@ class Views_Route extends Route {
 		$view = View::by_id( $view_id );
 
 		if ( ! $entry = \GV\GF_Entry::by_id( $entry_id ) ) {
-			return new \WP_Error( 'rest_forbidden', \GravityView_Error_Messages::get( 'entry_not_found', $view, 'rest' ) );
+			return new \WP_Error( 'rest_forbidden', \GravityView_Error_Messages::get( 'entry_not_found', $view, 'rest' ), array( 'status' => 404 ) );
 		}
 
 		if ( $entry['form_id'] != $view->form->ID ) {
-			return new \WP_Error( 'rest_forbidden', \GravityView_Error_Messages::get( 'entry_form_mismatch', $view, 'rest', $entry ) );
+			return new \WP_Error( 'rest_forbidden', \GravityView_Error_Messages::get( 'entry_form_mismatch', $view, 'rest', $entry ), array( 'status' => 403 ) );
 		}
 
 		$check = $entry->check_access( $view );
 		if ( is_wp_error( $check ) ) {
-			return new \WP_Error( 'rest_forbidden', \GravityView_Error_Messages::get( $check, $view, 'rest', $entry ) );
+			return new \WP_Error( 'rest_forbidden', \GravityView_Error_Messages::get( $check, $view, 'rest', $entry ), array( 'status' => 403 ) );
 		}
 
 		return true;
@@ -582,7 +582,7 @@ class Views_Route extends Route {
 		$view_id = rgar( $params, 'id', 0 );
 
 		if ( ! $view = View::by_id( $view_id ) ) {
-			return new \WP_Error( 'rest_forbidden', \GravityView_Error_Messages::get( 'rest_forbidden', null, 'rest' ) );
+			return new \WP_Error( 'rest_forbidden', \GravityView_Error_Messages::get( 'rest_forbidden', null, 'rest' ), array( 'status' => 403 ) );
 		}
 
 		if (

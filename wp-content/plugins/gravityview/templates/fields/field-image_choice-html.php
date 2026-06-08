@@ -66,6 +66,6 @@ if ( 'image' === $display_type ) {
 			echo esc_html( $value );
 		}
 	} else {
-		echo $field->get_value_entry_detail( $value, '', $show_label );
+		echo GravityView_GF_Compat::get_entry_detail( $field, $value, $entry, $show_label );
 	}
 }

@@ -6,18 +6,6 @@ namespace Members\BlockPermissions;
 defined( 'ABSPATH' ) || exit;
 
 /**
- * Registers the plugin activation callback.
- *
- * @since  1.0.0
- * @access public
- * @return void
- */
-register_activation_hook( __FILE__, function() {
-	require_once 'src/Activator.php';
-	Activator::activate();
-} );
-
-/**
  * Wrapper for the plugin instance.
  *
  * @since  1.0.0
@@ -38,10 +26,10 @@ function plugin() {
 }
 
 # Bootstrap plugin.
-require_once 'src/Block.php';
-require_once 'src/Editor.php';
-require_once 'src/Integration.php';
-require_once 'src/Plugin.php';
+require_once __DIR__ . '/src/Block.php';
+require_once __DIR__ . '/src/Editor.php';
+require_once __DIR__ . '/src/Integration.php';
+require_once __DIR__ . '/src/Plugin.php';
 
 # Boot the plugin.
 plugin()->boot();

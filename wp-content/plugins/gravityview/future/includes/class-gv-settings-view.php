@@ -422,6 +422,15 @@ class View_Settings extends Settings {
 						'url' => 'https://docs.gravitykit.com/article/79-using-relative-start-dates-and-end-dates',
 					),
 				),
+				'allow_date_range_overwrite'   => array(
+					'label'             => __( 'Allow searching beyond the start and end date range', 'gk-gravityview' ),
+					'left_label'        => '&nbsp;',
+					'desc'              => __( 'The start and end date settings will only filter the default results. The Entry Date search field can search outside this range.', 'gk-gravityview' ),
+					'type'              => 'checkbox',
+					'value'             => 0,
+					'group'             => 'filter',
+					'show_in_shortcode' => false,
+				),
 				'class'                       => array(
 					'label'             => __( 'CSS Class', 'gk-gravityview' ),
 					'desc'              => __( 'CSS class to add to the wrapping HTML container.', 'gk-gravityview' ),
@@ -524,6 +533,15 @@ class View_Settings extends Settings {
 					'requires'    => 'edit_redirect=2',
 					'merge_tags'  => 'force',
 					'validation'  => self::validate_url_with_tags(),
+				),
+				'edit_entry_title'            => array(
+					'label'       => __( 'Edit Entry Title', 'gk-gravityview' ),
+					'group'       => 'default',
+					'desc'        => __( 'Change the title shown when editing an entry. Supports merge tags.', 'gk-gravityview' ),
+					'type'        => 'text',
+					'value'       => '',
+					'placeholder' => __( 'Edit Entry', 'gk-gravityview' ),
+					'merge_tags'  => 'force',
 				),
 				'action_label_update'         => array(
 					'label'      => __( 'Update Button Text', 'gk-gravityview' ),
@@ -774,7 +792,7 @@ class View_Settings extends Settings {
 		 *
 		 * @param array $default_settings Array of default settings.
 		 */
-		$default_settings = apply_filters( 'gravityview_default_args', $default_settings );
+		$default_settings = \GravityView_Deprecated_Hook_Notices::apply_filters( 'gravityview_default_args', [ $default_settings ], '2.55', 'gravityview/view/settings/defaults' );
 
 		/**
 		 * Modify the default settings for new Views.

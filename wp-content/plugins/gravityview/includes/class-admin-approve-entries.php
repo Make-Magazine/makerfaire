@@ -104,7 +104,7 @@ class GravityView_Admin_ApproveEntries {
 		// [AND]
 		// 2. 'partial_entry_percent' meta key = '' [OR] 'partial_entry_percent' meta key = NULL
 		$field_filters_unapproved = array(
-			'mode' => 'any',
+			'mode' => 'all',
 			array(
 				'key'   => GravityView_Entry_Approval::meta_key,
 				'value' => '__filter_unapproved'

@@ -79,7 +79,7 @@ jQuery( function ( $ ) {
 		 * Fix the issue of updating files after edit where the previous value still exists in the uploaded field.
 		 */
 		fix_updating_files_after_edit: function () {
-			if ( window.gform ) {
+			if ( window.gform && typeof window.gform.addAction === 'function' ) {
 				// Prevent enabling the single upload input when the field is conditional but already has values.
 				gform.addAction( 'gform_post_conditional_logic_field_action', ( form_id, action, target_id ) => {
 					if ( action !== 'show' ) {

@@ -2,7 +2,7 @@
 /**
  * @license MIT
  *
- * Modified by gravitykit on 20-February-2026 using {@see https://github.com/BrianHenryIE/strauss}.
+ * Modified by gravitykit on 28-April-2026 using {@see https://github.com/BrianHenryIE/strauss}.
  */
 
 namespace GravityKit\AdvancedFilter\QueryFilters\Filter\Visitor;
@@ -20,7 +20,7 @@ trait EntryAware {
 	 *
 	 * @var array
 	 */
-	protected $entry = [];
+	protected array $entry = [];
 
 	/**
 	 * Records the entry object.

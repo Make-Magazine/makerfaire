@@ -79,27 +79,38 @@ class UpdatesPage {
 			return;
 		}
 
+		$update_transient = get_site_transient( 'update_plugins' );
+
 		$products = array_filter(
 			ProductManager::get_instance()->get_products_data( [ 'key_by' => 'path' ] ),
-			function ( $product ) {
-				return ! $product['third_party'] && $product['update_available'] && ( ! $product['checked_dependencies'][ $product['server_version'] ]['status'] );
+			function ( $product ) use ( $update_transient ) {
+				if ( $product['third_party'] || empty( $product['path'] ) ) {
+					return false;
+				}
+
+				// Use the version from the WP update transient (set by EDD.php) to check dependencies.
+				$offered_version = $update_transient->response[ $product['path'] ]->new_version ?? null;
+
+				return $offered_version && ! ( $product['checked_dependencies'][ $offered_version ]['status'] ?? true );
 			}
 		);
 
 		$product_html_markup = array_map(
-			function ( $product ) {
+			function ( $product ) use ( $update_transient ) {
+				$offered_version = $update_transient->response[ $product['path'] ]->new_version ?? $product['server_version'];
+
 				$product_logo_text = strtr(
-					esc_html__( '[product] logo', 'gk-gravityimport' ),
+					esc_html__( '[product] logo', 'gk-foundation' ),
 					[
 						'[product]' => $product['name'],
 					]
 				);
 
 				$update_description_text = strtr(
-					esc_html_x( 'You have version [current_version] installed. Before updating to [new_version], please [link]review the requirements[/link].', 'Placeholders inside [] are not to be translated.', 'gk-gravityimport' ),
+					esc_html_x( 'You have version [current_version] installed. Before updating to [new_version], please [link]review the requirements[/link].', 'Placeholders inside [] are not to be translated.', 'gk-foundation' ),
 					[
 						'[current_version]' => $product['installed_version'],
-						'[new_version]'     => $product['server_version'],
+						'[new_version]'     => $offered_version,
 						'[link]'            => '<a href="' . esc_url_raw( add_query_arg( [ 'action' => 'update' ], Framework::get_instance()->get_link_to_product_search( $product['id'] ) ) ) . '">',
 						'[/link]'           => '</a>',
 					]
@@ -166,23 +177,32 @@ JS;
 			return $response;
 		}
 
-		$products = array_filter(
-			ProductManager::get_instance()->get_products_data( [ 'key_by' => 'path' ] ),
-			function ( $product ) {
-				return ! $product['third_party'] && $product['update_available'];
-			}
-		);
+		$products = ProductManager::get_instance()->get_products_data( [ 'key_by' => 'path' ] );
 
 		$product = $products[ $args['plugin'] ] ?? null;
 
-		if ( ! $product || ( $product['checked_dependencies'][ $product['server_version'] ]['status'] ?? false ) ) {
+		if ( ! $product || $product['third_party'] ) {
+			return $response;
+		}
+
+		// Check if the version being installed has unmet dependencies.
+		// Use the WP update transient (set by EDD.php) to determine the offered version.
+		$update_transient = get_site_transient( 'update_plugins' );
+		$offered_version  = $update_transient->response[ $product['path'] ]->new_version ?? null;
+
+		// If the offered version has met deps (or no transient entry), allow the install.
+		// Also allow if stable deps are met — the install may be a "switch to stable" action.
+		$offered_deps_ok = ! $offered_version || ( $product['checked_dependencies'][ $offered_version ]['status'] ?? true );
+		$stable_deps_ok  = $product['checked_dependencies'][ $product['server_version'] ]['status'] ?? true;
+
+		if ( $offered_deps_ok || $stable_deps_ok ) {
 			return $response;
 		}
 
 		return new WP_Error(
 			'gk_product_unmet_dependency',
 			strtr(
-				esc_html_x( 'This product has unmet dependencies. [link]Review the requirements[/link] and try updating again.', 'Placeholders inside [] are not to be translated.', 'gk-gravityimport' ),
+				esc_html_x( 'This product has unmet dependencies. [link]Review the requirements[/link] and try updating again.', 'Placeholders inside [] are not to be translated.', 'gk-foundation' ),
 				[
 					'[link]'  => '<a href="' . esc_url_raw( add_query_arg( [ 'action' => 'update' ], Framework::get_instance()->get_link_to_product_search( $product['id'] ) ) ) . '" target="_parent">',
 					'[/link]' => '</a>',

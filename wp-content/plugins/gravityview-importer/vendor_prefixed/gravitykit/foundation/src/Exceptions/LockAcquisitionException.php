@@ -32,7 +32,7 @@ class LockAcquisitionException extends BaseException {
 		$data['lock_key'] = $lock_key;
 
 		if ( empty( $message ) ) {
-			$message = esc_html__( 'Failed to acquire distributed lock. Another process may be running.', 'gk-gravityimport' );
+			$message = esc_html__( 'Failed to acquire distributed lock. Another process may be running.', 'gk-foundation' );
 		}
 
 		return new self( 'lock_acquisition_failed', $message, $data );

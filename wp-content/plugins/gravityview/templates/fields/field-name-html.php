@@ -34,10 +34,7 @@ if ( $is_single_input ) {
 		}
 	}
 
-	// GF 2.9.29+ expects the full entry array; older versions expect a currency string.
-	$entry_or_currency = version_compare( GFForms::$version, '2.9.28', '>' ) ? $entry : '';
-
-	$display_value = GFCommon::get_lead_field_display( $field, $value, $entry_or_currency, false, 'html' );
+	$display_value = GravityView_GF_Compat::get_field_display( $field, $value, $entry );
 
 	if ( empty( $display_value ) ) {
 		return;

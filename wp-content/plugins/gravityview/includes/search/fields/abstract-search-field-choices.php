@@ -4,6 +4,8 @@ namespace GV\Search\Fields;
 
 use BadMethodCallException;
 use GravityView_Cache;
+use GV\Search\Querying\Search_Filter;
+use GV\View;
 
 /**
  * Represents a search field with possible choices.
@@ -229,5 +231,22 @@ abstract class Search_Field_Choices extends Search_Field {
 		}
 
 		return $search_fields;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 *
+	 * @since 2.55.0
+	 */
+	public function adjust_filter( Search_Filter $filter, ?View $view = null ): Search_Filter {
+		$filter = parent::adjust_filter( $filter, $view );
+
+		if ( $this->has_choices() && is_array( $filter->value() ) ) {
+			// In case of negative operators, use `NOT IN`.
+			$operator = in_array( $filter->operator(), [ '!=', 'isnot', 'notin' ], true ) ? 'notin' : 'in';
+			$filter   = $filter->with_operator( $operator, [ 'in', 'notin' ] );
+		}
+
+		return $filter;
 	}
 }

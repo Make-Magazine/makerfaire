@@ -65,16 +65,21 @@ class Framework {
 	 * @throws Exception
 	 */
 	private function __construct() {
+		// On multisite, permissions depend on whether Foundation's host plugin is network-activated.
+		// Network-activated: only network admins manage licenses/install/update/delete.
+		// Site-activated: site admins manage their own licenses and plugins.
+		$is_network_activated = is_multisite() && $this->is_network_activated();
+
 		$permissions = [
 			// Licenses.
 			'view_licenses'       =>
 				( ! is_super_admin() && current_user_can( 'gk_foundation_view_licenses' ) ) ||
-				( ! is_multisite() && current_user_can( 'manage_options' ) ) ||
-				( is_multisite() && current_user_can( 'manage_network_options' ) && CoreHelpers::is_network_admin() ),
+				( ! $is_network_activated && current_user_can( 'manage_options' ) ) ||
+				( $is_network_activated && current_user_can( 'manage_network_options' ) && CoreHelpers::is_network_admin() ),
 			'manage_licenses'     =>
 				( ! is_super_admin() && current_user_can( 'gk_foundation_manage_licenses' ) ) ||
-				( ! is_multisite() && current_user_can( 'manage_options' ) ) ||
-				( is_multisite() && current_user_can( 'manage_network_options' ) && CoreHelpers::is_network_admin() ),
+				( ! $is_network_activated && current_user_can( 'manage_options' ) ) ||
+				( $is_network_activated && current_user_can( 'manage_network_options' ) && CoreHelpers::is_network_admin() ),
 			// Products.
 			'view_products'       =>
 				( ! is_super_admin() && current_user_can( 'gk_foundation_view_products' ) ) ||
@@ -82,20 +87,20 @@ class Framework {
 				( is_multisite() && ( current_user_can( 'activate_plugins' ) || current_user_can( 'manage_network_plugins' ) ) ),
 			'install_products'    =>
 				( ! is_super_admin() && current_user_can( 'gk_foundation_install_products' ) ) ||
-				( ! is_multisite() && current_user_can( 'install_plugins' ) ) ||
-				( is_multisite() && current_user_can( 'manage_network_plugins' ) && CoreHelpers::is_network_admin() ),
+				( ! $is_network_activated && current_user_can( 'install_plugins' ) ) ||
+				( $is_network_activated && current_user_can( 'manage_network_plugins' ) && CoreHelpers::is_network_admin() ),
 			'update_products'     =>
 				( ! is_super_admin() && current_user_can( 'gk_foundation_update_products' ) ) ||
-				( ! is_multisite() && current_user_can( 'update_plugins' ) ) ||
-				( is_multisite() && current_user_can( 'manage_network_plugins' ) && CoreHelpers::is_network_admin() ),
+				( ! $is_network_activated && current_user_can( 'update_plugins' ) ) ||
+				( $is_network_activated && current_user_can( 'manage_network_plugins' ) && CoreHelpers::is_network_admin() ),
 			'activate_products'   =>
 				( ! is_super_admin() && current_user_can( 'gk_foundation_activate_products' ) ) ||
 				( ! is_multisite() && current_user_can( 'activate_plugins' ) ) ||
 				( is_multisite() && ( current_user_can( 'activate_plugins' ) || current_user_can( 'manage_network_plugins' ) ) ),
 			'delete_products'     =>
 				( ! is_super_admin() && current_user_can( 'gk_foundation_delete_products' ) ) ||
-				( ! is_multisite() && current_user_can( 'delete_plugins' ) ) ||
-				( is_multisite() && current_user_can( 'manage_network_plugins' ) && CoreHelpers::is_network_admin() ),
+				( ! $is_network_activated && current_user_can( 'delete_plugins' ) ) ||
+				( $is_network_activated && current_user_can( 'manage_network_plugins' ) && CoreHelpers::is_network_admin() ),
 			'deactivate_products' =>
 				( ! is_super_admin() && current_user_can( 'gk_foundation_deactivate_products' ) ) ||
 				( ! is_multisite() && current_user_can( 'install_plugins' ) ) ||
@@ -416,6 +421,25 @@ class Framework {
 	 */
 	public function license_manager() {
 		return $this->_license_manager;
+	}
+
+	/**
+	 * Checks whether Foundation's host plugin is network-activated.
+	 *
+	 * @since 1.12.0
+	 *
+	 * @return bool
+	 */
+	private function is_network_activated(): bool {
+		$registered = FoundationCore::get_instance()->get_registered_plugins();
+
+		foreach ( $registered as $plugin_file => $data ) {
+			if ( ! empty( $data['loads_foundation'] ) ) {
+				return is_plugin_active_for_network( plugin_basename( $plugin_file ) );
+			}
+		}
+
+		return false;
 	}
 
 	/**

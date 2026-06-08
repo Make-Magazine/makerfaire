@@ -7,6 +7,7 @@
 
 namespace GravityKit\GravityView\Foundation\Components;
 
+use GravityKit\GravityView\Foundation\Helpers\Core as CoreHelpers;
 use GravityKit\GravityView\Foundation\Licenses\Framework;
 use GravityKit\GravityView\Foundation\State\StateManager;
 use GravityKit\GravityView\Foundation\State\UserStateManager;
@@ -222,10 +223,14 @@ final class NewsletterSignup {
 			);
 		}
 
+		// This is an EXTERNAL call to the newsletter form endpoint — strict cert verification
+		// in production protects against MitM on customer networks. Loopback probes use a
+		// different knob (`https_local_ssl_verify`); do NOT "unify" these without understanding
+		// the distinction.
 		$result = wp_remote_post(
 			$this->form_endpoint,
 			[
-				'sslverify' => false,
+				'sslverify' => CoreHelpers::is_production_environment(),
 				'headers'   => [
 					self::SIGNING_HEADER => '1',
 				],

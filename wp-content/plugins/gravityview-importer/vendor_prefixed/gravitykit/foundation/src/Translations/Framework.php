@@ -10,6 +10,7 @@ namespace GravityKit\GravityImport\Foundation\Translations;
 
 use GravityKit\GravityImport\Foundation\Core as FoundationCore;
 use GravityKit\GravityImport\Foundation\Helpers\Core as CoreHelpers;
+use GravityKit\GravityImport\Foundation\Helpers\WP;
 use GravityKit\GravityImport\Foundation\Logger\Framework as LoggerFramework;
 use Exception;
 
@@ -61,16 +62,17 @@ class Framework {
 	}
 
 	/**
-	 * Returns TranslationsPress updater instance.
+	 * Returns translation updater instance.
 	 *
 	 * @since 1.0.0
+	 * @since 1.15.0   Renamed from get_T15s_updater(); return type updated to TranslationUpdater.
 	 *
 	 * @param string $text_domain Text domain.
 	 *
-	 * @return TranslationsPress_Updater
+	 * @return TranslationUpdater
 	 */
-	public function get_T15s_updater( $text_domain ) { // phpcs:ignore WordPress.NamingConventions.ValidFunctionName.MethodNameInvalid
-		return TranslationsPress_Updater::get_instance( $text_domain );
+	public function get_updater( $text_domain ) {
+		return TranslationUpdater::get_instance( $text_domain );
 	}
 
 	/**
@@ -87,31 +89,41 @@ class Framework {
 
 		$this->_logger = LoggerFramework::get_instance();
 
+		// Clear the translations cache when the site language changes so new locale translations are fetched immediately.
+		add_action(
+			'update_option_WPLANG',
+			function () {
+				WP::delete_site_transient( TranslationUpdater::TRANSLATIONS_TRANSIENT );
+			}
+		);
+
+		$is_en = $this->is_en_locale();
+
+		/**
+		 * Disables downloading translations.
+		 *
+		 * @filter `gk/foundation/translations/disable-download`
+		 *
+		 * @since  1.2.6
+		 *
+		 * @param bool $disable_translations Whether to download translations. Default: false.
+		 */
+		$disable_download = apply_filters( 'gk/foundation/translations/disable-download', false );
+
 		foreach ( FoundationCore::get_instance()->get_registered_plugins() as $plugin ) {
 			$plugin_data = CoreHelpers::get_plugin_data( $plugin['plugin_file'] );
 
 			if ( isset( $plugin_data['TextDomain'] ) ) {
 				$this->_text_domains[] = $plugin_data['TextDomain'];
 
-				if ( $this->is_en_locale() ) {
+				if ( $is_en ) {
 					continue;
 				}
 
-				/**
-				 * Disables downloading translations.
-				 *
-				 * @filter `gk/foundation/translations/disable-download`
-				 *
-				 * @since  1.2.6
-				 *
-				 * @param bool $disable_translations Whether to download translations. Default: false.
-				 */
-				$disable_download = apply_filters( 'gk/foundation/translations/disable-download', false );
-
 				if ( $this->can_install_languages() && ! $disable_download ) {
 					// This will automatically try to install translations for all plugins when:
-					// 1) The language is available in T15S and is not installed locally
-					// 2) T15S has updated translations
+					// 1) The language is available on the translation platform and is not installed locally.
+					// 2) The platform has updated translations.
 					// Minimal to no performance impact if the 2 conditions are not met.
 					$this->install_and_load_translations( $plugin_data['TextDomain'], get_user_locale() );
 				} else {
@@ -134,7 +146,7 @@ class Framework {
                                 self::get_translation_file_name( $plugin_data['TextDomain'], get_user_locale() )
 							);
 
-							if ( $plugin_data['TextDomain'] === $text_domain && file_exists( $remapped_mo_file ) ) {
+							if ( $plugin_data['TextDomain'] === $text_domain && $remapped_mo_file ) {
 								return $remapped_mo_file;
 							}
 
@@ -192,7 +204,7 @@ class Framework {
 	}
 
 	/**
-	 * Downloads and installs translations from TranslationsPress.
+	 * Downloads and installs translations from the GravityKit translation platform.
 	 *
 	 * @since 1.0.0
 	 * @since 1.2.6 Method renamed from `install` to `install_and_load_translations`.
@@ -212,20 +224,20 @@ class Framework {
 					$current_user->user_login
 				)
 			);
+
+			return;
 		}
 
 		try {
-			// phpcs:disable WordPress.NamingConventions.ValidVariableName.VariableNotSnakeCase
-			$T15s_updater = $this->get_T15s_updater( $text_domain );
+			$updater = $this->get_updater( $text_domain );
 
-			$T15s_updater->install( $language );
+			$updater->install( $language );
 
-			$translations = $T15s_updater->get_installed_translations( true );
+			$translations = $updater->get_installed_translations( true );
 
 			if ( isset( $translations[ $language ] ) ) {
 				$this->load_backend_translations( $text_domain, $language );
 			}
-			// phpcs:enable WordPress.NamingConventions.ValidVariableName.VariableNotSnakeCase
 		} catch ( Exception $e ) {
 			$this->_logger->error( $e->getMessage() );
 		}
@@ -275,6 +287,7 @@ class Framework {
 			return;
 		}
 
+		// WP 6.5+ auto-discovers .l10n.php alongside .mo files via load_textdomain().
 		load_textdomain( $text_domain, $mo_file );
 	}
 
@@ -300,7 +313,7 @@ class Framework {
 
 		$json_translations = $this->get_translation_file_name( $text_domain, $language, 'json' );
 
-		if ( ! file_exists( $json_translations ) ) {
+		if ( ! $json_translations ) {
 			$this->_logger->notice(
 				sprintf(
 					'No %s.json translations file found for "%s" text domain.',
@@ -314,28 +327,67 @@ class Framework {
 
 		$json_translations = file_get_contents( $json_translations );
 
+		// Validate JSON before interpolating into inline JS.
+		if ( ! is_string( $json_translations ) || null === json_decode( $json_translations ) ) {
+			$this->_logger->error(
+				sprintf( 'Invalid JSON in translation file for "%s" text domain.', $text_domain )
+			);
+
+			return;
+		}
+
 		// Optionally override text domain if UI expects a different one.
 		$text_domain = $frontend_text_domain ?: $text_domain;
 
-		add_filter(
-            'gk/foundation/inline-scripts',
-            function ( $scripts ) use ( $text_domain, $json_translations ) {
-				$js = <<<JS
+		$js = $this->build_set_locale_data_js( $text_domain, $json_translations );
+
+		// Attach to wp-i18n handle directly. This avoids race conditions with
+		// defer/async script strategies and works from any hook.
+		if ( wp_script_is( 'wp-i18n', 'registered' ) ) {
+			wp_add_inline_script( 'wp-i18n', $js, 'after' );
+		} else {
+			// wp-i18n not registered yet (e.g., called during plugins_loaded).
+			// Defer until scripts are being enqueued.
+			$attach_js = function () use ( $js, &$attach_js ) {
+				wp_add_inline_script( 'wp-i18n', $js, 'after' );
+
+				remove_action( 'admin_enqueue_scripts', $attach_js, 1 );
+				remove_action( 'wp_enqueue_scripts', $attach_js, 1 );
+			};
+
+			add_action( 'admin_enqueue_scripts', $attach_js, 1 );
+			add_action( 'wp_enqueue_scripts', $attach_js, 1 );
+		}
+	}
+
+	/**
+	 * Builds the JS snippet that calls wp.i18n.setLocaleData().
+	 *
+	 * Includes a dedup guard to prevent multiple active products from
+	 * overwriting each other's locale data for the same domain.
+	 *
+	 * @since 1.15.0
+	 *
+	 * @param string $text_domain       The text domain to register.
+	 * @param string $json_translations Raw JSON string of translation data.
+	 *
+	 * @return string
+	 */
+	private function build_set_locale_data_js( $text_domain, $json_translations ) {
+		$encoded_domain = wp_json_encode( $text_domain );
+
+		return <<<JS
 ( function( domain, translations ) {
+	if ( window.__gkTranslationsLoaded && window.__gkTranslationsLoaded[ domain ] ) {
+		return;
+	}
+	window.__gkTranslationsLoaded = window.__gkTranslationsLoaded || {};
+	window.__gkTranslationsLoaded[ domain ] = true;
 	var localeData = translations.locale_data[ domain ] || translations.locale_data.messages;
 	localeData[""].domain = domain;
 	wp.i18n.setLocaleData( localeData, domain );
-} )( '{$text_domain}', {$json_translations});
+} )( {$encoded_domain}, {$json_translations});
 JS;
-
-				$scripts[] = [
-					'script'       => $js,
-					'dependencies' => [ 'wp-i18n' ],
-				];
-
-				return $scripts;
-			}
-        );
 	}
 
 	/**
@@ -348,28 +400,40 @@ JS;
 	 * @return string|null
 	 */
 	public static function get_translation_file_name( $text_domain, $language, $extension = 'mo' ) {
-		return sprintf(
+		$path = sprintf(
 			'%s/%s-%s.%s',
 			self::get_path_to_translations_folder(),
 			$text_domain,
 			$language,
 			$extension
 		);
+
+		if ( ! file_exists( $path ) ) {
+			return null;
+		}
+
+		return $path;
 	}
 
 	/**
-	 * Returns path to folder where translations are stored, suffixed by the blog ID.
+	 * Returns path to folder where translations are stored.
+	 *
+	 * On single-site: wp-content/languages/plugins/gravitykit/
+	 * On multisite:    wp-content/languages/plugins/gravitykit/{blog_id}/
 	 *
 	 * @since 1.2.6
+	 * @since 1.15.0   Changed from numeric blog ID folder to gravitykit/ namespace.
 	 *
 	 * @return string
 	 */
 	public static function get_path_to_translations_folder() {
-		return sprintf(
-			'%s/%s',
-			untrailingslashit( self::WP_LANG_DIR ),
-			get_current_blog_id()
-		);
+		$base = untrailingslashit( self::WP_LANG_DIR ) . '/gravitykit';
+
+		if ( is_multisite() ) {
+			return $base . '/' . get_current_blog_id();
+		}
+
+		return $base;
 	}
 
 	/**
@@ -406,6 +470,13 @@ JS;
 
 		array_walk( $files, 'wp_delete_file' );
 
+		// Only remove the directory if it's empty (other GravityKit plugins may still have files here).
+		$remaining = glob( self::get_path_to_translations_folder() . '/*' );
+
+		if ( ! empty( $remaining ) ) {
+			return;
+		}
+
 		global $wp_filesystem;
 
 		if ( ! $wp_filesystem ) {
@@ -416,14 +487,7 @@ JS;
 			return;
 		}
 
-		if ( ! $wp_filesystem->rmdir( self::get_path_to_translations_folder() ) ) {
-			$this->_logger->error(
-				sprintf(
-					'Failed to delete translations folder for site ID "%d"',
-					get_current_blog_id()
-				)
-			);
-		}
+		$wp_filesystem->rmdir( self::get_path_to_translations_folder() );
 	}
 
 	/**

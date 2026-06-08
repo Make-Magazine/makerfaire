@@ -21,7 +21,7 @@ class Helpers {
 	 * @return bool
 	 */
 	public static function compare_values( $first, $second, $op ) {
-		// phpcs:disable WordPress.PHP.StrictComparisons.LooseComparison
+		// phpcs:disable Universal.Operators.StrictComparisons
 		switch ( $op ) {
 			case '!=':
 				return $first != $second;
@@ -35,6 +35,6 @@ class Helpers {
 			default:
 				return $first == $second;
 		}
-		// phpcs:enable WordPress.PHP.StrictComparisons.LooseComparison
+		// phpcs:enable Universal.Operators.StrictComparisons
 	}
 }

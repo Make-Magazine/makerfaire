@@ -105,23 +105,32 @@ class GV_Extension_DataTables_Admin {
 		<?php
 
 		/**
-		 * Hook: gravityview_dt_default_settings.
+		 * Filters the default DataTables settings for a View.
+		 *
+		 * Allows DataTables extensions to register their default settings, which are
+		 * then merged with the saved View settings using wp_parse_args().
 		 *
 		 * @since 1.0
 		 *
-		 * @param array $defaults Empty array of settings, to be filled-in by DT extensions.
+		 * @param array $defaults Default settings array. Each extension should add its
+		 *                        settings keys with default values.
+		 *
+		 * @return array Modified array of default settings.
 		 */
-		$defaults = apply_filters( 'gravityview_dt_default_settings', array() );
+		$defaults = apply_filters( 'gravityview_dt_default_settings', [] );
 
 		$ds = wp_parse_args( $settings, $defaults );
 
 		/**
-		 * Hook: gravityview_datatables_settings_row.
+		 * Fires after the DataTables settings metabox content is rendered.
+		 *
+		 * Allows DataTables extensions to output additional settings fields in the
+		 * DataTables metabox on the View editor screen.
 		 *
 		 * @since 1.0
 		 *
-		 * @param array   $ds   DataTables settings stored in `_gravityview_datatables_settings` postmeta.
-		 * @param WP_Post $post The View post object.
+		 * @param array   $ds   DataTables settings merged with defaults.
+		 * @param WP_Post $post The View post object being edited.
 		 */
 		do_action( 'gravityview_datatables_settings_row', $ds, $post );
 	}

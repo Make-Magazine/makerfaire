@@ -65,7 +65,7 @@ class View_List_Template extends View_Template {
 		 * @deprecated Here for back-compatibility.
 		 */
 		$label = apply_filters( 'gravityview_render_after_label', $field->get_label( $this->view, $form, $entry ), $field->as_configuration() );
-		$label = apply_filters( 'gravityview/template/field_label', $label, $field->as_configuration(), $form->form ? $form->form : null, null );
+		$label = \GravityView_Deprecated_Hook_Notices::apply_filters( 'gravityview/template/field_label', [ $label, $field->as_configuration(), $form->form ? $form->form : null, $entry->as_entry() ], '2.55', 'gravityview/template/field/label' );
 
 		/**
 		 * Override the field label.
@@ -143,7 +143,7 @@ class View_List_Template extends View_Template {
 		 * @deprecated Use `gravityview/template/list/entry/class`
 		 * @return string The modified class.
 		 */
-		$class = apply_filters( 'gravityview_entry_class', $class, $entry->as_entry(), \GravityView_View::getInstance() );
+		$class = \GravityView_Deprecated_Hook_Notices::apply_filters( 'gravityview_entry_class', [ $class, $entry->as_entry(), \GravityView_View::getInstance() ], '2.55', 'gravityview/template/list/entry/class' );
 
 		/**
 		 * Modify the class applied to the entry row.
@@ -183,7 +183,7 @@ class View_List_Template extends View_Template {
 		* @since 1.0.7
 		* @param \GravityView_View $gravityview_view Current GravityView_View object.
 		*/
-		do_action( 'gravityview_list_body_before', \GravityView_View::getInstance() /** ugh! */ );
+		\GravityView_Deprecated_Hook_Notices::do_action( 'gravityview_list_body_before', [ \GravityView_View::getInstance() /** ugh! */ ], '2.55', 'gravityview/template/list/body/before' );
 	}
 
 	/**
@@ -211,7 +211,7 @@ class View_List_Template extends View_Template {
 		* @since 1.0.7
 		* @param \GravityView_View $gravityview_view Current GravityView_View object.
 		*/
-		do_action( 'gravityview_list_body_after', \GravityView_View::getInstance() /** ugh! */ );
+		\GravityView_Deprecated_Hook_Notices::do_action( 'gravityview_list_body_after', [ \GravityView_View::getInstance() /** ugh! */ ], '2.55', 'gravityview/template/list/body/after' );
 	}
 
 	/**
@@ -249,7 +249,7 @@ class View_List_Template extends View_Template {
 		 * @param array             $entry            The entry being displayed.
 		 * @param \GravityView_View $gravityview_view Current GravityView_View object.
 		 */
-		do_action( sprintf( 'gravityview_list_entry%sbefore', $zone ), $entry->as_entry(), \GravityView_View::getInstance() /** ugh! */ );
+		\GravityView_Deprecated_Hook_Notices::do_action( sprintf( 'gravityview_list_entry%sbefore', $zone ), [ $entry->as_entry(), \GravityView_View::getInstance() /** ugh! */ ], '2.55', sprintf( 'gravityview/template/list/entry%sbefore', str_replace( '_', '/', $zone ) ) );
 	}
 
 	/**
@@ -287,6 +287,6 @@ class View_List_Template extends View_Template {
 		 * @param array             $entry            The entry being displayed.
 		 * @param \GravityView_View $gravityview_view Current GravityView_View object.
 		 */
-		do_action( sprintf( 'gravityview_list_entry%safter', $zone ), $entry->as_entry(), \GravityView_View::getInstance() /** ugh! */ );
+		\GravityView_Deprecated_Hook_Notices::do_action( sprintf( 'gravityview_list_entry%safter', $zone ), [ $entry->as_entry(), \GravityView_View::getInstance() /** ugh! */ ], '2.55', sprintf( 'gravityview/template/list/entry%safter', str_replace( '_', '/', $zone ) ) );
 	}
 }

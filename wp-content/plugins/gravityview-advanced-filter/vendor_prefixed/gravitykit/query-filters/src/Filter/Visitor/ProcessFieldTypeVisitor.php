@@ -2,7 +2,7 @@
 /**
  * @license MIT
  *
- * Modified by gravitykit on 20-February-2026 using {@see https://github.com/BrianHenryIE/strauss}.
+ * Modified by gravitykit on 28-April-2026 using {@see https://github.com/BrianHenryIE/strauss}.
  */
 
 namespace GravityKit\AdvancedFilter\QueryFilters\Filter\Visitor;
@@ -13,11 +13,13 @@ use GravityKit\AdvancedFilter\QueryFilters\Repository\FormRepository;
 
 /**
  * Visitor that changes filters based on the field type.
+ *
  * @since 2.0.0
  */
 final class ProcessFieldTypeVisitor implements FilterVisitor {
 	/**
 	 * Form repository.
+	 *
 	 * @since 2.0.0
 	 * @var FormRepository
 	 */
@@ -25,6 +27,7 @@ final class ProcessFieldTypeVisitor implements FilterVisitor {
 
 	/**
 	 * The form object.
+	 *
 	 * @since 2.0.0
 	 * @var array
 	 */
@@ -32,6 +35,7 @@ final class ProcessFieldTypeVisitor implements FilterVisitor {
 
 	/**
 	 * Creates the visitor.
+	 *
 	 * @since 2.0.0
 	 */
 	public function __construct( FormRepository $form_repository, array $form = [] ) {
@@ -55,7 +59,7 @@ final class ProcessFieldTypeVisitor implements FilterVisitor {
 			return;
 		}
 
-		$form       = $this->get_form();
+		$form       = $this->get_form( $filter->form_id() );
 		$field      = $this->form_repository->get_field( $form['id'] ?? 0, $filter->key() );
 		$field_type = $field ? $field->type : $filter->key();
 
@@ -73,21 +77,18 @@ final class ProcessFieldTypeVisitor implements FilterVisitor {
 
 	/**
 	 * Returns the form for the filter.
-	 * @return array
+	 *
 	 * @since 2.0.0
+	 *
+	 * @param int|null $form_id An optional form ID.
+	 *
+	 * @return array The form object.
 	 */
-	private function get_form(): array {
+	private function get_form( int $form_id = 0 ): array {
 		$form = $this->form;
 
-		// todo: This can not be removed. The filter should have an optional form_id for Multiple Forms.
-
-
-//		if ( isset( $filter['form_id'] ) ) {
-//			$form = GFAPI::get_form( $filter['form_id'] );
-//		}
-
 		if ( ! $form ) {
-			$form = $this->form_repository->get_form();
+			$form = $this->form_repository->get_form( $form_id ?: null );
 		}
 
 		return $form;
@@ -96,23 +97,24 @@ final class ProcessFieldTypeVisitor implements FilterVisitor {
 	/**
 	 * Returns a callback for a specific field type.
 	 *
+	 * @since 2.0.0
+	 *
 	 * @param string $field_type The field type.
 	 *
 	 * @return null|callable{Filter, ?GF_Field}
-	 * @since 2.0.0
 	 */
 	private function get_callback_for_field_type( string $field_type ): ?callable {
 		$callbacks = [
 			/**
 			 * @since 2.0.0
 			 */
-			'entry_id'      => function ( Filter $filter ) {
+			'entry_id'              => function ( Filter $filter ) {
 				$filter->set_key( 'id' );
 			},
 			/**
 			 * @since 2.0.0
 			 */
-			'post_category' => function ( Filter $filter ) {
+			'post_category'         => function ( Filter $filter ) {
 				$category_name = get_term_field( 'name', $filter->value(), 'category', 'raw' );
 				if ( $category_name && ! is_wp_error( $category_name ) ) {
 					$filter->set_value( $category_name . ':' . $filter->value() );
@@ -123,7 +125,7 @@ final class ProcessFieldTypeVisitor implements FilterVisitor {
 			 *
 			 * @since 2.0.0
 			 */
-			'fileupload'    => function ( Filter $filter, GF_Field $field ) {
+			'fileupload'            => function ( Filter $filter, GF_Field $field ) {
 				if (
 					$field->multipleFiles
 					&& $filter->value() === ''
@@ -131,7 +133,7 @@ final class ProcessFieldTypeVisitor implements FilterVisitor {
 						$filter->operator(),
 						[
 							'is',
-							'isnot'
+							'isnot',
 						],
 						true
 					) ) {
@@ -147,11 +149,18 @@ final class ProcessFieldTypeVisitor implements FilterVisitor {
 				}
 
 				// Consider 100% as complete.
-				$filter->set_operator($filter->operator() === 'is' ? 'in' : 'notin');
+				$filter->set_operator( $filter->operator() === 'is' ? 'in' : 'notin' );
 				$filter->set_value( [ '', 100 ] );
 			},
 		];
 
+		/**
+		 * Modifies the field-type processing callbacks used to transform filter values.
+		 *
+		 * @since 2.0.0
+		 *
+		 * @param array<string, callable> $callbacks Map of field type slugs to their processing callbacks.
+		 */
 		$callbacks = apply_filters( 'gk/query-filters/process-field-type/callbacks', $callbacks );
 
 		return $callbacks[ $field_type ] ?? null;

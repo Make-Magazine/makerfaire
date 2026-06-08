@@ -2,7 +2,7 @@
 /**
  * @license MIT
  *
- * Modified by gravitykit on 20-February-2026 using {@see https://github.com/BrianHenryIE/strauss}.
+ * Modified by gravitykit on 28-April-2026 using {@see https://github.com/BrianHenryIE/strauss}.
  */
 
 namespace GravityKit\AdvancedFilter\QueryFilters\Filter\Visitor;
@@ -12,6 +12,7 @@ use GravityKit\AdvancedFilter\QueryFilters\Repository\UserRepository;
 
 /**
  * Visitor that possibly disables filters that are suffixed with `:disabled_admin` when the user is an admin.
+ *
  * @since 2.0.0
  */
 final class DisableAdminVisitor implements FilterVisitor {
@@ -19,6 +20,7 @@ final class DisableAdminVisitor implements FilterVisitor {
 	 * @var UserRepository
 	 */
 	private $user_repository;
+
 	/**
 	 * @var array
 	 */
@@ -26,6 +28,7 @@ final class DisableAdminVisitor implements FilterVisitor {
 
 	/**
 	 * Creates the step.
+	 *
 	 * @since 2.0.0
 	 */
 	public function __construct( UserRepository $user_repository, array $form = [] ) {
@@ -35,11 +38,10 @@ final class DisableAdminVisitor implements FilterVisitor {
 
 	/**
 	 * @inheritDoc
-	 * @return void
 	 * @since 2.0.0
 	 */
 	public function visit_filter( Filter $filter, string $level = '0' ) {
-		if ( $filter->is_logic() || $filter->value() === null ) {
+		if ( $filter->is_logic() || $filter->value() === null || ! is_string( $filter->value() ) ) {
 			return;
 		}
 

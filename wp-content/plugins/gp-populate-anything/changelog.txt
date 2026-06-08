@@ -1,5 +1,49 @@
 # Changelog
 
+## 2.1.71 | June 4, 2026
+
+- Fixed issue where the visible product name on Single Product fields did not update when dynamically populated via AJAX.
+- Fixed an issue where price templates incorrectly parsed numbers from product field labels instead of extracting the actual price value.
+
+## 2.1.70 | May 13, 2026
+
+- Fixed issue where conditionally shown Phone fields could break multi-page forms on mobile.
+
+## 2.1.69 | May 7, 2026
+
+- Fixed potential PHP warnings.
+
+## 2.1.68 | April 29, 2026
+
+- Fixed issue where array default values could cause a fatal error in live merge tag replacement.
+
+## 2.1.67 | April 22, 2026
+
+- Fixed an issue where Phone fields using the (###) format would display formatting characters on initial load when conditionally shown, even if the field was not dynamically populated.
+
+## 2.1.66 | April 15, 2026
+
+- Fixed an issue where PHP autoloading would sometimes register `gp_populate_anything()` twice and throw a fatal error.
+
+## 2.1.65 | April 13, 2026
+
+- Updated Spellbook bootstrap.
+
+## 2.1.64 | April 10, 2026
+
+- Improved Spellbook Bootstrap integration for better cross-plugin compatibility and reduced duplicate loading.
+- Fixed an issue where an incomplete phone input mask source data could still copy Live Merge Tag value.
+
+## 2.1.63 | March 25, 2026
+
+- Fixed an issue where Name fields with custom prefix choices could not be filtered or matched in queries.
+- Fixed an issue where raw live merge tag data may show for a conditionally hidden email field.
+
+## 2.1.62 | March 19, 2026
+
+- Improved performance of complex meta filtering queries with multiple filter groups.
+- Added Post Count property and filtering support for taxonomy terms.
+
 ## 2.1.61 | March 11, 2026
 
 - Fixed an issue where undefined choice values triggered PHP deprecation notices and warnings.

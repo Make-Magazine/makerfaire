@@ -914,6 +914,19 @@ export default class GPPopulateAnything {
 			);
 
 			$fieldContainer.addClass(addClass);
+
+			// Single Product fields render the product name in the outer .gfield_label,
+			// which isn't part of $fieldContainer. Pulse it too during the AJAX request.
+			if ($fieldContainer.is('.ginput_container_singleproduct')) {
+				const $productLabel = $el.find('.gfield_label_product').first();
+				if ($productLabel.length) {
+					$productLabel.addClass('gppa-loading');
+				} else {
+					$el.children('.gfield_label')
+						.first()
+						.addClass('gppa-loading');
+				}
+			}
 		});
 
 		if (Array.isArray(triggerInputId)) {
@@ -1033,6 +1046,57 @@ export default class GPPopulateAnything {
 						}
 
 						this.populatedFields.push(fieldID);
+
+						// Single Product fields render the product name in the outer .gfield_label, which isn't
+						// part of the replaced container. Sync it from the new hidden input_X.1 value.
+						const $singleProductContainer = $fieldContainer.is(
+							'.ginput_container_singleproduct'
+						)
+							? $fieldContainer
+							: $fieldContainer.find(
+									'.ginput_container_singleproduct'
+							  );
+
+						if ($singleProductContainer.length) {
+							const $productNameInput = $singleProductContainer.find(
+								`input[name="input_${fieldID}.1"]`
+							);
+							const productName = $productNameInput.val() as
+								| string
+								| undefined;
+
+							const $labelProduct = $field
+								.find('.gfield_label_product')
+								.first();
+							const $label = $field
+								.children('.gfield_label')
+								.first();
+
+							if (productName !== undefined) {
+								if ($labelProduct.length) {
+									$labelProduct.text(productName);
+								} else if ($label.length) {
+									// Update the first text node only to preserve any trailing markup like the required indicator.
+									let replaced = false;
+									$label.contents().each((_idx, node) => {
+										if (!replaced && node.nodeType === 3) {
+											node.textContent = productName;
+											replaced = true;
+										}
+									});
+
+									if (!replaced) {
+										$label.prepend(
+											document.createTextNode(productName)
+										);
+									}
+								}
+							}
+
+							// Remove the loading class added before AJAX.
+							$labelProduct.removeClass('gppa-loading');
+							$label.removeClass('gppa-loading');
+						}
 
 						if (fieldDetails.hasChosen) {
 							window.gformInitChosenFields(
