@@ -2,14 +2,14 @@
 # This file is distributed under the GPL2.
 msgid ""
 msgstr ""
-"Project-Id-Version: Spellbook 3.0.20\n"
-"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/cloned-perk-H4ULFLKWjT\n"
+"Project-Id-Version: Spellbook 3.0.26\n"
+"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/cloned-perk-4KPIW1N6sd\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-02-25T16:47:41+00:00\n"
+"POT-Creation-Date: 2026-05-27T22:16:46+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.10.0\n"
 "X-Domain: spellbook\n"
@@ -17,8 +17,8 @@ msgstr ""
 #. Plugin Name of the plugin
 #: spellbook.php
 #: class-gravityperks.php:204
-#: class-gravityperks.php:1197
-#: class-gravityperks.php:1451
+#: class-gravityperks.php:1199
+#: class-gravityperks.php:1453
 msgid "Spellbook"
 msgstr ""
 
@@ -103,48 +103,48 @@ msgid "Your license for %1$s has expired. <a href=\"%2$s\" target=\"_blank\">Ren
 msgstr ""
 
 #: class-gravityperks.php:604
-#: class-gravityperks.php:836
+#: class-gravityperks.php:838
 msgid "Updating free plugins in Spellbook requires a license or email. <a href=\"%1$s\" target=\"_blank\">Enter in Spellbook</a>"
 msgstr ""
 
-#: class-gravityperks.php:815
+#: class-gravityperks.php:817
 msgid "Your %1$s license is invalid or missing. <a href=\"%2$s\" target=\"_blank\">Enter in Spellbook</a> or <a href=\"%3$s\" target=\"_blank\">Buy License</a>."
 msgstr ""
 
-#: class-gravityperks.php:823
+#: class-gravityperks.php:825
 msgid "%s is unregistered. <a href=\"%s\" target=\"_blank\">Register in Spellbook</a>"
 msgstr ""
 
-#: class-gravityperks.php:828
+#: class-gravityperks.php:830
 msgid "Your %1$s license has expired. <a href=\"%2$s\" target=\"_blank\">Renew License</a>"
 msgstr ""
 
-#: class-gravityperks.php:859
+#: class-gravityperks.php:861
 msgid "<strong>Uh-oh!</strong> We ran into a problem when updating your Gravity Wiz plugins."
 msgstr ""
 
-#: class-gravityperks.php:860
+#: class-gravityperks.php:862
 msgid "<strong>Uh-oh!</strong> We ran into some problems when updating your Gravity Wiz plugins."
 msgstr ""
 
-#: class-gravityperks.php:876
+#: class-gravityperks.php:878
 msgid "Manage in Spellbook"
 msgstr ""
 
-#: class-gravityperks.php:977
+#: class-gravityperks.php:979
 msgid "<strong>Spellbook</strong> must be network activated before a <strong>perk</strong> can be network activated."
 msgstr ""
 
-#: class-gravityperks.php:1085
+#: class-gravityperks.php:1087
 msgid "Oops! Your site is having some trouble communicating with our API."
 msgstr ""
 
-#: class-gravityperks.php:1086
+#: class-gravityperks.php:1088
 msgid "Let's get this fixed."
 msgstr ""
 
-#: class-gravityperks.php:1515
-#: class-gravityperks.php:1519
+#: class-gravityperks.php:1517
+#: class-gravityperks.php:1521
 msgid "Perks"
 msgstr ""
 
@@ -194,8 +194,8 @@ msgid "Plugin is not installed."
 msgstr ""
 
 #: includes/api/class-rest-products-controller.php:158
-#: includes/api/class-rest-products-controller.php:342
-#: includes/api/class-rest-products-controller.php:545
+#: includes/api/class-rest-products-controller.php:335
+#: includes/api/class-rest-products-controller.php:538
 msgid "This plugin can only be managed from the network admin's Plugins page."
 msgstr ""
 
@@ -215,117 +215,117 @@ msgstr ""
 msgid "Plugin installation failed for an unknown reason."
 msgstr ""
 
-#: includes/api/class-rest-products-controller.php:333
+#: includes/api/class-rest-products-controller.php:326
 msgid "Plugin is already inactive."
 msgstr ""
 
-#: includes/api/class-rest-products-controller.php:380
+#: includes/api/class-rest-products-controller.php:373
 msgid "Plugin is already active."
 msgstr ""
 
-#: includes/api/class-rest-products-controller.php:389
+#: includes/api/class-rest-products-controller.php:382
 msgid "Plugin must be installed before it can be activated."
 msgstr ""
 
-#: includes/api/class-rest-products-controller.php:490
-#: includes/api/class-rest-products-controller.php:515
-#: includes/api/class-rest-products-controller.php:709
+#: includes/api/class-rest-products-controller.php:483
+#: includes/api/class-rest-products-controller.php:508
+#: includes/api/class-rest-products-controller.php:695
 msgid "Plugin not found."
 msgstr ""
 
-#: includes/api/class-rest-products-controller.php:536
+#: includes/api/class-rest-products-controller.php:529
 msgid "Plugin must be installed before it can be updated."
 msgstr ""
 
-#: includes/api/class-rest-products-controller.php:560
+#: includes/api/class-rest-products-controller.php:553
 msgid "No update available for this plugin."
 msgstr ""
 
-#: includes/api/class-rest-products-controller.php:609
+#: includes/api/class-rest-products-controller.php:602
 msgid "Plugin update failed for an unknown reason."
 msgstr ""
 
-#: includes/api/class-rest-products-controller.php:620
+#: includes/api/class-rest-products-controller.php:613
 msgid "Plugin updated but reactivation failed: "
 msgstr ""
 
-#: includes/api/class-rest-products-controller.php:732
+#: includes/api/class-rest-products-controller.php:718
 msgid "Plugin details not found."
 msgstr ""
 
-#: includes/api/class-rest-products-controller.php:816
+#: includes/api/class-rest-products-controller.php:802
 msgid "Unique identifier for the plugin."
 msgstr ""
 
-#: includes/api/class-rest-products-controller.php:821
+#: includes/api/class-rest-products-controller.php:807
 msgid "Plugin name."
 msgstr ""
 
-#: includes/api/class-rest-products-controller.php:825
+#: includes/api/class-rest-products-controller.php:811
 msgid "Plugin version."
 msgstr ""
 
-#: includes/api/class-rest-products-controller.php:829
+#: includes/api/class-rest-products-controller.php:815
 msgid "Available update version."
 msgstr ""
 
-#: includes/api/class-rest-products-controller.php:833
+#: includes/api/class-rest-products-controller.php:819
 msgid "Plugin slug."
 msgstr ""
 
-#: includes/api/class-rest-products-controller.php:837
+#: includes/api/class-rest-products-controller.php:823
 msgid "Plugin file path."
 msgstr ""
 
-#: includes/api/class-rest-products-controller.php:841
+#: includes/api/class-rest-products-controller.php:827
 msgid "Plugin file path (alias for backwards compatibility)."
 msgstr ""
 
-#: includes/api/class-rest-products-controller.php:845
+#: includes/api/class-rest-products-controller.php:831
 msgid "Plugin homepage URL."
 msgstr ""
 
-#: includes/api/class-rest-products-controller.php:850
+#: includes/api/class-rest-products-controller.php:836
 msgid "Documentation URL."
 msgstr ""
 
-#: includes/api/class-rest-products-controller.php:855
+#: includes/api/class-rest-products-controller.php:841
 msgid "Plugin sections including description and changelog."
 msgstr ""
 
-#: includes/api/class-rest-products-controller.php:863
+#: includes/api/class-rest-products-controller.php:849
 msgid "Plugin banner images."
 msgstr ""
 
-#: includes/api/class-rest-products-controller.php:877
+#: includes/api/class-rest-products-controller.php:863
 msgid "Plugin icons."
 msgstr ""
 
-#: includes/api/class-rest-products-controller.php:891
+#: includes/api/class-rest-products-controller.php:877
 msgid "Plugin categories."
 msgstr ""
 
-#: includes/api/class-rest-products-controller.php:896
+#: includes/api/class-rest-products-controller.php:882
 msgid "Whether the plugin is installed."
 msgstr ""
 
-#: includes/api/class-rest-products-controller.php:900
+#: includes/api/class-rest-products-controller.php:886
 msgid "Whether the plugin is active."
 msgstr ""
 
-#: includes/api/class-rest-products-controller.php:904
+#: includes/api/class-rest-products-controller.php:890
 msgid "Plugin type."
 msgstr ""
 
-#: includes/api/class-rest-products-controller.php:909
+#: includes/api/class-rest-products-controller.php:895
 msgid "Last updated date."
 msgstr ""
 
-#: includes/api/class-rest-products-controller.php:913
+#: includes/api/class-rest-products-controller.php:899
 msgid "Download URL for the plugin."
 msgstr ""
 
-#: includes/api/class-rest-products-controller.php:918
+#: includes/api/class-rest-products-controller.php:904
 msgid "Whether the plugin has settings."
 msgstr ""
 
@@ -372,10 +372,6 @@ msgstr ""
 
 #: js/built/dashboard.js:2
 msgid "Gravity Wiz Support"
-msgstr ""
-
-#: js/built/dashboard.js:2
-msgid " for assistance."
 msgstr ""
 
 #: js/built/dashboard.js:2
@@ -463,6 +459,10 @@ msgid "Install"
 msgstr ""
 
 #: js/built/dashboard.js:2
+msgid "Upgrade to Install"
+msgstr ""
+
+#: js/built/dashboard.js:2
 msgid "Buy License"
 msgstr ""
 
@@ -516,6 +516,18 @@ msgstr ""
 
 #: js/built/dashboard.js:2
 msgid "No"
+msgstr ""
+
+#: js/built/dashboard.js:2
+msgid "Unable to load products. Our server may be temporarily unavailable."
+msgstr ""
+
+#: js/built/dashboard.js:2
+msgid "If this persists, please contact"
+msgstr ""
+
+#: js/built/dashboard.js:2
+msgid "Try Again"
 msgstr ""
 
 #: js/built/dashboard.js:2
@@ -644,6 +656,18 @@ msgstr ""
 
 #: js/built/dashboard.js:2
 msgid "Failed to load license info."
+msgstr ""
+
+#: js/built/dashboard.js:2
+msgid "Unable to Verify"
+msgstr ""
+
+#: js/built/dashboard.js:2
+msgid "Our server may be temporarily unavailable. Try clicking Refresh Licenses above, or deactivate and reactivate your license. If this persists, "
+msgstr ""
+
+#: js/built/dashboard.js:2
+msgid "contact support"
 msgstr ""
 
 #: js/built/dashboard.js:2

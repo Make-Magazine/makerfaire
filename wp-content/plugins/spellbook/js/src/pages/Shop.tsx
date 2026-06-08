@@ -1,5 +1,6 @@
 import RingLoader from '@gravityforms/components/react/admin/modules/Loaders/RingLoader';
 import ProductGrid from '../components/products/ProductGrid';
+import EmptyProductsNotice from '../components/products/EmptyProductsNotice';
 import PageHeader from '../components/PageHeader';
 import { useProducts } from '../hooks/api/useProducts';
 import LicenseBarSuite from '../components/license/LicenseBarSuite';
@@ -22,6 +23,8 @@ const ShopPage = () => {
     if (loading) return <RingLoader />;
     if (error) return <div>Error: {error.message}</div>;
 
+    const hasProducts = Object.keys(products?.shop ?? {}).length > 0;
+
     return (
         <div className="gravityperks-settings-app__shop">
             <LicenseBarSuite type="shop" />
@@ -43,6 +46,7 @@ const ShopPage = () => {
                 description="Plugins that bring the flexibility of Gravity Forms into WooCommerce."
                 type="shop"
             />
+            {!hasProducts && <EmptyProductsNotice />}
             {Object.keys(filteredProducts).length > 0 && (
                 <ProductGrid products={filteredProducts} type="shop" />
             )}

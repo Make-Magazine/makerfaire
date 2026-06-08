@@ -1,5 +1,6 @@
 import RingLoader from '@gravityforms/components/react/admin/modules/Loaders/RingLoader';
 import ProductGrid from '../components/products/ProductGrid';
+import EmptyProductsNotice from '../components/products/EmptyProductsNotice';
 import PageHeader from '../components/PageHeader';
 import { useProducts } from '../hooks/api/useProducts';
 import LicenseBarAll from '../components/license/LicenseBarAll';
@@ -22,6 +23,8 @@ const Free = () => {
     if (loading) return <RingLoader />;
     if (error) return <div>Error: {error.message}</div>;
 
+    const hasProducts = Object.keys(products?.free ?? {}).length > 0;
+
     return (
         <div className="gravityperks-settings-app__free">
 			<LicenseBarAll />
@@ -43,6 +46,7 @@ const Free = () => {
                 description="Handy plugins that extend Gravity Forms with simple, focused functionality—no license required."
                 type="free"
             />
+            {!hasProducts && <EmptyProductsNotice />}
             {Object.keys(filteredProducts).length > 0 && (
                 <ProductGrid products={filteredProducts} type="free" />
             )}

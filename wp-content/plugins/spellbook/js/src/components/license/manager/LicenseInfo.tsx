@@ -73,16 +73,21 @@ const LicenseInfo = ({ license, type }: LicenseInfoProps) => {
 					)
 				}
 			</div>
-			<div className="license-box__stat">
-				<Text size="text-sm" color="comet">{__('Sites', 'spellbook')}</Text>
-				<Text
-					size="text-sm"
-					weight="medium"
-					color={license.site_count >= license.site_limit && license.site_limit > 0 ? 'warning' : undefined}
-				>
-					{license.site_limit === 0 ? `${license.site_count}/∞` : `${license.site_count}/${license.site_limit}`}
-				</Text>
-			</div>
+				<div className="license-box__stat">
+					<Text size="text-sm" color="comet">{__('Sites', 'spellbook')}</Text>
+					<Text
+						size="text-sm"
+						weight="medium"
+						color={license.site_count != null && license.site_limit != null && license.site_count >= license.site_limit && license.site_limit > 0 ? 'warning' : undefined}
+					>
+						{license.site_count == null || license.site_limit == null
+							? '—'
+							: license.site_limit === 0
+								? `${license.site_count}/∞`
+								: `${license.site_count}/${license.site_limit}`
+						}
+					</Text>
+				</div>
 			{renderPluginLimit()}
 			<div className="license-box__stat">
 				<Text size="text-sm" color="comet">

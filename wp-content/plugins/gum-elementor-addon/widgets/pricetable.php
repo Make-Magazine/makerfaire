@@ -542,7 +542,7 @@ class Month_Anual_Pricetable_Regular_Widget extends Widget_Base {
           'selected_icon[value]!' => '',
           'show_button[value]' => 'yes'
         ],
-        'default' => 'row',
+        'default' => '',
         'selectors' => [
             '{{WRAPPER}} .elementor-button-content-wrapper' => 'flex-direction: {{VALUE}};'
         ],
@@ -1756,6 +1756,7 @@ class Month_Anual_Pricetable_Regular_Widget extends Widget_Base {
             'icon' => 'eicon-text-align-justify',
           ],
         ],
+        'prefix_class' => 'button%s-align-',
         'default' => '',
         'condition' => ['show_button[value]' => 'yes']
       ]
@@ -1932,10 +1933,22 @@ class Month_Anual_Pricetable_Regular_Widget extends Widget_Base {
 
     $settings = $this->get_settings_for_display();
 
-    extract( $settings );
+/*
+    print "<pre>";
+
+
+var_dump($settings);
+
+    print "</pre>";
+//icon_align
+
+
+*/
+
+      extract( $settings );
 
       $allowed_tags = array('h1','h2','h3','h4','h5','h6','div');
-      $tag_title = (in_array( $tag, $allowed_tags )) ? trim( $tag ): 'h3';
+      $tag_title = (in_array( $tag, $allowed_tags )) ? wp_kses_post( $tag ): 'h3';
 
       $this->add_render_attribute( 'block_price', 'class', 'regular-price');
       $this->add_inline_editing_attributes( 'block_price', 'none' );
@@ -2059,7 +2072,7 @@ class Month_Anual_Pricetable_Regular_Widget extends Widget_Base {
               $this->add_render_attribute( 'button', 'class', [
                 'elementor-button',
                 'elementor-size-' . sanitize_html_class($size),
-                'elementor-button-align-'.sanitize_html_class($button_align)
+//                'elementor-button-align-'.sanitize_html_class($button_align)
               ] );
 
               $this->add_render_attribute( 'button_text', 'class', 'elementor-button-text');
@@ -2081,6 +2094,8 @@ class Month_Anual_Pricetable_Regular_Widget extends Widget_Base {
 
               if(!empty($selected_icon['value'])){
 
+
+                if( !isset($icon_align)) { $icon_align = 'row'; }
 
                 ob_start();
                 Icons_Manager::render_icon( $settings['selected_icon'], [ 'aria-hidden' => 'true' ] );
@@ -2232,8 +2247,7 @@ class Month_Anual_Pricetable_Regular_Widget extends Widget_Base {
 
               view.addRenderAttribute( 'button', 'class', [
                 'elementor-button',
-                'elementor-size-' + settings.size,
-                'elementor-button-align-' + settings.button_align
+                'elementor-size-' + settings.size
               ] );
 
 

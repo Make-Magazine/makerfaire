@@ -41,12 +41,14 @@
 	flex-wrap: wrap;
 }
 
+
 .license-bar-all .spellbook-input-group {
     display: flex;
     flex-direction: row;
     flex-wrap: wrap;
     gap: 8px;
     align-items: center;
+    justify-content: center;
     width: 100%;
 }
 

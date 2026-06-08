@@ -61,6 +61,47 @@ const LicenseBox = ({ type, title, description, learnMoreUrl, buyLicenseUrl }: L
         );
     }
 
+    // Detect corrupted license data (has key but null/missing critical fields)
+    // Still show the key + deactivate so users can take action
+    if (license && license.key && (license.site_count === null || license.site_count === undefined || !license.status)) {
+        return (
+            <MetaBox HeaderContent={() => <Header title={title} />} customClasses="license-box--activated">
+                <Box>
+                    <div className="license-box__content">
+                        <SuiteIcon type={type} />
+                        <div className="license-box__details">
+                            <div className="license-box__stat">
+                                <Text size="text-sm" color="comet">{__('License Key', 'spellbook')}</Text>
+                                <Text size="text-sm" customClasses="license-box__key-value">
+                                    {license.key.slice(0, 2)}
+                                    <span className="license-box__key-dots-long">{'•'.repeat(26)}</span>
+                                    <span className="license-box__key-dots-medium">{'•'.repeat(16)}</span>
+                                    <span className="license-box__key-dots-short">{'•'.repeat(8)}</span>
+                                    {license.key.slice(-4)}
+                                </Text>
+                            </div>
+                            <div className="license-box__stat">
+                                <Text size="text-sm" color="comet">{__('Status', 'spellbook')}</Text>
+                                <Text size="text-sm" weight="medium" color="warning">
+                                    {__('Unable to Verify', 'spellbook')}
+                                </Text>
+                            </div>
+                        </div>
+                        <div className="license-box__unavailable-notice">
+                            <Text size="text-sm" color="comet">
+                                {__('Our server may be temporarily unavailable. Try clicking Refresh Licenses above, or deactivate and reactivate your license. If this persists, ', 'spellbook')}
+                                <a href="https://gravitywiz.com/support/" target="_blank" rel="noopener noreferrer" className="license-box__support-link">
+                                    {__('contact support', 'spellbook')}
+                                </a>.
+                            </Text>
+                        </div>
+                        <LicenseActions type={type} license={license} />
+                    </div>
+                </Box>
+            </MetaBox>
+        );
+    }
+
     // Show license info if we have data and a valid key
     if (license && license.key) {
         return (

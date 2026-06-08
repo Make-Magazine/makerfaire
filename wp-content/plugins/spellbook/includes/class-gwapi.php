@@ -415,7 +415,20 @@ class GWAPI {
 			'flush'    => $flush,
 		) );
 
-		return is_array( $products ) ? $products : [];
+		if ( ! is_array( $products ) ) {
+			return [];
+		}
+
+		foreach ( $products as $plugin_file => $product ) {
+			$this->normalize_gpgs( $product );
+
+			if ( $plugin_file !== $product->plugin_file ) {
+				unset( $products[ $plugin_file ] );
+				$products[ $product->plugin_file ] = $product;
+			}
+		}
+
+		return $products;
 
 	}
 
@@ -460,6 +473,11 @@ class GWAPI {
 		$response = map_deep( $response, 'maybe_unserialize' );
 
 		foreach ( $response as $plugin_file => $plugin ) {
+			if ( ! $this->is_valid_product_response_item( $plugin ) ) {
+				GravityPerks::log_debug( sprintf( 'Skipping invalid product data for "%s".', $plugin_file ) );
+				continue;
+			}
+
 			$plugin->download_link = $plugin->package;
 
 			// If GC Google Sheets is not installed, convert GCGS to be GPGS to provide an upgrade path.
@@ -493,6 +511,10 @@ class GWAPI {
 		// Do a deep maybe_unserialize
 		$plugin = map_deep( $plugin, 'maybe_unserialize' );
 
+		if ( ! $this->is_valid_product_response_item( $plugin ) ) {
+			return false;
+		}
+
 		if ( property_exists( $plugin, 'sections' ) ) {
 			if ( isset( $plugin->sections['changelog'] ) ) {
 				$plugin->sections['changelog'] = GWPerks::format_changelog( $plugin->sections['changelog'], $plugin );
@@ -508,6 +530,37 @@ class GWAPI {
 
 		return $plugin;
 
+	}
+
+	/**
+	 * Check if a GWAPI product response item has the fields this client needs.
+	 *
+	 * @param mixed $product Potential product response item.
+	 * @return bool
+	 */
+	private function is_valid_product_response_item( $product ) {
+		return is_object( $product )
+			&& isset( $product->package )
+			&& isset( $product->categories )
+			&& is_array( $product->categories );
+	}
+
+	/**
+	 * Normalize Google Sheets product object for gp/gc slug/plugin mapping.
+	 *
+	 * @param object $product Product object (by reference)
+	 * @return void
+	 */
+	private function normalize_gpgs( &$product ) {
+		// If GC Google Sheets is installed, normalize GPGS to GCGS.
+		if (
+			$product->slug === 'gp-google-sheets' &&
+			GWPerk::is_installed( 'gc-google-sheets/gc-google-sheets.php' )
+		) {
+			$product->slug        = 'gc-google-sheets';
+			$product->plugin_file = 'gc-google-sheets/gc-google-sheets.php';
+			$product->plugin      = 'gc-google-sheets/gc-google-sheets.php';
+		}
 	}
 
 	/**
@@ -654,6 +707,9 @@ class GWAPI {
 		}
 
 		foreach ( $remote_products as $remote_product_file => $remote_product ) {
+			// Clone to avoid mutating the cached product objects.
+			$remote_product = clone $remote_product;
+
 			$local_product_version = $this->get_local_product_version( $remote_product_file );
 
 			/* Handle legacy versions if available */
@@ -913,7 +969,7 @@ class GWAPI {
 			$transient_key = $transient_key . '_' . get_current_blog_id();
 		}
 
-		return $this->request( array(
+		$response = $this->request( array(
 			'action'     => 'check_license',
 			'method'     => 'POST',
 			'transient'  => $transient_key,
@@ -927,6 +983,13 @@ class GWAPI {
 				'item_name' => urlencode( $item_name ),
 			),
 		) );
+
+		// If the response contains an item_name_mismatch, nuke the license key and transient.
+		if ( is_array( $response ) && isset( $response['license'] ) && $response['license'] === 'item_name_mismatch' ) {
+			$this->remove_license_key( $product_type );
+		}
+
+		return $response;
 	}
 
 	/**
@@ -1445,7 +1508,7 @@ class GWAPI {
 	 * @return bool
 	 */
 	public function is_legacy_free_plugin( $product ) {
-		if ( ! in_array( 'free-plugin', $product->categories ) ) {
+		if ( empty( $product->categories ) || ! in_array( 'free-plugin', $product->categories ) ) {
 			return false;
 		}
 

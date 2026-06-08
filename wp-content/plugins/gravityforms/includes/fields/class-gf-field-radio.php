@@ -449,6 +449,10 @@ class GF_Field_Radio extends GF_Field {
 	 * @return string
 	 */
 	public function get_value_entry_detail( $value, $entry = array(), $use_text = false, $format = 'html', $media = 'screen' ) {
+		if ( $this->type === 'post_category' ) {
+			$value = GFCommon::prepare_post_category_value( $value, $this, 'entry_detail' );
+		}
+
 		return $this->get_selected_choice_output( $value, rgar( $entry, 'currency' ), $use_text );
 	}
 
@@ -498,11 +502,11 @@ class GF_Field_Radio extends GF_Field {
 		foreach ( $items as $input_id => $item ) {
 			switch (true) {
 				case $use_value:
-					list( $val, $price ) = rgexplode( '|', $item, 2 );
+					list( $val, $price ) = rgexplode( '|', $item, 2, true );
 					break;
 
 				case $use_price:
-					list( $name, $val ) = rgexplode( '|', $item, 2 );
+					list( $name, $val ) = rgexplode( '|', $item, 2, true );
 					if ( $format_currency ) {
 						$val = GFCommon::to_money( $val, rgar( $entry, 'currency' ) );
 					}

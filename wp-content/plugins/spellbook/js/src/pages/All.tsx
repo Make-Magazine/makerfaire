@@ -1,5 +1,6 @@
 import RingLoader from '@gravityforms/components/react/admin/modules/Loaders/RingLoader';
 import ProductGrid from '../components/products/ProductGrid';
+import EmptyProductsNotice from '../components/products/EmptyProductsNotice';
 import PageHeader from '../components/PageHeader';
 import { useProducts } from '../hooks/api/useProducts';
 import LicenseBarAll from '../components/license/LicenseBarAll';
@@ -58,19 +59,21 @@ const AllPage = () => {
                 type="all"
             />
 
-			{
-				Object.keys(filteredPerks).length > 0 &&
-				(
-					<>
-						<PageHeader
-							title="Perks"
-							description="Install and manage your Gravity Perks. Each perk adds new functionality to Gravity Forms."
-							type="perk"
-						/>
-						<ProductGrid products={filteredPerks} type="perk" />
-					</>
-				)
-			}
+				{Object.keys(products ?? {}).length === 0 && <EmptyProductsNotice />}
+
+				{
+					Object.keys(filteredPerks).length > 0 &&
+					(
+						<>
+							<PageHeader
+								title="Perks"
+								description="Install and manage your Gravity Perks. Each perk adds new functionality to Gravity Forms."
+								type="perk"
+							/>
+							<ProductGrid products={filteredPerks} type="perk" />
+						</>
+					)
+				}
 
 			{
 				Object.keys(filteredConnect).length > 0 &&

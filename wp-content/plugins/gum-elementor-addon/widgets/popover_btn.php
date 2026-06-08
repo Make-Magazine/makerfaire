@@ -754,7 +754,6 @@ class Popover_Regular_Btn_Widget extends Widget_Base {
     }
 
     $button_html .= '<span '.$this->get_render_attribute_string( 'button_text' ).'>'.esc_html($button_text).'</span>';
-
     ?>
     <div <?php echo $this->get_render_attribute_string( 'wrapper' ); ?>><a <?php echo $this->get_render_attribute_string( 'button' ); ?>><span class="elementor-button-content-wrapper"><?php print $button_icon.$button_html; ?></span></a><div class="popover-box pop-<?php esc_attr_e($pop_align);?>"><div><?php
 
@@ -764,7 +763,7 @@ class Popover_Regular_Btn_Widget extends Widget_Base {
 
       $title_tag = isset($pop_tag) && in_array($pop_tag, $allowed_tags) ? $pop_tag:'h4';
 
-      printf('<%1$s class="pop-title">%2$s</%1$s>',$pop_tag,esc_attr($pop_title));
+      printf('<%1$s class="pop-title">%2$s</%1$s>',wp_kses_post($pop_tag),esc_attr($pop_title));
 
     }
 

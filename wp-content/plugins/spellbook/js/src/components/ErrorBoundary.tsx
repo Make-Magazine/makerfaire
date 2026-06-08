@@ -68,8 +68,7 @@ const ErrorFallback = ({ error }: ErrorFallbackProps) => {
                     className="error-boundary__support-link"
                 >
                     {__('Gravity Wiz Support', 'spellbook')}
-                </a>
-                {__(' for assistance.', 'spellbook')}
+                </a>.
             </p>
             <div className="error-boundary__actions">
                 <Button

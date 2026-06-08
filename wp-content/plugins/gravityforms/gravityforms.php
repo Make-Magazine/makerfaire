@@ -3,7 +3,7 @@
 Plugin Name: Gravity Forms
 Plugin URI: https://gravityforms.com
 Description: Easily create web forms and manage form entries within the WordPress admin.
-Version: 2.9.29
+Version: 2.10.3
 Requires at least: 6.5
 Requires PHP: 7.4
 Author: Gravity Forms
@@ -257,7 +257,7 @@ class GFForms {
 	 *
 	 * @var string $version The version number.
 	 */
-	public static $version = '2.9.29';
+	public static $version = '2.10.3';
 
 	/**
 	 * Handles background upgrade tasks.
@@ -335,6 +335,7 @@ class GFForms {
 		$container->add_provider( new \Gravity_Forms\Gravity_Forms\Query\Batch_Processing\GF_Batch_Operations_Service_Provider() );
 		$container->add_provider( new \Gravity_Forms\Gravity_Forms\Settings\GF_Settings_Service_Provider() );
 		$container->add_provider( new \Gravity_Forms\Gravity_Forms\Author_Select\GF_Author_Select_Service_Provider() );
+		$container->add_provider( new \Gravity_Forms\Gravity_Forms\Webapi\User_Select\GF_User_Select_Service_Provider() );
 		$container->add_provider( new \Gravity_Forms\Gravity_Forms\Assets\GF_Asset_Service_Provider( plugin_dir_path( __FILE__ ) ) );
 		$container->add_provider( new \Gravity_Forms\Gravity_Forms\Honeypot\GF_Honeypot_Service_Provider() );
 		$container->add_provider( new \Gravity_Forms\Gravity_Forms\Ajax\GF_Ajax_Service_Provider() );
@@ -373,6 +374,7 @@ class GFForms {
 		require_once GF_PLUGIN_DIR_PATH . 'includes/merge-tags/class-gf-merge-tags-service-provider.php';
 		require_once GF_PLUGIN_DIR_PATH . 'includes/settings/class-gf-settings-service-provider.php';
 		require_once GF_PLUGIN_DIR_PATH . 'includes/author-select/class-gf-author-select-service-provider.php';
+		require_once GF_PLUGIN_DIR_PATH . 'includes/webapi/user-select/class-gf-user-select-service-provider.php';
 		require_once GF_PLUGIN_DIR_PATH . 'includes/assets/class-gf-asset-service-provider.php';
 		require_once GF_PLUGIN_DIR_PATH . '/includes/honeypot/class-gf-honeypot-service-provider.php';
 		require_once GF_PLUGIN_DIR_PATH . '/includes/ajax/class-gf-ajax-service-provider.php';
@@ -4342,9 +4344,7 @@ class GFForms {
 	 * Resends failed notifications
 	 *
 	 * @since  Unknown
-	 * @access public
-	 *
-	 * @uses   GFCommon::send_notification()
+	 * @since 2.10.0 Updated to use GFAPI::send_notification().
 	 */
 	public static function resend_notifications() {
 
@@ -4446,7 +4446,7 @@ class GFForms {
 				$abort_email = apply_filters( 'gform_disable_resend_notification', false, $notification, $form, $lead );
 
 				if ( ! $abort_email ) {
-					GFCommon::send_notification( $notification, $form, $lead );
+					GFAPI::send_notification( $notification, $form, $lead );
 				}
 
 				/**
@@ -7275,6 +7275,9 @@ if ( ! function_exists( 'rgar' ) ) {
 			return $default;
 		}
 
+		// Normalize $prop to avoid deprecated notices in PHP 8.5+
+		$prop = $prop === null ? '' : (string) $prop;
+
 		if ( isset( $array[ $prop ] ) ) {
 			$value = $array[ $prop ];
 		} else {
@@ -7382,18 +7385,32 @@ if ( ! function_exists( 'rgexplode' ) ) {
 	/**
 	 * Converts a delimiter separated string to an array.
 	 *
-	 * @since  Unknown
-	 * @access public
+	 * @since Unknown
+	 * @since 2.9.30 Added the optional $on_last_sep param.
 	 *
-	 * @param string $sep The delimiter between values
-	 * @param string $string The string to convert
-	 * @param int $count The expected number of items in the resulting array
+	 * @param string $sep         The delimiter between values
+	 * @param string $string      The string to convert
+	 * @param int    $min_count   The minimum number of items in the resulting array
+	 * @param bool   $on_last_sep Optional. If true, the split occurs on the last instance of the delimiter. Defaults to false.
 	 *
 	 * @return array $ary The exploded array
 	 */
-	function rgexplode( $sep, $string, $count ) {
-		$ary = explode( (string) $sep, (string) $string );
-		while ( count( $ary ) < $count ) {
+	function rgexplode( $sep, $string, $min_count, $on_last_sep = false ) {
+		if ( $on_last_sep ) {
+			$last_sep_pos = strrpos( (string) $string, (string) $sep );
+			if ( $last_sep_pos === false ) {
+				$ary = [ (string) $string ];
+			} else {
+				$ary = [
+					substr( (string) $string, 0, $last_sep_pos ),
+					substr( (string) $string, $last_sep_pos + 1 ),
+				];
+			}
+		} else {
+			$ary = explode( (string) $sep, (string) $string );
+		}
+
+		while ( count( $ary ) < $min_count ) {
 			$ary[] = '';
 		}
 

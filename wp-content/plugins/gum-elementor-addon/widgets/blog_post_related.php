@@ -126,27 +126,6 @@ class Gum_Elementor_Widget_Post_related extends Widget_Base {
     );
 
 
-    $this->add_responsive_control(
-      'post_list_wide',
-      [
-        'label' => esc_html__( 'Grid Wide', 'gum-elementor-addon' ),
-        'type' => Controls_Manager::SLIDER,
-        'range' => [
-          '%' => [
-            'min' => 10,
-            'max' => 100,
-            'step' => 0.1
-          ],
-        ],  
-        'default'=>['size'=>33.33,'unit'=>'%'],
-        'size_units' => [ '%' ],
-        'style_transfer' => true,
-        'selectors' => [
-          '{{WRAPPER}} .related-post-container' => 'width: {{SIZE}}%;',
-        ],
-      ]
-    );
-
     $this->add_control(
       'show_image',
       [
@@ -374,6 +353,27 @@ class Gum_Elementor_Widget_Post_related extends Widget_Base {
       ]
     );    
 
+
+    $this->add_responsive_control(
+      'post_list_wide',
+      [
+        'label' => esc_html__( 'Grid Wide (%)', 'gum-elementor-addon' ),
+        'type' => Controls_Manager::SLIDER,
+        'range' => [
+          '%' => [
+            'min' => 0,
+            'max' => 100,
+            'step' => 0.1
+          ],
+        ],  
+        'default'=>['size'=>33.33,'unit'=>'%'],
+        'size_units' => [ '%'],
+        'style_transfer' => true,
+        'selectors' => [
+          '{{WRAPPER}} .related-post-container' => 'width: {{SIZE}}%;',
+        ],
+      ]
+    );
 
 
     $this->add_responsive_control(
@@ -1081,7 +1081,7 @@ class Gum_Elementor_Widget_Post_related extends Widget_Base {
       ]
     );  
 
-    $this->add_control(
+    $this->add_responsive_control(
       'readmore_button_align',
       [
         'label' => esc_html__( 'Align', 'gum-elementor-addon' ),
@@ -1104,6 +1104,7 @@ class Gum_Elementor_Widget_Post_related extends Widget_Base {
             'icon' => 'eicon-h-align-right',
           ],
         ],
+        'prefix_class' => 'readmore%s-align-',
         'default' => '',
         'condition' => ['show_readmore[value]' => 'yes']
       ]
@@ -1688,9 +1689,7 @@ class Gum_Elementor_Widget_Post_related extends Widget_Base {
     $this->add_render_attribute( $index , 'class', 'elementor-button-text' );
     $this->add_inline_editing_attributes( $index, 'none' );
 
-    $readmore_button_align = isset( $settings['readmore_button_align'] ) ? $settings['readmore_button_align'] : '';
-
-    ?><div class="elementor-button-wrap<?php print ' button-align-'.esc_attr($readmore_button_align) ;?>"><a <?php echo $this->get_render_attribute_string( 'button-'.$index ); ?>>
+    ?><div class="elementor-button-wrap"><a <?php echo $this->get_render_attribute_string( 'button-'.$index ); ?>>
           <span class="elementor-button-content-wrapper">
       <?php if ( ! empty( $settings['readmore_icon']['value'] ) ) : ?>
       <span <?php echo $this->get_render_attribute_string( 'readmore_icon_align' ); ?>>

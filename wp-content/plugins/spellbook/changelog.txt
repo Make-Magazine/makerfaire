@@ -1,6 +1,34 @@
 
 # Changelog
 
+## 3.0.26 | May 27, 2026
+
+- Fixed 'Upgrade to Install' showing for already-registered plugins in some situations.
+
+## 3.0.25 | May 20, 2026
+
+- Added graceful handling for bad transient data in license cards and product listings.
+- Fixed issue where an "Install" button was showing on plugins when licenses were maxed out creating a confusing experience.
+- Added logic to cleanup license data in the situation of a license being entered for the wrong suite.
+- Fixed issue where out-of-date perks could show a message about requiring Gravity Perks even with Spellbook activated.
+- Fixed an alignment issue in plugin cards for certain cases.
+
+## 3.0.24 | May 7, 2026
+
+- Fixed issue where unexpected GWAPI product responses could fatal plugin admin screens.
+
+## 3.0.23 | April 22, 2026
+
+- Fixed issue where `GP_Plugin` and `GP_Feed_Plugin` were not always loaded soon enough.
+
+## 3.0.22 | April 15, 2026
+
+- Fixed an issue where installing or uninstalling plugins in Spellbook on multisite installations could trigger fatal errors.
+
+## 3.0.21 | April 1, 2026
+
+- Fixed an issue where GC Google Sheets may not activate via Spellbook's interface.
+
 ## 3.0.20 | February 25, 2026
 
 - Updated license REST endpoint calls to include trailing slash to help prevent 301 redirects for certain server setups.

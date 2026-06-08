@@ -19,7 +19,7 @@ import type { BaseProduct, LicensedProductType, LicenseData, LicenseResponse } f
 import './ProductCard.css';
 import { useProductMutations, useProductDetails } from '../../hooks/api/useProducts';
 import { useLicenseMutations } from '../../hooks/api/useLicenses';
-import { canRegisterProduct, canUpdateProduct, isProductRegistered, getLicenseForProduct } from '../../helpers/productStatus';
+import { canRegisterProduct, canUpdateProduct, isProductRegistered, getLicenseForProduct, supportsRegistration, hasUnlimitedRegistrations } from '../../helpers/productStatus';
 import { addUtmParams, getPricingUrl } from '../../helpers/urls';
 
 interface ProductCardButtonsProps<T extends BaseProduct> {
@@ -332,17 +332,40 @@ const ProductCard = memo(<T extends BaseProduct>({ product }: ProductCardProps<T
 						{__('Buy License', 'spellbook')}
 					</a>
 				);
-			} else {
-				footerContent.push(
-					<Button
-						onClick={handleInstall}
-						type="primary"
-						disabled={mutations.install.isPending}
-					>
-						{mutations.install.isPending ? __('Installing...', 'spellbook') : __('Install', 'spellbook')}
-					</Button>
-				);
-			}
+			} else if (product.type !== 'free' && license?.valid && supportsRegistration(product, licenses) && !hasUnlimitedRegistrations(product, licenses) && !isProductRegistered(product, licenses) && !canRegisterProduct(product, licenses)) {
+					// Has a valid license but at product capacity — show upgrade link
+					const upgradeUrl = license.upgrade_url
+						? addUtmParams(license.upgrade_url, {
+							component: 'product-card',
+							text: 'upgrade-license',
+							meta: 'no-capacity'
+						})
+						: addUtmParams('https://account.gravitywiz.com', {
+							component: 'product-card',
+							text: 'upgrade-license',
+							meta: 'no-capacity'
+						});
+
+					footerContent.push(
+						<a
+							href={upgradeUrl}
+							target="_blank"
+							style={{ padding: '0.2rem 0', display: 'block' }}
+						>
+							{__('Upgrade to Install', 'spellbook')}
+						</a>
+					);
+				} else {
+					footerContent.push(
+						<Button
+							onClick={handleInstall}
+							type="primary"
+							disabled={mutations.install.isPending}
+						>
+							{mutations.install.isPending ? __('Installing...', 'spellbook') : __('Install', 'spellbook')}
+						</Button>
+					);
+				}
 		} else {
 			footerContent.push(
 				<Toggle

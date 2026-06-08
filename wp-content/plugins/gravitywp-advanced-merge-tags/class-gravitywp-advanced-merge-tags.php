@@ -838,7 +838,7 @@ class GravityWP_Advanced_Merge_Tags extends GFAddOn {
 
 			$replace = self::$method( $value, $input_id, $modifier_atts, $field, $raw_value, $format, $form, $entry, $url_encode, $esc_html, $nl2br );
 
-			$replace = self::gwp_process_nested_modifiers( $modifier_atts, $replace, $input_id, $field, $raw_value, $format, $form, $entry );
+			$replace = self::gwp_process_nested_modifiers( $modifier_atts, $replace, $input_id, $field, $raw_value, $format, $form, $entry, $url_encode, $esc_html, $nl2br );
 
 			// Format the html output of gwp_get_matched_entries_values. @todo, move this to the modifier function.
 			if ( $amt_modifier === 'gwp_get_matched_entries_values' ) {
@@ -952,10 +952,13 @@ class GravityWP_Advanced_Merge_Tags extends GFAddOn {
 	 * @param string       $format Whether the text is formatted as html or text.
 	 * @param array<mixed> $form The form object.
 	 * @param array<mixed> $entry The entry array.
+	 * @param bool         $url_encode Whether to URL encode the output.
+	 * @param bool         $esc_html Whether to escape HTML entities in the output.
+	 * @param bool         $nl2br Whether to convert newlines to HTML line breaks in the output.
 	 *
 	 * @return string  The modified value.
 	 */
-	public static function gwp_process_nested_modifiers( $modifier_atts, $value, $input_id, $field, $raw_value, $format, $form, $entry ) {
+	public static function gwp_process_nested_modifiers( $modifier_atts, $value, $input_id, $field, $raw_value, $format, $form, $entry, &$url_encode = false, &$esc_html = false, &$nl2br = false ) {
 		// Process additional modifiers, if present.
 		if ( ! empty( $modifier_atts ) ) {
 			$modifiers = self::atts_to_modifiers( $modifier_atts );
@@ -965,7 +968,9 @@ class GravityWP_Advanced_Merge_Tags extends GFAddOn {
 					// In case this is a nested Advanced Merge Tags case sensitive modifiers.
 					$nested_method        = 'modifier_' . $gwp_modifier;
 					$nested_modifier_atts = self::parse_mergetag_atts( $modifier );
-					$value                = self::$nested_method( $value, $input_id, $nested_modifier_atts, $field, $raw_value, $format, $form, $entry );
+					// Nested advanced modifiers should receive the current value as both the display value
+					// and the raw value so chained lookups operate on the previous modifier result.
+					$value = self::$nested_method( $value, $input_id, $nested_modifier_atts, $field, $value, $format, $form, $entry, $url_encode, $esc_html, $nl2br );
 				} else {
 					// Apply regular Merge Tag modifiers which are hooked to the case insensitive default GF merge tag filter. This includes third party modifiers.
 					$value = apply_filters( 'gform_merge_tag_filter', $value, $input_id, $modifier, $field, $raw_value, $format );
@@ -2218,6 +2223,7 @@ class GravityWP_Advanced_Merge_Tags extends GFAddOn {
 	 *
 	 * @param string $datetime_str     String containing datetime.
 	 * @param string $current_format   Format of $datetime_str. @see https://www.php.net/manual/en/datetime.format.php.
+	 *                                 Supports pseudo format 'U_local' for localized (wall time) timestamps.
 	 * @param string $target_format    The desired date format.
 	 * @param string $modify           Modifies $datetime with a relative datetime string. @see https://www.php.net/manual/en/datetime.formats.relative.php.
 	 * @param string $current_timezone Shift to this timezone. @see https://www.php.net/manual/en/timezones.php.
@@ -2232,7 +2238,17 @@ class GravityWP_Advanced_Merge_Tags extends GFAddOn {
 			return gravitywp_advanced_merge_tags()->gwp_error_handler( esc_html__( 'invalid timezone', 'gravitywpadvancedmergetags' ), __METHOD__, print_r( $current_timezone, true ) );
 		}
 
-		$datetime_str = DateTime::createFromFormat( $current_format, $datetime_str, $source_timezone );
+		if ( $current_format === 'U_local' ) {
+			if ( ! is_numeric( $datetime_str ) ) {
+				return gravitywp_advanced_merge_tags()->gwp_error_handler( esc_html__( 'invalid or empty date string', 'gravitywpadvancedmergetags' ), __METHOD__, print_r( $datetime_str, true ) );
+			}
+
+			// Convert pseudo local timestamp (wall time) to datetime in the source timezone.
+			$localized_datetime = gmdate( 'Y-m-d H:i:s', (int) $datetime_str );
+			$datetime_str       = DateTime::createFromFormat( 'Y-m-d H:i:s', $localized_datetime, $source_timezone );
+		} else {
+			$datetime_str = DateTime::createFromFormat( $current_format, $datetime_str, $source_timezone );
+		}
 
 		if ( $datetime_str === false ) {
 			return gravitywp_advanced_merge_tags()->gwp_error_handler( esc_html__( 'invalid or empty date string', 'gravitywpadvancedmergetags' ), __METHOD__, print_r( $datetime_str, true ) );

@@ -3,7 +3,7 @@
  * Plugin Name: Spellbook
  * Plugin URI: https://gravitywiz.com/
  * Description: Spellbook will allow you to install and update all other Gravity Wiz plugins directly from your WordPress admin. It feels like magic. ✨
- * Version: 3.0.20
+ * Version: 3.0.26
  * Author: Gravity Wiz
  * Author URI: https://gravitywiz.com/
  * License: GPL2
@@ -13,7 +13,7 @@
  */
 if (!defined('ABSPATH')) exit;
 
-define( 'SPELLBOOK_VERSION', '3.0.20' );
+define( 'SPELLBOOK_VERSION', '3.0.26' );
 
 if (!defined('GRAVITY_PERKS_VERSION')) {
 	define( 'GRAVITY_PERKS_VERSION',  SPELLBOOK_VERSION );
@@ -48,6 +48,7 @@ add_action( 'plugins_loaded', function() {
 	require_once( plugin_dir_path( __FILE__ ) . 'class-gravityperks.php' );
 
 	add_action( 'init', array( 'GravityPerks', 'init' ) );
+	add_action( 'gform_loaded', array( 'GravityPerks', 'load_plugin_classes' ), 0 );
 	add_action( 'gform_loaded', array( 'GravityPerks', 'init_perk_as_plugin_functionality' ) );
 }, -1 );
 

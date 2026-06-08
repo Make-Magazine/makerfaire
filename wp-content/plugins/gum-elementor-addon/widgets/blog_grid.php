@@ -372,25 +372,6 @@ class Gum_Elementor_Widget_blog_grid extends Widget_Base {
       ]
     );
 
-    $this->add_control(
-      'readmore_icon_indent',
-      [
-        'label' => esc_html__( 'Icon Spacing', 'gum-elementor-addon' ),
-        'type' => Controls_Manager::SLIDER,
-        'range' => [
-          'px' => [
-            'max' => 100,
-          ],
-        ],
-        'default' =>['value'=>5, 'unit'=>'px'],
-        'selectors' => [
-          '{{WRAPPER}} .elementor-button .elementor-align-icon-right' => 'margin-left: {{SIZE}}{{UNIT}};margin-right:0;',
-          '{{WRAPPER}} .elementor-button .elementor-align-icon-left' => 'margin-right: {{SIZE}}{{UNIT}};margin-left: 0;',
-          '{{WRAPPER}} .elementor-button .elementor-button-content-wrapper' => 'gap:{{SIZE}}{{UNIT}};'
-        ],
-        'condition' => ['show_readmore!' => '','readmore_label!' => '','readmore_icon[value]!' => ''],
-      ]
-    );
 
     $this->add_control(
       'show_meta',
@@ -3937,7 +3918,7 @@ class Gum_Elementor_Widget_blog_grid extends Widget_Base {
       ]
     );  
 
-    $this->add_control(
+    $this->add_responsive_control(
       'readmore_button_align',
       [
         'label' => esc_html__( 'Align', 'gum-elementor-addon' ),
@@ -3960,6 +3941,7 @@ class Gum_Elementor_Widget_blog_grid extends Widget_Base {
             'icon' => 'eicon-h-align-right',
           ],
         ],
+        'prefix_class' => 'readmore%s-align-',
         'default' => '',
         'condition' => ['show_readmore!' => '']
       ]
@@ -3971,6 +3953,7 @@ class Gum_Elementor_Widget_blog_grid extends Widget_Base {
       [
         'name' => 'typography_readmore_button',
         'selector' => '{{WRAPPER}} .elementor-button',
+        'style_transfer' => true,
       ]
     );
 
@@ -3983,6 +3966,7 @@ class Gum_Elementor_Widget_blog_grid extends Widget_Base {
           'selectors' => [
               '{{WRAPPER}} .elementor-button' => 'margin: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
           ],
+          'style_transfer' => true,
       ]
     );
 
@@ -3995,7 +3979,8 @@ class Gum_Elementor_Widget_blog_grid extends Widget_Base {
         'size_units' => [ 'px', 'em', '%' ],
         'selectors' => [
           '{{WRAPPER}} .elementor-button' => 'padding: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
-        ]
+        ],
+        'style_transfer' => true,
       ]
     );
     
@@ -4007,7 +3992,8 @@ class Gum_Elementor_Widget_blog_grid extends Widget_Base {
         'size_units' => [ 'px', '%' ],
         'selectors' => [
           '{{WRAPPER}} .elementor-button' => 'border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
-        ]
+        ],
+        'style_transfer' => true,
       ]
     );
 
@@ -4039,6 +4025,7 @@ class Gum_Elementor_Widget_blog_grid extends Widget_Base {
         'selectors' => [
           '{{WRAPPER}} .elementor-button' => 'fill: {{VALUE}}; color: {{VALUE}};',
         ],
+        'style_transfer' => true,
       ]
     );
 
@@ -4050,6 +4037,7 @@ class Gum_Elementor_Widget_blog_grid extends Widget_Base {
         'selectors' => [
           '{{WRAPPER}} .elementor-button' => 'background-color: {{VALUE}};',
         ],
+        'style_transfer' => true,
       ]
     );
 
@@ -4071,6 +4059,7 @@ class Gum_Elementor_Widget_blog_grid extends Widget_Base {
           '{{WRAPPER}} .elementor-button:hover, {{WRAPPER}} .elementor-button:focus' => 'color: {{VALUE}}!important;',
           '{{WRAPPER}} .elementor-button:hover svg, {{WRAPPER}} .elementor-button:focus svg' => 'fill: {{VALUE}}!important;',
         ],
+        'style_transfer' => true,
       ]
     );
 
@@ -4082,6 +4071,7 @@ class Gum_Elementor_Widget_blog_grid extends Widget_Base {
         'selectors' => [
           '{{WRAPPER}} .elementor-button:hover, {{WRAPPER}} .elementor-button:focus' => 'background-color: {{VALUE}};',
         ],
+        'style_transfer' => true,
       ]
     );
 
@@ -4096,6 +4086,7 @@ class Gum_Elementor_Widget_blog_grid extends Widget_Base {
         'selectors' => [
           '{{WRAPPER}} .elementor-button:hover, {{WRAPPER}} .elementor-button:focus' => 'border-color: {{VALUE}};',
         ],
+        'style_transfer' => true,
       ]
     );
 
@@ -4133,6 +4124,29 @@ class Gum_Elementor_Widget_blog_grid extends Widget_Base {
           '{{WRAPPER}} .elementor-button .elementor-button-icon' => 'font-size: {{SIZE}}{{UNIT}};',
         ],
         'condition' => ['show_readmore!' => '','readmore_icon[value]!' => ''],
+        'style_transfer' => true,
+      ]
+    );
+
+
+    $this->add_control(
+      'readmore_icon_indent',
+      [
+        'label' => esc_html__( 'Icon Spacing', 'gum-elementor-addon' ),
+        'type' => Controls_Manager::SLIDER,
+        'range' => [
+          'px' => [
+            'max' => 100,
+          ],
+        ],
+        'default' =>['value'=>5, 'unit'=>'px'],
+        'selectors' => [
+          '{{WRAPPER}} .elementor-button .elementor-align-icon-right' => 'margin-left: {{SIZE}}{{UNIT}};margin-right:0;',
+          '{{WRAPPER}} .elementor-button .elementor-align-icon-left' => 'margin-right: {{SIZE}}{{UNIT}};margin-left: 0;',
+          '{{WRAPPER}} .elementor-button .elementor-button-content-wrapper' => 'gap:{{SIZE}}{{UNIT}};'
+        ],
+        'condition' => ['show_readmore!' => '','readmore_label!' => '','readmore_icon[value]!' => ''],
+        'style_transfer' => true,
       ]
     );
 
@@ -4143,6 +4157,7 @@ class Gum_Elementor_Widget_blog_grid extends Widget_Base {
         'name' => 'readmore_icon_border',
         'selector' => '{{WRAPPER}} .elementor-button .elementor-button-icon',
         'condition' => ['show_readmore!' => '','readmore_icon[value]!' => ''],
+        'style_transfer' => true,
       ]
     );
 
@@ -4156,6 +4171,7 @@ class Gum_Elementor_Widget_blog_grid extends Widget_Base {
                 '{{WRAPPER}} .elementor-button .elementor-button-icon' => 'padding: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
             ],
             'condition' => ['show_readmore!' => '','readmore_icon[value]!' => '','readmore_icon_border_border!' => ''],
+            'style_transfer' => true,
         ]
     );
 
@@ -4169,6 +4185,7 @@ class Gum_Elementor_Widget_blog_grid extends Widget_Base {
           '{{WRAPPER}} .elementor-button .elementor-button-icon' => 'border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
         ],
         'condition' => ['show_readmore!' => '','readmore_icon[value]!' => '','readmore_icon_border_border!'=>''],
+        'style_transfer' => true,
       ]
     );
 
@@ -4191,6 +4208,7 @@ class Gum_Elementor_Widget_blog_grid extends Widget_Base {
           '{{WRAPPER}} .elementor-button .elementor-button-icon i,{{WRAPPER}} .elementor-button .elementor-button-icon svg' => 'color: {{VALUE}}!important,fill: {{VALUE}}!important;',
         ],
         'condition' => ['show_readmore!' => '','readmore_icon[value]!' => ''],
+        'style_transfer' => true,
       ]
     );
 
@@ -4205,6 +4223,7 @@ class Gum_Elementor_Widget_blog_grid extends Widget_Base {
           '{{WRAPPER}} .elementor-button .elementor-button-icon' => 'background: {{VALUE}};',
         ],
         'condition' => ['readmore_icon_border_border!' => ''],
+        'style_transfer' => true,
       ]
     );
 
@@ -4222,6 +4241,7 @@ class Gum_Elementor_Widget_blog_grid extends Widget_Base {
           '{{WRAPPER}} .elementor-button .elementor-button-icon i, {{WRAPPER}} .elementor-button .elementor-button-icon svg' => 'transform: rotate({{SIZE}}{{UNIT}});',
         ],
         'condition' => ['show_readmore!' => '','readmore_icon[value]!' => ''],
+        'style_transfer' => true,
 
       ]
     );
@@ -4244,6 +4264,7 @@ class Gum_Elementor_Widget_blog_grid extends Widget_Base {
           '{{WRAPPER}} .elementor-button:hover .elementor-button-icon i,{{WRAPPER}} .elementor-button:hover .elementor-button-icon svg' => 'color: {{VALUE}}!important,fill: {{VALUE}}!important;',
         ],
         'condition' => ['show_readmore!' => '','readmore_icon[value]!' => ''],
+        'style_transfer' => true,
       ]
     );
 
@@ -4257,6 +4278,7 @@ class Gum_Elementor_Widget_blog_grid extends Widget_Base {
           '{{WRAPPER}} .elementor-button:hover .elementor-button-icon' => 'background: {{VALUE}};',
         ],
         'condition' => ['readmore_icon_border_border!' => ''],
+        'style_transfer' => true,
       ]
     );
 
@@ -4269,6 +4291,7 @@ class Gum_Elementor_Widget_blog_grid extends Widget_Base {
           '{{WRAPPER}} .elementor-button:hover .elementor-button-icon' => 'border-color: {{VALUE}}!important;',
         ],
         'condition' => ['show_readmore!' => '','readmore_icon[value]!' => '','readmore_icon_border_border!'=>''],
+        'style_transfer' => true,
       ]
     );
 
@@ -4286,6 +4309,7 @@ class Gum_Elementor_Widget_blog_grid extends Widget_Base {
         'selectors' => [
           '{{WRAPPER}} .elementor-button:hover .elementor-button-icon i, {{WRAPPER}} .elementor-button:hover .elementor-button-icon svg' => 'transform: rotate({{SIZE}}{{UNIT}});',
         ],
+        'style_transfer' => true,
       ]
     );
 
@@ -4303,6 +4327,7 @@ class Gum_Elementor_Widget_blog_grid extends Widget_Base {
         'selectors' => [
           '{{WRAPPER}} .elementor-button-content-wrapper' => '--e-button-transition-duration: {{SIZE}}ms',
         ],
+        'style_transfer' => true,
       ]
     );
 
@@ -5040,7 +5065,7 @@ class Gum_Elementor_Widget_blog_grid extends Widget_Base {
     $allowed_tags = array('h1','h2','h3','h4','h5','h6','div');
     $tag_title = (in_array( $tag, $allowed_tags )) ? trim( $tag ): 'h4';
 
-    $post_title = sprintf( '<%s class="post-title"><a href="%s">%s</a></%s>',$tag_title, get_the_permalink( $post_id ),esc_html( $post_title ), $tag_title);
+    $post_title = sprintf( '<%s class="post-title"><a href="%s">%s</a></%s>',wp_kses_post($tag_title), get_the_permalink( $post_id ),esc_html( $post_title ), $tag_title);
     $top_meta = $this->get_post_meta( $settings , 'top', $divider);
     $mid_meta = $this->get_post_meta( $settings , 'mid', $divider);
 
@@ -5178,9 +5203,7 @@ class Gum_Elementor_Widget_blog_grid extends Widget_Base {
     $this->add_render_attribute( $index , 'class', 'elementor-button-text' );
     $this->add_inline_editing_attributes( $index, 'none' );
 
-    $readmore_button_align = isset( $settings['readmore_button_align'] ) ? $settings['readmore_button_align'] : '';
-
-    ?><div class="elementor-button-wrap<?php print ' button-align-'.esc_attr($readmore_button_align) ;?>"><a <?php echo $this->get_render_attribute_string( 'button-'.$index ); ?>>
+    ?><div class="elementor-button-wrap"><a <?php echo $this->get_render_attribute_string( 'button-'.$index ); ?>>
           <span class="elementor-button-content-wrapper">
       <?php if ( ! empty( $settings['readmore_icon']['value'] ) ) : ?>
       <span <?php echo $this->get_render_attribute_string( 'readmore_icon_align' ); ?>>

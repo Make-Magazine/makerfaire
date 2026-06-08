@@ -4,7 +4,7 @@ Tags: gravity forms, gravityforms, mergetags, merge tags
 Requires at least: 3.0.1
 Tested up to: 6.9
 Requires PHP: 7.0
-Stable tag: 1.9.6
+Stable tag: 1.9.8
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -30,6 +30,14 @@ This plugin provides advanced functionality to the default Gravity Forms Number 
 Upload the plugin files to the `/wp-content/plugins/gravitywp-advanced-merge-tags` directory, or install the plugin through the WordPress plugins screen directly.
 
 == Changelog ==
+= 1.9.8 =
+- Fixed fatal ArgumentCountError when gwp_get_matched_entry_value is used as a nested modifier1, caused by gwp_process_nested_modifiers not forwarding the url_encode, esc_html and nl2br arguments introduced in 1.9.5.
+- Fixed a compatibility issue with GP Populate Anything.
+- Implemented automated unit tests.
+
+= 1.9.7 =
+- Added support for `U_local` input format in gwp_date_format/gwp_date_field date parsing, so localized timestamps (such as `date_local_timestamp`) correctly honor `field_timezone`.
+
 = 1.9.6 =
 - Added support returning formatted rich text in the gwp_get_matched_entry_value merge tag / modifier.
 - Fixed gwp_reverse to correctly handle multibyte characters (accented letters, emojis, CJK characters) by using a UTF-8-aware reversal instead of byte-level strrev.

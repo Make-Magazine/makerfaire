@@ -25,6 +25,38 @@ abstract class GP_Feed_Plugin extends GFFeedAddOn {
 
 	public static function includes() { }
 
+	// Override Meets Minimum Requirements as most perks are still depending on `gravityperks/gravityperks.php`
+	public function meets_minimum_requirements() {
+		$parent_result = parent::meets_minimum_requirements();
+
+		/**
+		 * Is there only one error saying `Required WordPress plugin is missing: Array` or `Required WordPress plugin is missing: gravityperks/gravityperks.php`?
+		 *
+		 * The reason for it showing "Array" is some perks define the requirements as
+		 *
+		 * 'plugins'      => array(
+		 *		'gravityperks/gravityperks.php' => array(
+		 *			'name'    => 'Gravity Perks',
+		 *			'version' => '2.2.3',
+		 *		),
+		 *	),
+		 *
+		 * ... which is invalid. It should be:
+		 *
+		 * 'plugins'      => array(
+		 * 		'gravityperks/gravityperks.php',
+		 * )
+		 */
+		if ( is_array( $parent_result ) && count( $parent_result['errors'] ) === 1 ) {
+			$error = array_shift( $parent_result['errors'] );
+			if ( strpos( $error, 'gravityperks/gravityperks.php' ) !== false || strpos( $error, 'Gravity Perks' ) !== false || strpos( $error, 'Array' ) !== false ) {
+				return array( 'meets_requirements' => true, 'errors' => array() );
+			}
+		}
+
+		return $parent_result;
+	}
+
 	public function __construct( $perk = null ) {
 
 		if ( ! $this->perk ) {

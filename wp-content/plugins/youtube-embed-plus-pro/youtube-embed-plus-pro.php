@@ -3,7 +3,7 @@
   Plugin Name: Embed Plus for YouTube Pro
   Plugin URI: https://www.embedplus.com/dashboard/pro-easy-video-analytics.aspx
   Description: YouTube Embed Plugin. Embed a YouTube channel gallery, playlist gallery, YouTube live stream. Lite embeds with defer JavaScript and facade options
-  Version: 14.2.4
+  Version: 14.2.6
   Author: Embed Plus for YouTube Team
   Author URI: https://www.embedplus.com
   Requires at least: 4.5
@@ -11,7 +11,7 @@
 
 /*
   Embed Plus Plugin for YouTube Pro
-  Copyright (C) 2025 EmbedPlus.com
+  Copyright (C) 2026 EmbedPlus.com
 
  */
 
@@ -22,7 +22,7 @@ class YouTubePrefsPro
 
     public static $folder_name = 'youtube-embed-plus-pro';
     public static $curltimeout = 30;
-    public static $version = '14.2.4';
+    public static $version = '14.2.6';
     public static $opt_version = 'version';
     public static $opt_free_migrated = 'free_migrated';
     public static $optembedwidth = null;
@@ -630,6 +630,11 @@ class YouTubePrefsPro
         $result = array();
         if (self::is_ajax())
         {
+            if (!current_user_can('edit_posts'))
+            {
+                wp_send_json_error('Unauthorized');
+                die();
+            }
             $postid = intval($_REQUEST['postid']);
             $currpost = get_post($postid);
 
@@ -749,6 +754,11 @@ class YouTubePrefsPro
         $result = array();
         if (self::is_ajax())
         {
+            if (!current_user_can('edit_posts'))
+            {
+                wp_send_json_error('Unauthorized');
+                die();
+            }
             $thehtml = '';
 
             try
@@ -1553,7 +1563,7 @@ class YouTubePrefsPro
                         <div id="wizoptionboxLeft">
                             <div id="ytpreviewbox">
                                 <div class="ep-wizard-preview-video-wrapper">
-                                    <iframe ng-src="{{iframePreviewUrl()}}" id="ifPreview" title="<?php _e('YouTube video player', 'text_domain'); ?>" frameborder="0" allow="fullscreen; accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen=""></iframe>
+                                    <iframe ng-src="{{trustedIframePreviewUrl}}" id="ifPreview" title="<?php _e('YouTube video player', 'text_domain'); ?>" frameborder="0" allow="fullscreen; accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen=""></iframe>
                                 </div>
                             </div>
                         </div>
@@ -2131,6 +2141,11 @@ class YouTubePrefsPro
         $result = array();
         if (self::is_ajax())
         {
+            if (!current_user_can('manage_options'))
+            {
+                wp_send_json_error('Unauthorized');
+                die();
+            }
             $user_id = get_current_user_id();
             update_user_meta($user_id, 'embedplus_double_plugin_warning', 1);
             $result['type'] = 'success';
@@ -4560,6 +4575,10 @@ class YouTubePrefsPro
 
     public static function my_embedplus_pro_record()
     {
+        if (!current_user_can('manage_options'))
+        {
+            die();
+        }
         $result = array();
         if (self::is_ajax())
         {
@@ -4590,6 +4609,10 @@ class YouTubePrefsPro
 
     public static function my_embedplus_dashpre()
     {
+        if (!current_user_can('manage_options'))
+        {
+            die();
+        }
         $result = array();
         if (self::is_ajax())
         {
@@ -4631,6 +4654,10 @@ class YouTubePrefsPro
 
     public static function my_embedplus_clearspdc()
     {
+        if (!current_user_can('edit_posts'))
+        {
+            die();
+        }
         $result = array();
         if (self::is_ajax())
         {
@@ -4669,7 +4696,7 @@ class YouTubePrefsPro
         {
             try
             {
-                $channelId = $_POST["channelId"];
+                $channelId = sanitize_text_field($_POST["channelId"]);
                 add_filter( 'wp_feed_cache_transient_lifetime' , array(self::class, 'rss_lifetime'), 10, 2);
                 $rss = fetch_feed("https://www.youtube.com/feeds/videos.xml?channel_id=" . $channelId . '&rand=' . time());
                 remove_filter( 'wp_feed_cache_transient_lifetime' , array(self::class, 'rss_lifetime'));
@@ -4858,7 +4885,7 @@ class YouTubePrefsPro
         $new_pointer_content = '<h3>' . __('New Update') . '</h3>'; // ooopointer
 
         $new_pointer_content .= '<p>'; // ooopointer
-        $new_pointer_content .= "This version fixes a lightbox gallery issue for pro users, and allows you to disable keyboard controls for both free and pro users.";
+        $new_pointer_content .= "This version improves compatibility with WordPress 7.0 and PHP 8.4 for both free and Pro plugins.";
         $new_pointer_content .= '</p>';
 
         return array(
@@ -4961,15 +4988,7 @@ class YouTubePrefsPro
             p.submit {margin: 10px 0 0 0; padding: 10px 0 5px 0;}
             .wp-core-ui p.submit .button-primary {
                 font-weight: bold;
-                font-size: 21px; height: 50px; padding: 0 20px 1px;
-                background: #2ea2cc; /* Old browsers */
-                background: -moz-linear-gradient(top,  #2ea2cc 0%, #007396 98%); /* FF3.6+ */
-                background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#2ea2cc), color-stop(98%,#007396)); /* Chrome,Safari4+ */
-                background: -webkit-linear-gradient(top,  #2ea2cc 0%,#007396 98%); /* Chrome10+,Safari5.1+ */
-                background: -o-linear-gradient(top,  #2ea2cc 0%,#007396 98%); /* Opera 11.10+ */
-                background: -ms-linear-gradient(top,  #2ea2cc 0%,#007396 98%); /* IE10+ */
-                background: linear-gradient(to bottom,  #2ea2cc 0%,#007396 98%); /* W3C */
-                filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#2ea2cc', endColorstr='#007396',GradientType=0 ); /* IE6-9 */
+                font-size: 21px; min-height: 50px; padding: 0 20px 1px;
             }
             .wp-core-ui p.submit .button-primary[disabled] {
                 opacity: .4;
@@ -6549,7 +6568,7 @@ class YouTubePrefsPro
                             <b>For galleries:</b> <a href="#jumpgallery">Click here</a> to scroll down to gallery settings and directions.
                         </p>
                         <p>
-                            <b>For self-contained playlists:</b> Go to the page for the playlist that lists all of its videos (<a target="_blank" href="http://www.youtube.com/playlist?list=PL70DEC2B0568B5469">Example &raquo;</a>). Click on the video that you want the playlist to start with. Copy and paste that browser URL into your blog on its own line. If you want the first video to always be the latest video in your playlist, check the option "Playlist Ordering" in the settings down below (you will also see this option available if you use the Pro Wizard). If you want to have two or more playlists next to each other on the same line, wrap each link with the <code>[embedyt]...[/embedyt]</code> shortcode.
+                            <b>For self-contained playlists:</b> Go to the page for the playlist that lists all of its videos (<a target="_blank" href="https://www.youtube.com/playlist?list=PLsRNoUx8w3rPxNGCQYBPobGxNj1BfDT7P">Example &raquo;</a>). Click on the video that you want the playlist to start with. Copy and paste that browser URL into your blog on its own line. If you want the first video to always be the latest video in your playlist, check the option "Playlist Ordering" in the settings down below (you will also see this option available if you use the Pro Wizard). If you want to have two or more playlists next to each other on the same line, wrap each link with the <code>[embedyt]...[/embedyt]</code> shortcode.
                         </p>                
                         <p>
                             <b>For self-contained channel playlists:</b> At your editor, click on the <img style="vertical-align: text-bottom;" src="<?php echo plugins_url('images/wizbuttonbig.png', __FILE__) ?>"> wizard button and choose the option <i>Search for a video or channel to insert in my editor.</i> Then, click on the <i>channel playlist</i> option there (instead of <i>single video</i>). Search for the channel username and follow the rest of the directions there.
@@ -8589,7 +8608,11 @@ define('EPYT_BASE_URL', rtrim(plugins_url('', __FILE__), "\\/") . '/');
 define('EPYTGB_INCLUDES_PATH', rtrim(dirname(__FILE__), "\\/") . '/includes/gutenberg/');
 
 $youtubeplgplus_pro = new YouTubePrefsPro();
+
 require rtrim(dirname(__FILE__), "\\/") . '/plugin-update-checker/plugin-update-checker.php';
-$myUpdateCheckerYouTubePro = Puc_v4_Factory::buildUpdateChecker(
-                (strpos(YouTubePrefsPro::$epbase, 'http') === false ? 'https:' : '') . YouTubePrefsPro::$epbase . '/youtube-pro/update-checker/?prokey=' . YouTubePrefsPro::$alloptions[YouTubePrefsPro::$opt_pro], __FILE__
+use YahnisElsts\PluginUpdateChecker\v5\PucFactory;
+$myUpdateCheckerYouTubePro = PucFactory::buildUpdateChecker(
+	(strpos(YouTubePrefsPro::$epbase, 'http') === false ? 'https:' : '') . YouTubePrefsPro::$epbase . '/youtube-pro/update-checker/?prokey=' . YouTubePrefsPro::$alloptions[YouTubePrefsPro::$opt_pro],
+	__FILE__,
+	'youtube-embed-plus-pro'
 );

@@ -2078,7 +2078,8 @@ class Gum_Elementor_Widget_imagebox_carousel extends Widget_Base {
   protected function get_button( $index, $slide=array(), $settings = array(), $echo = true  ) {
 
     if(!isset($settings['show_button']) || $settings['show_button'] =='' ) return '';
-
+    if(!isset($settings['button_icon_align'])){ $settings['button_icon_align'] = 'row'; }
+    
     $this->add_render_attribute( 'button-'.$index ,
       [
         'class' => ['elementor-button', 'imbox-button' ],
@@ -3557,6 +3558,7 @@ class Gum_Elementor_Widget_imagebox extends Widget_Base {
   protected function get_button( $settings = array(), $echo = true ) {
 
     if(!isset($settings['show_button']) || $settings['show_button'] =='' ) return '';
+    if(!isset($settings['button_icon_align'])){ $settings['button_icon_align'] = 'row'; }
 
     $this->add_render_attribute( 'box-button' ,
       [

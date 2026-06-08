@@ -1032,7 +1032,7 @@ function LoadFieldSettings() {
 		this.checked = false;
 	});
 
-	if (has_entry(field.id))
+	if (field?.storageType !== 'json' && has_entry(field.id))
 		jQuery("#field_type, #field_multiple_files").prop("disabled", true);
 	else
 		jQuery("#field_type, #field_multiple_files").prop("disabled", false);
@@ -1333,6 +1333,12 @@ function getAllFieldSettings(field) {
 		settingsArray = settingsArray.filter(function(setting) {
 			return setting !== '.display_choices_columns_setting';
 		});
+	}
+
+	if ( field.type === 'post_custom_field' && field.inputType === 'fileupload' ) {
+		settingsArray = settingsArray.filter( function( setting ) {
+			return setting !== '.prepopulate_field_setting';
+		} );
 	}
 
 	/**
@@ -2754,6 +2760,11 @@ function StartChangePostCategoryType(type){
 function StartChangePostCustomFieldType( type ) {
 	if ( jQuery.inArray( type, [ 'radio', 'select', 'checkbox', 'multiselect' ] ) === -1 ) {
 		field.choices = null;
+	}
+
+	if ( type === 'fileupload' ) {
+		field.allowsPrepopulate = false;
+		field.inputName = '';
 	}
 
 	return StartChangeInputType(type, field);

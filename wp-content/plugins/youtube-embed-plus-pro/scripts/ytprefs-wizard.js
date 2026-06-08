@@ -110,11 +110,13 @@ window._EPYTWIZ_ = window._EPYTWIZ_ || {};
 
         $('form.wizform').each(function ()
         {
-            $thisForm = $(this);
+            var $thisForm = $(this);
+            var pasteTimeout;
             $thisForm.find('.txturlpastecustom').on('paste change', function ()
             {
-                $thisTxtUrl = $(this);
-                setTimeout(function ()
+                var $thisTxtUrl = $(this);
+                clearTimeout(pasteTimeout);
+                pasteTimeout = setTimeout(function ()
                 {
                     var thepaste = $.trim($thisTxtUrl.val());
                     var badpaste = /<.*/i;
@@ -143,6 +145,9 @@ window._EPYTWIZ_ = window._EPYTWIZ_ || {};
                     }
 
                 }, 100);
+            });
+            $thisForm.on('submit', function() {
+                clearTimeout(pasteTimeout);
             });
         });
 
@@ -228,9 +233,11 @@ window._EPYTWIZ_ = window._EPYTWIZ_ || {};
 
                     $scope.canInputRange = function ()
                     {
+                        if (typeof $scope._canInputRange !== 'undefined') return $scope._canInputRange;
                         var rangedetect = document.createElement("input");
                         rangedetect.setAttribute("type", "range");
-                        return rangedetect.type !== "text";
+                        $scope._canInputRange = (rangedetect.type !== "text");
+                        return $scope._canInputRange;
                     };
 
                     $scope.selectAllText = function (e)
@@ -350,7 +357,7 @@ window._EPYTWIZ_ = window._EPYTWIZ_ || {};
                         $scope.model.live_chat = parseInt($scope.model.live_chat) === 0 ? 1 : 0;
                     };
 
-                    $scope.iframePreviewUrl = function ()
+                    $scope.initIframePreviewUrl = function ()
                     {
                         var previewUrl = '';
                         var vid = $scope.model.if_live_preview || $scope.model.theytid;
@@ -370,7 +377,7 @@ window._EPYTWIZ_ = window._EPYTWIZ_ || {};
                                     + ($scope.model.theplaylistid ? 'list=' + $scope.model.theplaylistid : '');
                         }
 
-                        return $sce.trustAsResourceUrl(previewUrl);
+                        $scope.trustedIframePreviewUrl = $sce.trustAsResourceUrl(previewUrl);
                     };
 
 
@@ -594,6 +601,7 @@ window._EPYTWIZ_ = window._EPYTWIZ_ || {};
                     $scope.model.gallery_style = '';
                     $scope.model.rblPlaylistStart = '0';
                     $scope.selectHeight();
+                    $scope.initIframePreviewUrl();
 
                 }]);
 })(jQuery, angular);

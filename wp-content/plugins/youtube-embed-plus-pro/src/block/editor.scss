@@ -28,6 +28,10 @@
         }
     }
 
+    .components-modal__children-container {
+        height: 100%;
+    }
+
     iframe {
         width: 100%;
         height: calc(100% - 60px);

@@ -718,10 +718,12 @@ class GravityPerks {
 		$announcements_controller->register_routes();
 	}
 
-	public static function init_perk_as_plugin_functionality() {
-
+	public static function load_plugin_classes() {
 		require_once( 'model/class-gp-plugin.php' );
 		require_once( 'model/class-gp-feed-plugin.php' );
+	}
+
+	public static function init_perk_as_plugin_functionality() {
 
 		add_filter( 'extra_plugin_headers', array( __CLASS__, 'extra_perk_headers' ) );
 
@@ -1171,11 +1173,11 @@ class GravityPerks {
 					if ( $item[2] === 'gwp_perks' ) {
 						$spellbook = $item;
 						unset( $submenu['gf_edit_forms'][ $key ] );
-						
+
 						// Add SVG icon to the label
 						$svg_icon = '<svg width="16" height="16" viewBox="0 0 1200 1200" style="display:inline-block;vertical-align:text-bottom;fill:currentColor;" xmlns="http://www.w3.org/2000/svg"><path d="m770.63 534.19c-157.6 31.5-279.84 153.74-311.44 311.44-0.84375 4.3125-4.6875 7.5-9.1875 7.5s-8.3438-3.1875-9.1875-7.5c-31.5-157.6-153.74-279.84-311.44-311.44-4.3125-0.84375-7.5-4.6875-7.5-9.1875s3.1875-8.3438 7.5-9.1875c157.6-31.5 279.84-153.74 311.44-311.44 0.84375-4.4062 4.6875-7.5 9.1875-7.5s8.3438 3.1875 9.1875 7.5c31.5 157.6 153.74 279.84 311.44 311.44 4.4062 0.84375 7.5 4.6875 7.5 9.1875s-3.1875 8.3438-7.5 9.1875zm300 337.87c-91.219-18.281-161.9-88.969-180.19-180.19-0.84375-4.3125-4.6875-7.5-9.1875-7.5s-8.3438 3.1875-9.1875 7.5c-18.281 91.219-88.969 161.9-180.19 180.19-4.3125 0.84375-7.5 4.6875-7.5 9.1875s3.1875 8.3438 7.5 9.1875c91.219 18.281 161.9 88.969 180.19 180.19 0.84375 4.4062 4.6875 7.5 9.1875 7.5s8.3438-3.1875 9.1875-7.5c18.281-91.219 88.969-161.9 180.19-180.19 4.4062-0.84375 7.5-4.6875 7.5-9.1875s-3.1875-8.3438-7.5-9.1875zm-266.26-600.37c62.719 12.562 111.38 61.219 123.94 123.94 0.84375 4.4062 4.6875 7.5 9.1875 7.5s8.3438-3.1875 9.1875-7.5c12.562-62.719 61.219-111.38 123.94-123.94 4.4062-0.84375 7.5-4.6875 7.5-9.1875s-3.1875-8.3438-7.5-9.1875c-62.719-12.562-111.38-61.219-123.94-123.94-0.84375-4.4062-4.6875-7.5-9.1875-7.5s-8.3438 3.1875-9.1875 7.5c-12.562 62.719-61.219 111.38-123.94 123.94-4.3125 0.84375-7.5 4.6875-7.5 9.1875s3.1875 8.3438 7.5 9.1875z"/></svg>';
 						$spellbook[0] = $spellbook[0] . ' ' . $svg_icon;
-						
+
 						// Add it back at the end
 						$submenu['gf_edit_forms'][] = $spellbook;
 						break;

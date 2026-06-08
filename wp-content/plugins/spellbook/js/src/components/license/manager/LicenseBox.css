@@ -135,6 +135,19 @@
     color: #d63638 !important; /* WordPress error red */
 }
 
+.license-box__unavailable-notice {
+    grid-column: 2 / -1;
+}
+
+.license-box__support-link {
+    color: #902EEF;
+    text-decoration: none;
+}
+
+.license-box__support-link:hover {
+    text-decoration: underline;
+}
+
 @container spellbook (min-width: 600px) {
     .license-box__form-inputs {
         flex-wrap: wrap;

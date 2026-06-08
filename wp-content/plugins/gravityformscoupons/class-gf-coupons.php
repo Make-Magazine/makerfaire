@@ -11,12 +11,12 @@ if ( class_exists( 'GF_Field' ) ) {
 class GFCoupons extends GFFeedAddOn {
 
 	protected $_version = GF_COUPONS_VERSION;
-	protected $_min_gravityforms_version = '1.9.5';
+	protected $_min_gravityforms_version = '2.8.0';
 	protected $_slug = 'gravityformscoupons';
 	protected $_path = 'gravityformscoupons/coupons.php';
 	protected $_full_path = __FILE__;
 	protected $_url = 'http://www.gravityforms.com';
-	protected $_title = 'Coupons Add-On';
+	protected $_title = 'Gravity Forms Coupons Add-On';
 	protected $_short_title = 'Coupons';
 	protected $_coupon_feed_id = '';
 	protected $_enable_theme_layer = true;
@@ -132,6 +132,17 @@ class GFCoupons extends GFFeedAddOn {
 		}
 
 		return array_merge( parent::styles(), $styles );
+	}
+
+	/**
+	 * Return the plugin's icon for the plugin/form settings menu.
+	 *
+	 * @since 3.6.0
+	 *
+	 * @return string
+	 */
+	public function get_menu_icon() {
+		return 'gform-icon--coupon-alt';
 	}
 
 	/**
@@ -318,14 +329,124 @@ class GFCoupons extends GFFeedAddOn {
 	 * @param array $form The form object currently being processed.
 	 */
 	public function process_feed( $feed, $entry, $form ) {
-		$meta               = $feed['meta'];
-		$starting_count     = empty( $meta['usageCount'] ) ? 0 : $meta['usageCount'];
-		$meta['usageCount'] = $starting_count + 1;
+		// Get the coupon code. Aborting if no coupon code.
+		$coupon_code = rgars( $feed, 'meta/couponCode', '' );
+		if ( empty( $coupon_code ) ) {
+			return;
+		}
 
-		$this->update_feed_meta( $feed['id'], $meta );
-		$this->log_debug( __METHOD__ . "(): Updating usage count from {$starting_count} to {$meta['usageCount']}." );
+		// Only update the usage count once per entry.
+		if ( $this->has_used_coupon( $coupon_code, $entry ) ) {
+			return;
+		}
+
+		/**
+		 * Allows custom logic to be used to determine if the usage count should be updated.
+		 *
+		 * @since 3.5.1
+		 *
+		 * @param bool   $update_usage_count Whether the usage count should be updated. Default is true.
+		 * @param string $coupon_code        The coupon code.
+		 * @param array  $entry              The entry object currently being processed.
+		 * @param array  $form               The form object currently being processed.
+		 * @param array  $feed               The coupon feed currently being processed.
+		 */
+		$update_usage_count = gf_apply_filters( array( 'gform_coupons_update_usage_count', $form['id'] ), true, $coupon_code, $entry, $form, $feed );
+		if ( $update_usage_count ) {
+			// Update the usage count.
+			$this->update_usage_count( $feed, $entry );
+		}
 	}
 
+	/**
+	 * Update the usage count for a given coupon feed and entry.
+	 *
+	 * @since 3.5.1
+	 *
+	 * @param array $feed  The coupon feed currently being processed.
+	 * @param array $entry The entry object currently being processed.
+	 *
+	 * @return void
+	 */
+	public function update_usage_count( $feed, $entry ) {
+		$meta = $feed['meta'];
+
+		// Mark the coupon as used to prevent duplicate usage.
+		$this->mark_coupon_used( rgar( $meta, 'couponCode' ), $entry );
+
+		// Update the usage count.
+		$meta['usageCount'] = empty( rgar( $meta, 'usageCount' ) ) ? 1 : rgar( $meta, 'usageCount' ) + 1;
+		$this->update_feed_meta( $feed['id'], $meta );
+
+		$this->log_debug( __METHOD__ . "(): Updating usage count to {$meta['usageCount']}." );
+	}
+
+	/**
+	 * Entry meta key used to record which coupon codes have counted toward usage for an entry.
+	 *
+	 * @since 3.5.1
+	 *
+	 * @return string
+	 */
+	public function get_used_coupons_meta_key() {
+		return $this->_slug . '_used_coupon_codes';
+	}
+
+	/**
+	 * Records a coupon code on the entry as used (uppercase). Idempotent per code.
+	 *
+	 * @since 3.5.1
+	 *
+	 * @param string $coupon_code The coupon code.
+	 * @param array  $entry       The entry.
+	 *
+	 * @return void
+	 */
+	public function mark_coupon_used( $coupon_code, $entry ) {
+		$used_codes      = $this->get_used_coupons( $entry );
+		$normalized_code = strtoupper( (string) $coupon_code );
+
+		// If this coupon code has already been recorded as used for this entry, do nothing.
+		if ( in_array( $normalized_code, $used_codes, true ) ) {
+			return;
+		}
+
+		$used_codes[] = $normalized_code;
+		gform_update_meta( $entry['id'], $this->get_used_coupons_meta_key(), $used_codes );
+	}
+
+	/**
+	 * Get the used coupon codes for a given entry.
+	 *
+	 * @since 3.5.1
+	 * @param array $entry The entry object currently being processed.
+	 *
+	 * @return array
+	 */
+	public function get_used_coupons( $entry ) {
+		$used_codes = gform_get_meta( $entry['id'], $this->get_used_coupons_meta_key() );
+		if ( empty( $used_codes ) || ! is_array( $used_codes ) ) {
+			$used_codes = array();
+		}
+
+		return array_map( 'strtoupper', $used_codes );
+	}
+
+	/**
+	 * Check if the given coupon code has already been processed for the given entry.
+	 *
+	 * @since 3.5.1
+	 *
+	 * @param string $coupon_code The coupon code.
+	 * @param array  $entry       The entry object currently being processed.
+	 *
+	 * @return bool
+	 */
+	public function has_used_coupon( $coupon_code, $entry ) {
+		$used_codes = $this->get_used_coupons( $entry );
+
+		return in_array( strtoupper( (string) $coupon_code ), $used_codes, true );
+	}
 
 	// # AJAX FUNCTIONS ------------------------------------------------------------------------------------------------
 

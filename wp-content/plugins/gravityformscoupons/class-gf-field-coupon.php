@@ -10,6 +10,24 @@ class GF_Field_Coupon extends GF_Field {
 	public $type = 'coupon';
 
 	/**
+	 * Whether there can be more than one of this field type per form.
+	 *
+	 * @since 3.5.1
+	 *
+	 * @var bool
+	 */
+	public $duplicatable = false;
+
+	/**
+	 * Whether the field can be used in a repeater.
+	 *
+	 * @since 3.5.1
+	 *
+	 * @var bool
+	 */
+	public $repeatable = false;
+
+	/**
 	 * The JSON details for the applied coupon codes.
 	 *
 	 * @since 2.10

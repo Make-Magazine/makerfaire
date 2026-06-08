@@ -331,6 +331,11 @@ ul.gum-menu{
 .popover-box .close-pop:after{ -webkit-transform:  translate(-50%, -50%) rotate(-45deg); -ms-transform:  translate(-50%, -50%) rotate(-45deg);-o-transform:  translate(-50%, -50%) rotate(-45deg);transform:  translate(-50%, -50%) rotate(-45deg);}
 .popover-box .pop-title{ display: block; }
 
+[data-elementor-device-mode=tablet] .elementor-widget-gum_popover.elementor-tablet-align-justify .popover-button-wrapper,
+[data-elementor-device-mode=mobile] .elementor-widget-gum_popover.elementor-mobile-align-justify .popover-button-wrapper{ display: block; }
+[data-elementor-device-mode=tablet] .elementor-widget-gum_popover.elementor-tablet-align-justify .elementor-button,
+[data-elementor-device-mode=mobile] .elementor-widget-gum_popover.elementor-mobile-align-justify .elementor-button{ width: 100%; }
+
 @media (max-width: 767px) { .popover-box{ max-width: 100%;}}
 @media (min-width: 768px) {
 	.popover-box{visibility: hidden;opacity: 0;	position: absolute; width: 220px; height: auto;right: auto;left: 50%;top: 100%;overflow: visible;-webkit-transform: translate(-50%, 20px);-ms-transform: translate(-50%, 20px);-o-transform: translate(-50%, 20px);transform: translate(-50%, 20px);	}
@@ -577,18 +582,6 @@ article .posts-meta{ list-style: none; padding: 0; margin: 0; display: -webkit-b
 .grid-posts article .post-content {padding: 30px; position: relative;}
 .grid-posts article .post-content .post-title,.grid-posts article .post-top .post-title{ line-height: unset; font-size: unset; font-family: unset; font-weight: normal;letter-spacing: unset;word-spacing: unset;}
 
-.related-posts .elementor-button-wrap.button-align-full .elementor-button,
-.grid-posts article .elementor-button-wrap.button-align-full .elementor-button,
-.grid-posts article .elementor-button-wrap.button-align-justify .elementor-button{ display: block;}
-.related-posts .elementor-button-wrap.button-align-full .elementor-button .elementor-button-text,
-.grid-posts article .elementor-button-wrap.button-align-full .elementor-button .elementor-button-text,
-.grid-posts article .elementor-button-wrap.button-align-justify .elementor-button .elementor-button-text{ -webkit-box-flex: 0; -ms-flex-positive: 0; flex-grow: 0;}
-.related-posts .elementor-button-wrap.button-align-right,
-.grid-posts article .elementor-button-wrap.button-align-right{ text-align: right;}
-.related-posts .elementor-button-wrap.button-align-left,
-.grid-posts article .elementor-button-wrap.button-align-left{ text-align: left;}
-.related-posts .elementor-button-wrap.button-align-center,
-.grid-posts article .elementor-button-wrap.button-align-center{ text-align: center;}
 
 .grid-posts .grid-post article .blog-image img{ width: 100%;}
 .grid-posts .grid-post.image-position-left article,
@@ -608,6 +601,40 @@ article .posts-meta{ list-style: none; padding: 0; margin: 0; display: -webkit-b
 .grid-posts .grid-post.image-position-left article .blog-image img,
 .grid-posts .grid-post.image-position-right article .blog-image,
 .grid-posts .grid-post.image-position-right article .blog-image img{ height: 100%; }
+
+
+[data-elementor-device-mode=mobile] :where(.elementor-widget-gum_post_related,.elementor-widget-gum_posts_grid).readmore-tablet-align-left:not([class*=readmore-mobile]) .elementor-button-wrap,
+[data-elementor-device-mode=mobile] :where(.elementor-widget-gum_post_related,.elementor-widget-gum_posts_grid).readmore-mobile-align-left .elementor-button-wrap,
+[data-elementor-device-mode=tablet] :where(.elementor-widget-gum_post_related,.elementor-widget-gum_posts_grid).readmore-tablet-align-left .elementor-button-wrap{ text-align: left; }
+
+:where(.elementor-widget-gum_post_related,.elementor-widget-gum_posts_grid).readmore-align-center .elementor-button-wrap,
+[data-elementor-device-mode=mobile] :where(.elementor-widget-gum_post_related,.elementor-widget-gum_posts_grid).readmore-tablet-align-center:not([class*=readmore-mobile]) .elementor-button-wrap,
+[data-elementor-device-mode=mobile] :where(.elementor-widget-gum_post_related,.elementor-widget-gum_posts_grid).readmore-mobile-align-center .elementor-button-wrap,
+[data-elementor-device-mode=tablet] :where(.elementor-widget-gum_post_related,.elementor-widget-gum_posts_grid).readmore-tablet-align-center .elementor-button-wrap{ text-align: center; }
+
+:where(.elementor-widget-gum_post_related,.elementor-widget-gum_posts_grid).readmore-align-right .elementor-button-wrap,
+[data-elementor-device-mode=mobile] :where(.elementor-widget-gum_post_related,.elementor-widget-gum_posts_grid).readmore-mobile-align-right .elementor-button-wrap,
+[data-elementor-device-mode=mobile] :where(.elementor-widget-gum_post_related,.elementor-widget-gum_posts_grid).readmore-tablet-align-right:not([class*=readmore-mobile]) .elementor-button-wrap,
+[data-elementor-device-mode=tablet] :where(.elementor-widget-gum_post_related,.elementor-widget-gum_posts_grid).readmore-tablet-align-right .elementor-button-wrap{ text-align: right; }
+
+.elementor-widget-gum_pricetable.button-align-justify .elementor-button,
+[data-elementor-device-mode=tablet] .elementor-widget-gum_pricetable.button-tablet-align-justify .elementor-button,
+[data-elementor-device-mode=mobile] .elementor-widget-gum_pricetable.button-mobile-align-justify .elementor-button,
+[data-elementor-device-mode=mobile] .elementor-widget-gum_pricetable.button-mobile-align-justify:not([class*=button-mobile]) .elementor-button,
+:where(.elementor-widget-gum_post_related,.elementor-widget-gum_posts_grid).readmore-align-full .elementor-button,
+[data-elementor-device-mode=mobile] :where(.elementor-widget-gum_post_related,.elementor-widget-gum_posts_grid).readmore-mobile-align-full .elementor-button,
+[data-elementor-device-mode=mobile] :where(.elementor-widget-gum_post_related,.elementor-widget-gum_posts_grid).readmore-tablet-align-full:not([class*=readmore-mobile]) .elementor-button,
+[data-elementor-device-mode=tablet] :where(.elementor-widget-gum_post_related,.elementor-widget-gum_posts_grid).readmore-tablet-align-full .elementor-button{ display: block; }
+
+:where(.elementor-widget-gum_post_related,.elementor-widget-gum_posts_grid).readmore-align-full .elementor-button .elementor-button-text,
+[data-elementor-device-mode=mobile] :where(.elementor-widget-gum_post_related,.elementor-widget-gum_posts_grid).readmore-mobile-align-full .elementor-button .elementor-button-text,
+[data-elementor-device-mode=mobile] :where(.elementor-widget-gum_post_related,.elementor-widget-gum_posts_grid).readmore-tablet-align-full:not([class*=readmore-mobile]) .elementor-button .elementor-button-text,
+[data-elementor-device-mode=tablet] :where(.elementor-widget-gum_post_related,.elementor-widget-gum_posts_grid).readmore-tablet-align-full .elementor-button .elementor-button-text{ -webkit-box-flex: 0; -ms-flex-positive: 0; flex-grow: 0;}
+
+[data-elementor-device-mode=tablet] .elementor-widget-gum_pricetable.button-tablet-align-center .elementor-button,
+[data-elementor-device-mode=mobile] .elementor-widget-gum_pricetable.button-mobile-align-center .elementor-button,
+[data-elementor-device-mode=mobile] .elementor-widget-gum_pricetable.button-tablet-align-center:not([class*=button-mobile]) .elementor-button{ display: inline-block; }
+
 
 [data-elementor-device-mode=mobile] .grid-posts .grid-post.mobile-force-ontop article{ display: block!important;}
 [data-elementor-device-mode=mobile] .grid-posts .grid-post.mobile-force-ontop article .post-top,

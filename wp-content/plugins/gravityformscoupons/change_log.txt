@@ -1,3 +1,10 @@
+### 3.5.1 | 2026-04-28
+- Added [`gform_coupons_update_usage_count`](https://docs.gravityforms.com/gform_coupons_update_usage_count/) filter to allow custom code to determine when the usage count should be updated (i.e. when an entry is marked as Paid).
+- Updated the Coupon field so that it can’t be placed in a repeater or duplicated in the form editor.
+- Updated the title that displays on the logging page.
+- Fixed an issue where the Coupon icon is not displayed on the Uninstall screen.
+- Fixed an issue that causes the coupon usage count to be updated multiple times for a single submission in certain situations such as when using the Stripe Add-On.
+
 ### 3.5.0 | 2025-07-15
 - Added support for the new Products Javascript API by adding the total discount amount to the products state object.
 - Fixed PHP warnings that can occur if a submitted coupon is deleted between the coupon code passing validation and the entry being saved.

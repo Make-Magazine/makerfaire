@@ -447,10 +447,10 @@ class GravityPerks_REST_License_Controller extends WP_REST_Controller {
 
 		return [
 			'key' => $this->api->get_license_key($product_type),
-			'status' => $license_data['license'],
+			'status' => rgar( $license_data, 'license' ),
 			'registered_products' => $registered_products,
 			'registered_products_limit' => $registered_products_limit,
-			'valid' => $license_data['valid'],
+			'valid' => rgar( $license_data, 'valid' ),
 			'product_type' => $product_type,
 			'is_bundle' => $this->api->is_bundle_type($product_type),
 			'type' => rgar( $license_data, 'price_name' ),
