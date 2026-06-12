@@ -111,6 +111,11 @@ if (isset($entry->errors)) {
 
     if (isset($entry['320']) && $entry['320'] != '') {
         $mainCategory = get_term($entry['320']);
+        // if entry 320 is a term and not a number
+        if ( ! $mainCategory || is_wp_error( $mainCategory ) ) {
+            $mainCategory = get_term_by( 'name', $entry['320'], 'makerfaire_category' );
+        }
+
         $mainCategoryName = (isset($mainCategory->name) ? $mainCategory->name : '');
         if (isset($mainCategory->taxonomy)) {
             $mainCategoryIconType = get_field('icon_type', $mainCategory->taxonomy . '_' . $mainCategory->term_id);
@@ -128,10 +133,14 @@ if (isset($entry->errors)) {
         $categories[] = $mainCategoryName;
     }
 
-    // get terms from secondary catetgories
+    // get terms from secondary categories
     foreach ($entry as $key => $value) {
         if (isset($key) && strpos($key, '321.') !== false && $value != null) {
             $cat=get_term($value);
+            // if entry 321 is a term and not a number
+            if ( ! $cat || is_wp_error( $cat ) ) {
+                $cat = get_term_by( 'name', $value, 'makerfaire_category' );
+            }
             
             if (isset($cat->name) &&  $cat->name != $mainCategoryName) {
                 $categories[] = $cat->name;
@@ -151,6 +160,10 @@ if (isset($entry->errors)) {
     $showcase = '';
 
     $project_name = (isset($entry['151']) ? $entry['151'] : '');  //Change Project Name
+
+    error_log(print_r($project_name,true));
+    error_log(print_r($categories,true));
+    error_log(print_r($categoryDisplay,true));
 
     $project_photo = (isset($entry['22']) ? $entry['22'] : '');
     //for BA24, the single photo was changed to a multi image which messed things up a bit
