@@ -651,3 +651,7 @@ b, strong {
     display: none !important;
   }
 }
+//hide auth0 sign up button. they need to go to make.co to sign up
+#makerfaire .auth0-lock.auth0-lock .auth0-lock-tabs li:not(.auth0-lock-tabs-current) {
+  display:none;
+}
