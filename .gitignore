@@ -32,7 +32,7 @@ wp-content/cache/supercache/*
 .htaccess
 _wpeprivate*
 wp-content/object-cache.php
-wp-content/mu-plugins/*
+wp-content/mu-plugins/
 
 # wp core (as of 4.9.5)
 /db-config.php
