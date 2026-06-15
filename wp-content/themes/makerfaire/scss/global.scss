@@ -22,6 +22,12 @@
        url('../fonts/Roboto-Bold.woff') format('woff');
 	font-display: swap;
 }
+@font-face {
+	font-family: 'Rubik Dirt';
+	src:  url('../fonts/RubikDirt-Regular.woff2') format('woff2'),
+       url('../fonts/RubikDirt-Regular.woff') format('woff');
+	font-display: swap;
+}
 body {
   font-weight: 300;
   overflow-x: hidden;

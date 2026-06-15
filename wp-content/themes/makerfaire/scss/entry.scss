@@ -3,10 +3,11 @@
 		background: #fff;
 		h1, h2, h4 {
 			color: #2D91C3;
-			font-family: "Roboto Bold", Sans-serif;
-			font-size: 30px;
+			font-family: "Rubik Dirt", "Roboto Bold", Sans-serif;
+			font-size: 32px;
 			margin: 0px;
 		}
+		h1 { font-size: 36px; }
 		h2.faireName {
 			font-size: 24px;
 			margin: 0px;
@@ -57,7 +58,7 @@
 				}
 				.embed-youtube, .embed-vimeo {
 					margin-bottom: 0px;
-					border-radius: 5px !important;
+					//border-radius: 5px !important;
 				}
 			}
 			&#categoryList {
@@ -91,7 +92,7 @@
 				aspect-ratio: 3 / 2;
 				overflow: hidden;
 				display: flex;
-				border-radius: 5px;
+				//border-radius: 5px;
 				// Fallback
 				@supports not (aspect-ratio: auto) {
 					&::before {
@@ -110,7 +111,7 @@
 				object-fit: cover;
 				object-position: top;
 				width: 100%;
-				border-radius: 5px;
+				//border-radius: 5px;
 			}
 			&.small-picture {
 				justify-content: center;
@@ -162,7 +163,7 @@
 					img {
 						width: fit-content;
 						margin: 0 auto;
-						border-radius: 5px;
+						//border-radius: 5px;
 					}
 				}
 			}
@@ -173,8 +174,8 @@
 		.entry-box {
 			border-style: double;
 			border-width: 5px;
-			border-radius: 5px;
-			padding: 15px;
+			//border-radius: 5px;
+			padding: 15px 20px;
 			display: flex;
 			flex-direction: column;
 			align-self: stretch;
