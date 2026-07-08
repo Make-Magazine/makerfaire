@@ -440,7 +440,7 @@ function getSocial($entrySocial) {
         $socialBlock = '<span class="social-links reversed">';
 
         //only show the first 5 social links entered
-        foreach (array_slice($socialArray, 0, 5) as $link) {
+        foreach (array_slice((array)$socialArray, 0, 5) as $link) {
             if(!$link || !isset($link['Your Link']) || $link['Your Link'] == ''){
                 continue;
             }
