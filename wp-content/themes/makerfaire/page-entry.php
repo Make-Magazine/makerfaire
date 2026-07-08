@@ -161,10 +161,6 @@ if (isset($entry->errors)) {
 
     $project_name = (isset($entry['151']) ? $entry['151'] : '');  //Change Project Name
 
-    error_log(print_r($project_name,true));
-    error_log(print_r($categories,true));
-    error_log(print_r($categoryDisplay,true));
-
     $project_photo = (isset($entry['22']) ? $entry['22'] : '');
     //for BA24, the single photo was changed to a multi image which messed things up a bit
     $photo = json_decode($project_photo);
