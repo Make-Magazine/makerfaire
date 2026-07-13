@@ -304,3 +304,19 @@ ul#input_321 li {
   }
 
 }
+
+// following section necessary to keep metaboxes always open in wp version 7.0
+.interface-interface-skeleton__content {
+	display: block !important;
+}
+/* Force the Meta Boxes region to always take its full height */
+.edit-post-meta-boxes-main {
+    height: auto !important;
+}
+.has-metaboxes .interface-interface-skeleton__content:has(.edit-post-meta-boxes-main) .editor-visual-editor {
+    overflow: visible !important;
+}
+.editor-resizable-editor {
+    height: 100vh !important;
+    min-height: 500px !important;
+}
