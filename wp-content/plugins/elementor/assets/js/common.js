@@ -361,6 +361,60 @@ var EditorOneEventManager = exports.EditorOneEventManager = /*#__PURE__*/functio
       }
       return this.dispatchEvent(config === null || config === void 0 || (_config$names1 = config.names) === null || _config$names1 === void 0 || (_config$names1 = _config$names1.editorOne) === null || _config$names1 === void 0 ? void 0 : _config$names1.widgetPanelSearch, payload);
     }
+  }, {
+    key: "createWpDashPayload",
+    value: function createWpDashPayload() {
+      var _config$appTypes$wpDa, _config$appTypes5, _config$locations11;
+      var overrides = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+      var config = this.getConfig();
+      return this.createBasePayload(_objectSpread({
+        window_name: (_config$appTypes$wpDa = config === null || config === void 0 || (_config$appTypes5 = config.appTypes) === null || _config$appTypes5 === void 0 ? void 0 : _config$appTypes5.wpDash) !== null && _config$appTypes$wpDa !== void 0 ? _config$appTypes$wpDa : 'wpdash',
+        target_location: this.toLowerSnake(config === null || config === void 0 || (_config$locations11 = config.locations) === null || _config$locations11 === void 0 ? void 0 : _config$locations11.wpDashAdmin),
+        location_l2: ''
+      }, overrides));
+    }
+  }, {
+    key: "sendWpDashElementorMenuClick",
+    value: function sendWpDashElementorMenuClick() {
+      var _config$names10, _config$triggers10, _config$targetTypes11, _config$interactionRe13, _config$secondaryLoca11;
+      var config = this.getConfig();
+      return this.dispatchEvent(config === null || config === void 0 || (_config$names10 = config.names) === null || _config$names10 === void 0 || (_config$names10 = _config$names10.editorOne) === null || _config$names10 === void 0 ? void 0 : _config$names10.wpDashElementorMenuClick, this.createWpDashPayload({
+        interaction_type: this.toLowerSnake(config === null || config === void 0 || (_config$triggers10 = config.triggers) === null || _config$triggers10 === void 0 ? void 0 : _config$triggers10.click),
+        target_type: config === null || config === void 0 || (_config$targetTypes11 = config.targetTypes) === null || _config$targetTypes11 === void 0 ? void 0 : _config$targetTypes11.wpDashAdminMenuItem,
+        target_name: 'elementor_menu_item',
+        interaction_result: config === null || config === void 0 || (_config$interactionRe13 = config.interactionResults) === null || _config$interactionRe13 === void 0 ? void 0 : _config$interactionRe13.elementorSideMenuOpened,
+        location_l1: this.toLowerSnake(config === null || config === void 0 || (_config$secondaryLoca11 = config.secondaryLocations) === null || _config$secondaryLoca11 === void 0 ? void 0 : _config$secondaryLoca11.wpDashElementorCoreMenu),
+        interaction_description: 'core_user_clicked_elementor_menu_item'
+      }));
+    }
+  }, {
+    key: "sendWpDashEditorSubMenuHover",
+    value: function sendWpDashEditorSubMenuHover() {
+      var _config$names11, _config$triggers11, _config$targetTypes12, _config$interactionRe14, _config$secondaryLoca12;
+      var config = this.getConfig();
+      return this.dispatchEvent(config === null || config === void 0 || (_config$names11 = config.names) === null || _config$names11 === void 0 || (_config$names11 = _config$names11.editorOne) === null || _config$names11 === void 0 ? void 0 : _config$names11.wpDashEditorSubMenuHover, this.createWpDashPayload({
+        interaction_type: this.toLowerSnake(config === null || config === void 0 || (_config$triggers11 = config.triggers) === null || _config$triggers11 === void 0 ? void 0 : _config$triggers11.hover),
+        target_type: config === null || config === void 0 || (_config$targetTypes12 = config.targetTypes) === null || _config$targetTypes12 === void 0 ? void 0 : _config$targetTypes12.wpDashEditorMenu,
+        target_name: 'wpdash_editor_sub_menu',
+        interaction_result: config === null || config === void 0 || (_config$interactionRe14 = config.interactionResults) === null || _config$interactionRe14 === void 0 ? void 0 : _config$interactionRe14.editorSubMenuOpened,
+        location_l1: this.toLowerSnake(config === null || config === void 0 || (_config$secondaryLoca12 = config.secondaryLocations) === null || _config$secondaryLoca12 === void 0 ? void 0 : _config$secondaryLoca12.wpDashElementorCoreSubMenu),
+        interaction_description: 'core_user_hovered_sub_menu'
+      }));
+    }
+  }, {
+    key: "sendWpDashThemeBuilderClick",
+    value: function sendWpDashThemeBuilderClick() {
+      var _config$names12, _config$triggers12, _config$targetTypes13, _config$interactionRe15, _config$secondaryLoca13;
+      var config = this.getConfig();
+      return this.dispatchEvent(config === null || config === void 0 || (_config$names12 = config.names) === null || _config$names12 === void 0 || (_config$names12 = _config$names12.editorOne) === null || _config$names12 === void 0 ? void 0 : _config$names12.wpDashThemeBuilderClick, this.createWpDashPayload({
+        interaction_type: this.toLowerSnake(config === null || config === void 0 || (_config$triggers12 = config.triggers) === null || _config$triggers12 === void 0 ? void 0 : _config$triggers12.click),
+        target_type: config === null || config === void 0 || (_config$targetTypes13 = config.targetTypes) === null || _config$targetTypes13 === void 0 ? void 0 : _config$targetTypes13.wpDashSubMenuItem,
+        target_name: 'theme_builder_menu_item',
+        interaction_result: config === null || config === void 0 || (_config$interactionRe15 = config.interactionResults) === null || _config$interactionRe15 === void 0 ? void 0 : _config$interactionRe15.themeBuilderPromotionWindow,
+        location_l1: this.toLowerSnake(config === null || config === void 0 || (_config$secondaryLoca13 = config.secondaryLocations) === null || _config$secondaryLoca13 === void 0 ? void 0 : _config$secondaryLoca13.wpDashThemeBuilder),
+        interaction_description: 'core_user_clicked_theme_builder_menu_item'
+      }));
+    }
   }]);
 }();
 var createDebouncedFinderSearch = exports.createDebouncedFinderSearch = function createDebouncedFinderSearch() {
@@ -2133,7 +2187,8 @@ exports["default"] = void 0;
 var eventsConfig = {
   appTypes: {
     editor: 'editor',
-    wpAdmin: 'wpadmin'
+    wpAdmin: 'wpadmin',
+    wpDash: 'wpdash'
   },
   targetTypes: {
     dropdownItem: 'dropdown_item',
@@ -2143,7 +2198,10 @@ var eventsConfig = {
     searchInput: 'search_input',
     searchResult: 'search_result',
     buttons: 'buttons',
-    searchWidget: 'search_widget'
+    searchWidget: 'search_widget',
+    wpDashAdminMenuItem: 'wpdash_admin_menu_item',
+    wpDashEditorMenu: 'wpdash_editor_menu',
+    wpDashSubMenuItem: 'wpdash_sub_menu_item'
   },
   interactionResults: {
     actionSelected: 'action_selected',
@@ -2158,7 +2216,10 @@ var eventsConfig = {
     noResults: 'no_results',
     selected: 'selected',
     promotionViewed: 'promotion_viewed',
-    upgradeNow: 'upgrade_now'
+    upgradeNow: 'upgrade_now',
+    elementorSideMenuOpened: 'elementor_side_menu_opened',
+    editorSubMenuOpened: 'wpdash_editor_sub_menu_opened',
+    themeBuilderPromotionWindow: 'theme_builder_promotion_window'
   },
   targetNames: {
     publishDropdown: {
@@ -2183,7 +2244,8 @@ var eventsConfig = {
     pageLoaded: 'Page Loaded',
     typing: 'Typing',
     tabSelect: 'Tab Select',
-    insert: 'Insert'
+    insert: 'Insert',
+    hover: 'Hover'
   },
   locations: {
     widgetPanel: 'Widget Panel',
@@ -2202,6 +2264,7 @@ var eventsConfig = {
     variables: 'Variables Panel',
     variablesManager: 'Variables Manager',
     admin: 'WP admin',
+    wpDashAdmin: 'wpdash_admin',
     structurePanel: 'Structure Panel',
     canvas: 'Canvas',
     leftPanel: 'Left Panel',
@@ -2290,7 +2353,10 @@ var eventsConfig = {
     searchBar: 'Search Bar',
     finderResults: 'Finder Results',
     libraryTabs: 'Library Tabs',
-    assetCard: 'Asset Card'
+    assetCard: 'Asset Card',
+    wpDashElementorCoreMenu: 'elementor_editor_core_menu',
+    wpDashElementorCoreSubMenu: 'elementor_editor_core_sub_menu',
+    wpDashThemeBuilder: 'wpdash_core_sub_menu_theme_builder'
   },
   elements: {
     accordionSection: 'Accordion section',
@@ -2416,7 +2482,10 @@ var eventsConfig = {
       finderSearchInput: 'finder_search_input',
       finderResultSelect: 'finder_result_select',
       canvasEmptyBoxAction: 'canvas_empty_box_action',
-      widgetPanelSearch: 'widget_panel_search'
+      widgetPanelSearch: 'widget_panel_search',
+      wpDashElementorMenuClick: 'wpdash_elementor_menu_click',
+      wpDashEditorSubMenuHover: 'wpdash_editor_sub_menu_hover',
+      wpDashThemeBuilderClick: 'wpdash_theme_builder_click'
     },
     interactions: {
       created: 'interactions_created'
@@ -2457,7 +2526,6 @@ var _defineProperty2 = _interopRequireDefault(__webpack_require__(/*! @babel/run
 var _eventsConfig = _interopRequireDefault(__webpack_require__(/*! ./events-config */ "../core/common/modules/events-manager/assets/js/events-config.js"));
 var _mixpanelBrowser = _interopRequireWildcard(__webpack_require__(/*! mixpanel-browser */ "../node_modules/mixpanel-browser/dist/mixpanel.module.js"));
 var _tiers = __webpack_require__(/*! elementor-utils/tiers */ "../assets/dev/js/utils/tiers.js");
-var _sessionRecording = __webpack_require__(/*! ./session-recording */ "../core/common/modules/events-manager/assets/js/session-recording.js");
 function _interopRequireWildcard(e, t) { if ("function" == typeof WeakMap) var r = new WeakMap(), n = new WeakMap(); return (_interopRequireWildcard = function _interopRequireWildcard(e, t) { if (!t && e && e.__esModule) return e; var o, i, f = { __proto__: null, default: e }; if (null === e || "object" != _typeof(e) && "function" != typeof e) return f; if (o = t ? n : r) { if (o.has(e)) return o.get(e); o.set(e, f); } for (var _t2 in e) "default" !== _t2 && {}.hasOwnProperty.call(e, _t2) && ((i = (o = Object.defineProperty) && Object.getOwnPropertyDescriptor(e, _t2)) && (i.get || i.set) ? o(f, _t2, i) : f[_t2] = e[_t2]); return f; })(e, t); }
 function ownKeys(e, r) { var t = Object.keys(e); if (Object.getOwnPropertySymbols) { var o = Object.getOwnPropertySymbols(e); r && (o = o.filter(function (r) { return Object.getOwnPropertyDescriptor(e, r).enumerable; })), t.push.apply(t, o); } return t; }
 function _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t = null != arguments[r] ? arguments[r] : {}; r % 2 ? ownKeys(Object(t), !0).forEach(function (r) { (0, _defineProperty2.default)(e, r, t[r]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(e, Object.getOwnPropertyDescriptors(t)) : ownKeys(Object(t)).forEach(function (r) { Object.defineProperty(e, r, Object.getOwnPropertyDescriptor(t, r)); }); } return e; }
@@ -2481,13 +2549,11 @@ var _default = exports["default"] = /*#__PURE__*/function (_elementorModules$Mod
   return (0, _createClass2.default)(_default, [{
     key: "onInit",
     value: function onInit() {
-      var _elementorCommon$conf,
-        _this2 = this;
+      var _this2 = this;
       this.config = _eventsConfig.default;
       if (!this.canSendEvents()) {
         return;
       }
-      (0, _sessionRecording.configureSessionRecording)((_elementorCommon$conf = elementorCommon.config.editor_events) === null || _elementorCommon$conf === void 0 ? void 0 : _elementorCommon$conf.session_recording_events);
       this.initializeMixpanel(function () {
         return _this2.enableTracking();
       });
@@ -2498,21 +2564,21 @@ var _default = exports["default"] = /*#__PURE__*/function (_elementorModules$Mod
       if (mixpanelInstance && mixpanelInstance.isInitialized) {
         onLoaded(mixpanelInstance);
       } else {
-        var _elementorCommon$conf2;
-        mixpanelInstance = _mixpanelBrowser.default.init((_elementorCommon$conf2 = elementorCommon.config.editor_events) === null || _elementorCommon$conf2 === void 0 ? void 0 : _elementorCommon$conf2.token, {
+        var _elementorCommon$conf, _elementorCommon$conf2, _elementorCommon$conf3, _elementorCommon$conf4, _elementorCommon$conf5;
+        mixpanelInstance = _mixpanelBrowser.default.init((_elementorCommon$conf = elementorCommon.config.editor_events) === null || _elementorCommon$conf === void 0 ? void 0 : _elementorCommon$conf.token, {
           persistence: 'localStorage',
+          debug: (_elementorCommon$conf2 = (_elementorCommon$conf3 = elementorCommon.config.editor_events) === null || _elementorCommon$conf3 === void 0 ? void 0 : _elementorCommon$conf3.debug) !== null && _elementorCommon$conf2 !== void 0 ? _elementorCommon$conf2 : false,
           autocapture: false,
           flags: true,
           api_host: 'https://api-eu.mixpanel.com',
           loaded: onLoaded,
-          record_sessions_percent: 0,
+          record_sessions_percent: (_elementorCommon$conf4 = (_elementorCommon$conf5 = elementorCommon.config.editor_events) === null || _elementorCommon$conf5 === void 0 ? void 0 : _elementorCommon$conf5.session_recording_percent) !== null && _elementorCommon$conf4 !== void 0 ? _elementorCommon$conf4 : 0,
           record_idle_timeout_ms: 60 * 1000,
           // 60 Seconds
           record_min_ms: 5 * 1000,
           // 5 Seconds
-          record_max_ms: 30 * 1000,
-          // 30 Seconds
-          record_mask_text_selector: ''
+          record_mask_text_selector: '',
+          remote_settings_mode: 'strict'
         }, 'elementor-editor');
       }
       elementorCommon.config.editor_events.mixpanelInstance = mixpanelInstance;
@@ -2520,21 +2586,21 @@ var _default = exports["default"] = /*#__PURE__*/function (_elementorModules$Mod
   }, {
     key: "enableTracking",
     value: function enableTracking() {
-      var _elementorCommon$conf3;
+      var _elementorCommon$conf6;
       if (!this.isMixpanelReady()) {
         return;
       }
-      var userId = (_elementorCommon$conf3 = elementorCommon.config.editor_events) === null || _elementorCommon$conf3 === void 0 ? void 0 : _elementorCommon$conf3.user_id;
+      var userId = (_elementorCommon$conf6 = elementorCommon.config.editor_events) === null || _elementorCommon$conf6 === void 0 ? void 0 : _elementorCommon$conf6.user_id;
       mixpanelInstance.register({
         appType: 'Editor'
       });
       if (userId) {
-        var _elementorCommon$conf4;
+        var _elementorCommon$conf7;
         mixpanelInstance.identify(userId);
         mixpanelInstance.people.set_once({
           $user_id: userId,
           $last_login: new Date().toISOString(),
-          $plan_type: ((_elementorCommon$conf4 = elementorCommon.config.library_connect) === null || _elementorCommon$conf4 === void 0 ? void 0 : _elementorCommon$conf4.plan_type) || _tiers.TIERS.free
+          $plan_type: ((_elementorCommon$conf7 = elementorCommon.config.library_connect) === null || _elementorCommon$conf7 === void 0 ? void 0 : _elementorCommon$conf7.plan_type) || _tiers.TIERS.free
         });
       }
       this.trackingEnabled = true;
@@ -2543,7 +2609,7 @@ var _default = exports["default"] = /*#__PURE__*/function (_elementorModules$Mod
   }, {
     key: "dispatchEvent",
     value: function dispatchEvent(name, data) {
-      var _elementorCommon$conf5, _elementorCommon$conf6, _elementorCommon$conf7, _elementorCommon$conf8, _elementorCommon$conf9, _elementorCommon$conf0, _elementorCommon$conf1, _elementorCommon$conf10, _elementorCommon$conf11;
+      var _elementorCommon$conf8, _elementorCommon$conf9, _elementorCommon$conf0, _elementorCommon$conf1, _elementorCommon$conf10, _elementorCommon$conf11, _elementorCommon$conf12, _elementorCommon$conf13, _elementorCommon$conf14;
       var options = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
       if (!this.canSendEvents()) {
         return;
@@ -2552,22 +2618,18 @@ var _default = exports["default"] = /*#__PURE__*/function (_elementorModules$Mod
         this.enableTracking();
       }
       var eventData = _objectSpread({
-        user_id: ((_elementorCommon$conf5 = elementorCommon.config.editor_events) === null || _elementorCommon$conf5 === void 0 ? void 0 : _elementorCommon$conf5.user_id) || null,
-        user_roles: ((_elementorCommon$conf6 = elementorCommon.config.library_connect) === null || _elementorCommon$conf6 === void 0 ? void 0 : _elementorCommon$conf6.user_roles) || [],
-        subscription_id: ((_elementorCommon$conf7 = elementorCommon.config.editor_events) === null || _elementorCommon$conf7 === void 0 ? void 0 : _elementorCommon$conf7.subscription_id) || null,
-        user_tier: ((_elementorCommon$conf8 = elementorCommon.config.library_connect) === null || _elementorCommon$conf8 === void 0 ? void 0 : _elementorCommon$conf8.current_access_tier) || null,
-        url: (_elementorCommon$conf9 = elementorCommon.config.editor_events) === null || _elementorCommon$conf9 === void 0 ? void 0 : _elementorCommon$conf9.site_url,
-        wp_version: (_elementorCommon$conf0 = elementorCommon.config.editor_events) === null || _elementorCommon$conf0 === void 0 ? void 0 : _elementorCommon$conf0.wp_version,
-        client_id: (_elementorCommon$conf1 = elementorCommon.config.editor_events) === null || _elementorCommon$conf1 === void 0 ? void 0 : _elementorCommon$conf1.site_key,
-        app_version: (_elementorCommon$conf10 = elementorCommon.config.editor_events) === null || _elementorCommon$conf10 === void 0 ? void 0 : _elementorCommon$conf10.elementor_version,
-        site_language: (_elementorCommon$conf11 = elementorCommon.config.editor_events) === null || _elementorCommon$conf11 === void 0 ? void 0 : _elementorCommon$conf11.site_language,
+        user_id: ((_elementorCommon$conf8 = elementorCommon.config.editor_events) === null || _elementorCommon$conf8 === void 0 ? void 0 : _elementorCommon$conf8.user_id) || null,
+        user_roles: ((_elementorCommon$conf9 = elementorCommon.config.library_connect) === null || _elementorCommon$conf9 === void 0 ? void 0 : _elementorCommon$conf9.user_roles) || [],
+        subscription_id: ((_elementorCommon$conf0 = elementorCommon.config.editor_events) === null || _elementorCommon$conf0 === void 0 ? void 0 : _elementorCommon$conf0.subscription_id) || null,
+        user_tier: ((_elementorCommon$conf1 = elementorCommon.config.library_connect) === null || _elementorCommon$conf1 === void 0 ? void 0 : _elementorCommon$conf1.current_access_tier) || null,
+        url: (_elementorCommon$conf10 = elementorCommon.config.editor_events) === null || _elementorCommon$conf10 === void 0 ? void 0 : _elementorCommon$conf10.site_url,
+        wp_version: (_elementorCommon$conf11 = elementorCommon.config.editor_events) === null || _elementorCommon$conf11 === void 0 ? void 0 : _elementorCommon$conf11.wp_version,
+        client_id: (_elementorCommon$conf12 = elementorCommon.config.editor_events) === null || _elementorCommon$conf12 === void 0 ? void 0 : _elementorCommon$conf12.site_key,
+        app_version: (_elementorCommon$conf13 = elementorCommon.config.editor_events) === null || _elementorCommon$conf13 === void 0 ? void 0 : _elementorCommon$conf13.elementor_version,
+        site_language: (_elementorCommon$conf14 = elementorCommon.config.editor_events) === null || _elementorCommon$conf14 === void 0 ? void 0 : _elementorCommon$conf14.site_language,
         experiments: this.availableExperiments
       }, data);
       mixpanelInstance.track(name, eventData, options);
-      var recordingDecision = (0, _sessionRecording.handleSessionRecording)(name, mixpanelInstance);
-      if (recordingDecision) {
-        mixpanelInstance.track(recordingDecision, eventData);
-      }
     }
   }, {
     key: "featureFlagIsActive",
@@ -2605,8 +2667,8 @@ var _default = exports["default"] = /*#__PURE__*/function (_elementorModules$Mod
     value: function () {
       var _getExperimentVariant = (0, _asyncToGenerator2.default)(/*#__PURE__*/_regenerator.default.mark(function _callee2(experimentName) {
         var defaultValue,
-          _elementorCommon$conf12,
-          _elementorCommon$conf13,
+          _elementorCommon$conf15,
+          _elementorCommon$conf16,
           isAbTestingEnabled,
           variant,
           _args2 = arguments,
@@ -2622,7 +2684,7 @@ var _default = exports["default"] = /*#__PURE__*/function (_elementorModules$Mod
               }
               return _context2.abrupt("return", defaultValue);
             case 2:
-              isAbTestingEnabled = (_elementorCommon$conf12 = (_elementorCommon$conf13 = elementorCommon.config.editor_events) === null || _elementorCommon$conf13 === void 0 ? void 0 : _elementorCommon$conf13.flags_enabled) !== null && _elementorCommon$conf12 !== void 0 ? _elementorCommon$conf12 : false;
+              isAbTestingEnabled = (_elementorCommon$conf15 = (_elementorCommon$conf16 = elementorCommon.config.editor_events) === null || _elementorCommon$conf16 === void 0 ? void 0 : _elementorCommon$conf16.flags_enabled) !== null && _elementorCommon$conf15 !== void 0 ? _elementorCommon$conf15 : false;
               if (isAbTestingEnabled) {
                 _context2.next = 3;
                 break;
@@ -2713,85 +2775,6 @@ var _default = exports["default"] = /*#__PURE__*/function (_elementorModules$Mod
     }
   }]);
 }(elementorModules.Module);
-
-/***/ }),
-
-/***/ "../core/common/modules/events-manager/assets/js/session-recording.js":
-/*!****************************************************************************!*\
-  !*** ../core/common/modules/events-manager/assets/js/session-recording.js ***!
-  \****************************************************************************/
-/***/ ((__unused_webpack_module, exports) => {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", ({
-  value: true
-}));
-exports.configureSessionRecording = configureSessionRecording;
-exports.getIsRecording = getIsRecording;
-exports.handleSessionRecording = handleSessionRecording;
-var RECORD_SESSION_PERCENT = 1;
-var sessionRecordingPairs = [];
-var activeEndEvent = null;
-var isRecording = false;
-function shouldRecordSession(distinctId, percent) {
-  var fraction = Math.min(Math.max(percent / 100, 0), 1);
-  var hash = 0;
-  for (var i = 0; i < distinctId.length; i++) {
-    // eslint-disable-next-line no-bitwise
-    hash = hash * 31 + distinctId.charCodeAt(i) >>> 0;
-  }
-  return hash / 4294967295 < fraction;
-}
-
-/**
- * @param {Array<{start: string, end?: string|null}>} pairs
- */
-function configureSessionRecording(pairs) {
-  if (!Array.isArray(pairs)) {
-    return;
-  }
-  sessionRecordingPairs = pairs.filter(function (pair) {
-    return 'string' === typeof (pair === null || pair === void 0 ? void 0 : pair.start) && pair.start;
-  });
-}
-
-/**
- * Evaluates whether to start/stop recording based on the event name.
- *
- * @param {string}                              name
- * @param {import('mixpanel-browser').Mixpanel} mixpanelInstance
- * @return {'recording_started'|'recording_skipped'|'recording_stopped'|null} The recording decision, or null if no action taken.
- */
-function handleSessionRecording(name, mixpanelInstance) {
-  var matchedPair = sessionRecordingPairs.find(function (pair) {
-    return pair.start === name;
-  });
-  if (matchedPair) {
-    var distinctId = mixpanelInstance.get_distinct_id();
-    if (shouldRecordSession(distinctId, RECORD_SESSION_PERCENT)) {
-      var _matchedPair$end;
-      mixpanelInstance.start_session_recording();
-      isRecording = true;
-      activeEndEvent = (_matchedPair$end = matchedPair.end) !== null && _matchedPair$end !== void 0 ? _matchedPair$end : null;
-      return 'recording_started';
-    }
-    isRecording = false;
-    activeEndEvent = null;
-    return 'recording_skipped';
-  }
-  if (activeEndEvent && name === activeEndEvent) {
-    mixpanelInstance.stop_session_recording();
-    isRecording = false;
-    activeEndEvent = null;
-    return 'recording_stopped';
-  }
-  return null;
-}
-function getIsRecording() {
-  return isRecording;
-}
 
 /***/ }),
 

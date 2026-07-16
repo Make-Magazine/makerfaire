@@ -15,7 +15,8 @@ class Email_Settings {
 	}
 
 	public function to() {
-		return $this->email_settings['to'] ?? get_option( 'admin_email' );
+		return $this->normalize_address_list( $this->email_settings['to'] ?? null )
+			?? get_option( 'admin_email' );
 	}
 
 	public function from() {
@@ -43,14 +44,28 @@ class Email_Settings {
 	}
 
 	public function cc() {
-		return $this->email_settings['cc'] ?? '';
+		return $this->normalize_address_list( $this->email_settings['cc'] ?? null ) ?? '';
 	}
 
 	public function bcc() {
-		return $this->email_settings['bcc'] ?? '';
+		return $this->normalize_address_list( $this->email_settings['bcc'] ?? null ) ?? '';
 	}
 
 	public function content_type() {
 		return $this->email_settings['send-as'] ?? 'html';
+	}
+
+	private function normalize_address_list( $value ) {
+		if ( is_array( $value ) ) {
+			$value = array_filter( array_map( 'trim', array_map( 'strval', $value ) ) );
+
+			return empty( $value ) ? null : implode( ', ', $value );
+		}
+
+		if ( is_string( $value ) && '' !== trim( $value ) ) {
+			return $value;
+		}
+
+		return null;
 	}
 }

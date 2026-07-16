@@ -74,6 +74,7 @@ class Textarea extends Atomic_Widget_Base {
 		return [
 			Section::make()
 				->set_label( __( 'Content', 'elementor-pro' ) )
+				->set_id( 'content' )
 				->set_items( [
 					Text_Control::bind_to( 'placeholder' )
 					  ->set_placeholder( 'Enter placeholder text' )

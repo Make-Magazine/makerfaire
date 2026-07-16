@@ -56,8 +56,6 @@
 
 /*! ../locales/en.js */
 
-/*! ../mcp-registry */
-
 /*! ../names */
 
 /*! ../parseDef.js */
@@ -81,6 +79,8 @@
 /*! ../types.js */
 
 /*! ../util */
+
+/*! ../utils/to-mcp-title */
 
 /*! ../validation/ajv-provider.js */
 
@@ -344,6 +344,8 @@
 
 /*! ./utils/get-active-chat-info */
 
+/*! ./utils/get-model-context */
+
 /*! ./utils/get-sdk */
 
 /*! ./utils/install-angie-plugin */
@@ -365,6 +367,8 @@
 /*! ./utils/save-angie-consent */
 
 /*! ./utils/send-prompt-to-angie */
+
+/*! ./utils/to-mcp-title */
 
 /*! ./validate */
 
@@ -690,6 +694,10 @@
   !*** ./node_modules/zod-to-json-schema/dist/esm/zodToJsonSchema.js ***!
   \*********************************************************************/
 
+/*!*********************************************************************!*\
+  !*** ./packages/packages/libs/editor-mcp/src/utils/to-mcp-title.ts ***!
+  \*********************************************************************/
+
 /*!**********************************************************************!*\
   !*** ./node_modules/zod-to-json-schema/dist/esm/parsers/nullable.js ***!
   \**********************************************************************/
@@ -732,6 +740,10 @@
 
 /*!**************************************************************************!*\
   !*** ./node_modules/zod-to-json-schema/dist/esm/parsers/intersection.js ***!
+  \**************************************************************************/
+
+/*!**************************************************************************!*\
+  !*** ./packages/packages/libs/editor-mcp/src/utils/get-model-context.ts ***!
   \**************************************************************************/
 
 /*!***************************************************************************!*\

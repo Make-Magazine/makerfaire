@@ -1,6 +1,38 @@
 /******/ (() => { // webpackBootstrap
 /******/ 	var __webpack_modules__ = ({
 
+/***/ "../assets/dev/js/editor/utils/preview-iframe-listeners.js":
+/*!*****************************************************************!*\
+  !*** ../assets/dev/js/editor/utils/preview-iframe-listeners.js ***!
+  \*****************************************************************/
+/***/ ((__unused_webpack_module, exports) => {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", ({
+  value: true
+}));
+exports.bindPreviewIframeEvents = bindPreviewIframeEvents;
+function bindPreviewIframeEvents(callback) {
+  var _elementor;
+  var iframeDocument = (_elementor = elementor) === null || _elementor === void 0 || (_elementor = _elementor.$preview) === null || _elementor === void 0 || (_elementor = _elementor[0]) === null || _elementor === void 0 ? void 0 : _elementor.contentDocument;
+  if (!iframeDocument) {
+    return function () {};
+  }
+  var handleEvent = function handleEvent() {
+    return callback();
+  };
+  iframeDocument.addEventListener('click', handleEvent);
+  iframeDocument.addEventListener('keydown', handleEvent);
+  return function () {
+    iframeDocument.removeEventListener('click', handleEvent);
+    iframeDocument.removeEventListener('keydown', handleEvent);
+  };
+}
+
+/***/ }),
+
 /***/ "../modules/atomic-opt-in/assets/js/panel-chip/app-manager.js":
 /*!********************************************************************!*\
   !*** ../modules/atomic-opt-in/assets/js/panel-chip/app-manager.js ***!
@@ -20,6 +52,7 @@ var _classCallCheck2 = _interopRequireDefault(__webpack_require__(/*! @babel/run
 var _createClass2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime/helpers/createClass */ "../node_modules/@babel/runtime/helpers/createClass.js"));
 var _app = _interopRequireDefault(__webpack_require__(/*! ./app */ "../modules/atomic-opt-in/assets/js/panel-chip/app.js"));
 var _client = __webpack_require__(/*! react-dom/client */ "../node_modules/react-dom/client.js");
+var _previewIframeListeners = __webpack_require__(/*! elementor-editor-utils/preview-iframe-listeners */ "../assets/dev/js/editor/utils/preview-iframe-listeners.js");
 var AppManager = exports.AppManager = /*#__PURE__*/function () {
   function AppManager() {
     (0, _classCallCheck2.default)(this, AppManager);
@@ -64,39 +97,24 @@ var AppManager = exports.AppManager = /*#__PURE__*/function () {
       this.popover = null;
     }
   }, {
-    key: "setupIframeEventListeners",
-    value: function setupIframeEventListeners() {
-      var _this2 = this;
-      var previewIframe = document.getElementById('elementor-preview-iframe');
-      if (previewIframe) {
-        var iframeDocument = previewIframe.contentWindow.document;
-        var handleClick = function handleClick() {
-          return _this2.unmount();
-        };
-        iframeDocument.addEventListener('click', handleClick);
-        iframeDocument.addEventListener('keydown', handleClick);
-        this.unbindIframeEvents = function () {
-          iframeDocument.removeEventListener('click', handleClick);
-          iframeDocument.removeEventListener('keydown', handleClick);
-        };
-      }
-    }
-  }, {
     key: "setupRouteListener",
     value: function setupRouteListener() {
-      var _this3 = this;
+      var _this2 = this;
       this.onRoute = function (component, route) {
         if (route !== 'panel/elements/categories' && route !== 'panel/editor/content') {
           return;
         }
-        _this3.unmount();
+        _this2.unmount();
       };
       $e.routes.on('run:after', this.onRoute);
     }
   }, {
     key: "attachEditorEventListeners",
     value: function attachEditorEventListeners() {
-      this.setupIframeEventListeners();
+      var _this3 = this;
+      this.unbindIframeEvents = (0, _previewIframeListeners.bindPreviewIframeEvents)(function () {
+        return _this3.unmount();
+      });
       this.setupRouteListener();
     }
   }, {

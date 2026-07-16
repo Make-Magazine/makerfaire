@@ -1239,6 +1239,38 @@ module.exports = ControlBaseView;
 
 /***/ }),
 
+/***/ "../assets/dev/js/editor/utils/preview-iframe-listeners.js":
+/*!*****************************************************************!*\
+  !*** ../assets/dev/js/editor/utils/preview-iframe-listeners.js ***!
+  \*****************************************************************/
+/***/ ((__unused_webpack_module, exports) => {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", ({
+  value: true
+}));
+exports.bindPreviewIframeEvents = bindPreviewIframeEvents;
+function bindPreviewIframeEvents(callback) {
+  var _elementor;
+  var iframeDocument = (_elementor = elementor) === null || _elementor === void 0 || (_elementor = _elementor.$preview) === null || _elementor === void 0 || (_elementor = _elementor[0]) === null || _elementor === void 0 ? void 0 : _elementor.contentDocument;
+  if (!iframeDocument) {
+    return function () {};
+  }
+  var handleEvent = function handleEvent() {
+    return callback();
+  };
+  iframeDocument.addEventListener('click', handleEvent);
+  iframeDocument.addEventListener('keydown', handleEvent);
+  return function () {
+    iframeDocument.removeEventListener('click', handleEvent);
+    iframeDocument.removeEventListener('keydown', handleEvent);
+  };
+}
+
+/***/ }),
+
 /***/ "../modules/promotions/assets/js/react/app-manager.js":
 /*!************************************************************!*\
   !*** ../modules/promotions/assets/js/react/app-manager.js ***!
@@ -1254,17 +1286,25 @@ Object.defineProperty(exports, "__esModule", ({
 }));
 exports.AppManager = void 0;
 var _react = _interopRequireDefault(__webpack_require__(/*! react */ "react"));
+var _extends2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime/helpers/extends */ "../node_modules/@babel/runtime/helpers/extends.js"));
+var _defineProperty2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime/helpers/defineProperty */ "../node_modules/@babel/runtime/helpers/defineProperty.js"));
 var _classCallCheck2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime/helpers/classCallCheck */ "../node_modules/@babel/runtime/helpers/classCallCheck.js"));
 var _createClass2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime/helpers/createClass */ "../node_modules/@babel/runtime/helpers/createClass.js"));
 var _app = _interopRequireDefault(__webpack_require__(/*! ./app */ "../modules/promotions/assets/js/react/app.js"));
+var _previewIframeListeners = __webpack_require__(/*! elementor-editor-utils/preview-iframe-listeners */ "../assets/dev/js/editor/utils/preview-iframe-listeners.js");
+var _i18n = __webpack_require__(/*! @wordpress/i18n */ "@wordpress/i18n");
 var _client = __webpack_require__(/*! react-dom/client */ "../node_modules/react-dom/client.js");
+function ownKeys(e, r) { var t = Object.keys(e); if (Object.getOwnPropertySymbols) { var o = Object.getOwnPropertySymbols(e); r && (o = o.filter(function (r) { return Object.getOwnPropertyDescriptor(e, r).enumerable; })), t.push.apply(t, o); } return t; }
+function _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t = null != arguments[r] ? arguments[r] : {}; r % 2 ? ownKeys(Object(t), !0).forEach(function (r) { (0, _defineProperty2.default)(e, r, t[r]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(e, Object.getOwnPropertyDescriptors(t)) : ownKeys(Object(t)).forEach(function (r) { Object.defineProperty(e, r, Object.getOwnPropertyDescriptor(t, r)); }); } return e; }
 var AppManager = exports.AppManager = /*#__PURE__*/function () {
   function AppManager() {
     (0, _classCallCheck2.default)(this, AppManager);
     this.promotionInfoTip = null;
-    this.atomicFormPromotionWrapper = null;
+    this.promotionWrapper = null;
     this.onRoute = function () {};
+    this.unbindIframeEvents = function () {};
     this.attachAtomicFormListeners();
+    this.attachWidgetPromotionListeners();
   }
   return (0, _createClass2.default)(AppManager, [{
     key: "getPromotionData",
@@ -1278,10 +1318,39 @@ var AppManager = exports.AppManager = /*#__PURE__*/function () {
       return ((_elementor = elementor) === null || _elementor === void 0 || (_elementor = _elementor.config) === null || _elementor === void 0 ? void 0 : _elementor.atomicFormPromotion) || {};
     }
   }, {
+    key: "resolveWidgetPromotionData",
+    value: function resolveWidgetPromotionData(detail) {
+      var _elementor2, _elementor$config$pro, _elementsPromotion$ac, _elementsPromotion$ac2, _elementsPromotion$ti, _elementsPromotion$co;
+      var promotions = ((_elementor2 = elementor) === null || _elementor2 === void 0 || (_elementor2 = _elementor2.config) === null || _elementor2 === void 0 ? void 0 : _elementor2.v4Promotions) || {};
+      var widgetType = detail.widgetType || '';
+      var normalizedType = widgetType.replace(/[-_]/g, '').toLowerCase();
+      var key = Object.keys(promotions).find(function (promotionKey) {
+        return promotionKey.replace(/[-_]/g, '').toLowerCase() === normalizedType;
+      });
+      var promotionData = key ? promotions[key] : null;
+      var elementsPromotion = ((_elementor$config$pro = elementor.config.promotion) === null || _elementor$config$pro === void 0 ? void 0 : _elementor$config$pro.elements) || {};
+      var fallbackCtaUrl = detail.ctaUrl || ((_elementsPromotion$ac = elementsPromotion.action_button) === null || _elementsPromotion$ac === void 0 || (_elementsPromotion$ac = _elementsPromotion$ac.url) === null || _elementsPromotion$ac === void 0 ? void 0 : _elementsPromotion$ac.replace('%s', widgetType)) || '';
+      var fallbackCtaText = detail.ctaText || ((_elementsPromotion$ac2 = elementsPromotion.action_button) === null || _elementsPromotion$ac2 === void 0 ? void 0 : _elementsPromotion$ac2.text) || '';
+      var widgetName = detail.widgetTitle || detail.title || '';
+      var hideProTag = detail.hideProTag || false;
+      var resolvedPromotionData = promotionData ? _objectSpread(_objectSpread({}, promotionData), {}, {
+        ctaUrl: promotionData.ctaUrl || fallbackCtaUrl,
+        ctaText: promotionData.ctaText || fallbackCtaText,
+        hideProTag: hideProTag
+      }) : {
+        title: detail.title || ((_elementsPromotion$ti = elementsPromotion.title) === null || _elementsPromotion$ti === void 0 ? void 0 : _elementsPromotion$ti.replace('%s', widgetName)) || '',
+        content: detail.content || ((_elementsPromotion$co = elementsPromotion.content) === null || _elementsPromotion$co === void 0 ? void 0 : _elementsPromotion$co.replace('%s', widgetName)) || '',
+        ctaUrl: fallbackCtaUrl,
+        ctaText: fallbackCtaText,
+        hideProTag: hideProTag
+      };
+      return applyProConnectPromotionOverrides(resolvedPromotionData);
+    }
+  }, {
     key: "mount",
     value: function mount(targetNode, selectors) {
-      var _elementor2,
-        _elementor2$getPrefer,
+      var _elementor3,
+        _elementor3$getPrefer,
         _rootElement$getAttri,
         _this = this;
       if (this.promotionInfoTip) {
@@ -1294,7 +1363,7 @@ var AppManager = exports.AppManager = /*#__PURE__*/function () {
       }
       this.attachEditorEventListeners();
       this.promotionInfoTip = (0, _client.createRoot)(rootElement);
-      var colorScheme = ((_elementor2 = elementor) === null || _elementor2 === void 0 || (_elementor2$getPrefer = _elementor2.getPreferences) === null || _elementor2$getPrefer === void 0 ? void 0 : _elementor2$getPrefer.call(_elementor2, 'ui_theme')) || 'auto';
+      var colorScheme = ((_elementor3 = elementor) === null || _elementor3 === void 0 || (_elementor3$getPrefer = _elementor3.getPreferences) === null || _elementor3$getPrefer === void 0 ? void 0 : _elementor3$getPrefer.call(_elementor3, 'ui_theme')) || 'auto';
       var isRTL = elementorCommon.config.isRTL;
       var promotionType = (_rootElement$getAttri = rootElement.getAttribute('data-promotion')) === null || _rootElement$getAttri === void 0 ? void 0 : _rootElement$getAttri.replace('_promotion', '');
       this.promotionInfoTip.render(/*#__PURE__*/_react.default.createElement(_app.default, {
@@ -1307,62 +1376,75 @@ var AppManager = exports.AppManager = /*#__PURE__*/function () {
       }));
     }
   }, {
-    key: "mountAtomicFormPromotion",
-    value: function mountAtomicFormPromotion(targetEl, ctaUrl) {
-      var _elementor3,
-        _elementor3$getPrefer,
+    key: "mountCard",
+    value: function mountCard(targetEl, wrapperClassName, appProps) {
+      var _elementor4,
+        _elementor4$getPrefer,
         _this2 = this;
       this.unmount();
-      this.atomicFormPromotionWrapper = document.createElement('span');
-      this.atomicFormPromotionWrapper.className = 'e-atomic-form-promotion-wrapper';
-      targetEl.appendChild(this.atomicFormPromotionWrapper);
+      this.promotionWrapper = document.createElement('span');
+      this.promotionWrapper.className = wrapperClassName;
+      document.body.appendChild(this.promotionWrapper);
       this.attachEditorEventListeners();
-      var colorScheme = ((_elementor3 = elementor) === null || _elementor3 === void 0 || (_elementor3$getPrefer = _elementor3.getPreferences) === null || _elementor3$getPrefer === void 0 ? void 0 : _elementor3$getPrefer.call(_elementor3, 'ui_theme')) || 'auto';
-      var isRTL = elementorCommon.config.isRTL;
-      var promotionData = this.getAtomicFormPromotionData();
-      this.promotionInfoTip = (0, _client.createRoot)(this.atomicFormPromotionWrapper);
-      this.promotionInfoTip.render(/*#__PURE__*/_react.default.createElement(_app.default, {
-        colorScheme: colorScheme,
-        isRTL: isRTL,
-        cardType: "atomicForm",
-        promotionData: promotionData,
-        ctaUrl: ctaUrl,
+      this.promotionInfoTip = (0, _client.createRoot)(this.promotionWrapper);
+      this.promotionInfoTip.render(/*#__PURE__*/_react.default.createElement(_app.default, (0, _extends2.default)({
+        colorScheme: ((_elementor4 = elementor) === null || _elementor4 === void 0 || (_elementor4$getPrefer = _elementor4.getPreferences) === null || _elementor4$getPrefer === void 0 ? void 0 : _elementor4$getPrefer.call(_elementor4, 'ui_theme')) || 'auto',
+        isRTL: elementorCommon.config.isRTL,
+        anchorTarget: targetEl,
         doClose: function doClose() {
           return _this2.unmount();
         }
-      }));
+      }, appProps)));
     }
   }, {
     key: "attachAtomicFormListeners",
     value: function attachAtomicFormListeners() {
       var _this3 = this;
       document.addEventListener('atomic-form-promotion:open', function (event) {
-        var promotionData = _this3.getAtomicFormPromotionData();
-        _this3.mountAtomicFormPromotion(event.detail.target, promotionData.widgetCtaUrl);
+        var promotionData = applyProConnectPromotionOverrides(_this3.getAtomicFormPromotionData());
+        _this3.mountCard(event.detail.target, 'e-atomic-form-promotion-wrapper', {
+          cardType: 'atomicForm',
+          promotionData: promotionData,
+          ctaUrl: promotionData.widgetCtaUrl
+        });
+      });
+    }
+  }, {
+    key: "attachWidgetPromotionListeners",
+    value: function attachWidgetPromotionListeners() {
+      var _this4 = this;
+      document.addEventListener('widget-promotion:open', function (event) {
+        _this4.mountCard(event.detail.target, 'e-widget-promotion-wrapper', {
+          cardType: 'widgetPromotion',
+          promotionData: _this4.resolveWidgetPromotionData(event.detail)
+        });
       });
     }
   }, {
     key: "unmount",
     value: function unmount() {
+      var _this$promotionWrappe;
       if (this.promotionInfoTip) {
         this.detachEditorEventListeners();
         this.promotionInfoTip.unmount();
+        this.unbindIframeEvents();
       }
-      if (this.atomicFormPromotionWrapper && this.atomicFormPromotionWrapper.parentNode) {
-        this.atomicFormPromotionWrapper.parentNode.removeChild(this.atomicFormPromotionWrapper);
-      }
+      (_this$promotionWrappe = this.promotionWrapper) === null || _this$promotionWrappe === void 0 || (_this$promotionWrappe = _this$promotionWrappe.parentNode) === null || _this$promotionWrappe === void 0 || _this$promotionWrappe.removeChild(this.promotionWrapper);
       this.promotionInfoTip = null;
-      this.atomicFormPromotionWrapper = null;
+      this.promotionWrapper = null;
     }
   }, {
     key: "attachEditorEventListeners",
     value: function attachEditorEventListeners() {
-      var _this4 = this;
+      var _this5 = this;
+      this.unbindIframeEvents = (0, _previewIframeListeners.bindPreviewIframeEvents)(function () {
+        return _this5.unmount();
+      });
       this.onRoute = function (component, route) {
         if (route !== 'panel/elements/categories' && route !== 'panel/editor/content') {
           return;
         }
-        _this4.unmount();
+        _this5.unmount();
       };
       $e.routes.on('run:after', this.onRoute);
     }
@@ -1373,6 +1455,15 @@ var AppManager = exports.AppManager = /*#__PURE__*/function () {
     }
   }]);
 }();
+function applyProConnectPromotionOverrides(promotionData) {
+  if (!elementor.helpers.hasProAndNotConnected()) {
+    return promotionData;
+  }
+  return _objectSpread(_objectSpread({}, promotionData), {}, {
+    ctaUrl: elementorProEditorConfig.urls.connect,
+    ctaText: (0, _i18n.__)('Connect & Activate', 'elementor')
+  });
+}
 
 /***/ }),
 
@@ -1392,41 +1483,78 @@ Object.defineProperty(exports, "__esModule", ({
 }));
 exports["default"] = void 0;
 var _react = _interopRequireDefault(__webpack_require__(/*! react */ "react"));
+var _defineProperty2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime/helpers/defineProperty */ "../node_modules/@babel/runtime/helpers/defineProperty.js"));
+var _objectWithoutProperties2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime/helpers/objectWithoutProperties */ "../node_modules/@babel/runtime/helpers/objectWithoutProperties.js"));
 var _ui = __webpack_require__(/*! @elementor/ui */ "@elementor/ui");
 var _atomicFormPromotionCard = _interopRequireDefault(__webpack_require__(/*! ./components/atomic-form-promotion-card */ "../modules/promotions/assets/js/react/components/atomic-form-promotion-card.js"));
 var _promotionCard = _interopRequireDefault(__webpack_require__(/*! ./components/promotion-card */ "../modules/promotions/assets/js/react/components/promotion-card.js"));
-var App = function App(props) {
-  var cardContent = 'atomicForm' === props.cardType ? /*#__PURE__*/_react.default.createElement(_atomicFormPromotionCard.default, {
-    doClose: props.doClose,
-    promotionData: props.promotionData,
-    ctaUrl: props.ctaUrl
-  }) : /*#__PURE__*/_react.default.createElement(_promotionCard.default, {
+var _widgetPromotionCard = _interopRequireDefault(__webpack_require__(/*! ./components/widget-promotion-card */ "../modules/promotions/assets/js/react/components/widget-promotion-card.js"));
+var _excluded = ["colorScheme", "isRTL", "anchorTarget"];
+function ownKeys(e, r) { var t = Object.keys(e); if (Object.getOwnPropertySymbols) { var o = Object.getOwnPropertySymbols(e); r && (o = o.filter(function (r) { return Object.getOwnPropertyDescriptor(e, r).enumerable; })), t.push.apply(t, o); } return t; }
+function _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t = null != arguments[r] ? arguments[r] : {}; r % 2 ? ownKeys(Object(t), !0).forEach(function (r) { (0, _defineProperty2.default)(e, r, t[r]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(e, Object.getOwnPropertyDescriptors(t)) : ownKeys(Object(t)).forEach(function (r) { Object.defineProperty(e, r, Object.getOwnPropertyDescriptor(t, r)); }); } return e; }
+var OFFSET_MODIFIER = {
+  name: 'offset',
+  options: {
+    offset: [-24, 8]
+  }
+};
+function getPlacement(anchorTarget, isRTL) {
+  if (!anchorTarget) {
+    return 'right';
+  }
+  return isRTL ? 'left-start' : 'right-start';
+}
+function getCardContent(props) {
+  if ('atomicForm' === props.cardType) {
+    return /*#__PURE__*/_react.default.createElement(_atomicFormPromotionCard.default, {
+      doClose: props.doClose,
+      promotionData: props.promotionData,
+      ctaUrl: props.ctaUrl
+    });
+  }
+  if ('widgetPromotion' === props.cardType) {
+    return /*#__PURE__*/_react.default.createElement(_widgetPromotionCard.default, {
+      doClose: props.doClose,
+      promotionData: props.promotionData
+    });
+  }
+  return /*#__PURE__*/_react.default.createElement(_promotionCard.default, {
     doClose: props.onClose,
     promotionsData: props.promotionsData
   });
+}
+var App = function App(_ref) {
+  var colorScheme = _ref.colorScheme,
+    isRTL = _ref.isRTL,
+    anchorTarget = _ref.anchorTarget,
+    props = (0, _objectWithoutProperties2.default)(_ref, _excluded);
   return /*#__PURE__*/_react.default.createElement(_ui.DirectionProvider, {
-    rtl: props.isRTL
+    rtl: isRTL
   }, /*#__PURE__*/_react.default.createElement(_ui.LocalizationProvider, null, /*#__PURE__*/_react.default.createElement(_ui.ThemeProvider, {
-    colorScheme: props.colorScheme
+    colorScheme: colorScheme,
+    palette: "unstable"
   }, /*#__PURE__*/_react.default.createElement(_ui.Infotip, {
-    content: cardContent,
-    placement: "right",
+    content: getCardContent(props),
+    placement: getPlacement(anchorTarget, isRTL),
     arrow: true,
     open: true,
     disableHoverListener: true,
-    PopperProps: {
-      modifiers: [{
-        name: 'offset',
-        options: {
-          offset: [-24, 8]
+    PopperProps: _objectSpread({
+      modifiers: [OFFSET_MODIFIER],
+      sx: {
+        zIndex: function zIndex(theme) {
+          return theme.zIndex.appBar - 1;
         }
-      }]
-    }
+      }
+    }, anchorTarget && {
+      anchorEl: anchorTarget
+    })
   }, /*#__PURE__*/_react.default.createElement("span", null)))));
 };
 App.propTypes = {
   colorScheme: PropTypes.oneOf(['auto', 'light', 'dark']),
   isRTL: PropTypes.bool,
+  anchorTarget: PropTypes.object,
   cardType: PropTypes.string,
   promotionsData: PropTypes.object,
   promotionData: PropTypes.object,
@@ -1676,6 +1804,113 @@ var _default = exports["default"] = PromotionCard;
 
 /***/ }),
 
+/***/ "../modules/promotions/assets/js/react/components/widget-promotion-card.js":
+/*!*********************************************************************************!*\
+  !*** ../modules/promotions/assets/js/react/components/widget-promotion-card.js ***!
+  \*********************************************************************************/
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+"use strict";
+
+
+var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault */ "../node_modules/@babel/runtime/helpers/interopRequireDefault.js");
+Object.defineProperty(exports, "__esModule", ({
+  value: true
+}));
+exports["default"] = void 0;
+var _react = _interopRequireDefault(__webpack_require__(/*! react */ "react"));
+var _i18n = __webpack_require__(/*! @wordpress/i18n */ "@wordpress/i18n");
+var _ui = __webpack_require__(/*! @elementor/ui */ "@elementor/ui");
+var _icons = __webpack_require__(/*! @elementor/icons */ "@elementor/icons");
+var _propTypes = _interopRequireDefault(__webpack_require__(/*! prop-types */ "../node_modules/prop-types/index.js"));
+var CARD_WIDTH = 296;
+var IMAGE_HEIGHT = 176;
+var DEFAULT_CTA_TEXT = (0, _i18n.__)('Upgrade Now', 'elementor');
+var WidgetPromotionCard = function WidgetPromotionCard(_ref) {
+  var doClose = _ref.doClose,
+    promotionData = _ref.promotionData;
+  var title = promotionData.title,
+    content = promotionData.content,
+    image = promotionData.image,
+    ctaUrl = promotionData.ctaUrl,
+    ctaText = promotionData.ctaText,
+    hideProTag = promotionData.hideProTag;
+  return /*#__PURE__*/_react.default.createElement(_ui.ClickAwayListener, {
+    disableReactTree: true,
+    mouseEvent: "onMouseDown",
+    touchEvent: "onTouchStart",
+    onClickAway: doClose
+  }, /*#__PURE__*/_react.default.createElement(_ui.Box, {
+    sx: {
+      width: CARD_WIDTH
+    }
+  }, /*#__PURE__*/_react.default.createElement(_ui.Stack, {
+    direction: "row",
+    alignItems: "center",
+    py: 1,
+    px: 2
+  }, /*#__PURE__*/_react.default.createElement(_ui.Typography, {
+    variant: "subtitle2"
+  }, title), hideProTag && /*#__PURE__*/_react.default.createElement(_ui.Chip, {
+    label: (0, _i18n.__)('Free', 'elementor'),
+    size: "tiny",
+    variant: "standard",
+    color: "secondary",
+    sx: {
+      ml: 1
+    }
+  }), /*#__PURE__*/_react.default.createElement(_ui.CloseButton, {
+    edge: "end",
+    sx: {
+      ml: 'auto'
+    },
+    slotProps: {
+      icon: {
+        fontSize: 'small'
+      }
+    },
+    onClick: doClose
+  })), image && /*#__PURE__*/_react.default.createElement(_ui.Image, {
+    src: image,
+    alt: "",
+    sx: {
+      width: CARD_WIDTH,
+      height: IMAGE_HEIGHT
+    }
+  }), /*#__PURE__*/_react.default.createElement(_ui.Stack, {
+    px: 2
+  }, /*#__PURE__*/_react.default.createElement(_ui.Typography, {
+    variant: "body2",
+    color: "secondary",
+    sx: {
+      pt: 1.5,
+      pb: 1
+    }
+  }, content)), /*#__PURE__*/_react.default.createElement(_ui.Stack, {
+    pt: 1,
+    pb: 1.5,
+    px: 2
+  }, /*#__PURE__*/_react.default.createElement(_ui.Button, {
+    variant: "contained",
+    size: "small",
+    color: hideProTag ? 'info' : 'promotion',
+    href: ctaUrl,
+    target: "_blank",
+    rel: "noopener noreferrer",
+    startIcon: hideProTag ? null : /*#__PURE__*/_react.default.createElement(_icons.CrownFilledIcon, null),
+    sx: {
+      ml: 'auto'
+    }
+  }, ctaText || DEFAULT_CTA_TEXT))));
+};
+WidgetPromotionCard.propTypes = {
+  doClose: _propTypes.default.func,
+  promotionData: _propTypes.default.object
+};
+var _default = exports["default"] = WidgetPromotionCard;
+
+/***/ }),
+
 /***/ "../modules/promotions/assets/js/react/controls/promotion.js":
 /*!*******************************************************************!*\
   !*** ../modules/promotions/assets/js/react/controls/promotion.js ***!
@@ -1880,6 +2115,25 @@ module.exports = _defineProperty, module.exports.__esModule = true, module.expor
 
 /***/ }),
 
+/***/ "../node_modules/@babel/runtime/helpers/extends.js":
+/*!*********************************************************!*\
+  !*** ../node_modules/@babel/runtime/helpers/extends.js ***!
+  \*********************************************************/
+/***/ ((module) => {
+
+function _extends() {
+  return module.exports = _extends = Object.assign ? Object.assign.bind() : function (n) {
+    for (var e = 1; e < arguments.length; e++) {
+      var t = arguments[e];
+      for (var r in t) ({}).hasOwnProperty.call(t, r) && (n[r] = t[r]);
+    }
+    return n;
+  }, module.exports.__esModule = true, module.exports["default"] = module.exports, _extends.apply(null, arguments);
+}
+module.exports = _extends, module.exports.__esModule = true, module.exports["default"] = module.exports;
+
+/***/ }),
+
 /***/ "../node_modules/@babel/runtime/helpers/getPrototypeOf.js":
 /*!****************************************************************!*\
   !*** ../node_modules/@babel/runtime/helpers/getPrototypeOf.js ***!
@@ -1980,6 +2234,47 @@ function _nonIterableRest() {
   throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
 }
 module.exports = _nonIterableRest, module.exports.__esModule = true, module.exports["default"] = module.exports;
+
+/***/ }),
+
+/***/ "../node_modules/@babel/runtime/helpers/objectWithoutProperties.js":
+/*!*************************************************************************!*\
+  !*** ../node_modules/@babel/runtime/helpers/objectWithoutProperties.js ***!
+  \*************************************************************************/
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+var objectWithoutPropertiesLoose = __webpack_require__(/*! ./objectWithoutPropertiesLoose.js */ "../node_modules/@babel/runtime/helpers/objectWithoutPropertiesLoose.js");
+function _objectWithoutProperties(e, t) {
+  if (null == e) return {};
+  var o,
+    r,
+    i = objectWithoutPropertiesLoose(e, t);
+  if (Object.getOwnPropertySymbols) {
+    var n = Object.getOwnPropertySymbols(e);
+    for (r = 0; r < n.length; r++) o = n[r], -1 === t.indexOf(o) && {}.propertyIsEnumerable.call(e, o) && (i[o] = e[o]);
+  }
+  return i;
+}
+module.exports = _objectWithoutProperties, module.exports.__esModule = true, module.exports["default"] = module.exports;
+
+/***/ }),
+
+/***/ "../node_modules/@babel/runtime/helpers/objectWithoutPropertiesLoose.js":
+/*!******************************************************************************!*\
+  !*** ../node_modules/@babel/runtime/helpers/objectWithoutPropertiesLoose.js ***!
+  \******************************************************************************/
+/***/ ((module) => {
+
+function _objectWithoutPropertiesLoose(r, e) {
+  if (null == r) return {};
+  var t = {};
+  for (var n in r) if ({}.hasOwnProperty.call(r, n)) {
+    if (-1 !== e.indexOf(n)) continue;
+    t[n] = r[n];
+  }
+  return t;
+}
+module.exports = _objectWithoutPropertiesLoose, module.exports.__esModule = true, module.exports["default"] = module.exports;
 
 /***/ }),
 

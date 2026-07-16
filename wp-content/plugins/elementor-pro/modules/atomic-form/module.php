@@ -28,9 +28,41 @@ class Module extends Module_Base {
 	const MODULE_NAME = 'e-atomic-form';
 	const EXPERIMENT_NAME = 'e_pro_atomic_form';
 	const AKISMET_LICENSE_FEATURE_NAME = 'akismet';
+	const FORM_ELEMENT_TYPE = 'e-form';
 
 	public function get_name() {
 		return self::MODULE_NAME;
+	}
+
+	public static function get_form_widget_types(): array {
+		$widget_types = [
+			self::FORM_ELEMENT_TYPE,
+			Input::get_element_type(),
+			Label::get_element_type(),
+			Textarea::get_element_type(),
+			Submit_Button::get_element_type(),
+			Checkbox::get_element_type(),
+			Radio_Button::get_element_type(),
+		];
+
+		if ( version_compare( ELEMENTOR_VERSION, '4.1', '>=' ) ) {
+			$widget_types = array_merge( $widget_types, [
+				Date_Picker::get_element_type(),
+				Time_Picker::get_element_type(),
+				Select::get_element_type(),
+				File_Upload::get_element_type(),
+			] );
+		}
+
+		return $widget_types;
+	}
+
+	public static function get_form_field_widget_types(): array {
+		return array_values( array_diff( self::get_form_widget_types(), [
+			self::FORM_ELEMENT_TYPE,
+			Label::get_element_type(),
+			Submit_Button::get_element_type(),
+		] ) );
 	}
 
 	public static function get_experimental_data(): array {

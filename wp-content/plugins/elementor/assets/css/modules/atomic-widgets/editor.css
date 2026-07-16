@@ -1,4 +1,4 @@
-.e-form-placeholder {
+.e-pro-promotion-placeholder {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -8,19 +8,19 @@
   text-align: center;
   min-height: 200px;
 }
-.e-form-placeholder__icon {
+.e-pro-promotion-placeholder__icon {
   font-size: 48px;
   color: rgba(0, 0, 0, 0.54);
   margin-bottom: 4px;
 }
-.e-form-placeholder__title {
+.e-pro-promotion-placeholder__title {
   font-family: Poppins, sans-serif;
   font-size: 16px;
   font-weight: 600;
   line-height: normal;
   color: #000000;
 }
-.e-form-placeholder__description {
+.e-pro-promotion-placeholder__description {
   font-family: Poppins, sans-serif;
   font-size: 12px;
   font-weight: 400;
@@ -28,11 +28,11 @@
   color: #3f444b;
   margin-bottom: 16px;
 }
-.e-form-placeholder__actions {
+.e-pro-promotion-placeholder__actions {
   display: flex;
   gap: 8px;
 }
-.e-form-placeholder__remove-btn {
+.e-pro-promotion-placeholder__remove-btn {
   display: flex;
   justify-content: center;
   align-items: center;
@@ -50,10 +50,10 @@
   color: #515962;
   box-sizing: border-box;
 }
-.e-form-placeholder__remove-btn:hover {
+.e-pro-promotion-placeholder__remove-btn:hover {
   background: #f1f2f3;
 }
-.e-form-placeholder__unlock-btn {
+.e-pro-promotion-placeholder__unlock-btn {
   display: flex;
   justify-content: center;
   align-items: center;
@@ -72,8 +72,10 @@
   text-decoration: none;
   box-sizing: border-box;
 }
-.e-form-placeholder__unlock-btn:hover {
+.e-pro-promotion-placeholder__unlock-btn:hover {
   background: #7a0032;
+  color: #fff;
+  text-decoration: none;
 }
 
 /*# sourceMappingURL=editor.css.map */

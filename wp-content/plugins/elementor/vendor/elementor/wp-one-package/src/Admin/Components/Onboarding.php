@@ -42,10 +42,23 @@ class Onboarding {
 	}
 
 	/**
+	 * On connect fail
+	 * @param Facade $facade
+	 * @return void
+	 */
+	public function on_connect_fail( Facade $facade ): void {
+		wp_safe_redirect(
+			$facade->utils()->get_admin_url() . '#/home?connect-fail=1'
+		);
+		exit;
+	}
+
+	/**
 	 * Onboarding constructor
 	 * @return void
 	 */
 	private function __construct() {
 		add_action( 'elementor_one/elementor_one_connected', [ $this, 'on_connect' ] );
+		add_action( 'elementor_one/elementor_one_connect_fail', [ $this, 'on_connect_fail' ], 10, 1 );
 	}
 }

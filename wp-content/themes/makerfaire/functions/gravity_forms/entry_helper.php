@@ -133,7 +133,10 @@ function showcase($entryID, $edit = false) {
         global $groupbio;
         global $entry;
         $groupsocial = getSocial(isset($entry['828']) ? $entry['828'] : '');
-        $groupwebsite = isset($entry['112']) ? $entry['112'] : '';
+        if(empty($groupsocial)) {
+            $groupsocial = getSocial(isset($entry['906']) ? $entry['906'] : '');
+        }
+         $groupwebsite = isset($entry['112']) ? $entry['112'] : '';
         
         // we reuse the makerInfo section for projects here, as it's the same css
         if(isset($showcase_info['child_data'])) {

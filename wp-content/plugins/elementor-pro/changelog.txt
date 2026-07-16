@@ -1,5 +1,20 @@
 # Elementor Pro - by Elementor.com
 
+#### 4.1.3 - 2026-07-14
+
+* Fix: Content section isn't expanded by default when adding atomic element inside Atomic Form - Atomic Editor
+* Fix: Atomic Form cannot be saved as template - Atomic Editor
+
+#### 4.1.2 - 2026-06-23
+
+* Fix: Email action is not configured correctly when submitting Atomic Forms - Atomic Editor
+
+#### 4.1.1 - 2026-06-08
+
+* Fix: Live Results item count does not apply correctly on Tablet and Mobile in Search widget
+* Fix: Default animation appears for logged-out users when using an ACF URL dynamic tag in Lottie widget
+* Fix: "Something went wrong" error appears when using Taxonomy Filter with a Loop Grid based on Current Query
+
 #### 4.1.0 - 2026-05-26
 
 * Tweak: Added Radio Button element to Atomic Form - Atomic Editor

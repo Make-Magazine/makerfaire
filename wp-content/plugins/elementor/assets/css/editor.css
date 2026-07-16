@@ -1438,8 +1438,8 @@ body.elementor-panel-loading #elementor-panel-state-loading {
   background-color: var(--e-a-bg-hover);
   border-color: var(--e-a-border-color-bold);
 }
-.elementor-panel .elementor-element:hover > .eicon-lock, .elementor-panel .elementor-element:focus > .eicon-lock {
-  color: var(--e-a-color-accent);
+.elementor-panel .elementor-element:hover > .eicon-upgrade-crown-full, .elementor-panel .elementor-element:focus > .eicon-upgrade-crown-full {
+  color: var(--e-a-color-accent-promotion);
 }
 .elementor-panel .elementor-element:hover > .eicon-plug, .elementor-panel .elementor-element:focus > .eicon-plug {
   color: var(--e-a-color-info);
@@ -1457,10 +1457,15 @@ body.elementor-panel-loading #elementor-panel-state-loading {
 .elementor-panel .elementor-element .title {
   font-size: 12px;
 }
-.elementor-panel .elementor-element > .eicon-lock, .elementor-panel .elementor-element .eicon-plug {
+.elementor-panel .elementor-element > .eicon-upgrade-crown-full, .elementor-panel .elementor-element .eicon-plug {
   position: absolute;
   inset-block-start: 5px;
   inset-inline-end: 5px;
+}
+.elementor-panel .elementor-element > .eicon-upgrade-crown-full {
+  color: var(--e-a-color-accent-promotion-disabled);
+}
+.elementor-panel .elementor-element > .eicon-plug {
   color: var(--e-a-color-txt-disabled);
 }
 .elementor-panel .elementor-element:active {
@@ -1671,16 +1676,52 @@ body.elementor-panel-loading #elementor-panel-state-loading {
   margin-block-start: 20px;
 }
 
+#elementor-panel-content-wrapper:has(> #elementor-panel-page-editor) {
+  display: flex;
+  flex-direction: column;
+}
+#elementor-panel-content-wrapper:has(> #elementor-panel-page-editor) #elementor-panel-page-editor {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+}
+#elementor-panel-content-wrapper:has(> #elementor-panel-page-editor) .elementor-panel-editor-sticky-promotion {
+  position: sticky;
+  inset-block-end: 0;
+  margin-block-start: auto;
+}
+#elementor-panel-content-wrapper:has(> #elementor-panel-page-editor) .elementor-panel-editor-sticky-promotion .elementor-get-pro-sticky-message {
+  margin-block-start: 0;
+}
+
 #elementor-panel-get-pro-elements-sticky {
   position: sticky;
   inset-block-end: 0;
-  font-size: 14px;
-  font-weight: 400;
-  line-height: 1.6;
   margin-block-end: -10px;
 }
 #elementor-panel-get-pro-elements-sticky .elementor-get-pro-sticky-message {
   margin-block-start: -14px;
+}
+
+#elementor-panel-page-elements:has(> #elementor-panel-get-pro-elements-sticky) {
+  display: flex;
+  flex-direction: column;
+  min-height: 100%;
+}
+#elementor-panel-page-elements:has(> #elementor-panel-get-pro-elements-sticky) > #elementor-panel-get-pro-elements-sticky {
+  margin-block-start: auto;
+}
+
+#elementor-panel-get-pro-elements-sticky,
+.elementor-panel-editor-sticky-promotion {
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 1.6;
+  background-color: var(--e-a-color-white);
+}
+#elementor-panel-get-pro-elements-sticky .elementor-get-pro-sticky-message,
+.elementor-panel-editor-sticky-promotion .elementor-get-pro-sticky-message {
   min-height: 40px;
   display: block;
   padding: 9px min(35px, 5%);
@@ -1690,13 +1731,15 @@ body.elementor-panel-loading #elementor-panel-state-loading {
   text-align: center;
   box-shadow: 0px -10px 14px -6px rgba(0, 0, 0, 0.05);
 }
-#elementor-panel-get-pro-elements-sticky .elementor-get-pro-sticky-message a {
+#elementor-panel-get-pro-elements-sticky .elementor-get-pro-sticky-message a,
+.elementor-panel-editor-sticky-promotion .elementor-get-pro-sticky-message a {
   display: inline-block;
   font-size: 13px;
   font-weight: 500;
   color: var(--e-a-btn-bg-accent);
 }
-#elementor-panel-get-pro-elements-sticky img {
+#elementor-panel-get-pro-elements-sticky img,
+.elementor-panel-editor-sticky-promotion img {
   margin-inline-start: 17px;
 }
 
@@ -4524,8 +4567,8 @@ body:not(.elementor-device-mobile) .elementor-control.elementor-control-responsi
   display: flex;
   justify-content: space-between;
 }
-.e-control-display-conditions-promotion__wrapper:hover .eicon-lock.e-control-display-conditions-promotion {
-  color: var(--e-a-color-accent);
+.e-control-display-conditions-promotion__wrapper:hover .eicon-upgrade-crown-full.e-control-display-conditions-promotion {
+  color: var(--e-a-color-accent-promotion);
 }
 .e-control-display-conditions-promotion__description {
   display: flex;
@@ -4540,6 +4583,9 @@ body:not(.elementor-device-mobile) .elementor-control.elementor-control-responsi
   justify-content: center;
   align-items: center;
 }
+.e-control-display-conditions-promotion__lock-wrapper .eicon-upgrade-crown-full {
+  color: var(--e-a-color-accent-promotion-disabled);
+}
 .e-control-display-conditions-promotion.eicon-flow {
   align-self: flex-end;
   cursor: pointer;
@@ -4552,8 +4598,8 @@ body:not(.elementor-device-mobile) .elementor-control.elementor-control-responsi
   color: #E73CF6;
 }
 
-.e-control-motion-effects-promotion__wrapper:hover .eicon-lock, .e-control-promotion__wrapper:hover .eicon-lock {
-  color: var(--e-a-color-accent);
+.e-control-motion-effects-promotion__wrapper:hover .eicon-upgrade-crown-full, .e-control-promotion__wrapper:hover .eicon-upgrade-crown-full {
+  color: var(--e-a-color-accent-promotion);
 }
 .e-control-motion-effects-promotion__wrapper .elementor-control-title, .e-control-promotion__wrapper .elementor-control-title {
   margin-inline-end: 0;
@@ -4579,6 +4625,9 @@ body:not(.elementor-device-mobile) .elementor-control.elementor-control-responsi
   display: flex;
   justify-content: center;
   align-items: center;
+}
+.e-control-motion-effects-promotion__lock-wrapper .eicon-upgrade-crown-full, .e-control-promotion__lock-wrapper .eicon-upgrade-crown-full {
+  color: var(--e-a-color-accent-promotion-disabled);
 }
 
 .e-link-promotion {
@@ -8372,5 +8421,15 @@ label.e-scrubbing-over {
 }
 .e-ui-state--document-direction-mode__row-reverse [class^=eicon-flex]:not(.eicon-wrap):not(.eicon-nowrap):not(.eicon-grow):is(.eicon-justify-start-h, .eicon-justify-end-h, .eicon-order-start, .eicon-order-end), .e-ui-state--document-direction-mode__row-reverse [class*=" eicon-flex"]:not(.eicon-wrap):not(.eicon-nowrap):not(.eicon-grow):is(.eicon-justify-start-h, .eicon-justify-end-h, .eicon-order-start, .eicon-order-end) {
   transform: rotate(calc(var(--is-ltr) * 180deg));
+}
+
+.elementor-editor-active .embed-media-settings .setting.caption {
+  display: none;
+}
+.elementor-editor-active .embed-media-settings .setting.align {
+  display: none;
+}
+.elementor-editor-active .embed-media-settings fieldset.setting-group {
+  display: none;
 }
 /*# sourceMappingURL=editor.css.map */

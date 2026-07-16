@@ -22,6 +22,8 @@
 
 /*! ../../hooks/use-prefetch-css-class-usage */
 
+/*! ../../load-existing-classes */
+
 /*! ../../save-global-classes */
 
 /*! ../../service/css-class-usage-service */

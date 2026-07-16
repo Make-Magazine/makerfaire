@@ -60,11 +60,6 @@ class Fields {
 				'show_in_rest' => true,
 				'description' => 'Elementor One Dismiss Connect Alert',
 			],
-			'editor_update_notification_dismissed' => [
-				'type' => 'boolean',
-				'show_in_rest' => true,
-				'description' => 'Elementor One Dismiss Editor Update Notification',
-			],
 		];
 	}
 
@@ -84,7 +79,6 @@ class Fields {
 			'siteUrl' => get_site_url(),
 			'welcomeScreenCompleted' => (bool) get_option( self::SETTING_PREFIX . 'welcome_screen_completed' ),
 			'dismissConnectAlert' => (bool) get_option( self::SETTING_PREFIX . 'dismiss_connect_alert' ),
-			'editorUpdateNotificationDismissed' => (bool) get_option( self::SETTING_PREFIX . 'editor_update_notification_dismissed' ),
 			'userLocale' => get_user_locale( get_current_user_id() ),
 			'isRTL' => is_rtl(),
 		];

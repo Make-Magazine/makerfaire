@@ -3,13 +3,13 @@
  * Plugin Name: Elementor Pro
  * Description: Elevate your designs and unlock the full power of the Atomic Editor. Gain access to dozens of Pro widgets, Website Templates, Theme Builder, Pop Ups, Forms, reusable Components, and WooCommerce building capabilities.
  * Plugin URI: https://go.elementor.com/wp-dash-wp-plugins-author-uri/
- * Version: 4.1.0
+ * Version: 4.1.3
  * Author: Elementor.com
  * Author URI: https://go.elementor.com/wp-dash-wp-plugins-author-uri/
  * Requires PHP: 7.4
- * Requires at least: 6.7
+ * Requires at least: 6.8
  * Requires Plugins: elementor
- * Elementor tested up to: 4.1.0
+ * Elementor tested up to: 4.1.3-ga
  * Text Domain: elementor-pro
  */
 
@@ -17,7 +17,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
-define( 'ELEMENTOR_PRO_VERSION', '4.1.0' );
+define( 'ELEMENTOR_PRO_VERSION', '4.1.3' );
 
 /**
  * All versions should be `major.minor`, without patch, in order to compare them properly.
