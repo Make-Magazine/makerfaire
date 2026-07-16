@@ -133,7 +133,8 @@ function showcase($entryID, $edit = false) {
         global $groupbio;
         global $entry;
         $groupsocial = getSocial(isset($entry['828']) ? $entry['828'] : '');
-        if(empty($groupsocial)) {
+        // if group socials are empty, try the project socials
+        if(empty($groupsocial) || $groupsocial == '<span class="social-links reversed"></span>') {
             $groupsocial = getSocial(isset($entry['906']) ? $entry['906'] : '');
         }
          $groupwebsite = isset($entry['112']) ? $entry['112'] : '';
