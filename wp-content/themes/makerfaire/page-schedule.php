@@ -346,7 +346,7 @@ if ($schedule_ids_trimmed && $schedule_ids_trimmed != '') { //display the new sc
                             <div class="sched-row">
 
                                 <div class="stage-track stage-{{schedule.stageOrder}} area-{{schedule.stageClass}}">{{schedule.nicename}}</div>
-                                <a href="/maker/entry/{{schedule.id}}">
+                                <a href="{{schedule.link}}">
                                     <div class="sched-img" role="img" aria-label="{{schedule.name}} Photo" style="background-image:url({{schedule.thumb_img_url}});"></div>
                                 </a>
                                 <div class="sched-wrapper">
@@ -364,7 +364,7 @@ if ($schedule_ids_trimmed && $schedule_ids_trimmed != '') { //display the new sc
                                         <div class="featured" ng-show="schedule.featured != NULL && schedule.featured == 'Featured'">Featured</div>
                                     </div>
 
-                                    <h3> <a href="/maker/entry/{{schedule.id}}">{{schedule.name}}</a> </h3>
+                                    <h3> <a href="{{schedule.link}}">{{schedule.name}}</a> </h3>
                                     <p class="sched-name" ng-bind-html="trust(schedule.maker_list)"></p>
 
                                     <p class="sched-description" ng-bind-html="schedule.desc"></p>
@@ -372,7 +372,7 @@ if ($schedule_ids_trimmed && $schedule_ids_trimmed != '') { //display the new sc
                                         Additional Times: {{schedule.additional}}
                                     </div>
 
-                                    <a href="/maker/entry/{{schedule.id}}" class="read-more-btn">Read More</a>
+                                    <a href="{{schedule.link}}" class="read-more-btn">Read More</a>
                                     <!--
                                     <div class="sched-registration" ng-show="schedule.registration != NULL && schedule.registration != ''">
                                         <a class="btn universal-btn" href="{{schedule.registration}}" target="_blank">Register Here</a>

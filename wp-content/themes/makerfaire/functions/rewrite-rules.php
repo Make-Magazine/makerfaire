@@ -130,3 +130,55 @@ function mf_entry_is_public( $entry, $form = null ) {
     }
     return true;
 }
+
+/**
+ * Memoized fetch — template_redirect and page-entry.php both need the entry.
+ * Returns array on success, null on failure/WP_Error.
+ */
+function mf_get_entry( $entry_id ) {
+    static $cache = array();
+
+    $entry_id = (int) $entry_id;
+    if ( ! $entry_id ) {
+        return null;
+    }
+    if ( ! array_key_exists( $entry_id, $cache ) ) {
+        $entry = GFAPI::get_entry( $entry_id );
+        $cache[ $entry_id ] = is_wp_error( $entry ) ? null : $entry;
+    }
+    return $cache[ $entry_id ];
+}
+
+/* Canonical redirect — must live on template_redirect rather than in
+ * page-entry.php: WP 6.8+ exits before the template include on HEAD requests,
+ * and running here also skips the remote @getimagesize() call on URLs that
+ * are about to 301 away. */
+add_action( 'template_redirect', function() {
+    $entry_id = (int) get_query_var( 'e_id' );
+    if ( ! $entry_id || ! is_page( 'entry-page-do-not-delete' ) ) {
+        return;
+    }
+
+    // HEAD is safe/idempotent so it redirects too. POST does not — a 301 would
+    // convert it to GET and silently drop a GravityView edit submission.
+    $reqMethod = strtoupper( $_SERVER['REQUEST_METHOD'] ?? 'GET' );
+    if ( ! in_array( $reqMethod, array( 'GET', 'HEAD' ), true ) ) {
+        return;
+    }
+
+    $entry = mf_get_entry( $entry_id );
+    if ( ! mf_entry_is_public( $entry ) ) {
+        return; // let the template render "Invalid Entry"
+    }
+
+    $title = rgar( $entry, (string) MF_TITLE_FIELD );
+    if ( (string) get_query_var( 'e_slug' ) !== mf_slug_from_title( $title ) ) {
+        $isEdit = ( 'edit' === (string) get_query_var( 'edit_slug' ) );
+        $target = home_url( mf_entry_path( $title, $entry_id, $isEdit ) );
+        if ( ! empty( $_SERVER['QUERY_STRING'] ) ) {
+            $target .= '?' . $_SERVER['QUERY_STRING'];
+        }
+        wp_safe_redirect( $target, 301 );
+        exit;
+    }
+}, 1 );

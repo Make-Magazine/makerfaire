@@ -18,17 +18,13 @@ function faire_sitemap_criteria() {
         ),
     );
 }
-//define valid form types
-$form_types = faire_sitemap_form_types();
-//entry search criteria
-$search_criteria = faire_sitemap_criteria();
 
 /**
  * When the sitemap_index.xml page is accessed, add links to form sitemaps
  */
-function faire_entries_sitemap_index($sitemap_index) {
-   global $form_types;
-   global $search_criteria;
+function faire_entries_sitemap_index( $sitemap_index ) {
+   $form_types      = faire_sitemap_form_types();
+   $search_criteria = faire_sitemap_criteria();
 
    //generate a sitemap for each exhibit form
    $forms = GFAPI::get_forms(NULL, false);
@@ -67,9 +63,8 @@ add_action('init', 'register_entries_sitemap', 99);
  * On init, run the function that will register sitemaps for all gravity forms that match the defined form types
  */
 function register_entries_sitemap() {
-   global $wpseo_sitemaps;
-   global $form_types;
-   global $wpdb;
+   global $wpseo_sitemaps, $wpdb;
+   $form_types = faire_sitemap_form_types();
    if ($wpseo_sitemaps && is_array($form_types)) {
       $formResults = $wpdb->get_results('select display_meta, form_id from wp_gf_form_meta', ARRAY_A);
       foreach ($formResults as $formrow) {
@@ -99,6 +94,7 @@ function faire_entries_sitemap_generate() {
     }
 
     $form            = GFAPI::get_form( $form_id );
+    if ( ! $form ) { return; }
     $search_criteria = faire_sitemap_criteria();
 
     $entries = array();
@@ -161,14 +157,14 @@ function faire_entries_sitemap_generate() {
     }
       
       $sitemap_body = <<<SITEMAP_BODY
-            <urlset
-                xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-                xmlns:image="http://www.google.com/schemas/sitemap-image/1.1"
-                xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd http://www.google.com/schemas/sitemap-image/1.1 http://www.google.com/schemas/sitemap-image/1.1/sitemap-image.xsd"
-                xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-            %s
-            </urlset>
-            SITEMAP_BODY;
+<urlset
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xmlns:image="http://www.google.com/schemas/sitemap-image/1.1"
+      xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd http://www.google.com/schemas/sitemap-image/1.1 http://www.google.com/schemas/sitemap-image/1.1/sitemap-image.xsd"
+      xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+%s
+</urlset>
+SITEMAP_BODY;
       $sitemap = sprintf($sitemap_body, implode("\n", $urls));
       $wpseo_sitemaps->set_sitemap($sitemap);
 }     

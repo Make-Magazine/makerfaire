@@ -495,9 +495,10 @@ $query = "SELECT schedule.entry_id,
     
     (select meta_value from wp_gf_entry_meta where wp_gf_entry_meta.entry_id = schedule.entry_id and meta_key='96.3') as maker_fname,
     (select meta_value from wp_gf_entry_meta where wp_gf_entry_meta.entry_id = schedule.entry_id and meta_key='96.6') as maker_lname,
-
+    (select meta_value from wp_gf_entry_meta where wp_gf_entry_meta.entry_id = schedule.entry_id and meta_key='151') as proj_name,
     (select meta_value from wp_gf_entry_meta where wp_gf_entry_meta.entry_id = schedule.entry_id and meta_key='109') as group_name,
-    (select meta_value from wp_gf_entry_meta where wp_gf_entry_meta.entry_id = schedule.entry_id and meta_key='916') as presenter_list,      
+    (select meta_value from wp_gf_entry_meta where wp_gf_entry_meta.entry_id = schedule.entry_id and meta_key='916') as presenter_list, 
+    (select meta_value from wp_gf_entry_meta where wp_gf_entry_meta.entry_id = schedule.entry_id and meta_key='878') as proj_photo_gallery,     
 	entity.form_type, entity.status as entry_status,
 	subarea.subarea, subarea.nicename, subarea.sort_order,
 	entity.project_photo as photo, entity.presentation_title as title, entity.desc_short as short_desc,
@@ -524,6 +525,10 @@ where   entry.status='active'
 
     //retrieve schedule information
     foreach ($schedule as $row) {
+
+        $flags = isset($row->flags) ? explode(",", $row->flags) : array();
+        if (in_array('no-public-view', $flags)) continue;
+
         //if this entry is not accepted, move along to the next record
         if($row->entry_status != 'Accepted')  continue;        
         $form_type = $row->form_type;
@@ -627,6 +632,7 @@ where   entry.status='active'
         
         $data['schedule'][] = array(
             'id'            => $row->entry_id,
+            'link'          => mf_entry_path( $row->proj_name, $row->entry_id ),
             'time_start'    => $startDate,
             'time_end'      => $endDate,
             'name'          => isset($row->title) ? htmlspecialchars_decode($row->title, ENT_QUOTES) : '',

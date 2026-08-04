@@ -9,7 +9,7 @@ global $wp_query;
 global $wpdb;
 $entryId = (isset($wp_query->query_vars['e_id']) ? $wp_query->query_vars['e_id'] : '');
 $editEntry = (isset($wp_query->query_vars['edit_slug']) ? $wp_query->query_vars['edit_slug'] : '');
-$entry = GFAPI::get_entry($entryId);
+$entry = mf_get_entry($entryId);
 
 // The opengraph cards for sharing. This is necessary as otherwise yoast is not pulling dynamic data
 $sharing_cards = new mf_sharing_cards();
@@ -25,7 +25,7 @@ $displayMakers = true;
 $displayFormType = true;
 
 //entry not found
-if (isset($entry->errors)) {
+if ( ! is_array( $entry ) || empty( $entry ) ) {
     $form_id = '';
     $formType = '';
     $entry = array();
@@ -252,23 +252,6 @@ foreach ( $entry as $key => $field ) {
         if ( 'hide-form-type' === $field ) {
             $displayFormType = false;
         }
-    }
-}
-
-//canonical redirect: legacy numeric URLs, stale slugs after a title edit, and
-//hand-mangled slugs all resolve to one URL. Now covers /edit/ as well.
-$reqMethod = strtoupper( $_SERVER['REQUEST_METHOD'] ?? 'GET' );
-if ( $publicEntry && 'GET' === $reqMethod ) {
-    $mfTitle  = rgar( $entry, (string) MF_TITLE_FIELD );
-    $expected = mf_slug_from_title( $mfTitle );
-
-    if ( (string) get_query_var( 'e_slug' ) !== $expected ) {
-        $target = home_url( mf_entry_path( $mfTitle, $entryId, 'edit' === (string) $editEntry ) );
-        if ( ! empty( $_SERVER['QUERY_STRING'] ) ) {
-            $target .= '?' . $_SERVER['QUERY_STRING'];
-        }
-        wp_safe_redirect( $target, 301 );
-        exit;
     }
 }
 

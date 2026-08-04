@@ -226,7 +226,7 @@ function updateMakerTables($entry, $form_id, $blog_id) {
         . "                         entry_link      = '" . $entryData['link']           . "', "
         . "                         last_change_date= now(),"
         . "                         project_gallery = '" . $entryData['project_gallery']. "', "
-        . "                         last_change_date= 'North America' ";
+        . "                         region          = 'North America' ";
 
     $wpdb->query($wp_mf_entitysql);
     $entry_write_count = $entry_write_count + 1;
@@ -370,7 +370,7 @@ function buildMakerData($entry, $form_id) {
             'faire_name'    => $faire,
             'faire_year'    => $faire_year,
             'status'        => $status,
-            'link'          => get_bloginfo('url') . '/maker/entry/' . $entry_id
+            'link' => get_bloginfo('url') . ( function_exists( 'mf_entry_path' ) ? mf_entry_path( $project_name, $entry_id ) : '/maker/entry/' . $entry_id . '/' ),
         );
 
     /*
