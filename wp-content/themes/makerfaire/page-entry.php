@@ -236,6 +236,54 @@ if (isset($entry->errors)) {
     $project_store = (isset($entry['920']) ? esc_html($entry['920']) : ''); // Storefront or Crowdfunding link
 }
 
+/* ---- Public visibility + canonical URL --------------------------------
+ * $publicEntry deliberately ignores $adminView and $makerEdit: the 301 must
+ * be identical for every visitor, or a page cache will store a logged-in
+ * admin's redirect for a non-public entry and serve it to everyone.
+ */
+$publicEntry = mf_entry_is_public( $entry, isset( $form ) ? $form : null );
+
+//flags — display side effects only; visibility lives in mf_entry_is_public()
+foreach ( $entry as $key => $field ) {
+    if ( strpos( (string) $key, '304.' ) === 0 ) {
+        if ( 'no-maker-display' === $field ) {
+            $displayMakers = false;
+        }
+        if ( 'hide-form-type' === $field ) {
+            $displayFormType = false;
+        }
+    }
+}
+
+//canonical redirect: legacy numeric URLs, stale slugs after a title edit, and
+//hand-mangled slugs all resolve to one URL. Now covers /edit/ as well.
+$reqMethod = strtoupper( $_SERVER['REQUEST_METHOD'] ?? 'GET' );
+if ( $publicEntry && 'GET' === $reqMethod ) {
+    $mfTitle  = rgar( $entry, (string) MF_TITLE_FIELD );
+    $expected = mf_slug_from_title( $mfTitle );
+
+    if ( (string) get_query_var( 'e_slug' ) !== $expected ) {
+        $target = home_url( mf_entry_path( $mfTitle, $entryId, 'edit' === (string) $editEntry ) );
+        if ( ! empty( $_SERVER['QUERY_STRING'] ) ) {
+            $target .= '?' . $_SERVER['QUERY_STRING'];
+        }
+        wp_safe_redirect( $target, 301 );
+        exit;
+    }
+}
+
+//what actually renders — admins/reviewers see more than the public does
+$validEntry = $publicEntry;
+if ( ! $validEntry && $adminView && is_array( $entry ) && ! empty( $entry )
+     && isset( $entry[151] ) && $entry[151] != '' ) {
+    $validEntry = true;
+    foreach ( $entry as $key => $field ) {
+        if ( strpos( (string) $key, '304.' ) === 0 && 'no-public-view' === $field ) {
+            $validEntry = false;   // blocks admins too, as in your original
+        }
+    }
+}
+
 /* Lets check if we are coming from the Maker Portal -
  * if we are, and user is logged in and has access to this record
  *   Display edit functionality
@@ -269,6 +317,10 @@ if ((is_array($entry) && isset($entry['status']) && $entry['status'] == 'active'
 //Url
 global $wp;
 $canonical_url = home_url($wp->request) . '/';
+//edit views don't redirect, so point them at the public URL rather than themselves
+if ( 'edit' === (string) $editEntry && $publicEntry ) {
+    $canonical_url = home_url( mf_entry_path( rgar( $entry, (string) MF_TITLE_FIELD ), $entryId ) );
+}
 $sharing_cards->canonical_url = $canonical_url;
 
 $sharing_cards->set_values();
@@ -302,36 +354,6 @@ if (isset($faireShort) && strpos($faireShort, "VMF") === 0) { // special for vir
 }
 //$registerLink = ''; //post faire return blank for register link
 //
-
-//decide if we should display this entry
-$validEntry = false;
-if (is_array($entry) && !empty($entry)) { //is this a valid entry?
-    if (isset($entry[151]) && $entry[151] != '') {
-        if ((isset($entry['status']) && $entry['status'] === 'active' && //is the entry not trashed
-                isset($entry[303]) && $entry[303] == 'Accepted') || //is the entry accepted?
-                $adminView == true) {                                         // OR, if user is an administrator or editor they can see it all
-
-            $validEntry = true; //display the entry
-        }
-    }
-    // is this a show management, other, or not sure in exhibit type? we don't want to show it
-    if ((in_array('Show Management', $exhibit_type) || in_array('Not Sure Yet', $exhibit_type) || in_array('Other', $exhibit_type)) && $adminView == false) {
-        $validEntry = false;
-    }
-}
-
-//check flags
-foreach ($entry as $key => $field) {
-    $pos = strpos($key, '304.') ?? false;
-    if ($pos !== false) {
-        if ($field == 'no-public-view')
-            $validEntry = false;
-        if ($field == 'no-maker-display')
-            $displayMakers = false;
-        if ($field == 'hide-form-type')
-            $displayFormType = false;
-    }
-}
 
 // if edit entry is true, this means the user viewing the entry is the user who created the entry and should be able to see it
 $makerBioSugg = $proj_desc_sugg = $gallery_video_sugg = '';

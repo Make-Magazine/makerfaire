@@ -5,13 +5,23 @@
  */
 // only use this during development to disable sitemap caching :
 // add_filter( 'wpseo_enable_xml_sitemap_transient_caching', '__return_false');
+function faire_sitemap_form_types() {
+    return array( 'Exhibit', 'Presentation', 'Performance',
+                  'Startup Sponsor', 'Sponsor', 'Workshop', 'Master' );
+}
 
+function faire_sitemap_criteria() {
+    return array(
+        'status'        => 'active',
+        'field_filters' => array(
+            array( 'key' => '303', 'value' => 'Accepted' ),
+        ),
+    );
+}
 //define valid form types
-$form_types = array('Exhibit', 'Presentation', 'Performance', 'Startup Sponsor', 'Sponsor', 'Workshop', 'Master');
+$form_types = faire_sitemap_form_types();
 //entry search criteria
-$search_criteria = array();
-$search_criteria['status'] = 'active';
-$search_criteria['field_filters'][] = array('key' => '303', 'value' => 'Accepted');
+$search_criteria = faire_sitemap_criteria();
 
 /**
  * When the sitemap_index.xml page is accessed, add links to form sitemaps
@@ -80,54 +90,75 @@ function register_entries_sitemap() {
  * This is triggered when the specific form sitemap is accessed
  */
 function faire_entries_sitemap_generate() {
-   global $wpseo_sitemaps;
-   global $search_criteria;
+    global $wpseo_sitemaps, $wp;
 
-   //determine what form this sitemap this is for
-   global $wp;
-   $current_slug = add_query_arg(array(), $wp->request);
+    $current_slug = add_query_arg( array(), $wp->request );
+    $form_id      = (int) str_replace( array( 'form-', '-entries-sitemap.xml' ), '', $current_slug ?? '' );
+    if ( ! $form_id ) {
+        return;
+    }
 
-   //get form id from current sitemap name ie) form43-entries-sitemap.xml
-   $form_id = str_replace('-entries-sitemap.xml', '', $current_slug ?? '');
-   $form_id = str_replace('form-', '', $current_slug ?? '');
+    $form            = GFAPI::get_form( $form_id );
+    $search_criteria = faire_sitemap_criteria();
 
-   //retrieve list of entries   
-   $entries = GFAPI::get_entries((int)$form_id, $search_criteria, null, array('offset' => 0, 'page_size' => 999));
-   $urls = array();
-   if (!empty($entries)) {
-      foreach ($entries as $entry) {         
-         $url['loc'] = site_url() . '/maker/entry/' . $entry['id'] . '/';
-         $url['mod'] = $entry['date_updated'];
-         $url['images'] = array();
+    $entries = array();
+    $offset  = 0;
+    do {
+        $batch = GFAPI::get_entries( $form_id, $search_criteria, null,
+            array( 'offset' => $offset, 'page_size' => 200 ) );
+        if ( is_wp_error( $batch ) || empty( $batch ) ) {
+            break;
+        }
+        $entries = array_merge( $entries, $batch );
+        $offset += 200;
+    } while ( count( $batch ) === 200 );
 
-         //project photos
-         $project_photo = (isset($entry['22']) ? $entry['22'] : '');
-         //for BA24, the single photo was changed to a multi image which messed things up a bit
-         $photo = json_decode($project_photo);
-         if (is_array($photo)) {
-            $project_photo = $photo[0];
-         }
-         // this returns an array of image urls from the additional images field
-         $project_gallery = (isset($entry['878']) ? json_decode($entry['878']) : '');
+    if ( empty( $entries ) ) {
+        return;
+    }
 
-         //if the main project photo isn't set but the photo gallery is, use the first image in the photo gallery
-         if ($project_photo == '' && is_array($project_gallery)) {
-            $project_photo = $project_gallery[0];
-         }
+    $urls = array();
+    foreach ( $entries as $entry ) {
+        if ( ! mf_entry_is_public( $entry, $form ) ) {
+            continue;
+        }
 
-         $url['images'][] = array("src" => $project_photo);
+        $images = array();
 
-         //additional photos
-         if (isset($project_gallery) && !empty($project_gallery)) {
-            foreach ($project_gallery as $key => $image) {
-               if ($image != '') {
-                  $url['images'][] = array("src" => $image);
-               }
+        $project_photo = rgar( $entry, '22' );
+        $photo         = json_decode( $project_photo, true );
+        if ( is_array( $photo ) ) {
+            $project_photo = isset( $photo[0] ) ? $photo[0] : '';
+        }
+
+        $gallery = json_decode( rgar( $entry, '878' ), true );
+        $gallery = is_array( $gallery ) ? $gallery : array();
+
+        if ( '' === $project_photo && ! empty( $gallery[0] ) ) {
+            $project_photo = $gallery[0];
+        }
+        if ( '' !== $project_photo ) {
+            $images[] = array( 'src' => $project_photo );
+        }
+        foreach ( $gallery as $image ) {
+            if ( ! empty( $image ) && $image !== $project_photo ) {
+                $images[] = array( 'src' => $image );
             }
-         }
+        }
 
-         $urls[] .= $wpseo_sitemaps->renderer->sitemap_url($url);
-      }
+        $url = array(
+            'loc' => home_url( mf_entry_path( rgar( $entry, (string) MF_TITLE_FIELD ), $entry['id'] ) ),
+            'mod' => $entry['date_updated'],
+        );
+        if ( $images ) {
+            $url['images'] = $images;
+        }
+        $urls[] = $wpseo_sitemaps->renderer->sitemap_url( $url );
+    }
+
+    if ( empty( $urls ) ) {
+        return;
+    }
       
       $sitemap_body = <<<SITEMAP_BODY
             <urlset
@@ -140,6 +171,5 @@ function faire_entries_sitemap_generate() {
             SITEMAP_BODY;
       $sitemap = sprintf($sitemap_body, implode("\n", $urls));
       $wpseo_sitemaps->set_sitemap($sitemap);
-   } //end check if entries      
+}     
    
-}

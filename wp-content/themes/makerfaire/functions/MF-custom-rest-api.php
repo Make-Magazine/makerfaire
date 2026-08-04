@@ -432,7 +432,7 @@ function getMTMentries($formIDs = '', $faireID = '', $years = '') {
             
             $data['entity'][] = array(
                 'id' => $result->entry_id,
-                'link' => '/maker/entry/' . $result->entry_id,
+                'link' => mf_entry_path( $result->proj_name, $result->entry_id ),
                 'name' => $result->proj_name,
                 'large_img_url' => $largePhoto,
                 'small_img_url' => $smallPhoto,

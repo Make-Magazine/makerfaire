@@ -3,9 +3,11 @@
 function maker_url_vars($rules) {
   $newrules = array();
 
-  //classic entry page for flagship faires
-  $newrules['maker/entry/(\d*)/?(.*)$/?'] = 'index.php?post_type=page&pagename=entry-page-do-not-delete&e_id=$matches[1]&edit_slug=$matches[2]';
-  
+  //classic entry page for flagship faires — slug-plus-ID, legacy numeric still matches
+  $newrules['maker/entry/([A-Za-z0-9\-]*?)-?(\d+)(?:/(edit))?/?$'] =
+    'index.php?post_type=page&pagename=entry-page-do-not-delete'
+    . '&e_slug=$matches[1]&e_id=$matches[2]&edit_slug=$matches[3]';
+
   //classic schedule page
   $newrules['([^\/]*)/schedule/([^/]+)/?$'] = 'index.php?pagename=$matches[1]/schedule&sched_dow=$matches[2]';
   $newrules['([^\/]*)/schedule/([^/]+)/([^/]+)/?$'] = 'index.php?pagename=$matches[1]/schedule&sched_dow=$matches[2]&sched_type=$matches[3]';
@@ -32,7 +34,8 @@ add_filter( 'query_vars', 'makerfaire_register_query_var' );
 function makerfaire_register_query_var( $vars ) {
     $vars[] = 'type';       //page-api.php, page-mfapi.php
     $vars[] = 'e_id';       //page-entry.php
-    $vars[] = 'edit_slug';  //page-entry.php    
+    $vars[] = 'edit_slug';  //page-entry.php   
+    $vars[] = 'e_slug';     //page-entry.php — canonical check only
     $vars[] = 'faire_id';   //page-mfscheduler.php
     $vars[] = 'token';      //page-maker-checkin.php, page-mfscheduler.php, page-onsite-checkin.php, page-onsite-pinning.php
     $vars[] = 'makersign';  //classes/makerfaire-helper.php
@@ -50,3 +53,80 @@ function custom_rewrite_tag() {
 }
 
 add_action('init', 'custom_rewrite_tag', 10, 0);
+
+/* ---- Maker entry URLs HELPER FUNCTIONS -------------------------------------------- */
+
+define( 'MF_TITLE_FIELD', 151 );
+
+function mf_slug_from_title( $title ) {
+    $slug = sanitize_title( $title );
+    if ( strlen( $slug ) > 60 ) {
+        $slug = rtrim( substr( $slug, 0, 60 ), '-' );
+    }
+    return $slug;
+}
+
+function mf_entry_path( $title, $entry_id, $edit = false ) {
+    $slug = mf_slug_from_title( $title );
+    $path = '/maker/entry/' . ( $slug ? $slug . '-' : '' ) . (int) $entry_id . '/';
+    if ( $edit ) {
+        $path .= 'edit/';
+    }
+    return $path;
+}
+
+function mf_entry_exhibit_types( $entry, $form = null ) {
+    if ( ! is_array( $entry ) || empty( $entry ) ) {
+        return array();
+    }
+    if ( null === $form ) {
+        $form = GFAPI::get_form( $entry['form_id'] );
+    }
+    if ( ! is_array( $form ) ) {
+        return array();
+    }
+    $formType = isset( $form['form_type'] ) ? $form['form_type'] : '';
+    $types    = array();
+
+    if ( 'Master' === $formType ) {
+        foreach ( $entry as $key => $value ) {
+            if ( strpos( (string) $key, '339.' ) === 0 && $value !== '' && $value !== null ) {
+                $types[] = ( stripos( $value, 'sponsor' ) !== false ) ? 'Exhibit' : $value;
+            }
+        }
+    } else {
+        $types[] = ( stripos( $formType, 'sponsor' ) !== false ) ? 'Exhibit' : $formType;
+    }
+    return array_unique( $types );
+}
+
+/**
+ * The single public-visibility rule. Deliberately ignores $adminView and
+ * $makerEdit — sitemap, REST, and the 301 must all agree for every visitor.
+ */
+function mf_entry_is_public( $entry, $form = null ) {
+    if ( ! is_array( $entry ) || empty( $entry ) ) {
+        return false;
+    }
+    if ( ! isset( $entry[151] ) || '' === trim( (string) $entry[151] ) ) {
+        return false;
+    }
+    if ( ! isset( $entry['status'] ) || 'active' !== $entry['status'] ) {
+        return false;
+    }
+    if ( ! isset( $entry[303] ) || 'Accepted' != $entry[303] ) {
+        return false;
+    }
+    foreach ( $entry as $key => $value ) {
+        if ( strpos( (string) $key, '304.' ) === 0 && 'no-public-view' === $value ) {
+            return false;
+        }
+    }
+    $types = mf_entry_exhibit_types( $entry, $form );
+    foreach ( array( 'Show Management', 'Not Sure Yet', 'Other' ) as $blocked ) {
+        if ( in_array( $blocked, $types, true ) ) {
+            return false;
+        }
+    }
+    return true;
+}
