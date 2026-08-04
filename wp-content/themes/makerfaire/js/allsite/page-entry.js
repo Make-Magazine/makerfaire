@@ -78,9 +78,15 @@ jQuery(document).ready(function(){
                 jQuery(this).remove();
             },
             open: function(event, ui) { 
-              jQuery('.ui-widget-overlay').bind('click', function(){ 
+                jQuery(this).prepend(
+                    '<button class="dialog-close">&times;</button>'
+                );
+                jQuery('.dialog-close').on('click', function() {
                     jQuery("#dialog").dialog('close');
-              }); 
+                });
+                jQuery('.ui-widget-overlay').on('click', function() {
+                    jQuery("#dialog").dialog('close');
+                });
             }
         });
     });
@@ -99,10 +105,16 @@ jQuery(document).ready(function(){
                 jQuery(this).remove();
             },
             open: function(event, ui) { 
-              jQuery('.ui-widget-overlay').bind('click', function(){ 
-                  jQuery("#dialog").dialog('close');
-            }); 
-          }
+                jQuery(this).prepend(
+                    '<button class="dialog-close">&times;</button>'
+                );
+                jQuery('.dialog-close').on('click', function() {
+                    jQuery("#dialog").dialog('close');
+                });
+                jQuery('.ui-widget-overlay').on('click', function() {
+                    jQuery("#dialog").dialog('close');
+                });
+            }
         });
     });
 })
