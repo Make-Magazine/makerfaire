@@ -76,14 +76,15 @@ function mf_set_entry_location(WP_REST_Request $request) {
         return new WP_Error('entry_not_found', 'Gravity Forms entry not found', ['status' => 404]);
     }
 
-    // Get valid area_ids for the current faire
+    $faire_table      = $wpdb->prefix . 'mf_faire';
     $faire_area_table = $wpdb->prefix . 'mf_faire_area';
-    $faire_table = $wpdb->prefix . 'mf_faire';
+    $subarea_table    = $wpdb->prefix . 'mf_faire_subarea';
+    $location_table   = $wpdb->prefix . 'mf_location';
 
     // Get the faire ID for this form
     $faire_id = $wpdb->get_var(
         $wpdb->prepare(
-            "SELECT faire FROM {$faire_table} WHERE find_in_set(%d, form_ids) > 0 LIMIT 1",
+            "SELECT ID FROM {$faire_table} WHERE find_in_set(%d, form_ids) > 0 LIMIT 1",
             305
         )
     );
@@ -92,10 +93,10 @@ function mf_set_entry_location(WP_REST_Request $request) {
         return new WP_Error('not_found', 'No faire found for this form', ['status' => 404]);
     }
 
-    // Get valid area_ids for this faire
+    // Get valid area IDs for this faire from wp_mf_faire_area
     $area_ids = $wpdb->get_col(
         $wpdb->prepare(
-            "SELECT area_id FROM {$faire_area_table} WHERE faire_id = %d",
+            "SELECT ID FROM {$faire_area_table} WHERE faire_id = %d",
             $faire_id
         )
     );
@@ -104,20 +105,21 @@ function mf_set_entry_location(WP_REST_Request $request) {
         return new WP_Error('not_found', 'No areas found for this faire', ['status' => 404]);
     }
 
+    // Look up subarea and its parent area_id
     $placeholders = implode(',', array_fill(0, count($area_ids), '%d'));
-    $subarea_table = $wpdb->prefix . 'mf_subarea';
-    $subarea_id = $wpdb->get_var(
+    $subarea_row = $wpdb->get_row(
         $wpdb->prepare(
-            "SELECT id FROM {$subarea_table} WHERE subarea = %s AND area_id IN ($placeholders) LIMIT 1",
+            "SELECT ID, area_id FROM {$subarea_table} WHERE subarea = %s AND area_id IN ($placeholders) LIMIT 1",
             array_merge([$zone], $area_ids)
         )
     );
 
-    if (!$subarea_id) {
+    if (!$subarea_row) {
         return new WP_Error('not_found', 'Subarea not found for zone: ' . $zone, ['status' => 404]);
     }
 
-    $location_table = $wpdb->prefix . 'mf_location';
+    $subarea_id = $subarea_row->ID;
+    $area_id    = $subarea_row->area_id;
 
     // Use a transaction to make delete + insert atomic
     $wpdb->query('START TRANSACTION');
@@ -160,6 +162,7 @@ function mf_set_entry_location(WP_REST_Request $request) {
         'success'     => true,
         'entry_id'    => $entry_id,
         'subarea_id'  => intval($subarea_id),
+        'area_id'     => intval($area_id),
         'location'    => $booth,
         'location_id' => $location_id,
     ];
