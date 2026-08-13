@@ -76,12 +76,40 @@ function mf_set_entry_location(WP_REST_Request $request) {
         return new WP_Error('entry_not_found', 'Gravity Forms entry not found', ['status' => 404]);
     }
 
-    // Look up subarea_id
+    // Get valid area_ids for the current faire
+    $faire_area_table = $wpdb->prefix . 'mf_faire_area';
+    $faire_table = $wpdb->prefix . 'mf_faire';
+
+    // Get the faire ID for this form
+    $faire_id = $wpdb->get_var(
+        $wpdb->prepare(
+            "SELECT faire FROM {$faire_table} WHERE find_in_set(%d, form_ids) > 0 LIMIT 1",
+            305
+        )
+    );
+
+    if (!$faire_id) {
+        return new WP_Error('not_found', 'No faire found for this form', ['status' => 404]);
+    }
+
+    // Get valid area_ids for this faire
+    $area_ids = $wpdb->get_col(
+        $wpdb->prepare(
+            "SELECT area_id FROM {$faire_area_table} WHERE faire_id = %d",
+            $faire_id
+        )
+    );
+
+    if (empty($area_ids)) {
+        return new WP_Error('not_found', 'No areas found for this faire', ['status' => 404]);
+    }
+
+    $placeholders = implode(',', array_fill(0, count($area_ids), '%d'));
     $subarea_table = $wpdb->prefix . 'mf_subarea';
     $subarea_id = $wpdb->get_var(
         $wpdb->prepare(
-            "SELECT id FROM {$subarea_table} WHERE subarea = %s LIMIT 1",
-            $zone
+            "SELECT id FROM {$subarea_table} WHERE subarea = %s AND area_id IN ($placeholders) LIMIT 1",
+            array_merge([$zone], $area_ids)
         )
     );
 
