@@ -5,6 +5,32 @@ function mf_clean_title($title) {
 }
 add_filter('the_title', 'mf_clean_title', 10, 2);
 
+function mf_normalize_url( $url ) {
+  $url = trim( (string) $url );
+
+  if ( $url === '' ) {
+    return '';
+  }
+
+  // Leave mailto:, tel:, etc. alone.
+  if ( preg_match( '#^(mailto|tel|sms):#i', $url ) ) {
+    return $url;
+  }
+
+  // Protocol-relative: //example.com
+  if ( strpos( $url, '//' ) === 0 ) {
+    return 'https:' . $url;
+  }
+
+  // Already has a scheme.
+  if ( preg_match( '#^[a-z][a-z0-9+.\-]*://#i', $url ) ) {
+    return $url;
+  }
+
+  // Bare domain or path: example.com, www.example.com/foo
+  return 'https://' . ltrim( $url, '/' );
+}
+
 
 /**
  * Modal Window Builder

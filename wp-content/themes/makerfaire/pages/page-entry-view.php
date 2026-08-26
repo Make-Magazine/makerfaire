@@ -222,7 +222,7 @@ if($proj_photo_size && ($proj_photo_size[0]/$proj_photo_size[1] > 1.77777)) {
                 <div class="entry-box">
                     <h4>More Maker Info</h4>
                     <?php if(!empty($maker['website'])) { ?>
-                        <a class="maker-website" href="<?php echo($maker['website']); ?>" target="_blank"><?php echo($maker['website']); ?></a>
+                        <a class="maker-website" href="<?php echo(mf_normalize_url($maker['website'])); ?>" target="_blank"><?php echo($maker['website']); ?></a>
                     <?php } ?>  
                     <?php if($maker['social'] != '<span class="social-links reversed"></span>') { 
                         echo $maker['social'];                   
@@ -247,7 +247,7 @@ if($proj_photo_size && ($proj_photo_size[0]/$proj_photo_size[1] > 1.77777)) {
                 <div class="entry-box">
                     <h4>More Project Info</h4>
                     <?php if(!empty($project_website)) { ?>
-                        <a class="maker-website" href="<?php echo($project_website); ?>" target="_blank"><?php echo($project_website); ?></a>                    
+                        <a class="maker-website" href="<?php echo(mf_normalize_url($project_website)); ?>" target="_blank"><?php echo($project_website); ?></a>                    
                     <?php } ?> 
                     <?php if(!empty($project_store)) { ?>
                         <a class="btn universal-btn-red" href="<?php echo($project_store); ?>" target="_blank">Shop Now</a>                    
