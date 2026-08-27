@@ -3,21 +3,26 @@
  * Template name: Meet the Makers
  */
 get_header();
-
+ 
 //Pull ACF data
 $faire_forms = get_field('faire-forms');
 $faire_forms_trimmed = preg_replace('/\s+/', '', $faire_forms);
-
+ 
 $noMakerText = get_field('no_makers_found_text');
 if ($noMakerText == '')
     $noMakerText = 'No makers found';
-
+ 
+//ACF-driven filter presets - when either is filled in, the results are locked to that
+//value and the matching dropdown is hidden (a URL ?category=/?type= param is ignored).
+$presetCategory = get_field('category');
+$presetType     = get_field('entry_type');
+ 
 //faire name
 $faire     = get_field('faire');
 $results   = $wpdb->get_results('SELECT * FROM wp_mf_faire where faire= "'.strtoupper($faire).'"');
 $faireName = (isset($results[0]->faire_name)?$results[0]->faire_name:'');
 ?>
-
+ 
 <div class="row">
     <?php    
     if (have_posts()) {
@@ -49,12 +54,14 @@ $faireName = (isset($results[0]->faire_name)?$results[0]->faire_name:'');
         <input type="hidden" id="forms2use" value="<?php echo $faire_forms_trimmed; ?>" />
         <input type="hidden" id="mtm-faire" value="<?php echo $faire; ?>" />
         <input type="hidden" id="noMakerText" value="<?php echo $noMakerText; ?>" />
-
+        <input type="hidden" id="mtm-preset-category" value="<?php echo esc_attr($presetCategory); ?>" />
+        <input type="hidden" id="mtm-preset-type" value="<?php echo esc_attr($presetType); ?>" />
+ 
         <form class="mtm-filter-wrap" ng-cloak role="form">
             <div class="search-wrapper">
                 <input ng-model="makerSearch.$" role="search" id="mtm-search-input" class="form-control" placeholder="<?php _e("Search...", 'makerfaire') ?>" type="text">
             </div>
-
+ 
             <!-- Weekend Filter -->
             <div class="dropdown form-control" ng-if="weekends.length > 0">
                 <button class="btn btn-link dropdown-toggle" type="button" id="weekend-dropdownMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
@@ -65,13 +72,13 @@ $faireName = (isset($results[0]->faire_name)?$results[0]->faire_name:'');
                     <li>
                         <a class="pointer-on-hover" ng-click="makerSearch.weekend = ''"><?php _e("Any", 'makerfaire') ?></a>
                     </li>
-
+ 
                     <li ng-repeat="weekend in weekends| orderBy: 'weekend'">
                         <a class="pointer-on-hover" ng-click="makerSearch.weekend = weekend">{{weekend}}</a>
                     </li>
                 </ul>
             </div>
-
+ 
             <!-- Area Filter -->
             <div class="dropdown form-control" ng-if="locations.length > 0">
                 <button class="btn btn-link dropdown-toggle" type="button" id="location-dropdownMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
@@ -82,20 +89,21 @@ $faireName = (isset($results[0]->faire_name)?$results[0]->faire_name:'');
                     <li>
                         <a class="pointer-on-hover" ng-click="makerSearch.location = ''"><?php _e("All", 'makerfaire') ?></a>
                     </li>
-
+ 
                     <li ng-repeat="location in locations| orderBy: 'location'">
                         <a class="pointer-on-hover" ng-click="makerSearch.location = location">{{location}}</a>
                     </li>
                 </ul>
             </div>
-
-            <!--Category filter-->
+ 
+            <!--Category filter (hidden when the "category" ACF field locks the page to one category) -->
+            <?php if (empty($presetCategory)): ?>
             <div class="dropdown form-control">
                 <button class="btn btn-link dropdown-toggle" type="button" id="mtm-dropdownMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
                     <span ng-if="makerSearch.categories != ''">{{makerSearch.categories}}</span>
                     <span ng-if="makerSearch.categories == ''">All Categories</span>
                 </button>
-
+ 
                 <ul>
                     <li ng-repeat="maker in makers| filter:{categories: {id}}">
                         {{maker.categories}}
@@ -110,14 +118,16 @@ $faireName = (isset($results[0]->faire_name)?$results[0]->faire_name:'');
                     </li>
                 </ul>
             </div>
-
-            <!--Type filter-->
+            <?php endif; ?>
+ 
+            <!--Type filter (hidden when the "entry_type" ACF field locks the page to one type) -->
+            <?php if (empty($presetType)): ?>
             <div class="dropdown form-control" ng-if="types.length > 0">
                 <button class="btn btn-link dropdown-toggle" type="button" id="mtm-dropdownMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
                     <span ng-if="makerSearch.types != ''">{{makerSearch.types}}</span>
                     <span ng-if="makerSearch.types == ''">All Types</span>
                 </button>
-
+ 
                 <ul class="dropdown-menu topic-menu" aria-labelledby="mtm-dropdownMenu">
                     <li>
                         <a class="pointer-on-hover" ng-click="makerSearch.types = ''"><?php _e("All", 'makerfaire') ?></a>
@@ -127,7 +137,8 @@ $faireName = (isset($results[0]->faire_name)?$results[0]->faire_name:'');
                     </li>
                 </ul>
             </div>
-
+            <?php endif; ?>
+ 
             <div class="faux-checkbox">
                 <label>Featured Makers</label>
                 <ul class="nav nav-pills">
@@ -150,15 +161,15 @@ $faireName = (isset($results[0]->faire_name)?$results[0]->faire_name:'');
                     </li>
                 </ul>
             </div>
-
+ 
             <div class="mtm-filter-view">
                 <a ng-class="{active: layout == 'list'}" ng-click="changeView('list')" class="mtm-filter-l pointer-on-hover box list" title="List View"><i class="fas fa-bars" aria-hidden="true"></i></a>
                 <a ng-class="{active: layout == 'grid'}" ng-click="changeView('grid')" class="mtm-filter-g pointer-on-hover box gallery" title="Grid View"><i class="far fa-grid-2" aria-hidden="true"></i></a>
                 <a ng-show="makers[0].name" ng-class="{active: layout == 'maker'}" ng-click="changeView('maker')" class="mtm-filter-m pointer-on-hover box maker" title="Maker View"><i class="fas fa-user" aria-hidden="true"></i></a>
             </div>
-
+ 
         </form>
-
+ 
         <div class="mtm-results container-fluid" mtm-scroll="loadMore()">
             <div ng-show="!makers.length" class="card-deck loading">
                 <div class="ng-scope card">
@@ -245,7 +256,7 @@ $faireName = (isset($results[0]->faire_name)?$results[0]->faire_name:'');
                 </div>
                 <div class="clearfix"></div>
             </div>
-
+ 
             <!-- List View -->
             <div ng-if="layout == 'list'" class="mtm-results-cont-list">
                 <div class="filter-alpha-wrapper">
@@ -254,9 +265,9 @@ $faireName = (isset($results[0]->faire_name)?$results[0]->faire_name:'');
                     </span>
                     <span class="filterAlpha"><a href="" class="pointer-on-hover" ng-click="setLetter('')">Reset</a></span>
                 </div>
-
+ 
                 <div class="card-deck" ng-repeat="maker in makers| filter : makerSearch | orderBy: 'name' | startsWithLetter:letter">
-
+ 
                     <div class="card">
                         <div class="card-header">
                             <a href="{{maker.link}}">
@@ -306,12 +317,12 @@ $faireName = (isset($results[0]->faire_name)?$results[0]->faire_name:'');
                 </div>
                 <div class="clearfix"></div>
             </div>
-
+ 
             <!-- Maker View -->
             <div ng-if="layout == 'maker'" class="mtm-results-cont maker-view card-deck square-grid">
-
+ 
                 <div class="card" ng-repeat="maker in makers| filter : makerSearch | limitTo: limit">
-
+ 
                         <div class="card-header">
                             <a href="{{maker.link}}">
                                 <img ng-src="{{maker.maker_photo}}" on-error="/wp-content/themes/makerfaire/images/default-makey-medium.jpg" alt="{{maker.name}} Photo" class="card-image" />
@@ -354,11 +365,11 @@ $faireName = (isset($results[0]->faire_name)?$results[0]->faire_name:'');
                         </div>
                 </div>
             </div>
-
+ 
         </div>
     </div>
-
+ 
     <div class="load-trigger"></div>
 </div>
-
+ 
 <?php get_footer(); ?>

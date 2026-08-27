@@ -1,41 +1,41 @@
 var mtm = angular.module('mtm', ['angular.filter', 'ngSanitize']);
-
+ 
 //filter by Location with URL
 var initialLocation = "";
 if (getUrlParam("location")) {
     initialLocation = getUrlParam("location");
 }
-
+ 
 //filter by Category with URL
 var initialCategory = "";
 if (getUrlParam("category")) {
     initialCategory = getUrlParam("category");
 }
-
+ 
 //filter by Entry Type with URL
 var initialType = "";
 if (getUrlParam("type")) {
     initialType = getUrlParam("type");
 }
-
+ 
 //Toggle Hands on filter with URL
 var handsOn = "";
 if (getUrlParam("handson")) {
     handsOn = getUrlParam("handson");
 }
-
+ 
 //Toggle Featured filter with URL
 var featured = "";
 if (getUrlParam("featured")) {
     featured = getUrlParam("featured");
 }
-
+ 
 // filter by layout with url
 var layout = "grid";
 if (getUrlParam("layout")) {
     layout = getUrlParam("layout");
 }
-
+ 
 mtm.controller('mtmMakers', ['$scope', '$sce', '$filter', '$http', function ($scope, $sce, $filter, $http) {
     $scope.trust = $sce.trustAsHtml; // for rendering html
     //infinite scroll
@@ -44,7 +44,7 @@ mtm.controller('mtmMakers', ['$scope', '$sce', '$filter', '$http', function ($sc
     $scope.loadMore = function () {
         $scope.limit += 12;
     };
-
+ 
     $scope.location = '';
     $scope.weekend = '';
     $scope.flag = '';
@@ -62,7 +62,7 @@ mtm.controller('mtmMakers', ['$scope', '$sce', '$filter', '$http', function ($sc
     $scope.makerSearch.location = '';
     $scope.makerSearch.weekend = '';
     $scope.alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
-
+ 
     $scope.layout = layout;
     $scope.category = '';
     $scope.type = '';
@@ -71,49 +71,75 @@ mtm.controller('mtmMakers', ['$scope', '$sce', '$filter', '$http', function ($sc
     catJson = [];
     
     var noMakerText = jQuery('#noMakerText').val();
-
+ 
     var formIDs = jQuery('#forms2use').val();
     var faireID = jQuery('#mtm-faire').val();
     formIDs = replaceAll(formIDs, ",", "-");
-
+ 
+    //ACF-driven filter presets set on the page itself (entry_type / category fields).
+    //When present, these lock the results and take priority over any ?category=/?type= URL param.
+    //Either field may hold multiple values separated by commas, e.g. "Robotics, Woodworking" -
+    //makers matching ANY of the listed values are kept.
+    var presetCategory = jQuery('#mtm-preset-category').val();
+    var presetType = jQuery('#mtm-preset-type').val();
+    var presetCategories = splitPresetList(presetCategory);
+    var presetTypes = splitPresetList(presetType);
+    $scope.presetCategory = presetCategories.length > 0;
+    $scope.presetType = presetTypes.length > 0;
+ 
     if (initialLocation) {
         $scope.makerSearch.location = initialLocation;
     }
-
-    if (initialCategory) {
+ 
+    if (!$scope.presetCategory && initialCategory) {
         $scope.makerSearch.categories = initialCategory;
     }
-
-    if (initialType) {
+ 
+    if (!$scope.presetType && initialType) {
         $scope.makerSearch.types = initialType;
     }
-
+ 
     if (handsOn == "true") {
         $scope.makerSearch.handson = "Featured HandsOn";
     }
     if (featured == "true") {
         $scope.makerSearch.flag = "Featured Maker";
     }
-
+ 
     $scope.changeView = function (view) {
         jQuery('body').removeClass ("listview gridview makerview");
         jQuery('body').addClass(view + "view");
         $scope.layout = view;
     };
-
+ 
     //call to MF custom rest API
-
+ 
     //console.log('pulling makerfaire data');
     $http.get('/wp-json/makerfaire/v2/fairedata/mtm/' + formIDs + '/' + faireID)
         .then(function successCallback(response) {
             if (response.data.entity.length <= 0) {
                 jQuery('.mtm .loading').html(noMakerText);
             }
-
+ 
             jQuery.merge($scope.makers, response.data.entity);
             //console.log($scope.makers);
             shuffle($scope.makers);
-
+ 
+            //Narrow down to the ACF-preset category/type(s), if any were configured on the page
+            if (presetCategories.length > 0) {
+                $scope.makers = $scope.makers.filter(function (maker) {
+                    return listContainsAny(maker.categories, presetCategories);
+                });
+            }
+            if (presetTypes.length > 0) {
+                $scope.makers = $scope.makers.filter(function (maker) {
+                    return listContainsAny(maker.types, presetTypes);
+                });
+            }
+            if ((presetCategories.length > 0 || presetTypes.length > 0) && $scope.makers.length <= 0) {
+                jQuery('.mtm .loading').html(noMakerText);
+            }
+ 
         }, function errorCallback(error) {
             console.log(error);
             jQuery('.mtm .loading').html(noMakerText);
@@ -125,41 +151,41 @@ mtm.controller('mtmMakers', ['$scope', '$sce', '$filter', '$http', function ($sc
     $scope.trustedHTML = function(html_code) {
         return $sce.trustAsHtml(html_code);
     };
-
+ 
     $scope.setLocFilter = function (location) {
         $scope.makerSearch.location = location;
     };
-
+ 
     $scope.setWkndFilter = function (weekend) {
         $scope.makerSearch.weekend = weekend;
     };
-
+ 
     $scope.setFlagFilter = function (flag) {
         $scope.flag = flag;
     };
-
+ 
     $scope.setHandsonFilter = function (handson) {
         $scope.handson = handson;
     };
-
+ 
     $scope.setTypeFilter = function (type) {
         $scope.type = type;
     };
-
+ 
     $scope.setTagFilter = function (tag) {
         $scope.category = tag;
     };
-
+ 
     $scope.setLetter = function (startsWith) {
         $scope.letter = startsWith;
     };
-
+ 
     // Clear category filter on All button click
     $scope.clearFilter = function () {
         $scope.category = '';
         $scope.type = '';
     };
-
+ 
     //watch the maker variable, if it changes update the location, category and weekend drop downs
     $scope.$watch("makers", function (newValue, oldValue) {
         var catList = [];
@@ -176,7 +202,7 @@ mtm.controller('mtmMakers', ['$scope', '$sce', '$filter', '$http', function ($sc
                     }
                 });
             }
-
+ 
             //locations
             var location = maker.location;
             if (location != null) {
@@ -186,7 +212,7 @@ mtm.controller('mtmMakers', ['$scope', '$sce', '$filter', '$http', function ($sc
                     }
                 });
             }
-
+ 
             var categories = maker.categories;
             //reset the category ids to the category names
             maker.category_id_refs = categories;
@@ -194,14 +220,14 @@ mtm.controller('mtmMakers', ['$scope', '$sce', '$filter', '$http', function ($sc
             if (maker.makerList && Array.isArray(maker.makerList)) {
                 maker.makerList = " ";
             }
-
+ 
             if (categories != null) {
                 angular.forEach(categories, function (cat) {
                     if (catList.indexOf(cat) == -1)
                         catList.push(cat);
                 });
             }
-
+ 
             var types = maker.types;
             if (types != null) {
                 angular.forEach(types, function (type) {
@@ -212,7 +238,7 @@ mtm.controller('mtmMakers', ['$scope', '$sce', '$filter', '$http', function ($sc
             }
             maker.typeString = types.join(", ");
         });
-
+ 
         //categories
         $scope.tags = catList;
         //weekends
@@ -235,8 +261,8 @@ mtm.controller('mtmMakers', ['$scope', '$sce', '$filter', '$http', function ($sc
         }
     }, true);
 }]);
-
-
+ 
+ 
 mtm.filter('startsWithLetter', function () {
     return function (items, letter) {
         var filtered = [];
@@ -252,7 +278,7 @@ mtm.filter('startsWithLetter', function () {
         return filtered;
     };
 });
-
+ 
 mtm.directive('mtmScroll', ['$window', mtmScroll]);
 function mtmScroll($window) {
     return {
@@ -273,45 +299,68 @@ function mtmScroll($window) {
             $window.on('scroll', handler);
         }
     };
-
+ 
 }
-
+ 
 mtm.directive('onError', function() {
     return {
-      restrict:'A',
-      link: function(scope, element, attr) {
-        element.on('error', function() {
-          element.attr('src', attr.onError);
-        })
-      }
+        restrict:'A',
+        link: function(scope, element, attr) {
+            element.on('error', function() {
+                element.attr('src', attr.onError);
+            })
+        }
     }
-  })
-  
-
-
+})
+ 
 function replaceAll(str, find, replace) {
     return str.replace(new RegExp(escapeRegExp(find), 'g'), replace);
 }
 function escapeRegExp(str) {
     return str.replace(/([.*+?^=!:${}()|\[\]\/\\])/g, "\\$1");
 }
+ 
+// Splits a comma-separated ACF preset value ("Robotics, Woodworking") into a clean array of trimmed, non-empty values. Returns [] for an empty/undefined field.
+function splitPresetList(value) {
+    if (!value) {
+        return [];
+    }
+    return value.split(',')
+        .map(function (item) { return item.trim(); })
+        .filter(function (item) { return item.length > 0; });
+}
+ 
+// True if any of "needles" is a case-insensitive substring match against any entry in "items"
+function listContainsAny(items, needles) {
+    if (!items) {
+        return false;
+    }
+    return needles.some(function (needle) {
+        var target = needle.trim().toLowerCase();
+        return items.some(function (item) {
+            return String(item).trim().toLowerCase() === target;
+        });
+    });
+}
+ 
 
-
+ 
+ 
 function shuffle(array) {
     var currentIndex = array.length, temporaryValue, randomIndex;
-
+ 
     // While there remain elements to shuffle...
     while (0 !== currentIndex) {
-
+ 
         // Pick a remaining element...
         randomIndex = Math.floor(Math.random() * currentIndex);
         currentIndex -= 1;
-
+ 
         // And swap it with the current element.
         temporaryValue = array[currentIndex];
         array[currentIndex] = array[randomIndex];
         array[randomIndex] = temporaryValue;
     }
-
+ 
     return array;
 }
