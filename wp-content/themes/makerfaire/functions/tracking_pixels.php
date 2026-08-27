@@ -19,6 +19,9 @@ function add_tracking_config() {
 
         var trackingConfig = {
             gtm: 'GTM-PCDDDV',
+            ga4: 'G-51PP9YXQ8B',
+            fbPixel: '2071714643070701',
+            linkedin: '545404',
             activeCampaign: {
                 accountId: '1000801328',
                 trackByDefault: true
@@ -27,8 +30,7 @@ function add_tracking_config() {
                 advId: 'QZ72KCGOPBGLLLPAE3SDSI',
                 pixId: 'RGZKRB7CHJF5RBMNCUJREU'
             },
-            ga4: 'G-51PP9YXQ8B',
-            fbPixel: '399923000199419'
+            gtmIsAnalytics: true  // GTM contains only analytics tags on this site
         };
     </script>
     <?php
@@ -42,15 +44,23 @@ add_action('wp_head', 'add_tracking_config', 1); // Priority 1 — must run befo
 // be injected dynamically via JavaScript.
 // ------------------------------------------------------------------
 function add_body_pixels() {
-    if (isset($_COOKIE['cookielawinfo-checkbox-non-necessary']) &&
-        $_COOKIE['cookielawinfo-checkbox-non-necessary'] == 'yes') {
+    if (isset($_COOKIE['cookielawinfo-checkbox-analytics']) &&
+        $_COOKIE['cookielawinfo-checkbox-analytics'] == 'yes') {
         ?>
         <!-- Google Tag Manager (noscript) -->
         <noscript>
             <iframe src="https://www.googletagmanager.com/ns.html?id=GTM-PCDDDV"
                 height="0" width="0" style="display:none;visibility:hidden"></iframe>
         </noscript>
-        <!-- End Google Tag Manager (noscript) -->
+        <?php
+    }
+    if (isset($_COOKIE['cookielawinfo-checkbox-non-necessary']) &&
+        $_COOKIE['cookielawinfo-checkbox-non-necessary'] == 'yes') {
+        ?>
+        <noscript>
+            <img height="1" width="1" style="display:none"
+                src="https://www.facebook.com/tr?id=2071714643070701&ev=PageView&noscript=1" />
+        </noscript>
         <?php
     }
 }
