@@ -54,9 +54,8 @@ get_header();
 <div id="manageEntries" style="width:95%; margin: 35px auto;margin-bottom: 0px;" class="maker-portal">
 
   <?php
-  //only allow alicia, rio and webmaster to test emails
+  //only allow rio, select others and webmaster to test emails
   if (
-    $current_user->user_email == 'alicia@make.co'    ||
     $current_user->user_email == 'rio@make.co'       ||
     $current_user->user_email == 'webmaster@make.co' ||
     $current_user->user_email == 'siana@make.co'     ||
@@ -86,9 +85,22 @@ get_header();
   ?>
   <input type="hidden" id="user_email" value="<?php echo $user_email; ?>" />
   <div class="row">
+    <div style="text-align:center;margin-bottom:45px;margin-top:20px;">
+      <h1>THIS IS NOT THE PORTAL FOR YOUR MFBA26 ENTRY.</h1>
+      <p>Use <a href="https://mfba2026-portal.makerfaire.com/">https://mfba2026-portal.makerfaire.com/</a> and email <a href="mailto:makers@make.co">makers@make.co</a> with any access issues.</p>
+    </div
+    
+    <?php
+    if (
+      $current_user->user_email == 'rio@make.co'       ||
+      $current_user->user_email == 'webmaster@make.co' ||
+      $current_user->user_email == 'siana@make.co'     ||
+      $current_user->user_email == 'nicole@make.co'    ||
+      $current_user->user_email == 'jamie@make.co'
+    ) {
+    ?>
     <h1 style="text-align:center">Hello <?php echo $user_email; ?></h1>
     <?php echo the_content(); ?>
-
     <h4 v-if="!showData" id="loadingMsg">Please wait while we retrieve your submitted entries. <img src="https://make.co/wp-content/universal-assets/v2/images/makey-spinner.gif" /></h4>
     
     <h4 v-if="showData && faire_entries.length==0">I'm sorry. We could not find any entries for your email.</h4>
@@ -267,6 +279,7 @@ get_header();
 
       </b-card>
     </div>
+    <?php } ?>
   </div>
 </div>
 
