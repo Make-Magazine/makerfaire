@@ -52,11 +52,14 @@ class Label extends Atomic_Widget_Base {
 				->default( 'label' ),
 			'classes' => Classes_Prop_Type::make()
 				->default( [] ),
-			'text' => Html_V3_Prop_Type::make()
-				->default( [
-					'content'  => String_Prop_Type::generate( 'Form label' ),
-					'children' => [],
-				] ),
+			'text' => class_exists( 'Elementor\Modules\AtomicWidgets\PropTypes\Escaped_Html_Prop_Type' )
+				? \Elementor\Modules\AtomicWidgets\PropTypes\Escaped_Html_Prop_Type::make()
+					->default( 'Form label' )
+				: Html_V3_Prop_Type::make()
+					->default( [
+						'content'  => String_Prop_Type::generate( 'Form label' ),
+						'children' => [],
+					] ),
 			'input-id' => String_Prop_Type::make()
 				->default( '' )->description( 'ID of connected input' ),
 			'attributes' => Attributes_Prop_Type::make()->meta( Overridable_Prop_Type::ignore() ),

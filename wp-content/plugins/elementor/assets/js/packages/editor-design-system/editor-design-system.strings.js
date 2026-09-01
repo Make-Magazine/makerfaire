@@ -29,6 +29,13 @@ __(
 	);
 __( 'Import', 'elementor' );
 __( 'Export', 'elementor' );
+__( 'You have unsaved changes', 'elementor' );
+__(
+							"To open the Design System, save your page first. You can't continue without saving.",
+							'elementor'
+						);
+__( 'Stay here', 'elementor' );
+__( 'Save & Continue', 'elementor' );
 __( 'Replace existing values', 'elementor' );
 __( 'Imported design system values will overwrite existing variables and classes.', 'elementor' );
 __( 'Keep existing values', 'elementor' );

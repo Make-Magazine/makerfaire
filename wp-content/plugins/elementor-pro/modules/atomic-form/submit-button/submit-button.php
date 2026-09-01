@@ -56,8 +56,11 @@ class Submit_Button extends Atomic_Widget_Base {
 		return [
 			'classes' => Classes_Prop_Type::make()
 				->default( [] ),
-			'text' => Html_V3_Prop_Type::make()
-				->default( 'Submit' ),
+			'text' => class_exists( 'Elementor\Modules\AtomicWidgets\PropTypes\Escaped_Html_Prop_Type' )
+				? \Elementor\Modules\AtomicWidgets\PropTypes\Escaped_Html_Prop_Type::make()
+					->default( 'Submit' )
+				: Html_V3_Prop_Type::make()
+					->default( 'Submit' ),
 			'tag' => String_Prop_Type::make()
 				->default( 'button' )
 				->description( 'The HTML tag for the button element.' ),

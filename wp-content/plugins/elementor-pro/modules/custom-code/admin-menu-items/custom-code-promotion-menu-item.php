@@ -54,7 +54,11 @@ class Custom_Code_Promotion_Menu_Item extends Base_Promotion_Template {
 	}
 
 	public function get_promotion_title(): string {
-		return sprintf( esc_html__( 'Enjoy Creative Freedom %s with Custom Code', 'elementor-pro' ), '<br />' );
+		return sprintf(
+			/* translators: %s: Line break HTML. */
+			esc_html__( 'Enjoy Creative Freedom %s with Custom Code', 'elementor-pro' ),
+			'<br />'
+		);
 	}
 
 	public function get_video_url(): string {

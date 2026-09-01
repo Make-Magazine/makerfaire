@@ -25,7 +25,7 @@
     },
     "autoload": {
         "psr-4": {
-            "Illuminate\\Support\\": ""
+            "GravityKit\\GravityView\\Foundation\\ThirdParty\\Illuminate\\Support\\": ""
         },
         "files": [
             "helpers.php"

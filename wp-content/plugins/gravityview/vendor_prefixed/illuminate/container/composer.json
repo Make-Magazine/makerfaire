@@ -19,7 +19,7 @@
     },
     "autoload": {
         "psr-4": {
-            "Illuminate\\Container\\": ""
+            "GravityKit\\GravityView\\Foundation\\ThirdParty\\Illuminate\\Container\\": ""
         }
     },
     "extra": {

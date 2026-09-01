@@ -16,9 +16,13 @@ gravityview_before( $gravityview );
 
 ?>
 <?php
+// The back link renders before the container so it sits outside the
+// single-entry card. Theme styling reaches it via its own class with
+// a sibling arm (`.gv-back-link:has(~ .gv-themed)` in `_a11y.scss`),
+// the same pattern the `gravityview/template/before` notices use.
 if ( $link = gravityview_back_link( $gravityview ) ) {
 	?>
-	<p class="gv-back-link"><?php echo $link; ?></p><?php } ?>
+	<nav class="gv-back-link" aria-label="<?php esc_attr_e( 'Back to entries', 'gk-gravityview' ); ?>"><?php echo $link; ?></nav><?php } ?>
 
 <div class="<?php gv_container_class( 'gv-table-view gv-table-container gv-table-single-container', true, $gravityview ); ?>">
 	<table class="gv-table-view-content">

@@ -1,9 +1,4 @@
 <?php
-/**
- * @license GPL-2.0-or-later
- *
- * Modified using {@see https://github.com/BrianHenryIE/strauss}.
- */
 
 namespace GravityKit\GravityView\Foundation\Integrations;
 
@@ -71,13 +66,19 @@ class TrustedLogin {
 			return;
 		}
 
-		try {
-			$this->add_gk_submenu_item();
-		} catch ( Exception $e ) {
-			LoggerFramework::get_instance()->error( 'Unable to add TrustedLogin to the Foundation menu: ' . $e->getMessage() );
-
-			return;
-		}
+		// Build the translated submenu title on `init`, not in the constructor (which runs
+		// on `plugins_loaded`, before `after_setup_theme`), to avoid WordPress 6.7's
+		// just-in-time translation notice. The menu is not consumed until `admin_menu`.
+		add_action(
+			'init',
+			function () {
+				try {
+					$this->add_gk_submenu_item();
+				} catch ( Exception $e ) {
+					LoggerFramework::get_instance()->error( 'Unable to add TrustedLogin to the Foundation menu: ' . $e->getMessage() );
+				}
+			}
+		);
 
 		add_filter( 'gk/foundation/integrations/helpscout/configuration', [ $this, 'add_tl_key_to_helpscout_beacon' ] );
 		add_action( 'trustedlogin/' . self::ID . '/admin/access_revoked', [ $this, 'replace_revoked_notice' ], 11 );
@@ -171,7 +172,7 @@ class TrustedLogin {
 
 		$license_manager = LicenseManager::get_instance();
 
-		foreach ( $license_manager->get_licenses_data() as $license_data ) {
+		foreach ( $license_manager->get_all_licenses_data() as $license_data ) {
 			if ( Arr::get( $license_data, 'products' ) && ! $license_manager->is_expired_license( Arr::get( $license_data, 'expiry' ) ) ) {
 				Arr::set( $config, 'auth.license_key', Arr::get( $license_data, 'key' ) );
 
@@ -208,7 +209,7 @@ class TrustedLogin {
 	public function replace_revoked_notice() {
 		$vendor_title = $this->get_config()['vendor']['title'];
 
-		// translators: %s is replaced with the company name.
+		// translators: %s is replaced with the name of the software developer (e.g. "Acme Widgets").
 		$message = sprintf( esc_html__( '%s access revoked.', 'gk-gravityview' ), '<strong>' . esc_html( $vendor_title ) . '</strong>' );
 
 		Core::notices()->add_stored(

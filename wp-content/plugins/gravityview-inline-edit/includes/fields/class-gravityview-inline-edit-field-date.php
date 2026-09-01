@@ -7,9 +7,9 @@
  */
 class GravityView_Inline_Edit_Field_Date extends GravityView_Inline_Edit_Field {
 
-	var $gv_field_name = 'date';
+	public $gv_field_name = 'date';
 
-	var $inline_edit_type = 'date';
+	public $inline_edit_type = 'date';
 
 	/**
 	 * @since 1.0

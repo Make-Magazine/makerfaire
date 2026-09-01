@@ -55,6 +55,16 @@ class GWPerksPage {
 
 		$page_title = sprintf( __( '%s Settings', 'spellbook' ), $perk->data['Name'] );
 
+		// Match the user's admin color scheme so CSS custom properties such as
+		// --wp-admin-theme-color (used by core to fill checked checkboxes/radios)
+		// are defined inside this standalone iframe document.
+		$admin_color = get_user_option( 'admin_color' );
+		// The legacy 'fresh' scheme (and an unset option) has no --wp-admin-theme-color
+		// definition in WP 7.0+, so fall back to 'modern', the current default.
+		if ( empty( $admin_color ) || 'fresh' === $admin_color ) {
+			$admin_color = 'modern';
+		}
+
 		?>
 
 		<!DOCTYPE html>
@@ -66,12 +76,15 @@ class GWPerksPage {
 			// Resolves issues with the 3rd party scripts checking for get_current_screen().
 			remove_all_actions( 'wp_print_styles' );
 			remove_all_actions( 'wp_print_scripts' );
-			wp_print_styles( array( 'gwp-admin', 'wp-admin', 'buttons', 'colors-fresh' ) );
+			// 'wp-base-styles' defines the admin color scheme custom properties; 'colors'
+			// is the current scheme stylesheet. Without them, checked checkboxes render
+			// with no fill and their white checkmark is invisible.
+			wp_print_styles( array( 'gwp-admin', 'wp-admin', 'wp-base-styles', 'buttons', 'colors' ) );
 			wp_print_scripts( array( 'jquery', 'gwp-admin' ) );
 		?>
 		</head>
 
-		<body class="perk-iframe wp-core-ui">
+		<body class="perk-iframe wp-core-ui admin-color-<?php echo esc_attr( $admin_color ); ?>">
 
 			<div class="wrap perk-settings">
 				<form action="" method="post">

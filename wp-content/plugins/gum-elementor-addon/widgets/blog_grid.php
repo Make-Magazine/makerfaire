@@ -5063,9 +5063,11 @@ class Gum_Elementor_Widget_blog_grid extends Widget_Base {
     }
 
     $allowed_tags = array('h1','h2','h3','h4','h5','h6','div');
-    $tag_title = (in_array( $tag, $allowed_tags )) ? trim( $tag ): 'h4';
 
-    $post_title = sprintf( '<%s class="post-title"><a href="%s">%s</a></%s>',wp_kses_post($tag_title), get_the_permalink( $post_id ),esc_html( $post_title ), $tag_title);
+    $tag_title = (in_array( $tag, $allowed_tags )) ? Utils::validate_html_tag( $tag ) : 'h4';
+
+    $post_title = sprintf( '<%1$s class="post-title"><a href="%2$s">%3$s</a></%1$s>', $tag_title, get_the_permalink( $post_id ),esc_html( $post_title ));
+
     $top_meta = $this->get_post_meta( $settings , 'top', $divider);
     $mid_meta = $this->get_post_meta( $settings , 'mid', $divider);
 

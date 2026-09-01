@@ -1,9 +1,4 @@
 <?php
-/**
- * @license MIT
- *
- * Modified by gravitykit on 28-April-2026 using {@see https://github.com/BrianHenryIE/strauss}.
- */
 
 namespace GravityKit\AdvancedFilter\QueryFilters\Filter;
 
@@ -95,6 +90,10 @@ final class EntryFilterService {
 
 		if ( $field ) {
 			if ( $field->inputs && $field->choices ) {
+				if ( is_array( $filter_value ) ) {
+					return $this->matches_multi_choice( $entry, (string) $field_id, $filter_value, $filter->operator() );
+				}
+
 				$input_id = null;
 				// Find the selected option input_id.
 				foreach ( $field->choices as $i => $choice ) {
@@ -168,6 +167,47 @@ final class EntryFilterService {
 		}
 
 		return $this->matches_operation( $entry_value, $filter_value, $operator );
+	}
+
+	/**
+	 * Whether the entry's selected multi-input choices satisfy a set operator.
+	 *
+	 * Values are gathered by the `{field_id}.` input-key prefix rather than the field's current
+	 * inputs, because Gravity Forms re-numbers input ids when choices are reordered or inserted
+	 * while historical entries keep the id stored at submission time.
+	 *
+	 * @since 2.14.0
+	 *
+	 * @param array    $entry        The entry object.
+	 * @param string   $field_id     The field ID.
+	 * @param string[] $filter_value The selected choice values.
+	 * @param string   $operator     The resolved operator (`in`, `notin`, or `has_all`).
+	 *
+	 * @return bool Whether the entry meets the filter.
+	 */
+	private function matches_multi_choice( array $entry, string $field_id, array $filter_value, string $operator ): bool {
+		$prefix   = $field_id . '.';
+		$selected = [];
+		foreach ( $entry as $entry_key => $entry_value ) {
+			if ( 0 !== strpos( (string) $entry_key, $prefix ) ) {
+				continue;
+			}
+
+			$entry_value = (string) $entry_value;
+			if ( '' !== $entry_value ) {
+				$selected[] = $entry_value;
+			}
+		}
+
+		$needed = array_map( 'strval', $filter_value );
+
+		if ( 'has_all' === $operator ) {
+			return [] === array_diff( $needed, $selected );
+		}
+
+		$found = [] !== array_intersect( $needed, $selected );
+
+		return 'notin' === $operator ? ! $found : $found;
 	}
 
 	/**
@@ -277,6 +317,13 @@ final class EntryFilterService {
 	private function matches_operation( $value_1, $value_2, $operation ): bool {
 		if ( in_array( $operation, [ 'ncontains', 'notcontains' ], true ) ) {
 			return ! $this->matches_operation( $value_1, $value_2, 'contains' );
+		}
+
+		if ( in_array( $operation, [ 'in', 'notin' ], true ) ) {
+			$allowed = array_map( 'strval', (array) $value_2 );
+			$found   = in_array( (string) $value_1, $allowed, true );
+
+			return 'in' === $operation ? $found : ! $found;
 		}
 
 		if ( method_exists( GFFormsModel::class, 'matches_conditional_operation' ) ) {

@@ -1,0 +1,313 @@
+/**
+ * GravityView Theme — Widgets
+ *
+ * Pagination, back link, no-results, and powered-by styles.
+ * Scoped to `.gv-themed`.
+ *
+ * @package   GravityView
+ * @license   GPL2
+ * @since     TBD
+ */
+
+// =========================================================
+// Pagination — page links
+// =========================================================
+.gv-themed .gv-widget-page-links {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	// Right-align in LTR, left-align in RTL — `flex-end` honours writing direction.
+	justify-content: flex-end;
+	gap: var(--gv-pagination-gap);
+	padding-block: var(--gv-toolbar-padding);
+
+	// No container chrome — explicit overrides defeat any inherited rules.
+	background: none;
+	border: 0;
+
+	ul, li {
+		list-style: none;
+		margin: 0;
+		padding: 0;
+	}
+
+	ul {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		justify-content: flex-end;
+		gap: var(--gv-pagination-gap);
+	}
+
+	li {
+		display: inline-flex;
+	}
+
+	// Note: WordPress also adds `.page-numbers` to the wrapping `<ul>`, so
+	// these selectors are deliberately scoped to `li .page-numbers` to target
+	// only the individual link/span buttons — never the surrounding list.
+	li .page-numbers {
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		min-width: var(--gv-pagination-button-size);
+		min-height: var(--gv-pagination-button-size);
+		padding-block: var(--gv-space-1);
+		padding-inline: var(--gv-space-2);
+		// All buttons share the same rounded-rect shape — including prev/next.
+		border-radius: var(--gv-pagination-button-radius);
+		font-size: var(--gv-font-size-sm);
+		font-weight: var(--gv-font-weight-medium);
+		// Idle state — colors now token-themable. Previously hardcoded
+		// to `--gv-color-text` and `transparent`; new tokens default to
+		// the same values so zero visual change on upgrade.
+		color: var(--gv-pagination-button-color);
+		text-decoration: none;
+		// No border on the buttons; resting state controlled by token.
+		border: 0;
+		background: var(--gv-pagination-button-bg);
+		// Pagination buttons swap from resting → hovered with an
+		// "accelerate" curve (fast start, slow finish) so the
+		// off-hover return reads as a deliberate retreat rather
+		// than a linear pull-back.
+		transition: background-color var(--gv-transition-fast) var(--gv-easing-accelerate),
+		            color var(--gv-transition-fast) var(--gv-easing-accelerate);
+
+		// Underline on hover as a link affordance. Scoped to :not(.current)
+		// because the current page is a non-navigable span, not a link.
+		&:hover:not(.current) {
+			background-color: var(--gv-pagination-button-bg-hover);
+			color: var(--gv-pagination-button-color-hover);
+			text-decoration: underline;
+		}
+
+		&:focus-visible {
+			outline: none;
+			box-shadow: var(--gv-shadow-focus);
+		}
+
+		// Current page — filled to indicate selection.
+		&.current {
+			background-color: var(--gv-pagination-button-bg-active);
+			color: var(--gv-pagination-button-color-active);
+
+			&:focus-visible {
+				box-shadow: var(--gv-shadow-focus);
+			}
+		}
+
+		// Previous/Next buttons — same rounded-rect as numbers, slightly more
+		// horizontal padding to give the « » glyphs a bit of breathing room.
+		&.prev,
+		&.next {
+			padding-inline: var(--gv-space-3);
+		}
+	}
+}
+
+// =========================================================
+// Pagination info — "Displaying X - Y of Z"
+// =========================================================
+.gv-themed .gv-widget-pagination {
+	font-size: var(--gv-font-size-sm);
+	color: var(--gv-color-text-muted);
+	padding-block: var(--gv-space-2);
+}
+
+// =========================================================
+// Page size selector
+// =========================================================
+.gv-themed .gv-widget-page-size {
+	display: inline-flex;
+	align-items: center;
+	gap: var(--gv-space-2);
+	font-size: var(--gv-font-size-sm);
+	color: var(--gv-color-text-muted);
+
+	select {
+		padding-block: var(--gv-space-1);
+		padding-inline: var(--gv-space-2);
+		border: 1px solid var(--gv-control-border-color);
+		border-radius: var(--gv-radius-md);
+		font-size: var(--gv-font-size-sm);
+		color: var(--gv-color-text);
+		// Per-page page-size selector — share the same control
+		// background as the search-widget inputs so the customer's
+		// "Input Background" override paints both consistently.
+		background: var(--gv-control-bg);
+
+		&:focus-visible {
+			outline: none;
+			box-shadow: var(--gv-shadow-focus);
+		}
+	}
+}
+
+// =========================================================
+// Back link
+//
+// Two placements exist: List and Layout Builder single-entry templates
+// render the back link INSIDE the marked container (descendant arm),
+// while the Table single-entry template renders it BEFORE the container
+// so it sits outside the entry card (sibling arm, same pattern as the
+// `gravityview/template/before` notices). The arms stay in separate
+// rules: grouping a `:has()` arm with a plain arm would make browsers
+// without `:has()` drop the whole rule.
+// =========================================================
+@mixin gv-back-link-chrome {
+	font-size: var(--gv-font-size-sm);
+	margin-block-end: var(--gv-space-4);
+
+	a {
+		display: inline-flex;
+		align-items: center;
+		gap: var(--gv-space-1);
+		// Hairline radius so a focus/hover background tint reads as a
+		// pill, not a hard rectangle.
+		border-radius: var(--gv-radius-xs);
+		color: var(--gv-color-link);
+		text-decoration: none;
+		transition: color var(--gv-transition-fast) var(--gv-easing-standard);
+
+		&:hover,
+		&:focus-visible {
+			color: var(--gv-color-link-hover);
+			text-decoration: underline;
+		}
+
+		&:active {
+			color: var(--gv-color-link-active);
+		}
+	}
+}
+
+.gv-themed .gv-back-link {
+	@include gv-back-link-chrome;
+}
+
+.gv-back-link:has(~ .gv-themed) {
+	@include gv-back-link-chrome;
+}
+
+// =========================================================
+// No results
+// =========================================================
+.gv-themed .gv-no-results,
+.gv-themed .gv-no-results-text {
+	text-align: center;
+	color: var(--gv-color-text-muted);
+	padding-block: var(--gv-space-10);
+	padding-inline: var(--gv-space-4);
+	font-size: var(--gv-font-size-lg);
+}
+
+// The message can render inside an entry-title structure (Layout Builder, for
+// example, outputs `.gv-layout-builder-view-title > h3 > p`), which would
+// otherwise pick up heading chrome (semibold, dark color, heading margins).
+// Normalize headings and paragraphs so the message reads as the muted, centered
+// empty-state text set above rather than a stray heading.
+.gv-themed .gv-no-results :is( h1, h2, h3, h4, h5, h6 ),
+.gv-themed .gv-no-results p {
+	margin: 0;
+	font: inherit;
+	color: inherit;
+}
+
+// =========================================================
+// Powered by — light weight, low-contrast attribution line.
+// =========================================================
+.gv-themed .gv-powered-by {
+	font-size: var(--gv-font-size-xs);
+	font-weight: var(--gv-font-weight-light);
+	color: var(--gv-color-text-muted);
+	text-align: center;
+	margin-block-start: var(--gv-space-6);
+}
+
+// =========================================================
+// Entry notes — "Add note" form
+// =========================================================
+.gv-themed .gv-note-add {
+	margin-block: var(--gv-space-4);
+
+	// The form's first child is a wrapping <div>; turn it into a vertical stack
+	// so the email selector, content area, and submit button get consistent gap.
+	> div {
+		display: flex;
+		flex-direction: column;
+		gap: var(--gv-space-3);
+	}
+
+	.gv-note-email-container,
+	.gv-note-content-container {
+		display: flex;
+		flex-direction: column;
+		gap: var(--gv-space-2);
+	}
+
+	// Visually nest the conditional email options under the "Also email this
+	// note to" select using a left rail + indent — no competing border box.
+	.gv-note-to-container {
+		display: flex;
+		flex-direction: column;
+		gap: var(--gv-space-3);
+		margin: 0;
+		padding: var(--gv-space-2) 0 0 0;
+		padding-inline-start: var(--gv-space-4);
+		border: 0;
+		border-inline-start: var(--gv-border-width-2) solid var(--gv-entry-border-color);
+		border-radius: 0;
+		background-color: transparent;
+	}
+
+	.gv-note-to-custom-container,
+	.gv-note-subject-container {
+		display: flex;
+		flex-direction: column;
+		gap: var(--gv-space-1);
+
+		label {
+			font-size: var(--gv-font-size-sm);
+			font-weight: var(--gv-font-weight-medium);
+			color: var(--gv-color-text);
+		}
+	}
+
+	// Inputs/selects/textarea share the same chip styling — borders, rounded
+	// corners, padding — so the form reads consistently.
+	.gv-note-email-to,
+	input[type='text'],
+	textarea {
+		width: 100%;
+		padding-block: var(--gv-space-2);
+		padding-inline: var(--gv-space-3);
+		border: 1px solid var(--gv-color-border);
+		border-radius: var(--gv-radius-md);
+		background-color: var(--gv-color-surface);
+		font-family: inherit;
+		font-size: var(--gv-font-size-sm);
+		line-height: var(--gv-line-height-normal);
+		color: var(--gv-color-text);
+		transition:
+			border-color var(--gv-transition-fast) var(--gv-easing-standard),
+			box-shadow var(--gv-transition-fast) var(--gv-easing-standard);
+		box-sizing: border-box;
+
+		&:focus,
+		&:focus-visible {
+			outline: none;
+			border-color: var(--gv-color-primary);
+			box-shadow: var(--gv-shadow-focus);
+		}
+	}
+
+	textarea {
+		min-height: 6em;
+		resize: vertical;
+	}
+
+	.gv-add-note-submit {
+		align-self: flex-start;
+		margin: 0;
+	}
+}

@@ -12,12 +12,12 @@ use GV\GF_Field;
  * @since 1.0
  */
 class GravityView_Inline_Edit_Field_EntryTags extends GravityView_Inline_Edit_Field {
-	var $gv_field_name = 'entry_tags';
+	public $gv_field_name = 'entry_tags';
 
 	/** @see GF_Field_Tag $gf_field */
-	var $inline_edit_type = 'entry_tags';
+	public $inline_edit_type = 'entry_tags';
 
-	var $set_value = true;
+	public $set_value = true;
 
 	/**
 	 * @since 1.0
@@ -39,26 +39,29 @@ class GravityView_Inline_Edit_Field_EntryTags extends GravityView_Inline_Edit_Fi
 
 		$field_value = rgar( $entry, $field_id );
 
-		$wrapper_attributes['data-source'] = json_encode( $gf_field->choices );
+		$wrapper_attributes['data-source'] = wp_json_encode( $gf_field->choices );
 		parent::add_field_template( $this->inline_edit_type, $gf_field->get_field_input( $current_form, $field_value, $entry ), $current_form['id'], $field_id );
 
-		$view  = View::by_id( $wrapper_attributes['data-viewid'] ?? 0 );
-		$entry = GF_Entry::by_id( $wrapper_attributes['data-entryid'] ?? 0 );
-		$field = GF_Field::by_id( $view->form ?? 0, $field_id );
+		$view     = View::by_id( $wrapper_attributes['data-viewid'] ?? 0 );
+		$gv_entry = GF_Entry::by_id( $wrapper_attributes['data-entryid'] ?? 0 );
 
-		$context = Template_Context::from_template(
-			array(
-				'view'  => $view,
-				'field' => $field,
-				'entry' => $entry,
-			)
-		);
+		$field = $view ? GF_Field::by_id( $view->form, $field_id ) : null;
 
-		$tag_value                             = '{replace_value}';
-		$fitler_link                           = ( new EntryTagField() )->get_tag_filter_link( $tag_value, $current_form, $field_id, $context, $entry ?? [] );
-		$wrapper_attributes['data-entry-link'] = $fitler_link;
+		if ( $view && $gv_entry && $field ) {
+			$context = Template_Context::from_template(
+				array(
+					'view'  => $view,
+					'field' => $field,
+					'entry' => $gv_entry,
+				)
+			);
 
-		return parent::modify_inline_edit_attributes( $wrapper_attributes, $field_input_type, $field_id, $entry ?? [], $current_form, $gf_field );
+			$tag_value                             = '{replace_value}';
+			$filter_link                           = ( new EntryTagField() )->get_tag_filter_link( $tag_value, $current_form, $field_id, $context, $gv_entry );
+			$wrapper_attributes['data-entry-link'] = $filter_link;
+		}
+
+		return parent::modify_inline_edit_attributes( $wrapper_attributes, $field_input_type, $field_id, $entry, $current_form, $gf_field );
 	}
 }
 

@@ -1,8 +1,8 @@
 === GravityView - DataTables Layout ===
 Tags: gravityview
 Requires at least: 4.4
-Tested up to: 7.0.0
-Stable tag: trunk
+Tested up to: 7.1
+Stable tag: 3.12.0
 Contributors: The GravityKit Team
 License: GPL 3 or higher
 
@@ -15,6 +15,155 @@ Display entries in a dynamic table powered by DataTables & GravityView.
 3. Follow the instructions
 
 == Changelog ==
+
+= 3.13.1 on August 20, 2026 =
+
+This update fixes tables rendered from a stale page cache after a View's columns changed, and sorting of Currency, comma-decimal Number, and Time columns in client-side Views.
+
+#### 🐛 Fixed
+* A page cache that served a copy saved before the View's columns were changed showed values under the wrong headings, or dropped and blanked them — the table now reports that the page is out of date instead of displaying data that does not line up.
+* Sorting issues in Views using "Preloaded (Client-side)" processing:
+  - A Number column formatted as Currency did not sort at all, with the heading showing its sort arrow but no row moving;
+  - A Number column using a comma for its decimal point ordered by the digits rather than by the amount;
+  - A Time column ordered alphabetically, placing afternoon times ahead of morning ones.
+
+= 3.13.0 on August 13, 2026 =
+
+This release adds a "Column Widths" setting controlling how Percent Width columns behave on narrow screens, and fixes exports repeating link addresses after values along with several column alignment issues.
+
+#### 🚀 Added
+* A "Column Widths" setting on the DataTables tab for columns using a Percent Width, choosing between "Widen the table and scroll sideways" (default setting that keeps every value readable) and "Keep the column at its set width" (holds your configured widths at any screen size, letting a wider value overlap the next column).
+
+#### ✨ Improved
+* A Percent Width is now the share of the table a column aims for rather than one it is held to, so columns whose values need more room can take it once the rows load — choose "Keep the column at its set width" to have the percentages honored exactly.
+
+#### 🐛 Fixed
+* Exports repeated a value's link address after it — a name linked to its entry exported as `Jane Doe (https://example.com/view/entry/123/)`, and phone or email columns exported their own address alongside the value (File Upload, Website, Entry Link and Edit Link columns still export the address, since there the address is the value).
+* Column alignment issues, most visible on mobiles devices:
+  - Columns were narrower than the values they held, breaking headings one letter per line and running values across the column beside them;
+  - Column headings and the footer stayed behind when the table was scrolled sideways, leaving every heading over the wrong column;
+  - Column headings and the footer kept a width the rows no longer had when a web font finished loading after the table drew — including tables using a floating header, where headings stayed out of line even after the header dropped back into place.
+
+= 3.12.0 on August 6, 2026 =
+
+A huge bug fix update, columns can now be pinned, and exports now contain every entry rather than just the current page. Includes security improvements; please update!
+
+*GravityView 2.57 or newer is now required.*
+
+#### 🚀 Added
+* Field settings to pin a column to the left or right edge of the table, and to choose which columns collapse first in Responsive mode.
+* A "Clear Filters" button that empties every field filter at once, enabled in View Settings on the DataTables tab.
+
+#### ✨ Improved
+* Expands exports to cover every matching entry, honoring the active search, filters and sorting.
+* Shows a message and a Retry button when a table cannot load its data, instead of appearing to load forever. Administrators also see which plugin caused the failure.
+* Truncates a long field filter label with an ellipsis instead of cutting it mid-word, and carries the full text for hovering and for screen readers.
+
+#### 🔒 Security
+* Fixes a View restricted using the "Search Value" setting exposing additional entry data outside the search. Please update.
+
+#### 🐛 Fixed
+* Removes the Page Links, Pagination Info and Page Size widgets from DataTables Views; any already added stop rendering. The table's own page-size menu does what Page Size did without reloading the page, and the other two never displayed anything.
+* Fixes a table too wide for the space around it being cut off or pushing the whole page sideways, instead of scrolling within its own area.
+* Fixes CSV files containing accented text not displaying properly in Excel.
+* Fixes sorting issues:
+    - A View sorted by "Random" repeating rows as you page through. It now loads all matching entries at once, which adds to the initial load time on a View with many entries;
+    - The View's Sort Field setting not being applied;
+    - A direction set on a shortcode or block being ignored;
+    - Sorting by a joined form's field (Multiple Forms) preventing the table from loading, or leaving the rows in place;
+    - A blank date sorting as though it were today.
+* Fixes searching issues:
+    - A Search Bar search combined with a column filter matching either one instead of both;
+    - Multi-word searches not requiring every word;
+    - Column filters on joined Name and Address fields searching the wrong form;
+    - A multi-select search field preventing search from working.
+* Fixes field filter issues:
+    - A View with "Enable Field Filters" on, but no fields chosen in "Fields With Filter", showing no filters instead of one on every eligible column;
+    - "Clear" leaving the column filters in place;
+    - A cleared date range keeping its dates on screen;
+    - Filters not being clickable on a table with pinned columns;
+    - Resizing the window discarding whatever had been typed.
+* Fixes column width issues:
+    - "Percent Width" not applying in both processing modes;
+    - Columns left blank not sharing the width remainder evenly;
+    - Widths shifting once data loads. (Superseded in the next release: widths shift again by design where a column would otherwise be too narrow for its content. Choose "Keep the column at its set width" under Column Widths to hold them.)
+* Fixes issues on pages that embed the same View more than once: "Clear" reset every copy, searching from the second acted on the first, and all copies shared one saved table state.
+* Fixes FixedHeader forcing the horizontal-scroll layout, and its floating header drifting out of line with its columns.
+* Fixes settings that were not being applied:
+    - "Offset entries starting from";
+    - "Save Table State" on embedded Views;
+    - Scroller's "Row Height";
+    - Auto-Update interval of 0.
+* Fixes "No Entries Behavior" being disabled by any URL parameter on the page, including tracking parameters such as `utm_source`, and the "No Entries Message" and "No Search Results Text" being discarded on translated sites.
+* Fixes a table's saved page, search and filters staying in the browser indefinitely; they are now forgotten once the browser is closed.
+* Fixes RowGroup overriding the View's Sort direction, and storing its grouping field by column position, so reordering or deleting a column regrouped the table by a different field. Existing Views keep grouping by the same field.
+* Fixes smaller issues: single entry pages rendering empty action columns or an empty back-link paragraph, the loading overlay covering the column headings, Column Visibility listing a hidden column used for sorting, a button with no label rendering blank instead of falling back to its default name, URL parameters with numeric names not reaching the table, settings left over from the retired TableTools buttons overwriting the export buttons you configured, and Views saved before DataTables 3.3 offering a date range their processing mode cannot search.
+
+#### 💻 Developer Updates
+* Adds filters:
+    - [`gk/gravityview/datatables/response/error-payload`](https://www.gravitykit.dev/docs/gravityview-datatables/filters/gk-gravityview-datatables-response-error-payload/) - the error response sent to the browser;
+    - [`gk/gravityview/datatables/export/max-rows`](https://www.gravitykit.dev/docs/gravityview-datatables/filters/gk-gravityview-datatables-export-max-rows/) - the 1,000-row export cap;
+    - [`gk/gravityview/datatables/columns/widths`](https://www.gravitykit.dev/docs/gravityview-datatables/filters/gk-gravityview-datatables-columns-widths/) - column widths after they are calculated;
+    - [`gk/gravityview/datatables/search/split-words`](https://www.gravitykit.dev/docs/gravityview-datatables/filters/gk-gravityview-datatables-search-split-words/) - whether a multi-word search splits into per-word matches.
+* Registers field settings on [`gk/gravityview/template/options`](https://www.gravitykit.dev/docs/gravityview/filters/gk-gravityview-template-options/) instead of the deprecated `gravityview_template_field_options`.
+* Extends the REST and inspector schema to cover the whole DataTables settings group, including `processing_mode`, so a client can discover whether a View uses server-side or client-side processing.
+* Passes the View's own strings, merged over the bundled locale, to [`gravityview/datatables/config/language`](https://www.gravitykit.dev/docs/gravityview-datatables/filters/gravityview-datatables-config-language/) rather than the locale alone.
+
+= 3.11.0 on July 30, 2026 =
+
+This release tightens security around who can load a View's entries and fixes several loading and sorting issues in DataTables Views.
+
+#### 🔒 Security
+* Tightened the access checks applied before a View's entries are returned to the browser.
+
+#### 🐛 Fixed
+* Logged-out visitors saw "Loading data…" indefinitely, with no explanation, when a full-page cache served a page whose security token had since expired.
+* After a failed request, a later search that genuinely returned no results was labeled as a server error.
+* When rows were grouped by a column ("RowGroup"), clicking its header for descending order flipped the arrow but left the rows unchanged — the groups now reverse, and sorting any other column still keeps the rows grouped.
+* A `sort` parameter in the page address discarded every column the visitor sorted for as long as it stayed in the address bar — clicking a column header now takes precedence, and where the sorted field is a column the table also starts on the order the address asks for.
+
+= 3.10.0 on July 16, 2026 =
+
+This release improves rendering performance, fixes Views interfering with each other when embedded together on one page, corrects filtered search-result counts, and fixes URL-based Filter & Sort conditions returning no entries behind a full-page cache.
+
+#### ✨ Improved
+* Page rendering performance: the table configuration is now built once per View and shared across DataTables features instead of being rebuilt by each feature.
+* Client-side search performance when multiple Views are displayed on the same page.
+
+#### 🐛 Fixed
+* Tables did not display when the same View was embedded more than once on a page.
+* Responsive, FixedHeader, and FixedColumns settings were applied to the wrong table when multiple Views were displayed on the same page.
+* A View using client-side processing conflicted with other tables on the page that use the DataTables library.
+* The table information text did not report the total number of entries when results were filtered by a search ("Showing X to Y of Z entries (filtered from N total entries)").
+* On a View with URL-based Filter & Sort conditions (e.g. `{get:city}`), the DataTables AJAX refresh could return no entries (clearing the results and any Calendar widget) when the page was served from a full-page cache. The AJAX request now also carries the live URL query so the filters resolve regardless of the cached markup.
+
+#### 💻 Developer Updates
+* DataTables now uses current GravityView hooks instead of ones deprecated in GravityView 2.55.
+* The `gk.datatables.options` JavaScript filter now receives a per-table copy of the configuration. Mutating the filtered object no longer modifies the shared `window.gvDTglobals` entries; return the modified object instead.
+
+= 3.9.1 on July 9, 2026 =
+
+This update resolves single-entry links failing on Views with a large number of columns, along with multiple Search Bar Clear button issues.
+
+#### 🐛 Fixed
+* Single-entry links (View, Edit, Delete) on Views with a large number of columns could fail with an "HTTP 414 Request-URI Too Long" error, because DataTables request parameters were appended to each link's URL.
+* Search Bar Clear button issues:
+  - Clearing a search reset the results but left date picker fields populated, making the search appear still active;
+  - After clearing a search, the Clear button could not reappear when changing inputs or searching again until the page was reloaded.
+* A "translation loading was triggered too early" PHP notice in WordPress 6.7+.
+
+= 3.9.0 on June 26, 2026 =
+
+This release exposes DataTables View settings to GravityView's REST inspector and the GravityKit Abilities API, switches DataTables search to GravityView's built-in search, and fixes the Approval and Star column filters.
+
+#### 🚀 Added
+* DataTables View settings can now be read, configured, and discovered through GravityView's REST inspector API and the GravityKit Abilities API, so the [GravityKit MCP](https://gravitykit.com/mcp/) can manage them.
+
+#### ✨ Improved
+* Replaces DataTables' custom entry search with GravityView's built-in search (GravityView 2.57 and newer).
+
+#### 🐛 Fixed
+* Fixes the Approval and Star per-column filters appearing as plain text inputs instead of dropdown menus.
 
 = 3.8.1 on June 4, 2026 =
 

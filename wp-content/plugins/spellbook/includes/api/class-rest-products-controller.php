@@ -10,126 +10,126 @@ class GravityPerks_REST_Products_Controller extends WP_REST_Controller {
 	}
 
 	public function register_routes() {
-		register_rest_route( $this->namespace, '/' . $this->rest_base, [
-			[
+		register_rest_route( $this->namespace, '/' . $this->rest_base, array(
+			array(
 				'methods'             => WP_REST_Server::READABLE,
-				'callback'            => [ $this, 'get_products' ],
-				'permission_callback' => [ $this, 'check_permission' ],
-				'schema'              => [ $this, 'get_product_schema' ],
-			],
-		] );
+				'callback'            => array( $this, 'get_products' ),
+				'permission_callback' => array( $this, 'check_permission' ),
+				'schema'              => array( $this, 'get_product_schema' ),
+			),
+		) );
 
-		register_rest_route( $this->namespace, '/' . $this->rest_base . '/(?P<id>[\w-]+)', [
-			[
+		register_rest_route( $this->namespace, '/' . $this->rest_base . '/(?P<id>[\w-]+)', array(
+			array(
 				'methods'             => WP_REST_Server::READABLE,
-				'callback'            => [ $this, 'get_product' ],
-				'permission_callback' => [ $this, 'check_permission' ],
-				'schema'              => [ $this, 'get_product_schema' ],
-			],
-			[
+				'callback'            => array( $this, 'get_product' ),
+				'permission_callback' => array( $this, 'check_permission' ),
+				'schema'              => array( $this, 'get_product_schema' ),
+			),
+			array(
 				'methods'             => WP_REST_Server::DELETABLE,
-				'callback'            => [ $this, 'delete_product' ],
-				'permission_callback' => [ $this, 'check_permission' ],
-				'args'               => [
-					'id' => [
+				'callback'            => array( $this, 'delete_product' ),
+				'permission_callback' => array( $this, 'check_permission' ),
+				'args'                => array(
+					'id' => array(
 						'required'          => true,
-						'type'             => 'string',
-						'validate_callback' => [ $this, 'validate_product_exists' ],
-					],
-				],
-			],
-		] );
+						'type'              => 'string',
+						'validate_callback' => array( $this, 'validate_product_exists' ),
+					),
+				),
+			),
+		) );
 
-		register_rest_route( $this->namespace, '/' . $this->rest_base . '/(?P<id>[\d]+)/details', [
-			[
+		register_rest_route( $this->namespace, '/' . $this->rest_base . '/(?P<id>[\d]+)/details', array(
+			array(
 				'methods'             => WP_REST_Server::READABLE,
-				'callback'            => [ $this, 'get_product_details' ],
-				'permission_callback' => [ $this, 'check_permission' ],
-				'args'               => [
-					'id' => [
-						'required'          => true,
-						'type'             => 'integer',
-						'minimum'          => 1,
-					],
-				],
-			],
-		] );
+				'callback'            => array( $this, 'get_product_details' ),
+				'permission_callback' => array( $this, 'check_permission' ),
+				'args'                => array(
+					'id' => array(
+						'required' => true,
+						'type'     => 'integer',
+						'minimum'  => 1,
+					),
+				),
+			),
+		) );
 
 		// Register plugin management endpoints
-		register_rest_route( $this->namespace, '/' . $this->rest_base . '/(?P<id>[\w-]+)/activate', [
-			[
+		register_rest_route( $this->namespace, '/' . $this->rest_base . '/(?P<id>[\w-]+)/activate', array(
+			array(
 				'methods'             => WP_REST_Server::CREATABLE,
-				'callback'            => [ $this, 'activate_product' ],
-				'permission_callback' => [ $this, 'check_permission' ],
-				'args'               => [
-					'id' => [
+				'callback'            => array( $this, 'activate_product' ),
+				'permission_callback' => array( $this, 'check_permission' ),
+				'args'                => array(
+					'id' => array(
 						'required'          => true,
-						'type'             => 'string',
-						'validate_callback' => [ $this, 'validate_product_exists' ],
-					],
-				],
-			],
-		] );
+						'type'              => 'string',
+						'validate_callback' => array( $this, 'validate_product_exists' ),
+					),
+				),
+			),
+		) );
 
-		register_rest_route( $this->namespace, '/' . $this->rest_base . '/(?P<id>[\w-]+)/deactivate', [
-			[
+		register_rest_route( $this->namespace, '/' . $this->rest_base . '/(?P<id>[\w-]+)/deactivate', array(
+			array(
 				'methods'             => WP_REST_Server::CREATABLE,
-				'callback'            => [ $this, 'deactivate_product' ],
-				'permission_callback' => [ $this, 'check_permission' ],
-				'args'               => [
-					'id' => [
+				'callback'            => array( $this, 'deactivate_product' ),
+				'permission_callback' => array( $this, 'check_permission' ),
+				'args'                => array(
+					'id' => array(
 						'required'          => true,
-						'type'             => 'string',
-						'validate_callback' => [ $this, 'validate_product_exists' ],
-					],
-				],
-			],
-		] );
+						'type'              => 'string',
+						'validate_callback' => array( $this, 'validate_product_exists' ),
+					),
+				),
+			),
+		) );
 
-		register_rest_route( $this->namespace, '/' . $this->rest_base . '/(?P<id>[\w-]+)/install', [
-			[
+		register_rest_route( $this->namespace, '/' . $this->rest_base . '/(?P<id>[\w-]+)/install', array(
+			array(
 				'methods'             => WP_REST_Server::CREATABLE,
-				'callback'            => [ $this, 'install_product' ],
-				'permission_callback' => [ $this, 'check_permission' ],
-				'args'               => [
-					'id' => [
+				'callback'            => array( $this, 'install_product' ),
+				'permission_callback' => array( $this, 'check_permission' ),
+				'args'                => array(
+					'id' => array(
 						'required'          => true,
-						'type'             => 'string',
-						'validate_callback' => [ $this, 'validate_product_exists' ],
-					],
-				],
-			],
-		] );
+						'type'              => 'string',
+						'validate_callback' => array( $this, 'validate_product_exists' ),
+					),
+				),
+			),
+		) );
 
-		register_rest_route( $this->namespace, '/' . $this->rest_base . '/(?P<id>[\w-]+)/uninstall', [
-			[
+		register_rest_route( $this->namespace, '/' . $this->rest_base . '/(?P<id>[\w-]+)/uninstall', array(
+			array(
 				'methods'             => WP_REST_Server::CREATABLE,
-				'callback'            => [ $this, 'uninstall_product' ],
-				'permission_callback' => [ $this, 'check_permission' ],
-				'args'               => [
-					'id' => [
+				'callback'            => array( $this, 'uninstall_product' ),
+				'permission_callback' => array( $this, 'check_permission' ),
+				'args'                => array(
+					'id' => array(
 						'required'          => true,
-						'type'             => 'string',
-						'validate_callback' => [ $this, 'validate_product_exists' ],
-					],
-				],
-			],
-		] );
+						'type'              => 'string',
+						'validate_callback' => array( $this, 'validate_product_exists' ),
+					),
+				),
+			),
+		) );
 
-		register_rest_route( $this->namespace, '/' . $this->rest_base . '/(?P<id>[\w-]+)/update', [
-			[
+		register_rest_route( $this->namespace, '/' . $this->rest_base . '/(?P<id>[\w-]+)/update', array(
+			array(
 				'methods'             => WP_REST_Server::CREATABLE,
-				'callback'            => [ $this, 'update_product' ],
-				'permission_callback' => [ $this, 'check_permission' ],
-				'args'               => [
-					'id' => [
+				'callback'            => array( $this, 'update_product' ),
+				'permission_callback' => array( $this, 'check_permission' ),
+				'args'                => array(
+					'id' => array(
 						'required'          => true,
-						'type'             => 'string',
-						'validate_callback' => [ $this, 'validate_product_exists' ],
-					],
-				],
-			],
-		] );
+						'type'              => 'string',
+						'validate_callback' => array( $this, 'validate_product_exists' ),
+					),
+				),
+			),
+		) );
 	}
 
 	/**
@@ -147,7 +147,7 @@ class GravityPerks_REST_Products_Controller extends WP_REST_Controller {
 			return new WP_Error(
 				'plugin_not_installed',
 				__( 'Plugin is not installed.', 'spellbook' ),
-				[ 'status' => 400 ]
+				array( 'status' => 400 )
 			);
 		}
 
@@ -156,7 +156,7 @@ class GravityPerks_REST_Products_Controller extends WP_REST_Controller {
 			return new WP_Error(
 				'network_activated_plugin',
 				__( 'This plugin can only be managed from the network admin\'s Plugins page.', 'spellbook' ),
-				[ 'status' => 400 ]
+				array( 'status' => 400 )
 			);
 		}
 
@@ -186,7 +186,7 @@ class GravityPerks_REST_Products_Controller extends WP_REST_Controller {
 			return new WP_Error(
 				'remove_failed',
 				__( 'Failed to remove plugin.', 'spellbook' ),
-				[ 'status' => 500 ]
+				array( 'status' => 500 )
 			);
 		}
 
@@ -241,7 +241,7 @@ class GravityPerks_REST_Products_Controller extends WP_REST_Controller {
 			return new WP_Error(
 				'plugin_already_installed',
 				__( 'Plugin is already installed.', 'spellbook' ),
-				[ 'status' => 400 ]
+				array( 'status' => 400 )
 			);
 		}
 
@@ -250,7 +250,7 @@ class GravityPerks_REST_Products_Controller extends WP_REST_Controller {
 			return new WP_Error(
 				'no_download_link',
 				__( 'No download URL available for this plugin.', 'spellbook' ),
-				[ 'status' => 400 ]
+				array( 'status' => 400 )
 			);
 		}
 
@@ -261,15 +261,15 @@ class GravityPerks_REST_Products_Controller extends WP_REST_Controller {
 		require_once ABSPATH . 'wp-admin/includes/plugin.php';
 
 		// Download and install the plugin
-		$skin = new WP_Ajax_Upgrader_Skin();
+		$skin     = new WP_Ajax_Upgrader_Skin();
 		$upgrader = new Plugin_Upgrader( $skin );
-		$result = $upgrader->install( $product->download_link );
+		$result   = $upgrader->install( $product->download_link );
 
 		if ( is_wp_error( $result ) ) {
 			return new WP_Error(
 				'installation_failed',
 				$result->get_error_message(),
-				[ 'status' => 500 ]
+				array( 'status' => 500 )
 			);
 		}
 
@@ -277,7 +277,7 @@ class GravityPerks_REST_Products_Controller extends WP_REST_Controller {
 			return new WP_Error(
 				'installation_failed',
 				$skin->result->get_error_message(),
-				[ 'status' => 500 ]
+				array( 'status' => 500 )
 			);
 		}
 
@@ -285,7 +285,7 @@ class GravityPerks_REST_Products_Controller extends WP_REST_Controller {
 			return new WP_Error(
 				'installation_failed',
 				$skin->get_error_messages(),
-				[ 'status' => 500 ]
+				array( 'status' => 500 )
 			);
 		}
 
@@ -293,7 +293,7 @@ class GravityPerks_REST_Products_Controller extends WP_REST_Controller {
 			return new WP_Error(
 				'installation_failed',
 				__( 'Plugin installation failed for an unknown reason.', 'spellbook' ),
-				[ 'status' => 500 ]
+				array( 'status' => 500 )
 			);
 		}
 
@@ -324,7 +324,7 @@ class GravityPerks_REST_Products_Controller extends WP_REST_Controller {
 			return new WP_Error(
 				'plugin_already_inactive',
 				__( 'Plugin is already inactive.', 'spellbook' ),
-				[ 'status' => 400 ]
+				array( 'status' => 400 )
 			);
 		}
 
@@ -333,7 +333,7 @@ class GravityPerks_REST_Products_Controller extends WP_REST_Controller {
 			return new WP_Error(
 				'network_activated_plugin',
 				__( 'This plugin can only be managed from the network admin\'s Plugins page.', 'spellbook' ),
-				[ 'status' => 400 ]
+				array( 'status' => 400 )
 			);
 		}
 
@@ -371,7 +371,7 @@ class GravityPerks_REST_Products_Controller extends WP_REST_Controller {
 			return new WP_Error(
 				'plugin_already_active',
 				__( 'Plugin is already active.', 'spellbook' ),
-				[ 'status' => 400 ]
+				array( 'status' => 400 )
 			);
 		}
 
@@ -380,7 +380,7 @@ class GravityPerks_REST_Products_Controller extends WP_REST_Controller {
 			return new WP_Error(
 				'plugin_not_installed',
 				__( 'Plugin must be installed before it can be activated.', 'spellbook' ),
-				[ 'status' => 400 ]
+				array( 'status' => 400 )
 			);
 		}
 
@@ -391,7 +391,7 @@ class GravityPerks_REST_Products_Controller extends WP_REST_Controller {
 			return new WP_Error(
 				'activation_failed',
 				$result->get_error_message(),
-				[ 'status' => 500 ]
+				array( 'status' => 500 )
 			);
 		}
 
@@ -481,7 +481,7 @@ class GravityPerks_REST_Products_Controller extends WP_REST_Controller {
 		return new WP_Error(
 			'rest_plugin_invalid',
 			__( 'Plugin not found.', 'spellbook' ),
-			[ 'status' => 404 ]
+			array( 'status' => 404 )
 		);
 	}
 
@@ -506,7 +506,7 @@ class GravityPerks_REST_Products_Controller extends WP_REST_Controller {
 		return new WP_Error(
 			'plugin_not_found',
 			__( 'Plugin not found.', 'spellbook' ),
-			[ 'status' => 404 ]
+			array( 'status' => 404 )
 		);
 	}
 
@@ -527,7 +527,7 @@ class GravityPerks_REST_Products_Controller extends WP_REST_Controller {
 			return new WP_Error(
 				'plugin_not_installed',
 				__( 'Plugin must be installed before it can be updated.', 'spellbook' ),
-				[ 'status' => 400 ]
+				array( 'status' => 400 )
 			);
 		}
 
@@ -536,7 +536,7 @@ class GravityPerks_REST_Products_Controller extends WP_REST_Controller {
 			return new WP_Error(
 				'network_activated_plugin',
 				__( 'This plugin can only be managed from the network admin\'s Plugins page.', 'spellbook' ),
-				[ 'status' => 400 ]
+				array( 'status' => 400 )
 			);
 		}
 
@@ -551,7 +551,7 @@ class GravityPerks_REST_Products_Controller extends WP_REST_Controller {
 			return new WP_Error(
 				'no_update_available',
 				__( 'No update available for this plugin.', 'spellbook' ),
-				[ 'status' => 400 ]
+				array( 'status' => 400 )
 			);
 		}
 
@@ -568,15 +568,15 @@ class GravityPerks_REST_Products_Controller extends WP_REST_Controller {
 		wp_update_plugins();
 
 		// Update the plugin
-		$skin = new WP_Ajax_Upgrader_Skin();
+		$skin     = new WP_Ajax_Upgrader_Skin();
 		$upgrader = new Plugin_Upgrader( $skin );
-		$result = $upgrader->upgrade( $plugin_file );
+		$result   = $upgrader->upgrade( $plugin_file );
 
 		if ( is_wp_error( $result ) ) {
 			return new WP_Error(
 				'update_failed',
 				$result->get_error_message(),
-				[ 'status' => 500 ]
+				array( 'status' => 500 )
 			);
 		}
 
@@ -584,7 +584,7 @@ class GravityPerks_REST_Products_Controller extends WP_REST_Controller {
 			return new WP_Error(
 				'update_failed',
 				$skin->result->get_error_message(),
-				[ 'status' => 500 ]
+				array( 'status' => 500 )
 			);
 		}
 
@@ -592,7 +592,7 @@ class GravityPerks_REST_Products_Controller extends WP_REST_Controller {
 			return new WP_Error(
 				'update_failed',
 				$skin->get_error_messages(),
-				[ 'status' => 500 ]
+				array( 'status' => 500 )
 			);
 		}
 
@@ -600,7 +600,7 @@ class GravityPerks_REST_Products_Controller extends WP_REST_Controller {
 			return new WP_Error(
 				'update_failed',
 				__( 'Plugin update failed for an unknown reason.', 'spellbook' ),
-				[ 'status' => 500 ]
+				array( 'status' => 500 )
 			);
 		}
 
@@ -611,7 +611,7 @@ class GravityPerks_REST_Products_Controller extends WP_REST_Controller {
 				return new WP_Error(
 					'reactivation_failed',
 					__( 'Plugin updated but reactivation failed: ', 'spellbook' ) . $activate_result->get_error_message(),
-					[ 'status' => 500 ]
+					array( 'status' => 500 )
 				);
 			}
 		}
@@ -627,7 +627,7 @@ class GravityPerks_REST_Products_Controller extends WP_REST_Controller {
 
 	public function check_permission( $request ) {
 		$method = $request->get_method();
-		$route = $request->get_route();
+		$route  = $request->get_route();
 
 		// Handle different capabilities based on route and method
 		if ( strpos( $route, '/activate' ) !== false ) {
@@ -646,19 +646,19 @@ class GravityPerks_REST_Products_Controller extends WP_REST_Controller {
 	}
 
 	public function get_products( $request ) {
-		$force = $request->get_param('force');
-		$products = $this->api->get_products( !! $force );
+		$force    = $request->get_param( 'force' );
+		$products = $this->api->get_products( ! ! $force );
 
 		if ( is_wp_error( $products ) ) {
 			return $products;
 		}
 
-		$products_data = [];
+		$products_data = array();
 
-		$excluded_slugs = [
+		$excluded_slugs = array(
 			'gravityperks',
 			'spellbook',
-		];
+		);
 
 		foreach ( $products as $product ) {
 			if ( in_array( $product->slug, $excluded_slugs, true ) ) {
@@ -677,7 +677,7 @@ class GravityPerks_REST_Products_Controller extends WP_REST_Controller {
 	}
 
 	public function get_product( $request ) {
-		$id = $request['id'];
+		$id       = $request['id'];
 		$products = $this->api->get_products();
 
 		if ( is_wp_error( $products ) ) {
@@ -693,7 +693,7 @@ class GravityPerks_REST_Products_Controller extends WP_REST_Controller {
 		return new WP_Error(
 			'plugin_not_found',
 			__( 'Plugin not found.', 'spellbook' ),
-			[ 'status' => 404 ]
+			array( 'status' => 404 )
 		);
 	}
 
@@ -716,7 +716,7 @@ class GravityPerks_REST_Products_Controller extends WP_REST_Controller {
 			return new WP_Error(
 				'plugin_details_not_found',
 				__( 'Plugin details not found.', 'spellbook' ),
-				[ 'status' => 404 ]
+				array( 'status' => 404 )
 			);
 		}
 
@@ -739,36 +739,36 @@ class GravityPerks_REST_Products_Controller extends WP_REST_Controller {
 
 		// Convert object to array and add computed fields
 		$data = array(
-			'ID'            => $product->ID,
-			'name'          => $product->name,
-			'version'       => GWPerk::is_installed( $product->plugin_file ) ? $this->api->get_local_product_version( $product->plugin_file ) : $product->version,
-			'new_version'   => isset( $product->new_version ) ? $product->new_version : $product->version,
-			'has_update'    => isset( $product->new_version ) && GWPerk::is_installed( $product->plugin_file ) && version_compare( $product->new_version, $this->api->get_local_product_version( $product->plugin_file ), '>' ),
-			'slug'          => $product->slug,
-			'plugin_file'   => $product->plugin_file,
-			'plugin'        => $product->plugin_file, // For backwards compatibility
-			'homepage'      => $product->homepage,
-			'documentation' => $product->documentation,
-			'sections'      => $product->sections,
-			'banners'       => isset( $product->banners ) ? $product->banners : array(),
-			'icons'         => isset( $product->icons ) ? $product->icons : array(),
-			'categories'    => $product->categories,
-			'type'          => $product->type,
-			'last_updated'  => $product->last_updated,
-			'download_link' => $product->download_link,
-			'can_uninstall' => GWPerk::is_perk( $product->plugin_file )
+			'ID'                    => $product->ID,
+			'name'                  => $product->name,
+			'version'               => GWPerk::is_installed( $product->plugin_file ) ? $this->api->get_local_product_version( $product->plugin_file ) : $product->version,
+			'new_version'           => isset( $product->new_version ) ? $product->new_version : $product->version,
+			'has_update'            => isset( $product->new_version ) && GWPerk::is_installed( $product->plugin_file ) && version_compare( $product->new_version, $this->api->get_local_product_version( $product->plugin_file ), '>' ),
+			'slug'                  => $product->slug,
+			'plugin_file'           => $product->plugin_file,
+			'plugin'                => $product->plugin_file, // For backwards compatibility
+			'homepage'              => $product->homepage,
+			'documentation'         => $product->documentation,
+			'sections'              => $product->sections,
+			'banners'               => isset( $product->banners ) ? $product->banners : array(),
+			'icons'                 => isset( $product->icons ) ? $product->icons : array(),
+			'categories'            => $product->categories,
+			'type'                  => $product->type,
+			'last_updated'          => $product->last_updated,
+			'download_link'         => $product->download_link,
+			'can_uninstall'         => GWPerk::is_perk( $product->plugin_file )
 				&& GWPerk::is_installed( $product->plugin_file )
 				&& GWPerk::get_perk( $product->plugin_file )
 				&& method_exists( GWPerk::get_perk( $product->plugin_file ), 'uninstall' ),
 			'is_legacy_free_plugin' => $is_legacy_free_plugin,
-			'is_installed'  => GWPerk::is_installed( $product->plugin_file ) || $is_legacy_free_plugin,
-			'is_active'     => is_plugin_active( $product->plugin_file ),
-			'is_deprecated' => $this->is_deprecated( $product ),
+			'is_installed'          => GWPerk::is_installed( $product->plugin_file ) || $is_legacy_free_plugin,
+			'is_active'             => is_plugin_active( $product->plugin_file ),
+			'is_deprecated'         => $this->is_deprecated( $product ),
 			/*
 			 * Performance Note: Loading perk classes to check for settings is expensive.
 			 * We're keeping this for now since only a few perks like GP Better User Activation
 			 */
-			'has_settings'  => $this->has_settings( $product->plugin_file )
+			'has_settings'          => $this->has_settings( $product->plugin_file ),
 		);
 
 		return $data;
@@ -793,118 +793,118 @@ class GravityPerks_REST_Products_Controller extends WP_REST_Controller {
 	}
 
 	public function get_product_schema() {
-		return [
+		return array(
 			'$schema'    => 'http://json-schema.org/draft-04/schema#',
 			'title'      => 'product',
 			'type'       => 'object',
-			'properties' => [
-				'ID'            => [
+			'properties' => array(
+				'ID'            => array(
 					'description' => __( 'Unique identifier for the plugin.', 'spellbook' ),
 					'type'        => 'integer',
 					'readonly'    => true,
-				],
-				'name'          => [
+				),
+				'name'          => array(
 					'description' => __( 'Plugin name.', 'spellbook' ),
 					'type'        => 'string',
-				],
-				'version'       => [
+				),
+				'version'       => array(
 					'description' => __( 'Plugin version.', 'spellbook' ),
 					'type'        => 'string',
-				],
-				'new_version'   => [
+				),
+				'new_version'   => array(
 					'description' => __( 'Available update version.', 'spellbook' ),
 					'type'        => 'string',
-				],
-				'slug'          => [
+				),
+				'slug'          => array(
 					'description' => __( 'Plugin slug.', 'spellbook' ),
 					'type'        => 'string',
-				],
-				'plugin_file'   => [
+				),
+				'plugin_file'   => array(
 					'description' => __( 'Plugin file path.', 'spellbook' ),
 					'type'        => 'string',
-				],
-				'plugin'        => [
+				),
+				'plugin'        => array(
 					'description' => __( 'Plugin file path (alias for backwards compatibility).', 'spellbook' ),
 					'type'        => 'string',
-				],
-				'homepage'      => [
+				),
+				'homepage'      => array(
 					'description' => __( 'Plugin homepage URL.', 'spellbook' ),
 					'type'        => 'string',
 					'format'      => 'uri',
-				],
-				'documentation' => [
+				),
+				'documentation' => array(
 					'description' => __( 'Documentation URL.', 'spellbook' ),
 					'type'        => 'string',
 					'format'      => 'uri',
-				],
-				'sections'      => [
+				),
+				'sections'      => array(
 					'description' => __( 'Plugin sections including description and changelog.', 'spellbook' ),
 					'type'        => 'object',
-					'properties'  => [
-						'description' => [ 'type' => 'string' ],
-						'changelog'   => [ 'type' => 'string' ],
-					],
-				],
-				'banners'       => [
+					'properties'  => array(
+						'description' => array( 'type' => 'string' ),
+						'changelog'   => array( 'type' => 'string' ),
+					),
+				),
+				'banners'       => array(
 					'description' => __( 'Plugin banner images.', 'spellbook' ),
 					'type'        => 'object',
-					'properties'  => [
-						'high' => [
+					'properties'  => array(
+						'high' => array(
 							'type'   => 'string',
 							'format' => 'uri',
-						],
-						'low'  => [
+						),
+						'low'  => array(
 							'type'   => 'string',
 							'format' => 'uri',
-						],
-					],
-				],
-				'icons'         => [
+						),
+					),
+				),
+				'icons'         => array(
 					'description' => __( 'Plugin icons.', 'spellbook' ),
 					'type'        => 'object',
-					'properties'  => [
-						'1x' => [
+					'properties'  => array(
+						'1x' => array(
 							'type'   => 'string',
 							'format' => 'uri',
-						],
-						'2x' => [
+						),
+						'2x' => array(
 							'type'   => 'string',
 							'format' => 'uri',
-						],
-					],
-						],
-				'categories'    => [
+						),
+					),
+				),
+				'categories'    => array(
 					'description' => __( 'Plugin categories.', 'spellbook' ),
 					'type'        => 'array',
-					'items'       => [ 'type' => 'string' ],
-				],
-				'is_installed'  => [
+					'items'       => array( 'type' => 'string' ),
+				),
+				'is_installed'  => array(
 					'description' => __( 'Whether the plugin is installed.', 'spellbook' ),
 					'type'        => 'boolean',
-				],
-				'is_active'     => [
+				),
+				'is_active'     => array(
 					'description' => __( 'Whether the plugin is active.', 'spellbook' ),
 					'type'        => 'boolean',
-				],
-				'type'          => [
+				),
+				'type'          => array(
 					'description' => __( 'Plugin type.', 'spellbook' ),
 					'type'        => 'string',
-					'enum'        => [ 'perk', 'connect', 'shop' ],
-				],
-				'last_updated'  => [
+					'enum'        => array( 'perk', 'connect', 'shop' ),
+				),
+				'last_updated'  => array(
 					'description' => __( 'Last updated date.', 'spellbook' ),
 					'type'        => 'string',
-				],
-				'download_link' => [
+				),
+				'download_link' => array(
 					'description' => __( 'Download URL for the plugin.', 'spellbook' ),
 					'type'        => 'string',
 					'format'      => 'uri',
-				],
-				'has_settings' => [
+				),
+				'has_settings'  => array(
 					'description' => __( 'Whether the plugin has settings.', 'spellbook' ),
 					'type'        => 'boolean',
-				],
-			]
-		];
+				),
+			),
+		);
 	}
 }

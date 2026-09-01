@@ -1,9 +1,4 @@
 <?php
-/**
- * @license GPL-2.0-or-later
- *
- * Modified using {@see https://github.com/BrianHenryIE/strauss}.
- */
 
 namespace GravityKit\GravityView\Foundation\Licenses;
 
@@ -29,8 +24,30 @@ class Helpers {
 		// protects against MitM on customer networks. Loopback probes intentionally use a
 		// different knob (`https_local_ssl_verify`); do NOT "unify" these without understanding
 		// the distinction. See HealthCheck::probe_loopback() and Core::is_site_accessible().
+		// Derive the timeout from PHP's max_execution_time instead of hardcoding it, so a slow or
+		// unreachable Store cannot stack multiple sequential requests (products + licenses) into a
+		// fatal timeout on admin page loads. Budget each request to ~1/3 of the limit, leaving room
+		// for a second sequential fetch plus the rest of the page; clamp to a sane 5–15s range. When
+		// there is no limit (CLI / max_execution_time = 0), use the generous upper bound.
+		$max_execution_time = (int) ini_get( 'max_execution_time' );
+		$default_timeout    = $max_execution_time > 0 ? (int) max( 5, min( 15, floor( $max_execution_time / 3 ) ) ) : 15;
+
+		/**
+		 * Filters the timeout (in seconds) for Store API metadata requests (product and license data).
+		 *
+		 * Defaults to roughly a third of PHP's max_execution_time (clamped to 5–15s), or 15s when there
+		 * is no limit, so a slow or unreachable Store cannot exhaust the request budget. Raise it on slow
+		 * connections. Package downloads use their own (longer) timeout, not this value.
+		 *
+		 * @since 1.22.0
+		 *
+		 * @param int    $timeout Request timeout in seconds.
+		 * @param string $url     The Store API URL being requested.
+		 */
+		$timeout = (int) apply_filters( 'gk/foundation/licenses/api-request-timeout', $default_timeout, $url );
+
 		$request_parameters = [
-			'timeout'   => 15,
+			'timeout'   => $timeout,
 			'sslverify' => CoreHelpers::is_production_environment(),
 			'body'      => $args,
 		];

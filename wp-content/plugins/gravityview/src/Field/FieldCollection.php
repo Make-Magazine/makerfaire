@@ -1,0 +1,210 @@
+<?php
+/**
+ * A collection of Field objects.
+ *
+ * @package GravityKit\GravityView\Field
+ * @since 3.0.0
+ */
+
+namespace GravityKit\GravityView\Field;
+
+use function gravityview;
+
+/**
+ * A collection of \GV\Field objects.
+ *
+ * @implements \GV\Collection<Field>
+ *
+ * @since 2.0
+ * @since 3.0.0 Migrated to GravityKit\GravityView\Field namespace.
+ */
+class FieldCollection extends \GV\Collection implements \GV\Collection_Position_Aware {
+
+	/**
+	 * Returns all the objects in this collection as an an array. Here for docBlock purposes only.
+	 *
+	 * @since 2.0.13.1
+	 *
+	 * @return \GV\Field[]
+	 */
+	public function all() {
+		return parent::all();
+	}
+
+	/**
+	 * Add a \GV\Field to this collection.
+	 *
+	 * @param \GV\Field $field The field to add to the internal array.
+	 *
+	 * @api
+	 * @since 2.0
+	 * @return void
+	 */
+	public function add( $field ) {
+		if ( ! $field instanceof \GV\Field ) {
+			gravityview()->log->error( 'Field_Collections can only contain objects of type \GV\Field.' );
+			return;
+		}
+		parent::add( $field );
+	}
+
+	/**
+	 * Get a \GV\Field from this list by UID.
+	 *
+	 * @param int $field_uid The UID of the field in the field to get.
+	 *
+	 * @api
+	 * @since 2.0
+	 *
+	 * @return \GV\Field|null The \GV\Field with the $field_uid as the UID, or null if not found.
+	 */
+	public function get( $field_uid ) {
+		foreach ( $this->all() as $field ) {
+			if ( $field->UID == $field_uid ) {
+				return $field;
+			}
+		}
+		return null;
+	}
+
+	/**
+	 * Get a copy of this \GV\Field_Collection filtered by position.
+	 *
+	 * @param string $position The position to get the fields for.
+	 *  Can be a wildcard *
+	 *
+	 * @api
+	 * @since 3.0.0
+	 *
+	 * @return \GV\Field_Collection A filtered collection of \GV\Fields, filtered by position.
+	 */
+	public function by_position( $position ) {
+		$fields = new self();
+
+		$search = implode( '.*', array_map( 'preg_quote', explode( '*', $position ) ) );
+
+		foreach ( $this->all() as $field ) {
+			if ( preg_match( "#^{$search}$#", $field->position ) ) {
+				$fields->add( $field );
+			}
+		}
+		return $fields;
+	}
+
+	/**
+	 * Get a copy of this \GV\Field_Collection filtered by visibility to current user context.
+	 *
+	 * @api
+	 * @since 3.0.0
+	 *
+	 * @param $view \GV\View The view!
+	 *
+	 * @return \GV\Field_Collection A filtered collection of \GV\Fields, filtered by visibility.
+	 */
+	public function by_visible( $view = null ) {
+		$fields = new self();
+
+		/** @type \GV\Field $field */
+		foreach ( $this->all() as $field ) {
+			if ( $field->is_visible( $view ) ) {
+				$fields->add( $field );
+			}
+		}
+		return $fields;
+	}
+
+	/**
+	 * Get a copy of this collection with each field resolved to its unioned counterpart for the given form.
+	 *
+	 * @since 3.2.0
+	 *
+	 * @param \GV\View   $view    The view holding the union mappings.
+	 * @param int|string $form_id The form ID of the entry being rendered.
+	 *
+	 * @return \GV\Field_Collection The resolved collection, or this collection unchanged when there are no unions.
+	 */
+	public function for_form( $view, $form_id ) {
+		if ( ! $view->unions ) {
+			return $this;
+		}
+
+		$fields = new self();
+
+		foreach ( $this->all() as $field ) {
+			$fields->add( $view->maybe_union_field( $field, $form_id ) );
+		}
+
+		return $fields;
+	}
+
+	/**
+	 * Parses a configuration array into a Field_Collection.
+	 *
+	 * <code>
+	 * $configuration = [
+	 *     'directory_table-columns' => [
+	 *         '5372653f25d44' => [
+	 *             'id'            => '1',
+	 *             'label'         => 'Name',
+	 *             'show_label'    => '1',
+	 *             'custom_label'  => '',
+	 *             'custom_class'  => '',
+	 *             'only_loggedin' => '0',
+	 *         ],
+	 *     ],
+	 *     'single_table-columns' => [ ... ],
+	 * ];
+	 * $fields = \GV\Field_Collection::from_configuration( $configuration );
+	 * </code>
+	 *
+	 * @since 2.0
+	 *
+	 * @see \GV\Field::as_configuration() For the complete field configuration structure.
+	 *
+	 * @param array $configuration Multidimensional array keyed by zone position (e.g., 'directory_table-columns'),
+	 *                             with each zone containing field configurations keyed by unique field UID.
+	 *
+	 * @return \GV\Field_Collection A collection of fields.
+	 */
+	public static function from_configuration( $configuration ) {
+		$fields = new self();
+		foreach ( $configuration as $position => $_fields ) {
+
+			if ( empty( $_fields ) || ! is_array( $_fields ) ) {
+				continue;
+			}
+
+			foreach ( $_fields as $uid => $_configuration ) {
+				$field           = \GV\Field::from_configuration( $_configuration );
+				$field->UID      = $uid;
+				$field->position = $position;
+
+				$fields->add( $field );
+			}
+		}
+		return $fields;
+	}
+
+	/**
+	 * Return a configuration array for this field collection.
+	 *
+	 * @see \GV\Field_Collection::from_configuration() for structure.
+	 *
+	 * @return array
+	 */
+	public function as_configuration() {
+		$configuration = [];
+
+		/**
+		 * @var \GV\Field $field
+		 */
+		foreach ( $this->all() as $field ) {
+			if ( empty( $configuration[ $field->position ] ) ) {
+				$configuration[ $field->position ] = [];
+			}
+
+			$configuration[ $field->position ][ $field->UID ] = $field->as_configuration();
+		}
+		return $configuration;
+	}
+}

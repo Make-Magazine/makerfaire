@@ -1,49 +1,23 @@
 <?php
 /**
- * Display admin multiselect field type
+ * Backward-compatibility shim.
  *
- * @since 1.17.3
+ * This file was moved in GravityView 3.0. It is intentionally empty.
+ * GravityView classes and functions load automatically — you no longer
+ * need to require GravityView files in your code.
+ *
+ * @deprecated 3.0
  */
 
-/**
- * multiselect
- */
-class GravityView_FieldType_multiselect extends GravityView_FieldType {
+if ( ! defined( 'ABSPATH' ) ) {
+	die;
+}
 
-	function render_option() {
-		?>
-		<label for="<?php echo $this->get_field_id(); ?>" class="<?php echo $this->get_label_class(); ?>">
-			<?php
-			$label = $this->get_field_label();
-
-			if ( '' !== $label ) {
-				echo '<span class="gv-label">' . $label . '</span>';
-			}
-
-			echo $this->get_tooltip() . $this->get_field_desc();
-
-			$this->render_input();
-			?>
-		</label>
-		<?php
-	}
-
-	function render_input( $override_input = null ) {
-
-		if ( isset( $override_input ) ) {
-			echo $override_input;
-			return;
-		}
-
-		$class       = isset( $this->field['class'] ) ? esc_attr( $this->field['class'] ) : '';
-		$placeholder = isset( $this->field['placeholder'] ) ? esc_attr( $this->field['placeholder'] ) : '';
-
-		?>
-		<select name="<?php echo esc_attr( $this->name ); ?>[]" id="<?php echo $this->get_field_id(); ?>" class="<?php echo $class; ?>" data-placeholder="<?php echo $placeholder; ?>" multiple="multiple">
-			<?php foreach ( $this->field['options'] as $value => $label ) : ?>
-				<option value="<?php echo esc_attr( $value ); ?>" <?php selected( in_array( $value, (array) $this->value ), true, true ); ?>><?php echo esc_html( $label ); ?></option>
-			<?php endforeach; ?>
-		</select>
-		<?php
-	}
+if ( function_exists( '_deprecated_file' ) ) {
+	_deprecated_file(
+		plugin_basename( __FILE__ ),
+		'3.0',
+		'',
+		'This file was moved in GravityView 3.0 and will be removed in a future release. GravityView classes and functions load automatically — you no longer need to require them.'
+	);
 }

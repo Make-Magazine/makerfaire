@@ -31,8 +31,13 @@ class Post_Query extends Base {
 
 		if ( $is_custom_search && ! empty( $term ) ) {
 			$escaped = esc_sql( $term );
+			$search_in_content = $wp_query->get( self::SEARCH_IN_CONTENT_KEY ) ?? false;
 			$search_term .= ' AND (';
 			$search_term .= "post_title LIKE '%{$escaped}%'";
+			if ( $search_in_content ) {
+				$search_term .= " OR post_content LIKE '%{$escaped}%'";
+				$search_term .= " OR post_excerpt LIKE '%{$escaped}%'";
+			}
 			if ( ctype_digit( $term ) ) {
 				$search_term .= ' OR ID = ' . intval( $term );
 			} else {
@@ -52,15 +57,6 @@ class Post_Query extends Base {
 		$params = $request->get_params();
 		$term = trim( $params[ self::SEARCH_TERM_KEY ] ?? '' );
 
-		if ( empty( $term ) ) {
-			return new \WP_REST_Response( [
-				'success' => true,
-				'data' => [
-					'value' => [],
-				],
-			], 200 );
-		}
-
 		$keys_format_map = $this->filter_keys_conversion_map(
 			$params[ self::KEYS_CONVERSION_MAP_KEY ] ?? self::ALLOWED_KEYS_CONVERSION_MAP,
 			self::ALLOWED_KEYS_CONVERSION_MAP
@@ -72,15 +68,24 @@ class Post_Query extends Base {
 		$post_types = $this->get_post_types_from_params( $request );
 
 		$query_args = [
-			'post_type' => array_keys( $post_types ),
-			'numberposts' => $post_count,
+			'post_type'       => array_keys( $post_types ),
+			'numberposts'     => $post_count,
 			'suppress_filters' => false,
-			'custom_search' => true,
-			'search_term' => $term,
-			'post_status' => $is_public_only ? 'publish' : 'any',
-			'orderby' => 'ID',
-			'order' => 'ASC',
+			'custom_search'   => true,
+			'post_status'     => $is_public_only ? 'publish' : 'any',
+			'orderby'         => 'modified',
+			'order'           => 'DESC',
 		];
+
+		// for non-admins (contributors), filter by author for private posts
+		if ( ! $is_public_only && ! current_user_can( 'read_private_posts' ) ) {
+			$query_args['author'] = get_current_user_id();
+		}
+
+		if ( ! empty( $term ) ) {
+			$query_args['search_term'] = $term;
+			$query_args[ self::SEARCH_IN_CONTENT_KEY ] = $params[ self::SEARCH_IN_CONTENT_KEY ] ?? false;
+		}
 
 		if ( ! empty( $params[ self::META_QUERY_KEY ] ) && is_array( $params[ self::META_QUERY_KEY ] ) ) {
 			$query_args['meta_query'] = $params[ self::META_QUERY_KEY ];
@@ -211,6 +216,12 @@ class Post_Query extends Base {
 				'default' => null,
 				'sanitize_callback' => fn ( ...$args ) => self::sanitize_string_array( ...$args ),
 			],
+			self::SEARCH_IN_CONTENT_KEY => [
+				'description' => 'Whether to search within post content and excerpt in addition to title',
+				'type' => 'boolean',
+				'required' => false,
+				'default' => false,
+			],
 		];
 	}
 
@@ -223,6 +234,7 @@ class Post_Query extends Base {
 			self::TAX_QUERY_KEY,
 			self::IS_PUBLIC_KEY,
 			self::ITEMS_COUNT_KEY,
+			self::SEARCH_IN_CONTENT_KEY,
 		];
 	}
 

@@ -1,9 +1,4 @@
 <?php
-/**
- * @license GPL-2.0-or-later
- *
- * Modified using {@see https://github.com/BrianHenryIE/strauss}.
- */
 
 namespace GravityKit\GravityView\Foundation\Notices;
 
@@ -456,6 +451,73 @@ final class NoticeRepository {
 		$list = [];
 
 		foreach ( $merged as $payload ) {
+			if ( is_array( $payload ) ) {
+				$list[] = StoredNotice::create( $payload );
+			}
+		}
+
+		return $list;
+	}
+
+	/**
+	 * Returns stored notices across global and all user-scoped storage.
+	 *
+	 * User-scoped definitions override global definitions with the same ID.
+	 *
+	 * @since TBD
+	 *
+	 * @return StoredNoticeInterface[]
+	 */
+	public function get_all_stored_across_scopes(): array {
+		global $wpdb;
+
+		$merged = $this->global_state_manager->all();
+
+		if ( ! is_object( $wpdb ) || ! method_exists( $wpdb, 'prepare' ) || ! method_exists( $wpdb, 'get_results' ) ) {
+			return $this->create_stored_notices( $merged );
+		}
+
+		$wpdb_properties = get_object_vars( $wpdb );
+		$usermeta_table  = $wpdb_properties['usermeta'] ?? '';
+
+		if ( ! is_string( $usermeta_table ) || '' === $usermeta_table ) {
+			return $this->create_stored_notices( $merged );
+		}
+
+		$rows = $wpdb->get_results(
+			$wpdb->prepare(
+				"SELECT user_id, meta_value FROM {$usermeta_table} WHERE meta_key = %s", // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Table name comes from wpdb.
+				self::OPTION_PERSISTED
+			)
+		);
+
+		foreach ( $rows as $row ) {
+			$meta_value = is_object( $row ) ? ( $row->meta_value ?? null ) : ( $row['meta_value'] ?? null );
+			$user_state = maybe_unserialize( $meta_value );
+
+			if ( ! is_array( $user_state ) || empty( $user_state[ self::USER_META_DEFS_KEY ] ) || ! is_array( $user_state[ self::USER_META_DEFS_KEY ] ) ) {
+				continue;
+			}
+
+			$merged = array_replace( $merged, $user_state[ self::USER_META_DEFS_KEY ] );
+		}
+
+		return $this->create_stored_notices( $merged );
+	}
+
+	/**
+	 * Creates stored notices from persisted definitions.
+	 *
+	 * @since TBD
+	 *
+	 * @param array $definitions Persisted definitions.
+	 *
+	 * @return StoredNoticeInterface[]
+	 */
+	private function create_stored_notices( array $definitions ): array {
+		$list = [];
+
+		foreach ( $definitions as $payload ) {
 			if ( is_array( $payload ) ) {
 				$list[] = StoredNotice::create( $payload );
 			}

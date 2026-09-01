@@ -1,36 +1,23 @@
 <?php
 /**
- * @file class-gravityview-field-shipping.php
- * @package GravityView
- * @subpackage includes\fields
- * @since 2.17
+ * Backward-compatibility shim.
+ *
+ * This file was moved in GravityView 3.0. It is intentionally empty.
+ * GravityView classes and functions load automatically — you no longer
+ * need to require GravityView files in your code.
+ *
+ * @deprecated 3.0
  */
 
-/**
- * @since 2.17
- */
-class GravityView_Field_Shipping extends GravityView_Field {
-
-	var $name = 'shipping';
-
-	var $is_searchable = true;
-
-	var $is_numeric = false;
-
-	var $search_operators = array( 'is', 'isnot', 'greater_than', 'less_than' );
-
-	var $group = 'product';
-
-	var $icon = 'dashicons-cart';
-
-	/** @see GF_Field_Shipping */
-	var $_gf_field_class_name = 'GF_Field_Shipping';
-
-	public function __construct() {
-		$this->label       = esc_html__( 'Shipping', 'gk-gravityview' );
-		$this->description = esc_html__( 'The shipping fee for the payment.', 'gk-gravityview' );
-		parent::__construct();
-	}
+if ( ! defined( 'ABSPATH' ) ) {
+	die;
 }
 
-new GravityView_Field_Shipping();
+if ( function_exists( '_deprecated_file' ) ) {
+	_deprecated_file(
+		plugin_basename( __FILE__ ),
+		'3.0',
+		'',
+		'This file was moved in GravityView 3.0 and will be removed in a future release. GravityView classes and functions load automatically — you no longer need to require them.'
+	);
+}

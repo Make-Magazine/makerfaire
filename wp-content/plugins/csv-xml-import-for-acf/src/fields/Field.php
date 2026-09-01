@@ -204,8 +204,8 @@ abstract class Field implements FieldInterface {
         if ("" != $args['field_path']) {
 
             $fieldKeys = preg_replace('%[\[\]]%', '', str_replace('][', ':', $args['field_path']));
-            $is_multiple_field_value = $parsingData['import']->options['is_multiple_field_value'];
-            $is_multiple_value = $parsingData['import']->options['multiple_value'];
+            $is_multiple_field_value = isset($parsingData['import']->options['is_multiple_field_value']) ? $parsingData['import']->options['is_multiple_field_value'] : array();
+            $is_multiple_value = isset($parsingData['import']->options['multiple_value']) ? $parsingData['import']->options['multiple_value'] : array();
 
             foreach (explode(":", $fieldKeys) as $n => $key) {
                 $xpath = (!$n) ? $parsingData['import']->options['fields'][$key] : $xpath[$key];

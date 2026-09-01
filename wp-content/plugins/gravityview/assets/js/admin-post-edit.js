@@ -116,13 +116,10 @@ jQuery(function( $ ) {
 		return false;
 	}
 
-	//datepicker
-	$( '.gv-datepicker' ).datepicker( {
-		dateFormat: "yy-mm-dd",
-
-		// Allow users to type in values like "-1 year" or "now"
-		constrainInput: false
-	} );
+	// Attach calendar popover to date fields (allows freetext like relative dates).
+	if ( jQuery.fn.attachCalendarPopover ) {
+		$( '.gv-datepicker' ).attachCalendarPopover( { showTodayButton: true } );
+	}
 
 
 	// Select view id -> populate sort fields

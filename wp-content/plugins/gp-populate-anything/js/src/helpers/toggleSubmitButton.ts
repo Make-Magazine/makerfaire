@@ -1,7 +1,13 @@
 const getSubmitButton = ($form: JQuery): JQuery => {
+	/**
+	 * As of GF 3.0, form buttons are rendered as `<button>` elements rather than `<input>` elements.
+	 * Both are matched so the button continues to be disabled while results are loading on GF 2.x.
+	 */
 	const $submitButton = $form
 		.find('.gform_footer, .gform_page_footer, .gfield--type-submit')
-		.find('input[type="submit"], input[type="button"]');
+		.find(
+			'input[type="submit"], input[type="button"], button[type="submit"], button[type="button"]'
+		);
 
 	/**
 	 * Filter the submit button element that is used for enabling/disabling the button while Populate Anything is

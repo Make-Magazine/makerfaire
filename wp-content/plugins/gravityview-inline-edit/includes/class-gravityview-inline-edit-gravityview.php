@@ -8,7 +8,7 @@
  * @since 1.0
  */
 final class GravityView_Inline_Edit_GravityView extends GravityView_Inline_Edit_Render {
-	/*
+	/**
 	 * Cached collection of forms used throughout the request
 	 *
 	 * @since 2.0
@@ -26,7 +26,8 @@ final class GravityView_Inline_Edit_GravityView extends GravityView_Inline_Edit_
 	 */
 	protected function should_add_hooks() {
 
-		$is_valid_nonce = isset( $_POST['nonce'] ) && ( wp_verify_nonce( $_POST['nonce'], 'gravityview_inline_edit' ) || wp_verify_nonce( $_POST['nonce'], 'gravityview_datatables_data' ) );
+		$nonce          = isset( $_POST['nonce'] ) ? sanitize_text_field( wp_unslash( $_POST['nonce'] ) ) : '';
+		$is_valid_nonce = $nonce && ( wp_verify_nonce( $nonce, 'gravityview_inline_edit' ) || wp_verify_nonce( $nonce, 'gravityview_datatables_data' ) );
 
 		$is_inline_edit_request = defined( 'DOING_AJAX' ) && DOING_AJAX && $is_valid_nonce;
 
@@ -44,7 +45,7 @@ final class GravityView_Inline_Edit_GravityView extends GravityView_Inline_Edit_
 
 		parent::add_hooks();
 
-		add_filter( 'gravityview_default_args', array( $this, 'add_inline_edit_toggle_setting' ) );
+		add_filter( 'gravityview/view/settings/defaults', array( $this, 'add_inline_edit_toggle_setting' ) );
 
 		add_action( 'gravityview_admin_directory_settings', array( $this, 'render_inline_edit_setting' ) );
 
@@ -71,7 +72,11 @@ final class GravityView_Inline_Edit_GravityView extends GravityView_Inline_Edit_
 		add_action( 'gravityview_datatables_settings_row', array( $this, 'render_datatables_settings_row' ) );
 		add_filter( 'gravityview_datatables_js_options', array( $this, 'add_inline_edit_refresh_option' ), 10, 2 );
 
-		add_filter( 'gravityview_template_field_options', array( $this, 'add_inline_edit_option' ), 10, 6 );
+		if ( defined( 'GV_PLUGIN_VERSION' ) && version_compare( GV_PLUGIN_VERSION, '2.57', '>=' ) ) {
+			add_filter( 'gk/gravityview/template/options', array( $this, 'add_inline_edit_option_from_hook' ), 10, 8 );
+		} else {
+			add_filter( 'gravityview_template_field_options', array( $this, 'add_inline_edit_option' ), 10, 6 );
+		}
 
 		add_filter( 'gravityview/admin/indicator_icons', array( $this, 'add_inline_edit_icon' ), 10, 2 );
 
@@ -99,10 +104,27 @@ final class GravityView_Inline_Edit_GravityView extends GravityView_Inline_Edit_
 	 * @return array
 	 */
 	public function fix_gp_inventory_count( $update_result, $entry, $form_id, $gf_field, $original_entry ) {
-		$form         = GFAPI::get_form( $form_id );
+		// This runs at priority 99, after the field's own updated_result. Only rebuild the inventory
+		// payload for a successful save: a failed save must pass through as false or the WP_Error, or
+		// it reaches the browser as success.
+		if ( true !== $update_result ) {
+			return $update_result;
+		}
+
+		$form = GFAPI::get_form( $form_id );
+
+		if ( ! $form ) {
+			return $update_result;
+		}
+
 		$updated_form = gp_inventory_type_choices()->pre_render( $form );
 		$field        = GFFormsModel::get_field( $updated_form, $gf_field->id );
-		return array( 'source' => json_encode( $field->choices ) );
+
+		if ( ! $field || ! isset( $field->choices ) ) {
+			return $update_result;
+		}
+
+		return array( 'source' => wp_json_encode( $field->choices ) );
 	}
 
 	/**
@@ -125,6 +147,30 @@ final class GravityView_Inline_Edit_GravityView extends GravityView_Inline_Edit_
 	}
 
 	/**
+	 * Adapts the `gk/gravityview/template/options` filter to {@see add_inline_edit_option()}.
+	 *
+	 * @since 2.10.0
+	 *
+	 * @param array   $field_options
+	 * @param string  $field_type    The field type (`widget` or `field`).
+	 * @param integer $template_id
+	 * @param string  $context
+	 * @param bool    $grouped       Whether the options are grouped.
+	 * @param integer $form_id
+	 * @param integer $field_id
+	 * @param string  $input_type
+	 *
+	 * @return array
+	 */
+	public function add_inline_edit_option_from_hook( $field_options, $field_type, $template_id, $context, $grouped, $form_id, $field_id, $input_type ) {
+		if ( 'field' !== $field_type ) {
+			return $field_options;
+		}
+
+		return $this->add_inline_edit_option( $field_options, $template_id, $field_id, $context, $input_type, $form_id );
+	}
+
+	/**
 	 * Add inline edit checkbox in the field setting
 	 *
 	 * @since 1.7 Moved to this class from GravityView_Inline_Edit_GFAddon.
@@ -141,7 +187,7 @@ final class GravityView_Inline_Edit_GravityView extends GravityView_Inline_Edit_
 	public function add_inline_edit_option( $field_options, $template_id, $field_id, $context, $input_type, $form_id ) {
 		// Show option only to supported fields.
 		$supported_fields = GravityView_Inline_Edit::get_instance()->get_supported_fields();
-		if ( ! in_array( $input_type, $supported_fields ) ) {
+		if ( ! in_array( $input_type, $supported_fields, true ) ) {
 			return $field_options;
 		}
 
@@ -163,7 +209,7 @@ final class GravityView_Inline_Edit_GravityView extends GravityView_Inline_Edit_
 
 	/**
 	 * @since 1.0.2
-	 * @depecated 1.5
+	 * @deprecated 1.5
 	 */
 	public function add_to_blacklist( $update_result, $entry ) {
 		_deprecated_function( __METHOD__, '1.5', 'GravityView_Inline_Edit_GravityView::add_to_blocklist' );
@@ -180,7 +226,7 @@ final class GravityView_Inline_Edit_GravityView extends GravityView_Inline_Edit_
 	 *
 	 * @return bool|WP_Error Original $update_result
 	 */
-	function add_to_blocklist( $update_result, $entry ) {
+	public function add_to_blocklist( $update_result, $entry ) {
 
 		if ( $update_result && ! is_wp_error( $update_result ) ) {
 			/**
@@ -235,7 +281,7 @@ final class GravityView_Inline_Edit_GravityView extends GravityView_Inline_Edit_
 	 * @param bool $can_edit True: User can edit the entry at $entry_id; False; they just can't
 	 * @param int  $entry_id Entry ID to check
 	 * @param int  $form_id Form connected to $entry_id
-	 * @param int| $view_id View ID, if set
+	 * @param int|null $view_id View ID, if set
 	 *
 	 * @return bool True: User can edit this entry. False: Nope.
 	 */
@@ -300,6 +346,12 @@ final class GravityView_Inline_Edit_GravityView extends GravityView_Inline_Edit_
 		/** @var GV\View $view */
 		$view = \GV\View::by_id( $view_id );
 
+		if ( ! $view || ! isset( $view->settings, $view->form ) ) {
+			$_can_edit_cache[ $view_id ] = false;
+
+			return false;
+		}
+
 		$view_entries = GravityView_frontend::get_view_entries( $view->settings->as_atts(), $view->form->ID );
 
 		$_can_edit_cache[ $view_id ] = false;
@@ -323,7 +375,7 @@ final class GravityView_Inline_Edit_GravityView extends GravityView_Inline_Edit_
 	 *
 	 * @return string The mode to use. Can be `popup` or `inline`
 	 */
-	function filter_inline_edit_mode( $mode = '' ) {
+	public function filter_inline_edit_mode( $mode = '' ) {
 
 		if ( ! class_exists( 'GravityKitFoundation' ) ) {
 			return $mode;
@@ -344,7 +396,7 @@ final class GravityView_Inline_Edit_GravityView extends GravityView_Inline_Edit_
 	 *
 	 * @return void
 	 */
-	function maybe_enqueue_inline_edit_styles( $context ) {
+	public function maybe_enqueue_inline_edit_styles( $context ) {
 
 		if ( ! $this->is_inline_edit_enabled( $context ) ) {
 			return;

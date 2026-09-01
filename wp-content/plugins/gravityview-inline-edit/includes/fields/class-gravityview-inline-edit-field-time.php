@@ -7,9 +7,9 @@
  */
 class GravityView_Inline_Edit_Field_Time extends GravityView_Inline_Edit_Field {
 
-	var $gv_field_name = 'time';
+	public $gv_field_name = 'time';
 
-	var $inline_edit_type = 'gvtime';
+	public $inline_edit_type = 'gvtime';
 
 
 	/**
@@ -41,13 +41,15 @@ class GravityView_Inline_Edit_Field_Time extends GravityView_Inline_Edit_Field {
 	 * @param bool|WP_Error $update_result
 	 * @param array $entry
 	 * @param int $form_id
-	 * @param GF_Field $gf_field
+	 * @param GF_Field|null $gf_field
 	 *
 	 * @return array|bool|WP_Error
 	 */
-	public function updated_result( $update_result, $entry = array(), $form_id = 0, GF_Field $gf_field = null ) {
+	public function updated_result( $update_result, $entry = array(), $form_id = 0, ?GF_Field $gf_field = null ) {
 
-		if ( ! is_bool( $update_result ) ) {
+		// A WP_Error passes through, and so does false: only a successful save should produce a
+		// payload telling the browser what to display.
+		if ( ! $gf_field || true !== $update_result ) {
 			return $update_result;
 		}
 
@@ -57,7 +59,7 @@ class GravityView_Inline_Edit_Field_Time extends GravityView_Inline_Edit_Field {
 			array(
 				'selector' => ".gv-inline-editable-field-{$entry['id']}-{$entry['form_id']}-{$gf_field->id}",
 				'data'     => array( 'display_value' => strtoupper( $gf_field->get_value_export( $entry ) ) ),
-				'value'    => json_encode( $gvtime ),
+				'value'    => wp_json_encode( $gvtime ),
 			),
 		);
 
@@ -65,7 +67,7 @@ class GravityView_Inline_Edit_Field_Time extends GravityView_Inline_Edit_Field {
 			$return[] = array(
 				'selector' => ".gv-inline-editable-field-{$entry['id']}-{$entry['form_id']}-{$gf_field->id}-{$key}",
 				'data'     => array( 'display_value' => strtoupper( $value ) ),
-				'value'    => json_encode( array( $key => $value ) ),
+				'value'    => wp_json_encode( array( $key => $value ) ),
 			);
 		}
 
@@ -103,7 +105,7 @@ class GravityView_Inline_Edit_Field_Time extends GravityView_Inline_Edit_Field {
 			$value[3] = strtolower( rgar( $gftime, 2, '' ) );
 		}
 
-		return $json_encode ? ( empty( $value ) ? '' : json_encode( $value ) ) : $value;
+		return $json_encode ? ( empty( $value ) ? '' : wp_json_encode( $value ) ) : $value;
 	}
 
 }

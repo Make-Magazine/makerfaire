@@ -1,10 +1,7 @@
 <?php
 /**
  * This class is used inside the Job object to track the progress of the tasks.
- * *
- * @license GPL-2.0-or-later
- * Modified using {@see https://github.com/BrianHenryIE/strauss}.
- */
+ * */
 
 namespace GravityKit\GravityView\Foundation\Scheduler\Models;
 

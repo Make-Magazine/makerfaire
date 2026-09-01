@@ -1,3 +1,430 @@
-/*! For license information please see editor-widget-creation.js.LICENSE.txt */
-!function(){"use strict";var e={"./packages/packages/core/editor-widget-creation/src/components/create-widget.tsx":function(e,t,n){n.r(t),n.d(t,{CreateWidget:function(){return CreateWidget}});var r=n("react"),o=n("@elementor/editor-mcp"),i=n("@elementor/editor-ui"),a=n("@elementor/events"),l=n("@elementor/icons"),c=n("@elementor/ui"),s=n("@wordpress/i18n");const d="elementor/editor/create-widget",_="https://assets.elementor.com/packages/v1/images/angie-modal-promotion.png",m="ai_widget_cta_clicked",u="angie_install_started",p="angie_install_completed",g="angie_install_abandoned";function CreateWidgetModal({prompt:e,entryPoint:t,onClose:n}){const[d,m]=(0,r.useState)("idle"),[w,f]=(0,r.useState)(!1),handleClose=()=>{"installing"!==d&&((0,a.trackEvent)({eventName:g,abandon_step:"error"===d?"install_error":"install_modal",trigger_source:t}),n())};return r.createElement(i.ThemeProvider,null,r.createElement(c.Dialog,{fullWidth:!0,maxWidth:"md",open:!0,onClose:handleClose},r.createElement(c.IconButton,{"aria-label":(0,s.__)("Close","elementor"),onClick:handleClose,sx:{position:"absolute",right:8,top:8,zIndex:1}},r.createElement(l.XIcon,null)),r.createElement(c.DialogContent,{sx:{p:0,overflow:"hidden"}},r.createElement(c.Stack,{direction:"row",sx:{height:400}},r.createElement(c.Image,{sx:{height:"100%",aspectRatio:"1 / 1",objectFit:"cover",objectPosition:"right center"},src:_}),r.createElement(c.Stack,{justifyContent:"space-between",p:4},r.createElement(c.Stack,{gap:2.5,justifyContent:"center",sx:{flex:1,paddingInlineEnd:2.5}},r.createElement(c.Typography,{variant:"h4",fontWeight:600,color:"text.secondary"},"error"===d?(0,s.__)("Installation failed","elementor"):(0,s.__)("Create custom widgets with Angie","elementor")),r.createElement(c.Typography,{variant:"body2"},"error"===d?(0,s.__)("We couldn't install Angie automatically. Click below to install it manually.","elementor"):(0,s.__)("Build custom widgets, sections, and code using simple instructions. Install once to start building directly from the editor.","elementor")),"error"!==d&&r.createElement(c.FormControlLabel,{control:r.createElement(c.Checkbox,{size:"small",checked:w,onChange:(e,t)=>f(t)}),label:r.createElement(c.Typography,{variant:"body2",color:"text.secondary"},(0,s.__)("I agree to the","elementor"),r.createElement(c.Link,{sx:{px:.5},href:"https://elementor.com/terms/angie-terms-conditions/",target:"_blank",rel:"noopener noreferrer"},(0,s.__)("Terms","elementor")),(0,s.__)("&","elementor"),r.createElement(c.Link,{sx:{px:.5},href:"https://elementor.com/about/privacy/",target:"_blank",rel:"noopener noreferrer"},(0,s.__)("Privacy Policy.","elementor")))})),r.createElement(c.Stack,{direction:"row",justifyContent:"flex-end"},"error"===d?r.createElement(c.Button,{variant:"contained",color:"accent",onClick:()=>{(0,o.redirectToInstallation)(e)}},(0,s.__)("Install Manually","elementor")):r.createElement(c.Button,{variant:"contained",color:"accent",onClick:async()=>{m("installing"),(0,a.trackEvent)({eventName:u,trigger_source:t});const[n]=await Promise.all([(0,o.installAngiePlugin)(),(0,o.saveAngieConsent)()]);n.success?((0,a.trackEvent)({eventName:p,trigger_source:t}),(0,o.redirectToAppAdmin)(e)):m("error")},disabled:"installing"===d||!w,startIcon:"installing"===d?r.createElement(c.CircularProgress,{size:18,color:"inherit"}):void 0},"installing"===d?(0,s.__)("Installing…","elementor"):(0,s.__)("Install & Activate","elementor"))))))))}function CreateWidget(){const[e,t]=(0,r.useState)(null);return(0,r.useEffect)(()=>{const handleShow=e=>{const n=e,r=(0,o.isAngieAvailable)();(0,a.trackEvent)({eventName:m,entry_point:n.detail.entry_point,has_angie_installed:r}),r?(0,o.sendPromptToAngie)(n.detail?.prompt):t(n.detail)};return window.addEventListener(d,handleShow),()=>{window.removeEventListener(d,handleShow)}},[]),e?r.createElement(CreateWidgetModal,{prompt:e.prompt,entryPoint:e.entry_point,onClose:()=>t(null)}):null}},"./packages/packages/core/editor-widget-creation/src/init.ts":function(e,t,n){n.r(t),n.d(t,{init:function(){return init}});var r=n("@elementor/editor"),o=n("./packages/packages/core/editor-widget-creation/src/components/create-widget.tsx");function init(){(0,r.injectIntoTop)({id:"create-widget",component:o.CreateWidget})}},"@elementor/editor":function(e){e.exports=window.elementorV2.editor},"@elementor/editor-mcp":function(e){e.exports=window.elementorV2.editorMcp},"@elementor/editor-ui":function(e){e.exports=window.elementorV2.editorUi},"@elementor/events":function(e){e.exports=window.elementorV2.events},"@elementor/icons":function(e){e.exports=window.elementorV2.icons},"@elementor/ui":function(e){e.exports=window.elementorV2.ui},"@wordpress/i18n":function(e){e.exports=window.wp.i18n},react:function(e){e.exports=window.React}},t={};function __webpack_require__(n){var r=t[n];if(void 0!==r)return r.exports;var o=t[n]={exports:{}};return e[n](o,o.exports,__webpack_require__),o.exports}__webpack_require__.n=function(e){var t=e&&e.__esModule?function(){return e.default}:function(){return e};return __webpack_require__.d(t,{a:t}),t},__webpack_require__.d=function(e,t){for(var n in t)__webpack_require__.o(t,n)&&!__webpack_require__.o(e,n)&&Object.defineProperty(e,n,{enumerable:!0,get:t[n]})},__webpack_require__.o=function(e,t){return Object.prototype.hasOwnProperty.call(e,t)},__webpack_require__.r=function(e){"undefined"!=typeof Symbol&&Symbol.toStringTag&&Object.defineProperty(e,Symbol.toStringTag,{value:"Module"}),Object.defineProperty(e,"__esModule",{value:!0})};var n={};!function(){__webpack_require__.r(n),__webpack_require__.d(n,{init:function(){return e.init}});var e=__webpack_require__("./packages/packages/core/editor-widget-creation/src/init.ts")}(),(window.elementorV2=window.elementorV2||{}).editorWidgetCreation=n}(),window.elementorV2.editorWidgetCreation?.init?.();
+/******/ (function() { // webpackBootstrap
+/******/ 	"use strict";
+/******/ 	var __webpack_modules__ = ({
+
+/***/ "./packages/packages/core/editor-widget-creation/src/components/create-widget.tsx":
+/*!****************************************************************************************!*\
+  !*** ./packages/packages/core/editor-widget-creation/src/components/create-widget.tsx ***!
+  \****************************************************************************************/
+/***/ (function(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   CreateWidget: function() { return /* binding */ CreateWidget; }
+/* harmony export */ });
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "react");
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _elementor_editor_mcp__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @elementor/editor-mcp */ "@elementor/editor-mcp");
+/* harmony import */ var _elementor_editor_mcp__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_elementor_editor_mcp__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var _elementor_editor_ui__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @elementor/editor-ui */ "@elementor/editor-ui");
+/* harmony import */ var _elementor_editor_ui__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_elementor_editor_ui__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var _elementor_events__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @elementor/events */ "@elementor/events");
+/* harmony import */ var _elementor_events__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_elementor_events__WEBPACK_IMPORTED_MODULE_3__);
+/* harmony import */ var _elementor_icons__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @elementor/icons */ "@elementor/icons");
+/* harmony import */ var _elementor_icons__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(_elementor_icons__WEBPACK_IMPORTED_MODULE_4__);
+/* harmony import */ var _elementor_ui__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! @elementor/ui */ "@elementor/ui");
+/* harmony import */ var _elementor_ui__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(_elementor_ui__WEBPACK_IMPORTED_MODULE_5__);
+/* harmony import */ var _wordpress_i18n__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! @wordpress/i18n */ "@wordpress/i18n");
+/* harmony import */ var _wordpress_i18n__WEBPACK_IMPORTED_MODULE_6___default = /*#__PURE__*/__webpack_require__.n(_wordpress_i18n__WEBPACK_IMPORTED_MODULE_6__);
+/* harmony import */ var _interpolate_links__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../interpolate-links */ "./packages/packages/core/editor-widget-creation/src/interpolate-links.tsx");
+
+
+
+
+
+
+
+
+
+const CREATE_WIDGET_EVENT = 'elementor/editor/create-widget';
+const ANGIE_MODAL_PROMOTION_IMAGE_URL = 'https://assets.elementor.com/packages/v1/images/angie-modal-promotion.png';
+const ANGIE_CTA_CLICKED_EVENT = 'ai_widget_cta_clicked';
+const ANGIE_INSTALL_STARTED_EVENT = 'angie_install_started';
+const ANGIE_INSTALL_COMPLETED_EVENT = 'angie_install_completed';
+const ANGIE_INSTALL_ABANDONED_EVENT = 'angie_install_abandoned';
+function CreateWidgetModal({
+  prompt,
+  entryPoint,
+  onClose
+}) {
+  const [installState, setInstallState] = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)('idle');
+  const [agreedToTerms, setAgreedToTerms] = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(false);
+  const handleClose = () => {
+    if (installState === 'installing') {
+      return;
+    }
+    (0,_elementor_events__WEBPACK_IMPORTED_MODULE_3__.trackEvent)({
+      eventName: ANGIE_INSTALL_ABANDONED_EVENT,
+      abandon_step: installState === 'error' ? 'install_error' : 'install_modal',
+      trigger_source: entryPoint
+    });
+    onClose();
+  };
+  const handleInstall = async () => {
+    setInstallState('installing');
+    (0,_elementor_events__WEBPACK_IMPORTED_MODULE_3__.trackEvent)({
+      eventName: ANGIE_INSTALL_STARTED_EVENT,
+      trigger_source: entryPoint
+    });
+    const [result] = await Promise.all([(0,_elementor_editor_mcp__WEBPACK_IMPORTED_MODULE_1__.installAngiePlugin)(), (0,_elementor_editor_mcp__WEBPACK_IMPORTED_MODULE_1__.saveAngieConsent)()]);
+    if (!result.success) {
+      setInstallState('error');
+      return;
+    }
+    (0,_elementor_events__WEBPACK_IMPORTED_MODULE_3__.trackEvent)({
+      eventName: ANGIE_INSTALL_COMPLETED_EVENT,
+      trigger_source: entryPoint
+    });
+    (0,_elementor_editor_mcp__WEBPACK_IMPORTED_MODULE_1__.redirectToAppAdmin)(prompt);
+  };
+  const handleFallbackInstall = () => {
+    (0,_elementor_editor_mcp__WEBPACK_IMPORTED_MODULE_1__.redirectToInstallation)(prompt);
+  };
+  return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(_elementor_editor_ui__WEBPACK_IMPORTED_MODULE_2__.ThemeProvider, null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(_elementor_ui__WEBPACK_IMPORTED_MODULE_5__.Dialog, {
+    fullWidth: true,
+    maxWidth: "md",
+    open: true,
+    onClose: handleClose
+  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(_elementor_ui__WEBPACK_IMPORTED_MODULE_5__.IconButton, {
+    "aria-label": (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_6__.__)('Close', 'elementor'),
+    onClick: handleClose,
+    sx: {
+      position: 'absolute',
+      right: 8,
+      top: 8,
+      zIndex: 1
+    }
+  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(_elementor_icons__WEBPACK_IMPORTED_MODULE_4__.XIcon, null)), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(_elementor_ui__WEBPACK_IMPORTED_MODULE_5__.DialogContent, {
+    sx: {
+      p: 0,
+      overflow: 'hidden'
+    }
+  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(_elementor_ui__WEBPACK_IMPORTED_MODULE_5__.Stack, {
+    direction: "row",
+    sx: {
+      height: 400
+    }
+  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(_elementor_ui__WEBPACK_IMPORTED_MODULE_5__.Image, {
+    sx: {
+      height: '100%',
+      aspectRatio: '1 / 1',
+      objectFit: 'cover',
+      objectPosition: 'right center'
+    },
+    src: ANGIE_MODAL_PROMOTION_IMAGE_URL
+  }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(_elementor_ui__WEBPACK_IMPORTED_MODULE_5__.Stack, {
+    justifyContent: "space-between",
+    p: 4
+  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(_elementor_ui__WEBPACK_IMPORTED_MODULE_5__.Stack, {
+    gap: 2.5,
+    justifyContent: "center",
+    sx: {
+      flex: 1,
+      paddingInlineEnd: 2.5
+    }
+  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(_elementor_ui__WEBPACK_IMPORTED_MODULE_5__.Typography, {
+    variant: "h4",
+    fontWeight: 600,
+    color: "text.secondary"
+  }, installState === 'error' ? (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_6__.__)('Installation failed', 'elementor') : (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_6__.__)('Create custom widgets with Angie', 'elementor')), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(_elementor_ui__WEBPACK_IMPORTED_MODULE_5__.Typography, {
+    variant: "body2"
+  }, installState === 'error' ? (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_6__.__)("We couldn't install Angie automatically. Click below to install it manually.", 'elementor') : (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_6__.__)('Build custom widgets, sections, and code using simple instructions. Install once to start building directly from the editor.', 'elementor')), installState !== 'error' && /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(_elementor_ui__WEBPACK_IMPORTED_MODULE_5__.FormControlLabel, {
+    control: /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(_elementor_ui__WEBPACK_IMPORTED_MODULE_5__.Checkbox, {
+      size: "small",
+      checked: agreedToTerms,
+      onChange: (_e, checked) => setAgreedToTerms(checked)
+    }),
+    label: /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(_elementor_ui__WEBPACK_IMPORTED_MODULE_5__.Typography, {
+      variant: "body2",
+      color: "text.secondary"
+    }, (0,_interpolate_links__WEBPACK_IMPORTED_MODULE_7__.interpolateLinks)((0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_6__.sprintf)(
+    // translators: %1$s is the Terms link, %2$s is the Privacy Policy link.
+    (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_6__.__)('I agree to the %1$s & %2$s.', 'elementor'), '{{terms}}', '{{privacy}}'), {
+      terms: {
+        label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_6__.__)('Terms', 'elementor'),
+        href: 'https://elementor.com/terms/angie-terms-conditions/'
+      },
+      privacy: {
+        label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_6__.__)('Privacy Policy', 'elementor'),
+        href: 'https://elementor.com/about/privacy/'
+      }
+    }))
+  })), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(_elementor_ui__WEBPACK_IMPORTED_MODULE_5__.Stack, {
+    direction: "row",
+    justifyContent: "flex-end"
+  }, installState === 'error' ? /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(_elementor_ui__WEBPACK_IMPORTED_MODULE_5__.Button, {
+    variant: "contained",
+    color: "accent",
+    onClick: handleFallbackInstall
+  }, (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_6__.__)('Install Manually', 'elementor')) : /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(_elementor_ui__WEBPACK_IMPORTED_MODULE_5__.Button, {
+    variant: "contained",
+    color: "accent",
+    onClick: handleInstall,
+    disabled: installState === 'installing' || !agreedToTerms,
+    startIcon: installState === 'installing' ? /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(_elementor_ui__WEBPACK_IMPORTED_MODULE_5__.CircularProgress, {
+      size: 18,
+      color: "inherit"
+    }) : undefined
+  }, installState === 'installing' ? (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_6__.__)('Installing…', 'elementor') : (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_6__.__)('Install & Activate', 'elementor'))))))));
+}
+function CreateWidget() {
+  const [modalData, setModalData] = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(null);
+  (0,react__WEBPACK_IMPORTED_MODULE_0__.useEffect)(() => {
+    const handleShow = event => {
+      const customEvent = event;
+      const hasAngieInstalled = (0,_elementor_editor_mcp__WEBPACK_IMPORTED_MODULE_1__.isAngieAvailable)();
+      (0,_elementor_events__WEBPACK_IMPORTED_MODULE_3__.trackEvent)({
+        eventName: ANGIE_CTA_CLICKED_EVENT,
+        entry_point: customEvent.detail.entry_point,
+        has_angie_installed: hasAngieInstalled
+      });
+      if (hasAngieInstalled) {
+        (0,_elementor_editor_mcp__WEBPACK_IMPORTED_MODULE_1__.sendPromptToAngie)(customEvent.detail?.prompt);
+        return;
+      }
+      setModalData(customEvent.detail);
+    };
+    window.addEventListener(CREATE_WIDGET_EVENT, handleShow);
+    return () => {
+      window.removeEventListener(CREATE_WIDGET_EVENT, handleShow);
+    };
+  }, []);
+  if (!modalData) {
+    return null;
+  }
+  return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(CreateWidgetModal, {
+    prompt: modalData.prompt,
+    entryPoint: modalData.entry_point,
+    onClose: () => setModalData(null)
+  });
+}
+
+/***/ }),
+
+/***/ "./packages/packages/core/editor-widget-creation/src/init.ts":
+/*!*******************************************************************!*\
+  !*** ./packages/packages/core/editor-widget-creation/src/init.ts ***!
+  \*******************************************************************/
+/***/ (function(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   init: function() { return /* binding */ init; }
+/* harmony export */ });
+/* harmony import */ var _elementor_editor__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @elementor/editor */ "@elementor/editor");
+/* harmony import */ var _elementor_editor__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_elementor_editor__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _components_create_widget__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./components/create-widget */ "./packages/packages/core/editor-widget-creation/src/components/create-widget.tsx");
+
+
+function init() {
+  (0,_elementor_editor__WEBPACK_IMPORTED_MODULE_0__.injectIntoTop)({
+    id: 'create-widget',
+    component: _components_create_widget__WEBPACK_IMPORTED_MODULE_1__.CreateWidget
+  });
+}
+
+/***/ }),
+
+/***/ "./packages/packages/core/editor-widget-creation/src/interpolate-links.tsx":
+/*!*********************************************************************************!*\
+  !*** ./packages/packages/core/editor-widget-creation/src/interpolate-links.tsx ***!
+  \*********************************************************************************/
+/***/ (function(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   interpolateLinks: function() { return /* binding */ interpolateLinks; }
+/* harmony export */ });
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "react");
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _elementor_ui__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @elementor/ui */ "@elementor/ui");
+/* harmony import */ var _elementor_ui__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_elementor_ui__WEBPACK_IMPORTED_MODULE_1__);
+
+
+const LINK_PLACEHOLDER_PATTERN = /\{\{(\w+)}}/g;
+const interpolateLinks = (text, links) => {
+  return text.split(LINK_PLACEHOLDER_PATTERN).map((part, i) => {
+    const link = links[part];
+    if (!link) {
+      return part;
+    }
+    return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(_elementor_ui__WEBPACK_IMPORTED_MODULE_1__.Link, {
+      key: i,
+      sx: {
+        px: 0.5
+      },
+      href: link.href,
+      target: "_blank",
+      rel: "noopener noreferrer"
+    }, link.label);
+  });
+};
+
+/***/ }),
+
+/***/ "@elementor/editor":
+/*!*****************************************!*\
+  !*** external ["elementorV2","editor"] ***!
+  \*****************************************/
+/***/ (function(module) {
+
+module.exports = window["elementorV2"]["editor"];
+
+/***/ }),
+
+/***/ "@elementor/editor-mcp":
+/*!********************************************!*\
+  !*** external ["elementorV2","editorMcp"] ***!
+  \********************************************/
+/***/ (function(module) {
+
+module.exports = window["elementorV2"]["editorMcp"];
+
+/***/ }),
+
+/***/ "@elementor/editor-ui":
+/*!*******************************************!*\
+  !*** external ["elementorV2","editorUi"] ***!
+  \*******************************************/
+/***/ (function(module) {
+
+module.exports = window["elementorV2"]["editorUi"];
+
+/***/ }),
+
+/***/ "@elementor/events":
+/*!*****************************************!*\
+  !*** external ["elementorV2","events"] ***!
+  \*****************************************/
+/***/ (function(module) {
+
+module.exports = window["elementorV2"]["events"];
+
+/***/ }),
+
+/***/ "@elementor/icons":
+/*!****************************************!*\
+  !*** external ["elementorV2","icons"] ***!
+  \****************************************/
+/***/ (function(module) {
+
+module.exports = window["elementorV2"]["icons"];
+
+/***/ }),
+
+/***/ "@elementor/ui":
+/*!*************************************!*\
+  !*** external ["elementorV2","ui"] ***!
+  \*************************************/
+/***/ (function(module) {
+
+module.exports = window["elementorV2"]["ui"];
+
+/***/ }),
+
+/***/ "@wordpress/i18n":
+/*!******************************!*\
+  !*** external ["wp","i18n"] ***!
+  \******************************/
+/***/ (function(module) {
+
+module.exports = window["wp"]["i18n"];
+
+/***/ }),
+
+/***/ "react":
+/*!**************************!*\
+  !*** external ["React"] ***!
+  \**************************/
+/***/ (function(module) {
+
+module.exports = window["React"];
+
+/***/ })
+
+/******/ 	});
+/************************************************************************/
+/******/ 	// The module cache
+/******/ 	var __webpack_module_cache__ = {};
+/******/ 	
+/******/ 	// The require function
+/******/ 	function __webpack_require__(moduleId) {
+/******/ 		// Check if module is in cache
+/******/ 		var cachedModule = __webpack_module_cache__[moduleId];
+/******/ 		if (cachedModule !== undefined) {
+/******/ 			return cachedModule.exports;
+/******/ 		}
+/******/ 		// Create a new module (and put it into the cache)
+/******/ 		var module = __webpack_module_cache__[moduleId] = {
+/******/ 			// no module.id needed
+/******/ 			// no module.loaded needed
+/******/ 			exports: {}
+/******/ 		};
+/******/ 	
+/******/ 		// Execute the module function
+/******/ 		__webpack_modules__[moduleId](module, module.exports, __webpack_require__);
+/******/ 	
+/******/ 		// Return the exports of the module
+/******/ 		return module.exports;
+/******/ 	}
+/******/ 	
+/************************************************************************/
+/******/ 	/* webpack/runtime/compat get default export */
+/******/ 	!function() {
+/******/ 		// getDefaultExport function for compatibility with non-harmony modules
+/******/ 		__webpack_require__.n = function(module) {
+/******/ 			var getter = module && module.__esModule ?
+/******/ 				function() { return module['default']; } :
+/******/ 				function() { return module; };
+/******/ 			__webpack_require__.d(getter, { a: getter });
+/******/ 			return getter;
+/******/ 		};
+/******/ 	}();
+/******/ 	
+/******/ 	/* webpack/runtime/define property getters */
+/******/ 	!function() {
+/******/ 		// define getter functions for harmony exports
+/******/ 		__webpack_require__.d = function(exports, definition) {
+/******/ 			for(var key in definition) {
+/******/ 				if(__webpack_require__.o(definition, key) && !__webpack_require__.o(exports, key)) {
+/******/ 					Object.defineProperty(exports, key, { enumerable: true, get: definition[key] });
+/******/ 				}
+/******/ 			}
+/******/ 		};
+/******/ 	}();
+/******/ 	
+/******/ 	/* webpack/runtime/hasOwnProperty shorthand */
+/******/ 	!function() {
+/******/ 		__webpack_require__.o = function(obj, prop) { return Object.prototype.hasOwnProperty.call(obj, prop); }
+/******/ 	}();
+/******/ 	
+/******/ 	/* webpack/runtime/make namespace object */
+/******/ 	!function() {
+/******/ 		// define __esModule on exports
+/******/ 		__webpack_require__.r = function(exports) {
+/******/ 			if(typeof Symbol !== 'undefined' && Symbol.toStringTag) {
+/******/ 				Object.defineProperty(exports, Symbol.toStringTag, { value: 'Module' });
+/******/ 			}
+/******/ 			Object.defineProperty(exports, '__esModule', { value: true });
+/******/ 		};
+/******/ 	}();
+/******/ 	
+/************************************************************************/
+var __webpack_exports__ = {};
+// This entry needs to be wrapped in an IIFE because it needs to be isolated against other modules in the chunk.
+!function() {
+/*!********************************************************************!*\
+  !*** ./packages/packages/core/editor-widget-creation/src/index.ts ***!
+  \********************************************************************/
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   init: function() { return /* reexport safe */ _init__WEBPACK_IMPORTED_MODULE_0__.init; }
+/* harmony export */ });
+/* harmony import */ var _init__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./init */ "./packages/packages/core/editor-widget-creation/src/init.ts");
+
+}();
+(window.elementorV2 = window.elementorV2 || {}).editorWidgetCreation = __webpack_exports__;
+/******/ })()
+;
+window.elementorV2.editorWidgetCreation?.init?.();
 //# sourceMappingURL=editor-widget-creation.js.map

@@ -1,41 +1,23 @@
 <?php
 /**
- * @file class-gravityview-field-post-excerpt.php
- * @package GravityView
- * @subpackage includes\fields
+ * Backward-compatibility shim.
+ *
+ * This file was moved in GravityView 3.0. It is intentionally empty.
+ * GravityView classes and functions load automatically — you no longer
+ * need to require GravityView files in your code.
+ *
+ * @deprecated 3.0
  */
 
-class GravityView_Post_Excerpt extends GravityView_Field {
-
-	var $name = 'post_excerpt';
-
-	var $is_searchable = true;
-
-	var $search_operators = array( 'contains', 'is', 'isnot', 'starts_with', 'ends_with' );
-
-	var $_gf_field_class_name = 'GF_Field_Post_Excerpt';
-
-	var $group = 'post';
-
-	var $icon = 'dashicons-format-quote';
-
-	public function __construct() {
-		$this->label = esc_html__( 'Post Excerpt', 'gk-gravityview' );
-		parent::__construct();
-	}
-
-	public function field_options( $field_options, $template_id, $field_id, $context, $input_type, $form_id ) {
-
-		unset( $field_options['show_as_link'] );
-
-		if ( 'edit' === $context ) {
-			return $field_options;
-		}
-
-		$this->add_field_support( 'dynamic_data', $field_options );
-
-		return $field_options;
-	}
+if ( ! defined( 'ABSPATH' ) ) {
+	die;
 }
 
-new GravityView_Post_Excerpt();
+if ( function_exists( '_deprecated_file' ) ) {
+	_deprecated_file(
+		plugin_basename( __FILE__ ),
+		'3.0',
+		'',
+		'This file was moved in GravityView 3.0 and will be removed in a future release. GravityView classes and functions load automatically — you no longer need to require them.'
+	);
+}

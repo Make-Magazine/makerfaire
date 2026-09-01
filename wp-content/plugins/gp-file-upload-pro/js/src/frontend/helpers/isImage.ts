@@ -9,19 +9,17 @@ export default function isImage(file: File) : boolean {
 		'image/heic',
 	];
 
-	// Check if the browser supports WebP before treating it as an image.
 	const supports = checkBrowserSupport();
 
+	// Canvas support is required to preview/crop/resize.
 	if (!supports.canvas) {
 		return false;
 	}
 
 	const fileType = getFileType(file);
 
-	if (fileType === 'image/webp' && !supports.webp) {
-		return false;
-	}
-
+	// Don't gate WebP on `supports.webp` (encode support): Safari can decode WebP but not encode it,
+	// and gating made it skip the thumbnail/cropper. Encode fallback is handled at the encode sites.
 	return fileType.indexOf('image/') === 0 && supportedImageTypes.includes(fileType);
 }
 
@@ -42,6 +40,52 @@ export function checkBrowserSupport() : { canvas: boolean, webp: boolean } {
 			webp: false,
 		}
 	}
+}
+
+/**
+ * MIME type to encode a processed image with via canvas. Safari can't encode WebP (it silently
+ * emits PNG), so fall back to PNG explicitly here so the caller can also fix the filename.
+ */
+export function getEncodableImageType(fileType: string): string {
+	if (['image/jpg', 'image/jpeg'].includes(fileType)) {
+		return 'image/jpeg';
+	}
+
+	if (fileType === 'image/webp' && !checkBrowserSupport().webp) {
+		return 'image/png';
+	}
+
+	return fileType;
+}
+
+/**
+ * Rewrite a filename's extension to match the given MIME type (e.g. WebP -> PNG fallback).
+ */
+export function renameToImageType(name: string, fileType: string): string {
+	if (!name) {
+		return name;
+	}
+
+	const extByType: { [type: string]: string } = {
+		'image/png': 'png',
+		'image/jpeg': 'jpg',
+		'image/webp': 'webp',
+	};
+
+	const ext = extByType[fileType];
+
+	if (!ext) {
+		return name;
+	}
+
+	const imageExtensionPattern = /\.(gif|png|jpe?g|bmp|webp|svg|heic)$/i;
+
+	// Append the output extension if the filename does not end in a recognized image extension.
+	if (!imageExtensionPattern.test(name)) {
+		return `${name}.${ext}`;
+	}
+
+	return name.replace(imageExtensionPattern, `.${ext}`);
 }
 
 /**

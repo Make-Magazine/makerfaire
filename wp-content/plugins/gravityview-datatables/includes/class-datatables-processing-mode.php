@@ -74,16 +74,82 @@ class GV_Extension_DataTables_Processing_Mode extends GV_DataTables_Extension {
 	 *
 	 * @return array
 	 */
-	function add_config( $dt_config, $view_id, $post, $object ) {
-		$processing_mode = $this->get_setting( $view_id, $this->settings_key, self::DEFAULT_MODE );
-
-		if ( $post instanceof WP_Post && $processing_mode !== self::DEFAULT_MODE ) {
-			$dt_config = $this->modify_config_for_client_side_processing( $dt_config, $view_id, $post, $object );
-
-			gravityview()->log->debug( '[processing_mode_add_config] Updating DataTables config to use client-side.' );
+	/**
+	 * {@inheritdoc}
+	 *
+	 * `is_enabled()` is false whenever no `processing_mode` value is stored, which is every View
+	 * saved before 3.3 — and those Views run server-side, so they are exactly the ones a Random
+	 * sort has to be rescued from. Overridden so a random sort reaches `add_config()` on its own.
+	 *
+	 * @since 3.12.0
+	 *
+	 * @return array
+	 */
+	public function maybe_add_config( $dt_config, $view_id, $post, $object ) {
+		if ( $this->is_enabled( $view_id ) || $this->has_random_sort( $view_id, $dt_config, $object ) ) {
+			return $this->add_config( $dt_config, $view_id, $post, $object );
 		}
 
 		return $dt_config;
+	}
+
+	function add_config( $dt_config, $view_id, $post, $object ) {
+		$processing_mode = $this->get_setting( $view_id, $this->settings_key, self::DEFAULT_MODE );
+		$has_random_sort = $this->has_random_sort( $view_id, $dt_config, $object );
+
+		if ( $post instanceof WP_Post && ( $processing_mode !== self::DEFAULT_MODE || $has_random_sort ) ) {
+			$dt_config = $this->modify_config_for_client_side_processing( $dt_config, $view_id, $post, $object );
+
+			gravityview()->log->debug(
+				$has_random_sort
+					// A server-side Random sort re-shuffles on every AJAX request, so paging
+					// duplicates and drops rows; the single-fetch client-side path is the only
+					// mode that can page it coherently (F-9).
+					? '[processing_mode_add_config] Sort direction is Random: forcing client-side processing regardless of the saved processing_mode.'
+					: '[processing_mode_add_config] Updating DataTables config to use client-side.'
+			);
+		}
+
+		return $dt_config;
+	}
+
+	/**
+	 * Whether this render's effective sort (saved meta, overlaid with any shortcode/block
+	 * override) includes a Random direction.
+	 *
+	 * Reuses `GV_Extension_DataTables_Data::get_effective_sort()` (F-8) rather than reading
+	 * `sort_direction` off the View directly, so a `sort_direction=RAND` shortcode/block
+	 * override -- which survives core's sanitization -- routes through this check too.
+	 *
+	 * @since 3.12.0
+	 *
+	 * @param int                           $view_id  The View ID.
+	 * @param array                         $dt_config The configuration built so far; already carries `columns` by the time `add_config()` runs.
+	 * @param GV_Extension_DataTables_Data|null $object The current instance of the GV_Extension_DataTables_Data class.
+	 *
+	 * @return bool
+	 */
+	private function has_random_sort( $view_id, array $dt_config, $object ) {
+		if ( ! $object instanceof GV_Extension_DataTables_Data ) {
+			return false;
+		}
+
+		$view = \GV\View::by_id( $view_id );
+
+		if ( ! $view instanceof \GV\View ) {
+			return false;
+		}
+
+		$columns = \GV\Utils::get( $dt_config, 'columns', array() );
+		$sort    = $object->get_effective_sort( $view, $columns );
+
+		foreach ( (array) \GV\Utils::get( $sort, 'directions', array() ) as $direction ) {
+			if ( 'rand' === strtolower( $direction ) ) {
+				return true;
+			}
+		}
+
+		return false;
 	}
 
     /**
@@ -188,12 +254,24 @@ class GV_Extension_DataTables_Processing_Mode extends GV_DataTables_Extension {
 				$dt_shadow_data_value = '';
 
 				if ( in_array( $field['type'], $date_fields, true ) ) {
-					// Convert date fields to Unix timestamp using milliseconds.
-					// We can use this value to filter date field columns in the UI.
-					try {
-						$dt_shadow_data_value = ( new DateTime( $entry_field_value ) )->setTime( 0, 0, 0 )->getTimestamp() * 1000;
-					} catch ( Exception $e ) {
-						gravityview()->log->debug( "Invalid date value for field ID {$field['id']}" );
+					// new DateTime( '' ) does not throw -- PHP treats an empty string as "now"
+					// on both 7.4 and 8.x -- so a field submitted empty (the entry key exists
+					// with value '') must be caught here, before construction, or every undated
+					// entry gets today's timestamp and wrongly matches "today" in every
+					// client-side date filter/sort. Leave the shadow cell at its '' default: the
+					// JS falls back to the rendered value for it (empty for a blank date), which
+					// correctly excludes the row rather than treating it as epoch (0 would be a
+					// valid 1970 timestamp and match any range starting before then).
+					$raw_date = is_string( $entry_field_value ) ? trim( $entry_field_value ) : '';
+
+					if ( '' !== $raw_date ) {
+						// Convert date fields to Unix timestamp using milliseconds.
+						// We can use this value to filter date field columns in the UI.
+						try {
+							$dt_shadow_data_value = ( new DateTime( $raw_date ) )->setTime( 0, 0, 0 )->getTimestamp() * 1000;
+						} catch ( Exception $e ) {
+							gravityview()->log->debug( "Invalid date value for field ID {$field['id']}" );
+						}
 					}
 				} else if ( 'email' === $field['type'] && preg_match( '/function hivelogic/', $dt_data_value ) ) {
 					// Obfuscate email addresses if the original value is encoded using GravityView's "enkoder".

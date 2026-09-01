@@ -3,8 +3,8 @@ Contributors: spivurno,claygriffiths,bradvin,wpsmith
 Donate link: http://gravitywiz.com/
 Tags: gravity forms, custom post types, taxonomy, custom taxonomy, gravity forms posts
 Requires at least: 3.0.1
-Tested up to: 6.9.1
-Stable tag: 3.1.31
+Tested up to: 7.0.2
+Stable tag: 3.1.32
 Requires PHP: 5.6
 License: GPLv2
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -120,6 +120,9 @@ When populating a Drop Down field with a post type, you may wish to set the sele
 7. Setting: Mapping a Single Line Text field to a taxonomy (and enabling Enhanced UI)
 
 == Changelog ==
+
+= 3.1.32 =
+* Improved compatibility with Gravity Forms 3.0.
 
 = 3.1.31 =
 * Fixed readme.txt formatting for WordPress.org plugin directory.

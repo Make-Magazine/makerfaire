@@ -1,0 +1,745 @@
+/**
+ * GravityView Theme — DataTables Layout
+ *
+ * Harmonizes with the DataTables.net library CSS. Uses higher specificity
+ * via the `.gv-themed` scope to override library defaults while coexisting
+ * with its functional styles.
+ *
+ * @package   GravityView
+ * @license   GPL2
+ * @since     TBD
+ */
+
+// =========================================================
+// DataTables container
+//
+// `gv-datatables-container` is passed into `gv_container_class()`,
+// so it sits on the SAME element as `.gv-themed` (same-element
+// compound). Rules on `table.gv-datatables.dataTable` target the
+// inner `<table>`, a true descendant.
+// =========================================================
+.gv-datatables-container.gv-themed {
+	// Corners painted by the corner cells (see `border-start-*-radius`
+	// / `border-end-*-radius` rules on `thead tr:first-child > *` and
+	// `tfoot tr:last-child > *` below) so the container stays square.
+	overflow: hidden;
+	background: var(--gv-color-surface);
+	// Padding here (not on `.dataTables_wrapper`) so the responsive
+	// plugin's `wrapper.offsetWidth` reference excludes the inset.
+	padding: var(--gv-toolbar-padding);
+}
+
+// =========================================================
+// Table element — override DataTables defaults
+// =========================================================
+.gv-themed table.gv-datatables.dataTable {
+	width: 100% !important; // DataTables sets inline width
+	border-collapse: separate;
+	border-spacing: 0;
+	// Outer border via `outline` (negative offset) rather than
+	// `border`. See Table layout's matching rule for the geometry:
+	// a real border offsets cells 1px inward and exposes a 1px
+	// ring of the table background through the corner cells'
+	// rounded curves.
+	border: 0;
+	outline: var(--gv-entry-border-width) var(--gv-entry-border-style) var(--gv-entry-border-color);
+	outline-offset: calc(-1 * var(--gv-entry-border-width));
+	border-radius: var(--gv-entry-radius);
+}
+
+// Host themes paint borders, radius, shadow, and margin on the
+// table and its sub-elements that clash with the container's chrome.
+// Zero them out so every visible border is ours.
+.gv-themed table.gv-datatables.dataTable,
+.gv-themed table.gv-datatables.dataTable :where(thead, tbody, tfoot, tr, th, td) {
+	margin: 0;
+}
+
+.gv-themed table.gv-datatables.dataTable :where(thead, tbody, tfoot, tr, th, td) {
+	border: 0;
+	border-radius: 0;
+	box-shadow: none;
+}
+
+// Round corner cells themselves so the rounded corner is painted by
+// the cell, not clipped by the container's `overflow: hidden`.
+//
+// `:has()` targets the FIRST and LAST visible cell, not the DOM
+// first / last. DataTables Responsive hides columns by adding
+// `.dtr-hidden` + `display: none` to the cell, which `:first-child` /
+// `:last-child` would still match — so the radius would attach to a
+// non-rendering cell and the visible end-column would stay square.
+// `:not(.dtr-hidden):not(:has(~ :not(.dtr-hidden)))` matches the
+// last cell that isn't `.dtr-hidden` and has no visible cell after it.
+.gv-themed table.gv-datatables.dataTable thead tr:first-child > :not(.dtr-hidden):first-child {
+	border-start-start-radius: var(--gv-entry-radius);
+}
+.gv-themed table.gv-datatables.dataTable thead tr:first-child > :not(.dtr-hidden):not(:has(~ :not(.dtr-hidden))) {
+	border-start-end-radius: var(--gv-entry-radius);
+}
+.gv-themed table.gv-datatables.dataTable tfoot tr:last-child > :not(.dtr-hidden):first-child {
+	border-end-start-radius: var(--gv-entry-radius);
+}
+.gv-themed table.gv-datatables.dataTable tfoot tr:last-child > :not(.dtr-hidden):not(:has(~ :not(.dtr-hidden))) {
+	border-end-end-radius: var(--gv-entry-radius);
+}
+
+// =========================================================
+// Table header cells
+// =========================================================
+.gv-themed table.gv-datatables.dataTable thead th {
+	background: var(--gv-table-header-background);
+	font-weight: var(--gv-font-weight-semibold);
+	font-size: var(--gv-table-header-font-size);
+	text-transform: var(--gv-field-label-text-transform);
+	letter-spacing: var(--gv-field-label-letter-spacing, var(--gv-_letter-spacing-uppercase));
+	// `--gv-field-label-color` is registered AND always set by the
+	// cascade in `_tokens.scss`, so a var() fallback here could never
+	// trigger; consume the token directly.
+	color: var(--gv-field-label-color);
+	padding-block: var(--gv-table-cell-padding-block);
+	padding-inline: var(--gv-table-cell-padding-inline);
+	border-block-end: 1px solid var(--gv-color-border);
+	text-align: start;
+	// No `white-space: nowrap` — would set column min-width to
+	// the longest header word and prevent shrinking to fit.
+}
+
+// =========================================================
+// Table body cells
+// =========================================================
+.gv-themed table.gv-datatables.dataTable tbody td {
+	padding-block: var(--gv-table-cell-padding-block);
+	padding-inline: var(--gv-table-cell-padding-inline);
+	border-block-end: 1px solid var(--gv-color-row-divider);
+	font-size: var(--gv-font-size-base);
+	color: var(--gv-color-text);
+	vertical-align: top;
+	line-height: var(--gv-line-height-normal);
+}
+
+// =========================================================
+// Zebra striping — even rows. Defaults transparent (matches surface)
+// so users opt in by darkening `color.zebra_bg` in Design Studio.
+// =========================================================
+.gv-themed table.gv-datatables.dataTable tbody tr:nth-child(even) {
+	background-color: var(--gv-color-zebra-bg);
+}
+
+// =========================================================
+// Row hover — background + text color. Text falls back to
+// `--gv-color-primary` via `_tokens.scss` unless the user
+// customises `color.text_hover`.
+// =========================================================
+.gv-themed table.gv-datatables.dataTable tbody tr {
+	transition: background-color var(--gv-transition-fast) var(--gv-easing-standard), color var(--gv-transition-fast) var(--gv-easing-standard);
+
+	&:hover,
+	&:hover td {
+		background-color: var(--gv-color-surface-hover);
+		color: var(--gv-color-text-hover);
+	}
+}
+
+// Last row: no bottom border
+.gv-themed table.gv-datatables.dataTable tbody tr:last-child td {
+	border-block-end: none;
+}
+
+// =========================================================
+// Sorting headers — override DataTables sort indicators
+// =========================================================
+.gv-themed table.gv-datatables.dataTable thead th.sorting,
+.gv-themed table.gv-datatables.dataTable thead th.sorting_asc,
+.gv-themed table.gv-datatables.dataTable thead th.sorting_desc {
+	cursor: pointer;
+	position: relative;
+	// Extra right padding to prevent filter inputs from sitting under sort arrows
+	padding-inline-end: var(--gv-space-8);
+	transition: background-color var(--gv-transition-fast) var(--gv-easing-standard);
+
+	&:hover {
+		background-color: var(--gv-color-surface-hover);
+	}
+
+	// Position sort arrows at top-right, next to column label text
+	&::before {
+		inset-block-start: var(--gv-table-cell-padding-block);
+		inset-block-end: auto;
+	}
+
+	&::after {
+		inset-block-start: calc(var(--gv-table-cell-padding-block) + 1em);
+		inset-block-end: auto;
+	}
+}
+
+// Neutral sort — secondary color. The arrow's color + opacity
+// crossfade uses linear easing so the visual cadence stays
+// uniform across slow / fast hover sequences (linear = no
+// perceived acceleration on a UI indicator).
+.gv-themed table.gv-datatables.dataTable thead th.sorting::after {
+	color: var(--gv-color-text-secondary);
+	opacity: 0.5;
+	transition: color var(--gv-transition-fast) var(--gv-easing-linear),
+	            opacity var(--gv-transition-fast) var(--gv-easing-linear);
+}
+
+// Active sort direction — primary color
+.gv-themed table.gv-datatables.dataTable thead th.sorting_asc::after,
+.gv-themed table.gv-datatables.dataTable thead th.sorting_desc::after {
+	color: var(--gv-color-primary);
+	opacity: 1;
+}
+
+// =========================================================
+// Table footer cells
+// =========================================================
+.gv-themed table.gv-datatables.dataTable tfoot th {
+	background: var(--gv-table-header-background);
+	font-weight: var(--gv-font-weight-semibold);
+	font-size: var(--gv-table-header-font-size);
+	text-transform: var(--gv-field-label-text-transform);
+	letter-spacing: var(--gv-field-label-letter-spacing, var(--gv-_letter-spacing-uppercase));
+	color: var(--gv-field-label-color);
+	padding-block: var(--gv-table-cell-padding-block);
+	padding-inline: var(--gv-table-cell-padding-inline);
+	border-block-start: 1px solid var(--gv-color-border);
+	text-align: start;
+}
+
+// =========================================================
+// Field filter inputs in tfoot
+// =========================================================
+// Target filters in both thead and tfoot
+.gv-themed table.gv-datatables.dataTable .gv-dt-field-filter {
+	width: 100%;
+	min-height: var(--gv-size-touch-target);
+	padding: var(--gv-space-1) var(--gv-space-2);
+	border: 1px solid var(--gv-color-border);
+	border-radius: var(--gv-radius-sm);
+	font-size: var(--gv-font-size-sm);
+	font-family: var(--gv-font-family);
+	color: var(--gv-color-text);
+	background: var(--gv-color-surface);
+	appearance: none;
+	margin-block-start: var(--gv-space-1);
+	transition: border-color var(--gv-transition-fast) var(--gv-easing-standard),
+	            box-shadow var(--gv-transition-fast) var(--gv-easing-standard);
+
+	&::placeholder {
+		color: var(--gv-color-text-muted);
+		font-size: var(--gv-font-size-xs);
+	}
+
+	&:focus {
+		border-color: var(--gv-color-primary);
+		box-shadow: var(--gv-shadow-focus);
+		outline: none;
+	}
+}
+
+// Date filter renders as a wrapper div with `gv-dt-field-filter` on
+// the container (not the inputs). The base rule above paints chrome
+// on the wrapper while the browser-default chrome stays on each
+// `<input type="date">` inside, producing nested rounded borders.
+// Reset the wrapper chrome and apply it to the inputs instead so
+// the pair reads as two flush date inputs sitting side by side.
+.gv-themed table.gv-datatables.dataTable .gv-dt-field-filter.date-input-wrapper {
+	display: flex;
+	gap: var(--gv-space-2);
+	padding: 0;
+	border: 0;
+	background: transparent;
+
+	> input[type="date"] {
+		flex: 1 1 0;
+		min-width: 0;
+		min-height: var(--gv-size-touch-target);
+		padding: var(--gv-space-1) var(--gv-space-2);
+		border: 1px solid var(--gv-color-border);
+		border-radius: var(--gv-radius-sm);
+		font-family: var(--gv-font-family);
+		font-size: var(--gv-font-size-sm);
+		color: var(--gv-color-text);
+		background: var(--gv-color-surface);
+		// Reset browser-default date input chrome (Webkit / Blink
+		// add inner shadows + their own font on the value display).
+		appearance: none;
+		-webkit-appearance: none;
+		line-height: 1.25;
+
+		&:focus {
+			border-color: var(--gv-color-primary);
+			box-shadow: var(--gv-shadow-focus);
+			outline: none;
+		}
+	}
+}
+
+// =========================================================
+// Links inside table cells
+// =========================================================
+.gv-themed table.gv-datatables.dataTable tbody td a {
+	color: var(--gv-color-link);
+	text-decoration: none;
+	transition: color var(--gv-transition-fast) var(--gv-easing-standard);
+
+	&:hover,
+	&:focus-visible {
+		color: var(--gv-color-link-hover);
+		text-decoration: underline;
+	}
+
+	&:active {
+		color: var(--gv-color-link-active);
+	}
+
+	&:visited {
+		color: var(--gv-color-link-visited);
+	}
+}
+
+// SC 1.4.1 Use of Color: anchors inside flowing paragraph content
+// within cells carry a resting underline (matches the Table layout
+// contract in `_table.scss`).
+.gv-themed table.gv-datatables.dataTable tbody td p a {
+	text-decoration: underline;
+}
+
+// =========================================================
+// DataTables wrapper — flex layout so toolbar items align
+// =========================================================
+.gv-datatables-container.gv-themed .dataTables_wrapper {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: var(--gv-toolbar-gap);
+
+	// Table takes full width on its own row. With scrolling enabled
+	// (FixedHeader/FixedColumns set `scrollX`), the table is nested
+	// inside `.dataTables_scroll`, which becomes the flex child and
+	// needs the same full-width treatment.
+	table.gv-datatables,
+	.dataTables_scroll {
+		flex: 0 0 100%;
+		margin-block-start: var(--gv-toolbar-margin-block-end);
+	}
+
+	// The scroll container carries the toolbar offset; the tables
+	// nested inside it (header/footer clones and body) must not add it again.
+	.dataTables_scroll table.gv-datatables {
+		margin-block-start: 0;
+	}
+
+	// Info + pagination share the bottom row
+	.dataTables_info {
+		flex: 1 1 auto;
+	}
+}
+
+// =========================================================
+// DataTables controls — length selector
+// =========================================================
+.gv-datatables-container.gv-themed .dataTables_length {
+	display: inline-flex;
+	align-items: center;
+
+	label {
+		font-size: var(--gv-font-size-sm);
+		color: var(--gv-color-text-muted);
+		display: inline-flex;
+		align-items: center;
+		gap: var(--gv-space-2);
+		margin: 0;
+		line-height: 1;
+	}
+
+	select {
+		padding: var(--gv-space-2) var(--gv-space-3);
+		padding-inline-end: var(--gv-space-8);
+		min-height: var(--gv-size-touch-target);
+		border: 1px solid var(--gv-control-border-color);
+		border-radius: var(--gv-radius-md);
+		font-size: var(--gv-font-size-sm);
+		color: var(--gv-color-text);
+		// DataTables length menu — share the same control background
+		// as the search-widget inputs so "Input Background" paints
+		// both consistently.
+		background: var(--gv-control-bg);
+		appearance: none;
+		background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1.41.59L6 5.17 10.59.59 12 2 6 8 0 2z' fill='%23607382'/%3E%3C/svg%3E");
+		background-repeat: no-repeat;
+		background-position: right var(--gv-space-3) center;
+
+		// RTL: text starts at the physical right, so flip the chevron
+		// to the physical left. The `padding-inline-end` reservation is
+		// logical and already maps to the left in RTL, so only the
+		// background-position needs the override.
+		&:dir(rtl) {
+			background-position: left var(--gv-space-3) center;
+		}
+
+		&:focus-visible {
+			outline: none;
+			box-shadow: var(--gv-shadow-focus);
+			border-color: var(--gv-color-primary);
+		}
+	}
+}
+
+// =========================================================
+// DataTables controls — info display
+// =========================================================
+.gv-datatables-container.gv-themed .dataTables_info {
+	font-size: var(--gv-font-size-sm);
+	color: var(--gv-color-text-muted);
+	padding-block: var(--gv-space-2);
+}
+
+// =========================================================
+// DataTables controls — processing indicator
+// =========================================================
+.gv-datatables-container.gv-themed .dataTables_processing {
+	background: var(--gv-color-surface);
+	color: var(--gv-color-primary);
+	border: var(--gv-entry-border-width) var(--gv-entry-border-style) var(--gv-entry-border-color);
+	border-radius: var(--gv-radius-md);
+	padding: var(--gv-space-3) var(--gv-space-4);
+	font-size: var(--gv-font-size-sm);
+	box-shadow: var(--gv-shadow-md);
+}
+
+// =========================================================
+// DataTables pagination — match .gv-widget-page-links style
+// =========================================================
+.gv-datatables-container.gv-themed .dataTables_paginate {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	// Right-align in LTR, left-align in RTL — `flex-end` honours writing direction.
+	justify-content: flex-end;
+	gap: var(--gv-pagination-gap);
+	margin-block-start: var(--gv-space-3);
+	padding-block: var(--gv-space-3);
+	background: none;
+	border: 0;
+
+	.paginate_button {
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		min-width: var(--gv-pagination-button-size);
+		min-height: var(--gv-pagination-button-size);
+		padding-block: var(--gv-space-1);
+		padding-inline: var(--gv-space-2);
+		border-radius: var(--gv-pagination-button-radius);
+		font-size: var(--gv-font-size-sm);
+		font-weight: var(--gv-font-weight-medium);
+		color: var(--gv-color-text);
+		text-decoration: none;
+		cursor: pointer;
+		transition: background-color var(--gv-transition-fast) var(--gv-easing-standard),
+		            color var(--gv-transition-fast) var(--gv-easing-standard);
+		// No border on the buttons; resting state is transparent.
+		// `!important` on both: jquery.dataTables.css paints
+		// `.paginate_button:hover` / `:active` / `.current` with a
+		// border and gradient at specificity that ties or beats this
+		// rule depending on stylesheet load order, so importance is
+		// the only deterministic override.
+		border: 0 !important;
+		background: transparent !important;
+
+		&:hover:not(.disabled):not(.current) {
+			background-color: var(--gv-color-surface-alt);
+			// jquery.dataTables.css sets `color: #fff !important` on
+			// `.paginate_button:hover`; matching importance is required
+			// so the text stays readable on the light hover surface.
+			color: var(--gv-color-text) !important;
+			text-decoration: none;
+		}
+
+		&:focus-visible {
+			outline: none;
+			box-shadow: var(--gv-shadow-focus);
+		}
+
+		// Current page
+		&.current,
+		&.current:hover {
+			background-color: var(--gv-color-primary);
+			// jquery.dataTables.css sets `color: inherit !important` on
+			// `.paginate_button.current`; matching importance is required
+			// for the on-primary text to win.
+			color: var(--gv-color-on-primary) !important;
+		}
+
+		// Previous/Next buttons — same rounded-rect as numbers, slightly more
+		// horizontal padding for the « » glyphs.
+		&.previous,
+		&.next {
+			padding-inline: var(--gv-space-3);
+		}
+
+		// Disabled state — maintain WCAG AA contrast (4.5:1 minimum)
+		&.disabled {
+			color: var(--gv-color-text-muted);
+			cursor: default;
+			border-color: transparent;
+			background: transparent;
+		}
+	}
+}
+
+// =========================================================
+// Export buttons
+// =========================================================
+.gv-datatables-container.gv-themed .dt-buttons {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: var(--gv-space-2);
+
+	.dt-button {
+		margin: 0; // Reset DataTables default margin
+		background: var(--gv-color-surface);
+		border: var(--gv-entry-border-width) var(--gv-entry-border-style) var(--gv-entry-border-color);
+		border-radius: var(--gv-radius-md);
+		padding: var(--gv-space-2) var(--gv-space-3);
+		font-size: var(--gv-font-size-sm);
+		color: var(--gv-color-text);
+		cursor: pointer;
+		transition: border-color var(--gv-transition-fast) var(--gv-easing-standard),
+		            background-color var(--gv-transition-fast) var(--gv-easing-standard),
+		            color var(--gv-transition-fast) var(--gv-easing-standard);
+
+		&:hover {
+			border-color: var(--gv-color-primary);
+		}
+
+		&:active,
+		&.active {
+			background-color: var(--gv-color-primary);
+			color: var(--gv-color-on-primary);
+			border-color: var(--gv-color-primary);
+		}
+
+		&:focus-visible {
+			outline: none;
+			box-shadow: var(--gv-shadow-focus);
+		}
+	}
+}
+
+// =========================================================
+// Responsive mode — expand/collapse control
+//
+// DataTables responsive.dataTables.css ships a lurid green
+// circle with white border, drop shadow, and Courier monospace
+// glyph. Reset the entire appearance to a flat token-themable
+// button. We match the plugin's full selector chain
+// (`.collapsed > tbody > tr > td.dtr-control:before`) so our
+// redefinition wins on equal specificity in load order.
+//
+// Both collapsed (+) and expanded (-) states use the same
+// primary brand surface — the glyph alone signals state, not
+// the color, which reduces visual noise vs. the upstream
+// green/red contrast.
+// =========================================================
+.gv-themed table.gv-datatables.dataTable.dtr-inline.collapsed > tbody > tr > td.dtr-control::before,
+.gv-themed table.gv-datatables.dataTable.dtr-inline.collapsed > tbody > tr > th.dtr-control::before,
+.gv-themed table.gv-datatables.dataTable.dtr-inline.parent > tbody > tr.parent > td.dtr-control::before,
+.gv-themed table.gv-datatables.dataTable.dtr-inline.parent > tbody > tr.parent > th.dtr-control::before {
+	background-color: var(--gv-color-primary);
+	color: var(--gv-color-on-primary);
+	border: 0;
+	border-radius: var(--gv-radius-full);
+	box-shadow: none;
+	height: 1.25em;
+	width: 1.25em;
+	// CSS-drawn +/- — text glyphs render at different vertical
+	// offsets per font, gradients are pixel-exact.
+	content: "";
+	background-image:
+		linear-gradient(currentColor, currentColor), // horizontal bar
+		linear-gradient(currentColor, currentColor); // vertical bar (collapsed +)
+	// gv-token-purity-ok: pixel-exact gradient glyph, not a spacing token
+	background-size: 50% 2px, 2px 50%;
+	background-position: center;
+	background-repeat: no-repeat;
+	// Align the control with the FIRST LINE of cell content
+	// (`vertical-align: top` on cells means content top-aligns
+	// to the cell padding edge). Plugin's `top: 50%` centered
+	// the control to the whole cell height — for tall rows or
+	// row-group cells this dropped the control well below the
+	// first line of text. Pin to the cell's top padding-block
+	// instead so the control sits next to the title.
+	top: var(--gv-table-cell-padding-block);
+	margin-top: 0;
+}
+
+// Expanded state: horizontal bar only.
+.gv-themed table.gv-datatables.dataTable.dtr-inline.collapsed > tbody > tr.parent > td.dtr-control::before,
+.gv-themed table.gv-datatables.dataTable.dtr-inline.collapsed > tbody > tr.parent > th.dtr-control::before {
+	background-image: linear-gradient(currentColor, currentColor);
+	// gv-token-purity-ok: pixel-exact gradient glyph, not a spacing token
+	background-size: 50% 2px;
+}
+
+// =========================================================
+// RowGroup extension — group headers
+//
+// `rowGroup.dataTables.css` hardcodes `background-color: #e0e0e0`
+// for `tr.dtrg-group th`. That grey clashes with every modern
+// preset and bleeds through customer brand colors. Use the
+// same header tokens the regular table thead uses so groups
+// read as "another row of header chrome" instead of an alien
+// grey band.
+// =========================================================
+.gv-themed table.gv-datatables.dataTable tr.dtrg-group th,
+.gv-themed table.gv-datatables.dataTable tr.dtrg-group td {
+	background-color: var(--gv-color-surface-alt);
+	color: var(--gv-color-header-text);
+	font-weight: var(--gv-font-weight-semibold);
+	font-size: var(--gv-table-header-font-size);
+	text-align: start;
+	border-block-end: var(--gv-border-width-1) solid var(--gv-color-border-light);
+}
+
+// =========================================================
+// Responsive mode — expanded child row (`tr.child`)
+//
+// When the user clicks `+`, DataTables inserts a `tr.child`
+// containing a `<ul>` of `<li>` rows, each with
+// `<span class="dtr-title">` (label) and
+// `<span class="dtr-data">` (value).
+//
+// GOTCHA: the GravityView DataTables extension swaps the
+// upstream Responsive renderer for `customResponsiveRowRenderer`
+// (`gravityview-datatables/assets/js/datatables-views.js`)
+// which emits the `<ul>` WITHOUT the upstream `dtr-details`
+// class. Target the `data-dtr-index` attribute instead so
+// rules apply to both the GV custom renderer and the upstream
+// renderers that add the class.
+//
+// Visually: upstream renders this as a bulleted list with
+// bold inline labels (`display: inline-block; min-width: 75px`)
+// inside a row that inherits the table's zebra/hover styling.
+// Reshape it to match the Single Entry table layout: two-
+// column label/value grid with row dividers, field-label
+// tokens on the title, neutral surface, and no interactive
+// hover effect (the expanded panel is informational, not
+// clickable).
+// =========================================================
+.gv-themed table.gv-datatables.dataTable > tbody > tr.child {
+	> td {
+		padding: var(--gv-space-4) var(--gv-space-6);
+		background-color: var(--gv-color-surface);
+	}
+
+	// Suppress the inherited row hover — the expanded panel
+	// is not a navigation target.
+	&:hover > td {
+		background-color: var(--gv-color-surface);
+		color: var(--gv-color-text);
+	}
+}
+
+.gv-themed table.gv-datatables.dataTable > tbody > tr.child ul[data-dtr-index] {
+	display: block;
+	width: 100%;
+	list-style: none;
+	margin: 0;
+	padding: 0;
+
+	> li {
+		display: grid;
+		grid-template-columns: var(--gv-single-entry-label-width) 1fr;
+		gap: var(--gv-space-3);
+		align-items: baseline;
+		padding-block: var(--gv-space-3);
+		border-block-end: 1px solid var(--gv-color-row-divider);
+
+		&:first-child {
+			padding-block-start: 0;
+		}
+
+		&:last-child {
+			padding-block-end: 0;
+			border-block-end: 0;
+		}
+	}
+}
+
+.gv-themed table.gv-datatables.dataTable > tbody > tr.child .dtr-title {
+	// Override upstream `display: inline-block; min-width: 75px`
+	// so the title fills its grid column instead of inline-shrinking.
+	display: block;
+	min-width: 0;
+	font-size: var(--gv-field-label-font-size);
+	font-weight: var(--gv-field-label-font-weight);
+	color: var(--gv-field-label-color);
+	text-transform: var(--gv-field-label-text-transform);
+	letter-spacing: var(--gv-field-label-letter-spacing);
+	text-align: start;
+}
+
+.gv-themed table.gv-datatables.dataTable > tbody > tr.child .dtr-data {
+	color: var(--gv-color-text);
+	word-break: break-word;
+}
+
+// Gravity Wiz Chained Selects nested value — two markup shapes
+// ship: `<table class="gfcs-value">` (legacy) and
+// `<div class="gfcs-value"><div class="gfcs-value-row">` (current).
+// Shared paint below; shape-specific chrome resets follow.
+.gv-themed .gfcs-value {
+	background: transparent;
+	margin: 0;
+	min-width: 0;
+	// Pin to xs scale so the nested pair reads as supplementary
+	// data regardless of parent cell's font-size.
+	font-size: var(--gv-font-size-xs);
+	line-height: var(--gv-line-height-tight);
+
+	b {
+		display: block;
+		font-size: var(--gv-field-label-font-size);
+		font-weight: var(--gv-field-label-font-weight);
+		color: var(--gv-field-label-color);
+		text-transform: var(--gv-field-label-text-transform);
+		letter-spacing: var(--gv-field-label-letter-spacing);
+	}
+
+	span {
+		color: var(--gv-color-text);
+	}
+}
+
+// Render the legacy `<table class="gfcs-value">` shape as block,
+// not a table. Host themes that set `table { width: 100% }` (Twenty
+// Twenty, several block themes) force the nested 2-column gfcs table
+// into a narrow parent cell, then auto layout splits columns equally
+// and the browser falls back to character-by-character breaking when
+// even the bold label doesn't fit. Block layout sidesteps the entire
+// table sizing model and renders identically to the div-shape.
+.gv-themed table.gfcs-value,
+.gv-themed table.gfcs-value tbody,
+.gv-themed table.gfcs-value tr,
+.gv-themed table.gfcs-value td,
+.gv-themed table.gfcs-value th {
+	display: block;
+	background: transparent;
+	border: 0;
+	padding: 0;
+	font-size: inherit;
+	color: inherit;
+}
+
+.gv-themed div.gfcs-value .gfcs-value-row {
+	margin-block-end: var(--gv-space-2);
+
+	&:last-child {
+		margin-block-end: 0;
+	}
+}

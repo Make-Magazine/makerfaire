@@ -193,40 +193,40 @@ if ( ! function_exists( 'rgexplode' ) ) {
 }
 
 if ( ! function_exists( 'gw_add_utm_params' ) ) {
-/**
- * Add UTM parameters to a URL.
- *
- * @param string $url     The URL to add UTM parameters to
- * @param array{
- *     page?: string,      Which page (e.g., 'licenses', 'products')
- *     component?: string, Which component (e.g., 'license-bar', 'product-card')
- *     text?: string,      The actual button/link text
- *     meta?: string      Optional: Additional context (e.g., 'no-capacity')
- * } $context
- * @return string The URL with UTM parameters added
- */
-function gw_add_utm_params( $url, $context = array() ) {
-	$utm_params = array(
-		'utm_campaign' => 'spellbook-plugin'
-	);
+	/**
+	 * Add UTM parameters to a URL.
+	 *
+	 * @param string $url     The URL to add UTM parameters to
+	 * @param array{
+	 *     page?: string,      Which page (e.g., 'licenses', 'products')
+	 *     component?: string, Which component (e.g., 'license-bar', 'product-card')
+	 *     text?: string,      The actual button/link text
+	 *     meta?: string      Optional: Additional context (e.g., 'no-capacity')
+	 * } $context
+	 * @return string The URL with UTM parameters added
+	 */
+	function gw_add_utm_params( $url, $context = array() ) {
+		$utm_params = array(
+			'utm_campaign' => 'spellbook-plugin',
+		);
 
-	// Only add params that have truthy values
-	if ( ! empty( $context['page'] ) ) {
-		$utm_params['utm_source'] = $context['page'];
+		// Only add params that have truthy values
+		if ( ! empty( $context['page'] ) ) {
+			$utm_params['utm_source'] = $context['page'];
+		}
+
+		if ( ! empty( $context['component'] ) ) {
+			$utm_params['utm_medium'] = $context['component'];
+		}
+
+		if ( ! empty( $context['text'] ) ) {
+			$utm_params['utm_content'] = $context['text'];
+		}
+
+		if ( ! empty( $context['meta'] ) ) {
+			$utm_params['utm_term'] = $context['meta'];
+		}
+
+		return add_query_arg( $utm_params, $url );
 	}
-
-	if ( ! empty( $context['component'] ) ) {
-		$utm_params['utm_medium'] = $context['component'];
-	}
-
-	if ( ! empty( $context['text'] ) ) {
-		$utm_params['utm_content'] = $context['text'];
-	}
-
-	if ( ! empty( $context['meta'] ) ) {
-		$utm_params['utm_term'] = $context['meta'];
-	}
-
-	return add_query_arg( $utm_params, $url );
-}
 }

@@ -27,7 +27,7 @@ if ( is_array( $value ) ) {
 }
 
 // Default: plain email, no link
-$output = $value;
+$output = esc_html( $value );
 
 if ( ! isset( $field_settings['emailmailto'] ) || ! empty( $field_settings['emailmailto'] ) ) {
 
@@ -61,8 +61,9 @@ if ( ! isset( $field_settings['emailmailto'] ) || ! empty( $field_settings['emai
 		$link .= '?' . implode( '&', $params );
 	}
 
-	// Generate the link HTML
-	$output = gravityview_get_link( $link, $value );
+	// Generate the link HTML. The email is the link text; escape it (the value is
+	// attacker-controlled and gravityview_get_link() does not escape the label).
+	$output = gravityview_get_link( $link, esc_html( $value ) );
 
 }
 

@@ -17,7 +17,9 @@ $field_value = gravityview_get_field_value( $gravityview->entry->as_entry(), $gr
 if ( is_array( $field_value ) ) {
 	$field_value = array_filter( $field_value, 'gravityview_is_not_empty_string' );
 
-	echo implode( '; ', $field_value );
+	echo esc_html( implode( '; ', $field_value ) );
 } else {
+	// A scalar here is the GF-rendered display value (GF escapes the choices, and
+	// side-by-side is a <table>), so escaping it would print the markup as text.
 	echo $field_value;
 }

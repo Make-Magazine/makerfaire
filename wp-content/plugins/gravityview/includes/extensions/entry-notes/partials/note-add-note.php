@@ -1,32 +1,23 @@
 <?php
 /**
- * Display a note, without editing options
+ * Backward-compatibility shim.
  *
- * @since 1.17
+ * This file was moved in GravityView 3.0. It is intentionally empty.
+ * GravityView classes and functions load automatically — you no longer
+ * need to require GravityView files in your code.
+ *
+ * @deprecated 3.0
  */
 
-/**
- * Print scripts and styles required for the Notes field.
- *
- * @see GravityView_Field_Notes::enqueue_scripts
- * @since 1.17
- */
-do_action( 'gravityview/field/notes/scripts' );
-?>
-<form method="post" class="gv-note-add">
-	<div>
-		<input type="hidden" name="action" value="gv_note_add" />
-		<input type="hidden" name="entry-slug" value="{entry_slug}" />
-		<input type="hidden" name="show-delete" value="{show_delete}" />
-		<input type="hidden" name="current-url" value="{url}" />
-		{nonce_field}
-		{email_fields}
+if ( ! defined( 'ABSPATH' ) ) {
+	die;
+}
 
-		<div class="gv-note-content-container">
-			<label for="gv-note-content-{entry_slug}" class="screen-reader-text"><?php echo GravityView_Field_Notes::strings( 'content-label' ); ?></label>
-			<textarea name="gv-note-content" id="gv-note-content-{entry_slug}"></textarea>
-		</div>
-
-		<button type="submit" class="button gv-add-note-submit"><?php echo GravityView_Field_Notes::strings( 'add-note' ); ?></button>
-	</div>
-</form>
+if ( function_exists( '_deprecated_file' ) ) {
+	_deprecated_file(
+		plugin_basename( __FILE__ ),
+		'3.0',
+		'',
+		'This file was moved in GravityView 3.0 and will be removed in a future release. GravityView classes and functions load automatically — you no longer need to require them.'
+	);
+}

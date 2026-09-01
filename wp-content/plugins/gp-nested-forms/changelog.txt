@@ -1,6 +1,33 @@
 
 # Changelog
 
+## 1.2.33 | August 19, 2026
+
+- Fixed issue where child forms failed to submit correctly on sites that globally enabled Gravity Forms' AJAX submission method via the `gform_form_args` filter.
+- Fixed issue where the `{Parent}` merge tag did not populate Date fields in Gravity Forms 3.0.
+
+## 1.2.32 | August 13, 2026
+
+- Fixed a potential fatal error when GP Nested Forms is used with WooCommerce Gravity Forms Product Add-Ons.
+- Fixed issue where calculations broke the form when using the legacy jQuery UI modal in Gravity Forms 3.0.
+
+## 1.2.31 | August 7, 2026
+
+- Fixed issue where Next and Previous buttons in the Nested Form modal had no label in Gravity Forms 3.0.
+
+## 1.2.30 | August 4, 2026
+
+- Improved compatibility with Gravity Forms 3.0.
+
+## 1.2.29 | July 22, 2026
+
+- Fixed an issue where files uploaded on child entries could be lost when editing nested forms with pagination in Gravity Forms 2.10.3+.
+
+## 1.2.28 | June 25, 2026
+
+- Fixed issue where Gravity Forms Geolocation Add-On address fields did not initialize in Nested Forms modals.
+- Fixed issue where Nested Forms minimum entry limits were not enforced when editing entries via GravityView.
+
 ## 1.2.27 | June 4, 2026
 
 - Improved compatibility of file upload fields in Nested Forms for Gravity Forms 2.10.3.

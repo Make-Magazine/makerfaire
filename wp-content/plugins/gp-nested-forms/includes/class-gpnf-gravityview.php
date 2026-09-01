@@ -6,6 +6,8 @@ class GPNF_GravityView {
 
 	private static $form_has_gv_buttons = array();
 
+	private $validation_filters_added = array();
+
 	public static function get_instance() {
 		if ( self::$instance == null ) {
 			self::$instance = new self;
@@ -19,8 +21,88 @@ class GPNF_GravityView {
 		add_action( 'gpnf_nested_forms_markup', array( $this, 'add_gravityview_edit_hooks' ) );
 		add_action( 'gravityview/view/query', array( $this, 'filter_unsubmitted_child_entries' ), 10, 3 );
 		add_filter( 'gform_entry_post_save', array( $this, 'store_gravityview_reference' ), 11, 2 );
+		add_filter( 'gravityview/edit_entry/form_fields', array( $this, 'add_entry_limit_validation_hooks' ), 10, 4 );
 		add_action( 'gravityview/edit_entry/after_update', array( $this, 'send_notifications_for_edited_entry' ), 10, 4 );
 
+	}
+
+	public function add_entry_limit_validation_hooks( $fields, $edit_fields, $form, $view_id ) {
+		if ( ! is_array( $fields ) ) {
+			return $fields;
+		}
+
+		$has_limited_nested_form_field = false;
+
+		foreach ( $fields as $field ) {
+			if (
+				$field->type == 'form'
+				&& ( ! rgblank( $field->gpnfEntryLimitMin ) || ! rgblank( $field->gpnfEntryLimitMax ) )
+			) {
+				$has_limited_nested_form_field = true;
+				break;
+			}
+		}
+
+		$form_id = (int) rgar( $form, 'id' );
+		if ( ! $has_limited_nested_form_field || ! $form_id || rgar( $this->validation_filters_added, $form_id ) ) {
+			return $fields;
+		}
+
+		add_filter( 'gform_validation_' . $form_id, array( $this, 'validate_entry_limits' ), 20 );
+
+		$this->validation_filters_added[ $form_id ] = true;
+
+		return $fields;
+	}
+
+	public function validate_entry_limits( $validation_result ) {
+		$form_id = (int) rgars( $validation_result, 'form/id' );
+
+		if ( ! $form_id ) {
+			return $validation_result;
+		}
+
+		foreach ( $validation_result['form']['fields'] as &$field ) {
+			if (
+				$field->type != 'form'
+				|| ( rgblank( $field->gpnfEntryLimitMin ) && rgblank( $field->gpnfEntryLimitMax ) )
+			) {
+				continue;
+			}
+
+			$input_name = 'input_' . $field->id;
+			$value      = rgpost( $input_name );
+
+			if ( null === $value ) {
+				continue;
+			}
+
+			$field->validate( $value, $validation_result['form'] );
+
+			if ( ! empty( $field->failed_validation ) ) {
+				$validation_result['is_valid'] = false;
+			}
+		}
+		unset( $field );
+
+		$render_instance = $this->gravityview_edit_render_instance();
+		if ( $render_instance && rgar( $render_instance->form_after_validation, 'id' ) == $form_id ) {
+			$render_instance->form_after_validation = $validation_result['form'];
+		}
+
+		return $this->remove_entry_limit_validation_hooks( $validation_result, $form_id );
+	}
+
+	public function remove_entry_limit_validation_hooks( $validation_result, $form_id ) {
+		if ( ! $form_id ) {
+			return $validation_result;
+		}
+
+		remove_filter( 'gform_validation_' . $form_id, array( $this, 'validate_entry_limits' ), 20 );
+
+		unset( $this->validation_filters_added[ $form_id ] );
+
+		return $validation_result;
 	}
 
 	/**

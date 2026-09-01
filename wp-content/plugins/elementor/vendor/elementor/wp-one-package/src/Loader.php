@@ -58,6 +58,7 @@ class Loader {
 	 */
 	private static function initialize_services(): void {
 		\ElementorOne\Admin\Services\Editor::instance();
+		\ElementorOne\Admin\Services\Licenses::instance();
 		\ElementorOne\Admin\Services\Migration::instance();
 	}
 

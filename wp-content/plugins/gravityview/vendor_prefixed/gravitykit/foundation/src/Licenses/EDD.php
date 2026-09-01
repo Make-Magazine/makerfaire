@@ -1,9 +1,4 @@
 <?php
-/**
- * @license GPL-2.0-or-later
- *
- * Modified using {@see https://github.com/BrianHenryIE/strauss}.
- */
 
 namespace GravityKit\GravityView\Foundation\Licenses;
 
@@ -129,6 +124,7 @@ class EDD {
 	 * Checks for product updates and modifies the 'update_plugins' transient.
 	 *
 	 * @since 1.0.0
+	 * @since 1.30.0 Up-to-date products are added to the transient's `no_update` collection so WP shows the auto-update UI.
 	 *
 	 * @param object $transient_data Transient data.
 	 * @param bool   $skip_cache     (optional) Whether to skip cache when getting products data. Default: false.
@@ -189,18 +185,44 @@ class EDD {
 			$has_update = ! empty( $effective_version )
 				&& CoreHelpers::version_compare( $installed_normalized, $effective_version, '<' );
 
-			if ( $has_update ) {
-				$transient_data->response[ $product['path'] ] = $this->format_product_data( $product ); // @phpstan-ignore property.notFound (WP update transient object has a `response` property.)
-			} elseif ( $product['channel'] && ChannelManager::is_prerelease_version( $product['installed_version'], $channel_names )
-				&& ! empty( $effective_version ) && $product['installed_version'] !== $effective_version ) {
-				// Cross-channel switch: installed prerelease doesn't match the active channel's version (e.g., beta→alpha).
-				$transient_data->response[ $product['path'] ] = $this->format_product_data( $product ); // @phpstan-ignore property.notFound (WP update transient object has a `response` property.)
-			} elseif ( ! $product['channel'] && ChannelManager::is_prerelease_version( $product['installed_version'], $channel_names ) && $product['server_version'] ) {
-				// User switched to stable (manually or via supersession): force update to stable version.
-				$transient_data->response[ $product['path'] ] = $this->format_product_data( $product ); // @phpstan-ignore property.notFound (WP update transient object has a `response` property.)
+			// Cross-channel switch: installed channel build doesn't match the active channel's version
+			// (e.g. beta→alpha, or the next commit-hash build landing on the same channel).
+			$is_channel_switch = $product['channel'] && $product['channel_tracked']
+				&& ! empty( $effective_version )
+				&& ! ChannelManager::is_same_channel_build( $product['installed_version'], $effective_version );
+
+			// User switched to stable (manually or via supersession): force update to stable version.
+			//
+			// Deliberately NOT channel_tracked, and deliberately NOT is_channel_build(). This arm runs
+			// for products with NO active channel, where `channels` is server-supplied data. A response
+			// that echoes the installed version back as some channel's version would otherwise satisfy
+			// is_channel_build(), mint gk_stable_recovery, and have the verifier waive rollback
+			// protection for whatever `server_version` claims -- a downgrade with no local intent
+			// behind it. Provenance for this arm must be locally recorded: a real pre-release suffix,
+			// or channel_exit written by this site when its channel was withdrawn.
+			$is_stable_switch = ! $product['channel']
+				&& ( ChannelManager::is_prerelease_version( $product['installed_version'], $channel_names )
+					|| ! empty( $product['channel_exit'] ) )
+				&& $product['server_version']
+				&& $product['installed_version'] !== $product['server_version'];
+
+			// A product lives in exactly one of `response`/`no_update`; WP treats membership in either as
+			// "supports updates" and hides the auto-update UI otherwise (see WP_Plugins_List_Table).
+			if ( $has_update || $is_channel_switch || $is_stable_switch ) {
+				$transient_data->response[ $product['path'] ] = $this->format_product_data( $product, (bool) $is_stable_switch, (bool) $is_channel_switch ); // @phpstan-ignore property.notFound (WP update transient object has a `response` property.)
+
+				unset( $transient_data->no_update[ $product['path'] ] ); // @phpstan-ignore property.notFound
 			} else {
-				// No update — remove any stale entry from a previous check.
 				unset( $transient_data->response[ $product['path'] ] ); // @phpstan-ignore property.notFound
+
+				$no_update_data = $this->format_product_data( $product );
+
+				// WP only checks membership here; drop `sections` (changelog/description HTML) so the
+				// stored transient isn't bloated by every installed product. w.org `no_update` entries
+				// carry no `sections` either.
+				unset( $no_update_data->sections );
+
+				$transient_data->no_update[ $product['path'] ] = $no_update_data; // @phpstan-ignore property.notFound (WP update transient object has a `no_update` property.)
 			}
 		}
 
@@ -217,12 +239,16 @@ class EDD {
 	 * @see   ProductManager::get_products_data()
 	 * @see   plugins_api()
 	 *
-	 * @param array $product Product data.
+	 * @param array $product             Product data.
+	 * @param bool  $is_stable_recovery  (optional) Whether this entry is a deliberate move back to
+	 *                                   stable, which authorizes an apparent downgrade.
+	 * @param bool  $is_channel_update   (optional) Whether this entry is an in-channel move, which may
+	 *                                   legitimately go backward (a reverted build, a lower track).
 	 *
 	 * @return object
 	 */
-	public function format_product_data( $product ) {
-		$licenses_data = LicenseManager::get_instance()->get_licenses_data();
+	public function format_product_data( $product, bool $is_stable_recovery = false, bool $is_channel_update = false ) {
+		$licenses_data = LicenseManager::get_instance()->get_all_licenses_data();
 
 		$download_link = self::pick_download_link( $product, $licenses_data );
 
@@ -240,6 +266,13 @@ class EDD {
 			'id'                     => $product['id'],
 			'slug'                   => $product['slug'],
 			'gk_product_text_domain' => $product['text_domain'],
+			// Tells PackageVerifier this download is a deliberate return to stable, decided by this
+			// class. Without it, rollback protection blocks the very update just offered, because an
+			// automatic update sets no channel-switch flag.
+			'gk_stable_recovery'     => $is_stable_recovery,
+			// Set when this class decided an in-channel move is warranted; the verifier honours it
+			// only after corroborating against the site's own stored channel preference.
+			'gk_channel_update'      => $is_channel_update,
 			'version'                => $version,
 			'new_version'            => $version,
 			'url'                    => $link,

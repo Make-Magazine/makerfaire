@@ -7,13 +7,13 @@
  */
 class GravityView_Inline_Edit_Field_Checkbox extends GravityView_Inline_Edit_Field {
 
-	var $gv_field_name = 'checkbox';
+	public $gv_field_name = 'checkbox';
 
-	var $inline_edit_type = 'checklist';
+	public $inline_edit_type = 'checklist';
 
-	var $standard_live_update = true;
+	public $standard_live_update = true;
 
-	var $live_update_json_encode = false;
+	public $live_update_json_encode = false;
 
 	/**
 	 * @since 1.0
@@ -34,7 +34,7 @@ class GravityView_Inline_Edit_Field_Checkbox extends GravityView_Inline_Edit_Fie
 		parent::add_field_template( $this->inline_edit_type, $gf_field->get_field_input( $current_form, $checklist_value, $entry ), $current_form['id'], $field_id );
 
 		if ( ! empty( $checklist_value ) ) {
-			$wrapper_attributes['data-value'] = json_encode( $checklist_value );
+			$wrapper_attributes['data-value'] = wp_json_encode( $checklist_value );
 		}
 
 		return parent::modify_inline_edit_attributes( $wrapper_attributes, $field_input_type, $field_id, $entry, $current_form, $gf_field );
@@ -75,7 +75,7 @@ class GravityView_Inline_Edit_Field_Checkbox extends GravityView_Inline_Edit_Fie
 		$checklist_value = array();
 		$choice_number   = 1;
 		foreach ( $gf_field->choices as $choice ) {
-			if ( $choice_number % 10 == 0 ) { //hack to skip numbers ending in 0. so that 5.1 doesn't conflict with 5.10
+			if ( 0 === $choice_number % 10 ) { // Skip numbers ending in 0 so that 5.1 doesn't conflict with 5.10
 				$choice_number ++;
 			}
 			$input_id                = $field_id . '.' . $choice_number;
@@ -88,7 +88,7 @@ class GravityView_Inline_Edit_Field_Checkbox extends GravityView_Inline_Edit_Fie
 			$choice_number ++;
 		}
 
-		return $as_json ? json_encode( $checklist_value ) : $checklist_value;
+		return $as_json ? wp_json_encode( $checklist_value ) : $checklist_value;
 	}
 
 }

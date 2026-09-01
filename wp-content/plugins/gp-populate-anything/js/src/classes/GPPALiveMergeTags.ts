@@ -9,6 +9,59 @@ export interface ILiveMergeTagValues {
 	[ mergeTag: string ]: string;
 }
 
+/**
+ * Zero-pad each group of digits in a value to the width its input mask expects.
+ *
+ * As of GF 3.0.3, the Date field's datepicker input carries an input mask (e.g. `99/99/9999`) which rewrites the
+ * value as soon as the mask initializes. The mask fills its digit slots from left to right, so an unpadded but
+ * otherwise valid date such as `9/15/2022` becomes `91/52/022`. Padding the value up front lets it pass through the
+ * mask unchanged.
+ *
+ * @see GP_Populate_Anything_Live_Merge_Tags::pad_value_to_input_mask() for the PHP counterpart used on initial load.
+ *
+ * @param value The value to pad.
+ * @param mask  The input mask from the element's `data-mask` attribute, if any.
+ *
+ * @return The original value if it does not line up with the mask.
+ */
+export function padValueToInputMask( value: any, mask?: string ) {
+	if ( ! mask || typeof value !== 'string' || ! value ) {
+		return value;
+	}
+
+	const maskParts = mask.match( /9+|[^9]+/g ) ?? [];
+	const valueParts = value.match( /\d+|\D+/g ) ?? [];
+
+	if ( maskParts.length !== valueParts.length ) {
+		return value;
+	}
+
+	let padded = '';
+
+	for ( let i = 0; i < maskParts.length; i++ ) {
+		const maskPart = maskParts[ i ];
+		const valuePart = valueParts[ i ];
+		const isDigitRun = maskPart.startsWith( '9' );
+
+		if ( isDigitRun !== /^\d+$/.test( valuePart ) ) {
+			return value;
+		}
+
+		if ( ! isDigitRun ) {
+			padded += maskPart;
+			continue;
+		}
+
+		if ( valuePart.length > maskPart.length ) {
+			return value;
+		}
+
+		padded += valuePart.padStart( maskPart.length, '0' );
+	}
+
+	return padded;
+}
+
 export default class GPPALiveMergeTags {
 	public formId: formID;
 	public whitelist: { [ lmt: string ]: string } = {};
@@ -434,7 +487,11 @@ export default class GPPALiveMergeTags {
 					break;
 			}
 
-			const value = mergeTagValues[ elementMergeTag ];
+			const mask = $el.attr( 'data-mask' );
+			const value = padValueToInputMask(
+				mergeTagValues[ elementMergeTag ],
+				mask
+			);
 
 			let removeClass = 'gppa-loading',
 				$target = $el
@@ -482,6 +539,19 @@ export default class GPPALiveMergeTags {
 			}
 
 			/**
+			 * The masked value is what actually sits in the input, so the merge tag values it is compared against have
+			 * to be masked too. Otherwise a masked field looks manually edited and is decoupled on the next refresh.
+			 */
+			const currentValue = padValueToInputMask(
+				this.currentMergeTagValues[ elementMergeTag ],
+				mask
+			);
+			const currentValueTexturized = padValueToInputMask(
+				this?.currentMergeTagValuesTexturized?.[ elementMergeTag ],
+				mask
+			);
+
+			/**
 			 * Handle decoupling
 			 *
 			 * Note, if the value differs but the current value is the same as the elementMergeTag, remain coupled. This
@@ -490,12 +560,11 @@ export default class GPPALiveMergeTags {
 			if (
 				elementMergeTag in this.currentMergeTagValues &&
 				// eslint-disable-next-line eqeqeq
-				attrValComparison !=
-					this.currentMergeTagValues[ elementMergeTag ] &&
+				attrValComparison != currentValue &&
 				(
-					! this?.currentMergeTagValuesTexturized?.[elementMergeTag] ||
+					! currentValueTexturized ||
 					// eslint-disable-next-line eqeqeq
-					attrValComparison != this.currentMergeTagValuesTexturized[ elementMergeTag ]
+					attrValComparison != currentValueTexturized
 				) &&
 				// eslint-disable-next-line eqeqeq
 				attrVal != elementMergeTag &&

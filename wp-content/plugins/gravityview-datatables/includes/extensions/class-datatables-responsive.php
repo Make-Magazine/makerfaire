@@ -112,6 +112,33 @@ class GV_Extension_DataTables_Responsive extends GV_DataTables_Extension {
 	}
 
 	/**
+	 * Returns the responsive inline-script config for a View.
+	 *
+	 * Includes the View ID so the frontend can match the config to its table
+	 * instead of relying on DOM order.
+	 *
+	 * @since 3.10.0
+	 *
+	 * @param \GV\View $view The View.
+	 *
+	 * @return array
+	 */
+	public function get_output_config_data( $view ) {
+		if ( $this->is_enabled( $view->ID ) ) {
+			return array(
+				'view_id'    => $view->ID,
+				'responsive' => 1,
+				'hide_empty' => $view->settings->get( 'hide_empty' ),
+			);
+		}
+
+		return array(
+			'view_id'    => $view->ID,
+			'responsive' => 0,
+		);
+	}
+
+	/**
 	 * Output the responsive configuration.
 	 *
 	 * @param object $gravityview The template $gravityview object.
@@ -123,12 +150,7 @@ class GV_Extension_DataTables_Responsive extends GV_DataTables_Extension {
 			return;
 		}
 
-		if ( $this->is_enabled( $gravityview->view->ID ) ) {
-			$responsive_config = array( 'responsive' => 1, 'hide_empty' => $gravityview->view->settings->get( 'hide_empty' ) );
-		} else {
-			$responsive_config = array( 'responsive' => 0 );
-		}
-
+		$responsive_config = $this->get_output_config_data( $gravityview->view );
 		?>
 			<script type="text/javascript">
 				if (!window.gvDTResponsive) {

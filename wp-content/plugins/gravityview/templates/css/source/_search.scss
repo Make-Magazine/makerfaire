@@ -1,5 +1,47 @@
 // search.scss
 
+// Defensive reset: some builders/themes apply a universal input reset in
+// their layout scope (e.g. Divi `#et-boc .et-l input { border:none }`) that
+// strips our search inputs. `all: revert` restores the browser default. Scoped
+// to `.gv-themed` so only themed Views reset — Legacy Views keep the site
+// theme's inherited styling, exactly as in 2.x.
+.gv-themed .gv-widget-search {
+	input[type="search"],
+	input[type="text"],
+	input[type="email"],
+	input[type="url"],
+	input[type="number"],
+	input[type="tel"],
+	input[type="date"],
+	input[type="datetime-local"],
+	input[type="time"],
+	input[type="month"],
+	input[type="week"],
+	input[type="submit"],
+	input[type="button"],
+	input[type="reset"],
+	input[type="checkbox"],
+	input[type="radio"],
+	select,
+	textarea,
+	button,
+	a.button,
+	.button {
+		all: revert;
+	}
+
+	// Browsers have no built-in button styling for anchors, so link-as-buttons
+	// (Clear, pagination) need affordances restored after the reset.
+	a.button {
+		display: inline-block;
+		padding: 0.4em 1em;
+		line-height: 1.4;
+		text-decoration: none;
+		cursor: pointer;
+		vertical-align: middle;
+	}
+}
+
 .gv-search-horizontal {
 
 	// Get vertical centering

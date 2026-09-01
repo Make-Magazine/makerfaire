@@ -835,6 +835,7 @@ add_action( 'gk/foundation/scheduler/job/resumed', function ( $job ) {
 | Filter | Parameters | Description |
 |--------|------------|-------------|
 | `request/trigger/timeout` | `$timeout` | Loopback dispatch timeout in milliseconds. Default: 100. |
+| `health-check/loopback-timeout` | `$timeout`, `$url` | Loopback health-check probe timeout in seconds. Increase on slow servers to avoid a false "loopback blocked" diagnosis. Default: 2. |
 | `loopback-base-url` | `$base_url` | Override the base URL for all loopback requests. |
 
 #### UI Filters
@@ -1440,6 +1441,20 @@ This enables step-by-step execution mode. Instead of running tasks through Actio
 ## Action Scheduler Loading Quirks
 
 Foundation bundles Action Scheduler (AS) and loads it using the recommended pattern: `require_once action-scheduler.php` during plugin file loading, **before** `plugins_loaded` fires. This registers a version callback at `plugins_loaded` priority 0, and the version resolution at priority 1 picks the newest version across all plugins and initializes it.
+
+### Resolving the bundled copy across layouts
+
+`Loader.php` does not hard-code the path to the bundled AS. It calls `VendorPathResolver::resolve( __DIR__ )`, which probes candidate `vendor/` directories nearest-first and returns the first whose `action-scheduler.php` is readable. This locates AS whether Foundation lives in Composer's `vendor/`, is Strauss-copied into a product's `vendor_prefixed/` (where AS sits in the sibling `vendor/`), or runs as a standalone plugin (`<root>/vendor/`).
+
+Resolution matches the nearest `/vendor/` path **segment**, not the first `"vendor"` **substring**. An ancestor folder whose name merely contains "vendor" (e.g. a `vendors.example.com` domain folder on shared hosting) therefore never cuts the path in the wrong place — a mis-resolution that otherwise points the require at a non-existent file and hard-fatals the whole site.
+
+### Graceful degradation when AS is missing
+
+`Loader.php` is a Composer `files` autoload, so it runs at file-load time on **every request**, before `plugins_loaded`. If the bundled tree is missing or half-written — the window while WordPress swaps the plugin directory during an update, or a failed/partial update — `resolve()` finds no readable copy and returns `null`, and the loader skips requiring AS rather than fataling.
+
+The scheduler hard-depends on AS (`DbStore extends ActionScheduler_DBStore`), so `Core::init()` registers the `scheduler` component only when `class_exists( 'ActionScheduler_DBStore' )`. With AS absent the site degrades to "background jobs paused" instead of a site-wide white screen. `JobOverview` self-guards the same way, and the `-11` callback bails on `! class_exists( 'ActionScheduler_Versions', false )`.
+
+In any such trace the AS path reads as `vendor/woocommerce/action-scheduler/…`; despite the name this is Foundation's own bundled copy, not a WooCommerce dependency.
 
 ### The theme support block bug (AS < 3.2.1)
 

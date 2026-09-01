@@ -7,10 +7,10 @@
  */
 class GravityView_Inline_Edit_Field_Name extends GravityView_Inline_Edit_Field {
 
-	var $gv_field_name = 'name';
+	public $gv_field_name = 'name';
 
 	/** @see GF_Field_Name $gf_field */
-	var $inline_edit_type = 'name';
+	public $inline_edit_type = 'name';
 
 	/**
 	 * GF_Field_Name is stored in the format {FIELD_ID}.{INPUT NUMBER}. ( i.e. "1.3" ) where each
@@ -79,7 +79,7 @@ class GravityView_Inline_Edit_Field_Name extends GravityView_Inline_Edit_Field {
 
 		}
 
-		return empty( $inline_editable_name ) ? '' : json_encode( $inline_editable_name );
+		return empty( $inline_editable_name ) ? '' : wp_json_encode( $inline_editable_name );
 	}
 
 }

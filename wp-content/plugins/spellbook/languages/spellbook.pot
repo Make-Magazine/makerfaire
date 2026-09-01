@@ -2,23 +2,23 @@
 # This file is distributed under the GPL2.
 msgid ""
 msgstr ""
-"Project-Id-Version: Spellbook 3.0.26\n"
-"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/cloned-perk-4KPIW1N6sd\n"
+"Project-Id-Version: Spellbook 3.0.29\n"
+"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/cloned-perk-qIWyhkt5rd\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-05-27T22:16:46+00:00\n"
+"POT-Creation-Date: 2026-08-27T13:59:58+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.10.0\n"
 "X-Domain: spellbook\n"
 
 #. Plugin Name of the plugin
 #: spellbook.php
-#: class-gravityperks.php:204
-#: class-gravityperks.php:1199
-#: class-gravityperks.php:1453
+#: class-gravityperks.php:220
+#: class-gravityperks.php:1215
+#: class-gravityperks.php:1490
 msgid "Spellbook"
 msgstr ""
 
@@ -50,101 +50,101 @@ msgstr ""
 msgid "%s Settings"
 msgstr ""
 
-#: admin/manage_perks.php:91
+#: admin/manage_perks.php:104
 msgid "Save Settings"
 msgstr ""
 
-#: class-gravityperks.php:250
+#: class-gravityperks.php:266
 msgid "Auto-updates disabled; enter %s license in Spellbook to enable."
 msgstr ""
 
-#: class-gravityperks.php:255
+#: class-gravityperks.php:271
 msgid "Auto-updates disabled; register %s in Spellbook."
 msgstr ""
 
-#: class-gravityperks.php:260
+#: class-gravityperks.php:276
 msgid "Auto-updates disabled; %s license has expired."
 msgstr ""
 
-#: class-gravityperks.php:265
+#: class-gravityperks.php:281
 msgid "Auto-updates disabled; free plugins require a license or email to enable auto-updates."
 msgstr ""
 
-#: class-gravityperks.php:501
+#: class-gravityperks.php:517
 msgid "Current Gravity Forms version (%1$s) does not meet minimum Gravity Forms version requirement (%2$s)."
 msgstr ""
 
-#: class-gravityperks.php:504
+#: class-gravityperks.php:520
 msgid "Gravity Forms %1$s or greater is required. Activate it now or %2$spurchase it today!%3$s"
 msgstr ""
 
-#: class-gravityperks.php:510
+#: class-gravityperks.php:526
 msgid "%1$s requires WordPress %2$s or greater. You must upgrade WordPress in order to use this perk."
 msgstr ""
 
-#: class-gravityperks.php:513
+#: class-gravityperks.php:529
 msgid "Spellbook requires WordPress %1$s or greater. You must upgrade WordPress in order to use Spellbook."
 msgstr ""
 
-#: class-gravityperks.php:518
+#: class-gravityperks.php:534
 msgid "%1$s requires Spellbook %2$s or greater. Activate it now or %3$spurchase it today!%4$s"
 msgstr ""
 
-#: class-gravityperks.php:562
+#: class-gravityperks.php:578
 msgid "Enter your license for %1$s in <a href=\"%2$s\">Spellbook</a> to receive access to automatic upgrades and support for this %3$s. Need a license key? <a href=\"%4$s\" target=\"_blank\">Purchase one now.</a>"
 msgstr ""
 
-#: class-gravityperks.php:578
+#: class-gravityperks.php:594
 msgid "Register %1$s in <a href=\"%2$s\">Spellbook</a> to receive access to automatic upgrades and support for this %3$s."
 msgstr ""
 
-#: class-gravityperks.php:589
+#: class-gravityperks.php:605
 msgid "Your license for %1$s has expired. <a href=\"%2$s\" target=\"_blank\">Renew</a> to receive access to automatic upgrades and support for this %3$s."
 msgstr ""
 
-#: class-gravityperks.php:604
-#: class-gravityperks.php:838
+#: class-gravityperks.php:620
+#: class-gravityperks.php:854
 msgid "Updating free plugins in Spellbook requires a license or email. <a href=\"%1$s\" target=\"_blank\">Enter in Spellbook</a>"
 msgstr ""
 
-#: class-gravityperks.php:817
+#: class-gravityperks.php:833
 msgid "Your %1$s license is invalid or missing. <a href=\"%2$s\" target=\"_blank\">Enter in Spellbook</a> or <a href=\"%3$s\" target=\"_blank\">Buy License</a>."
 msgstr ""
 
-#: class-gravityperks.php:825
-msgid "%s is unregistered. <a href=\"%s\" target=\"_blank\">Register in Spellbook</a>"
+#: class-gravityperks.php:841
+msgid "%1$s is unregistered. <a href=\"%2$s\" target=\"_blank\">Register in Spellbook</a>"
 msgstr ""
 
-#: class-gravityperks.php:830
+#: class-gravityperks.php:846
 msgid "Your %1$s license has expired. <a href=\"%2$s\" target=\"_blank\">Renew License</a>"
 msgstr ""
 
-#: class-gravityperks.php:861
+#: class-gravityperks.php:877
 msgid "<strong>Uh-oh!</strong> We ran into a problem when updating your Gravity Wiz plugins."
 msgstr ""
 
-#: class-gravityperks.php:862
+#: class-gravityperks.php:878
 msgid "<strong>Uh-oh!</strong> We ran into some problems when updating your Gravity Wiz plugins."
 msgstr ""
 
-#: class-gravityperks.php:878
+#: class-gravityperks.php:894
 msgid "Manage in Spellbook"
 msgstr ""
 
-#: class-gravityperks.php:979
+#: class-gravityperks.php:995
 msgid "<strong>Spellbook</strong> must be network activated before a <strong>perk</strong> can be network activated."
 msgstr ""
 
-#: class-gravityperks.php:1087
+#: class-gravityperks.php:1103
 msgid "Oops! Your site is having some trouble communicating with our API."
 msgstr ""
 
-#: class-gravityperks.php:1088
+#: class-gravityperks.php:1104
 msgid "Let's get this fixed."
 msgstr ""
 
-#: class-gravityperks.php:1517
-#: class-gravityperks.php:1521
+#: class-gravityperks.php:1554
+#: class-gravityperks.php:1558
 msgid "Perks"
 msgstr ""
 
@@ -329,11 +329,11 @@ msgstr ""
 msgid "Whether the plugin has settings."
 msgstr ""
 
-#: includes/class-gwapi.php:310
+#: includes/class-gwapi.php:311
 msgid "<strong>Important Note!</strong> GP Google Sheets has been converted to GC Google Sheets"
 msgstr ""
 
-#: includes/class-gwapi.php:314
+#: includes/class-gwapi.php:315
 msgid "GC Google Sheets has been activated."
 msgstr ""
 

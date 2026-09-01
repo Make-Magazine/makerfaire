@@ -1,35 +1,23 @@
 <?php
-namespace GV\REST;
+/**
+ * Backward-compatibility shim.
+ *
+ * This file was moved in GravityView 3.0. It is intentionally empty.
+ * GravityView classes and functions load automatically. You no longer
+ * need to require GravityView files in your code.
+ *
+ * @deprecated 3.0
+ */
 
-/** If this file is called directly, abort. */
-if ( ! defined( 'GRAVITYVIEW_DIR' ) ) {
-	die();
+if ( ! defined( 'ABSPATH' ) ) {
+	die;
 }
 
-/**
- * The default REST Request class.
- */
-class Request extends \GV\Request {
-	private $request;
-
-	/**
-	 * @param \WP_REST_Request $request The WordPress REST request object.
-	 */
-	public function __construct( \WP_REST_Request $request ) {
-		$this->request = $request;
-	}
-
-	/**
-	 * Retrieve paging parameters if any.
-	 *
-	 * @return array
-	 */
-	public function get_paging() {
-		return array(
-			'paging' => array(
-				'page_size'    => $this->request->get_param( 'limit' ),
-				'current_page' => $this->request->get_param( 'page' ),
-			),
-		);
-	}
+if ( function_exists( '_deprecated_file' ) ) {
+	_deprecated_file(
+		plugin_basename( __FILE__ ),
+		'3.0',
+		'',
+		'This file was moved in GravityView 3.0 and will be removed in a future release. GravityView classes and functions load automatically. You no longer need to require them.'
+	);
 }

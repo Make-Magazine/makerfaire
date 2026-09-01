@@ -1,9 +1,4 @@
 <?php
-/**
- * @license GPL-2.0-or-later
- *
- * Modified using {@see https://github.com/BrianHenryIE/strauss}.
- */
 
 namespace GravityKit\GravityView\Foundation\Settings;
 
@@ -101,6 +96,17 @@ class Framework {
 	}
 
 	/**
+	 * Returns the capability required to access and modify GravityKit settings.
+	 *
+	 * @since 1.30.0
+	 *
+	 * @return string
+	 */
+	public function get_capability() {
+		return $this->_capability;
+	}
+
+	/**
 	 * Initializes Settings framework.
 	 *
 	 * @since 1.0.0
@@ -116,7 +122,10 @@ class Framework {
 
 		add_filter( 'gk/foundation/ajax/' . self::AJAX_ROUTER . '/routes', [ $this, 'configure_ajax_routes' ] );
 
-		$this->add_gk_submenu_item();
+		// Build the translated submenu title on `init`, not during Core boot (which runs on
+		// `plugins_loaded`, before `after_setup_theme`), to avoid WordPress 6.7's just-in-time
+		// translation notice. The menu is not consumed until `admin_menu`.
+		add_action( 'init', [ $this, 'add_gk_submenu_item' ] );
 
 		/**
 		 * Fires when the class has finished initializing.
@@ -586,6 +595,11 @@ class Framework {
 	 * @return mixed|void Exit with JSON response or return response message.
 	 */
 	public function save_ui_settings( array $settings_data ) {
+		// The Ajax router only verifies the shared nonce, which is not an authorization check; gate on the same capability that guards the settings page.
+		if ( ! current_user_can( $this->_capability ) ) {
+			throw new Exception( esc_html__( 'You do not have permission to save these settings.', 'gk-gravityview' ) );
+		}
+
 		$plugin_id   = ! empty( $settings_data['plugin'] ) ? $settings_data['plugin'] : null;
 		$ui_settings = ! empty( $settings_data['settings'] ) ? $settings_data['settings'] : null;
 

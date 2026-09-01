@@ -52,7 +52,6 @@ __( 'You have unsaved changes in the Class Manager.', 'elementor' );
 __( 'To avoid losing your updates, save your changes before leaving.', 'elementor' );
 __( 'Discard', 'elementor' );
 __( 'Save & Continue', 'elementor' );
-__( 'Class Manager', 'elementor' );
 __( 'Something went wrong', 'elementor' );
 __( 'Un-sync typography class', 'elementor' );
 __( "You're about to stop syncing a typography class to Global Fonts.", 'elementor' );
@@ -73,13 +72,6 @@ __(
 					'elementor'
 				);
 __( 'Class Manager', 'elementor' );
-__( 'You have unsaved changes', 'elementor' );
-__(
-								"To open the Class Manager, save your page first. You can't continue without saving.",
-								'elementor'
-							);
-__( 'Stay here', 'elementor' );
-__( 'Save & Continue', 'elementor' );
 __( 'More actions', 'elementor' );
 __( 'Rename', 'elementor' );
 __( 'Stop syncing to Global Fonts', 'elementor' );

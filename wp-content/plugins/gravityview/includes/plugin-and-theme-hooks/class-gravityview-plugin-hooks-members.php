@@ -1,53 +1,23 @@
 <?php
 /**
- * Enhance Members compatibility with GravityView
+ * Backward-compatibility shim.
  *
- * @file      class-gravityview-plugin-hooks-members.php
- * @package   GravityView
- * @license   GPL2+
- * @author    GravityKit <hello@gravitykit.com>
- * @link      https://www.gravitykit.com
- * @copyright Copyright 2022, Katz Web Services, Inc.
+ * This file was moved in GravityView 3.0. It is intentionally empty.
+ * GravityView classes and functions load automatically — you no longer
+ * need to require GravityView files in your code.
  *
- * @since 2.14.1
+ * @deprecated 3.0
  */
 
-/**
- * @inheritDoc
- */
-class GravityView_Plugin_Hooks_Members extends GravityView_Plugin_and_Theme_Hooks {
-
-	/**
-	 * @var string Check for the Members_Plugin class
-	 */
-	protected $class_name = 'Members_Plugin';
-
-	protected $style_handles = array(
-		'members-edit-post',
-		'members-pointers',
-		'members-admin',
-		'thickbox',
-		'editor-buttons',
-	);
-
-	protected $script_handles = array(
-		'members-edit-post',
-		'members-pointers',
-		'wp-tinymce',
-		'quicktags',
-		'buttons',
-		'thickbox',
-		'post',
-		'jquery-ui-autocomplete',
-		'wplink',
-		'wp-embed',
-		'media-upload',
-		'editor',
-		'members-block-permissions-editor',
-		'postbox',
-		'wp-util',
-		'wp-pointer',
-	);
+if ( ! defined( 'ABSPATH' ) ) {
+	die;
 }
 
-new GravityView_Plugin_Hooks_Members();
+if ( function_exists( '_deprecated_file' ) ) {
+	_deprecated_file(
+		plugin_basename( __FILE__ ),
+		'3.0',
+		'',
+		'This file was moved in GravityView 3.0 and will be removed in a future release. GravityView classes and functions load automatically — you no longer need to require them.'
+	);
+}

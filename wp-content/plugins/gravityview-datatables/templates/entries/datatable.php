@@ -11,14 +11,19 @@
 
 <?php gravityview_before( $gravityview ); ?>
 
-
-<p class="gv-back-link"><?php echo gravityview_back_link( $gravityview ); ?></p>
+<?php
+// Matches core's single-entry table template (`templates/entries/table.php`): omit the
+// link entirely when there is none, rather than an empty `<p>`.
+if ( $link = gravityview_back_link( $gravityview ) ) :
+	?>
+	<nav class="gv-back-link" aria-label="<?php esc_attr_e( 'Back to entries', 'gv-datatables' ); ?>"><?php echo $link; ?></nav>
+<?php endif; ?>
 
 <div class="<?php gv_container_class( 'gv-table-view gv-table-container gv-table-single-container', true, $gravityview ); ?>">
 	<table class="gv-table-view-content">
 		<?php
 
-        if ( $gravityview->fields->by_position( 'single_table-columns' )->by_visible()->count() ): ?>
+        if ( $gravityview->fields->by_position( 'single_table-columns' )->by_visible( $gravityview->view )->count() ): ?>
 			<thead>
 				<?php gravityview_header( $gravityview ); ?>
 			</thead>

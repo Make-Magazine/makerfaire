@@ -330,6 +330,7 @@ var i18n = {
   checkboxText: (0, _i18n.__)('I’ve read and understood.', 'elementor'),
   optIn: {
     titleText: (0, _i18n.__)('You are about to enable Atomic Editor features!', 'elementor'),
+    // eslint-disable-next-line @wordpress/i18n-no-flanking-whitespace
     introText: (0, _i18n.__)('By activating, you’ll get access to the next generation of Elementor’s Editor. This is your chance to explore new capabilities and help shape the future of Elementor! ', 'elementor'),
     details: [(0, _i18n.__)('When you activate, you’ll also be activating Containers and Nested Elements. You can turn them back off by going to: WP Admin > Elementor > Settings > Features.', 'elementor')],
     activateButton: (0, _i18n.__)('Activate', 'elementor'),

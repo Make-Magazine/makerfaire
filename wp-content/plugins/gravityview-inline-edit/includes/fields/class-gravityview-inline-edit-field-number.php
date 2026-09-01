@@ -7,11 +7,11 @@
  */
 class GravityView_Inline_Edit_Field_Number extends GravityView_Inline_Edit_Field {
 
-	var $gv_field_name = 'number';
+	public $gv_field_name = 'number';
 
-	var $inline_edit_type = 'text';
+	public $inline_edit_type = 'text';
 
-	var $set_value = true;
+	public $set_value = true;
 
 	/**
 	 * Update calculation fields and add live-update response
@@ -25,20 +25,24 @@ class GravityView_Inline_Edit_Field_Number extends GravityView_Inline_Edit_Field
 	 *
 	 * @return bool|WP_Error|array Returns original result, if not a number field. Otherwise, returns a response array. Empty if no calculation fields, otherwise multi-dimensional array with `data` and `selector` keys
 	 */
-	public function updated_result( $update_result, $entry = array(), $form_id = 0, GF_Field $gf_field = null ) {
+	public function updated_result( $update_result, $entry = array(), $form_id = 0, ?GF_Field $gf_field = null ) {
 
-		if ( ! is_bool( $update_result ) ) {
+		// A WP_Error passes through, and so does false: only a successful save should produce a
+		// payload telling the browser what to display.
+		if ( null === $gf_field || true !== $update_result ) {
 			return $update_result;
 		}
 
 		$form = GFAPI::get_form( $form_id );
 
-		$entry_or_currency = version_compare( \GFForms::$version, '2.9.29', '>=' ) ? $entry : $entry['currency'];
-		$display_value = \GFCommon::get_lead_field_display( $gf_field, $entry[ $gf_field->id ], $entry_or_currency, false, 'html' );
+		// get_value_entry_detail() replaces GFCommon::get_lead_field_display(), deprecated in
+		// Gravity Forms 3.0; its second parameter changed from currency to entry in GF 2.9.29.
+		$entry_or_currency = version_compare( \GFForms::$version, '2.9.29', '>=' ) ? $entry : rgar( $entry, 'currency' );
+		$display_value     = $gf_field->get_value_entry_detail( rgar( $entry, $gf_field->id ), $entry_or_currency, false, 'html' );
 
 		$response = array(
 			array(
-				'value'    => $entry[ $gf_field->id ],
+				'value'    => rgar( $entry, $gf_field->id ),
 				'selector' => ".gv-inline-editable-field-{$entry['id']}-{$entry['form_id']}-{$gf_field->id}",
 				'data'     => array( 'display_value' => $display_value ),
 			),
@@ -59,7 +63,22 @@ class GravityView_Inline_Edit_Field_Number extends GravityView_Inline_Edit_Field
 			 * Fetch entry after updating the field, in case there are multiple calculations.
 			 * @see https://github.com/gravityview/Inline-Edit/issues/131
 			 */
-			$entry = GFAPI::get_entry( $entry['id'] );
+			$refreshed_entry = GFAPI::get_entry( $entry['id'] );
+
+			if ( is_wp_error( $refreshed_entry ) ) {
+				GravityView_Inline_Edit_GFAddon::get_instance()->log_error(
+					sprintf(
+						'Failed to refresh entry %s during calculation update: %s',
+						$entry['id'],
+						$refreshed_entry->get_error_message()
+					)
+				);
+				// Stop rather than continue: a later calculation could otherwise be derived from this
+				// stale, un-refreshed entry and saved as if it were current.
+				break;
+			}
+
+			$entry = $refreshed_entry;
 
 			// Make sure $value is a number, not a string. Problem is, this is now a float and floats are wild.
 			$display_value = (float) $value;
@@ -76,7 +95,7 @@ class GravityView_Inline_Edit_Field_Number extends GravityView_Inline_Edit_Field
 				 * Bring $field->clean_number() inline
 				 * @see https://github.com/gravityview/GravityEdit/issues/200
 				 */
-				if ( $field->numberFormat == 'currency' ) {
+				if ( $field->numberFormat === 'currency' ) {
 					$display_value = GFCommon::to_number( $display_value );
 				} else {
 					$display_value = GFCommon::clean_number( $display_value, $field->numberFormat );

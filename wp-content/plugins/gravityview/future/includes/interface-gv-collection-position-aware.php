@@ -1,22 +1,23 @@
 <?php
-
-namespace GV;
-
 /**
- * Represents a collection that has a position (fields, widgets and search fields).
+ * Backward-compatibility shim.
  *
- * @since 2.42
+ * This file was moved in GravityView 3.0. It is intentionally empty.
+ * GravityView classes and functions load automatically. You no longer
+ * need to require GravityView files in your code.
+ *
+ * @deprecated 3.0
  */
-interface Collection_Position_Aware {
-	/**
-	 * Get a copy of this \GV\Field_Collection filtered by position.
-	 *
-	 * @since 2.42
-	 *
-	 * @param string $position The position to get the fields for.
-	 *                         Can be a wildcard *
-	 *
-	 * @return static|Collection A filtered collection, filtered by position.
-	 */
-	public function by_position( $position );
+
+if ( ! defined( 'ABSPATH' ) ) {
+	die;
+}
+
+if ( function_exists( '_deprecated_file' ) ) {
+	_deprecated_file(
+		plugin_basename( __FILE__ ),
+		'3.0',
+		'',
+		'This file was moved in GravityView 3.0 and will be removed in a future release. GravityView classes and functions load automatically. You no longer need to require them.'
+	);
 }

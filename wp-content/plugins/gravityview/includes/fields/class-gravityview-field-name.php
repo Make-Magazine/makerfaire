@@ -1,76 +1,23 @@
 <?php
 /**
- * @file class-gravityview-field-name.php
- * @package GravityView
- * @subpackage includes\fields
+ * Backward-compatibility shim.
+ *
+ * This file was moved in GravityView 3.0. It is intentionally empty.
+ * GravityView classes and functions load automatically — you no longer
+ * need to require GravityView files in your code.
+ *
+ * @deprecated 3.0
  */
 
-class GravityView_Field_Name extends GravityView_Field {
-
-	var $name = 'name';
-
-	/** @see GF_Field_Name */
-	var $_gf_field_class_name = 'GF_Field_Name';
-
-	var $group = 'advanced';
-
-	public $search_operators = array( 'is', 'isnot', 'contains' );
-
-	var $is_searchable = true;
-
-	var $icon = 'dashicons-admin-users';
-
-	public function __construct() {
-		$this->label = esc_html__( 'Name', 'gk-gravityview' );
-
-		parent::__construct();
-	}
-
-	/**
-	 * {@inheritDoc}
-	 *
-	 * @since 2.29.0
-	 */
-	public function field_options( $field_options, $template_id, $field_id, $context, $input_type, $form_id ) {
-		if ( 'edit' === $context ) {
-			return $field_options;
-		}
-
-		$field_options['show_as_initials'] = array(
-			'type'     => 'checkbox',
-			'label'    => __( 'Show as initials', 'gk-gravityview' ),
-			'desc'     => __( 'This displays the first letter of the first and last names.', 'gk-gravityview' ),
-			'value'    => '',
-			'group'    => 'display',
-		);
-
-
-		return $field_options;
-	}
-
-	/**
-	 * Converts a full name or string to initials.
-	 *
-	 * @since 2.33
-	 *
-	 * @param string $value The full name or string to convert.
-	 * 
-	 * @return string The initials.
-	 */
-	public static function convert_to_initials( $value ) {
-		$names    = explode( ' ', $value );
-
-		$display_value = '';
-	
-		foreach ( $names as $name ) {
-			$first_char = function_exists( 'mb_substr' ) ? mb_substr( $name, 0, 1 ) : substr( $name, 0, 1 );
-			$upper_char = function_exists( 'mb_strtoupper' ) ? mb_strtoupper( $first_char ) : strtoupper( $first_char );
-	
-			$display_value .= trim( $upper_char ) . '.';
-		}
-
-		return $display_value;
-	}
+if ( ! defined( 'ABSPATH' ) ) {
+	die;
 }
 
-new GravityView_Field_Name();
+if ( function_exists( '_deprecated_file' ) ) {
+	_deprecated_file(
+		plugin_basename( __FILE__ ),
+		'3.0',
+		'',
+		'This file was moved in GravityView 3.0 and will be removed in a future release. GravityView classes and functions load automatically — you no longer need to require them.'
+	);
+}

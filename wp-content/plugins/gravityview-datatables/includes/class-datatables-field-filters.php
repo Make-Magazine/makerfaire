@@ -13,11 +13,6 @@ class GV_Extension_DataTables_Field_Filters extends GV_DataTables_Extension {
 
 	protected $settings_key = 'field_filters';
 
-	/**
-	 * Allows wp_add_inline_style to be used on FixedHeader/FixedColumn style
-	 */
-	protected $script_priority = 100;
-
 	const FIELD_UID_REGEX = '/[^a-z\d]/i';
 
 	public function __construct() {
@@ -38,6 +33,7 @@ class GV_Extension_DataTables_Field_Filters extends GV_DataTables_Extension {
 		$settings['field_filter_location'] = 'footer';
 		$settings['date_filter_type']      = 'date';
 		$settings['fields_with_filter']    = '';
+		$settings['clear_filters_button']  = 1;
 
 		return $settings;
 	}
@@ -90,7 +86,7 @@ class GV_Extension_DataTables_Field_Filters extends GV_DataTables_Extension {
 							'header' => esc_html_x( 'Header', 'The header of an HTML table', 'gv-datatables' ),
 							'both'   => esc_html_x( 'Both', 'Both options', 'gv-datatables' ),
 						),
-						'desc'    => esc_html__( 'Fix the first column in place while horizontally scrolling a table. The first column and its contents will remain visible at all times.', 'gv-datatables' ),
+						'desc'    => esc_html__( 'Choose where the filter inputs appear on the table.', 'gv-datatables' ),
 					), $ds['field_filter_location'] );
 					?>
                 </td>
@@ -105,6 +101,18 @@ class GV_Extension_DataTables_Field_Filters extends GV_DataTables_Extension {
 				        'value'   => '',
 				        'desc'    => esc_html__( 'Select one or more fields for which filtering will be enabled.', 'gv-datatables' ),
 			        ), $ds['fields_with_filter'] );
+			        ?>
+		        </td>
+	        </tr>
+	        <tr valign="top" data-requires="field_filters">
+		        <td colspan="2">
+			        <?php
+			        echo GravityView_Render_Settings::render_field_option( 'datatables_settings[clear_filters_button]', array(
+				        'label' => __( 'Show "Clear Filters" button', 'gv-datatables' ),
+				        'type'  => 'checkbox',
+				        'value' => 1,
+				        'desc'  => esc_html__( 'Display a button that clears all field filters at once when any filter is active.', 'gv-datatables' ),
+			        ), \GV\Utils::get( $ds, 'clear_filters_button', 1 ) );
 			        ?>
 		        </td>
 	        </tr>
@@ -128,7 +136,9 @@ class GV_Extension_DataTables_Field_Filters extends GV_DataTables_Extension {
 
 		<?php
 		echo GravityView_Render_Settings::render_field_option( 'datatables_settings[version]', array(
-			'label'   => __( 'Input Location', 'gv-datatables' ),
+			// Stamps the DataTables version the settings were last saved with, so upgrade paths
+			// can tell a pre-3.2 silo from a current one. Never shown to the author.
+			'label'   => __( 'DataTables version', 'gv-datatables' ),
 			'type'    => 'hidden',
 			'value'   => GV_DT_VERSION,
 		), GV_DT_VERSION );
@@ -156,6 +166,16 @@ class GV_Extension_DataTables_Field_Filters extends GV_DataTables_Extension {
 		$field_filters = $this->get_setting( $view_id, 'field_filter_location', 'footer' );
 
 		$dt_config['field_filters'] = $field_filters;
+
+		$show_clear_button = (bool) $this->get_setting( $view_id, 'clear_filters_button', 1 );
+
+		if ( $show_clear_button ) {
+			$dt_config['clearFilters'] = array(
+				'enabled' => true,
+				'label'   => __( 'Clear Filters', 'gv-datatables' ),
+				'cleared' => __( 'All filters cleared.', 'gv-datatables' ),
+			);
+		}
 
 		return $dt_config;
 	}
@@ -194,7 +214,9 @@ class GV_Extension_DataTables_Field_Filters extends GV_DataTables_Extension {
 
 		$dt_settings = get_post_meta( $view->ID, '_gravityview_datatables_settings', true );
 
-		$is_server_side = 'serverSide' === Utils::get( $dt_settings, 'processing_mode', false );
+		// An absent `processing_mode` key (any View saved before 3.3) must default to server-side,
+		// matching class-datatables-processing-mode.php and class-datatables-data.php.
+		$is_server_side = 'serverSide' === Utils::get( $dt_settings, 'processing_mode', GV_Extension_DataTables_Processing_Mode::DEFAULT_MODE );
 
 		$atts = [
 			'type'        => 'search',
@@ -230,12 +252,18 @@ class GV_Extension_DataTables_Field_Filters extends GV_DataTables_Extension {
 			|| 'date_updated' === $field_id
 			|| 'payment_date' === $field_id
 		) {
-			$is_server_side = 'serverSide' === Utils::get( $dt_settings, 'processing_mode', false );
+			$is_server_side = 'serverSide' === Utils::get( $dt_settings, 'processing_mode', GV_Extension_DataTables_Processing_Mode::DEFAULT_MODE );
 
 			$atts['field_type'] = Utils::get( $dt_settings, 'date_filter_type', self::defaults( [] )['date_filter_type'] );
 
 			if ( $is_server_side ) {
-				$atts['type'] = 'date'; // Server-side only supports single date input, so override the UI setting in case client-side rendering was enabled before and date range was selected.
+				// Server-side only supports a single date input, so override the UI setting in
+				// case client-side rendering was enabled before and Date Range was selected.
+				// Both keys matter: `field_type` is what datatables-views.js reads to choose the
+				// single-input vs. two-input renderer, and `type` sets the rendered input's HTML
+				// `type` attribute.
+				$atts['field_type'] = 'date';
+				$atts['type']       = 'date';
 			}
 
 			$atts['pattern'] = '\d{4}-\d{2}-\d{2}';
@@ -299,7 +327,8 @@ class GV_Extension_DataTables_Field_Filters extends GV_DataTables_Extension {
 		}
 
 		if ( in_array( $field_id, [ 'is_approved', 'entry_approval' ] ) ) {
-			$atts['type'] = 'select';
+			$atts['type']       = 'select';
+			$atts['field_type'] = 'select';
 
 			$options = GravityView_Entry_Approval_Status::get_all();
 
@@ -314,8 +343,9 @@ class GV_Extension_DataTables_Field_Filters extends GV_DataTables_Extension {
 		}
 
 		if ( 'is_starred' === $field_id ) {
-			$atts['type']    = 'select';
-			$atts['options'] = wp_json_encode( array(
+			$atts['type']       = 'select';
+			$atts['field_type'] = 'select';
+			$atts['options']    = wp_json_encode( array(
 				array(
 					'value' => 1,
 					'label' => __( 'Is Starred', 'gv-datatables' ),
@@ -374,69 +404,19 @@ class GV_Extension_DataTables_Field_Filters extends GV_DataTables_Extension {
 			return $field_column;
 		}
 
-		if ( empty( $dt_settings['fields_with_filter'] ) ) {
-			$field_column['searchable'] = false;
-		}
+		// An empty (untouched) "Fields With Filter" selection means no restriction, matching the
+		// settings row's own fallback label for it ("All Fields"), not zero filters. Only an
+		// explicit, non-empty selection narrows the set. The setting is a multiselect in the UI
+		// ($fieldsWithFilterSettingsEl.val() returns an array), but the inspector schema declares
+		// it `text`; normalize to an array here so a scalar from that path, or from older stored
+		// data, doesn't fail in_array()'s type expectation.
+		if ( ! empty( $dt_settings['fields_with_filter'] ) ) {
+			$fields_with_filter = (array) $dt_settings['fields_with_filter'];
 
-		$field_column['searchable'] = $field_column['searchable'] && in_array( $field_column['atts']['uid'], $dt_settings['fields_with_filter'] ?? [] );
+			$field_column['searchable'] = $field_column['searchable'] && in_array( $field_column['atts']['uid'], $fields_with_filter );
+		}
 
 		return $field_column;
-	}
-
-	/**
-	 * Pass the search parameters through the cloned table that DataTables FixedColumns creates
-	 *
-	 * @uses wp_add_inline_script
-	 *
-	 * @return void
-	 */
-	public function add_scripts( $dt_configs, $views, $post ) {
-
-		if ( ! parent::add_scripts( $dt_configs, $views, $post ) ) {
-			return;
-		}
-
-		$comment = '';
-
-		if ( current_user_can( 'manage_options' ) ) {
-			$comment = '/** Inline script added by GravityView DataTables Field Filters when using FixedColumns setting */';
-		}
-
-		$script = <<<EOD
-$comment
-(function ( $ ) {
-
-	var typingTimer;
-	var searchDelay = 350;
-
-	function set_first_input( that ) {
-		return $( '.gv-datatables:not(".DTFC_Cloned")' )
-			.find( '.gv-dt-field-filter[data-uid=' + that.data( 'uid' ) + ']' )
-			.val( that.val() )
-			.first();
-	}
-
-	$( document ).on( 'draw.dt', function ( draw ) {
-
-		var table = $( draw.target ).dataTable();
-
-		$( '.gv-dt-field-filter', '.DTFC_Cloned' ).val( function () {
-			return table.api().state() ? table.api().state().columns[ 0 ].search.search : $( this ).val();
-		} ).on( 'keyup', function ( e ) {
-		
-			clearTimeout( typingTimer );
-
-			first_input = set_first_input( $( this ) );
-
-			typingTimer = setTimeout( function () {
-				first_input.trigger( 'change' );
-			}, searchDelay );
-		} );
-	} );
-})( jQuery );
-EOD;
-
-		wp_add_inline_script( 'gv-dt-fixedcolumns', normalize_whitespace( $script, true ) );
 	}
 
 	/**
@@ -449,27 +429,37 @@ EOD;
 	 * @return array
 	 */
 	public function modify_date_filter_type_selection( $scripts ) {
+		$screen = function_exists( 'get_current_screen' ) ? get_current_screen() : null;
+
+		// #date_filter_type only exists in the View editor's DataTables metabox. Foundation
+		// fires `gk/foundation/inline-scripts` on every admin page, so without this guard the
+		// script shipped everywhere else too (F-21).
+		if ( ! $screen || 'gravityview' !== $screen->post_type || 'post' !== $screen->base ) {
+			return $scripts;
+		}
+
 		$scripts[] = [
 			'script' => <<<JS
 (function ( $ ) {
 	$(window).on('load', function() {
-	    let lastCheckedRadioId = '';
-	
 		const _processingMode = $('input[name="datatables_settings[processing_mode]"]');
 
 		_processingMode.on('change', function() {
-	        if ($('#datatables_settingsprocessing_mode-serverSide').is(':checked')) {
-	            lastCheckedRadioId = $('#date_filter_type input[type="radio"]:checked').attr('id');
-	            $('#date_filter_type input').prop('disabled', true);
-	            $('#datatables_settingsdate_filter_type-date').prop('checked', true);
-	        } else if ($('#datatables_settingsprocessing_mode-clientSide').is(':checked')) {
-	            $('#date_filter_type input').prop('disabled', false);
-	
-	            if (lastCheckedRadioId) {
-	                $('#' + lastCheckedRadioId).prop('checked', true);
-	            }
-	        }
-	    });
+			// A `disabled` input is dropped from the form entirely, so locking the Date
+			// Range radios this way silently wiped a saved choice the moment an author
+			// switched to server-side and saved (F-21). Lock the whole row visually
+			// (pointer-events, aria-disabled) instead of disabling the inputs, so the
+			// checked radio -- and therefore what gets posted -- never changes; switching
+			// back to client-side later restores exactly what was saved.
+			var isServerSide = $('#datatables_settingsprocessing_mode-serverSide').is(':checked');
+
+			$('#date_filter_type')
+				.css({
+					pointerEvents: isServerSide ? 'none' : '',
+					opacity: isServerSide ? 0.5 : '',
+				} )
+				.attr('aria-disabled', isServerSide ? 'true' : null);
+		});
 
 		if (_processingMode.length) {
 			_processingMode.trigger('change');

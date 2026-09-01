@@ -20,6 +20,19 @@
 	var self = {};
 
 	/**
+	 * The Gravity Forms entries-list form.
+	 *
+	 * Gravity Forms renders this as `entry_list_form` (entry_list.php). It used to be `lead_form`,
+	 * an ID that has not existed since at least Gravity Forms 2.9, so lookups scoped to it matched
+	 * nothing and failed silently.
+	 *
+	 * @since 3.3.2
+	 *
+	 * @type {string}
+	 */
+	var ENTRIES_FORM = '#entry_list_form';
+
+	/**
 	 * Enable Approve/Reject functionality on the Gravity Forms Entries page
 	 */
 	self.init = function() {
@@ -39,8 +52,9 @@
 
 			self.setupTippy();
 
-			// Delegated so the click handler survives content updates inside the entries list.
-			$( '#lead_form' )
+			// Delegated on the document so the click handler survives content updates inside the
+			// entries list and does not depend on a container ID owned by Gravity Forms.
+			$( document )
 				.off( 'click.gvapprove', '.toggleApproved' )
 				.on( 'click.gvapprove', '.toggleApproved', self.toggleApproved );
 		}
@@ -58,7 +72,7 @@
 	 * @since 2.60.2
 	 */
 	self.refresh = function () {
-		if ( ! ( gvGlobals.show_column * 1 ) ) {
+		if ( ! Number( gvGlobals.show_column ) ) {
 			return;
 		}
 
@@ -102,7 +116,7 @@
 					linkClickEvent.preventDefault();
 
 					var new_status = parseInt( $( linkClickEvent.target ).attr( 'data-approved' ), 10 );
-					var entry_id = $entry_element.parent().parent().find( 'th input[type="checkbox"]' ).val();
+					var entry_id = $entry_element.parent().parent().find( 'input[type="checkbox"]' ).val();
 					var new_class_and_title = self.getClassAndTitleFromApprovalStatus( new_status );
 
 					$entry_element
@@ -154,7 +168,7 @@
 	self.maybeDisplayMessages = function() {
 		// display update message if any
 		if ( gvGlobals.bulk_message.length > 0 ) {
-			self.displayMessage( gvGlobals.bulk_message, 'updated', '#lead_form' );
+			self.displayMessage( gvGlobals.bulk_message, 'updated', ENTRIES_FORM );
 		}
 	};
 
@@ -233,7 +247,7 @@
 	self.addApprovedColumn = function() {
 
 		// Don't add column if there are no entries yet.
-		if( $( 'tbody tr', '#lead_form' ).length === 1 && $( 'tbody tr td', '#lead_form' ).length === 1 ) {
+		if( $( 'tbody tr', ENTRIES_FORM ).length === 1 && $( 'tbody tr td', ENTRIES_FORM ).length === 1 ) {
 			return;
 		}
 
@@ -273,7 +287,7 @@
 	self.toggleApproved = function ( e ) {
 		e.preventDefault();
 
-		var entryID = $( this ).parent().parent().find( 'th input[type="checkbox"]' ).val(),
+		var entryID = $( this ).parent().parent().find( 'input[type="checkbox"]' ).val(),
 			title,
 			status;
 
@@ -311,7 +325,7 @@
 	 *
 	 * @param message Text to display
 	 * @param messageClass (default: updated)
-	 * @param container Where to prepend the message (default: #lead_form)
+	 * @param container Where to prepend the message (default: the Gravity Forms entries form)
 	 */
 	self.displayMessage = function ( message, messageClass, container ) {
 

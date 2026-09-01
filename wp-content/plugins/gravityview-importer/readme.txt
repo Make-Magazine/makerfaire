@@ -1,11 +1,11 @@
 === GravityImport ===
 Tags: gravitykit, gravityview, gravity forms, import
 Requires at least: 6.2
-Tested up to: 7.0.0
+Tested up to: 7.0.2
 Stable tag: trunk
 Contributors: The GravityKit Team
 License: GPL 3 or higher
-Requires PHP: 7.2.0
+Requires PHP: 7.4.0
 
 The best way to import entries into Gravity Forms. Proud to be a Gravity Forms Certified Add-On.
 
@@ -20,6 +20,33 @@ Easily import Gravity Forms entries from a CSV file. Learn more on [gravitykit.c
 3. Follow the instructions
 
 == Changelog ==
+
+= 2.12.0 on July 30, 2026 =
+
+This release gives clearer reasons when rows fail to import, and fixes file upload imports on Gravity Forms 3.0+, a fatal multi-file upload field error, and compatibility issues with GravityView and WordPress 6.7.
+
+#### ✨ Improved
+* Rows rejected by a form-level validation failure now report the actual cause instead of "Failed validation: Unknown" — including when Gravity Forms is blocking submissions while its database upgrade is pending (common on freshly cloned staging sites), or when an anti-spam or CAPTCHA plugin rejects the submission.
+
+#### 🐛 Fixed
+* Entries imported with an Entry Status column using different capitalization (e.g., `Active`) could not be opened or edited in [GravityView](https://www.gravitykit.com/products/gravityview/); the standard statuses (`active`, `spam`, `trash`) are now saved in the lowercase form Gravity Forms expects.
+* Resolved a "translation loading was triggered too early" notice on WordPress 6.7+.
+* Imports with a file upload column failed on Gravity Forms 3.0+ — downloaded files are now given a temporary name matching the uploaded file's extension, which Gravity Forms 3.0+ requires.
+* A row rejected by a multi-file upload field caused a fatal error on PHP 8; on PHP 7.4 the error named the field but left the reason blank.
+
+#### 🔧 Updated
+* [Foundation](https://www.gravitykit.com/foundation/) to version 1.27.0.
+
+= 2.11.3 on June 25, 2026 =
+
+This release fixes imports to forms that are connected to a Pod through the Pods Gravity Forms add-on.
+
+#### 🐛 Fixed
+* Imports to forms mapped to a Pod via the Pods Gravity Forms add-on now import reliably: every row is saved to the Pod, and a row that leaves a required Pods field empty no longer stops the whole import.
+* A feed that errors while importing a row no longer stops the whole import; the row is recorded as an error and the import continues.
+
+#### 🔧 Updated
+* [Foundation](https://www.gravitykit.com/foundation/) to version 1.24.2.
 
 = 2.11.2 on June 4, 2026 =
 

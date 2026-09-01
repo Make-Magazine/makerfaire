@@ -7,12 +7,12 @@
  */
 class GravityView_Inline_Edit_Field_Multiselect extends GravityView_Inline_Edit_Field {
 
-	var $gv_field_name = 'multiselect';
+	public $gv_field_name = 'multiselect';
 
 	/** @see GF_Field_MultiSelect $gf_field */
-	var $inline_edit_type = 'multiselect';
+	public $inline_edit_type = 'multiselect';
 
-	var $set_value = true;
+	public $set_value = true;
 
 	/**
 	 * @since 1.0
@@ -29,7 +29,7 @@ class GravityView_Inline_Edit_Field_Multiselect extends GravityView_Inline_Edit_
 	public function modify_inline_edit_attributes( $wrapper_attributes, $field_input_type, $field_id, $entry, $current_form, $gf_field ) {
 		$field_value = rgar( $entry, $field_id );
 
-		$wrapper_attributes['data-source'] = json_encode( $gf_field->choices );
+		$wrapper_attributes['data-source'] = wp_json_encode( $gf_field->choices );
 
 		parent::add_field_template( $this->inline_edit_type, $gf_field->get_field_input( $current_form, $field_value, $entry ), $current_form['id'], $field_id );
 

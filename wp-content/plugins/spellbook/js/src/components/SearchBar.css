@@ -3,25 +3,25 @@
 }
 
 .spellbook-app__search-filter-container {
-    display: flex;
-    gap: 1rem;
-    align-items: stretch;
+	display: flex;
+	gap: 1rem;
+	align-items: stretch;
 }
 
 .spellbook-app__search-input {
-    flex: 1;
+	flex: 1;
 	margin: 1rem;
 	max-width: 330px;
 }
 
 /* Override GF tabs styles for our filter tabs */
 .spellbook-app__search-filter-container .gform-tabs {
-    margin: 0 0 0 auto;
+	margin: 0 0 0 auto;
 }
 
 .spellbook-app__search-filter-container .gform-tabs__tablist {
-    border-bottom: none;
-    padding: 0;
+	border-bottom: none;
+	padding: 0;
 	height: 100%;
 	margin: 0 1rem 0 auto;
 }
@@ -32,19 +32,19 @@
 }
 
 @container spellbook (max-width: 1100px) {
-    .spellbook-app__search-filter-container .gform-tabs__tab[data-test-id="filter-active"],
-    .spellbook-app__search-filter-container .gform-tabs__tab[data-test-id="filter-inactive"],
-    .spellbook-app__search-filter-container .gform-tabs__tab[data-test-id="filter-not-installed"] {
-        display: none;
-    }
+	.spellbook-app__search-filter-container .gform-tabs__tab[data-test-id="filter-active"],
+	.spellbook-app__search-filter-container .gform-tabs__tab[data-test-id="filter-inactive"],
+	.spellbook-app__search-filter-container .gform-tabs__tab[data-test-id="filter-not-installed"] {
+		display: none;
+	}
 }
 
 @container spellbook (max-width: 750px) {
-    .spellbook-app__search-filter-container .gform-tabs {
-        display: none;
-    }
+	.spellbook-app__search-filter-container .gform-tabs {
+		display: none;
+	}
 
-    .spellbook-app__search-input {
-        max-width: none;
-    }
+	.spellbook-app__search-input {
+		max-width: none;
+	}
 }

@@ -409,7 +409,19 @@ const ko = window.ko;
 
 		self.parseCalcs = function( formula, formulaField, formId, calcObj ) {
 
-			var matches = getMatchGroups( formula, /{[^{]*?:([0-9]+):(sum|total|count)=?([0-9]*)}/i );
+			var pattern = /{[^{]*?:([0-9]+):(sum|total|count)=?([0-9]*)}/i,
+				matches;
+
+			/*
+			 * getMatchGroups() was removed in Gravity Forms 3.0. Use GFMergeTag.parseMergeTags() when it is
+			 * available and only fall back to getMatchGroups() for older versions of Gravity Forms.
+			 */
+			if( typeof GFMergeTag !== 'undefined' && typeof GFMergeTag.parseMergeTags === 'function' ) {
+				matches = GFMergeTag.parseMergeTags( formula, pattern );
+			} else {
+				matches = getMatchGroups( formula, pattern );
+			}
+
 			$.each( matches, function( i, group ) {
 
 				var search            = group[0],

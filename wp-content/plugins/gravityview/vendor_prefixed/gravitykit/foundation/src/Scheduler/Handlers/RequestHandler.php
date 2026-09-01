@@ -1,10 +1,7 @@
 <?php
 /**
  * Request handler.
- * *
- * @license GPL-2.0-or-later
- * Modified using {@see https://github.com/BrianHenryIE/strauss}.
- */
+ * */
 
 namespace GravityKit\GravityView\Foundation\Scheduler\Handlers;
 
@@ -37,8 +34,11 @@ class RequestHandler extends WP_Async_Request {
 			$this->debug_run_tasks();
 		}
 
-		// This check is for the unit tests.
-		if ( method_exists( get_parent_class( $this ), '__construct' ) ) {
+		// The unit tests' WP_Async_Request stub has no constructor. parent:: binds
+		// lexically to WP_Async_Request, so the guard must resolve from self::class —
+		// under a subclass, get_parent_class( $this ) names this class instead and
+		// answers for the wrong constructor.
+		if ( method_exists( get_parent_class( self::class ), '__construct' ) ) {
 			parent::__construct();
 		}
 
@@ -77,6 +77,36 @@ class RequestHandler extends WP_Async_Request {
 		WP::delete_transient( 'gk_scheduler_loopback_failed' );
 
 		return is_array( $result ) ? $result : null;
+	}
+
+	/**
+	 * The URL the async request posts to, with the loopback override applied
+	 * regardless of which plugin's copy of the async-request library is loaded.
+	 *
+	 * WP_Async_Request is defined by whichever plugin loads one first, and old copies
+	 * return admin_url() without applying the `{identifier}_query_url` filter — the
+	 * loopback override registered by JobScheduler::register_loopback_url_override()
+	 * would never reach the dispatch URL. Building the URL here keeps the override
+	 * independent of the loaded library's vintage.
+	 *
+	 * Integrators overriding loopback should filter `gk/foundation/scheduler/loopback-base-url`,
+	 * which fans out to every self-referencing request; the hook applied here honors the
+	 * library's own `{identifier}_query_url` contract.
+	 *
+	 * @since 1.29.0
+	 *
+	 * @return string
+	 */
+	protected function get_query_url() {
+		// The library's own contract: a subclass-defined query_url wins, unfiltered.
+		if ( property_exists( $this, 'query_url' ) ) {
+			return $this->query_url;
+		}
+
+		$url = admin_url( 'admin-ajax.php' );
+
+		/** This filter is documented in {@see \WP_Async_Request::get_query_url()} (current library versions). */
+		return (string) apply_filters( $this->identifier . '_query_url', $url );
 	}
 
 	/**

@@ -1,0 +1,52 @@
+/**
+ * GravityView Theme — DIY Layout
+ *
+ * Minimal styling for DIY layout Views. DIY has intentionally simple
+ * markup, so styling is lighter than List or Layout Builder: separators
+ * between directory entries, a card around the single entry.
+ *
+ * Grid behavior is inherited from `_card-grid.scss`.
+ *
+ * @package   GravityView
+ * @license   GPL2
+ * @since     TBD
+ */
+
+@use "tokens" as *;
+
+// =========================================================
+// Multiple entries — single column (default)
+// Separator between entries, minimal chrome
+//
+// `gv-diy-container` and `gv-diy-multiple-container` are BOTH passed
+// into `gv_container_class()` on the directory template, so they sit
+// on the SAME element as `.gv-themed`: one compound selector.
+// =========================================================
+.gv-themed.gv-diy-container.gv-diy-multiple-container .gv-diy-view {
+	padding-block-end: var(--gv-space-4);
+	margin-block-end: var(--gv-space-4);
+	border-block-end: 1px solid var(--gv-color-row-divider);
+
+	&:last-child {
+		border-block-end: none;
+		margin-block-end: 0;
+		padding-block-end: 0;
+	}
+}
+
+// =========================================================
+// Single entry — card treatment matching List/Table patterns
+// =========================================================
+.gv-diy-single-container.gv-themed {
+	@include gv-entry-card($hover: false);
+}
+
+// =========================================================
+// No results
+// =========================================================
+.gv-diy-container.gv-themed .gv-no-results {
+	padding: var(--gv-space-8) var(--gv-space-6);
+	text-align: center;
+	color: var(--gv-color-text-secondary);
+	font-size: var(--gv-font-size-base);
+}

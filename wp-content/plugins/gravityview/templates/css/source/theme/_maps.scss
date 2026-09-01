@@ -1,0 +1,217 @@
+/**
+ * GravityView Theme — Maps Layout
+ *
+ * Styles for the Google Maps integration: map canvas, info windows,
+ * and geolocation search. Keeps a light touch since the Google Maps
+ * library manages its own UI.
+ *
+ * @package   GravityView
+ * @license   GPL2
+ * @since     TBD
+ */
+
+// =========================================================
+// Map canvas
+// =========================================================
+.gv-themed .gv-map-canvas {
+	border-radius: var(--gv-radius-lg);
+	overflow: hidden;
+	box-shadow: var(--gv-shadow-sm);
+	margin-block-end: var(--gv-space-4);
+}
+
+// =========================================================
+// Info window — outer container
+//
+// SC 1.4.13 Content on Hover or Focus (AA) contract.
+// The InfoWindow is a hover/focus-revealed popover. It MUST be:
+//   1. Dismissable — Escape key closes it (Maps add-on JS).
+//   2. Hoverable   — cursor can move from the trigger into the
+//                    InfoWindow without it auto-dismissing. The
+//                    CSS deliberately avoids `pointer-events: none`
+//                    and any `transition-delay` on close that
+//                    would create a mouse-bridge gap.
+//   3. Persistent  — does NOT auto-dismiss on a timer; only on
+//                    user action (Escape / click-outside / close
+//                    button).
+//
+// If the Maps add-on JS introduces an auto-hide timeout or an
+// animation-fill-mode collapse, it violates the contract and
+// SC 1.4.13 fails on the InfoWindow path.
+// =========================================================
+.gv-themed .gv-infowindow-container {
+	max-width: var(--gv-map-infowindow-max-width);
+	font-family: inherit;
+	display: flex;
+	gap: var(--gv-space-3);
+	// Popover layer — InfoWindow floats above the map canvas but
+	// below modals and toasts. Customers re-tune the popover layer
+	// once and every popover (info windows, future tooltip
+	// adornments) tracks the new stacking order.
+	position: relative;
+	z-index: var(--gv-z-popover);
+	// SC 1.4.13 — explicitly NOT setting `pointer-events: none`
+	// during fade so cursor can bridge from trigger to popover.
+
+	// =========================================================
+	// Info window — image
+	// =========================================================
+	.gv-infowindow-image img {
+		border-radius: var(--gv-radius-sm);
+		max-width: var(--gv-map-infowindow-image-max-width);
+		object-fit: cover;
+	}
+
+	// =========================================================
+	// Info window — content
+	// =========================================================
+	.gv-infowindow-content {
+		h4 {
+			font-size: var(--gv-font-size-base);
+			font-weight: var(--gv-font-weight-semibold);
+			margin-block-end: var(--gv-space-1);
+			margin-block-start: 0;
+		}
+
+		p {
+			font-size: var(--gv-font-size-sm);
+			color: var(--gv-color-text-secondary);
+			margin: 0;
+		}
+	}
+
+	// =========================================================
+	// Info window — entry link
+	// =========================================================
+	.gv-infowindow-entry-link {
+		color: var(--gv-color-primary);
+		text-decoration: none;
+
+		&:hover {
+			text-decoration: underline;
+		}
+	}
+
+	// =========================================================
+	// No-image variant — single column
+	// =========================================================
+	&.gv-infowindow-no-image {
+		display: block;
+	}
+}
+
+// =========================================================
+// Geolocation search field
+// =========================================================
+.gv-themed .gk-search-geolocation-field {
+
+	// =========================================================
+	// Address autocomplete container
+	// =========================================================
+	.gk-maps-search-geolocation-address-autocomplete-container {
+		display: flex;
+		align-items: stretch;
+		gap: 0;
+	}
+
+	// =========================================================
+	// Address autocomplete input
+	// =========================================================
+	.gk-maps-search-geolocation-address-autocomplete {
+		flex: 1 1 auto;
+		min-width: 0;
+		padding: var(--gv-space-2) var(--gv-space-3);
+		border: 1px solid var(--gv-color-border);
+		border-start-start-radius: var(--gv-radius-md);
+		border-end-start-radius: var(--gv-radius-md);
+		border-start-end-radius: 0;
+		border-end-end-radius: 0;
+		font-size: var(--gv-font-size-base);
+		color: var(--gv-color-text);
+		background: var(--gv-color-surface);
+		transition: border-color var(--gv-transition-fast) var(--gv-easing-standard),
+		            box-shadow var(--gv-transition-fast) var(--gv-easing-standard);
+
+		&:focus {
+			border-color: var(--gv-color-primary);
+			box-shadow: var(--gv-shadow-focus);
+			outline: none;
+		}
+
+		&::placeholder {
+			color: var(--gv-color-text-muted);
+		}
+	}
+
+	// =========================================================
+	// Current location button
+	// =========================================================
+	.gk-maps-search-current-geolocation {
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		min-width: var(--gv-size-touch-target);
+		min-height: var(--gv-size-touch-target);
+		padding: var(--gv-space-2);
+		border: 1px solid var(--gv-color-border);
+		border-inline-start: none;
+		border-start-start-radius: 0;
+		border-end-start-radius: 0;
+		border-start-end-radius: var(--gv-radius-md);
+		border-end-end-radius: var(--gv-radius-md);
+		background: var(--gv-color-surface);
+		color: var(--gv-color-primary);
+		cursor: pointer;
+		transition: background-color var(--gv-transition-fast) var(--gv-easing-standard),
+		            color var(--gv-transition-fast) var(--gv-easing-standard);
+
+		&:hover {
+			background-color: var(--gv-color-surface-alt);
+		}
+
+		&:focus-visible {
+			outline: none;
+			box-shadow: var(--gv-shadow-focus);
+		}
+
+		svg {
+			width: var(--gv-map-marker-size);
+			height: var(--gv-map-marker-size);
+			fill: currentColor;
+		}
+	}
+
+	// =========================================================
+	// Radius and unit selectors
+	// =========================================================
+	.gk-maps-search-current-geolocation-radius,
+	.gk-maps-search-current-geolocation-unit {
+		padding: var(--gv-space-2) var(--gv-space-3);
+		padding-inline-end: var(--gv-space-8);
+		border: 1px solid var(--gv-color-border);
+		border-radius: var(--gv-radius-md);
+		font-size: var(--gv-font-size-base);
+		color: var(--gv-color-text);
+		background: var(--gv-color-surface);
+		appearance: none;
+		background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1.41.59L6 5.17 10.59.59 12 2 6 8 0 2z' fill='%23607382'/%3E%3C/svg%3E");
+		background-repeat: no-repeat;
+		background-position: right var(--gv-space-3) center;
+		transition: border-color var(--gv-transition-fast) var(--gv-easing-standard),
+		            box-shadow var(--gv-transition-fast) var(--gv-easing-standard);
+
+		// RTL: text starts at the physical right, so flip the chevron
+		// to the physical left. The `padding-inline-end` reservation
+		// is logical and already maps to the left in RTL, so only the
+		// background-position needs the override.
+		&:dir(rtl) {
+			background-position: left var(--gv-space-3) center;
+		}
+
+		&:focus {
+			border-color: var(--gv-color-primary);
+			box-shadow: var(--gv-shadow-focus);
+			outline: none;
+		}
+	}
+}

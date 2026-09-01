@@ -1,10 +1,7 @@
 <?php
 /**
  * Abstract Action class.
- * *
- * @license GPL-2.0-or-later
- * Modified using {@see https://github.com/BrianHenryIE/strauss}.
- */
+ * */
 
 namespace GravityKit\GravityView\Foundation\Scheduler\Models;
 
@@ -180,18 +177,29 @@ class Task implements Restorable {
 	/**
 	 * Executes the task.
 	 *
+	 * The callback may live in another plugin whose bundled Foundation copy is
+	 * Strauss-prefixed differently, making its `NextRunRules` a different PHP
+	 * class than this copy's. A native return type would throw a TypeError at
+	 * the `return` — after the callback already did its work — so the value is
+	 * normalized instead: a foreign copy's rules object is rehydrated into this
+	 * copy's class via {@see NextRunRules::from_task_return()}.
+	 *
 	 * @since 1.12.0
+	 * @since 1.29.0 Removed the native return type; a NextRunRules from another
+	 *              bundled Foundation copy is normalized into this copy's class.
 	 *
 	 * @return NextRunRules|null
+	 *
+	 * @throws \UnexpectedValueException When the callback returns a value that is neither null nor a NextRunRules.
 	 */
-	public function execute(): ?NextRunRules {
+	public function execute() {
 		$this->logger()->debug( 'Executing task.', [ 'task' => $this->name ] );
 
 		if ( $this->enabled() ) {
 			$next_rules = call_user_func( $this->callback(), $this->args(), $this->job_data() );
 		}
 
-		return $next_rules ?? null;
+		return NextRunRules::from_task_return( $next_rules ?? null );
 	}
 
 	/**

@@ -1,6 +1,11 @@
 
 # Changelog
 
+## 1.9.30 | August 19, 2026
+
+- Fixed issue where read-only radio fields could break Stripe Payment Element submissions.
+- Fixed an issue where read-only fields could lose their disabled state after being hidden and shown via Gravity Forms conditional logic when the field was re-rendered by GP Populate Anything.
+
 ## 1.9.29 | May 14, 2025
 
 - Removed redundant check for Gravity Perks in preparation for Spellbook.

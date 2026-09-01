@@ -1,22 +1,23 @@
 <?php
 /**
- * Display the search single CHECKBOX input field ( on/off type)
+ * Backward-compatibility shim.
  *
- * @file class-search-widget.php See for usage
+ * This file was moved in GravityView 3.0. It is intentionally empty.
+ * GravityView classes and functions load automatically — you no longer
+ * need to require GravityView files in your code.
  *
- * @global array $data
+ * @deprecated 3.0
  */
 
-$search_field = \GV\Utils::get( $data, 'search_field', [] );
-$custom_class = \GV\Utils::get( $search_field, 'custom_class', '' );
-?>
+if ( ! defined( 'ABSPATH' ) ) {
+	die;
+}
 
-<div class="gv-search-box gv-search-field-single_checkbox <?php echo $custom_class; ?>">
-	<label for="search-box-<?php echo esc_attr( $search_field['name'] ); ?>" class="gv-check-radio">
-		<input type="checkbox" name="<?php echo esc_attr( $search_field['name'] ); ?>" value="1" id="search-box-<?php echo esc_attr( $search_field['name'] ); ?>" <?php checked( '1', $search_field['value'], true ); ?>>
-			<?php
-			if ( ! gv_empty( $search_field['label'], false, false ) ) {
-				echo esc_html( $search_field['label'] ); }
-			?>
-	</label>
-</div>
+if ( function_exists( '_deprecated_file' ) ) {
+	_deprecated_file(
+		plugin_basename( __FILE__ ),
+		'3.0',
+		'',
+		'This file was moved in GravityView 3.0 and will be removed in a future release. GravityView classes and functions load automatically — you no longer need to require them.'
+	);
+}

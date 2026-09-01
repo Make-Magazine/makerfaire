@@ -244,7 +244,7 @@
 
 		methods: {
 			browse: function () : void {
-				$(`#field_${this.formId}_${this.fieldId} div.moxie-shim input[type=file]`).trigger('click');
+				$(`#field_${this.formId}_${this.fieldId} div.moxie-shim input[type=file]`).last().trigger('click');
 			},
 			drop: function (event: DragEvent) : void {
 				this.up.addFile(Array.from(event.dataTransfer!.files));

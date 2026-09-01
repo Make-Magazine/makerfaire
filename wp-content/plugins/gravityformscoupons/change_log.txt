@@ -1,3 +1,9 @@
+### 3.5.2 | 2026-08-10
+- Update to use the new Gravity Forms accessible datepicker.
+- Fixed a bug where expired coupons can still be applied automatically through dynamic population.
+- Fixed an issue where saving an existing coupon can cause a redirect, preventing the updated banner from appearing.
+- Fixed use of deprecated currency class.
+
 ### 3.5.1 | 2026-04-28
 - Added [`gform_coupons_update_usage_count`](https://docs.gravityforms.com/gform_coupons_update_usage_count/) filter to allow custom code to determine when the usage count should be updated (i.e. when an entry is marked as Paid).
 - Updated the Coupon field so that it can’t be placed in a repeater or duplicated in the form editor.

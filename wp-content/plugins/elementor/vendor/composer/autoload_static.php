@@ -4,7 +4,7 @@
 
 namespace Composer\Autoload;
 
-class ComposerStaticInitd9867a7d4c2af17d8f202bb70ee314ce
+class ComposerStaticInitb818fdf39a6cd2bdaedbca57a960dc33
 {
     public static $files = array (
         '9db71c6726821ac61284818089584d23' => __DIR__ . '/..' . '/elementor/wp-one-package/runner.php',
@@ -230,9 +230,9 @@ class ComposerStaticInitd9867a7d4c2af17d8f202bb70ee314ce
     public static function getInitializer(ClassLoader $loader)
     {
         return \Closure::bind(function () use ($loader) {
-            $loader->prefixLengthsPsr4 = ComposerStaticInitd9867a7d4c2af17d8f202bb70ee314ce::$prefixLengthsPsr4;
-            $loader->prefixDirsPsr4 = ComposerStaticInitd9867a7d4c2af17d8f202bb70ee314ce::$prefixDirsPsr4;
-            $loader->classMap = ComposerStaticInitd9867a7d4c2af17d8f202bb70ee314ce::$classMap;
+            $loader->prefixLengthsPsr4 = ComposerStaticInitb818fdf39a6cd2bdaedbca57a960dc33::$prefixLengthsPsr4;
+            $loader->prefixDirsPsr4 = ComposerStaticInitb818fdf39a6cd2bdaedbca57a960dc33::$prefixDirsPsr4;
+            $loader->classMap = ComposerStaticInitb818fdf39a6cd2bdaedbca57a960dc33::$classMap;
 
         }, null, ClassLoader::class);
     }

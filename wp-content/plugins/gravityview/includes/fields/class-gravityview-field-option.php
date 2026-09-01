@@ -1,36 +1,23 @@
 <?php
 /**
- * @file class-gravityview-field-option.php
- * @package GravityView
- * @subpackage includes\fields
- * @since 2.17
+ * Backward-compatibility shim.
+ *
+ * This file was moved in GravityView 3.0. It is intentionally empty.
+ * GravityView classes and functions load automatically — you no longer
+ * need to require GravityView files in your code.
+ *
+ * @deprecated 3.0
  */
 
-/**
- * @since 2.17
- */
-class GravityView_Field_Option extends GravityView_Field {
-
-	var $name = 'option';
-
-	var $is_searchable = true;
-
-	var $is_numeric = false;
-
-	var $search_operators = array( 'is', 'isnot', 'contains', 'in', 'not_in' );
-
-	var $group = 'product';
-
-	var $icon = 'dashicons-cart';
-
-	/** @see GF_Field_Option */
-	var $_gf_field_class_name = 'GF_Field_Option';
-
-	public function __construct() {
-		$this->label       = esc_html__( 'Option', 'gk-gravityview' );
-		$this->description = esc_attr__( 'Options for a specific product field.', 'gk-gravityview' );
-		parent::__construct();
-	}
+if ( ! defined( 'ABSPATH' ) ) {
+	die;
 }
 
-new GravityView_Field_Option();
+if ( function_exists( '_deprecated_file' ) ) {
+	_deprecated_file(
+		plugin_basename( __FILE__ ),
+		'3.0',
+		'',
+		'This file was moved in GravityView 3.0 and will be removed in a future release. GravityView classes and functions load automatically — you no longer need to require them.'
+	);
+}

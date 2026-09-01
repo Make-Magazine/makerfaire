@@ -1,47 +1,23 @@
 <?php
-namespace GV\REST;
+/**
+ * Backward-compatibility shim.
+ *
+ * This file was moved in GravityView 3.0. It is intentionally empty.
+ * GravityView classes and functions load automatically. You no longer
+ * need to require GravityView files in your code.
+ *
+ * @deprecated 3.0
+ */
 
-/** If this file is called directly, abort. */
-if ( ! defined( 'GRAVITYVIEW_DIR' ) ) {
-	die();
+if ( ! defined( 'ABSPATH' ) ) {
+	die;
 }
 
-class Core {
-	public static $routes;
-
-	/**
-	 * Initialization.
-	 */
-	public static function init() {
-		if ( ! gravityview()->plugin->supports( \GV\Plugin::FEATURE_REST ) ) {
-			return;
-		}
-
-		/** Load routes. */
-		require_once gravityview()->plugin->dir( 'future/includes/rest/class-gv-rest-route.php' );
-		require_once gravityview()->plugin->dir( 'future/includes/rest/class-gv-rest-views-route.php' );
-
-		self::$routes['views'] = $views = new Views_Route();
-		$views->register_routes();
-	}
-
-	/**
-	 * Get namespace for GravityView REST API endpoints
-	 *
-	 * @since 2.0
-	 * @return string
-	 */
-	public static function get_namespace() {
-		return 'gravityview/v1';
-	}
-
-	/**
-	 * Get root URL for GravityView REST API
-	 *
-	 * @since 2.0
-	 * @return string
-	 */
-	public static function get_url() {
-		return rest_url( self::get_namespace() );
-	}
+if ( function_exists( '_deprecated_file' ) ) {
+	_deprecated_file(
+		plugin_basename( __FILE__ ),
+		'3.0',
+		'',
+		'This file was moved in GravityView 3.0 and will be removed in a future release. GravityView classes and functions load automatically. You no longer need to require them.'
+	);
 }

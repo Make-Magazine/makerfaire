@@ -1,9 +1,4 @@
 <?php
-/**
- * @license MIT
- *
- * Modified by gravitykit on 28-April-2026 using {@see https://github.com/BrianHenryIE/strauss}.
- */
 
 namespace GravityKit\AdvancedFilter\QueryFilters\Repository;
 
@@ -54,15 +49,17 @@ final class DefaultRepository implements FormRepository, UserRepository {
 			array_unshift(
 				$filter['values'],
 				[
-					'value' => '{user:ID}',
-					'text'  => esc_html__( 'Currently Logged-in User', 'gravityview-advanced-filter' ),
+					'value'  => '{user:ID}',
+					'text'   => esc_html__( 'Currently Logged-in User', 'gravityview-advanced-filter' ),
+					'pinned' => true,
 				],
 				[
-					'value' => '{user:ID:disabled_admin}',
-					'text'  => esc_html__(
+					'value'  => '{user:ID:disabled_admin}',
+					'text'   => esc_html__(
 						'Currently Logged-in User (Disabled for Administrators)',
 						'gravityview-advanced-filter'
 					),
+					'pinned' => true,
 				]
 			);
 
@@ -149,7 +146,7 @@ final class DefaultRepository implements FormRepository, UserRepository {
 		$field_filters[] = [
 			'key'       => 'current_user_role',
 			'text'      => __( 'Current User Role', 'gravityview-advanced-filter' ),
-			'operators' => [ 'has_any', 'has_all' ],
+			'operators' => [ 'has_any', 'has_all', 'has_none' ],
 			'values'    => self::get_user_role_choices( true ),
 		];
 
@@ -487,22 +484,24 @@ final class DefaultRepository implements FormRepository, UserRepository {
 
 				$current_user_filters = [
 					[
-						'text'  => __( 'Currently Logged-in User (Disabled for Administrators)', 'gravityview-advanced-filter' ),
-						'value' => 'created_by_or_admin',
+						'text'   => __( 'Currently Logged-in User (Disabled for Administrators)', 'gravityview-advanced-filter' ),
+						'value'  => 'created_by_or_admin',
+						'pinned' => true,
 					],
 					[
-						'text'  => __( 'Currently Logged-in User', 'gravityview-advanced-filter' ),
-						'value' => 'created_by',
+						'text'   => __( 'Currently Logged-in User', 'gravityview-advanced-filter' ),
+						'value'  => 'created_by',
+						'pinned' => true,
 					],
 				];
 
 				foreach ( $current_user_filters as $user_filter ) {
-					// Add to the beginning on the value options
 					array_unshift( $filter['values'], $user_filter );
 				}
 
-				$filter['operators'][] = 'isempty';
-				$filter['operators'][] = 'isnotempty';
+				$filter['auto_endpoint'] = 'users';
+				$filter['operators'][]   = 'isempty';
+				$filter['operators'][]   = 'isnotempty';
 			}
 
 			// Process filter operators (and nested filters recursively).

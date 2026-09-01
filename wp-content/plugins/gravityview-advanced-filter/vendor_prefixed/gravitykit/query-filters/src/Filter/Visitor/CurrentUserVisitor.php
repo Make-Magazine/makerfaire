@@ -1,9 +1,4 @@
 <?php
-/**
- * @license MIT
- *
- * Modified by gravitykit on 28-April-2026 using {@see https://github.com/BrianHenryIE/strauss}.
- */
 
 namespace GravityKit\AdvancedFilter\QueryFilters\Filter\Visitor;
 
@@ -93,12 +88,15 @@ final class CurrentUserVisitor implements FilterVisitor {
 
 		$result = array_intersect( $user->roles, $filter_roles );
 
-		if ( 'has_any' === $filter->operator() ) {
-			return count( $result ) > 0;
+		// `has_any` and `has_none` are proxied to `in` and `notin` by Filter::operator(); `has_all` passes through.
+		switch ( $filter->operator() ) {
+			case 'in': // Any.
+				return count( $result ) > 0;
+			case 'notin': // None.
+				return count( $result ) === 0;
+			default: // All.
+				return count( $result ) === count( $filter_roles );
 		}
-
-		// All filters need to match.
-		return count( $result ) === count( $filter_roles );
 	}
 
 	/**

@@ -1,28 +1,23 @@
 <?php
 /**
- * @file class-gravityview-field-chainedselect.php
- * @package GravityView
- * @subpackage includes\fields
+ * Backward-compatibility shim.
+ *
+ * This file was moved in GravityView 3.0. It is intentionally empty.
+ * GravityView classes and functions load automatically — you no longer
+ * need to require GravityView files in your code.
+ *
+ * @deprecated 3.0
  */
 
-class GravityView_Field_Chained_Select extends GravityView_Field {
-
-	var $name = 'chainedselect';
-
-	var $is_searchable = true;
-
-	var $search_operators = array( 'is', 'isnot' );
-
-	var $_gf_field_class_name = 'GF_Field_ChainedSelect';
-
-	var $group = 'advanced';
-
-	var $icon = 'dashicons-admin-links';
-
-	public function __construct() {
-		$this->label = esc_html__( 'Chained Select', 'gk-gravityview' );
-		parent::__construct();
-	}
+if ( ! defined( 'ABSPATH' ) ) {
+	die;
 }
 
-new GravityView_Field_Chained_Select();
+if ( function_exists( '_deprecated_file' ) ) {
+	_deprecated_file(
+		plugin_basename( __FILE__ ),
+		'3.0',
+		'',
+		'This file was moved in GravityView 3.0 and will be removed in a future release. GravityView classes and functions load automatically — you no longer need to require them.'
+	);
+}

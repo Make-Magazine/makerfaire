@@ -1,38 +1,23 @@
 <?php
 /**
- * @file class-gravityview-field-html.php
- * @package GravityView
- * @subpackage includes\fields
+ * Backward-compatibility shim.
+ *
+ * This file was moved in GravityView 3.0. It is intentionally empty.
+ * GravityView classes and functions load automatically — you no longer
+ * need to require GravityView files in your code.
+ *
+ * @deprecated 3.0
  */
 
-/**
- * Add custom options for HTML field
- */
-class GravityView_Field_HTML extends GravityView_Field {
-
-	var $name = 'html';
-
-	var $is_searchable = false;
-
-	var $is_sortable = false;
-
-	var $_gf_field_class_name = 'GF_Field_HTML';
-
-	var $group = 'standard';
-
-	var $icon = 'dashicons-media-code';
-
-	public function __construct() {
-		$this->label = esc_html__( 'HTML', 'gk-gravityview' );
-		parent::__construct();
-	}
-
-	public function field_options( $field_options, $template_id, $field_id, $context, $input_type, $form_id ) {
-
-		unset( $field_options['search_filter'], $field_options['show_as_link'] );
-
-		return $field_options;
-	}
+if ( ! defined( 'ABSPATH' ) ) {
+	die;
 }
 
-new GravityView_Field_HTML();
+if ( function_exists( '_deprecated_file' ) ) {
+	_deprecated_file(
+		plugin_basename( __FILE__ ),
+		'3.0',
+		'',
+		'This file was moved in GravityView 3.0 and will be removed in a future release. GravityView classes and functions load automatically — you no longer need to require them.'
+	);
+}

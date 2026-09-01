@@ -28,6 +28,27 @@ class GV_Extension_DataTables_Admin {
 		add_action( 'admin_enqueue_scripts', array( $this, 'add_scripts_and_styles' ), 999 );
 		add_filter( 'gravityview_noconflict_scripts', array( $this, 'register_no_conflict') );
 		add_filter( 'gravityview_noconflict_styles', array( $this, 'register_no_conflict') );
+
+		// Every other DataTables setting registers its default via a GV_DataTables_Extension
+		// subclass hooking this filter (see class-datatables-extension.php:94). "Save Table
+		// State" is rendered directly by this class instead, so without this it never appeared
+		// in the merged $defaults array that other extensions' settings_row() callbacks receive.
+		add_filter( 'gravityview_dt_default_settings', array( $this, 'default_settings' ) );
+	}
+
+	/**
+	 * Registers the "Save Table State" default on the shared DataTables defaults filter.
+	 *
+	 * @since 3.11
+	 *
+	 * @param array $settings Default settings array.
+	 *
+	 * @return array
+	 */
+	function default_settings( $settings ) {
+		$settings['save_state'] = 1;
+
+		return $settings;
 	}
 
 	/**
@@ -191,7 +212,35 @@ class GV_Extension_DataTables_Admin {
 		wp_localize_script( 'gravityview_datatables_admin', 'GV_DataTables_Admin', [
 			'internal_fields' => wp_list_pluck( GravityView_Fields::get_all( 'gravityview' ), 'name' ),
 			'field_used_in_sort' => __( 'This field is currently used in the Sort & Filter settings. Removing it will reset the sort configuration. Are you sure you want to continue?', 'gv-datatables' ),
+			'width_budget'    => $this->get_width_budget_strings(),
+			'pin_warning'     => __( 'This pin has no effect: pinned columns must be adjacent to the table edge. Move the field or pin the fields between it and the edge.', 'gv-datatables' ),
+			'legacy_fixedcolumns_overridden' => __( 'Per-field pins are set; they override this setting.', 'gv-datatables' ),
 		] );
+	}
+
+	/**
+	 * Strings for the column-width budget notice in the View editor.
+	 *
+	 * Provided fully formed (sprintf placeholders left in place for JS to fill) so the
+	 * notice's JS has no English literals of its own; every byte of visible text comes from
+	 * here.
+	 *
+	 * @since 3.12.0
+	 *
+	 * @return array<string,string>
+	 */
+	private function get_width_budget_strings() {
+		return [
+			/* translators: %1$d is the total of the configured widths; %2$s is the list of field labels with the shares they are scaled to. */
+			'overBudget'      => __( 'Column widths total %1$d%%. A table is 100%% wide, so they are scaled down to fit: %2$s. A column whose content needs more room than that takes it, unless Column Widths is set to keep every column at its set width.', 'gv-datatables' ),
+			/* translators: %1$s is the field label; %2$d is its scaled width. */
+			'overBudgetItem'  => _x( '%1$s: %2$d%%', 'Field label and its scaled width', 'gv-datatables' ),
+			'listSeparator'   => _x( ', ', 'List separator between scaled column widths', 'gv-datatables' ),
+			/* translators: %d is the number of columns left without a width. */
+			'starvedSingular' => __( 'The set widths leave no room for the %d column without a width. All widths will be ignored and every column will size by its content.', 'gv-datatables' ),
+			/* translators: %d is the number of columns left without a width. */
+			'starvedPlural'   => __( 'The set widths leave no room for the %d columns without a width. All widths will be ignored and every column will size by its content.', 'gv-datatables' ),
+		];
 	}
 
 	/**

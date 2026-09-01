@@ -1,70 +1,23 @@
 <?php
-
-namespace GV\Search\Fields;
-
-use GV\Search\Querying\Search_Filter;
-use GV\View;
-
 /**
- * Represents a search field that searches on entry ID.
+ * Backward-compatibility shim.
  *
- * @since 2.42
+ * This file was moved in GravityView 3.0. It is intentionally empty.
+ * GravityView classes and functions load automatically — you no longer
+ * need to require GravityView files in your code.
  *
- * @extends Search_Field<string>
+ * @deprecated 3.0
  */
-final class Search_Field_Entry_ID extends Search_Field {
-	/**
-	 * @inheritDoc
-	 * @since 2.42
-	 */
-	protected string $icon = 'dashicons-tag';
 
-	/**
-	 * @inheritdoc
-	 * @since 2.42
-	 */
-	protected static string $type = 'entry_id';
+if ( ! defined( 'ABSPATH' ) ) {
+	die;
+}
 
-	/**
-	 * @inheritDoc
-	 * @since 2.42
-	 */
-	protected function get_name(): string {
-		return esc_html__( 'Entry ID', 'gk-gravityview' );
-	}
-
-	/**
-	 * @inheritDoc
-	 * @since 2.42
-	 */
-	protected function get_default_label(): string {
-		return esc_html__( 'Entry ID:', 'gk-gravityview' );
-	}
-
-	/**
-	 * @inheritDoc
-	 * @since 2.42
-	 */
-	public function get_description(): string {
-		return esc_html__( 'Search on entry ID', 'gk-gravityview' );
-	}
-
-	/**
-	 * @inheritDoc
-	 * @since 2.42
-	 */
-	protected function get_input_name(): string {
-		return 'gv_id';
-	}
-
-	/**
-	 * {@inheritDoc}
-	 *
-	 * @since $ver$
-	 */
-	public function adjust_filter( Search_Filter $filter, ?View $view = null ): Search_Filter {
-		return parent::adjust_filter( $filter, $view )
-		             ->with_operator( '=', [ '=' ] )
-		             ->with_key( 'id' );
-	}
+if ( function_exists( '_deprecated_file' ) ) {
+	_deprecated_file(
+		plugin_basename( __FILE__ ),
+		'3.0',
+		'',
+		'This file was moved in GravityView 3.0 and will be removed in a future release. GravityView classes and functions load automatically — you no longer need to require them.'
+	);
 }

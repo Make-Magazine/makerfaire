@@ -1,22 +1,23 @@
 <?php
 /**
- * Display the search by entry date input boxes
+ * Backward-compatibility shim.
  *
- * @file class-search-widget.php See for usage
+ * This file was moved in GravityView 3.0. It is intentionally empty.
+ * GravityView classes and functions load automatically — you no longer
+ * need to require GravityView files in your code.
  *
- * @global array $data
+ * @deprecated 3.0
  */
 
-$search_field     = \GV\Utils::get( $data, 'search_field', [] );
-$datepicker_class = \GV\Utils::get( $data, 'datepicker_class', '' );
-$custom_class     = \GV\Utils::get( $search_field, 'custom_class', '' );
-?>
+if ( ! defined( 'ABSPATH' ) ) {
+	die;
+}
 
-<div class="gv-search-box gv-search-date <?php echo $custom_class; ?>">
-	<?php if ( ! gv_empty( $search_field['label'], false, false ) ) { ?>
-	<label for="search-box-<?php echo esc_attr( $search_field['name'] ); ?>"><?php echo esc_html( $search_field['label'] ); ?></label>
-	<?php } ?>
-	<p>
-		<input type="text" name="<?php echo esc_attr( $search_field['name'] ); ?>" id="search-box-<?php echo esc_attr( $search_field['name'] ); ?>" value="<?php echo esc_attr( $search_field['value'] ); ?>" class="<?php echo gravityview_sanitize_html_class( $datepicker_class ); ?>" >
-	</p>
-</div>
+if ( function_exists( '_deprecated_file' ) ) {
+	_deprecated_file(
+		plugin_basename( __FILE__ ),
+		'3.0',
+		'',
+		'This file was moved in GravityView 3.0 and will be removed in a future release. GravityView classes and functions load automatically — you no longer need to require them.'
+	);
+}

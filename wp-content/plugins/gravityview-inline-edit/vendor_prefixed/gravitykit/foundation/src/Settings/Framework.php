@@ -117,7 +117,10 @@ class Framework {
 
 		add_filter( 'gk/foundation/ajax/' . self::AJAX_ROUTER . '/routes', [ $this, 'configure_ajax_routes' ] );
 
-		$this->add_gk_submenu_item();
+		// Build the translated submenu title on `init`, not during Core boot (which runs on
+		// `plugins_loaded`, before `after_setup_theme`), to avoid WordPress 6.7's just-in-time
+		// translation notice. The menu is not consumed until `admin_menu`.
+		add_action( 'init', [ $this, 'add_gk_submenu_item' ] );
 
 		/**
 		 * Fires when the class has finished initializing.

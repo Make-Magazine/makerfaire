@@ -56,6 +56,8 @@ __( `class %s removed`, 'elementor' );
 __( 'Class', 'elementor' );
 /* translators: %s is the class name. */
 __( `%s created`, 'elementor' );
+__( 'Some classes are missing', 'elementor' );
+__( 'A class was removed from your site and is no longer active on this element', 'elementor' );
 __( 'Local Class', 'elementor' );
 __( 'Duplicate', 'elementor' );
 __( 'local', 'elementor' );
@@ -79,6 +81,7 @@ __( 'States', 'elementor' );
 /* translators: %s: Element type title. */
 __( '%s States', 'elementor' );
 __( 'selected', 'elementor' );
+__( 'disabled', 'elementor' );
 __( 'With your current role, you can only use existing states.', 'elementor' );
 __( 'Has style', 'elementor' );
 __( 'Remove', 'elementor' );
@@ -187,7 +190,7 @@ __( 'Reversed wrap', 'elementor' );
 __( 'Display', 'elementor' );
 __( 'Flex wrap', 'elementor' );
 __( 'Flex child', 'elementor' );
-__( 'Grid Child', 'elementor' );
+__( 'Grid child', 'elementor' );
 __( 'Justify content', 'elementor' );
 __( 'Start', 'elementor' );
 __( 'Center', 'elementor' );
@@ -195,15 +198,26 @@ __( 'End', 'elementor' );
 __( 'Space between', 'elementor' );
 __( 'Space around', 'elementor' );
 __( 'Space evenly', 'elementor' );
-__( 'Column Span', 'elementor' );
-__( 'Row Span', 'elementor' );
+__( 'Grid column', 'elementor' );
+__( 'Grid row', 'elementor' );
 __( 'Columns', 'elementor' );
 __( 'Rows', 'elementor' );
+__( 'Show Grid Outline', 'elementor' );
 __( 'Justify items', 'elementor' );
 __( 'Start', 'elementor' );
 __( 'Center', 'elementor' );
 __( 'End', 'elementor' );
 __( 'Stretch', 'elementor' );
+__( 'Auto rows', 'elementor' );
+__( 'Auto columns', 'elementor' );
+__(
+	'Set the size for new rows created automatically when content exceeds the defined grid.',
+	'elementor'
+);
+__(
+	'Set the size for new columns created automatically when content exceeds the defined grid.',
+	'elementor'
+);
 __( 'Auto flow', 'elementor' );
 __( 'Dense', 'elementor' );
 __( 'Row', 'elementor' );
@@ -233,12 +247,12 @@ __( 'Flex', 'elementor' );
 __( 'Flex', 'elementor' );
 __( 'Grid', 'elementor' );
 __( 'Grid', 'elementor' );
+__( 'None', 'elementor' );
+__( 'None', 'elementor' );
 __( 'In-blk', 'elementor' );
 __( 'Inline-block', 'elementor' );
 __( 'In-flx', 'elementor' );
 __( 'Inline-flex', 'elementor' );
-__( 'None', 'elementor' );
-__( 'None', 'elementor' );
 __( 'Align self', 'elementor' );
 __( 'Start', 'elementor' );
 __( 'Center', 'elementor' );

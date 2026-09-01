@@ -1,0 +1,180 @@
+// Token-driven button utility. `.gv-button` (+ `--secondary`,
+// `--danger` modifiers) styles any element — `<a>`, `<button>`,
+// `<input type="submit">` — as a modern button. Edit Entry's
+// rendered class names alias to the variants so the same paint
+// applies without template changes:
+//
+//   .gv-button-update | -previous | -next  →  primary
+//   .gv-button-cancel                       →  secondary
+//   .gv-button-delete                       →  danger
+//
+// Scoped under `.gv-themed` so the paint only reaches Views (and
+// the Edit Entry wrapper, which carries the marker itself) that
+// opted into a theme; legacy Views sharing the page keep
+// their own button chrome.
+//
+// `!important` survives ONLY on the paint axes (background-color,
+// color, border, box-shadow). Edit Entry buttons carry Gravity
+// Forms' `.button` / `.gform_button` classes, and GF's theme
+// framework (gravity-forms-theme-framework.min.css) paints those
+// axes at roughly (0,6,1) specificity, far beyond any sane scoped
+// selector here. The sanctioned customization path is the
+// `--gv-button-*` tokens, which these declarations consume, so
+// importance does not block token-based restyling.
+.gv-themed {
+	.gv-button,
+	.gv-button-update,
+	.gv-button-previous,
+	.gv-button-next,
+	.gv-button-cancel,
+	.gv-button-delete {
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		gap: var(--gv-space-2);
+		padding: var(--gv-button-padding-block) var(--gv-button-padding-inline);
+		border-radius: var(--gv-button-radius);
+		font-family: inherit;
+		font-size: var(--gv-button-font-size);
+		font-weight: var(--gv-button-font-weight);
+		line-height: var(--gv-line-height-normal);
+		min-height: var(--gv-button-min-height);
+		text-align: center;
+		text-decoration: none;
+		cursor: pointer;
+		user-select: none;
+		transition: background-color var(--gv-transition-fast) var(--gv-easing-standard),
+		            border-color var(--gv-transition-fast) var(--gv-easing-standard),
+		            color var(--gv-transition-fast) var(--gv-easing-standard),
+		            box-shadow var(--gv-transition-fast) var(--gv-easing-standard);
+	}
+
+	// GF's theme framework sizes `.button` controls at (0,4,0), beating the
+	// base rule and leaving the Update <input> shorter than the Cancel/Delete
+	// <a> links. The Edit Entry buttons share the `#publishing-action` wrapper,
+	// whose id re-asserts one token-driven box above GF without !important.
+	#publishing-action :is(
+		.gv-button-update,
+		.gv-button-previous,
+		.gv-button-next,
+		.gv-button-cancel,
+		.gv-button-delete
+	) {
+		box-sizing: border-box;
+		min-height: var(--gv-button-min-height);
+		padding: var(--gv-button-padding-block) var(--gv-button-padding-inline);
+		font-size: var(--gv-button-font-size);
+		line-height: var(--gv-line-height-normal);
+	}
+
+	// Primary: filled.
+	// `!important` beats Gravity Forms' theme-framework paint on
+	// `.gform_button` / `.button` (Edit Entry's Update button).
+	.gv-button,
+	.gv-button-update,
+	.gv-button-previous,
+	.gv-button-next {
+		background-color: var(--gv-button-bg) !important;
+		color: var(--gv-button-color) !important;
+		border: var(--gv-button-border-width) solid var(--gv-button-border-color) !important;
+		box-shadow: none !important;
+	}
+
+	.gv-button.gv-button,
+	.gv-button-update.gv-button-update,
+	.gv-button-previous.gv-button-previous,
+	.gv-button-next.gv-button-next {
+		&:hover,
+		&:focus,
+		&:active {
+			// `!important` beats Gravity Forms' theme-framework
+			// `:hover` paint on `.gform_button` / `.button`.
+			background-color: var(--gv-button-bg-hover) !important;
+			border-color: var(--gv-button-border-color-hover) !important;
+			color: var(--gv-button-color) !important;
+			text-decoration: none;
+		}
+	}
+
+	// Secondary: outlined / neutral.
+	// `!important` beats Gravity Forms' theme-framework paint on
+	// `.button` (Edit Entry's Cancel link carries `.button`).
+	.gv-button.gv-button--secondary,
+	.gv-button-cancel {
+		background-color: var(--gv-button-secondary-bg) !important;
+		color: var(--gv-button-secondary-color) !important;
+		border: var(--gv-button-secondary-border-width) solid var(--gv-button-secondary-border-color) !important;
+		box-shadow: none !important;
+	}
+
+	.gv-button.gv-button--secondary.gv-button--secondary,
+	.gv-button-cancel.gv-button-cancel {
+		&:hover,
+		&:focus,
+		&:active {
+			// `!important` beats Gravity Forms' theme-framework
+			// `:hover` paint on `.button`.
+			background-color: var(--gv-button-secondary-bg-hover) !important;
+			border-color: var(--gv-button-secondary-border-color-hover) !important;
+			color: var(--gv-button-secondary-color-hover) !important;
+			text-decoration: none;
+		}
+	}
+
+	// Danger: outlined-error, filling on hover.
+	// `!important` beats Gravity Forms' theme-framework paint on
+	// `.button` (the Delete link carries `.button`).
+	.gv-button.gv-button--danger,
+	.gv-button-delete {
+		background-color: var(--gv-button-danger-bg) !important;
+		color: var(--gv-button-danger-color) !important;
+		border: var(--gv-button-danger-border-width) solid var(--gv-button-danger-border-color) !important;
+		box-shadow: none !important;
+	}
+
+	.gv-button.gv-button--danger.gv-button--danger,
+	.gv-button-delete.gv-button-delete {
+		&:hover,
+		&:focus,
+		&:active {
+			// `!important` beats Gravity Forms' theme-framework
+			// `:hover` paint on `.button`.
+			background-color: var(--gv-button-danger-bg-hover) !important;
+			border-color: var(--gv-button-danger-border-color-hover) !important;
+			color: var(--gv-button-danger-color-hover) !important;
+			text-decoration: none;
+		}
+	}
+
+	// Focus ring: keyboard focus only.
+	// `!important` beats Gravity Forms' theme-framework focus
+	// box-shadow on `.button` / `.gform_button`.
+	.gv-button:focus-visible,
+	.gv-button-update:focus-visible,
+	.gv-button-previous:focus-visible,
+	.gv-button-next:focus-visible,
+	.gv-button-cancel:focus-visible,
+	.gv-button-delete:focus-visible {
+		outline: none;
+		box-shadow: var(--gv-shadow-focus) !important;
+	}
+
+	// Disabled: `:disabled`, `aria-disabled`, and `.is-disabled`
+	// (for links / spans where `:disabled` doesn't apply).
+	// `!important` beats Gravity Forms' theme-framework disabled
+	// paint on `.button:disabled`.
+	.gv-button:disabled,
+	.gv-button[aria-disabled="true"],
+	.gv-button.is-disabled,
+	.gv-button-update:disabled,
+	.gv-button-previous:disabled,
+	.gv-button-next:disabled,
+	.gv-button-cancel:disabled,
+	.gv-button-delete:disabled {
+		background-color: var(--gv-button-bg-disabled) !important;
+		color: var(--gv-button-color-disabled) !important;
+		border-color: var(--gv-button-bg-disabled) !important;
+		cursor: not-allowed;
+		pointer-events: none;
+	}
+}

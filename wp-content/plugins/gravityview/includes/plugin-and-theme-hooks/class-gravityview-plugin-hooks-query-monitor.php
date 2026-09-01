@@ -1,41 +1,23 @@
 <?php
 /**
- * Add Query Monitor customizations
+ * Backward-compatibility shim.
  *
- * @file      class-gravityview-plugin-hooks-query-monitor.php
- * @package   GravityView
- * @license   GPL2+
- * @author    GravityKit <hello@gravitykit.com>
- * @link      http://www.gravitykit.com
- * @copyright Copyright 2015, Katz Web Services, Inc.
+ * This file was moved in GravityView 3.0. It is intentionally empty.
+ * GravityView classes and functions load automatically — you no longer
+ * need to require GravityView files in your code.
  *
- * @since 1.16.5
+ * @deprecated 3.0
  */
 
-/**
- * @inheritDoc
- * @since 2.0
- */
-class GravityView_Plugin_Hooks_Query_Monitor extends GravityView_Plugin_and_Theme_Hooks {
-
-	/**
-	 * @since 2.0
-	 */
-	protected $class_name = 'QueryMonitor';
-
-	/**
-	 * @since 2.0
-	 */
-	protected $script_handles = array(
-		'query-monitor',
-	);
-
-	/**
-	 * @since 2.0
-	 */
-	protected $style_handles = array(
-		'query-monitor',
-	);
+if ( ! defined( 'ABSPATH' ) ) {
+	die;
 }
 
-new GravityView_Plugin_Hooks_Query_Monitor();
+if ( function_exists( '_deprecated_file' ) ) {
+	_deprecated_file(
+		plugin_basename( __FILE__ ),
+		'3.0',
+		'',
+		'This file was moved in GravityView 3.0 and will be removed in a future release. GravityView classes and functions load automatically — you no longer need to require them.'
+	);
+}

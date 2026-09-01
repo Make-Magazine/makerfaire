@@ -102,7 +102,7 @@ class Atomic_Form_Panel_Promotion {
 			return false;
 		}
 
-		if ( API::active_licence_has_feature( self::FORM_FEATURE_NAME ) ) {
+		if ( API::is_license_active() && API::active_licence_has_feature( self::FORM_FEATURE_NAME ) ) {
 			return false;
 		}
 

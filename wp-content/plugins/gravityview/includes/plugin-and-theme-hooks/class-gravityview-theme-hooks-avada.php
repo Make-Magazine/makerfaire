@@ -1,50 +1,23 @@
 <?php
 /**
- * Add Avada Theme compatibility to GravityView, including registering scripts and styles to GravityView no-conflict list
+ * Backward-compatibility shim.
  *
- * @file      class-gravityview-theme-hooks-avada.php
- * @package   GravityView
- * @license   GPL2+
- * @author    GravityKit <hello@gravitykit.com>
- * @link      http://www.gravitykit.com
- * @copyright Copyright 2015, Katz Web Services, Inc.
+ * This file was moved in GravityView 3.0. It is intentionally empty.
+ * GravityView classes and functions load automatically — you no longer
+ * need to require GravityView files in your code.
  *
- * @since 1.15.2
+ * @deprecated 3.0
  */
 
-/**
- * @inheritDoc
- * @since 1.15.2
- */
-class GravityView_Theme_Hooks_Avada extends GravityView_Plugin_and_Theme_Hooks {
-
-	/**
-	 * @inheritDoc
-	 * @since 1.15.2
-	 */
-	protected $function_name = 'avada_scripts';
-
-	/**
-	 * @inheritDoc
-	 * @since 1.15.2
-	 */
-	protected $content_meta_keys = array(
-		'sbg_selected_sidebar',
-	);
-
-	/**
-	 * @inheritDoc
-	 * @since 1.15.2
-	 */
-	protected $script_handles = array(
-		'jquery.biscuit',
-		'avada_upload',
-		'tipsy',
-		'jquery-ui-slider',
-		'smof',
-		'cookie',
-		'kd-multiple-featured-images',
-	);
+if ( ! defined( 'ABSPATH' ) ) {
+	die;
 }
 
-new GravityView_Theme_Hooks_Avada();
+if ( function_exists( '_deprecated_file' ) ) {
+	_deprecated_file(
+		plugin_basename( __FILE__ ),
+		'3.0',
+		'',
+		'This file was moved in GravityView 3.0 and will be removed in a future release. GravityView classes and functions load automatically — you no longer need to require them.'
+	);
+}

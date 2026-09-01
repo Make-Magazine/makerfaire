@@ -48,6 +48,7 @@ class GV_Extension_DataTables_FixedHeader extends GV_DataTables_Extension {
 							'desc' => esc_html__( 'Fix the first column in place while horizontally scrolling a table. The first column and its contents will remain visible at all times.', 'gv-datatables' ),
 						), $ds['fixedcolumns'] );
 					?>
+					<p id="gv-dt-legacy-fixedcolumns-note" class="description" role="status" aria-live="polite" hidden></p>
 				</td>
 			</tr>
 		</table>
@@ -114,12 +115,44 @@ class GV_Extension_DataTables_FixedHeader extends GV_DataTables_Extension {
 	 */
 	function add_config( $dt_config, $view_id, $post, $object ) {
 
-		// FixedColumns need scrollX to be set
-		$dt_config['scrollX'] = true;
+		$settings          = $this->get_settings( $view_id );
+		$has_fixed_columns = ! empty( $settings['fixedcolumns'] );
+
+		// This class owns both settings and runs when either is enabled, but only
+		// FixedColumns needs horizontal scrolling. Forcing it for FixedHeader alone wraps
+		// the table in scroll containers and clones the header, which reflows the layout and
+		// drops the widths the original cells carry.
+		if ( $has_fixed_columns ) {
+			$dt_config['scrollX'] = true;
+		}
 
 		gravityview()->log->debug( '[fixedheadercolumns_add_config] Inserting FixedColumns config. Data: ', array( 'data' => $dt_config ) );
 
 		return $dt_config;
+	}
+
+	/**
+	 * Returns the FixedHeader/FixedColumns inline-script config for a View.
+	 *
+	 * Includes the View ID so the frontend can match the config to its table
+	 * instead of relying on DOM order.
+	 *
+	 * @since 3.10.0
+	 *
+	 * @param \GV\View $view The View.
+	 *
+	 * @return array
+	 */
+	public function get_output_config_data( $view ) {
+		$fixed_config = array( 'view_id' => $view->ID );
+
+		$settings = get_post_meta( $view->ID, '_gravityview_datatables_settings', true );
+
+		foreach ( array( 'fixedheader', 'fixedcolumns' ) as $key ) {
+			$fixed_config[ $key ] = empty( $settings[ $key ] ) ? 0 : 1;
+		}
+
+		return $fixed_config;
 	}
 
 	/**
@@ -134,17 +167,7 @@ class GV_Extension_DataTables_FixedHeader extends GV_DataTables_Extension {
 			return;
 		}
 
-		$fixed_config = array();
-
-		$settings = get_post_meta( $gravityview->view->ID, '_gravityview_datatables_settings', true );
-
-		foreach ( array( 'fixedheader', 'fixedcolumns' ) as $key ) {
-			if ( ! empty( $settings[ $key ] ) ) {
-				$fixed_config[ $key ] = 1;
-			} else {
-				$fixed_config[ $key ] = 0;
-			}
-		}
+		$fixed_config = $this->get_output_config_data( $gravityview->view );
 
 		?>
 			<script type="text/javascript">

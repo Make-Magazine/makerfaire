@@ -1,36 +1,23 @@
 <?php
 /**
- * select
+ * Backward-compatibility shim.
+ *
+ * This file was moved in GravityView 3.0. It is intentionally empty.
+ * GravityView classes and functions load automatically — you no longer
+ * need to require GravityView files in your code.
+ *
+ * @deprecated 3.0
  */
-class GravityView_FieldType_radio extends GravityView_FieldType {
 
-	function render_option() {
-		?>
-		<div class="gv-label">
-		<?php
-			echo $this->get_field_label();
-		?>
-		</div>
-		<?php
-			echo $this->get_tooltip();
-			echo $this->get_field_desc() . ' ';
-
-			$this->render_input();
-	}
-
-	function render_input( $override_input = null ) {
-		if ( isset( $override_input ) ) {
-			echo $override_input;
-			return;
-		}
-
-		foreach ( $this->field['options'] as $value => $label ) :
-			?>
-		<label class="<?php echo $this->get_label_class(); ?>">
-			<input name="<?php echo esc_attr( $this->name ); ?>" id="<?php echo $this->get_field_id(); ?>-<?php echo esc_attr( $value ); ?>" type="radio" value="<?php echo esc_attr( $value ); ?>" <?php checked( $value, $this->value, true ); ?> />&nbsp;<?php echo esc_html( $label ); ?>
-		</label>
-			<?php
-		endforeach;
-	}
+if ( ! defined( 'ABSPATH' ) ) {
+	die;
 }
 
+if ( function_exists( '_deprecated_file' ) ) {
+	_deprecated_file(
+		plugin_basename( __FILE__ ),
+		'3.0',
+		'',
+		'This file was moved in GravityView 3.0 and will be removed in a future release. GravityView classes and functions load automatically — you no longer need to require them.'
+	);
+}

@@ -278,11 +278,23 @@ class GPPA_Compatibility_GravityView {
 			$search_field['value'] = $value;
 		}
 
+		// Used by GravityView prior to 3.0, where templates read the search field off the
+		// GravityView_View instance.
 		// @phpstan-ignore-next-line
 		\GravityView_View::getInstance()->search_field = $search_field;
 
 		ob_start();
-		\GravityView_View::getInstance()->render( 'search-field', $search_field['type'], false );
+		/**
+		 * As of GravityView 3.0, search field templates read from a `$data` global rather than
+		 * the GravityView_View instance, so the field is passed as the fourth `$data` argument.
+		 * Older versions ignore the extra argument.
+		 */
+		\GravityView_View::getInstance()->render(
+			'search-field',
+			$search_field['type'],
+			false,
+			array( 'search_field' => $search_field )
+		);
 		$output = ob_get_clean();
 
 		return $output;

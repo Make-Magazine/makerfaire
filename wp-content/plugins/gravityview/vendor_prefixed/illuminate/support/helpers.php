@@ -1,11 +1,5 @@
 <?php
 namespace GravityKit\GravityView\Foundation\ThirdParty\Illuminate\Support;
-/**
- * @license MIT
- *
- * Modified using {@see https://github.com/BrianHenryIE/strauss}.
- */
-
 use GravityKit\GravityView\Foundation\ThirdParty\Illuminate\Support\Arr;
 use GravityKit\GravityView\Foundation\ThirdParty\Illuminate\Support\Str;
 use GravityKit\GravityView\Foundation\ThirdParty\Illuminate\Support\Collection;

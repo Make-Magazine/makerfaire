@@ -9,6 +9,16 @@
 		width: 100% !important; // overrides the fixed width calculated by the responsive algorithm
 	}
 
+	// Responsive's nowrap must not reach the child row: an unwrappable child cell widens the
+	// whole auto-layout table past the viewport and clips the last column. tr.child covers both
+	// the stock renderer (ul.dtr-details) and the hide_empty custom renderer, whose <ul> carries
+	// no class.
+	table.nowrap > tbody > tr.child > td,
+	table.nowrap > tbody > tr.child li {
+		white-space: normal;
+		overflow-wrap: break-word;
+	}
+
 	.dataTables_filter,
 	.dataTables_length {
 		white-space: nowrap;
@@ -70,6 +80,40 @@
 		display: block;
 		width: 100%;
 		min-width: 4em;
+
+		// "Filter by Start Date" cannot fit a narrow column, and the default clip cuts it
+		// mid-letter, which reads as a rendering fault rather than as truncation. The full
+		// text stays reachable through the `title` the JS mirrors onto every filter.
+		text-overflow: ellipsis;
+	}
+
+	// Scrolling gives the head and footer tables of their own, and neither holds the data, so on
+	// auto layout each resolves a width the body does not share: after a resize the body re-lays
+	// and they do not, by 162px on a phone. Fixed layout makes them obey the widths
+	// syncFooterColumnWidths hands them. The body stays on auto layout, which is what keeps a
+	// column from being starved below its own content.
+	.dataTables_scrollHead table,
+	.dataTables_scrollFoot table {
+		table-layout: fixed;
+
+		// Responsive adds .nowrap, whose auto layout would defeat this again.
+		&.nowrap {
+			table-layout: fixed;
+		}
+
+		// DataTables' own CSS sets content-box, which would add cell padding on top of each
+		// assigned width and re-introduce the drift this rule removes.
+		th,
+		td {
+			box-sizing: border-box;
+		}
+	}
+
+	// FixedColumns lays `.dataTables_wrapper` out as a flexbox. Its `.dataTables_scroll` flex
+	// item must be allowed to shrink below the auto-layout table's natural width; otherwise the
+	// whole page widens instead of leaving the overflow in DataTables' scroll body.
+	.dataTables_scroll {
+		min-width: 0;
 	}
 }
 
@@ -117,4 +161,84 @@ html[dir="rtl"] .gv-datatables-container {
 
 .DTTT_print_info {
 	z-index: 10;
+}
+
+// Scroll surface for a table wider than the space around it. Wraps the table alone, so the
+// search box and pagination stay put while the table scrolls.
+.gv-dt-overflow {
+	overflow-x: auto;
+	max-width: 100%;
+
+	// The length menu and search box float, so without clearing them this is laid out beside
+	// them: it loses their width and the table is pushed sideways and clipped.
+	clear: both;
+}
+
+// A View set to "Always exact" keeps its configured percentages at every screen size. Fixed
+// layout ignores content, so a value wider than its share overlaps the column beside it — that
+// is the trade the setting names, and why it is not the default.
+table.gv-dt-exact-widths {
+	table-layout: fixed;
+
+	// Responsive adds .nowrap, whose auto layout would defeat the percentages again.
+	&.nowrap {
+		table-layout: fixed;
+	}
+}
+
+// Deliberately no `table-layout: fixed`: automatic layout honours the <th> percentages where
+// there is room and still refuses to take a column below its own content, which fixed layout
+// would not.
+//
+// Not scoped to .gv-datatables-container: FixedHeader clones the header outside it, and the
+// clone must resolve the same box model as the cells it copies pixel widths from.
+table.gv-dt-fixed-layout {
+	th,
+	td {
+		// DataTables' own CSS sets content-box, which adds cell padding on top of each
+		// percentage: 25/25/50 rendered as 26.2/26.2/47.6 and always stole from the widest
+		// column. Border-box makes the configured percentage the whole column.
+		box-sizing: border-box;
+	}
+
+	// A server-side table has no body content to establish useful minimums until its first
+	// response arrives. Keep that temporary state readable without taking column sizing away
+	// from automatic layout. Not for a View that asked for exact percentages: a floor is
+	// exactly what that setting says not to apply.
+	&:not( .gv-dt-exact-widths ) thead th {
+		min-width: 60px;
+		overflow-wrap: normal;
+	}
+
+	td {
+		// A value with no break opportunity of its own, such as an untruncated URL, is broken
+		// rather than allowed to widen the table without limit.
+		overflow-wrap: break-word;
+	}
+}
+
+// Clears every field filter at once. Hidden until a filter is active, so a View's initial
+// rendering is unchanged.
+.gv-datatables-container .gv-dt-clear-filters {
+	margin: 0 0 .5em;
+}
+
+// Shown in place of the spinner when a table cannot load.
+.gv-datatables-container .gv-dt-error {
+	margin: 0 0 1em;
+
+	p {
+		margin: 0 0 .5em;
+	}
+
+	pre {
+		max-width: 100%;
+		overflow-x: auto;
+		white-space: pre-wrap;
+	}
+}
+
+// Shown instead of running an export whose full row count exceeds the configured cap.
+.gv-datatables-container .gv-dt-export-notice {
+	margin: 0 0 1em;
 }

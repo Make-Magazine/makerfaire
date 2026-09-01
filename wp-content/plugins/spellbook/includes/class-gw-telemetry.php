@@ -32,12 +32,12 @@ class GW_Telemetry {
 	}
 
 	public function get_data() {
-		$form_counts = GFFormsModel::get_form_count();
-		$active_count = $form_counts['active'];
+		$form_counts    = GFFormsModel::get_form_count();
+		$active_count   = $form_counts['active'];
 		$inactive_count = $form_counts['inactive'];
-		$fc = abs( $active_count ) + abs( $inactive_count );
-		$entry_count = GFFormsModel::get_entry_count_all_forms( 'active' );
-		$meta_counts = GFFormsModel::get_entry_meta_counts();
+		$fc             = abs( $active_count ) + abs( $inactive_count );
+		$entry_count    = GFFormsModel::get_entry_count_all_forms( 'active' );
+		$meta_counts    = GFFormsModel::get_entry_meta_counts();
 
 		$data = array(
 			// Basic Site Info
@@ -60,22 +60,22 @@ class GW_Telemetry {
 
 			// Licenses
 			'licenses'     => array(
-				'perks'   => array(
+				'perks'      => array(
 					'key'       => GWPerks::get_api()->get_license_key( 'perk' ),
 					'is_active' => $this->has_active_license( 'perk' ),
 				),
-				'connect' => array(
+				'connect'    => array(
 					'key'       => GWPerks::get_api()->get_license_key( 'connect' ),
 					'is_active' => $this->has_active_license( 'connect' ),
 				),
-				'shop'    => array(
+				'shop'       => array(
 					'key'       => GWPerks::get_api()->get_license_key( 'shop' ),
 					'is_active' => $this->has_active_license( 'shop' ),
 				),
-				'wiz-bundle'    => array(
+				'wiz-bundle' => array(
 					'key'       => GWPerks::get_api()->get_license_key( 'wiz-bundle' ),
 					'is_active' => $this->has_active_license( 'wiz-bundle' ),
-				)
+				),
 			),
 
 			// Generic Usage
@@ -126,7 +126,7 @@ class GW_Telemetry {
 
 		if ( empty( $email ) ) {
 			// License keys
-			$licensed_products = array_filter( GWAPI::$product_config, function ($product) {
+			$licensed_products = array_filter( GWAPI::$product_config, function ( $product ) {
 				return ! isset( $product['has_license'] ) || $product['has_license'];
 			} );
 
@@ -149,7 +149,7 @@ class GW_Telemetry {
 		return array(
 			'name'    => $theme->get( 'Name' ),
 			'version' => $theme->get( 'Version' ),
-			'author'  => $theme->get( 'Author' )
+			'author'  => $theme->get( 'Author' ),
 		);
 	}
 
@@ -159,14 +159,18 @@ class GW_Telemetry {
 		}
 
 		$active_plugins = get_option( 'active_plugins' );
-		$plugins = array();
+		$plugins        = array();
 
 		foreach ( get_plugins() as $key => $plugin ) {
 			if ( ! in_array( $key, $active_plugins ) ) {
 				continue;
 			}
 
-			$slug = substr( $key, 0, strpos( $key, '/' ) ) ?: str_replace( '.php', '', $key );
+			$pos  = strpos( $key, '/' );
+			$slug = ( false !== $pos )
+				? substr( $key, 0, $pos )
+				: str_replace( '.php', '', $key );
+
 			$plugins[] = array(
 				'name'      => $plugin['Name'],
 				'slug'      => $slug,

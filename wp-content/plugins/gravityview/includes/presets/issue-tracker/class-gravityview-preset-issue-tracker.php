@@ -1,34 +1,23 @@
 <?php
 /**
- * GravityView preset template
+ * Backward-compatibility shim.
  *
- * @file      class-gravityview-preset-issue-tracker.php
- * @since     1.15
- * @license   GPL2+
- * @author    GravityKit <hello@gravitykit.com>
- * @link      http://www.gravitykit.com
- * @copyright Copyright 2015, Katz Web Services, Inc.
+ * This file was moved in GravityView 3.0. It is intentionally empty.
+ * GravityView classes and functions load automatically — you no longer
+ * need to require GravityView files in your code.
  *
- * @package   GravityView
+ * @deprecated 3.0
  */
 
-class GravityView_Preset_Issue_Tracker extends GravityView_Default_Template_Table {
-	const ID = 'preset_issue_tracker';
-
-	function __construct() {
-		$settings = array(
-			'slug'          => 'table',
-			'type'          => 'preset',
-			'label'         => __( 'Issue Tracker', 'gk-gravityview' ),
-			'description'   => __( 'Manage issues and their statuses.', 'gk-gravityview' ),
-			'logo'          => plugins_url( 'includes/presets/issue-tracker/logo-issue-tracker.png', GRAVITYVIEW_FILE ),
-			// 'preview'       => 'https://site.try.gravitykit.com/task-management/',
-			'preset_form'   => GRAVITYVIEW_DIR . 'includes/presets/issue-tracker/form-issue-tracker.json',
-			'preset_fields' => GRAVITYVIEW_DIR . 'includes/presets/issue-tracker/fields-issue-tracker.xml',
-		);
-
-		parent::__construct( self::ID, $settings );
-	}
+if ( ! defined( 'ABSPATH' ) ) {
+	die;
 }
 
-new GravityView_Preset_Issue_Tracker();
+if ( function_exists( '_deprecated_file' ) ) {
+	_deprecated_file(
+		plugin_basename( __FILE__ ),
+		'3.0',
+		'',
+		'This file was moved in GravityView 3.0 and will be removed in a future release. GravityView classes and functions load automatically — you no longer need to require them.'
+	);
+}

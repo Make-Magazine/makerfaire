@@ -117,7 +117,7 @@ function PopulateDiscountInfo(price, formId) {
         couponDetails = '',
         safeCode,
         totalDiscount = 0,
-        currency = new Currency(gf_global['gf_currency_config']);
+        currency = new gform.Currency(gf_global['gf_currency_config']);
 
     if (window['gf_coupons' + formId] === undefined) {
         window['gf_coupons' + formId] = jQuery.evalJSON(jQuery('#gf_coupons_' + formId).val());

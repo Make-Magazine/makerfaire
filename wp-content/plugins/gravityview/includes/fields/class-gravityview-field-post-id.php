@@ -1,40 +1,23 @@
 <?php
 /**
- * @file class-gravityview-field-post-id.php
- * @package GravityView
- * @subpackage includes\fields
- * @since 1.7
- */
-
-/**
- * Add custom options for Post ID fields
+ * Backward-compatibility shim.
  *
- * @since 1.7
+ * This file was moved in GravityView 3.0. It is intentionally empty.
+ * GravityView classes and functions load automatically — you no longer
+ * need to require GravityView files in your code.
+ *
+ * @deprecated 3.0
  */
-class GravityView_Field_Post_ID extends GravityView_Field {
 
-	var $name = 'post_id';
-
-	var $is_searchable = true;
-
-	var $search_operators = array( 'is', 'isnot', 'greater_than', 'less_than' );
-
-	var $group = 'post';
-
-	/**
-	 * GravityView_Field_Post_ID constructor.
-	 */
-	public function __construct() {
-		$this->label = esc_html__( 'Post ID', 'gk-gravityview' );
-		parent::__construct();
-	}
-
-	public function field_options( $field_options, $template_id, $field_id, $context, $input_type, $form_id ) {
-
-		$this->add_field_support( 'link_to_post', $field_options );
-
-		return $field_options;
-	}
+if ( ! defined( 'ABSPATH' ) ) {
+	die;
 }
 
-new GravityView_Field_Post_ID();
+if ( function_exists( '_deprecated_file' ) ) {
+	_deprecated_file(
+		plugin_basename( __FILE__ ),
+		'3.0',
+		'',
+		'This file was moved in GravityView 3.0 and will be removed in a future release. GravityView classes and functions load automatically — you no longer need to require them.'
+	);
+}

@@ -1,0 +1,71 @@
+<?php
+/**
+ * The View Layout Builder Template class.
+ *
+ * @package GravityKit\GravityView\Template\View
+ * @since 3.0.0
+ */
+
+namespace GravityKit\GravityView\Template\View;
+
+use GV\Entry;
+use GV\Field_Renderer_Trait;
+use GV\Template_Context;
+
+/**
+ * The View Layout Builder Template class.
+ *
+ * @since 3.0.0
+ * @since 3.0.0 Migrated to GravityKit\GravityView\Template\View namespace.
+ */
+final class LayoutBuilder extends \GV\View_Template {
+	use Field_Renderer_Trait;
+
+	/**
+	 * {@inheritDoc}
+	 *
+	 * @since 3.0.0
+	 *
+	 * @var string
+	 */
+	public static $slug = \GravityView_Layout_Builder::ID;
+
+	/**
+	 * Modifies the entry class for this template.
+	 *
+	 * @since  2.46.2
+	 *
+	 * @filter `gravityview_entry_class`.
+	 * @filter `gravityview/template/layout-builder/entry/class`.
+	 *
+	 * @param string    $class The class.
+	 * @param \GV\Entry $entry The entry.
+	 * @param \GV\Template_Context The context.
+	 *
+	 * @return string The classes.
+	 */
+    public static function entry_class( string $class, Entry $entry, Template_Context $context ): string {
+        /**
+         * Modify the class applied to the entry row.
+         *
+         * @since 2.46.2
+         *
+         * @deprecated 3.0.0 `gravityview/template/layout-builder/entry/class` instead.
+         *
+         * @param string           $class Existing class.
+         * @param array            $entry Current entry being displayed.
+         * @param \GravityView_View $view  Current GravityView_View object.
+         */
+        $class = \GravityView_Deprecated_Hook_Notices::apply_filters( 'gravityview_entry_class', [ $class, $entry->as_entry(), \GravityView_View::getInstance() ], '2.55', 'gravityview/template/layout-builder/entry/class' );
+
+        /**
+         * Modify the class applied to the entry row.
+         *
+         * @since 2.46.2
+         *
+         * @param string               $class   The existing class.
+         * @param \GV\Template_Context $context The context.
+         */
+        return apply_filters( 'gravityview/template/layout-builder/entry/class', $class, Template_Context::from_template( $context->template, compact( 'entry' ) ) );
+    }
+}

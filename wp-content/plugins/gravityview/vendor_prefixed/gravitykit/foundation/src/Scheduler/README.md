@@ -20,7 +20,7 @@ These terms appear throughout the API. Getting them straight now saves confusion
 
 - **Dispatch** — An HTTP loopback request that nudges AS's queue runner to process pending actions immediately, rather than waiting for the next cron trigger. `run()` dispatches automatically; `async()` does not.
 
-- **NextRunRules** — The return type from a task callback. Tells the job scheduler what to do next: rerun with updated args (checkpoint), update shared job data, or both. Return `null` when done.
+- **NextRunRules** — The value a task callback returns. Do not declare it as a native return type on your callback: your copy of the class is not the running copy's, so the declaration throws a `TypeError` before the scheduler can normalize it. Type it in the docblock instead. Tells the job scheduler what to do next: rerun with updated args (checkpoint), update shared job data, or both. Return `null` when done, or `complete_with_data()` to finish while storing shared data. Build instances through the scheduler factories (`checkpoint()`, `checkpoint_with_data()`, `complete()`, `complete_with_data()`), not `new NextRunRules()`.
 
 ## Job Naming Convention
 
@@ -126,7 +126,7 @@ Code focuses on the work; the job scheduler handles the plumbing.
 ## Quick Start
 
 ```php
-use GravityKit\Foundation\Core as GravityKitFoundation;
+use GravityKit\GravityView\Foundation\Core as GravityKitFoundation;
 
 // 1. Create a job.
 $job = GravityKitFoundation::scheduler()->job()->create( 'csv_export' );
@@ -165,7 +165,7 @@ if ( $result->has_warning() ) {
 **Task callback signature:**
 
 ```php
-use GravityKit\Foundation\Scheduler\Models\NextRunRules;
+use GravityKit\GravityView\Foundation\Scheduler\Models\NextRunRules;
 
 /**
  * @param array      $args     Task-specific arguments.
@@ -173,7 +173,7 @@ use GravityKit\Foundation\Scheduler\Models\NextRunRules;
  *
  * @return NextRunRules|null Return null when done. Return NextRunRules to checkpoint/rerun.
  */
-public static function fetch( array $args = [], $job_data = null ): ?NextRunRules {
+public static function fetch( array $args = [], $job_data = null ) {
     $form_id = $job_data['form_id'];
     $offset  = $args['offset'] ?? 0;
 
@@ -394,7 +394,7 @@ $job->set_data( 'form_id', 42 )
     ->set_data( 'user_id', 7 );
 
 // Read in any task callback.
-public static function my_task( array $args, $job_data ): ?NextRunRules {
+public static function my_task( array $args, $job_data ) {
     $form_id = $job_data['form_id'];
     // ...
 }
@@ -414,6 +414,8 @@ GravityKitFoundation::scheduler()->should_continue( array $args, int $margin = 2
 
 Returns `true` if there is still time before the deadline. The `$margin` (default: 2 seconds) leaves room for cleanup. Returns `true` when no deadline is set, so tasks work correctly outside the job scheduler too.
 
+Also returns `false` when the process's memory use has grown close to `memory_limit` (default: 90% of it, matching Action Scheduler's own cutoff; filter: `gk/foundation/scheduler/memory-threshold`), so the task checkpoints and resumes in a fresh process instead of exhausting the limit mid-chunk. The stop only fires when memory has grown since the task started — a process that was already near the limit before the task did anything runs normally, because a rerun would start just as high. Args passed outside the scheduler are never memory-stopped. When PHP reports no limit (`-1`), usage is measured against a 32GB ceiling (filter: `gk/foundation/scheduler/unlimited-memory-ceiling`).
+
 ### `GravityKitFoundation::scheduler()->checkpoint()`
 
 ```php
@@ -430,13 +432,31 @@ GravityKitFoundation::scheduler()->checkpoint_with_data( array $next_args, array
 
 Same as `GravityKitFoundation::scheduler()->checkpoint()`, but also updates the job-level data shared across all tasks.
 
+### `GravityKitFoundation::scheduler()->complete()`
+
+```php
+GravityKitFoundation::scheduler()->complete(): NextRunRules
+```
+
+Marks the task finished. Equivalent to returning `null` — use it as the base for chaining (e.g., `complete()->set_next_task_args( ... )` to pass args to the next task).
+
+### `GravityKitFoundation::scheduler()->complete_with_data()`
+
+```php
+GravityKitFoundation::scheduler()->complete_with_data( array $job_data ): NextRunRules
+```
+
+Finishes the task while storing job-level shared data for downstream tasks (processed count, generated file path). The array replaces the shared data; merge in the incoming `$job_data` to keep existing keys.
+
+**Always build `NextRunRules` through these factories in task callbacks — never `new NextRunRules()`.** Each plugin bundles its own namespaced copy of Foundation, and only the highest version runs. The factories resolve through the running copy, so the returned object is always the class the scheduler expects; a directly constructed one is your plugin's copy of the class, which may not be.
+
 ### Complete Example
 
 ```php
-use GravityKit\Foundation\Scheduler\Models\NextRunRules;
+use GravityKit\GravityView\Foundation\Scheduler\Models\NextRunRules;
 
 class Importer {
-    public static function import( array $args = [], $job_data = null ): ?NextRunRules {
+    public static function import( array $args = [], $job_data = null ) {
         $offset     = $args['offset'] ?? 0;
         $batch_size = $args['batch_size'] ?? 100;
         $rows       = get_rows( $offset, $batch_size );
@@ -464,15 +484,16 @@ class Importer {
 When a task needs to pass results to downstream tasks (processed count, file path, etc.), use `GravityKitFoundation::scheduler()->checkpoint_with_data()`:
 
 ```php
-public static function import( array $args = [], $job_data = null ): ?NextRunRules {
+public static function import( array $args = [], $job_data = null ) {
     $offset = $args['offset'] ?? 0;
     $count  = $job_data['processed'] ?? 0;
+    $rows   = get_rows( $offset, 100 );
 
-    foreach ( get_rows( $offset, 100 ) as $i => $row ) {
+    foreach ( $rows as $i => $row ) {
         if ( ! GravityKitFoundation::scheduler()->should_continue( $args ) ) {
             return GravityKitFoundation::scheduler()->checkpoint_with_data(
                 [ 'offset' => $offset + $i ],  // Task args (this task only).
-                [ 'processed' => $count + $i ] // Job data (shared with all tasks).
+                [ 'processed' => $count ]      // Job data (shared with all tasks).
             );
         }
 
@@ -480,14 +501,24 @@ public static function import( array $args = [], $job_data = null ): ?NextRunRul
         $count++;
     }
 
-    return GravityKitFoundation::scheduler()->checkpoint_with_data(
-        [ 'offset' => $offset + count( $rows ) ],
-        [ 'processed' => $count ]
+    if ( count( $rows ) === 100 ) {
+        // Full batch — more rows may remain. Continue in a new execution.
+        return GravityKitFoundation::scheduler()->checkpoint_with_data(
+            [ 'offset' => $offset + count( $rows ) ],
+            [ 'processed' => $count ]
+        );
+    }
+
+    // Done — finish the task and store the final count for downstream tasks.
+    // Merged, not replaced: complete_with_data() overwrites the shared array,
+    // so passing only this key would discard whatever earlier tasks stored.
+    return GravityKitFoundation::scheduler()->complete_with_data(
+        array_merge( (array) $job_data, [ 'processed' => $count ] )
     );
 }
 
 // A later task reads the shared data:
-public static function send_report( array $args = [], $job_data = null ): ?NextRunRules {
+public static function send_report( array $args = [], $job_data = null ) {
     $total = $job_data['processed'] ?? 0;
 
     send_email( "Imported {$total} rows." );
@@ -506,8 +537,8 @@ These are two different concepts:
 **Retry requires opt-in.** A plain `\Exception` or `\Throwable` causes immediate permanent failure — no retry. To request a retry, throw `TaskException` with a `NextRunRules` instance that has `rerun()` set:
 
 ```php
-use GravityKit\Foundation\Scheduler\Exceptions\TaskException;
-use GravityKit\Foundation\Scheduler\Models\NextRunRules;
+use GravityKit\GravityView\Foundation\Scheduler\Exceptions\TaskException;
+use GravityKit\GravityView\Foundation\Scheduler\Models\NextRunRules;
 
 public static function my_task( array $args ): void {
     try {
@@ -520,6 +551,8 @@ public static function my_task( array $args ): void {
     }
 }
 ```
+
+**This is the one place to use `new NextRunRules()` instead of the scheduler factories.** Your bundled `TaskException` constructor only accepts your own copy's `NextRunRules`, while `checkpoint()` returns the running Foundation copy's class — which may be another plugin's bundle. Constructing both from your own namespace keeps them consistent; the scheduler normalizes the thrown pair into its own classes on receipt.
 
 This design is intentional: unexpected exceptions (bugs, fatal errors) should fail immediately so they surface for investigation. Only errors the task author has explicitly handled and deemed transient should trigger a retry.
 
@@ -835,6 +868,7 @@ add_action( 'gk/foundation/scheduler/job/resumed', function ( $job ) {
 | Filter | Parameters | Description |
 |--------|------------|-------------|
 | `request/trigger/timeout` | `$timeout` | Loopback dispatch timeout in milliseconds. Default: 100. |
+| `health-check/loopback-timeout` | `$timeout`, `$url` | Loopback health-check probe timeout in seconds. Increase on slow servers to avoid a false "loopback blocked" diagnosis. Default: 2. |
 | `loopback-base-url` | `$base_url` | Override the base URL for all loopback requests. |
 
 #### UI Filters
@@ -1440,6 +1474,20 @@ This enables step-by-step execution mode. Instead of running tasks through Actio
 ## Action Scheduler Loading Quirks
 
 Foundation bundles Action Scheduler (AS) and loads it using the recommended pattern: `require_once action-scheduler.php` during plugin file loading, **before** `plugins_loaded` fires. This registers a version callback at `plugins_loaded` priority 0, and the version resolution at priority 1 picks the newest version across all plugins and initializes it.
+
+### Resolving the bundled copy across layouts
+
+`Loader.php` does not hard-code the path to the bundled AS. It calls `VendorPathResolver::resolve( __DIR__ )`, which probes candidate `vendor/` directories nearest-first and returns the first whose `action-scheduler.php` is readable. This locates AS whether Foundation lives in Composer's `vendor/`, is Strauss-copied into a product's `vendor_prefixed/` (where AS sits in the sibling `vendor/`), or runs as a standalone plugin (`<root>/vendor/`).
+
+Resolution matches the nearest `/vendor/` path **segment**, not the first `"vendor"` **substring**. An ancestor folder whose name merely contains "vendor" (e.g. a `vendors.example.com` domain folder on shared hosting) therefore never cuts the path in the wrong place — a mis-resolution that otherwise points the require at a non-existent file and hard-fatals the whole site.
+
+### Graceful degradation when AS is missing
+
+`Loader.php` is a Composer `files` autoload, so it runs at file-load time on **every request**, before `plugins_loaded`. If the bundled tree is missing or half-written — the window while WordPress swaps the plugin directory during an update, or a failed/partial update — `resolve()` finds no readable copy and returns `null`, and the loader skips requiring AS rather than fataling.
+
+The scheduler hard-depends on AS (`DbStore extends ActionScheduler_DBStore`), so `Core::init()` registers the `scheduler` component only when `class_exists( 'ActionScheduler_DBStore' )`. With AS absent the site degrades to "background jobs paused" instead of a site-wide white screen. `JobOverview` self-guards the same way, and the `-11` callback bails on `! class_exists( 'ActionScheduler_Versions', false )`.
+
+In any such trace the AS path reads as `vendor/woocommerce/action-scheduler/…`; despite the name this is Foundation's own bundled copy, not a WooCommerce dependency.
 
 ### The theme support block bug (AS < 3.2.1)
 

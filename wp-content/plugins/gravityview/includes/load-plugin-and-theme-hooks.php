@@ -1,36 +1,23 @@
 <?php
 /**
- * Include files that load plugin and theme hooks
+ * Backward-compatibility shim.
  *
- * @file      load-plugin-and-theme-hooks.php
- * @package   GravityView
- * @license   GPL2+
- * @author    GravityKit <hello@gravitykit.com>
- * @link      http://www.gravitykit.com
- * @copyright Copyright 2015, Katz Web Services, Inc.
+ * This file was moved in GravityView 3.0. It is intentionally empty.
+ * GravityView classes and functions load automatically — you no longer
+ * need to require GravityView files in your code.
  *
- * @since 1.15.2
+ * @deprecated 3.0
  */
 
-/** @define "GRAVITYVIEW_DIR" "../" */
-$include_path = GRAVITYVIEW_DIR . 'includes/plugin-and-theme-hooks/';
-
-// Abstract class
-require_once $include_path . 'abstract-gravityview-plugin-and-theme-hooks.php';
-require_once $include_path . 'class-gravityview-object-placeholder.php';
-require_once $include_path . 'class-gravityview-feature-upgrade.php';
-require_once $include_path . 'trait-gravityview-permalink-override.php';
-
-$plugin_hooks_files = glob( $include_path . 'class-gravityview-plugin-hooks-*.php' );
-
-// Load all plugin files automatically
-foreach ( (array) $plugin_hooks_files as $plugin_hooks_file ) {
-	include $plugin_hooks_file;
+if ( ! defined( 'ABSPATH' ) ) {
+	die;
 }
 
-$theme_hooks_files = glob( $include_path . 'class-gravityview-theme-hooks-*.php' );
-
-// Load all theme files automatically
-foreach ( (array) $theme_hooks_files as $theme_hooks_file ) {
-	include $theme_hooks_file;
+if ( function_exists( '_deprecated_file' ) ) {
+	_deprecated_file(
+		plugin_basename( __FILE__ ),
+		'3.0',
+		'',
+		'This file was moved in GravityView 3.0 and will be removed in a future release. GravityView classes and functions load automatically — you no longer need to require them.'
+	);
 }

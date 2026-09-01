@@ -1,9 +1,4 @@
 <?php
-/**
- * @license GPL-2.0-or-later
- *
- * Modified using {@see https://github.com/BrianHenryIE/strauss}.
- */
 
 namespace GravityKit\GravityView\Foundation\Helpers;
 
@@ -284,12 +279,23 @@ class Core {
 	}
 
 	/**
+	 * Object-cache group for cached plugin header data; non-persistent, so entries
+	 * never survive the request.
+	 *
+	 * @since 1.25.0
+	 *
+	 * @var string
+	 */
+	const PLUGIN_DATA_CACHE_GROUP = 'gk_foundation_plugin_data';
+
+	/**
 	 * Wrapper for WP's get_plugin_data() function.
 	 *
 	 * @see   https://github.com/WordPress/wordpress-develop/blob/2bb5679d666474d024352fa53f07344affef7e69/src/wp-admin/includes/plugin.php#L72-L118
 	 *
 	 * @since 1.0.0
 	 * @since 1.2.21 Set the $translate parameter to false by default.
+	 * @since 1.25.0    Cache the result (per-request static memo + non-persistent object cache).
 	 *
 	 * @param string $plugin_file Absolute path to the main plugin file.
 	 * @param bool   $markup      (optional) If the returned data should have HTML markup applied. Default is true.
@@ -302,7 +308,55 @@ class Core {
 			require_once ABSPATH . 'wp-admin/includes/plugin.php';
 		}
 
-		return get_plugin_data( $plugin_file, $markup, $translate );
+		$markup    = (bool) $markup;
+		$translate = (bool) $translate;
+
+		// Translated header output depends on the active locale; untranslated does not.
+		$locale = $translate ? ( function_exists( 'determine_locale' ) ? determine_locale() : get_locale() ) : '';
+
+		// Request-scoped key (no file-state): the static memo and the non-persistent
+		// object cache both reset each request, so a plugin updated between requests is
+		// re-parsed on the next one — matching WordPress's own get_plugins() caching.
+		// Null byte can't appear in a path or locale, so the key is collision-free.
+		$key = $plugin_file . "\0" . (int) $markup . (int) $translate . "\0" . $locale;
+
+		// Tier 1: per-request static memo. Foundation calls this thousands of times per
+		// request for the same files; serve those repeats without an object-cache round-trip.
+		static $memo = [];
+
+		if ( isset( $memo[ $key ] ) ) {
+			return $memo[ $key ];
+		}
+
+		// Tier 2: object cache, shared across the Strauss-prefixed Foundation copies so
+		// the first copy's parse serves the rest. Non-persistent so it never survives the
+		// request (headers change on update/activate/delete).
+		static $group_registered = false;
+
+		if ( ! $group_registered ) {
+			wp_cache_add_non_persistent_groups( self::PLUGIN_DATA_CACHE_GROUP );
+
+			$group_registered = true;
+		}
+
+		// A non-persistent group is an in-process array, so the raw key is a valid array
+		// key — no hashing needed, and it matches the static memo's key above.
+		$cached = wp_cache_get( $key, self::PLUGIN_DATA_CACHE_GROUP );
+
+		// get_plugin_data() always returns an array, so a literal false is a cache miss.
+		if ( false !== $cached ) {
+			$memo[ $key ] = $cached;
+
+			return $cached;
+		}
+
+		$data = get_plugin_data( $plugin_file, $markup, $translate );
+
+		wp_cache_set( $key, $data, self::PLUGIN_DATA_CACHE_GROUP );
+
+		$memo[ $key ] = $data;
+
+		return $data;
 	}
 
 	/**

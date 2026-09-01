@@ -61,15 +61,15 @@ __( 'Delete', 'elementor' );
 __( 'Search', 'elementor' );
 __( 'Create your first variable', 'elementor' );
 __(
-						'Variables are saved attributes that you can apply anywhere on your site.',
-						'elementor'
-					);
+								'Variables are saved attributes that you can apply anywhere on your site.',
+								'elementor'
+							);
 __( 'Save changes', 'elementor' );
 __( 'You have unsaved changes', 'elementor' );
+__( 'You have unsaved changes in the Variables Manager.', 'elementor' );
 __( 'To avoid losing your updates, save your changes before leaving.', 'elementor' );
 __( 'Discard', 'elementor' );
 __( 'Save', 'elementor' );
-__( 'Variables Manager', 'elementor' );
 __( 'Stop syncing variable color', 'elementor' );
 __(
 						'This will disconnect the variable color from Global Colors. Existing uses on your site will automatically switch to a default color.',

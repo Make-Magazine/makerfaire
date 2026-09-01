@@ -28,7 +28,7 @@ $image_atts = array(
 	'width'        => \GV\Utils::_GET( 'boxWidth', \GV\Utils::get( $field, 'boxWidth', 300 ) ), // Taken from signature addon signature_input() method
 	'height'       => '180', // Always 180
 	'validate_src' => false, // Don't check if there's a valid image extension
-	'alt'          => '',
+	'alt'          => esc_attr__( 'Signature', 'gk-gravityview' ),
 );
 
 echo new GravityView_Image( $image_atts );

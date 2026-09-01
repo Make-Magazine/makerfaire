@@ -4,9 +4,6 @@
  *
  * Builds UNION ALL queries across per-site Action Scheduler tables
  * to provide an aggregated view of jobs for the network admin.
- *
- * @license GPL-2.0-or-later
- * Modified using {@see https://github.com/BrianHenryIE/strauss}.
  */
 
 namespace GravityKit\GravityView\Foundation\Scheduler\Overview;

@@ -161,6 +161,11 @@ class GP_Nested_Forms extends GP_Plugin {
 		// Allow Gravity Forms 2.9.18+ to retain previously uploaded files when a nested entry is edited.
 		add_filter( 'gform_submission_files_pre_save_field_value', array( $this, 'prepare_submission_files_for_save' ), 9, 4 );
 
+		// Re-seed file upload caches when paginating through a multi-page nested form during entry editing.
+		// prepare_entry_for_population() only runs on the initial AJAX edit load; pagination is a separate
+		// form postback that re-renders the form without going through that path.
+		add_filter( 'gform_pre_render', array( $this, 'seed_file_caches_on_paginated_edit' ), 9 );
+
 		// Clear form's nested entries if save and continue is used (migrated from snippet library)
 		add_action( 'gform_post_process', function( $form ) {
 			if ( rgpost( 'gform_save' ) && class_exists( 'GPNF_Session' ) ) {
@@ -174,7 +179,7 @@ class GP_Nested_Forms extends GP_Plugin {
 		add_filter( 'gform_pre_validation', array( $this, 'maybe_disable_honeypot_on_validation' ), 10, 1 );
 	}
 
-	public function maybe_disable_honeypot_on_pre_render( $form, $ajax, $field_values ) {
+	public function maybe_disable_honeypot_on_pre_render( $form, $ajax = false, $field_values = array() ) {
 		return $this->maybe_disable_honeypot( $form );
 	}
 
@@ -450,7 +455,14 @@ class GP_Nested_Forms extends GP_Plugin {
 				}
 				foreach ( $nested_form['fields'] as $_field ) {
 					if ( $_field->get_input_type() === 'fileupload' && $_field->multipleFiles ) {
-						GFCommon::localize_gform_gravityforms_multifile();
+						/**
+						 * As of GF 2.6, multifile strings are localized via GF's config service
+						 * provider (class-gf-config-multifile.php) and this method became a no-op.
+						 * It was removed entirely in GF 3.0, so only call it when it exists.
+						 */
+						if ( method_exists( 'GFCommon', 'localize_gform_gravityforms_multifile' ) ) {
+							GFCommon::localize_gform_gravityforms_multifile();
+						}
 					}
 				}
 			}
@@ -1976,7 +1988,7 @@ class GP_Nested_Forms extends GP_Plugin {
 	 * @return bool
 	 */
 	protected function supports_modern_file_upload_handling( $field ) {
-		return $field instanceof GF_Field_FileUpload && method_exists( $field, 'populate_file_urls_from_value' );
+		return $field instanceof GF_Field_FileUpload && method_exists( $field, 'set_submission_files' );
 	}
 
 	/**
@@ -2017,7 +2029,76 @@ class GP_Nested_Forms extends GP_Plugin {
 		unset( GFFormsModel::$uploaded_files[ $form_id ][ 'input_' . $field->id ] );
 
 		$field_value = rgar( $entry, $field->id );
-		$field->populate_file_urls_from_value( $field_value );
+
+		if ( $field->multipleFiles && version_compare( GFForms::$version, '2.10.3', '>=' ) ) {
+			// GF 2.10.3+ multi-file fields require manually seeding the submission cache for existing files.
+			// Use only 'uploaded_filename'; get_multifile_value() matches it against the original entry.
+			// populate_file_urls_from_value() can't be used here because GF 2.10.3+ strips existing files
+			// with a 'url' key before our gform_submission_files_pre_save_field_value filter runs (see
+			// prepare_submission_files_for_save()), so we re-match by filename instead.
+			$urls = json_decode( $field_value, true );
+			if ( is_array( $urls ) ) {
+				$existing = array_map(
+					function( $url ) {
+						return array( 'uploaded_filename' => wp_basename( $url ) );
+					},
+					array_filter( $urls )
+				);
+				$field->set_submission_files(
+					array(
+						'existing' => $existing,
+						'new'      => array(),
+					)
+				);
+			}
+		} elseif ( method_exists( $field, 'populate_file_urls_from_value' ) ) {
+			// GF 2.9.18 – 2.10.2 (all file upload fields) and GF 2.10.3+ single-file fields: use the
+			// built-in helper. It seeds the submission cache with the full file details (url + hash) that
+			// get_single_file_value() needs to both display the existing file and retain it on re-save.
+			$field->populate_file_urls_from_value( $field_value );
+		}
+	}
+
+	/**
+	 * Re-seed file upload caches when the user navigates between pages of a multi-page nested form
+	 * during entry editing. On the initial edit AJAX load, prepare_entry_for_population() seeds the
+	 * caches. Page navigation is a separate form postback (gpnf_mode=edit in POST) that re-renders
+	 * the form without going through that path, so we seed here for fields on the new page.
+	 *
+	 * @param array $form The form being rendered.
+	 *
+	 * @return array Unmodified form.
+	 */
+	public function seed_file_caches_on_paginated_edit( $form ) {
+		// gpnf_mode is only present in the form postback (pagination / final submit), not in the
+		// initial AJAX edit-entry request — so this check correctly skips the initial load.
+		if ( rgpost( 'gpnf_mode' ) !== 'edit' || ! rgpost( 'gpnf_entry_id' ) ) {
+			return $form;
+		}
+
+		// Skip on final submission — prepare_submission_files_for_save handles that.
+		if ( $this->is_nested_form_edit_submission() ) {
+			return $form;
+		}
+
+		$entry_id = absint( rgpost( 'gpnf_entry_id' ) );
+		$entry    = GFAPI::get_entry( $entry_id );
+
+		if ( is_wp_error( $entry ) ) {
+			return $form;
+		}
+
+		foreach ( $form['fields'] as $field ) {
+			if ( $field->type !== 'fileupload' ) {
+				continue;
+			}
+
+			if ( $this->supports_modern_file_upload_handling( $field ) ) {
+				$this->hydrate_submission_files_cache( $field, $form, $entry );
+			}
+		}
+
+		return $form;
 	}
 
 	/**
@@ -2463,6 +2544,13 @@ class GP_Nested_Forms extends GP_Plugin {
 	 */
 	public function force_child_form_ajax( $form_args ) {
 		$form_args['ajax'] = true;
+
+		/*
+		 * An explicit `submission_method` overrides `ajax`, so force the iframe path
+		 * required for Nested Forms when AJAX submission is globally enabled.
+		 */
+		$form_args['submission_method'] = 'iframe';
+
 		return $form_args;
 	}
 

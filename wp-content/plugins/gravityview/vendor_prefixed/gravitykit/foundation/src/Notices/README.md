@@ -757,8 +757,8 @@ The `NoticeHelpers` class provides the following static methods:
 ### Usage Examples
 
 ```php
-use GravityKit\Foundation\Notices\NoticeManager;
-use GravityKit\Foundation\Notices\NoticeHelpers;
+use GravityKit\GravityView\Foundation\Notices\NoticeManager;
+use GravityKit\GravityView\Foundation\Notices\NoticeHelpers;
 
 // 1. Network Admin Only - Shows only in network admin area
 NoticeManager::get_instance()->add_stored(array_merge([

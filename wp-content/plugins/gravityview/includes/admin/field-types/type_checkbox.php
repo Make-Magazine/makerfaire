@@ -1,57 +1,23 @@
 <?php
 /**
- * checkbox input type
+ * Backward-compatibility shim.
+ *
+ * This file was moved in GravityView 3.0. It is intentionally empty.
+ * GravityView classes and functions load automatically — you no longer
+ * need to require GravityView files in your code.
+ *
+ * @deprecated 3.0
  */
-class GravityView_FieldType_checkbox extends GravityView_FieldType {
 
-	function render_option() {
-		?>
-		<label for="<?php echo $this->get_field_id(); ?>" class="<?php echo $this->get_label_class(); ?>">
-			<?php $this->render_input(); ?>
-			&nbsp;<?php echo $this->get_field_label() . $this->get_tooltip() . $this->get_field_desc(); ?>
-		</label>
-		<?php
-	}
+if ( ! defined( 'ABSPATH' ) ) {
+	die;
+}
 
-	function render_setting( $override_input = null ) {
-
-		if ( $this->get_field_left_label() ) {
-			?>
-
-			<th scope="row">
-				<label for="<?php echo $this->get_field_id(); ?>">
-					<?php echo $this->get_field_left_label() . $this->get_tooltip(); ?>
-				</label>
-			</th>
-			<td>
-				<label>
-				<?php $this->render_input( $override_input ); ?>
-				&nbsp;<?php echo $this->get_field_label() . $this->get_tooltip() . $this->get_field_desc(); ?>
-				</label>
-			</td>
-
-		<?php } else { ?>
-
-			<td colspan="2">
-				<label for="<?php echo $this->get_field_id(); ?>">
-					<?php $this->render_input( $override_input ); ?>
-					&nbsp;<?php echo $this->get_field_label() . $this->get_tooltip() . $this->get_field_desc(); ?>
-				</label>
-			</td>
-
-			<?php
-		}
-	}
-
-	function render_input( $override_input = null ) {
-		if ( isset( $override_input ) ) {
-			echo $override_input;
-			return;
-		}
-
-		?>
-		<input name="<?php echo esc_attr( $this->name ); ?>" type="hidden" value="0" />
-			<input name="<?php echo esc_attr( $this->name ); ?>" id="<?php echo $this->get_field_id(); ?>" type="checkbox" value="1" <?php checked( $this->value, '1', true ); ?> />
-		<?php
-	}
+if ( function_exists( '_deprecated_file' ) ) {
+	_deprecated_file(
+		plugin_basename( __FILE__ ),
+		'3.0',
+		'',
+		'This file was moved in GravityView 3.0 and will be removed in a future release. GravityView classes and functions load automatically — you no longer need to require them.'
+	);
 }

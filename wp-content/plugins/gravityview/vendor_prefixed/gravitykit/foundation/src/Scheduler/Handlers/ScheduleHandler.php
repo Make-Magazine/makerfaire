@@ -1,10 +1,7 @@
 <?php
 /**
  * Job schedule handler.
- * *
- * @license GPL-2.0-or-later
- * Modified using {@see https://github.com/BrianHenryIE/strauss}.
- */
+ * */
 
 namespace GravityKit\GravityView\Foundation\Scheduler\Handlers;
 
@@ -435,9 +432,11 @@ class ScheduleHandler {
 
 		$status = Task::STATUS_FAILED;
 
-		if ( $e instanceof TaskException && $e->next_run_rules() ) {
-			$this->update_next_run_data( $e->next_run_rules(), $job );
-			$status = $e->next_run_rules()->should_rerun() ? Task::STATUS_PENDING : Task::STATUS_FAILED;
+		$next_run_rules = $this->extract_next_run_rules( $e );
+
+		if ( $next_run_rules ) {
+			$this->update_next_run_data( $next_run_rules, $job );
+			$status = $next_run_rules->should_rerun() ? Task::STATUS_PENDING : Task::STATUS_FAILED;
 		}
 
 		// Enforce retry limit to prevent infinite rerun loops.
@@ -534,6 +533,51 @@ class ScheduleHandler {
 					);
 				}
 			}
+		}
+	}
+
+	/**
+	 * Extracts next-run rules from a task exception thrown by any Foundation copy.
+	 *
+	 * A task callback may throw the `TaskException` bundled with its own
+	 * plugin's Foundation, which is a different (Strauss-prefixed) class than
+	 * this copy's — a bare `instanceof` check would silently drop the retry
+	 * request and permanently fail the task. Any throwable exposing
+	 * `next_run_rules()` is treated as a TaskException, and the rules it
+	 * carries are normalized into this copy's `NextRunRules`.
+	 *
+	 * @since 1.29.0
+	 *
+	 * @param Throwable $e The exception thrown by the task callback.
+	 *
+	 * @return NextRunRules|null The normalized rules, or null when the exception carries none.
+	 */
+	protected function extract_next_run_rules( Throwable $e ): ?NextRunRules {
+		// Public and argument-free, not merely present: `method_exists()` is true
+		// for a private method too, and calling one raises an Error inside the
+		// handler that exists to deal with an error.
+		$rules_accessor = [ $e, 'next_run_rules' ];
+		$carries_rules  = NextRunRules::is_invocable_accessor( $e, 'next_run_rules' )
+			&& is_callable( $rules_accessor );
+
+		if ( ! $carries_rules ) {
+			return null;
+		}
+
+		try {
+			// Invoked through the callable because the method is not on Throwable:
+			// this is a TaskException from a copy of Foundation this one cannot name.
+			return NextRunRules::from_task_return( $rules_accessor() );
+		} catch ( Throwable $unusable_rules ) {
+			// Nothing may escape: TaskExecutor clears its sentinel and disarms the
+			// timeout handler only after this returns, so a second throwable here
+			// leaves both armed. An accessor that throws carries no rules.
+			$this->logger()->warning(
+				'Discarded unusable next-run rules from a task exception.',
+				[ 'error' => $unusable_rules->getMessage() ]
+			);
+
+			return null;
 		}
 	}
 

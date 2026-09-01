@@ -1,14 +1,14 @@
-=== Import data from any XML or CSV to ACF ===
+=== WP All Import – Import Add-On for ACF ===
 Contributors: soflyy, wpallimport
 Requires at least: 5.0
-Tested up to: 6.9
-Stable tag: 1.0.7
+Tested up to: 7.0
+Stable tag: 1.0.8
 Requires PHP: 7.4
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 Tags: import acf, import advanced custom fields, csv import, xml import, acf import
 
-Easily import data from any XML, CSV or Excel file to Advanced Custom Fields (ACF) with the ACF add-on for WP All Import.
+Drag & drop to import any CSV, Excel, XML, or Google Sheets file into Advanced Custom Fields. Supports repeaters, flexible content, galleries, and all ACF field types, with powerful filters and scheduling.
 
 == Description ==
 
@@ -102,6 +102,9 @@ To import Advanced Custom Fields (ACF), you must have the ACF Import Add-On acti
 1. The ACF add-on.
 
 == Changelog ==
+
+= 1.0.8 =
+* bug fix: resolve PHP 8 warnings when importing nested ACF fields
 
 = 1.0.7 =
 * bug fix: resolve WPDB taxonomy field error

@@ -9,4 +9,6 @@ interface GravityFormsField {
 interface GFFile {
 	uploaded_filename: string
 	temp_filename: string
+	/* Gravity Forms includes the Plupload file ID in the uploaded file meta. */
+	id?: string
 }

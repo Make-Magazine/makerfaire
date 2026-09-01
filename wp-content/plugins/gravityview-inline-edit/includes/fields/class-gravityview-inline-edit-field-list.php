@@ -7,9 +7,9 @@
  */
 class GravityView_Inline_Edit_Field_List extends GravityView_Inline_Edit_Field {
 
-	var $gv_field_name = 'list';
+	public $gv_field_name = 'list';
 
-	var $inline_edit_type = 'gvlist';
+	public $inline_edit_type = 'gvlist';
 
 	/**
 	 * @since 1.0
@@ -36,7 +36,7 @@ class GravityView_Inline_Edit_Field_List extends GravityView_Inline_Edit_Field {
 		}
 
 		$wrapper_attributes['data-tplmode'] = $mode;
-		$wrapper_attributes['data-source']  = json_encode( $list_source_raw );
+		$wrapper_attributes['data-source']  = wp_json_encode( $list_source_raw );
 
 		parent::add_field_template( $this->inline_edit_type . $mode, $gf_field->get_field_input( $current_form, '', $entry ) );
 
@@ -56,12 +56,13 @@ class GravityView_Inline_Edit_Field_List extends GravityView_Inline_Edit_Field {
 	 */
 	public function _get_inline_edit_value( $gf_field, $entry, $field_id ) {
 
-		$input_id = 0;
+		$input_id = $field_id;
 
-		if ( ! ctype_digit( $field_id ) ) {
+		if ( ! ctype_digit( (string) $field_id ) ) {
 			$field_id_array = explode( '.', $field_id );
 			$input_id       = rgar( $field_id_array, 0 );
 		}
+
 		$value = rgar( $entry, $input_id );
 
 		return empty( $value ) ? '' : maybe_unserialize( $value );

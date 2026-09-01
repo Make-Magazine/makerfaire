@@ -109,8 +109,7 @@ window.gform.addFilter(
 		) {
 			const value = String($el.val() || '');
 
-			// Skip updates when the input mask is incomplete (e.g. contains "_").
-			if (value && value.indexOf('_') !== -1) {
+			if (value && !isPhoneMaskComplete($el, value)) {
 				return false;
 			}
 		}
@@ -118,6 +117,46 @@ window.gform.addFilter(
 		return triggerChange;
 	}
 );
+
+/**
+ * Whether a masked phone input has been filled out completely.
+ *
+ * @since 2.1.75
+ *
+ * @param $el   The phone input.
+ * @param value The current value of the phone input.
+ *
+ * @return Whether the mask has been filled out completely.
+ */
+function isPhoneMaskComplete($el: JQuery, value: string) {
+	/**
+	 * Up to GF 2.9, phone masks were applied by jquery.maskedinput, which pads the value with the
+	 * unfilled portion of the mask (e.g. "(123) 45_-____").
+	 */
+	if (value.indexOf('_') !== -1) {
+		return false;
+	}
+
+	/**
+	 * As of GF 3.0, masks are applied by IMask in lazy mode, which only keeps the portion of the mask
+	 * the user has actually typed (e.g. "(123) 45") and exposes the mask via `data-mask`. Without a
+	 * placeholder to look for, completeness is measured against the mask's required portion, which is
+	 * everything preceding the optional marker ("?").
+	 */
+	const mask = $el.attr('data-mask');
+
+	if (mask) {
+		const optionalIndex = mask.indexOf('?');
+		const requiredMask =
+			optionalIndex === -1 ? mask : mask.substring(0, optionalIndex);
+
+		if (value.length < requiredMask.length) {
+			return false;
+		}
+	}
+
+	return true;
+}
 
 /**
  * This is a workaround for the issue where the conditional logic action
@@ -170,8 +209,28 @@ window.gform.addAction('gform_post_conditional_logic_field_action', function(
 	}
 
 	// GF does not always emit these events when a field becomes visible.
-	$targetField.trigger('input').trigger('change');
+	//
+	// Masked inputs are excluded from `input`: jquery.maskedinput (GF < 3.0) binds an
+	// Android + Chromium only `input` handler that reads a caret position only available
+	// while the field is focused, so a synthetic event throws and aborts GF's conditional
+	// logic loop. `change` is what conditional logic and GPPA listen for anyway.
+	$targetField.filter((_index, el) => !hasInputMask(el)).trigger('input');
+	$targetField.trigger('change');
 });
+
+/**
+ * Whether an input currently has a jquery.maskedinput mask attached. The library sets this
+ * data key on mask and removes it on unmask.
+ *
+ * @param {HTMLElement} el The input to check.
+ *
+ * @since 2.1.74
+ */
+function hasInputMask(el: HTMLElement) {
+	const dataName = (jQuery as any).mask?.dataName ?? 'rawMaskFn';
+
+	return !!jQuery(el).data(dataName);
+}
 
 /**
  * Fixes an issue where conditionally shown List fields in GravityView edit mode

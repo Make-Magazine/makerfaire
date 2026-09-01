@@ -20,6 +20,10 @@
 
 			if ( $el.parents( 'table.gf_entries' ).length ) {
 				$el.text( value );
+			} else if ( $el.attr( 'data-rich-text' ) ) {
+				// A rich text Paragraph field stores HTML; render it as-is so the redraw after a save
+				// matches the page instead of escaping the tags or re-wrapping the blocks in <p>.
+				$el.html( value );
 			} else {
 				var lines = value.split( '\n' );
 				var html = '';

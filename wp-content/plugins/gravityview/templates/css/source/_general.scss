@@ -25,7 +25,10 @@ a.gv-sort {
   border-bottom: none;
 }
 
-// Used to hide elements (e.g. Hide View data until search is performed)
+// Used to hide elements (e.g. Hide View data until search is performed).
+// `!important` because the grid layout rules set `display` on these same
+// elements with two-class selectors, which would otherwise out-weigh this
+// one and leave a hidden View visible.
 .gv-hidden {
-  display: none;
+  display: none !important;
 }

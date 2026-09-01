@@ -431,7 +431,8 @@ var _baseTracking = _interopRequireDefault(__webpack_require__(/*! ./base-tracki
 function _callSuper(t, o, e) { return o = (0, _getPrototypeOf2.default)(o), (0, _possibleConstructorReturn2.default)(t, _isNativeReflectConstruct() ? Reflect.construct(o, e || [], (0, _getPrototypeOf2.default)(t).constructor) : o.apply(t, e)); }
 function _isNativeReflectConstruct() { try { var t = !Boolean.prototype.valueOf.call(Reflect.construct(Boolean, [], function () {})); } catch (t) {} return (_isNativeReflectConstruct = function _isNativeReflectConstruct() { return !!t; })(); }
 var PROMO_MENU_ITEMS = {
-  go_elementor_pro: 'Upgrade'
+  go_elementor_pro: 'Upgrade',
+  'elementor-one-upgrade': 'Upgrade'
 };
 var MenuPromotionTracking = /*#__PURE__*/function (_BaseTracking) {
   function MenuPromotionTracking() {
@@ -3821,7 +3822,7 @@ __webpack_require__(/*! elementor-app/event-track/wp-dashboard-tracking */ "../a
         $importFormFileInput: $('#elementor-import-template-form input[type="file"]'),
         $settingsForm: $('#elementor-settings-form'),
         $settingsTabsWrapper: $('#elementor-settings-tabs-wrapper'),
-        $menuGoProLink: $('a[href="admin.php?page=go_elementor_pro"]'),
+        $menuGoProLink: $('a[href="admin.php?page=go_elementor_pro"], a[href*="admin.php?page=elementor-one-upgrade"]'),
         $reMigrateGlobalsButton: $('.elementor-re-migrate-globals-button')
       };
       elements.$settingsFormPages = elements.$settingsForm.find('.elementor-settings-form-page');

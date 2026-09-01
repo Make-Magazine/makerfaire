@@ -1,4 +1,4 @@
-/*! elementor-pro - v4.1.0 - 14-07-2026 */
+/*! elementor-pro - v4.2.0 - 31-08-2026 */
 /******/ (() => { // webpackBootstrap
 /******/ 	var __webpack_modules__ = ({
 
@@ -5977,7 +5977,7 @@ function ConditionConflicts(props) {
   return /*#__PURE__*/_react.default.createElement(_appUi.Text, {
     className: "e-site-editor-conditions__conflict",
     variant: "sm"
-  }, sprintf(/* Translators: %s: a list of conflicted templates */
+  }, sprintf(/* translators: %s: a list of conflicted templates */
   __('We noticed that you already applied %s with the same condition.', 'elementor-pro'), conflictLinks), /*#__PURE__*/_react.default.createElement("br", null), __("To continue, set different conditions for each so they don't conflict.", 'elementor-pro'));
 }
 ConditionConflicts.propTypes = {

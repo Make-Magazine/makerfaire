@@ -1,9 +1,4 @@
 <?php
-/**
- * @license MIT
- *
- * Modified using {@see https://github.com/BrianHenryIE/strauss}.
- */
 
 namespace GravityKit\GravityView\QueryFilters\Querying\Form;
 
@@ -52,7 +47,7 @@ final class GravityFormsFormRepository {
 		// $where is the output of $wpdb->prepare() and may contain `%` literals — pass it as a %s
 		// argument so sprintf treats those bytes as a value rather than parsing them as tokens.
 		$sql = sprintf(
-			"SELECT id, title FROM {$table} %s ORDER BY title ASC LIMIT %d OFFSET %d",
+			"SELECT id, title FROM {$table} %s ORDER BY title ASC, id ASC LIMIT %d OFFSET %d",
 			$where,
 			$criteria->limit(),
 			$criteria->offset()

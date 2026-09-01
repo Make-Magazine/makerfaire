@@ -25,7 +25,10 @@ class GV_Extension_DataTables_Buttons extends GV_DataTables_Extension {
 
 		?>
 		<table class="form-table">
-			<caption>Buttons</caption>
+			<caption>
+				Buttons
+				<p class="description"><?php esc_html_e( 'These export buttons are separate from the "Allow Export" and "Show All In File" settings on the Permissions tab, which govern only the CSV/TSV download link and REST endpoint.', 'gv-datatables' ); ?></p>
+			</caption>
 			<tr valign="top">
 				<td colspan="2">
 					<?php
@@ -210,10 +213,20 @@ class GV_Extension_DataTables_Buttons extends GV_DataTables_Extension {
 			if( !empty( $buttons ) ) {
 				foreach( $buttons as $button ) {
 
+					// A filtered label array can be partial, which raised an undefined-key warning and
+					// rendered a blank, unnamed button.
+					$label = isset( $button_labels[ $button ] ) ? $button_labels[ $button ] : ucfirst( $button );
+
 					$button_config = array(
 						'extend' => $button,
-						'text' => esc_html( $button_labels[ $button ] ),
+						'text' => esc_html( $label ),
 					);
+
+					// The hidden sort columns are internal plumbing. Offering them in Column
+					// Visibility lets a visitor un-hide one into the table and into every export.
+					if ( 'colvis' === $button ) {
+						$button_config['columns'] = ':not(.gv-hidden-sort-column)';
+					}
 
 					/**
 					 * Customise the button export options ( `type` is 'pdf', 'csv', 'excel', 'colvis' ).
@@ -230,6 +243,27 @@ class GV_Extension_DataTables_Buttons extends GV_DataTables_Extension {
 				}
 			}
 
+			/**
+			 * Server-side mode only ever renders one page client-side, so an export button that
+			 * just reads the DOM silently produces a partial file. The JS fetches the full
+			 * filtered set for the duration of the export instead, bounded by this cap. `language`
+			 * is replaced wholesale by locale files (see F-14 in the docs audit), so these strings
+			 * live under their own top-level key instead, to survive translation.
+			 *
+			 * @since 3.12.0
+			 *
+			 * @param int      $max_rows Row cap. 0 or negative disables the cap.
+			 * @param \GV\View $view     The View being configured.
+			 */
+			// Resolved by ID, not from $post: for an embedded View $post is the embedding page,
+			// and View::from_post() returns null for any non-View post type.
+			$max_rows = (int) apply_filters( 'gk/gravityview/datatables/export/max-rows', 1000, \GV\View::by_id( $view_id ) );
+
+			$dt_config['gvExport'] = array(
+				'maxRows'   => $max_rows,
+				'tooLarge'  => __( 'There are too many rows to export at once. Refine your search and try again.', 'gv-datatables' ),
+				'exporting' => __( 'Preparing export…', 'gv-datatables' ),
+			);
 		}
 
 		gravityview()->log->debug(  __METHOD__ .': Inserting Buttons config. Data: ', array( 'data' => $dt_config ) );

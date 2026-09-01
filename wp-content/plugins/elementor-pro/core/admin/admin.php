@@ -178,7 +178,7 @@ class Admin extends App {
 						wp_nonce_url( admin_url( 'admin-post.php?action=elementor_pro_rollback&version=VERSION' ), 'elementor_pro_rollback' ),
 						__( 'Reinstall', 'elementor-pro' )
 					),
-					'desc' => '<span style="color: red;">' . esc_html__( 'Warning: Please backup your database before making the rollback.', 'elementor-pro' ) . '</span>',
+					'desc' => '<span style="color: red;">' . esc_html__( 'Warning: Please back up your database before making the rollback.', 'elementor-pro' ) . '</span>',
 				],
 			],
 		] );

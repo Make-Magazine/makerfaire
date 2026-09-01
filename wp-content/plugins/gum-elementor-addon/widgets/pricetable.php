@@ -1933,22 +1933,10 @@ class Month_Anual_Pricetable_Regular_Widget extends Widget_Base {
 
     $settings = $this->get_settings_for_display();
 
-/*
-    print "<pre>";
-
-
-var_dump($settings);
-
-    print "</pre>";
-//icon_align
-
-
-*/
-
       extract( $settings );
 
       $allowed_tags = array('h1','h2','h3','h4','h5','h6','div');
-      $tag_title = (in_array( $tag, $allowed_tags )) ? wp_kses_post( $tag ): 'h3';
+      $tag_title = (in_array( $tag, $allowed_tags )) ? Utils::validate_html_tag( $tag ) : 'h3';
 
       $this->add_render_attribute( 'block_price', 'class', 'regular-price');
       $this->add_inline_editing_attributes( 'block_price', 'none' );

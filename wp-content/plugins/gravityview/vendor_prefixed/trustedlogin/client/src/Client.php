@@ -16,9 +16,6 @@
  * @package GravityKit\GravityView\Foundation\ThirdParty\TrustedLogin\Client
  *
  * @copyright 2023 Katz Web Services, Inc.
- *
- * @license GPL-2.0-or-later
- * Modified using {@see https://github.com/BrianHenryIE/strauss}.
  */
 
 namespace GravityKit\GravityView\Foundation\ThirdParty\TrustedLogin;

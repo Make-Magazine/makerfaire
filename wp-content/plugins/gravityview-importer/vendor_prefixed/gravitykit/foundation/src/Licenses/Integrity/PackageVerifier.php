@@ -352,9 +352,11 @@ final class PackageVerifier {
 		$sha256_hex = hash_file( 'sha256', $temp_file );
 
 		if ( $sha256_hex !== $signature_data['sha256'] ) {
+			// Cached signature may lag a republished build; try a one-shot refresh-and-retry before
+			// failing. Only this path self-heals — tamper/revocation/missing below stay loud.
 			self::log(
-				'error',
-				'[hash_mismatch] action=blocked',
+				'warning',
+				'[hash_mismatch] action=self_heal_attempt',
 				[
 					'expected' => $signature_data['sha256'],
 					'actual'   => $sha256_hex,
@@ -362,13 +364,31 @@ final class PackageVerifier {
 				]
 			);
 
-			// phpcs:ignore WordPress.PHP.NoSilencedErrors.Discouraged -- Best-effort cleanup; may already be gone.
-			@unlink( $temp_file );
+			$healed = self::self_heal_hash_mismatch( $package, $hook_extra, (string) $sha256_hex, $signature_data['sha256'], $temp_file );
 
-			return new WP_Error(
-				'gk_signature_hash_mismatch',
-				esc_html__( 'This download does not match what we published. Often a network glitch — retry once. If it fails again, stop and contact GravityKit support.', 'gk-foundation' )
-			);
+			if ( ! $healed ) {
+				self::log(
+					'error',
+					'[hash_mismatch] action=blocked',
+					[
+						'expected' => $signature_data['sha256'],
+						'actual'   => $sha256_hex,
+						'package'  => $package,
+					]
+				);
+
+				// phpcs:ignore WordPress.PHP.NoSilencedErrors.Discouraged -- Best-effort cleanup; may already be gone.
+				@unlink( $temp_file );
+
+				return new WP_Error(
+					'gk_signature_hash_mismatch',
+					esc_html__( 'This download does not match what we published. Often a network glitch — retry once. If it fails again, stop and contact GravityKit support.', 'gk-foundation' )
+				);
+			}
+
+			$signature_data = $healed['signature_data'];
+			$temp_file      = $healed['temp_file'];
+			$sha256_hex     = $healed['sha256'];
 		}
 
 		if ( self::is_key_revoked( $signature_data['signing_key_id'] ) ) {
@@ -693,6 +713,86 @@ final class PackageVerifier {
 		}
 
 		return null;
+	}
+
+	/**
+	 * Forces one products refetch (as the Licenses UI "Refresh" does) and re-checks the downloaded
+	 * file against the fresh signature, re-downloading once only if the file on disk still mismatches.
+	 *
+	 * Heals the common case where the cached signature lags a republished build. One-shot, no
+	 * throttle: the path is update-gated and a stale cache must recover the moment the store is correct.
+	 *
+	 * Cross-channel false-heal safety relies on resolve_signature_data() being pinned to a single
+	 * channel: it never scans channels for any sha that happens to match the bytes.
+	 *
+	 * @since 1.25.0
+	 *
+	 * @param string $package        The package URL.
+	 * @param array  $hook_extra     Upgrader extra arguments.
+	 * @param string $downloaded_sha sha256 of the file already downloaded to $temp_file.
+	 * @param string $expected_sha   The stale cached sha256 the download just failed against.
+	 * @param string $temp_file      Path to the already-downloaded file.
+	 *
+	 * @return array{signature_data: array, temp_file: string, sha256: string}|null Healed context, or null.
+	 */
+	private static function self_heal_hash_mismatch( string $package, array $hook_extra, string $downloaded_sha, string $expected_sha, string $temp_file ): ?array {
+		try {
+			ProductManager::get_instance()->get_products_data( [ 'skip_remote_cache' => true ] );
+		} catch ( Throwable $e ) {
+			self::log( 'error', '[self_heal] action=refresh_failed reason=' . $e->getMessage() );
+
+			return null;
+		}
+
+		$fresh = self::resolve_signature_data( $package, $hook_extra );
+
+		if ( ! $fresh || empty( $fresh['sha256'] ) ) {
+			return null;
+		}
+
+		if ( $downloaded_sha === $fresh['sha256'] ) {
+			self::log( 'warning', '[self_heal] action=recovered mode=rehash', [ 'sha256' => $downloaded_sha ] );
+
+			return [
+				'signature_data' => $fresh,
+				'temp_file'      => $temp_file,
+				'sha256'         => $downloaded_sha,
+			];
+		}
+
+		// The refresh did not move the advertised sha (store unchanged, or it degraded to stale
+		// cache under lock contention). Re-downloading from the same URL cannot help — fail now.
+		if ( $expected_sha === $fresh['sha256'] ) {
+			self::log( 'warning', '[self_heal] action=refresh_noop sha256=' . $fresh['sha256'] );
+
+			return null;
+		}
+
+		$retry_file = download_url( $package );
+
+		if ( is_wp_error( $retry_file ) || ! is_string( $retry_file ) || ! is_file( $retry_file ) ) {
+			return null;
+		}
+
+		$retry_sha = hash_file( 'sha256', $retry_file );
+
+		if ( $retry_sha !== $fresh['sha256'] ) {
+			// phpcs:ignore WordPress.PHP.NoSilencedErrors.Discouraged -- Best-effort cleanup; may already be gone.
+			@unlink( $retry_file );
+
+			return null;
+		}
+
+		// phpcs:ignore WordPress.PHP.NoSilencedErrors.Discouraged -- Best-effort cleanup; may already be gone.
+		@unlink( $temp_file );
+
+		self::log( 'warning', '[self_heal] action=recovered mode=redownload', [ 'sha256' => $retry_sha ] );
+
+		return [
+			'signature_data' => $fresh,
+			'temp_file'      => $retry_file,
+			'sha256'         => $retry_sha,
+		];
 	}
 
 	/**

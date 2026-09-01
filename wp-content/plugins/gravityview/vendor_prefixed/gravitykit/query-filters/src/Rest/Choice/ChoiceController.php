@@ -1,19 +1,22 @@
 <?php
-/**
- * @license MIT
- *
- * Modified using {@see https://github.com/BrianHenryIE/strauss}.
- */
 
 namespace GravityKit\GravityView\QueryFilters\Rest\Choice;
 
 use GFCommon;
+use GravityKit\GravityView\QueryFilters\Querying\Field\FieldChoice;
+use GravityKit\GravityView\QueryFilters\Querying\Field\FieldCriteria;
+use GravityKit\GravityView\QueryFilters\Querying\Field\Source\ChoiceSourceManager;
+use GravityKit\GravityView\QueryFilters\Querying\Field\Source\FieldChoicesSource;
+use GravityKit\GravityView\QueryFilters\Querying\Field\Exception\FieldNotFoundException;
+use GravityKit\GravityView\QueryFilters\Querying\Field\Exception\FormNotFoundException;
+use GravityKit\GravityView\QueryFilters\Querying\Field\Exception\UnsupportedFieldTypeException;
 use GravityKit\GravityView\QueryFilters\Querying\Form\Form;
 use GravityKit\GravityView\QueryFilters\Querying\Form\FormCriteria;
 use GravityKit\GravityView\QueryFilters\Querying\Form\GravityFormsFormRepository;
 use GravityKit\GravityView\QueryFilters\Querying\User\User;
 use GravityKit\GravityView\QueryFilters\Querying\User\UserCriteria;
 use GravityKit\GravityView\QueryFilters\Querying\User\WordPressUserRepository;
+use WP_Error;
 use WP_REST_Request;
 use WP_REST_Response;
 use WP_REST_Server;
@@ -70,23 +73,37 @@ final class ChoiceController {
 	private $prefix;
 
 	/**
-	 * @since 2.12.0
+	 * Resolves a field to the source that owns its choices.
 	 *
-	 * @param string $prefix REST namespace prefix (e.g. `gravitycharts/v1`).
+	 * @since 2.14.0
+	 *
+	 * @var ChoiceSourceManager
 	 */
-	public function __construct( string $prefix ) {
-		$this->prefix = $prefix . '/query-filters';
+	private ChoiceSourceManager $manager;
+
+	/**
+	 * @since 2.12.0
+	 * @since 2.14.0 Added the `$manager` parameter.
+	 *
+	 * @param string                   $prefix  REST namespace prefix (e.g. `gravitycharts/v1`).
+	 * @param ChoiceSourceManager|null $manager Source manager; defaults to a field-choices-only manager.
+	 */
+	public function __construct( string $prefix, ?ChoiceSourceManager $manager = null ) {
+		$this->prefix  = $prefix . '/query-filters';
+		$this->manager = $manager ?? new ChoiceSourceManager( new FieldChoicesSource() );
 	}
 
 	/**
 	 * Convenience: register both routes under the resolved prefix.
 	 *
 	 * @since 2.12.0
+	 * @since 2.14.0 Added the `$manager` parameter.
 	 *
-	 * @param string $prefix REST namespace prefix.
+	 * @param string                   $prefix  REST namespace prefix.
+	 * @param ChoiceSourceManager|null $manager Source manager forwarded to the controller.
 	 */
-	public static function register( string $prefix ): void {
-		( new self( $prefix ) )->register_routes();
+	public static function register( string $prefix, ?ChoiceSourceManager $manager = null ): void {
+		( new self( $prefix, $manager ) )->register_routes();
 	}
 
 	/**
@@ -114,6 +131,17 @@ final class ChoiceController {
 				'callback'            => [ $this, 'find_users' ],
 				'permission_callback' => [ self::class, 'check_user_permission' ],
 				'args'                => self::common_args(),
+			]
+		);
+
+		register_rest_route(
+			$this->prefix,
+			'/choice/field',
+			[
+				'methods'             => WP_REST_Server::READABLE,
+				'callback'            => [ $this, 'find_field_choices' ],
+				'permission_callback' => [ self::class, 'check_permission' ],
+				'args'                => self::field_args(),
 			]
 		);
 	}
@@ -178,6 +206,100 @@ final class ChoiceController {
 
 		return new WP_REST_Response( self::build_response(
 			array_map( $to_choice, $forms ),
+			array_map( $to_choice, $resolved ),
+			$has_more
+		) );
+	}
+
+	/**
+	 * Find a field's choices matching the query.
+	 *
+	 * Capability-approved resolution temporarily bypasses Lookup's current-user scope because the
+	 * route's entry-view capability already grants access to the source entries.
+	 *
+	 * @since 2.14.0
+	 * @since TBD Added request-scoped Lookup user-limit bypassing.
+	 *
+	 * @param WP_REST_Request $request The REST request.
+	 *
+	 * @return WP_REST_Response|WP_Error Response with shape {@see ChoiceResponse}, or an error.
+	 */
+	public function find_field_choices( WP_REST_Request $request ) {
+		$form_id  = (int) $request->get_param( 'form_id' );
+		$field_id = trim( (string) $request->get_param( 'field_id' ) );
+		$query    = trim( (string) $request->get_param( 'q' ) );
+		$resolve  = self::sanitize_values( $request->get_param( 'values' ) );
+		$offset   = max( 0, (int) $request->get_param( 'offset' ) );
+		$limit    = self::clamp_limit( $request->get_param( 'limit' ) );
+
+		if ( '' === $field_id ) {
+			return new WP_Error(
+				'gk_qf_field_id_required',
+				__( 'Field ID is required.', 'gk-query-filters', 'gk-gravityview' ),
+				[ 'status' => 400 ]
+			);
+		}
+
+		$source = $this->manager->resolve_source( $form_id, $field_id );
+
+		try {
+			$probe_limit = min( $limit + 1, FieldCriteria::MAX_LIMIT );
+			$page        = $source->search(
+				new FieldCriteria(
+					$form_id,
+					$field_id,
+					$query,
+					$probe_limit,
+					$offset
+				)
+			);
+
+			$has_more = count( $page ) > $limit;
+			if ( $has_more ) {
+				$page = array_slice( $page, 0, $limit );
+			}
+
+			$resolved = [];
+
+			if ( [] !== $resolve ) {
+				$bypass_user_limit = static function (): bool {
+					return true;
+				};
+				$can_view_entries  = self::check_permission();
+
+				if ( $can_view_entries ) {
+					// Scope the Lookup user-limit bypass to this capability-approved resolution only.
+					add_filter( 'gk/lookup/choice-query/bypass-user-limit', $bypass_user_limit );
+				}
+
+				try {
+					$resolved = $source->resolve( FieldCriteria::for_values( $form_id, $field_id, $resolve ) );
+				} finally {
+					if ( $can_view_entries ) {
+						remove_filter( 'gk/lookup/choice-query/bypass-user-limit', $bypass_user_limit );
+					}
+				}
+			}
+		} catch ( FormNotFoundException $exception ) {
+			return new WP_Error( 'gk_qf_form_not_found',
+				__( 'Form not found.', 'gk-query-filters', 'gk-gravityview' ),
+				[ 'status' => 404 ] );
+		} catch ( FieldNotFoundException $exception ) {
+			return new WP_Error( 'gk_qf_field_not_found',
+				__( 'Field not found.', 'gk-query-filters', 'gk-gravityview' ),
+				[ 'status' => 404 ] );
+		} catch ( UnsupportedFieldTypeException $exception ) {
+			return new WP_Error(
+				'gk_qf_field_not_supported',
+				__( 'Field type does not expose a static choice list.', 'gk-query-filters', 'gk-gravityview' ),
+				[ 'status' => 400 ]
+			);
+		}
+
+		$to_choice = static fn( FieldChoice $choice ): array => $choice->to_choice();
+
+		return new WP_REST_Response( self::build_response(
+			array_map( $to_choice, $page ),
 			array_map( $to_choice, $resolved ),
 			$has_more
 		) );
@@ -262,6 +384,29 @@ final class ChoiceController {
 				'sanitize_callback' => 'absint',
 			],
 		];
+	}
+
+	/**
+	 * Query string parameters for the field-choice route — the shared set plus the field locator.
+	 *
+	 * @since 2.14.0
+	 *
+	 * @return array<string, array<string, mixed>>
+	 */
+	private static function field_args(): array {
+		return array_merge( self::common_args(), [
+			'form_id'  => [
+				'type'              => 'integer',
+				'required'          => true,
+				'minimum'           => 1,
+				'sanitize_callback' => 'absint',
+			],
+			'field_id' => [
+				'type'              => 'string',
+				'required'          => true,
+				'sanitize_callback' => 'sanitize_text_field',
+			],
+		] );
 	}
 
 	/**

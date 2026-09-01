@@ -1,54 +1,23 @@
 <?php
 /**
- * GravityView Defining Post Types and Rewrite rules
+ * Backward-compatibility shim.
  *
- * @package   GravityView
- * @license   GPL2+
- * @author    GravityKit <hello@gravitykit.com>
- * @link      http://www.gravitykit.com
- * @copyright Copyright 2014, Katz Web Services, Inc.
- * @deprecated
+ * This file was moved in GravityView 3.0. It is intentionally empty.
+ * GravityView classes and functions load automatically — you no longer
+ * need to require GravityView files in your code.
  *
- * @since 1.0.9
+ * @deprecated 3.0
  */
 
-class GravityView_Post_Types {
-
-	function __construct() {
-	}
-
-	/**
-	 * Init plugin components such as register own custom post types
-	 *
-	 * @deprecated
-	 * @see \GV\View::register_post_type
-	 * @return void
-	 */
-	public static function init_post_types() {
-		\GV\View::register_post_type();
-	}
-
-	/**
-	 * Register rewrite rules to capture the single entry view
-	 *
-	 * @deprecated
-	 * @see \GV\Entry::add_rewrite_endpoint
-	 * @return void
-	 */
-	public static function init_rewrite() {
-		\GV\Entry::add_rewrite_endpoint();
-	}
-
-	/**
-	 * Return the query var / end point name for the entry
-	 *
-	 * @deprecated
-	 * @see \GV\Entry::get_endpoint_name
-	 * @return string Default: "entry"
-	 */
-	public static function get_entry_var_name() {
-		return \GV\Entry::get_endpoint_name();
-	}
+if ( ! defined( 'ABSPATH' ) ) {
+	die;
 }
 
-new GravityView_Post_Types();
+if ( function_exists( '_deprecated_file' ) ) {
+	_deprecated_file(
+		plugin_basename( __FILE__ ),
+		'3.0',
+		'',
+		'This file was moved in GravityView 3.0 and will be removed in a future release. GravityView classes and functions load automatically — you no longer need to require them.'
+	);
+}

@@ -1,10 +1,5 @@
 <?php
 /**
- * @license GPL-2.0-or-later
- *
- * Modified using {@see https://github.com/BrianHenryIE/strauss}.
- */
-/**
  * Class Form
  *
  * @package GravityKit\GravityView\Foundation\ThirdParty\TrustedLogin\Client

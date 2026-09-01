@@ -73,6 +73,18 @@ class Settings {
 	const LOGGER_SETTING_IDS = [ 'logger', 'logger_type', 'logger_level', 'logger_level_critical_notice', 'logger_level_warning_notice', 'logger_level_notice_notice', 'logger_level_info_notice', 'logger_level_debug_notice', 'chrome_logger_tip', 'query_monitor_notice', 'logger_rotation_period', 'logger_max_files', 'log_file', 'log_migration_notice', 'gravity_forms_logger_tip' ];
 
 	/**
+	 * Whether the log-migration transient has been confirmed absent for the current request.
+	 *
+	 * The migration notice is built once per registered logger, so this memoizes the (almost always)
+	 * absent state to avoid re-reading the same option from the database on every logger.
+	 *
+	 * @since 1.25.0
+	 *
+	 * @var bool
+	 */
+	private static $is_migration_notice_absent = false;
+
+	/**
 	 * Class constructor.
 	 *
 	 * @since 1.3.0
@@ -796,9 +808,18 @@ class Settings {
 	 * @return array|null
 	 */
 	private function get_migration_notice() {
+		// The migration transient is absent on virtually every request (it is only set once after a
+		// log-file rotation). This notice is built once per registered logger, so without memoizing
+		// the absent case the same option would be read from the database many times per admin page.
+		if ( self::$is_migration_notice_absent ) {
+			return null;
+		}
+
 		$migration_data = WP::get_transient( 'gk_foundation_log_migrated' );
 
 		if ( ! $migration_data ) {
+			self::$is_migration_notice_absent = true;
+
 			return null;
 		}
 

@@ -14,7 +14,7 @@
  * Plugin Name: GravityView - DataTables Layout
  * Plugin URI: https://www.gravitykit.com/products/datatables/
  * Description: Display entries in a dynamic table powered by DataTables & GravityView.
- * Version: 3.8.1
+ * Version: 3.13.1
  * Author: The GravityKit Team
  * Author URI:  https://www.gravitykit.com
  * Text Domain: gv-datatables
@@ -26,7 +26,7 @@ if ( ! defined( 'WPINC' ) ) {
 	die;
 }
 
-define( 'GV_DT_VERSION', '3.8.1' );
+define( 'GV_DT_VERSION', '3.13.1' );
 
 /** @define "GV_DT_FILE" "./" */
 define( 'GV_DT_FILE', __FILE__ );
@@ -64,7 +64,7 @@ function gv_extension_datatables_load() {
 
 		protected $_text_domain = 'gv-datatables';
 
-		protected $_min_gravityview_version = '2.15';
+		protected $_min_gravityview_version = '2.57';
 
 		protected $_path = GV_DT_FILE;
 
@@ -87,7 +87,12 @@ function gv_extension_datatables_load() {
 		}
 
 		function core_actions() {
+			include_once GV_DT_DIR . 'includes/class-datatables-response.php';
 			include_once GV_DT_DIR . 'includes/class-datatables-data.php';
+
+			// REST inspector bridge — surfaces `_gravityview_datatables_settings`
+			// to GravityView's inspector under the `datatables.*` namespace.
+			include_once GV_DT_DIR . 'includes/class-datatables-rest-bridge.php';
 
 			include_once GV_DT_DIR . 'includes/extensions/class-datatables-extension.php';
 
@@ -98,6 +103,7 @@ function gv_extension_datatables_load() {
 			 */
 			include_once GV_DT_DIR . 'includes/class-datatables-field-filters.php';
 			include_once GV_DT_DIR . 'includes/class-datatables-processing-mode.php';
+			include_once GV_DT_DIR . 'includes/class-datatables-column-widths.php';
 
 			include_once GV_DT_DIR . 'includes/extensions/class-datatables-search.php';
 			include_once GV_DT_DIR . 'includes/extensions/class-datatables-buttons.php';
@@ -106,6 +112,11 @@ function gv_extension_datatables_load() {
 			include_once GV_DT_DIR . 'includes/extensions/class-datatables-responsive.php';
 			include_once GV_DT_DIR . 'includes/extensions/class-datatables-auto-update.php';
 			include_once GV_DT_DIR . 'includes/extensions/class-datatables-rowgroup.php';
+			include_once GV_DT_DIR . 'includes/extensions/class-datatables-column-control.php';
+
+			// Not a "DataTables Extension" (no settings row); suppresses core widgets that
+			// don't fit this layout. See F-16 in reports/settings-interface-audit.md.
+			include_once GV_DT_DIR . 'includes/class-datatables-pagination-widgets.php';
 		}
 
 		function register_templates() {

@@ -1979,6 +1979,15 @@ class Processor {
 						$datetime_partials[ $column['column'] ] = $row->data[ $column['column'] ];
 					}
 
+					if ( 'status' === $column['field'] ) {
+						// Normalize canonical statuses to lowercase: SQL matches them case-insensitively, but PHP consumers compare strictly.
+						$entry_status = Core::strtolower( trim( $row->data[ $column['column'] ] ) );
+
+						if ( in_array( $entry_status, array( 'active', 'spam', 'trash' ), true ) ) {
+							$row->data[ $column['column'] ] = $entry_status;
+						}
+					}
+
 					/**
 					 * Allow the transformation of data for a column.
 					 *
@@ -2132,6 +2141,10 @@ class Processor {
 									$_POST['gform_uploaded_files']["input_{$field->id}"] = array();
 								}
 
+								// Gravity Forms 3.0 rejects an upload whose temporary file extension does not match
+								// the uploaded one, and the streamed temp file is named without any extension.
+								$source = self::match_temp_file_extension( $source, $filename );
+
 								$_POST['gform_uploaded_files']["input_{$field->id}"][] = array(
 									'temp_filename'     => basename( $source ),
 									'uploaded_filename' => $filename,
@@ -2155,9 +2168,14 @@ class Processor {
 								$_POST['gform_uploaded_files']["input_{$field->id}"] = array();
 							}
 
+							// These are placeholders for a link that is never uploaded, but Gravity Forms 3.0
+							// still compares their extensions, so both must carry the link's own.
+							$link_extension = pathinfo( parse_url( $row->data[ $column['column'] ], PHP_URL_PATH ) ?: '', PATHINFO_EXTENSION );
+							$link_extension = $link_extension ? '.' . $link_extension : '';
+
 							$_POST['gform_uploaded_files']["input_{$field->id}"][] = array(
-								'temp_filename'     => wp_generate_password( 16, false ),
-								'uploaded_filename' => wp_generate_password( 16, false ),
+								'temp_filename'     => wp_generate_password( 16, false ) . $link_extension,
+								'uploaded_filename' => wp_generate_password( 16, false ) . $link_extension,
 							);
 
 							$has_fields = true;
@@ -2809,7 +2827,12 @@ class Processor {
 			add_filter( "gform_form_post_get_meta_{$batch['form_id']}", $remove_submit_button_logic );
 
 			\GFFormDisplay::process_form( $batch['form_id'] ); // @todo try submit_form()
-		} catch ( \Exception $e ) {
+		} catch ( \Throwable $e ) {
+			// Catch \Throwable (not just \Exception) so a fatal PHP \Error raised by a
+			// misbehaving form feed (e.g. an expired Google Sheets/Pods client calling a
+			// method on null) is recorded as a per-row error instead of escaping row
+			// handling, propagating through Processor::run(), and causing the background
+			// scheduler to mark the entire job "failed" with a generic, log-less message.
 			$error = $e->getMessage();
 
 			remove_filter( 'gform_suppress_confirmation_redirect', '__return_true' );
@@ -2880,12 +2903,37 @@ class Processor {
 
 		if ( is_null( $submission ) || ! $submission['is_valid'] ) {
 			if ( ! is_null( $submission ) ) {
-				$validation_error = __( 'Unknown', 'gk-gravityimport' );
+				$validation_error = '';
 
 				foreach ( $submission['form']['fields'] as $field ) {
 					if ( $field->validation_message ) {
-						$validation_error = sprintf( '%s (%s / #%s)', htmlspecialchars_decode( $field->validation_message, ENT_QUOTES ), $field->label ?: ( $field->adminLabel ?: $validation_error ), $field->id );
+						// Multi-file fields report one message per file, so the value can be an array.
+						$field_message = is_array( $field->validation_message ) ? implode( ' ', $field->validation_message ) : $field->validation_message;
+
+						$validation_error = sprintf( '%s (%s / #%s)', htmlspecialchars_decode( $field_message, ENT_QUOTES ), $field->label ?: ( $field->adminLabel ?: __( 'Unknown', 'gk-gravityimport' ) ), $field->id );
 						break;
+					}
+				}
+
+				if ( ! $validation_error && ! empty( $submission['button_logic_error'] ) ) {
+					// GF records submit/next button conditional-logic failures on the submission, not on a field.
+					$validation_error = trim( wp_strip_all_tags( $submission['button_logic_error'] ) );
+				}
+
+				if ( ! $validation_error ) {
+					$has_submissions_block = function_exists( 'gf_upgrade' ) && method_exists( gf_upgrade(), 'get_submissions_block' ) && gf_upgrade()->get_submissions_block();
+
+					if ( $has_submissions_block ) {
+						// GF rejects all submissions before field validation and the gform_validation filter while its database upgrade is pending, so no field carries a validation message.
+						$validation_error = implode( ' ', array(
+							__( 'Gravity Forms is blocking new entry submissions until its database upgrade completes.', 'gk-gravityimport' ),
+							__( 'Check the Forms → System Status page, then retry the import.', 'gk-gravityimport' ),
+						) );
+					} else {
+						$validation_error = implode( ' ', array(
+							__( 'The form failed validation without a field-specific message.', 'gk-gravityimport' ),
+							__( 'This usually comes from a plugin hooked to Gravity Forms validation, such as an anti-spam or CAPTCHA plugin.', 'gk-gravityimport' ),
+						) );
 					}
 				}
 
@@ -3311,6 +3359,35 @@ class Processor {
 	 */
 	public function get_args() {
 		return $this->args;
+	}
+
+	/**
+	 * Renames a downloaded temp file so its extension matches the uploaded filename.
+	 *
+	 * Gravity Forms 3.0 rejects an upload whose temporary and uploaded extensions differ, and the
+	 * temp file is streamed to a random name without one.
+	 *
+	 * @since 2.12.0
+	 *
+	 * @param string $source   Absolute path to the downloaded temp file.
+	 * @param string $filename The filename the upload will be stored under.
+	 *
+	 * @return string The temp file path, renamed when possible and unchanged otherwise.
+	 */
+	private static function match_temp_file_extension( $source, $filename ) {
+		$uploaded_extension = strtolower( pathinfo( $filename, PATHINFO_EXTENSION ) );
+
+		if ( ! $uploaded_extension || strtolower( pathinfo( $source, PATHINFO_EXTENSION ) ) === $uploaded_extension ) {
+			return $source;
+		}
+
+		$source_with_extension = $source . '.' . $uploaded_extension;
+
+		if ( ! rename( $source, $source_with_extension ) ) {
+			return $source;
+		}
+
+		return $source_with_extension;
 	}
 
 	/**

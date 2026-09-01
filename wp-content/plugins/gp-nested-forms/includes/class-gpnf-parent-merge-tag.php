@@ -123,7 +123,12 @@ class GPNF_Parent_Merge_Tag {
 		$input_html = GFCommon::get_field_input( $field, $value, $entry_id, $form_id, GFAPI::get_form( $form_id ) );
 		add_filter( 'gform_field_input', array( $this, 'select_value_data_attr' ), 11, 5 );
 
-		$select_pattern = '/<(?:select|textarea|input)(.*?)id=[\'"]input_((\d+_?)+)[\'"]/m';
+		/*
+		 * Gravity Forms 3.0 renders the datepicker input with each attribute on its own line, so the gap between the
+		 * tag name and its "id" attribute can span newlines. Match on [^>] rather than ".", which stops at the first
+		 * newline; the /s modifier would cross newlines but would also let the match run past the end of the tag.
+		 */
+		$select_pattern = '/<(?:select|textarea|input)([^>]*?)id=[\'"]input_((\d+_?)+)[\'"]/';
 
 		preg_match_all( $select_pattern, $input_html, $matches, PREG_SET_ORDER, 0 );
 

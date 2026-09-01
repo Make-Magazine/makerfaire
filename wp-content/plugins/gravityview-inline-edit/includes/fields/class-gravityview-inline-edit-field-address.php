@@ -7,12 +7,12 @@
  */
 class GravityView_Inline_Edit_Field_Address extends GravityView_Inline_Edit_Field {
 
-	var $gv_field_name = 'address';
+	public $gv_field_name = 'address';
 
 	/** @see GF_Field_Address $gf_field */
-	var $inline_edit_type = 'address';
+	public $inline_edit_type = 'address';
 
-	var $standard_live_update = true;
+	public $standard_live_update = true;
 
 	/**
 	 * @since 1.0
@@ -38,11 +38,11 @@ class GravityView_Inline_Edit_Field_Address extends GravityView_Inline_Edit_Fiel
 
 		foreach ( $address_types as $addr_type => $address_details ) {
 
-			if ( 'international' == $addr_type ) {
+			if ( 'international' === $addr_type ) {
 				$addr_list = $gf_field->get_country_dropdown();
-			} else if ( 'canadian' == $addr_type ) {
+			} elseif ( 'canadian' === $addr_type ) {
 				$addr_list = $gf_field->get_canadian_provinces_dropdown();
-			} else if ( 'us' == $addr_type ) {
+			} elseif ( 'us' === $addr_type ) {
 				$addr_list = $gf_field->get_us_state_dropdown();
 			} else {
 				$addr_list = $this->_get_new_country_dropdown( $address_details['states'] );
@@ -79,7 +79,7 @@ class GravityView_Inline_Edit_Field_Address extends GravityView_Inline_Edit_Fiel
 
 		}
 
-		return empty( $inline_editable_address ) ? '' : json_encode( $inline_editable_address );
+		return empty( $inline_editable_address ) ? '' : wp_json_encode( $inline_editable_address );
 	}
 
 	/**
@@ -107,8 +107,10 @@ class GravityView_Inline_Edit_Field_Address extends GravityView_Inline_Edit_Fiel
 
 		// Code taken from GravityView core (see `templates/fields/fields-address-html.php`)
 		add_filter( 'gform_disable_address_map_link', '__return_true' );
+		// get_value_entry_detail() replaces GFCommon::get_lead_field_display(), deprecated in
+		// Gravity Forms 3.0; its second parameter changed from currency to entry in GF 2.9.29.
 		$entry_or_currency = version_compare( \GFForms::$version, '2.9.29', '>=' ) ? $entry : '';
-		$formatted_address = \GFCommon::get_lead_field_display( $gf_field, $address, $entry_or_currency, false, 'html' );
+		$formatted_address = $gf_field->get_value_entry_detail( $address, $entry_or_currency, false, 'html' );
 		remove_filter( 'gform_disable_address_map_link', '__return_true' );
 		if ( empty( $formatted_address ) ) {
 			return array();
@@ -141,7 +143,7 @@ class GravityView_Inline_Edit_Field_Address extends GravityView_Inline_Edit_Fiel
 			}
 		}
 
-		return empty( $hidden_inputs ) ? '' : json_encode( $hidden_inputs );
+		return empty( $hidden_inputs ) ? '' : wp_json_encode( $hidden_inputs );
 	}
 
 	/**
@@ -157,7 +159,7 @@ class GravityView_Inline_Edit_Field_Address extends GravityView_Inline_Edit_Fiel
 	private function _get_new_country_dropdown( $states ) {
 		$country_options = '';
 		foreach ( $states as $state ) {
-			$country_options .= "<option value='{$state}'>{$state}</option>";
+			$country_options .= '<option value="' . esc_attr( $state ) . '">' . esc_html( $state ) . '</option>';
 		}
 
 		return $country_options;

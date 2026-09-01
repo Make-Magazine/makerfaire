@@ -128,10 +128,13 @@ abstract class GravityView_Inline_Edit_Field {
 	 *
 	 * @return bool|WP_Error|array Returns original result, if not a number field. Otherwise, returns a response array. Empty if no calculation fields, otherwise multi-dimensional array with `data` and `selector` keys
 	 */
-	public function updated_result( $update_result, $entry = array(), $form_id = 0, GF_Field $gf_field = null ) {
+	public function updated_result( $update_result, $entry = array(), $form_id = 0, ?GF_Field $gf_field = null ) {
 		$return = $update_result;
 
-		if ( $this->standard_live_update ) {
+		// Only a successful save produces a payload. A WP_Error passes through, and so does false:
+		// otherwise a failed save would reach the browser as a success telling it to display a value
+		// that was never stored.
+		if ( true === $update_result && $this->standard_live_update ) {
 
 			$value = method_exists( $this, '_get_inline_edit_value' ) ? $this->_get_inline_edit_value( $gf_field, $entry ) : rgar( $entry, $gf_field->id );
 			$data  = method_exists( $this, 'get_inline_edit_extra_data' ) ? $this->get_inline_edit_extra_data( $gf_field, $entry ) : array( 'display_value' => $gf_field->get_value_export( $entry ) );
@@ -144,19 +147,28 @@ abstract class GravityView_Inline_Edit_Field {
 				),
 			);
 
+			if ( ! is_array( $gf_field->inputs ) ) {
+				return $return;
+			}
+
 			foreach ( $gf_field->inputs as $input ) {
 				$input_array = explode( '.', $input['id'] );
 
 				$return_value = $value;
 
 				if ( $this->live_update_json_encode && isset( $input_array[1] ) ) {
-					$return_value = json_encode( array( $input_array[1] => rgar( $entry, $input['id'] ) ) );
+					$return_value = wp_json_encode( array( $input_array[1] => rgar( $entry, $input['id'] ) ) );
 				}
+
+				// Subclasses that set live_update_json_encode to false pass the raw value through,
+				// which json_decode() returns null for.
+				$decoded       = json_decode( $return_value, true );
+				$display_value = is_array( $decoded ) ? implode( ' ', array_values( $decoded ) ) : (string) $return_value;
 
 				$return[] = array(
 					'selector' => ".gv-inline-editable-field-{$entry['id']}-{$entry['form_id']}-" . str_replace( '.', '-', $input['id'] ),
 					'value'    => $return_value,
-					'data'     => array( 'display_value' => implode( ' ', array_values( json_decode( $return_value, true ) ) ) ),
+					'data'     => array( 'display_value' => $display_value ),
 				);
 			}
 		}

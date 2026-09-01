@@ -1,33 +1,23 @@
 <?php
 /**
- * Add Code Snippet customizations
+ * Backward-compatibility shim.
  *
- * @file      class-gravityview-plugin-hooks-code-snippets.php
- * @package   GravityView
- * @license   GPL2+
- * @author    GravityKit <hello@gravitykit.com>
- * @link      http://www.gravitykit.com
- * @copyright Copyright 2021, Katz Web Services, Inc.
+ * This file was moved in GravityView 3.0. It is intentionally empty.
+ * GravityView classes and functions load automatically — you no longer
+ * need to require GravityView files in your code.
  *
- * @since 2.13.2
+ * @deprecated 3.0
  */
 
-/**
- * @inheritDoc
- * @since 2.13.2
- */
-class GravityView_Plugin_Hooks_Code_Snippets extends GravityView_Plugin_and_Theme_Hooks {
-
-	/**
-	 * @since 2.13.2
-	 */
-	protected $constant_name = 'CODE_SNIPPETS_FILE';
-
-	/**
-	 * @since 2.13.2
-	 * @var array
-	 */
-	protected $style_handles = array( 'menu-icon-snippets' );
+if ( ! defined( 'ABSPATH' ) ) {
+	die;
 }
 
-new GravityView_Plugin_Hooks_Code_Snippets();
+if ( function_exists( '_deprecated_file' ) ) {
+	_deprecated_file(
+		plugin_basename( __FILE__ ),
+		'3.0',
+		'',
+		'This file was moved in GravityView 3.0 and will be removed in a future release. GravityView classes and functions load automatically — you no longer need to require them.'
+	);
+}

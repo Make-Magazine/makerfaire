@@ -27,7 +27,19 @@ class FoundationSettings {
 	 * @return void
 	 */
 	public static function bootstrap() {
-		add_filter( 'gk/foundation/settings/data/plugins', array( __CLASS__, 'include_settings' ) );
+		// Register on `after_setup_theme` (this runs on `plugins_loaded`): `include_settings()`
+		// translates its labels, and Foundation's logger materializes every plugin's settings
+		// during `plugins_loaded`, before `after_setup_theme`, tripping WordPress 6.7's
+		// just-in-time translation notice. Settings are only read at runtime (after `init`).
+		$register = static function () {
+			add_filter( 'gk/foundation/settings/data/plugins', array( __CLASS__, 'include_settings' ) );
+		};
+
+		if ( did_action( 'after_setup_theme' ) ) {
+			$register();
+		} else {
+			add_action( 'after_setup_theme', $register, 0 );
+		}
 	}
 
 	/**

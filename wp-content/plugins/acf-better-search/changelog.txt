@@ -1,8 +1,11 @@
 == Changelog ==
 
+= 4.5.1 (2026-08-18) =
+* `[Added]` Support for WordPress 7.1
+
 = 4.5.0 (2026-06-01) =
 * `[Fixed]` Compatibility with PHP 8.4
-* `[Changed]` Minimum required PHP version from 7.1 to 7.4
+* `[Changed]` Minimum required PHP version from 7.0 to 7.4
 * `[Added]` Compatibility with PHP 8.5
 * `[Added]` Support for WordPress 7.0
 

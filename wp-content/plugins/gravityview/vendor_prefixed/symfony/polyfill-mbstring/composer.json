@@ -23,7 +23,7 @@
         "ext-mbstring": "*"
     },
     "autoload": {
-        "psr-4": { "Symfony\\Polyfill\\Mbstring\\": "" },
+        "psr-4": { "GravityKit\\GravityView\\Symfony\\Polyfill\\Mbstring\\": "" },
         "files": [ "bootstrap.php" ]
     },
     "suggest": {

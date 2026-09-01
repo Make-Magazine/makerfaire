@@ -1,9 +1,4 @@
 <?php
-/**
- * @license MIT
- *
- * Modified using {@see https://github.com/BrianHenryIE/strauss}.
- */
 
 namespace GravityKit\GravityView\QueryFilters;
 
@@ -28,6 +23,10 @@ use GravityKit\GravityView\QueryFilters\Filter\Visitor\ProcessDateVisitor;
 use GravityKit\GravityView\QueryFilters\Filter\Visitor\ProcessFieldTypeVisitor;
 use GravityKit\GravityView\QueryFilters\Filter\Visitor\ProcessMergeTagsVisitor;
 use GravityKit\GravityView\QueryFilters\Filter\Visitor\UserIdVisitor;
+use GravityKit\GravityView\QueryFilters\MergeTag\FormMergeModifier;
+use GravityKit\GravityView\QueryFilters\Querying\Field\Source\ChoiceSourceManager;
+use GravityKit\GravityView\QueryFilters\Querying\Field\Source\FieldChoicesSource;
+use GravityKit\GravityView\QueryFilters\Querying\Field\Source\Integrations;
 use GravityKit\GravityView\QueryFilters\Repository\DefaultRepository;
 use GravityKit\GravityView\QueryFilters\Rest\Choice\ChoiceController;
 use GravityKit\GravityView\QueryFilters\Rest\Endpoint\EndpointRegistry;
@@ -39,6 +38,16 @@ class QueryFilters {
 	 * @since 1.0
 	 * @var array Assets handle.
 	 */
+	/**
+	 * The version of this copy of the library.
+	 *
+	 * Several plugins can vendor their own copy and load them on one screen. The version decides
+	 * which copy owns the shared browser globals, so it must be bumped with every release.
+	 *
+	 * @since $ver$
+	 */
+	public const VERSION = '2.16.0';
+
 	public const ASSETS_HANDLE = 'gk-query-filters';
 
 	/**
@@ -100,6 +109,8 @@ class QueryFilters {
 		$this->condition_factory    = new ConditionFactory();
 		$this->repository           = new DefaultRepository();
 		$this->entry_filter_service = new EntryFilterService( $this->repository );
+
+		FormMergeModifier::register();
 	}
 
 	/**
@@ -198,14 +209,137 @@ class QueryFilters {
 	 */
 	public static function register_rest_routes( ?string $prefix = null ): string {
 		$resolved_prefix = self::resolve_prefix( $prefix );
+		$manager         = self::choice_source_manager();
 
-		add_action( 'rest_api_init', static function () use ( $resolved_prefix ): void {
-			ChoiceController::register( $resolved_prefix );
+		add_action( 'rest_api_init', static function () use ( $resolved_prefix, $manager ): void {
+			ChoiceController::register( $resolved_prefix, $manager );
 		} );
 
-		EndpointRegistry::register_defaults( $resolved_prefix );
+		EndpointRegistry::register_defaults( $resolved_prefix, $manager );
+
+		self::register_field_filter_hooks();
 
 		return $resolved_prefix;
+	}
+
+	/**
+	 * The memoized choice source manager, sources registered ahead of the field-choices fallback.
+	 *
+	 * @since 2.14.0
+	 *
+	 * @var ChoiceSourceManager|null
+	 */
+	private static ?ChoiceSourceManager $choice_source_manager = null;
+
+	/**
+	 * Returns the choice source manager, building it on first use.
+	 *
+	 * @since 2.14.0
+	 *
+	 * @return ChoiceSourceManager The manager.
+	 */
+	private static function choice_source_manager(): ChoiceSourceManager {
+		if ( null === self::$choice_source_manager ) {
+			$manager = new ChoiceSourceManager( new FieldChoicesSource() );
+
+			Integrations::register( $manager );
+
+			self::$choice_source_manager = $manager;
+		}
+
+		return self::$choice_source_manager;
+	}
+
+	/**
+	 * Tags choice-bearing field filters with the `field` auto-endpoint hint so they can be
+	 * auto-switched to the on-demand endpoint, and grants them the `has_*` multi-value operators.
+	 * Fields that already declare an endpoint, or that no source claims, are left untouched.
+	 *
+	 * @since 2.14.0
+	 *
+	 * @param array $fields The field filters, each carrying `form_id` and `key`.
+	 *
+	 * @return array The tagged field filters.
+	 */
+	private static function tag_choice_fields( array $fields ): array {
+		$manager = self::choice_source_manager();
+
+		foreach ( $fields as $index => $field ) {
+			if ( ! is_array( $field ) || isset( $field['endpoint'] ) || isset( $field['auto_endpoint'] ) ) {
+				continue;
+			}
+
+			$form_id  = (int) ( $field['form_id'] ?? 0 );
+			$field_id = (string) ( $field['key'] ?? '' );
+			if ( $form_id < 1 || '' === $field_id ) {
+				continue;
+			}
+
+			if ( ! $manager->supports( $form_id, $field_id ) ) {
+				continue;
+			}
+
+			$fields[ $index ]['auto_endpoint'] = 'field';
+			$fields[ $index ]['operators']     = array_values(
+				array_unique(
+					array_merge(
+						$field['operators'] ?? [],
+						[ 'has_any', 'has_all', 'has_none' ]
+					)
+				)
+			);
+		}
+
+		return $fields;
+	}
+
+	/**
+	 * Enriches field filters with their choice endpoints: tags choice-bearing fields and resolves
+	 * each `endpoint`/`auto_endpoint` declaration into the descriptor the UI consumes.
+	 *
+	 * @since 2.14.0
+	 *
+	 * @param array $fields The raw field filters, each carrying `form_id` and `key`.
+	 *
+	 * @return array The enriched field filters.
+	 */
+	public static function prepare_field_filters( array $fields ): array {
+		return EndpointRegistry::apply_to_field_filters( self::tag_choice_fields( $fields ) );
+	}
+
+	/**
+	 * Builds and enriches the field-filter list for a form, so QF owns the list a consumer would
+	 * otherwise assemble itself. A field list already supplied by an earlier caller is returned as is.
+	 *
+	 * @since 2.14.0
+	 *
+	 * @param mixed $fields  A field list from an earlier filter, or null to have QF build one.
+	 * @param int   $form_id The form to build field filters for.
+	 *
+	 * @return array The enriched field filters.
+	 */
+	public static function provide_field_filters( $fields, int $form_id ): array {
+		if ( is_array( $fields ) ) {
+			return $fields;
+		}
+
+		return self::prepare_field_filters( self::create()->get_field_filters( $form_id ) );
+	}
+
+	/**
+	 * Registers the field-filter hooks consumers use to delegate field-list building to QF.
+	 *
+	 * Enrich a list you built yourself:
+	 * `$fields = apply_filters( 'gk/query-filters/prepare-field-filters', $fields );`
+	 *
+	 * Let QF build and enrich the whole list for a form:
+	 * `$fields = apply_filters( 'gk/query-filters/fields-for-form', null, $form_id );`
+	 *
+	 * @since 2.14.0
+	 */
+	private static function register_field_filter_hooks(): void {
+		add_filter( 'gk/query-filters/prepare-field-filters', [ self::class, 'prepare_field_filters' ] );
+		add_filter( 'gk/query-filters/fields-for-form', [ self::class, 'provide_field_filters' ], 10, 2 );
 	}
 
 	/**
@@ -463,6 +597,7 @@ class QueryFilters {
 			'custom_is_operator_input'      => esc_html__( 'Custom Choice', 'gk-query-filters', 'gk-gravityview' ),
 			'custom_date'                   => esc_html__( 'Custom Date', 'gk-query-filters', 'gk-gravityview' ),
 			'custom_value'                  => esc_html__( 'Custom Value', 'gk-query-filters', 'gk-gravityview' ),
+			'custom_value_hint'             => esc_html__( 'Type to add a custom value', 'gk-query-filters', 'gk-gravityview' ),
 			'open_calendar'                 => esc_html__( 'Open calendar', 'gk-query-filters', 'gk-gravityview' ),
 			'reset_date'                    => esc_html__( 'Clear date', 'gk-query-filters', 'gk-gravityview' ),
 			'reset_date_range'              => esc_html__( 'Clear date range', 'gk-query-filters', 'gk-gravityview' ),
@@ -475,6 +610,12 @@ class QueryFilters {
 			'select_form'                   => esc_html__( 'Select Form', 'gk-query-filters', 'gk-gravityview' ),
 			'field_not_available'           => esc_html__( 'Form field ID #%d is no longer available. Please remove this condition.',
 				'gk-query-filters', 'gk-gravityview' ),
+			'no_results'                    => esc_html__( 'No results', 'gk-query-filters', 'gk-gravityview' ),
+			'loading'                       => esc_html__( 'Loading…', 'gk-query-filters', 'gk-gravityview' ),
+			'loading_more'                  => esc_html__( 'Loading more…', 'gk-query-filters', 'gk-gravityview' ),
+			'clear'                         => esc_html__( 'Clear all', 'gk-query-filters', 'gk-gravityview' ),
+			'remove'                        => esc_html__( 'Remove', 'gk-query-filters', 'gk-gravityview' ),
+			'open_choices'                  => esc_html__( 'Show choices', 'gk-query-filters', 'gk-gravityview' ),
 		] );
 
 		return $translations;
@@ -492,18 +633,22 @@ class QueryFilters {
 	public function enqueue_scripts( array $meta = [] ) {
 		// Register the shared date-picker bundle so the main app can depend on it instead of
 		// duplicating bits-ui and @internationalized/date into the query-filters.js bundle.
-		self::register_pickers_bundle();
+		$pickers_handle = self::register_pickers_bundle();
 
 		$script = 'assets/js/query-filters.js';
 		$handle = $meta['handle'] ?? self::ASSETS_HANDLE;
-		$ver    = $meta['ver'] ?? filemtime( plugin_dir_path( __DIR__ ) . $script );
+		$ver    = $meta['ver'] ?? self::VERSION;
 		$src    = $meta['src'] ?? plugins_url( $script, __DIR__ );
-		$deps   = $meta['deps'] ?? [ 'jquery', self::PICKERS_HANDLE ];
+		$deps   = $meta['deps'] ?? [ 'jquery', $pickers_handle ];
 
-		wp_enqueue_script( $handle, $src, $deps, $ver );
-		wp_enqueue_style( self::PICKERS_HANDLE );
+		if ( self::claims_handle( $handle ) ) {
+			wp_enqueue_script( $handle, $src, $deps, $ver );
+		} else {
+			wp_enqueue_script( $handle );
+		}
+		wp_enqueue_style( $pickers_handle );
 
-		$fields = EndpointRegistry::apply_to_field_filters( $meta['fields'] ?? $this->get_field_filters() );
+		$fields = self::prepare_field_filters( $meta['fields'] ?? $this->get_field_filters() );
 
 		$variable_name = $meta['variable_name'] ?? sprintf( 'gkQueryFilters_%s', bin2hex( random_bytes( 8 ) ) );
 		wp_localize_script(
@@ -572,6 +717,40 @@ class QueryFilters {
 	}
 
 	/**
+	 * Returns whether this copy of the library should register the handle.
+	 *
+	 * Several plugins can vendor their own copy, and they all register under the same handle:
+	 * Strauss prefixes PHP symbols, not the strings WordPress keys scripts on. The handle cannot be
+	 * scoped per copy either, since hosts declare it as a dependency by name. So the copies compete
+	 * for it, and the newest wins -- a version that does not read as one belongs to a copy from
+	 * before this was decided, and loses to any that does.
+	 *
+	 * @since $ver$
+	 *
+	 * @param string $handle The handle to claim.
+	 *
+	 * @return bool Whether to go on and register.
+	 */
+	private static function claims_handle( string $handle ): bool {
+		$registered = wp_scripts()->query( $handle, 'registered' );
+
+		if ( ! $registered ) {
+			return true;
+		}
+
+		$version = (string) ( $registered->ver ?? '' );
+
+		if ( preg_match( '/^\d+\.\d+/', $version ) && version_compare( self::VERSION, $version, '<=' ) ) {
+			return false;
+		}
+
+		wp_deregister_script( $handle );
+		wp_deregister_style( $handle );
+
+		return true;
+	}
+
+	/**
 	 * Registers the shared date-picker bundle under a single handle.
 	 *
 	 * Consumers can override handle, version, source URLs, and additional dependencies via `$meta`
@@ -587,13 +766,13 @@ class QueryFilters {
 	private static function register_pickers_bundle( array $meta = [] ): string {
 		$handle = $meta['handle'] ?? self::PICKERS_HANDLE;
 
-		if ( wp_script_is( $handle, 'registered' ) ) {
+		if ( ! self::claims_handle( $handle ) ) {
 			return $handle;
 		}
 
 		$script     = 'assets/js/date-range-picker.js';
 		$style      = 'assets/css/date-range-picker.css';
-		$ver        = $meta['ver'] ?? filemtime( plugin_dir_path( __DIR__ ) . $script );
+		$ver        = $meta['ver'] ?? self::VERSION;
 		$script_src = $meta['src'] ?? plugins_url( $script, __DIR__ );
 		$style_src  = $meta['style_src'] ?? plugins_url( $style, __DIR__ );
 		// jQuery is always required — the bundle registers `$.fn.dateRangePicker` and `$.fn.datePicker`.
@@ -924,7 +1103,7 @@ class QueryFilters {
 	public static function enqueue_styles( array $meta = [] ) {
 		$style  = 'assets/css/query-filters.css';
 		$handle = $meta['handle'] ?? self::ASSETS_HANDLE;
-		$ver    = $meta['ver'] ?? filemtime( plugin_dir_path( __DIR__ ) . $style );
+		$ver    = $meta['ver'] ?? self::VERSION;
 		$src    = $meta['src'] ?? plugins_url( $style, __DIR__ );
 		$deps   = $meta['deps'] ?? [];
 

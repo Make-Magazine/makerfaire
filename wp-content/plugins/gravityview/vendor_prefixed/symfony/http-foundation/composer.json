@@ -24,7 +24,7 @@
         "symfony/expression-language": "~2.8|~3.0|~4.0"
     },
     "autoload": {
-        "psr-4": { "Symfony\\Component\\HttpFoundation\\": "" },
+        "psr-4": { "GravityKit\\GravityView\\Symfony\\Component\\HttpFoundation\\": "" },
         "exclude-from-classmap": [
             "/Tests/"
         ]

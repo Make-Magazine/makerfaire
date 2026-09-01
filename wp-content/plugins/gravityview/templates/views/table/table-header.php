@@ -14,6 +14,7 @@ if ( ! isset( $gravityview ) || empty( $gravityview->template ) ) {
 <?php gravityview_before( $gravityview ); ?>
 <div class="<?php gv_container_class( 'gv-table-view gv-table-container gv-table-multiple-container', true, $gravityview ); ?>">
 <table class="gv-table-view">
+	<caption class="screen-reader-text"><?php echo esc_html( $gravityview->view->settings->get( 'label', __( 'Entries', 'gk-gravityview' ) ) ); ?></caption>
 	<thead>
 		<?php gravityview_header( $gravityview ); ?>
 		<tr>

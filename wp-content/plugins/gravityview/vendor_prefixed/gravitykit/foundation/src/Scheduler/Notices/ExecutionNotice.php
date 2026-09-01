@@ -1,9 +1,6 @@
 <?php
 /**
  * Admin notice for background processing issues.
- *
- * @license GPL-2.0-or-later
- * Modified using {@see https://github.com/BrianHenryIE/strauss}.
  */
 
 namespace GravityKit\GravityView\Foundation\Scheduler\Notices;
@@ -109,7 +106,10 @@ class ExecutionNotice {
 	 * @return string[] Unique product display names.
 	 */
 	protected function get_affected_product_names(): array {
-		$actions = as_get_scheduled_actions(
+		// This asks for `paused`, so it must go through the store rather than Action Scheduler's
+		// global API — see DbStore::get_instances(). The sites this notice targets are exactly
+		// the ones where that API throws.
+		$actions = DbStore::get_instance()->get_instances(
 			[
 				'group'    => DbStore::GROUP_ID,
 				'status'   => [ DbStore::STATUS_PENDING, DbStore::STATUS_PAUSED ],

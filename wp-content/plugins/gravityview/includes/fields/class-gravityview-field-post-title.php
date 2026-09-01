@@ -1,45 +1,23 @@
 <?php
 /**
- * @file class-gravityview-field-post-title.php
- * @package GravityView
- * @subpackage includes\fields
+ * Backward-compatibility shim.
+ *
+ * This file was moved in GravityView 3.0. It is intentionally empty.
+ * GravityView classes and functions load automatically — you no longer
+ * need to require GravityView files in your code.
+ *
+ * @deprecated 3.0
  */
 
-/**
- * Add custom options for date fields
- */
-class GravityView_Field_Post_Title extends GravityView_Field {
-
-	var $name = 'post_title';
-
-	var $is_searchable = true;
-
-	var $search_operators = array( 'is', 'isnot', 'contains', 'starts_with', 'ends_with' );
-
-	/** @see GF_Field_Post_Title */
-	var $_gf_field_class_name = 'GF_Field_Post_Title';
-
-	var $group = 'post';
-
-	var $icon = 'dashicons-edit';
-
-	public function __construct() {
-		$this->label = esc_html__( 'Post Title', 'gk-gravityview' );
-		parent::__construct();
-	}
-
-	public function field_options( $field_options, $template_id, $field_id, $context, $input_type, $form_id ) {
-
-		if ( 'edit' === $context ) {
-			return $field_options;
-		}
-
-		$this->add_field_support( 'link_to_post', $field_options );
-
-		$this->add_field_support( 'dynamic_data', $field_options );
-
-		return $field_options;
-	}
+if ( ! defined( 'ABSPATH' ) ) {
+	die;
 }
 
-new GravityView_Field_Post_Title();
+if ( function_exists( '_deprecated_file' ) ) {
+	_deprecated_file(
+		plugin_basename( __FILE__ ),
+		'3.0',
+		'',
+		'This file was moved in GravityView 3.0 and will be removed in a future release. GravityView classes and functions load automatically — you no longer need to require them.'
+	);
+}

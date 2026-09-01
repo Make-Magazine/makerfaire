@@ -14,6 +14,8 @@ class GP_Multi_Page_Navigation extends GWPerk {
 
 	private $pages_visited = array();
 
+	private $page_validity = array();
+
 	public function init() {
 
 		load_plugin_textdomain( 'gp-multi-page-navigation', false, basename( dirname( __file__ ) ) . '/languages/' );
@@ -48,7 +50,10 @@ class GP_Multi_Page_Navigation extends GWPerk {
 			return $steps;
 		}
 
-		$page_validity = $this->get_page_validity( $form );
+		$page_validity = isset( $this->page_validity[ $form['id'] ] )
+			? $this->page_validity[ $form['id'] ]
+			: $this->get_page_validity( $form );
+
 		$pages_visited = $this->get_pages_visited_from_post( $form );
 
 		$incomplete_steps = array();
@@ -425,6 +430,8 @@ class GP_Multi_Page_Navigation extends GWPerk {
 		 * Page validity tracking
 		 */
 		$page_validity = $this->get_page_validity( $form );
+
+		$this->page_validity[ $form['id'] ] = $page_validity;
 
 		$page_validity_json      = htmlspecialchars( json_encode( $page_validity ) );
 		$page_validity_namespace = 'gpmpn_page_validity_' . $form['id'];

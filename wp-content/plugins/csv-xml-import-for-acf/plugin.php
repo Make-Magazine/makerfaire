@@ -3,7 +3,7 @@
 Plugin Name: WP All Import - ACF Add-On Free
 Plugin URI: http://www.wpallimport.com/
 Description: Import to Advanced Custom Fields. Requires WP All Import & Advanced Custom Fields.
-Version: 1.0.7
+Version: 1.0.8
 Author: Soflyy
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -37,7 +37,7 @@ else {
 	 */
 	define( 'PMAI_PREFIX', 'pmai_' );
 
-	define( 'PMAI_VERSION', '1.0.7' );
+	define( 'PMAI_VERSION', '1.0.8' );
 
 
 	define( 'PMAI_EDITION', 'free' );

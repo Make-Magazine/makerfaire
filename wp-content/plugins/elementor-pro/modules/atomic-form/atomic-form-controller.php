@@ -341,6 +341,7 @@ class Atomic_Form_Controller {
 				return $cssid;
 			}
 		}
+
 		$resolved = $this->resolve_raw_settings( $element, $post_id );
 		$cssid = $resolved['_cssid'] ?? '';
 

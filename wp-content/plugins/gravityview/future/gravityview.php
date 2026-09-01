@@ -1,31 +1,23 @@
 <?php
-/** If this file is called directly, abort. */
-if ( ! defined( 'GRAVITYVIEW_DIR' ) ) {
-	die();
-}
-
-/** Require core and mocks */
-
-/** @define "GRAVITYVIEW_DIR" "../" */
-require GRAVITYVIEW_DIR . 'future/_mocks.php';
-require GRAVITYVIEW_DIR . 'future/includes/class-gv-core.php';
-
-/** T-minus 3... 2.. 1... */
-\GV\Core::bootstrap();
-
 /**
- * The main GravityView wrapper function.
+ * Backward-compatibility shim.
  *
- * Exposes classes and functionality via the \GV\Core instance.
+ * This file was moved in GravityView 3.0. It is intentionally empty.
+ * GravityView classes and functions load automatically. You no longer
+ * need to require GravityView files in your code.
  *
- * @api
- * @since 2.0
- *
- * @return \GV\Core A global Core instance.
+ * @deprecated 3.0
  */
-function gravityview() {
-	return \GV\Core::get();
+
+if ( ! defined( 'ABSPATH' ) ) {
+	die;
 }
 
-/** Liftoff...*/
-add_action( 'plugins_loaded', 'gravityview', 1 );
+if ( function_exists( '_deprecated_file' ) ) {
+	_deprecated_file(
+		plugin_basename( __FILE__ ),
+		'3.0',
+		'',
+		'This file was moved in GravityView 3.0 and will be removed in a future release. GravityView classes and functions load automatically. You no longer need to require them.'
+	);
+}

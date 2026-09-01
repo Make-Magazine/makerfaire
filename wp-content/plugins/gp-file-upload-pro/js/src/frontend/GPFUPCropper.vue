@@ -59,6 +59,7 @@ import {mapState, mapGetters} from "vuex";
 import deleteFileFromHiddenGFInput from "./helpers/deleteFileFromHiddenGFInput";
 import replaceFile from "./helpers/replaceFile";
 import triggerUpload from "./helpers/triggerUpload";
+import { getEncodableImageType, renameToImageType } from "./helpers/isImage";
 
 const $ = window.jQuery;
 
@@ -192,15 +193,20 @@ export default Vue.extend({
 			}
 
 			if (['image/webp'].includes(this.currentFile?.type)) {
-				blobImageType = 'image/webp';
+				// Safari can display WebP but not encode it via canvas; fall back to PNG.
+				blobImageType = getEncodableImageType('image/webp');
 			}
+
+			// Correct the extension when WebP fell back to PNG.
+			const convertedFromWebp = this.currentFile?.type === 'image/webp' && blobImageType !== 'image/webp';
+			const fileName = convertedFromWebp ? renameToImageType(this.currentFile?.name, blobImageType) : this.currentFile?.name;
 
 			const jpegQuality = window.gform.applyFilters('gpfup_jpeg_quality', 0.92, this.formId, this.fieldId, (window as any)[`GPFUP_${this.formId}_${this.fieldId}`]);
 
 			canvasToBlob(canvas, blobImageType, jpegQuality).then((blob) => {
 				/* Create new file object for Plupload using blob and update file name */
 				let file = new window.mOxie.File(null, blob);
-				file.name = this.currentFile?.name;
+				file.name = fileName;
 
 				loadImage.parseMetaData(
 					blob,

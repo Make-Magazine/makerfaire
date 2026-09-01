@@ -67,6 +67,139 @@
 		};
 
 		/**
+		 * Mount WordPress's TinyMCE editor on a rich text field's inline textarea.
+		 *
+		 * @param {jQuery} $field The inline-editable field element.
+		 */
+		self.initRichTextEditor = function ( $field ) {
+			// getDefaultSettings must exist too: wp.editor.initialize silently no-ops without it.
+			if ( ! window.wp || ! wp.editor || 'function' !== typeof wp.editor.initialize || 'function' !== typeof wp.editor.getDefaultSettings ) {
+				return;
+			}
+
+			var editable = $field.data( 'editable' );
+			var $input   = editable && editable.input ? editable.input.$input : null;
+
+			if ( ! $input || ! $input.length || ! $input.attr( 'id' ) ) {
+				return;
+			}
+
+			var id = $input.attr( 'id' );
+
+			// Sweep any prior richtext editors whose textarea is gone from the document. A DataTables
+			// redraw or responsive re-init can remove a cell without firing the `hidden` teardown, leaving
+			// an orphaned editor and detached iframe in tinymce.editors.
+			if ( window.tinymce && window.tinymce.editors ) {
+				window.tinymce.editors.slice().forEach( function ( editor ) {
+					var isRichText = editor && editor.id && 0 === editor.id.indexOf( 'gv_richtext_' );
+					var target     = isRichText && editor.getElement ? editor.getElement() : null;
+
+					if ( isRichText && ( ! target || ! document.body.contains( target ) ) ) {
+						wp.editor.remove( editor.id );
+					}
+				} );
+			}
+
+			// Remember the id so the hidden handler can tear the editor down, and clear any prior
+			// instance a reused form may have left bound to the same id.
+			$field.data( 'gvRichtextEditorId', id );
+			wp.editor.remove( id );
+
+			// Confirm before Cancel discards unsaved changes. Bind in the capture phase so this runs
+			// before x-editable's own cancel handler and can stop it; resolve the editor from the form's
+			// textarea at click time so a reused/re-rendered form always checks the current instance.
+			var cancelButton = $input.closest( '.editableform' ).find( 'button.editable-cancel' )[0];
+
+			if ( cancelButton && ! cancelButton.gvRichtextConfirmBound ) {
+				cancelButton.gvRichtextConfirmBound = true;
+				cancelButton.addEventListener( 'click', function ( event ) {
+					var textarea = $( cancelButton ).closest( '.editableform' ).find( 'textarea.gv-inline-richtext' )[0];
+					var current  = ( textarea && window.tinymce ) ? window.tinymce.get( textarea.id ) : null;
+
+					if ( current && current.isDirty() && ! window.confirm( gv_inline_x.richtextDiscardConfirm ) ) {
+						event.stopPropagation();
+						event.preventDefault();
+						current.focus();
+					}
+				}, true );
+			}
+
+			wp.editor.initialize( id, {
+				tinymce: {
+					wpautop: true,
+					menubar: false,
+					statusbar: false,
+					branding: false,
+					// A fixed, compact height keeps the whole editor (toolbar + content + Save/Cancel)
+					// within a popover instead of growing past the viewport and hiding the buttons;
+					// longer content scrolls inside the editor.
+					height: 200,
+					toolbar1: 'bold italic underline bullist numlist blockquote link unlink undo redo',
+					// x-editable's activate() runs before this mount, so focus the editor once it is ready.
+					init_instance_callback: function ( editor ) {
+						editor.focus();
+					},
+					// Esc and Cmd/Ctrl+Enter are captured by the TinyMCE iframe and never reach x-editable's
+					// key handlers, so wire them here: Esc cancels, Cmd/Ctrl+Enter submits (Enter alone
+					// stays a newline in the editor).
+					setup: function ( editor ) {
+						editor.on( 'keydown', function ( event ) {
+							var isEscape = 27 === event.keyCode;
+							var isSubmit = 13 === event.keyCode && ( event.metaKey || event.ctrlKey );
+
+							if ( ! isEscape && ! isSubmit ) {
+								return;
+							}
+
+							event.preventDefault();
+
+							// Defer the teardown out of this keydown. Closing or submitting synchronously
+							// removes TinyMCE while it is still dispatching the event, and TinyMCE then reads
+							// a null selection (getStart on null) and throws.
+							setTimeout( function () {
+								if ( isEscape ) {
+									if ( editor.isDirty() && ! window.confirm( gv_inline_x.richtextDiscardConfirm ) ) {
+										editor.focus();
+										return;
+									}
+									$field.editable( 'hide' );
+								} else {
+									$( editor.getElement() ).closest( '.editableform' ).find( 'button.editable-submit' ).trigger( 'click' );
+								}
+							}, 0 );
+						} );
+					}
+				},
+				quicktags: false,
+				mediaButtons: false
+			} );
+
+			// initialize() silently no-ops without the editor bootstrap; if no instance materialized,
+			// fall back to the visible plain textarea rather than an empty popup.
+			if ( window.tinymce && ! window.tinymce.get( id ) ) {
+				$input.addClass( 'gv-richtext-visible' );
+			}
+		};
+
+		/**
+		 * Tear down the TinyMCE editor mounted for a rich text field.
+		 *
+		 * @param {jQuery} $field The inline-editable field element.
+		 */
+		self.destroyRichTextEditor = function ( $field ) {
+			if ( ! window.wp || ! wp.editor || 'function' !== typeof wp.editor.remove ) {
+				return;
+			}
+
+			var id = $field.data( 'gvRichtextEditorId' );
+
+			if ( id ) {
+				wp.editor.remove( id );
+				$field.removeData( 'gvRichtextEditorId' );
+			}
+		};
+
+		/**
 		 * After editing a field via inline edit, update fields based on the response.
 		 * Used primarily for updating number calculation fields
 		 *
@@ -131,7 +264,9 @@
 						}
 
 						if ( entryLink ) {
-							displayValue = $( '<a />', { href: entryLink, html: displayValue } );
+							// Use text, not html: display_value is the unescaped field value, so inserting
+							// it as markup would let a saved value inject HTML into the link.
+							displayValue = $( '<a />', { href: entryLink, text: displayValue } );
 						}
 
 						$el.attr( 'data-display', displayValue );
@@ -284,6 +419,14 @@
 				editableOptions.mode = 'popup';
 			}
 
+			// A rich text field mounts TinyMCE, whose toolbar dropdowns and dialogs render outside the
+			// editor, so an outside click must not dismiss it. Keep Save/Cancel explicit and never cancel
+			// on blur; the popup/inline mode still follows the plugin's edit-mode setting.
+			if ( 'richtext' === field_type ) {
+				editableOptions.onblur = 'ignore';
+				editableOptions.showbuttons = 'bottom';
+			}
+
 			// Set templates
 			tplName = field_type;
 			if ( $field.data( 'tplmode' ) && 'address' !== field_type ) {
@@ -432,6 +575,16 @@
 			}
 
 			$field.editable( editableOptions );
+
+			// Mount TinyMCE as a rich text field's inline editor opens, and tear it down when it closes.
+			if ( 'richtext' === field_type ) {
+				$field.on( 'shown', function () {
+					self.initRichTextEditor( $field );
+				} );
+				$field.on( 'hidden', function () {
+					self.destroyRichTextEditor( $field );
+				} );
+			}
 
 			// For checkbox fields, fix empty state styling and link preservation.
 			if ( field_type === 'checklist' ) {
@@ -1005,14 +1158,21 @@
 					.find( 'td[class~="' + css_class_name + '"]' )
 					.find( '[class^=gv-inline-editable-field]' );
 
+					var columnType = $editables.attr( 'data-type' );
+					// A rich text column keeps its Save/Cancel buttons and never submits on blur: TinyMCE's toolbar
+					// and dialogs are outside the editor, so a click on them must not count as a click-away submit.
+					var isRichTextColumn = 'richtext' === columnType;
+					
 					$editables
-                    .editable( 'option', 'showbuttons', ($editables.attr('data-type')) === 'entry_tags' ? true : false )
-                    .editable( 'option', 'mode', is_column_on ? 'inline' : gv_inline_x.mode )
-					.editable( 'option', 'onblur', is_column_on ? 'submit' : gv_inline_x.onblur );
+						.editable( 'option', 'showbuttons', isRichTextColumn ? 'bottom' : ( 'entry_tags' === columnType ? true : false ) )
+						.editable( 'option', 'mode', is_column_on ? 'inline' : gv_inline_x.mode )
+						.editable( 'option', 'onblur', isRichTextColumn ? 'ignore' : ( is_column_on ? 'submit' : gv_inline_x.onblur ) );
 
 				$( 'html, body' ).css( { overflow: 'hidden', height: '100%' } );
 
-				if ( is_column_on ) {
+				// Auto-opening a rich text column would mount one TinyMCE per row at once (heavy and janky);
+				// leave those cells click-to-open.
+				if ( is_column_on && ! isRichTextColumn ) {
 					$editables.editable( 'show' );
 				}
 
@@ -1025,11 +1185,33 @@
 		};
 
 		/**
-		 * When in the WP Admin "Entries" screen, allow our script to disable links by adding `disabled="disabled` to them
+		 * In the WP Admin "Entries" screen, move the toggle button beside the bulk actions and reveal it.
+		 *
+		 * The button is printed carrying `hidden` (GravityView_Inline_Edit_Render::add_inline_edit_toggle_button)
+		 * so it never flashes in its server-rendered position, which makes revealing it this function's job.
+		 *
+		 * The move target is optional: WordPress prints `.tablenav.top .bulkactions` only when the list table
+		 * has rows (WP_List_Table::display_tablenav()), so a view with none (a search that matched nothing,
+		 * an empty Trash or Spam filter, a page past the last one) has nothing to move next to. Reveal the
+		 * button on its own statement; chaining `removeClass()` onto `insertAfter()` reveals nothing when the
+		 * target is absent, because jQuery returns an empty set from an insert with no match.
+		 *
 		 * @return {void}
 		 */
 		self.gfMoveToggleButton = function () {
-			$( '.wp-admin .inline-edit-enable' ).insertAfter( '.tablenav.top .bulkactions' ).removeClass( 'hidden' );
+			var $toggle = $( '.wp-admin .inline-edit-enable' );
+
+			if ( !$toggle.length ) {
+				return;
+			}
+
+			var $bulkActions = $( '.tablenav.top .bulkactions' );
+
+			if ( $bulkActions.length ) {
+				$toggle.insertAfter( $bulkActions );
+			}
+
+			$toggle.removeClass( 'hidden' );
 		};
 
 		/**

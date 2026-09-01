@@ -6,13 +6,11 @@
  * It should return raw Action Scheduler objects or primitive data types.
  *
  * For job objects (JobInstance, etc.), use ScheduleHandler methods instead.
- *
- * @license GPL-2.0-or-later
- * Modified using {@see https://github.com/BrianHenryIE/strauss}.
  */
 
 namespace GravityKit\GravityView\Foundation\Scheduler\Store;
 
+use ActionScheduler;
 use ActionScheduler_Action;
 use RuntimeException;
 
@@ -662,7 +660,7 @@ class DbStore extends ActionScheduler_DBStore {
 
 		$query = wp_parse_args( (array) $query, $defaults );
 
-		return (array) as_get_scheduled_actions( $query );
+		return $this->get_instances( $query );
 	}
 
 	/**
@@ -682,7 +680,7 @@ class DbStore extends ActionScheduler_DBStore {
 
 		$query = wp_parse_args( (array) $query, $defaults );
 
-		return (array) as_get_scheduled_actions( $query );
+		return $this->get_instances( $query );
 	}
 
 	/**
@@ -1160,7 +1158,7 @@ class DbStore extends ActionScheduler_DBStore {
 
 		$query = wp_parse_args( (array) $query, $defaults );
 
-		return (array) as_get_scheduled_actions( $query );
+		return $this->get_instances( $query );
 	}
 
 	/**
@@ -1180,7 +1178,7 @@ class DbStore extends ActionScheduler_DBStore {
 
 		$query = wp_parse_args( (array) $query, $defaults );
 
-		return (array) as_get_scheduled_actions( $query );
+		return $this->get_instances( $query );
 	}
 
 	/**
@@ -1200,7 +1198,7 @@ class DbStore extends ActionScheduler_DBStore {
 
 		$query = wp_parse_args( (array) $query, $defaults );
 
-		return (array) as_get_scheduled_actions( $query );
+		return $this->get_instances( $query );
 	}
 
 	/**
@@ -1220,7 +1218,7 @@ class DbStore extends ActionScheduler_DBStore {
 
 		$query = wp_parse_args( (array) $query, $defaults );
 
-		return (array) as_get_scheduled_actions( $query );
+		return $this->get_instances( $query );
 	}
 
 	/**
@@ -1452,6 +1450,48 @@ class DbStore extends ActionScheduler_DBStore {
 		);
 
 		return ! empty( $running );
+	}
+
+	/**
+	 * Runs a job instances query, keyed by action ID like as_get_scheduled_actions().
+	 *
+	 * Action Scheduler defines no `paused` status, and its legacy post store throws an
+	 * InvalidArgumentException on any status it does not know. Queries asking for paused
+	 * instances are therefore served from this store's own tables, where the status lives.
+	 *
+	 * @since 1.30.0
+	 *
+	 * @param array $query Query args.
+	 *
+	 * @return ActionScheduler_Action[] Instances keyed by action ID.
+	 */
+	public function get_instances( array $query ): array {
+		$statuses = array_filter( (array) ( $query['status'] ?? [] ) );
+
+		if ( ! in_array( self::STATUS_PAUSED, $statuses, true ) ) {
+			return (array) as_get_scheduled_actions( $query );
+		}
+
+		if ( ! ActionScheduler::is_initialized( __FUNCTION__ ) ) {
+			return [];
+		}
+
+		// The two branches must agree on everything but the store, so mirror what
+		// as_get_scheduled_actions() does to the query before handing it over: date strings
+		// become DateTime objects, and the caller's group is left alone.
+		foreach ( [ 'date', 'modified' ] as $key ) {
+			if ( isset( $query[ $key ] ) ) {
+				$query[ $key ] = as_get_datetime_object( $query[ $key ] );
+			}
+		}
+
+		$instances = [];
+
+		foreach ( (array) parent::query_actions( $query ) as $action_id ) {
+			$instances[ (int) $action_id ] = $this->fetch_action( (int) $action_id );
+		}
+
+		return $instances;
 	}
 
 	/**

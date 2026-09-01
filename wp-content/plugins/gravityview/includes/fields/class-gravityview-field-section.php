@@ -1,55 +1,23 @@
 <?php
 /**
- * @file class-gravityview-field-section.php
- * @package GravityView
- * @subpackage includes\fields
+ * Backward-compatibility shim.
+ *
+ * This file was moved in GravityView 3.0. It is intentionally empty.
+ * GravityView classes and functions load automatically — you no longer
+ * need to require GravityView files in your code.
+ *
+ * @deprecated 3.0
  */
 
-/**
- * Add custom options for HTML field
- */
-class GravityView_Field_Section extends GravityView_Field {
-
-	var $name = 'section';
-
-	var $is_searchable = false;
-
-	var $_gf_field_class_name = 'GF_Field_Section';
-
-	var $group = 'standard';
-
-	var $icon = 'dashicons-minus';
-
-	public function __construct() {
-		$this->label = esc_html__( 'Section', 'gk-gravityview' );
-
-		parent::__construct();
-
-		add_filter( 'gravityview_field_entry_value_section', array( $this, 'prevent_empty_field' ) );
-	}
-
-	/**
-	 * Prevent Sections from being hidden when "Hide Empty Fields" is checked in View settings
-	 *
-	 * @since 1.15.1
-	 *
-	 * @param string $output Existing section field output
-	 *
-	 * @return string If output was empty, return an empty HTML comment tag. Otherwise, return output.
-	 */
-	function prevent_empty_field( $output = '' ) {
-		return empty( $output ) ? '<!-- -->' : $output;
-	}
-
-	public function field_options( $field_options, $template_id, $field_id, $context, $input_type, $form_id ) {
-
-		unset( $field_options['search_filter'], $field_options['show_as_link'] );
-
-		// Set the default CSS class to gv-section, which applies a border and top/bottom margin
-		$field_options['custom_class']['value'] = 'gv-section';
-
-		return $field_options;
-	}
+if ( ! defined( 'ABSPATH' ) ) {
+	die;
 }
 
-new GravityView_Field_Section();
+if ( function_exists( '_deprecated_file' ) ) {
+	_deprecated_file(
+		plugin_basename( __FILE__ ),
+		'3.0',
+		'',
+		'This file was moved in GravityView 3.0 and will be removed in a future release. GravityView classes and functions load automatically — you no longer need to require them.'
+	);
+}

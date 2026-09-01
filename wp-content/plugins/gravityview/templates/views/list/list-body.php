@@ -25,7 +25,7 @@ if ( ! $gravityview->entries->count() ) {
 	}
 
 	?>
-	<div class="gv-list-view <?php echo esc_attr( $no_results_css_class ); ?>">
+	<div class="gv-list-view <?php echo esc_attr( $no_results_css_class ); ?>" role="status">
 		<div class="gv-list-view-title">
 			<h3><?php echo gv_no_results( true, $gravityview ); ?></h3>
 		</div>
@@ -72,7 +72,7 @@ if ( ! $gravityview->entries->count() ) {
 						$did_main = 1;
 						$extras   = array(
 							'wpautop' => false,
-							'markup'  => '<h3 class="{{ class }}">{{ label }}{{ value }}</h3>',
+							'markup'  => '<h3 class="{{ class }}"{{ style_attr }}>{{ label }}{{ value }}</h3>',
 						);
 					} else {
 						$extras = array( 'wpautop' => true );
@@ -91,7 +91,7 @@ if ( ! $gravityview->entries->count() ) {
 							// The first field in the subtitle zone is the main
 							if ( 0 == $did_main ) {
 								$did_main = 1;
-								$extras   = array( 'markup' => '<h4 id="{{ field_id }}" class="{{ class }}">{{ label }}{{ value }}</h4>' );
+								$extras   = array( 'markup' => '<h4 id="{{ field_id }}" class="{{ class }}"{{ style_attr }}>{{ label }}{{ value }}</h4>' );
 							}
 
 							$extras['zone_id'] = 'directory_list-subtitle';
@@ -168,7 +168,7 @@ if ( ! $gravityview->entries->count() ) {
 						foreach ( $attributes->all() as $i => $field ) {
 							$extras = array(
 								'zone_id' => 'directory_list-content-attributes',
-								'markup'  => '<p id="{{ field_id }}" class="{{ class }}">{{ label }}{{ value }}</p>',
+								'markup'  => '<p id="{{ field_id }}" class="{{ class }}"{{ style_attr }}>{{ label }}{{ value }}</p>',
 							);
 							echo $gravityview->template->the_field( $field, $entry, $extras );
 						}

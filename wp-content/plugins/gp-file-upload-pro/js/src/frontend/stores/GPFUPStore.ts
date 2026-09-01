@@ -168,6 +168,11 @@ export default function GPFUPStoreFactory({ storage } : { storage: Storage }) : 
 				}
 			},
 			PUSH_ERRED_FILE (state, { file, error }) {
+				// Prevent duplicate error entries when page builders bind Plupload handlers multiple times.
+				if (state.erredFiles.find((erredFile) => erredFile.id === file.id)) {
+					return;
+				}
+
 				state.erredFiles.push({
 					...file,
 					error,

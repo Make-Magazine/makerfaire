@@ -8,6 +8,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 return [
 	'handle' => 'elementor-v2-site-builder',
 	'deps' => [
+		'elementor-v2-schema',
 		'react',
 		'wp-api-fetch',
 	],

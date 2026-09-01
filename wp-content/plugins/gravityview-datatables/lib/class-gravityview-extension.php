@@ -84,8 +84,6 @@ abstract class GravityView_Extension {
 			return;
 		}
 
-		add_filter( 'gravityview_tooltips', array( $this, 'tooltips' ) );
-
 		// Save the form configuration. Run at 14 so that View metadata is already saved (at 10)
 		add_action( 'save_post', array( $this, 'save_post' ), 14 );
 
@@ -222,29 +220,6 @@ abstract class GravityView_Extension {
 	public function save_post( $post_id ) {}
 
 	/**
-	 * Add tooltips for the extension.
-	 *
-	 * Add a tooltip with an array using the `title` and `value` keys. The `title` key is the H6 tag value of the tooltip; it's the headline. The `value` is the tooltip content, and can contain any HTML.
-	 *
-	 * The tooltip key must be `gv_{name_of_setting}`. If the name of the setting is "example_extension_setting", the code would be:
-	 *
-	 * <code>
-	 * $tooltips['gv_example_extension_setting'] = array(
-	 * 	'title'	=> 'About Example Extension Setting',
-	 *  'value'	=> 'When you do [x] with [y], [z] happens.'
-	 * );
-	 * </code>
-	 *
-	 * @param  array  $tooltips Existing GV tooltips, with `title` and `value` keys
-	 * @return array           Modified tooltips
-	 */
-	public function tooltips( $tooltips = array() ) {
-
-		return $tooltips;
-
-	}
-
-	/**
 	 * Check whether the extension is supported:
 	 *
 	 * - Checks if GravityView and Gravity Forms exist
@@ -259,23 +234,26 @@ abstract class GravityView_Extension {
 
 		self::$is_compatible = true;
 
+		// The messages are built as callbacks: this runs on `plugins_loaded`, and translating
+		// there trips WordPress 6.7's just-in-time translation notice. The notice is queued on
+		// `init`, before the `admin_notices` renderer consumes it.
 		$message = '';
 
 		if( !class_exists( 'GravityView_Plugin' ) ) {
 
-			$message = sprintf( __('Could not activate the %s Extension; GravityView is not active.', 'gv-datatables'), esc_html( $this->_title ) );
+			$message = function() { return sprintf( __('Could not activate the %s Extension; GravityView is not active.', 'gv-datatables'), esc_html( $this->_title ) ); };
 
 		} else if( false === version_compare(GravityView_Plugin::version, $this->_min_gravityview_version , ">=") ) {
 
-			$message = sprintf( __('The %s Extension requires GravityView Version %s or newer.', 'gv-datatables' ), esc_html( $this->_title ), '<tt>'.$this->_min_gravityview_version.'</tt>' );
+			$message = function() { return sprintf( __('The %s Extension requires GravityView Version %s or newer.', 'gv-datatables' ), esc_html( $this->_title ), '<tt>'.$this->_min_gravityview_version.'</tt>' ); };
 
 		} else if( isset( $this->_min_php_version ) && false === version_compare( phpversion(), $this->_min_php_version , ">=") ) {
 
-			$message = sprintf( __('The %s Extension requires PHP Version %s or newer. Please ask your host to upgrade your server\'s PHP.', 'gv-datatables' ), esc_html( $this->_title ), '<tt>'.$this->_min_php_version.'</tt>' );
+			$message = function() { return sprintf( __('The %s Extension requires PHP Version %s or newer. Please ask your host to upgrade your server\'s PHP.', 'gv-datatables' ), esc_html( $this->_title ), '<tt>'.$this->_min_php_version.'</tt>' ); };
 
 		} else if ( ! empty( $this->_max_gravityview_version ) && false === version_compare( $this->_max_gravityview_version, GravityView_Plugin::version, ">" ) ) {
 
-			$message = sprintf( __( 'The %s Extension is not compatible with this version of GravityView. Please update the Extension to the latest version.', 'gv-datatables' ), esc_html( $this->_title ) );
+			$message = function() { return sprintf( __( 'The %s Extension is not compatible with this version of GravityView. Please update the Extension to the latest version.', 'gv-datatables' ), esc_html( $this->_title ) ); };
 
 		} else {
 
@@ -285,9 +263,20 @@ abstract class GravityView_Extension {
 
 		if ( ! empty( $message ) ) {
 
-			self::add_notice( $message );
+			$queue_notice = function() use ( $message ) {
 
-			do_action( 'gravityview_log_error', __METHOD__. ' ' . $message );
+				$message = $message();
+
+				self::add_notice( $message );
+
+				do_action( 'gravityview_log_error', __METHOD__. ' ' . $message );
+			};
+
+			if ( did_action( 'init' ) ) {
+				$queue_notice();
+			} else {
+				add_action( 'init', $queue_notice );
+			}
 
 			self::$is_compatible = false;
 		}

@@ -36,7 +36,7 @@ $entry     = $gravityview->entry;
 $back_link = gravityview_back_link( $gravityview );
 
 if ( $back_link ) {
-	printf( '<p class="gv-back-link">%s</p>', $back_link );
+	printf( '<nav class="gv-back-link" aria-label="%s">%s</nav>', esc_attr__( 'Back to entries', 'gk-gravityview' ), $back_link );
 }
 
 ?>

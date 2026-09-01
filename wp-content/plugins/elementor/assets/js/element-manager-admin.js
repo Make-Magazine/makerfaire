@@ -837,7 +837,10 @@ var SearchFilters = exports.SearchFilters = function SearchFilters(_ref) {
     sx: function sx(theme) {
       return {
         position: 'sticky',
-        top: theme.spacing(10),
+        top: 0,
+        '@media screen and (max-width: 782px)': {
+          top: 'calc(var(--e-admin-bar-height, 0px) + var(--e-top-bar-header-height, 0px))'
+        },
         backgroundColor: 'var(--e-one-palette-background-default)',
         zIndex: 10,
         paddingBlock: 2,

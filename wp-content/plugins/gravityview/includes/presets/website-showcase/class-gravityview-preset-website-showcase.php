@@ -1,34 +1,23 @@
 <?php
 /**
- * GravityView preset template
+ * Backward-compatibility shim.
  *
- * @file      class-gravityview-preset-website-showcase.php
- * @since     1.15
- * @license   GPL2+
- * @author    GravityKit <hello@gravitykit.com>
- * @link      http://www.gravitykit.com
- * @copyright Copyright 2015, Katz Web Services, Inc.
+ * This file was moved in GravityView 3.0. It is intentionally empty.
+ * GravityView classes and functions load automatically — you no longer
+ * need to require GravityView files in your code.
  *
- * @package   GravityView
+ * @deprecated 3.0
  */
 
-class GravityView_Preset_Website_Showcase extends GravityView_Default_Template_List {
-	const ID = 'preset_website_showcase';
-
-	function __construct() {
-		$settings = array(
-			'slug'          => 'list',
-			'type'          => 'preset',
-			'label'         => __( 'Website Showcase', 'gk-gravityview' ),
-			'description'   => __( 'Feature submitted websites with screenshots.', 'gk-gravityview' ),
-			'logo'          => plugins_url( 'includes/presets/website-showcase/logo-website-showcase.png', GRAVITYVIEW_FILE ),
-			// 'preview'       => 'http://demo.gravitykit.com/blog/view/website-showcase/',
-			'preset_form'   => GRAVITYVIEW_DIR . 'includes/presets/website-showcase/form-website-showcase.json',
-			'preset_fields' => GRAVITYVIEW_DIR . 'includes/presets/website-showcase/fields-website-showcase.xml',
-		);
-
-		parent::__construct( self::ID, $settings );
-	}
+if ( ! defined( 'ABSPATH' ) ) {
+	die;
 }
 
-new GravityView_Preset_Website_Showcase();
+if ( function_exists( '_deprecated_file' ) ) {
+	_deprecated_file(
+		plugin_basename( __FILE__ ),
+		'3.0',
+		'',
+		'This file was moved in GravityView 3.0 and will be removed in a future release. GravityView classes and functions load automatically — you no longer need to require them.'
+	);
+}

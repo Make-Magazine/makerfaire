@@ -1,7 +1,7 @@
 <?php
 
 abstract class GravityView_Inline_Edit_Render {
-	/*
+	/**
 	 * Cached collection of forms used throughout the request
 	 *
 	 * @since 2.0
@@ -27,10 +27,6 @@ abstract class GravityView_Inline_Edit_Render {
 	 * @return    object    A single instance of this class.
 	 */
 	public static function get_instance() {
-
-		if ( ! function_exists( 'get_called_class' ) ) {
-			return false;
-		}
 
 		$classname = get_called_class();
 
@@ -80,7 +76,7 @@ abstract class GravityView_Inline_Edit_Render {
 	 *
 	 * @return string The mode to use. Can be `popup` or `inline`
 	 */
-	function filter_inline_edit_mode( $mode = '' ) {
+	public function filter_inline_edit_mode( $mode = '' ) {
 		return $mode;
 	}
 
@@ -105,7 +101,7 @@ abstract class GravityView_Inline_Edit_Render {
 		// Apply 'gform_pre_render' filter and cache result
 		static $filtered_forms = array();
 
-		if ( isset( $form['id'] ) && ! in_array( $form['id'], $filtered_forms ) ) {
+		if ( isset( $form['id'] ) && ! in_array( $form['id'], $filtered_forms, true ) ) {
 			$filtered_forms[] = $form['id'];
 
 			$form = gf_apply_filters( array( 'gform_pre_render', $form['id'] ), $form, false, false );
@@ -128,7 +124,7 @@ abstract class GravityView_Inline_Edit_Render {
 		$ignored_fields = GravityView_Inline_Edit::get_instance()->get_ignored_fields();
 
 		// Don't modify output
-		if ( in_array( $input_type, $ignored_fields ) ) {
+		if ( in_array( $input_type, $ignored_fields, true ) ) {
 			return $output;
 		}
 
@@ -136,10 +132,10 @@ abstract class GravityView_Inline_Edit_Render {
 		$supported_fields = GravityView_Inline_Edit::get_instance()->get_supported_fields();
 
 		// Don't use inline edit for single inputs of a multi-column field
-		if ( ! in_array( $input_type, $supported_fields ) ||
+		if ( ! in_array( $input_type, $supported_fields, true ) ||
 			 ( 'list' === $input_type && $gf_field->enableColumns && ! empty( $input_id ) )
 		) {
-			if ( 'entry_link' == $input_type ) {
+			if ( 'entry_link' === $input_type ) {
 				return $output;
 			}
 
@@ -167,7 +163,7 @@ abstract class GravityView_Inline_Edit_Render {
 		);
 
 		if ( ! empty( $source ) ) {
-			$wrapper_attributes['data-source'] = json_encode( $source );
+			$wrapper_attributes['data-source'] = wp_json_encode( $source );
 		}
 
 		if ( '1' === rgar( $field_settings, 'show_map_link' ) ) {
@@ -176,6 +172,13 @@ abstract class GravityView_Inline_Edit_Render {
 
 		if ( '1' === rgar( $field_settings, 'allow_html' ) ) {
 			$wrapper_attributes['data-allow-html'] = 'true';
+		}
+
+		// A Paragraph field with the rich text editor stores HTML and renders as HTML on the front
+		// end. Mark it so the client redraw after an inline save renders that HTML, matching the
+		// page, rather than escaping the tags or re-wrapping the blocks.
+		if ( $gf_field && ! empty( $gf_field->useRichTextEditor ) ) {
+			$wrapper_attributes['data-rich-text'] = 'true';
 		}
 
 		// Disable inline edit for number fields with calculation
@@ -223,7 +226,15 @@ abstract class GravityView_Inline_Edit_Render {
 		$wrapper_attributes = apply_filters( "gravityview-inline-edit/{$input_type}-wrapper-attributes", $wrapper_attributes, $input_type, $gf_field_id, $entry, $form, $gf_field, $output, $field_settings, $context );
 
 		// If only inline elements, use <span>
-		if ( $output === strip_tags( $output, '<a><abbr><acronym><audio><b><bdi><bdo><big><br><button><canvas><cite><code><data><datalist><del><dfn><em><embed><i><iframe><img><input><ins><kbd><label><map><mark><meter><noscript><object><output><picture><progress><q><ruby><s><samp><script><select><slot><small><span><strong><sub><sup><svg><template><textarea><time><u><tt><var><video><wbr>' ) ) {
+		$only_inline_output = ( $output === strip_tags( $output, '<a><abbr><acronym><audio><b><bdi><bdo><big><br><button><canvas><cite><code><data><datalist><del><dfn><em><embed><i><iframe><img><input><ins><kbd><label><map><mark><meter><noscript><object><output><picture><progress><q><ruby><s><samp><script><select><slot><small><span><strong><sub><sup><svg><template><textarea><time><u><tt><var><video><wbr>' ) );
+
+		// A rich text field's value is block-level (<p>), and the inline redraw injects that block into
+		// this same wrapper. Force a block <div> even while empty, so the wrapper matches what the
+		// server renders after a save — a <span> around a block can't show the editable underline, so
+		// an emptied-then-filled field would otherwise lose it until the page reloads.
+		$is_rich_text = $gf_field && ! empty( $gf_field->useRichTextEditor );
+
+		if ( $only_inline_output && ! $is_rich_text ) {
 			$tag_name = 'span';
 		} else {
 			$tag_name = 'div';
@@ -289,13 +300,11 @@ abstract class GravityView_Inline_Edit_Render {
 		// When on admin, show as button and hide (will be unhidden by JS). Otherwise, don't.
 		$link_class = is_admin() ? 'button button-primary hidden' : '';
 
-		ob_start();
 		/** @define "GRAVITYEDIT_DIR" "../" */
 		include GRAVITYEDIT_DIR . 'templates/toggle.php';
-		echo ob_get_clean();
 	}
 
-	/*
+	/**
 	 * Returns cached forms used during the request
 	 *
 	 * @since 2.0
@@ -306,7 +315,7 @@ abstract class GravityView_Inline_Edit_Render {
 		return $this->forms;
 	}
 
-	/*
+	/**
 	 * Caches and returns the form used during the request
 	 *
 	 * @since 2.0

@@ -1438,8 +1438,8 @@ body.elementor-panel-loading #elementor-panel-state-loading {
   background-color: var(--e-a-bg-hover);
   border-color: var(--e-a-border-color-bold);
 }
-.elementor-panel .elementor-element:hover > .eicon-upgrade-crown-full, .elementor-panel .elementor-element:focus > .eicon-upgrade-crown-full {
-  color: var(--e-a-color-accent-promotion);
+.elementor-panel .elementor-element:hover > .eicon-lock, .elementor-panel .elementor-element:focus > .eicon-lock {
+  color: var(--e-a-color-accent);
 }
 .elementor-panel .elementor-element:hover > .eicon-plug, .elementor-panel .elementor-element:focus > .eicon-plug {
   color: var(--e-a-color-info);
@@ -1457,15 +1457,10 @@ body.elementor-panel-loading #elementor-panel-state-loading {
 .elementor-panel .elementor-element .title {
   font-size: 12px;
 }
-.elementor-panel .elementor-element > .eicon-upgrade-crown-full, .elementor-panel .elementor-element .eicon-plug {
+.elementor-panel .elementor-element > .eicon-lock, .elementor-panel .elementor-element .eicon-plug {
   position: absolute;
   inset-block-start: 5px;
   inset-inline-end: 5px;
-}
-.elementor-panel .elementor-element > .eicon-upgrade-crown-full {
-  color: var(--e-a-color-accent-promotion-disabled);
-}
-.elementor-panel .elementor-element > .eicon-plug {
   color: var(--e-a-color-txt-disabled);
 }
 .elementor-panel .elementor-element:active {
@@ -5170,7 +5165,7 @@ body.e-is-device-mode:not(.elementor-device-desktop) #elementor-preview-responsi
   overflow-y: scroll;
 }
 #elementor-template-library-modal:has(#elementor-template-library-save-template) .dialog-message, #elementor-template-library-modal:has(#elementor-template-library-save-template-variant-b) .dialog-message {
-  overflow-y: hidden;
+  overflow-y: auto;
 }
 #elementor-template-library-modal .e-back-to-editor {
   color: var(--e-a-color-txt);

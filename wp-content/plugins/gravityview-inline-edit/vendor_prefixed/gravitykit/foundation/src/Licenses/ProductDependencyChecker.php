@@ -341,16 +341,20 @@ class ProductDependencyChecker {
 				}
 			}
 
-			$missing_name_placeholder = strtr(
-				_x( "Product with '[text_domain]' text domain", 'Placeholders inside [] are not to be translated.', 'gk-foundation' ),
-				[ '[text_domain]' => $product_text_domain ]
-			);
+			// Built lazily: this runs during plugin arbitration on `plugins_loaded`, and translating
+			// there trips WordPress 6.7's just-in-time notice. Only failure branches need the label.
+			$missing_name_placeholder = static function () use ( $product_text_domain ) {
+				return strtr(
+					_x( "Product with '[text_domain]' text domain", 'Placeholders inside [] are not to be translated.', 'gk-foundation' ),
+					[ '[text_domain]' => $product_text_domain ]
+				);
+			};
 
 			$product = $this->get_product( $product_text_domain );
 
 			if ( ! $product ) {
 				$unmet_dependencies['plugin'][ $product_text_domain ] = [
-					'name'             => $missing_name_placeholder,
+					'name'             => $missing_name_placeholder(),
 					'required_version' => '',
 					'text_domain'      => $product_text_domain,
 					'icon'             => '',
@@ -439,7 +443,7 @@ class ProductDependencyChecker {
 					$checked_dependencies[ $dependency_text_domain ] = true;
 
 					$unmet_dependencies['plugin'][ $dependency_text_domain ] = [
-						'name'             => $dependency_data['name'] ?? $missing_name_placeholder,
+						'name'             => $dependency_data['name'] ?? $missing_name_placeholder(),
 						'required_version' => $dependency_data['version'],
 						'text_domain'      => $dependency_text_domain,
 						'icon'             => '',

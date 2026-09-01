@@ -2,7 +2,7 @@
 
 final class GravityView_Inline_Edit_Gravity_Forms extends GravityView_Inline_Edit_Render {
 	/**
-	 * @return bool Whether to load the hooks
+	 * Whether to load the hooks.
 	 *
 	 * @since 1.0
 	 *
@@ -14,7 +14,7 @@ final class GravityView_Inline_Edit_Gravity_Forms extends GravityView_Inline_Edi
 		$current_page = trim( strtolower( rgget( 'page' ) ) );
 
 		// Entries Page or Form Settings page
-		return is_admin() && function_exists('rgget') && in_array( $current_page, array( 'gf_edit_forms', 'gf_entries' ) );
+		return is_admin() && function_exists('rgget') && in_array( $current_page, array( 'gf_edit_forms', 'gf_entries' ), true );
 	}
 
 	/**
@@ -85,7 +85,7 @@ final class GravityView_Inline_Edit_Gravity_Forms extends GravityView_Inline_Edi
 	 *
 	 * @return string The mode to use. Can be `popup` or `inline`
 	 */
-	function filter_inline_edit_mode( $mode = '' ) {
+	public function filter_inline_edit_mode( $mode = '' ) {
 
 		if ( ! class_exists( 'GravityKitFoundation' ) ) {
 			return $mode;
@@ -117,7 +117,7 @@ final class GravityView_Inline_Edit_Gravity_Forms extends GravityView_Inline_Edi
 	 *
 	 * @return array
 	 */
-	function add_settings_field( $fields, $form = array() ) {
+	public function add_settings_field( $fields, $form = array() ) {
 
 		$fields['form_options']['fields'][] = array(
 			'name' => 'gv_inline_edit_enable',
@@ -195,7 +195,7 @@ final class GravityView_Inline_Edit_Gravity_Forms extends GravityView_Inline_Edi
 	 *
 	 * @return void
 	 */
-	function maybe_enqueue_inline_edit_styles( $form_id = 0 ) {
+	public function maybe_enqueue_inline_edit_styles( $form_id = 0 ) {
 
 		if ( ! $this->is_inline_edit_enabled( $form_id ) ) {
 			return;
@@ -224,7 +224,7 @@ final class GravityView_Inline_Edit_Gravity_Forms extends GravityView_Inline_Edi
 	 *
 	 * @return void
 	 */
-	function open_container_wrapper( $form_id = 0) {
+	public function open_container_wrapper( $form_id = 0 ) {
 
 		if ( ! $this->is_inline_edit_enabled( $form_id ) ) {
 			return;
@@ -232,7 +232,7 @@ final class GravityView_Inline_Edit_Gravity_Forms extends GravityView_Inline_Edi
 
 		echo '<!-- start gv-inline-edit container --> 
 		<div class="gv-inline-editable-view">
-		<input type="hidden" class="gravityview-inline-edit-id" value="form-' . esc_html( rgget( 'id' ) ) . '" />';
+		<input type="hidden" class="gravityview-inline-edit-id" value="form-' . esc_attr( rgget( 'id' ) ) . '" />';
 	}
 
 	/**
@@ -244,7 +244,7 @@ final class GravityView_Inline_Edit_Gravity_Forms extends GravityView_Inline_Edi
 	 *
 	 * @return void
 	 */
-	function close_container_wrapper( $form_id = 0 ) {
+	public function close_container_wrapper( $form_id = 0 ) {
 
 		if ( ! $this->is_inline_edit_enabled( $form_id ) ) {
 			return;
@@ -263,7 +263,7 @@ final class GravityView_Inline_Edit_Gravity_Forms extends GravityView_Inline_Edi
 	 *
 	 * @return bool True: Inline Edit is enabled for this form; False: nope!
 	 */
-	function is_inline_edit_enabled( $form_id = 0 ) {
+	protected function is_inline_edit_enabled( $form_id = 0 ) {
 
 		if ( empty( $form_id ) ) {
 			return false;

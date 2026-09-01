@@ -5,9 +5,6 @@
  * Executes job actions without depending on WP_List_Table or JobAjaxController.
  * Calls ScheduleHandler methods directly and is consumed by both the AJAX
  * controller and WP-CLI commands.
- *
- * @license GPL-2.0-or-later
- * Modified using {@see https://github.com/BrianHenryIE/strauss}.
  */
 
 namespace GravityKit\GravityView\Foundation\Scheduler\Overview;

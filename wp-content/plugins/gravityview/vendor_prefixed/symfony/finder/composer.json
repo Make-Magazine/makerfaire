@@ -19,7 +19,7 @@
         "php": "^5.5.9|>=7.0.8"
     },
     "autoload": {
-        "psr-4": { "Symfony\\Component\\Finder\\": "" },
+        "psr-4": { "GravityKit\\GravityView\\Symfony\\Component\\Finder\\": "" },
         "exclude-from-classmap": [
             "/Tests/"
         ]

@@ -27,6 +27,10 @@ class ManageWidgetState {
 		return (bool) apply_filters( 'elementor_one/manage_dashboard_widget_is_delegated', false );
 	}
 
+	public static function is_plugin_installed(): bool {
+		return null !== Utils::get_plugin_data( SupportedPlugins::MANAGE );
+	}
+
 	public static function resolve(): string {
 		return self::resolve_with_meta()['state'];
 	}
@@ -36,18 +40,20 @@ class ManageWidgetState {
 			return self::$resolved_cache;
 		}
 
-		$plugin_data = Utils::get_plugin_data( SupportedPlugins::MANAGE );
-
-		if ( null === $plugin_data ) {
+		if ( ! self::is_plugin_installed() ) {
 			$state = self::STATE_NOT_INSTALLED;
-		} elseif ( ! self::is_plugin_active( $plugin_data['_file'] ) ) {
-			$state = self::STATE_NOT_ACTIVATED;
-		} elseif ( ! Utils::is_plugin_connected( SupportedPlugins::MANAGE ) ) {
-			$state = self::STATE_NOT_CONNECTED;
 		} else {
-			$state = self::is_delegated_to_manage()
-				? self::STATE_ACTIVE
-				: self::STATE_UPDATE_REQUIRED;
+			$plugin_data = Utils::get_plugin_data( SupportedPlugins::MANAGE );
+
+			if ( ! self::is_plugin_active( $plugin_data['_file'] ) ) {
+				$state = self::STATE_NOT_ACTIVATED;
+			} elseif ( ! Utils::is_plugin_connected( SupportedPlugins::MANAGE ) ) {
+				$state = self::STATE_NOT_CONNECTED;
+			} else {
+				$state = self::is_delegated_to_manage()
+					? self::STATE_ACTIVE
+					: self::STATE_UPDATE_REQUIRED;
+			}
 		}
 
 		self::$resolved_cache = [

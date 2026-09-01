@@ -3,7 +3,7 @@
  * Plugin Name:         GravityView
  * Plugin URI:          https://www.gravitykit.com
  * Description:         The best, easiest way to display Gravity Forms entries on your website.
- * Version:             2.61.1
+ * Version:             3.3.3
  * Requires PHP:        7.4.0
  * Author:              GravityKit
  * Author URI:          https://www.gravitykit.com
@@ -23,16 +23,12 @@ if ( ! GravityKit\GravityView\Foundation\should_load( __FILE__ ) ) {
 	return;
 }
 
-if ( ! GravityKit\GravityView\Foundation\meets_min_php_version_requirement( __FILE__, '7.4.0' ) ) {
-	return;
-}
-
 /** Constants */
 
 /**
  * The plugin version.
  */
-define( 'GV_PLUGIN_VERSION', '2.61.1' );
+define( 'GV_PLUGIN_VERSION', '3.3.3' );
 
 /**
  * Full path to the GravityView file
@@ -84,10 +80,56 @@ define( 'GV_FUTURE_MIN_WP_VERSION', '5.3' );
  */
 define( 'GV_FUTURE_MIN_PHP_VERSION', '8.0.0' );
 
+/** Autoloaders. */
+require_once GRAVITYVIEW_DIR . 'vendor/autoload.php';
+require_once GRAVITYVIEW_DIR . 'vendor_prefixed/autoload.php';
+
 /**
- * The future is here and now.
+ * Ensure PSR-4 aliases are registered.
+ *
+ * Composer's `files` autoload may have already included the alias files,
+ * but if loaded before the plugin defined constants (e.g., PHPUnit loads
+ * vendor/autoload.php before the test bootstrap), the alias registrations
+ * were skipped. Re-include here with `include` to ensure aliases are created.
+ *
+ * @since 3.0.0
  */
-require GRAVITYVIEW_DIR . 'future/loader.php';
+include GRAVITYVIEW_DIR . 'src/Aliases/gv-aliases.php';
+include GRAVITYVIEW_DIR . 'src/Aliases/legacy-aliases.php';
+
+/** Register with GravityKit Foundation. */
+GravityKit\GravityView\Foundation\Core::register( GRAVITYVIEW_FILE );
+
+/** Load mocks for deprecated GravityView_* global functions. */
+require GRAVITYVIEW_DIR . 'src/GravityForms/QueryExtensions/_mocks.php';
+
+/** Initialize the deprecated hook notices handler. */
+\GravityKit\GravityView\Deprecation\DeprecatedHookNotices::init();
+
+/** Bootstrap the core. */
+\GV\Core::bootstrap();
+
+/**
+ * The main GravityView wrapper function.
+ *
+ * Exposes classes and functionality via the \GV\Core instance.
+ *
+ * @api
+ * @since 2.0
+ *
+ * @return \GV\Core A global Core instance.
+ */
+function gravityview() {
+	return \GV\Core::get();
+}
+
+/** Liftoff. */
+add_action( 'plugins_loaded', 'gravityview', 1 );
+
+/** PSR-4 bootstrap marker. */
+if ( class_exists( 'GravityKit\GravityView\Core\Bootstrap' ) ) {
+	\GravityKit\GravityView\Core\Bootstrap::is_loaded();
+}
 
 add_action(
 	'plugins_loaded',
@@ -99,6 +141,9 @@ add_action(
 
 		/**
 		 * GravityView_Plugin is only used by the legacy class-gravityview-extension.php that's shipped with extensions.
+		 *
+		 * @since 1.0
+		 * @deprecated 3.0.0 Use GravityKit\GravityView\Core\Plugin instead.
 		 *
 		 * @TODO Remove once all extensions have been updated to use Foundation.
 		 */

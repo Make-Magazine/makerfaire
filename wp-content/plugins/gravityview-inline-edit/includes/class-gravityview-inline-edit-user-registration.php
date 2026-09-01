@@ -48,16 +48,30 @@ class GravityEdit_Entry_User_Registration {
 	 * @return bool|WP_Error
 	 */
 	public function update_user( $update_result, $entry, $form_id ) {
-		$entry_id = $entry['id'];
-		$form     = \GFAPI::get_form( $form_id );
-		$addon    = GravityView_Inline_Edit_GFAddon::get_instance();
+		// A failed or errored entry save must not trigger a user-profile update.
+		if ( true !== $update_result ) {
+			return $update_result;
+		}
+
+		$addon = GravityView_Inline_Edit_GFAddon::get_instance();
 
 		if ( ! class_exists( 'GFAPI' ) || ! class_exists( 'GF_User_Registration' ) ) {
 			$addon->log_error( 'GFAPI or User Registration class not found; not updating the user' );
-			return;
-		} elseif ( empty( $entry_id ) ) {
-			$addon->log_error( 'Entry ID is empty [{entry_id}]; not updating the user', array( 'entry_id' => $entry_id ) );
-			return;
+			return $update_result;
+		}
+
+		$entry_id = rgar( $entry, 'id' );
+
+		if ( empty( $entry_id ) ) {
+			$addon->log_error( sprintf( 'Entry ID is empty [%s]; not updating the user', $entry_id ) );
+			return $update_result;
+		}
+
+		$form = \GFAPI::get_form( $form_id );
+
+		if ( ! $form ) {
+			$addon->log_error( sprintf( 'Form not found for form ID [%s]; not updating the user', $form_id ) );
+			return $update_result;
 		}
 
 		$gf_user_registration = GF_User_Registration::get_instance();
@@ -76,20 +90,20 @@ class GravityEdit_Entry_User_Registration {
 
 		// Make sure the feed is active
 		if ( ! rgar( $config, 'is_active', false ) ) {
-			return;
+			return $update_result;
 		}
 
 		// If an Update feed, make sure the conditions are met.
 		if ( rgars( $config, 'meta/feedType' ) === 'update' ) {
 			if ( ! $gf_user_registration->is_feed_condition_met( $config, $form, $entry ) ) {
-				return;
+				return $update_result;
 			}
 		}
 
 		// Do not update user if the user hasn't been registered (happens when manual activation is enabled in User Registration feed)
 		$username = rgars( $config, 'meta/username' );
 		if ( ! isset( $entry[ $username ] ) || ! get_user_by( 'login', $entry[ $username ] ) ) {
-			return;
+			return $update_result;
 		}
 
 		// The priority is set to 3 so that default priority (10) will still override it
@@ -275,7 +289,7 @@ class GravityEdit_Entry_User_Registration {
 
 		// User not found
 		if ( ! $user_after_update ) {
-			$addon->log_error( 'User not found at $user_id #{user_id}', array( 'user_id' => $user_id ) );
+			$addon->log_error( sprintf( 'User not found at user_id #%s', $user_id ) );
 			return false;
 		}
 
@@ -303,14 +317,14 @@ class GravityEdit_Entry_User_Registration {
 
 		if ( is_wp_error( $updated ) ) {
 			$addon->log_error(
-				'There was an error updating user #{user_id} details',
-				array(
-					'user_id' => $user_id,
-					'data'    => $updated,
+				sprintf(
+					'There was an error updating user #%s details: %s',
+					$user_id,
+					$updated->get_error_message()
 				)
 			);
 		} else {
-			$addon->log_error( 'User #{user_id} details restored', array( 'user_id' => $user_id ) );
+			$addon->log_error( sprintf( 'User #%s details restored', $user_id ) );
 		}
 
 		$this->_user_before_update = null;

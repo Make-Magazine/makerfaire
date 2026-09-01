@@ -1,48 +1,23 @@
 <?php
-
-use GV\Shortcodes\gv_entry_link;
-
 /**
- * Shortcode to handle showing/hiding content in merge tags. Works great with GravityView Custom Content fields
+ * Backward-compatibility shim.
  *
- * @deprecated 2.45
- * @see        gv_entry_link
+ * This file was moved in GravityView 3.0. It is intentionally empty.
+ * GravityView classes and functions load automatically — you no longer
+ * need to require GravityView files in your code.
+ *
+ * @deprecated 3.0
  */
-class GravityView_Entry_Link_Shortcode {
 
-	/**
-	 * @deprecated 2.45
-	 * @see        gv_entry_link
-	 */
-	public function read_shortcode( $atts, $content = '', $tag = 'gv_entry_link' ) {
-		_deprecated_function( __FUNCTION__, '2.45', '\GV\Shortcodes\gv_entry_link' );
+if ( ! defined( 'ABSPATH' ) ) {
+	die;
+}
 
-		$shortcode = new gv_entry_link();
-
-		return $shortcode->callback( $atts, $content, $tag );
-	}
-
-	/**
-	 * @deprecated 2.45
-	 * @see        gv_entry_link
-	 */
-	public function edit_shortcode( $atts, $content = '', $tag = 'gv_edit_entry_link' ) {
-		_deprecated_function( __FUNCTION__, '2.45', '\GV\Shortcodes\gv_entry_link' );
-
-		$shortcode = new gv_entry_link();
-
-		return $shortcode->callback( $atts, $content, $tag );
-	}
-
-	/**
-	 * @deprecated 2.45
-	 * @see        gv_entry_link
-	 */
-	public function delete_shortcode( $atts, $content = '', $tag = 'gv_delete_entry_link' ) {
-		_deprecated_function( __FUNCTION__, '2.45', '\GV\Shortcodes\gv_entry_link' );
-
-		$shortcode = new gv_entry_link();
-
-		return $shortcode->callback( $atts, $content );
-	}
+if ( function_exists( '_deprecated_file' ) ) {
+	_deprecated_file(
+		plugin_basename( __FILE__ ),
+		'3.0',
+		'',
+		'This file was moved in GravityView 3.0 and will be removed in a future release. GravityView classes and functions load automatically — you no longer need to require them.'
+	);
 }

@@ -7,9 +7,9 @@
  */
 class GravityView_Inline_Edit_Field_Hidden extends GravityView_Inline_Edit_Field {
 
-	var $gv_field_name = 'hidden';
+	public $gv_field_name = 'hidden';
 
-	var $inline_edit_type = 'text';
+	public $inline_edit_type = 'text';
 
 }
 

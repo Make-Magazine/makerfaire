@@ -1,12 +1,8 @@
 <?php
-/**
- * @license MIT
- *
- * Modified using {@see https://github.com/BrianHenryIE/strauss}.
- */
 
 namespace GravityKit\GravityView\QueryFilters\Rest\Endpoint;
 
+use GravityKit\GravityView\QueryFilters\Querying\Field\Source\ChoiceSourceManager;
 use GravityKit\GravityView\QueryFilters\Querying\Form\FormCriteria;
 use GravityKit\GravityView\QueryFilters\Querying\Form\GravityFormsFormRepository;
 use GravityKit\GravityView\QueryFilters\Querying\User\UserCriteria;
@@ -50,24 +46,13 @@ final class EndpointRegistry {
 	private static array $endpoints = [];
 
 	/**
-	 * Counters keyed by kind. Each callable returns the total available items for a kind, used
-	 * to decide whether a field filter should auto-swap its static `values` for the endpoint.
+	 * Counters keyed by kind. Each is `callable(array $field, ?int $threshold): int`.
 	 *
 	 * @since 2.12.0
 	 *
-	 * @var array<string, callable():int>
+	 * @var array<string, callable>
 	 */
 	private static array $counters = [];
-
-	/**
-	 * Per-request memoization for {@see self::resolve_count()} so repeated lookups within the
-	 * same request don't re-invoke registered counter callables.
-	 *
-	 * @since 2.12.0
-	 *
-	 * @var array<string, ?int>
-	 */
-	private static array $count_cache = [];
 
 	/**
 	 * Registers a REST endpoint URL under a symbolic kind.
@@ -78,18 +63,15 @@ final class EndpointRegistry {
 	 *
 	 * @since 2.12.0
 	 *
-	 * @param string                 $kind    The endpoint identifier (e.g. `users`, `forms`, `field`).
-	 * @param string|callable():string $url   The fully qualified REST URL, or a callable returning one.
-	 * @param callable|null          $counter A callback returning the total number of available
-	 *                                        items for the kind. Used to drive the
-	 *                                        `auto_endpoint` switch.
+	 * @param string                   $kind    The endpoint identifier (e.g. `users`, `forms`, `field`).
+	 * @param string|callable():string $url     The fully qualified REST URL, or a callable returning one.
+	 * @param callable|null            $counter A `callable(array $field, ?int $threshold): int` reporting the count for the kind; global kinds ignore the field and may self-memoize.
 	 */
 	public static function register( string $kind, $url, ?callable $counter = null ): void {
 		self::$endpoints[ $kind ] = $url;
 
 		if ( $counter ) {
 			self::$counters[ $kind ] = $counter;
-			unset( self::$count_cache[ $kind ] );
 		}
 	}
 
@@ -119,24 +101,49 @@ final class EndpointRegistry {
 
 	/**
 	 * Stores the REST namespace prefix used to lazily resolve the conventional ChoicesField
-	 * endpoints (`users`, `forms`, `field`). The actual URL composition is deferred to
-	 * {@see self::resolve()} so callers can invoke this safely during very early bootstrap.
+	 * endpoints (`users`, `forms`). The actual URL composition is deferred to {@see self::resolve()}
+	 * so callers can invoke this safely during very early bootstrap.
 	 *
 	 * @since 2.12.0
+	 * @since 2.14.0 Added the `$manager` parameter.
 	 *
-	 * @param string $prefix REST namespace prefix used when registering routes.
+	 * @param string                  $prefix  REST namespace prefix used when registering routes.
+	 * @param ChoiceSourceManager|null $manager Source manager backing the per-field `field` kind; when null the kind is not registered.
 	 */
-	public static function register_defaults( string $prefix ): void {
+	public static function register_defaults( string $prefix, ?ChoiceSourceManager $manager = null ): void {
 		self::register(
 			'forms',
 			static fn(): string => rest_url( $prefix . '/query-filters/choice/forms' ),
-			static fn(): int => ( new GravityFormsFormRepository( $GLOBALS['wpdb'] ) )->count( FormCriteria::search() )
+			static function ( array $field = [], ?int $threshold = null ): int {
+				static $n;
+				return $n ??= (int) ( new GravityFormsFormRepository( $GLOBALS['wpdb'] ) )->count( FormCriteria::search() );
+			}
 		);
 		self::register(
 			'users',
 			static fn(): string => rest_url( $prefix . '/query-filters/choice/users' ),
-			static fn(): int => ( new WordPressUserRepository() )->count( UserCriteria::search() )
+			static function ( array $field = [], ?int $threshold = null ): int {
+				static $n;
+				return $n ??= (int) ( new WordPressUserRepository() )->count( UserCriteria::search() );
+			}
 		);
+
+		if ( $manager ) {
+			self::register(
+				'field',
+				static fn(): string => rest_url( $prefix . '/query-filters/choice/field' ),
+				static function ( array $field, ?int $threshold ) use ( $manager ): int {
+					$form_id  = (int) ( $field['form_id'] ?? 0 );
+					$field_id = (string) ( $field['key'] ?? '' );
+
+					if ( $manager->prefers_endpoint( $form_id, $field_id ) ) {
+						return $threshold ?? PHP_INT_MAX;
+					}
+
+					return $manager->count( $form_id, $field_id, $threshold );
+				}
+			);
+		}
 	}
 
 	/**
@@ -257,37 +264,76 @@ final class EndpointRegistry {
 			return $field;
 		}
 
-		$count = self::resolve_count( $kind );
-		if ( null === $count || $count <= $threshold ) {
+		$count = self::resolve_count( $kind, $field, $threshold + 1 );
+		if ( null === $count ) {
 			return $field;
 		}
 
-		// Replace actual values with endpoint lookup.
-		$field['endpoint'] = $kind;
-		unset( $field['values'] );
+		$field['control'] = 'combobox';
+
+		if ( $count <= $threshold ) {
+			return $field;
+		}
+
+		$field['endpoint'] = [
+			'kind'   => $kind,
+			'params' => [
+				'form_id'  => (int) ( $field['form_id'] ?? 0 ),
+				'field_id' => (string) ( $field['key'] ?? '' ),
+			],
+		];
+		$field = self::keep_pinned_values( $field );
 
 		return $field;
 	}
 
 	/**
-	 * Resolves the total count for a kind. Returns null when no counter is registered.
+	 * Drops a field's static values once an endpoint serves them, retaining only options flagged
+	 * `pinned` — special sentinels (e.g. created-by current-user options) the endpoint cannot
+	 * produce. The `values` key is removed entirely when nothing is pinned.
+	 *
+	 * @since 2.14.0
+	 *
+	 * @param array $field The field whose values are now backed by an endpoint.
+	 *
+	 * @return array The field with only its pinned values, or none.
+	 */
+	private static function keep_pinned_values( array $field ): array {
+		$pinned = array_values( array_filter(
+			(array) ( $field['values'] ?? [] ),
+			static fn( $value ): bool => is_array( $value ) && ! empty( $value['pinned'] )
+		) );
+
+		if ( $pinned === [] ) {
+			unset( $field['values'] );
+
+			return $field;
+		}
+
+		$field['values'] = $pinned;
+
+		return $field;
+	}
+
+	/**
+	 * Resolves the count for a kind via its registered counter, passing the field and threshold.
+	 * Returns null when no counter is registered.
 	 *
 	 * @since 2.12.0
+	 * @since 2.14.0 Added the `$field` and `$threshold` parameters.
 	 *
-	 * @param string $kind The endpoint identifier.
+	 * @param string   $kind    The endpoint identifier.
+	 * @param array    $field   The field filter, passed to the counter.
+	 * @param int|null $threshold The threshold, passed to the counter.
 	 *
-	 * @return int|null The total, or null when unsupported.
+	 * @return int|null The count, or null when the kind has no counter.
 	 */
-	public static function resolve_count( string $kind ): ?int {
-		if ( array_key_exists( $kind, self::$count_cache ) ) {
-			return self::$count_cache[ $kind ];
-		}
-
+	public static function resolve_count( string $kind, array $field = [], ?int $threshold = null ): ?int {
 		if ( ! isset( self::$counters[ $kind ] ) ) {
-			return self::$count_cache[ $kind ] = null;
+			return null;
 		}
 
-		return self::$count_cache[ $kind ] = (int) ( self::$counters[ $kind ] )();
+		return (int) ( self::$counters[ $kind ] )( $field, $threshold );
 	}
 
 	/**
@@ -298,8 +344,7 @@ final class EndpointRegistry {
 	 * @internal
 	 */
 	public static function reset(): void {
-		self::$endpoints   = [];
-		self::$counters    = [];
-		self::$count_cache = [];
+		self::$endpoints = [];
+		self::$counters  = [];
 	}
 }

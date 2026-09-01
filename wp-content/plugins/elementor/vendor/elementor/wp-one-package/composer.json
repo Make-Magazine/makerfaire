@@ -1,6 +1,6 @@
 {
   "name": "elementor/wp-one-package",
-  "version": "1.0.66",
+  "version": "1.0.68",
   "require-dev": {
     "squizlabs/php_codesniffer": "^3.10.2",
     "dealerdirect/phpcodesniffer-composer-installer": "^v1.0.0",

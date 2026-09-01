@@ -23,7 +23,7 @@
     },
     "autoload": {
         "psr-4": {
-            "Illuminate\\Validation\\": ""
+            "GravityKit\\GravityView\\Foundation\\ThirdParty\\Illuminate\\Validation\\": ""
         }
     },
     "extra": {

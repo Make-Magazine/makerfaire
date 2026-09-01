@@ -6,12 +6,12 @@
  * @since 2.4.0
  */
 class GravityView_Inline_Edit_Field_Lookup extends GravityView_Inline_Edit_Field {
-	var $gv_field_name = 'lookup';
+	public $gv_field_name = 'lookup';
 
 	/** @var GF_Field_Select $gf_field */
-	var $inline_edit_type = 'select';
+	public $inline_edit_type = 'select';
 
-	var $set_value = true;
+	public $set_value = true;
 
 	/**
 	 * Register hooks for all inline edit types the lookup field can use.
@@ -66,19 +66,19 @@ class GravityView_Inline_Edit_Field_Lookup extends GravityView_Inline_Edit_Field
 			$checklist_value = self::_get_inline_edit_value( $gf_field, $entry, false );
 
 			if ( ! empty( $checklist_value ) ) {
-				$wrapper_attributes['data-value'] = json_encode( array_map( 'strval', $checklist_value ) );
+				$wrapper_attributes['data-value'] = wp_json_encode( array_map( 'strval', $checklist_value ) );
 			}
 
 			parent::add_field_template( $this->inline_edit_type, $gf_field->get_field_input( $current_form, $lookup_field_value, $entry ), $current_form['id'], $field_id );
 		}
 
 		$choices = array_map( function ( $choice ) {
-			$choice['value'] = (string) $choice['value'];
+			$choice['value'] = (string) rgar( $choice, 'value' );
 
 			return $choice;
 		}, $gf_field->get_lookup_choices() );
 
-		$wrapper_attributes['data-source'] = json_encode( $choices );
+		$wrapper_attributes['data-source'] = wp_json_encode( $choices );
 
 		$wrapper_attributes['class'] = $wrapper_attributes['class'] . ' gv-inline-edit-lookup';
 
@@ -121,7 +121,7 @@ class GravityView_Inline_Edit_Field_Lookup extends GravityView_Inline_Edit_Field
 	 *
 	 * @return bool|WP_Error|array
 	 */
-	public function updated_result( $update_result, $entry = array(), $form_id = 0, GF_Field $gf_field = null ) {
+	public function updated_result( $update_result, $entry = array(), $form_id = 0, ?GF_Field $gf_field = null ) {
 		if ( $gf_field && 'lookup' === $gf_field->type && $this->is_checklist_type( $gf_field ) ) {
 			$this->standard_live_update    = true;
 			$this->live_update_json_encode = false;
@@ -168,7 +168,7 @@ class GravityView_Inline_Edit_Field_Lookup extends GravityView_Inline_Edit_Field
 		$choice_number   = 1;
 
 		foreach ( $gf_field->get_lookup_choices() as $choice ) {
-			if ( 0 == $choice_number % 10 ) { // hack to skip numbers ending in 0. so that 5.1 doesn't conflict with 5.10
+			if ( 0 === $choice_number % 10 ) { // Skip numbers ending in 0 so that 5.1 doesn't conflict with 5.10
 				++$choice_number;
 			}
 			$input_id = $field_id . '.' . $choice_number;
@@ -181,7 +181,7 @@ class GravityView_Inline_Edit_Field_Lookup extends GravityView_Inline_Edit_Field
 			++$choice_number;
 		}
 
-		return $as_json ? json_encode( $checklist_value ) : $checklist_value;
+		return $as_json ? wp_json_encode( $checklist_value ) : $checklist_value;
 	}
 }
 

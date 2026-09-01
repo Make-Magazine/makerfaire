@@ -2,17 +2,17 @@
     "packages": [
         {
             "name": "gravitykit/query-filters",
-            "version": "v2.10.2",
-            "version_normalized": "2.10.2.0",
+            "version": "v2.16.0",
+            "version_normalized": "2.16.0.0",
             "source": {
                 "type": "git",
                 "url": "git@github.com:GravityKit/Query-Filters.git",
-                "reference": "7ebac6b9dbbaeadfd04886d28fa3f98743e70b5f"
+                "reference": "716d7498105d88ad580037a80a251ff1b11046b7"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/GravityKit/Query-Filters/zipball/7ebac6b9dbbaeadfd04886d28fa3f98743e70b5f",
-                "reference": "7ebac6b9dbbaeadfd04886d28fa3f98743e70b5f",
+                "url": "https://api.github.com/repos/GravityKit/Query-Filters/zipball/716d7498105d88ad580037a80a251ff1b11046b7",
+                "reference": "716d7498105d88ad580037a80a251ff1b11046b7",
                 "shasum": ""
             },
             "require": {
@@ -20,10 +20,11 @@
                 "php": ">=7.4"
             },
             "require-dev": {
+                "gravityview/multiple-forms": "^0.7",
                 "phpunit/phpunit": "^9.6.33",
                 "yoast/phpunit-polyfills": "^1.1.0"
             },
-            "time": "2026-04-28T00:42:23+00:00",
+            "time": "2026-08-20T08:54:48+00:00",
             "type": "library",
             "installation-source": "dist",
             "autoload": {
@@ -47,7 +48,7 @@
             ],
             "description": "Advanced filtering functionality for Gravity Forms' GF_Query and form fields.",
             "support": {
-                "source": "https://github.com/GravityKit/Query-Filters/tree/v2.10.2",
+                "source": "https://github.com/GravityKit/Query-Filters/tree/v2.16.0",
                 "issues": "https://github.com/GravityKit/Query-Filters/issues"
             },
             "install-path": "../gravitykit/query-filters"

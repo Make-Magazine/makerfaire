@@ -56,6 +56,7 @@ class GP_Populate_Anything_Live_Merge_Tags {
 			add_filter( $field_filter, array( $this, 'add_live_value_attr_product_name' ), 99, 2 );
 			add_filter( $field_filter, array( $this, 'add_live_value_attr_checkable_choice' ), 99, 2 );
 			add_filter( $field_filter, array( $this, 'add_select_default_value_attr' ), 99, 2 );
+			add_filter( $field_filter, array( $this, 'pad_datepicker_value_for_input_mask' ), 100, 2 );
 		}
 
 		/**
@@ -535,7 +536,19 @@ class GP_Populate_Anything_Live_Merge_Tags {
 
 		$data_attr = 'data-gppa-live-merge-tag-value="' . esc_attr( $this->escape_live_merge_tags( $field->defaultValue ) ) . '"';
 
-		$content = str_replace( ' value=\'', ' ' . $data_attr . ' value=\'', $content );
+		/*
+		 * Match any whitespace preceding the value attribute rather than a literal space. As of GF 3.0, the Date
+		 * field's datepicker input is rendered with each attribute on its own line, so `value='` is preceded by a
+		 * newline and tabs rather than a space. Without this, the data attribute is never added and the Live Merge
+		 * Tag stops updating the field.
+		 */
+		$content = preg_replace_callback(
+			'/\svalue=\'/',
+			function ( $matches ) use ( $data_attr ) {
+				return ' ' . $data_attr . $matches[0];
+			},
+			$content
+		);
 
 		/*
 		 * Support Live Merge Tags for Date Picker Date fields. By default, the date will fail to parse so the value
@@ -546,6 +559,117 @@ class GP_Populate_Anything_Live_Merge_Tags {
 		}
 
 		return $content;
+	}
+
+	/**
+	 * Zero-pad the value rendered into a Date Picker input so it survives the field's input mask.
+	 *
+	 * The Live Merge Tag value reaches the input through several paths (the field's default value at render time, the
+	 * `value='//'` fallback above, hydrated input HTML), so this runs on the finished markup rather than on any one of
+	 * them.
+	 *
+	 * @since 2.1.75
+	 *
+	 * @param string   $content
+	 * @param GF_Field $field
+	 *
+	 * @return string
+	 * @see GP_Populate_Anything_Live_Merge_Tags::pad_value_to_input_mask() for why padding is needed.
+	 */
+	public function pad_datepicker_value_for_input_mask( $content, $field ) {
+		if ( $field->get_input_type() !== 'date' || rgar( $field, 'dateType' ) !== 'datepicker' ) {
+			return $content;
+		}
+
+		$mask = $this->get_field_input_mask( $field );
+
+		if ( ! $mask ) {
+			return $content;
+		}
+
+		// The Date Picker renders a single input, and its value is the first value attribute in the markup.
+		return preg_replace_callback(
+			'/\svalue=([\'"])(.*?)\1/',
+			function ( $matches ) use ( $mask ) {
+				return ' value=' . $matches[1] . $this->pad_value_to_input_mask( $matches[2], $mask ) . $matches[1];
+			},
+			$content,
+			1
+		);
+	}
+
+	/**
+	 * Get the input mask (e.g. "99/99/9999") that the field applies to its input, if any.
+	 *
+	 * @since 2.1.75
+	 *
+	 * @param GF_Field $field
+	 *
+	 * @return string Empty string if the field has no input mask.
+	 */
+	public function get_field_input_mask( $field ) {
+		if ( ! is_callable( array( $field, 'get_format_mask' ) ) ) {
+			return '';
+		}
+
+		if ( ! preg_match( '/data-mask=[\'"]([^\'"]+)[\'"]/', (string) $field->get_format_mask(), $matches ) ) {
+			return '';
+		}
+
+		return $matches[1];
+	}
+
+	/**
+	 * Zero-pad each group of digits in a value to the width its input mask expects.
+	 *
+	 * As of GF 3.0.3, the Date field's datepicker input is rendered with an input mask (e.g. "99/99/9999") which is
+	 * applied to the value as soon as the mask initializes. The mask fills its digit slots from left to right, so an
+	 * unpadded but otherwise valid date such as "9/15/2022" is rewritten to "91/52/022". Padding the value up front
+	 * lets it pass through the mask unchanged.
+	 *
+	 * @since 2.1.75
+	 *
+	 * @param string $value
+	 * @param string $mask
+	 *
+	 * @return string The original value if it does not line up with the mask.
+	 */
+	public function pad_value_to_input_mask( $value, $mask ) {
+		if ( $value === '' || ! $mask ) {
+			return $value;
+		}
+
+		$split       = PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_NO_EMPTY;
+		$mask_parts  = preg_split( '/(9+)/', $mask, -1, $split );
+		$value_parts = preg_split( '/(\d+)/', $value, -1, $split );
+
+		if ( count( $mask_parts ) !== count( $value_parts ) ) {
+			return $value;
+		}
+
+		$padded = '';
+
+		foreach ( $mask_parts as $i => $mask_part ) {
+			$value_part   = $value_parts[ $i ];
+			$is_digit_run = $mask_part[0] === '9';
+
+			if ( $is_digit_run !== ctype_digit( $value_part ) ) {
+				return $value;
+			}
+
+			if ( ! $is_digit_run ) {
+				$padded .= $mask_part;
+				continue;
+			}
+
+			if ( strlen( $value_part ) > strlen( $mask_part ) ) {
+				return $value;
+			}
+
+			$padded .= str_pad( $value_part, strlen( $mask_part ), '0', STR_PAD_LEFT );
+		}
+
+		return $padded;
 	}
 
 	/**
@@ -949,10 +1073,17 @@ class GP_Populate_Anything_Live_Merge_Tags {
 			/**
 			 * We explicitly add this to the form string to add support for Live Merge Tags when editing nested entries
 			 * with GP Nested Forms.
+			 *
+			 * Hex-encode HTML-sensitive characters so page builders that run block parsing over rendered widget
+			 * content do not interpret block markup in the JavaScript values as part of the page.
 			 */
+			$json_encode_options = JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP;
+			$current_values      = wp_json_encode( $this->_current_live_merge_tag_values[ $form['id'] ], $json_encode_options );
+			$texturized_values   = wp_json_encode( $this->_current_live_merge_tag_values_texturized[ $form['id'] ], $json_encode_options );
+
 			$form_string .= '<script type="text/javascript">
-				var GPPA_CURRENT_LIVE_MERGE_TAG_VALUES_FORM_' . $form['id'] . ' = ' . json_encode( $this->_current_live_merge_tag_values[ $form['id'] ] ) . ';
-				var GPPA_CURRENT_LIVE_MERGE_TAG_VALUES_FORM_' . $form['id'] . '_TEXTURIZED = ' . json_encode( $this->_current_live_merge_tag_values_texturized[ $form['id'] ] ) . ';
+				var GPPA_CURRENT_LIVE_MERGE_TAG_VALUES_FORM_' . $form['id'] . ' = ' . $current_values . ';
+				var GPPA_CURRENT_LIVE_MERGE_TAG_VALUES_FORM_' . $form['id'] . '_TEXTURIZED = ' . $texturized_values . ';
 			</script>';
 		}
 

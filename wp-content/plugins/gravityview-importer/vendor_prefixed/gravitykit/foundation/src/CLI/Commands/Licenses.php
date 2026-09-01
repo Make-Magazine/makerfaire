@@ -131,11 +131,15 @@ class Licenses extends AbstractCommand {
 	 * [--url=<site-url>]
 	 * : Site url for which to activate license(s).
 	 *
+	 * [--scope=<scope>]
+	 * : Activation scope on multisite. Accepts 'network' (counts once for the whole network) or 'site' (counts the current site). Default: network.
+	 *
 	 * ## EXAMPLES
 	 *
 	 *     wp gk licenses activate <license-key>,<license-key> --url=<site-url>
+	 *     wp gk licenses activate <license-key> --url=<site-url> --scope=site
 	 *
-	 * @synopsis <license-key> [--url=<site-url>]
+	 * @synopsis <license-key> [--url=<site-url>] [--scope=<scope>]
 	 *
 	 * @return void
 	 */
@@ -147,10 +151,20 @@ class Licenses extends AbstractCommand {
 		$is_url_specified = ! empty( preg_grep( '/^--url=/', $_SERVER['argv'] ?? [] ) );
 
 		if ( ! $is_url_specified ) {
-			WP_CLI::error( 'Please provide the site url (via the --url=<site-url> argument) for which to deactivate license(s).' );
+			WP_CLI::error( 'Please provide the site url (via the --url=<site-url> argument) for which to activate license(s).' );
 		}
 
 		$keys = explode( ',', $args[0] );
+
+		$scope = $assoc_args['scope'] ?? null;
+
+		if ( null !== $scope && ! in_array( $scope, [ LicenseManager::SCOPE_NETWORK, LicenseManager::SCOPE_SITE ], true ) ) {
+			WP_CLI::error( "Invalid --scope value '{$scope}'. Accepted values: network, site." );
+		}
+
+		if ( null === $scope && is_multisite() ) {
+			WP_CLI::warning( 'No --scope given on a multisite install; defaulting to a network-wide activation. Pass --scope=site to activate for the current site only.' );
+		}
 
 		$licenses = $this->get_licenses_or_exit();
 
@@ -164,7 +178,7 @@ class Licenses extends AbstractCommand {
 			}
 
 			try {
-				$license = LicenseManager::get_instance()->activate_license( $key );
+				$license = LicenseManager::get_instance()->activate_license( $key, $scope );
 
 				$this->show_license_info( [ $license ], $assoc_args['format'] ?? self::DEFAULT_OUTPUT_FORMAT );
 
@@ -323,6 +337,7 @@ class Licenses extends AbstractCommand {
 			'Limit',
 			'Site Count',
 			'Activations Left',
+			'Scope',
 		];
 
 		if ( 'json' === $format ) {
@@ -346,6 +361,7 @@ class Licenses extends AbstractCommand {
 					$license['license_limit'],
 					$license['site_count'],
 					$license['activations_left'],
+					( $license['scope'] ?? '-' ) . ( ! empty( $license['legacy'] ) ? ' (legacy)' : '' ),
 				]
 			);
 

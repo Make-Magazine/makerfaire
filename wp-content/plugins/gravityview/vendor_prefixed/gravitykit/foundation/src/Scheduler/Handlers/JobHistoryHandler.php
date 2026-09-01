@@ -1,10 +1,7 @@
 <?php
 /**
  * Job history handler.
- * *
- * @license GPL-2.0-or-later
- * Modified using {@see https://github.com/BrianHenryIE/strauss}.
- */
+ * */
 
 namespace GravityKit\GravityView\Foundation\Scheduler\Handlers;
 

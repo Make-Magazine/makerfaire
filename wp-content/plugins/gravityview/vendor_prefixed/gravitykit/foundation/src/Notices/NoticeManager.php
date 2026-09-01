@@ -1,9 +1,4 @@
 <?php
-/**
- * @license GPL-2.0-or-later
- *
- * Modified using {@see https://github.com/BrianHenryIE/strauss}.
- */
 
 namespace GravityKit\GravityView\Foundation\Notices;
 
@@ -302,6 +297,27 @@ final class NoticeManager {
 	}
 
 	/**
+	 * Returns stored notices across all scopes whose slug starts with a prefix.
+	 *
+	 * @since TBD
+	 *
+	 * @param string $slug_prefix Slug prefix to match.
+	 *
+	 * @return StoredNoticeInterface[] Keyed by notice ID.
+	 */
+	public function get_stored_by_slug_prefix_all_scopes( string $slug_prefix ): array {
+		$matches = [];
+
+		foreach ( $this->repository->get_all_stored_across_scopes() as $notice ) {
+			if ( str_starts_with( $notice->get_slug(), $slug_prefix ) ) {
+				$matches[ $notice->get_id() ] = $notice;
+			}
+		}
+
+		return $matches;
+	}
+
+	/**
 	 * Removes a stored notice from persistent storage.
 	 *
 	 * Deletes the notice from both global options and all user meta where it may
@@ -327,16 +343,30 @@ final class NoticeManager {
 	 * Runtime notices cannot be updated as they live only in memory.
 	 *
 	 * @since 1.3.0
+	 * @since TBD Find user-scoped notices outside the current user context.
+	 * @since TBD Accept an already-resolved stored notice.
 	 *
-	 * @param string              $notice_id Notice ID.
-	 * @param array<string,mixed> $changes   Partial definition data to merge.
+	 * @param string                     $notice_id Notice ID.
+	 * @param array<string,mixed>        $changes   Partial definition data to merge.
+	 * @param StoredNoticeInterface|null $notice    Already-resolved stored notice.
 	 *
 	 * @throws NoticeException When notice update fails.
 	 *
 	 * @return void
 	 */
-	public function update_notice( string $notice_id, array $changes ): void {
-		$notice = $this->get_notice( $notice_id );
+	public function update_notice( string $notice_id, array $changes, ?StoredNoticeInterface $notice = null ): void {
+		if ( ! $notice || $notice_id !== $notice->get_id() ) {
+			$notice = $this->get_notice( $notice_id );
+		}
+
+		if ( ! $notice instanceof StoredNoticeInterface ) {
+			foreach ( $this->repository->get_all_stored_across_scopes() as $stored_notice ) {
+				if ( $notice_id === $stored_notice->get_id() ) {
+					$notice = $stored_notice;
+					break;
+				}
+			}
+		}
 
 		if ( ! $notice instanceof StoredNoticeInterface ) {
 			throw NoticeException::persistence( __METHOD__, [ 'notice_id' => $notice_id ] );

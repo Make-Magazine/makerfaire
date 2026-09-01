@@ -23,6 +23,9 @@ use GravityKit\GravityView\Foundation\WP\RESTController;
 use GravityKit\GravityView\Foundation\Notices\NoticeManager as Notices;
 use GravityKit\GravityView\Foundation\Settings\WPDebugSettings;
 use GravityKit\GravityView\Foundation\Scheduler\JobScheduler;
+use GravityKit\GravityView\Foundation\Abilities\Framework as AbilitiesFramework;
+use GravityKit\GravityView\Foundation\AccountConnection\Framework as AccountConnectionFramework;
+use GravityKit\GravityView\Foundation\AccountConnection\Storage\AccountStorage;
 
 /**
  * Core class that initializes Foundation.
@@ -36,6 +39,7 @@ use GravityKit\GravityView\Foundation\Scheduler\JobScheduler;
  * @method static LoggerFramework logger(?string $logger_name = null, ?string $logger_title = null )
  * @method static SettingsFramework settings()
  * @method static LicensesFramework licenses()
+ * @method static AccountConnectionFramework account_connection()
  * @method static TranslationsFramework translations()
  * @method static AdminMenu admin_menu()
  * @method static PluginActivationHandler plugin_activation_handler()
@@ -43,9 +47,10 @@ use GravityKit\GravityView\Foundation\Scheduler\JobScheduler;
  * @method static SecureDownload secure_download()
  * @method static JobScheduler scheduler()
  * @method static JobOverview job_overview()
+ * @method static AbilitiesFramework abilities()
  */
 class Core {
-	const VERSION = '1.21.0';
+	const VERSION = '1.31.1';
 
 	const ID = 'gk_foundation';
 
@@ -150,7 +155,7 @@ class Core {
 				if ( $force_standalone_instance ) {
 					$plugin_data = CoreHelpers::get_plugin_data( $plugin_file );
 
-					if ( 'gk-foundation' === Arr::get( $plugin_data, 'TextDomain' ) ) {
+					if ( 'gk-foundation' === ( $plugin_data['TextDomain'] ?? '' ) ) {
 						$instance_to_return = $this;
 					}
 				}
@@ -230,52 +235,60 @@ class Core {
 
 				do_action( 'gk/foundation/load-failure-notice' );
 
-				$gk_foundation = apply_filters( 'gk/foundation/get-instance', null );
+				// Build the translated notice on `init`, not here on `plugins_loaded` (before
+				// `after_setup_theme`), to avoid WordPress 6.7's just-in-time translation notice.
+				// Notices are not rendered until `all_admin_notices`.
+				add_action(
+					'init',
+					function () {
+						$gk_foundation = apply_filters( 'gk/foundation/get-instance', null );
 
-				if ( ! $gk_foundation || ! is_callable( [ $gk_foundation, 'get_registered_plugins' ] ) ) {
-					return;
-				}
+						if ( ! $gk_foundation || ! is_callable( [ $gk_foundation, 'get_registered_plugins' ] ) ) {
+							return;
+						}
 
-				$product_names = [];
+						$product_names = [];
 
-				/** @phpstan-ignore-next-line */
-				foreach ( $gk_foundation->get_registered_plugins() as $file => $data ) {
-					$plugin_data     = CoreHelpers::get_plugin_data( $file );
-					$product_names[] = $plugin_data['Name'] ?? $data['text_domain'];
-				}
+						/** @phpstan-ignore-next-line */
+						foreach ( $gk_foundation->get_registered_plugins() as $file => $data ) {
+							$plugin_data     = CoreHelpers::get_plugin_data( $file );
+							$product_names[] = $plugin_data['Name'] ?? $data['text_domain'];
+						}
 
-				$count = count( $product_names );
-				$list  = implode( ', ', $product_names );
+						$count = count( $product_names );
+						$list  = implode( ', ', $product_names );
 
-				// translators: [plugins] is replaced with a list of plugin names.
-				$message = strtr(
-					_n(
-						'[plugins] did not load correctly. Please deactivate and reactivate it to resolve this issue.',
-						'[plugins] did not load correctly. Please deactivate and reactivate them to resolve this issue.',
-						$count,
-						'gk-gravityview'
-					),
-					[ '[plugins]' => '<strong>' . esc_html( $list ) . '</strong>' ]
-				);
+						// translators: [plugins] is replaced with a list of plugin names.
+						$message = strtr(
+							_n(
+								'[plugins] did not load correctly. Please deactivate and reactivate it to resolve this issue.',
+								'[plugins] did not load correctly. Please deactivate and reactivate them to resolve this issue.',
+								$count,
+								'gk-gravityview'
+							),
+							[ '[plugins]' => '<strong>' . esc_html( $list ) . '</strong>' ]
+						);
 
-				$support_link = '<a href="https://www.gravitykit.com/support/" target="_blank" rel="noopener noreferrer">'
-					. esc_html__( 'contact support', 'gk-gravityview' ) . '</a>';
+						$support_link = '<a href="https://www.gravitykit.com/support/" target="_blank" rel="noopener noreferrer">'
+						. esc_html__( 'contact support', 'gk-gravityview' ) . '</a>';
 
-				// translators: [link] is replaced with a support link.
-				$message .= ' ' . strtr(
-					esc_html__( 'If the problem persists, [link].', 'gk-gravityview' ),
-					[ '[link]' => $support_link ]
-				);
+						// translators: [link] is replaced with a support link.
+						$message .= ' ' . strtr(
+							esc_html__( 'If the problem persists, [link].', 'gk-gravityview' ),
+							[ '[link]' => $support_link ]
+						);
 
-				Notices::get_instance()->add_runtime(
-					[
-						'namespace'    => 'gk-foundation',
-						'slug'         => 'foundation-load-failure',
-						'message'      => $message,
-						'severity'     => 'error',
-						'dismissible'  => false,
-						'capabilities' => [ 'manage_options' ],
-					]
+						Notices::get_instance()->add_runtime(
+							[
+								'namespace'    => 'gk-foundation',
+								'slug'         => 'foundation-load-failure',
+								'message'      => $message,
+								'severity'     => 'error',
+								'dismissible'  => false,
+								'capabilities' => [ 'manage_options' ],
+							]
+						);
+					}
 				);
 			},
 			PHP_INT_MAX
@@ -414,23 +427,66 @@ class Core {
 		}
 
 		$this->_components = [
-			'translations'    => TranslationsFramework::get_instance(),
-			'newsletter'      => NewsletterSignup::get_instance(),
-			'settings'        => SettingsFramework::get_instance(),
-			'licenses'        => LicensesFramework::get_instance(),
-			'logger'          => LoggerFramework::get_instance(),
-			'admin_menu'      => AdminMenu::get_instance(),
-			'ajax_router'     => AjaxRouter::get_instance(),
-			'rest_controller' => RESTController::get_instance(),
-			'notices'         => Notices::get_instance(),
-			'encryption'      => Encryption::get_instance(),
-			'trustedlogin'    => TrustedLogin::get_instance(),
-			'helpscout'       => HelpScout::get_instance(),
-			'gravityforms'    => GravityForms::get_instance(),
-			'secure_download' => SecureDownload::get_instance(),
-			'scheduler'       => JobScheduler::get_instance(),
-			'job_overview'    => JobOverview::get_instance(),
+			'translations'       => TranslationsFramework::get_instance(),
+			'newsletter'         => NewsletterSignup::get_instance(),
+			'settings'           => SettingsFramework::get_instance(),
+			'licenses'           => LicensesFramework::get_instance(),
+			'account_connection' => AccountConnectionFramework::get_instance(),
+			'account_storage'    => AccountStorage::get_instance(),
+			'logger'             => LoggerFramework::get_instance(),
+			'admin_menu'         => AdminMenu::get_instance(),
+			'ajax_router'        => AjaxRouter::get_instance(),
+			'rest_controller'    => RESTController::get_instance(),
+			'notices'            => Notices::get_instance(),
+			'encryption'         => Encryption::get_instance(),
+			'trustedlogin'       => TrustedLogin::get_instance(),
+			'helpscout'          => HelpScout::get_instance(),
+			'gravityforms'       => GravityForms::get_instance(),
+			'secure_download'    => SecureDownload::get_instance(),
 		];
+
+		// JobScheduler hard-depends on Action Scheduler (DbStore extends
+		// ActionScheduler_DBStore), so instantiating it without AS loaded is a fatal.
+		// When the bundled AS is missing/unreadable (a failed or partial update),
+		// skip the scheduler so the site degrades to "background jobs paused" instead,
+		// and tell admins why. JobOverview self-guards the same way, so it stays
+		// registered unconditionally.
+		if ( class_exists( 'ActionScheduler_DBStore' ) ) {
+			$this->_components['scheduler'] = JobScheduler::get_instance();
+		} else {
+			// Build the translated notice on `init`, not during Core boot (which runs on
+			// `plugins_loaded`, before `after_setup_theme`), to avoid WordPress 6.7's just-in-time
+			// translation notice. Notices are not rendered until `all_admin_notices`.
+			add_action(
+				'init',
+				function () {
+					$message = esc_html__( 'GravityKit background processing is paused: Action Scheduler could not be loaded, so scheduled and background tasks will not run. This usually clears once a plugin finishes updating.', 'gk-gravityview' );
+
+					// translators: [link] and [/link] wrap the "contact support" anchor text.
+					$message .= ' ' . strtr(
+						esc_html__( 'If it persists, reinstall the plugin or [link]contact support[/link].', 'gk-gravityview' ),
+						[
+							'[link]'  => '<a href="' . esc_url( 'https://www.gravitykit.com/support/' ) . '" target="_blank" rel="noopener noreferrer">',
+							'[/link]' => '</a>',
+						]
+					);
+
+					Notices::get_instance()->add_runtime(
+						[
+							'namespace'    => 'gk-foundation',
+							'slug'         => 'scheduler-unavailable',
+							'message'      => $message,
+							'severity'     => 'warning',
+							'dismissible'  => false,
+							'capabilities' => [ 'manage_options' ],
+						]
+					);
+				}
+			);
+		}
+
+		$this->_components['job_overview'] = JobOverview::get_instance();
+		$this->_components['abilities']    = AbilitiesFramework::get_instance();
 
 		foreach ( $this->_components as $instance ) {
 			if ( CoreHelpers::is_callable_class_method( [ $instance, 'init' ] ) ) {
@@ -688,16 +744,16 @@ HTML;
 						'value'       => Arr::get( $gk_settings, 'background_processing', $default_settings['background_processing'] ),
 						'title'       => esc_html__( 'Enable Background Processing', 'gk-gravityview' ),
 						'description' => strtr(
-                            esc_html_x(
-                                'Allow GravityKit products to [url]process jobs in the background[/url]. Disable to stop background jobs from running.',
-                                'Placeholders inside [] are not to be translated.',
-                                'gk-gravityview'
-                            ),
-                            [
+							esc_html_x(
+								'Allow GravityKit products to [url]process jobs in the background[/url]. Disable to stop background jobs from running.',
+								'Placeholders inside [] are not to be translated.',
+								'gk-gravityview'
+							),
+							[
 								'[url]'  => '<a class="underline" href="https://docs.gravitykit.com/article/2150-background-processing" rel="noopener noreferrer" target="_blank">',
 								'[/url]' => '<span class="screen-reader-text"> ' . esc_html__( '(This link opens in a new window.)', 'gk-gravityview' ) . '</span></a>',
-                            ]
-                        ),
+							]
+						),
 					],
 					[
 						'id'          => 'show_background_jobs',
@@ -1046,18 +1102,17 @@ HTML;
 	}
 
 	/**
-	 * Detects and registers notices for namespace conflicts.
-	 *
-	 * This detects when a plugin has both vendor/ and vendor_prefixed/ Foundation copies,
-	 * which can cause conflicts when the standalone Foundation plugin is active.
-	 *
-	 * Only runs when the standalone Foundation plugin (gk-foundation) is the one that loaded.
+	 * Warns (WP_DEBUG only) when unprefixed Foundation classes load from outside the standalone plugin.
 	 *
 	 * @since 1.6.0
 	 *
 	 * @return void
 	 */
 	private function detect_namespace_conflict() {
+		if ( ! defined( 'WP_DEBUG' ) || ! WP_DEBUG ) {
+			return;
+		}
+
 		$foundation_source = Arr::first(
 			$this->_registered_plugins,
 			function ( $plugin ) {
@@ -1071,47 +1126,47 @@ HTML;
 
 		$conflicting_plugins = [];
 
-		// Check each registered plugin for namespace conflicts.
+		// Flag every product shipping an unprefixed Foundation copy on disk (load-order independent).
 		foreach ( $this->_registered_plugins as $plugin_file => $plugin_data ) {
-			// Skip if this is the current plugin that loaded Foundation.
 			if ( $plugin_data['loads_foundation'] ) {
 				continue;
 			}
 
-			$plugin_dir = dirname( $plugin_file );
-
-			// Check if plugin has non-namespaced Foundation in vendor/.
-			$vendor_foundation = $plugin_dir . '/vendor/gravitykit/foundation/src/Core.php';
-
-			if ( file_exists( $vendor_foundation ) ) {
-				$plugin_name           = CoreHelpers::get_plugin_data( $plugin_file )['Name'] ?? $plugin_data['text_domain'];
-				$conflicting_plugins[] = esc_html( $plugin_name );
+			if ( ! file_exists( dirname( $plugin_file ) . '/vendor/gravitykit/foundation/src/Core.php' ) ) {
+				continue;
 			}
+
+			$plugin_name           = CoreHelpers::get_plugin_data( $plugin_file )['Name'] ?? $plugin_data['text_domain'];
+			$conflicting_plugins[] = esc_html( $plugin_name );
 		}
 
 		if ( empty( $conflicting_plugins ) ) {
 			return;
 		}
 
-		$this->notices()->add_runtime(
-			[
-				'namespace'    => 'gk-foundation',
-				'slug'         => 'namespace-conflicts',
-				'message'      => strtr(
-					// translators: [plugins] is replaced with a list of plugin names.
-					_n(
-						'[plugins] contains both namespaced and non-namespaced Foundation, which may cause conflicts with the standalone Foundation plugin.',
-						'[plugins] contain both namespaced and non-namespaced Foundation, which may cause conflicts with the standalone Foundation plugin.',
-						count( $conflicting_plugins ),
-						'gk-gravityview'
-					),
-					[ '[plugins]' => '<strong>' . implode( ', ', $conflicting_plugins ) . '</strong>' ]
+		// Render directly: the conflict can break the notice framework, so don't route through it.
+		// The message is built inside the callback: this method runs on `plugins_loaded`, before
+		// `after_setup_theme`, and translating there trips WordPress 6.7's just-in-time notice.
+		$render = static function () use ( $conflicting_plugins ) {
+			if ( ! current_user_can( 'activate_plugins' ) ) {
+				return;
+			}
+
+			$message = strtr(
+				// translators: [plugins] is replaced with a list of plugin names.
+				_n(
+					'[plugins] contains both namespaced and non-namespaced Foundation, which may cause conflicts with the standalone Foundation plugin.',
+					'[plugins] contain both namespaced and non-namespaced Foundation, which may cause conflicts with the standalone Foundation plugin.',
+					count( $conflicting_plugins ),
+					'gk-gravityview'
 				),
-				'severity'     => 'warning',
-				'context'      => 'all',
-				'dismissible'  => false,
-				'capabilities' => [ 'manage_options' ],
-			]
-		);
+				[ '[plugins]' => '<strong>' . implode( ', ', $conflicting_plugins ) . '</strong>' ]
+			);
+
+			printf( '<div class="notice notice-warning"><p>%s</p></div>', wp_kses_post( $message ) );
+		};
+
+		add_action( 'admin_notices', $render );
+		add_action( 'network_admin_notices', $render );
 	}
 }

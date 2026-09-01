@@ -1,0 +1,168 @@
+/**
+ * GravityView Theme — Base/Reset
+ *
+ * Box-sizing reset, basic typography, link styles, and focus outlines.
+ * Uses logical properties for RTL support throughout.
+ *
+ * @package   GravityView
+ * @license   GPL2
+ * @since     TBD
+ */
+
+// `.gv-themed` is stamped on the `.gv-container` element itself by
+// `gv_container_class()`, so the primary arm is a same-element compound.
+// Doubled class deliberately: tripling to (0,3,0) means the modern type
+// baseline wins over the (0,2,1) and (0,2,0) selectors most themes use
+// to style body copy (`body.theme-x .gv-container p`,
+// `body .gv-list-view`, etc.). The descendant arm keeps nested or
+// embedded Views covered when a marked ancestor wraps an inner container.
+// `--gv-font-size-base` itself uses `max(1rem, 16px)` (see _tokens.scss)
+// so themes that hack the root font-size (OceanWP ships
+// `html { font-size: 62.5% }` making `1rem` = 10px) can't shrink the
+// modern type below 16px while still respecting users who scale up.
+.gv-container.gv-themed.gv-themed,
+.gv-themed.gv-themed .gv-container {
+	font-family: var(--gv-font-family);
+	font-size: var(--gv-font-size-base);
+	line-height: var(--gv-line-height-normal);
+	color: var(--gv-color-text);
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+
+	*,
+	*::before,
+	*::after {
+		box-sizing: border-box;
+	}
+}
+
+// =========================================================
+// Component-level surface paint
+//
+// Earlier drafts painted `background: var(--gv-color-surface)`
+// at the outer View wrapper itself. That created a hard
+// chromatic edge between the View and the host body — dark
+// presets in particular looked "stuck on" to a white page.
+//
+// The cleaner approach is to paint each visible chrome component
+// independently, so the body shows through between sections and
+// the View integrates with whatever theme it's embedded inside:
+//
+// - Entry cards (in `_card-grid.scss`, `_list.scss`, `_diy.scss`)
+//   already paint their own `--gv-color-surface`.
+// - Table rows (`_table.scss`) inherit zebra surface paints.
+// - Search bars (`_search.scss`) paint `--gv-color-surface-alt`.
+// - Edit Entry wrapper (`_edit-entry.scss`) paints its own surface.
+//
+// The widget-zone wrappers (header/footer slots, pagination row,
+// page-size selector, pagination info) deliberately ship
+// `background: none` for layout flexibility (see `_widgets.scss`,
+// which owns the "no container chrome" contract for the pagination
+// row at (0,2,0) specificity). Their text renders directly on
+// whatever sits behind, picking up `color: var(--gv-color-text)`.
+//
+// Dark presets that ship on a light host page (e.g. Cyberpunk on a
+// white theme) will see text-only widgets read as dark text on body
+// white. The design contract is that dark presets assume a host
+// theme with a compatible body background. Customers pair a dark
+// preset with a light host via Custom CSS at the page level
+// (e.g. `body { background: #0a0a0f; }`), by switching to a host
+// theme that ships dark, or by opting into self-contained mode
+// (Layer 2 below), which paints surface across the wrapper and
+// every widget zone.
+
+// =========================================================
+// Layer 2 — Self-contained mode (host-contrast multi-layer)
+//
+// When `--gv-self-contained: 1`, paint surface across the
+// outer wrapper + widget zones so the View becomes a discrete
+// chromatic container on whatever host page it's embedded in.
+// The trick: `rgb(from … r g b / calc(1 * var(--gv-self-contained)))`
+// drives alpha = 0 when the toggle is 0 (paint invisible) and
+// alpha = 1 when the toggle is 1 (paint fully opaque). Because
+// the value is alpha-zero by default, the rule is harmless when
+// the customer doesn't opt in.
+//
+// Gated on `@supports (color: rgb(from black r g b))` so older
+// browsers without relative-color syntax don't get a malformed
+// background value. Relative-color is Baseline-widely-available
+// since 2024 (Chrome 119+ / FF 128+ / Safari 16.4+).
+//
+// `border-radius` + `box-shadow` live in the same @supports
+// block so the optional "lifted card" appearance only ships
+// when the rest of the surface paint can take effect. Presets
+// override `--gv-view-wrapper-radius` / `--gv-view-wrapper-shadow`
+// to opt into a rounded / shadowed self-contained look.
+//
+// Specificity stays low via `:where(...)` — customer Custom CSS
+// at the per-View scoped wrapper always wins.
+//
+// Spec: docs/superpowers/specs/2026-05-20-host-contrast-multi-layer.md
+// =========================================================
+@supports (color: rgb(from black r g b)) {
+	// The marker lives on both the `gv-template-*` wrapper and the inner
+	// `.gv-container`. The self-contained surface and the lifted-card
+	// treatment belong to the View as a whole, so they target the outer
+	// wrapper only (`:not(.gv-container)`); painting both would double the
+	// shadow and surface. The widget zones are descendants of the wrapper.
+	:where(.gv-themed:not(.gv-container)) {
+		background: rgb(from var(--gv-color-surface) r g b / calc(1 * var(--gv-self-contained)));
+		border-radius: var(--gv-view-wrapper-radius);
+		box-shadow: var(--gv-view-wrapper-shadow);
+	}
+}
+
+// Link reset and interaction affordances only. Link COLOR is owned
+// by `_typography.scss` (the `--gv-color-link` four-state rules);
+// button components own their own colors. The descendant arm keeps
+// nested or embedded Views covered.
+.gv-container.gv-themed a,
+.gv-themed .gv-container a {
+	text-decoration: none;
+	transition: color var(--gv-transition-fast) var(--gv-easing-standard);
+
+	&:hover {
+		text-decoration: underline;
+	}
+
+	&:focus-visible {
+		outline: none;
+		box-shadow: var(--gv-shadow-focus);
+		border-radius: var(--gv-radius-sm);
+	}
+}
+
+// Fill-container image mode: stretch to fill available width.
+.gv-container.gv-themed .gv-image-fill-container {
+	width: 100%;
+	height: auto;
+	display: block;
+	object-fit: cover;
+}
+
+// Outer template-wrapper reset for block themes.
+//
+// Block themes (Frost, Ollie, Twenty Twenty-Four+) paint default
+// borders / outlines on any wp-block-* container via theme.json
+// layout rules. GravityView's outer template wrappers
+// (`.gv-template-table`, `.gv-template-list`, `.gv-template-diy`,
+// `.gv-template-layout-builder`) sit inside an entry-content
+// block, where Frost in particular applies a 1.5px solid black
+// border that looks like a customer-authored Card Border but
+// isn't — the `--gv-entry-border-*` tokens only paint the INNER
+// `.gv-list-view` / `.gv-table-view` / etc.
+//
+// Reset the outer wrappers so the customer's chosen Card Border
+// is the only border that shows. `outline: 0` covers the same
+// pattern themes use when they decorate via outline instead of
+// border. The customer's `--gv-entry-border-*` tokens still
+// paint the inner view container, unchanged.
+//
+// The template wrapper is the PARENT of the marked container, so
+// the modern scope is expressed with `:has()` (Baseline 2023):
+// only wrappers whose direct child opted into a theme get
+// the reset. Legacy Views sharing the page keep their theme chrome.
+[class*="gv-template-"]:has(> .gv-themed) {
+	border: 0;
+	outline: 0;
+}

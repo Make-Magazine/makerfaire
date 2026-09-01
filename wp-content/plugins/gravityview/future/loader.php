@@ -1,19 +1,47 @@
 <?php
 /**
- * Just an early preloader for the future code.
+ * Backward-compatibility shim for the legacy bootstrap entry point.
  *
- * Compatible with all PHP versions syntax-wise.
+ * This file was moved in GravityView 3.0. GravityView classes and
+ * functions load automatically. You no longer need to require this file.
+ *
+ * For safety, if a caller has defined GRAVITYVIEW_DIR and GRAVITYVIEW_FILE
+ * and required this file before GravityView has fully bootstrapped, this
+ * shim replicates the historical side effects (Composer autoload + Foundation
+ * registration) so the bootstrap can complete.
+ *
+ * @deprecated 3.0
  */
 
-/** If this file is called directly, abort. */
-if ( ! defined( 'GRAVITYVIEW_DIR' ) ) {
-	die();
+if ( ! defined( 'ABSPATH' ) ) {
+	die;
 }
 
-require_once GRAVITYVIEW_DIR . 'vendor/autoload.php';
-require_once GRAVITYVIEW_DIR . 'vendor_prefixed/autoload.php';
+if ( function_exists( '_deprecated_file' ) ) {
+	_deprecated_file(
+		plugin_basename( __FILE__ ),
+		'3.0',
+		'',
+		'This file was moved in GravityView 3.0 and will be removed in a future release. GravityView classes and functions load automatically. You no longer need to require them.'
+	);
+}
 
-GravityKit\GravityView\Foundation\Core::register( GRAVITYVIEW_FILE );
+if ( defined( 'GV_PLUGIN_VERSION' ) ) {
+	return;
+}
 
-/** @define "GRAVITYVIEW_DIR" "../" */
-require GRAVITYVIEW_DIR . 'future/gravityview.php';
+if ( ! defined( 'GRAVITYVIEW_DIR' ) || ! defined( 'GRAVITYVIEW_FILE' ) ) {
+	return;
+}
+
+if ( file_exists( GRAVITYVIEW_DIR . 'vendor/autoload.php' ) ) {
+	require_once GRAVITYVIEW_DIR . 'vendor/autoload.php';
+}
+
+if ( file_exists( GRAVITYVIEW_DIR . 'vendor_prefixed/autoload.php' ) ) {
+	require_once GRAVITYVIEW_DIR . 'vendor_prefixed/autoload.php';
+}
+
+if ( class_exists( 'GravityKit\\GravityView\\Foundation\\Core' ) ) {
+	GravityKit\GravityView\Foundation\Core::register( GRAVITYVIEW_FILE );
+}

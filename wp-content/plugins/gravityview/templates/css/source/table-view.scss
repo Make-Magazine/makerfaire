@@ -27,8 +27,10 @@
 				border-top: 1px solid #ccc;
 			}
 
-			td {
+			td,
+			th[scope='row'] {
 				display: table-row;
+				text-align: inherit;
 
 				&:before {
 					content: attr( data-label );

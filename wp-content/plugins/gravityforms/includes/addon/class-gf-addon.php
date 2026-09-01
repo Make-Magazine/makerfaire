@@ -453,6 +453,7 @@ abstract class GFAddOn {
 
 		// enqueues admin scripts
 		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_scripts' ), 10, 0 );
+		add_action( 'enqueue_block_assets', array( $this, 'enqueue_scripts' ), 10, 0 );
 
 		// message enforcing min version of Gravity Forms
 		if ( isset( $this->_min_gravityforms_version ) && RG_CURRENT_PAGE == 'plugins.php' ) {
@@ -908,7 +909,7 @@ abstract class GFAddOn {
 	 * @uses GFAddOn::get_short_title()
 	 * @uses GFAddOn::plugin_settings_title()
 	 * @uses GFCommon::get_base_path()
-	 * @uses RGForms::add_settings_page()
+	 * @uses GFForms::add_settings_page()
 	 */
 	public function failed_requirements_init() {
 
@@ -960,7 +961,7 @@ abstract class GFAddOn {
 	}
 
 	/**
-	 * Override this function to add to add database update scripts or any other code to be executed when the Add-On version changes
+	 * Override this function to add database update scripts or any other code to be executed when the Add-On version changes.
 	 */
 	public function upgrade( $previous_version ) {
 		return;
@@ -1109,7 +1110,7 @@ abstract class GFAddOn {
 				'handle'   => 'gaddon_results_js',
 				'src'      => GFAddOn::get_gfaddon_base_url() . "/js/gaddon_results{$min}.js",
 				'version'  => GFCommon::$version,
-				'deps'     => array( 'jquery', 'sack', 'jquery-ui-resizable', 'gform_datepicker_init', 'google_charts', 'gform_field_filter' ),
+				'deps'     => array( 'jquery', 'sack', 'jquery-ui-resizable', 'google_charts', 'gform_field_filter' ),
 				'callback' => array( 'GFResults', 'localize_results_scripts' ),
 				'enqueue'  => array(
 					array( 'admin_page' => array( 'results' ) ),
@@ -5217,7 +5218,11 @@ abstract class GFAddOn {
 						</div>
 
 						<?php
-						$uninstall_button = '<input type="submit" name="uninstall" value="' . sprintf( esc_attr__( 'Uninstall %s', 'gravityforms' ), $this->get_short_title() ) . '" class="button" onclick="return confirm(\'' . esc_js( $this->uninstall_confirm_message() ) . '\');" onkeypress="return confirm(\'' . esc_js( $this->uninstall_confirm_message() ) . '\');"/>';
+						$uninstall_button = sprintf(
+							'<input type="submit" name="uninstall" value="%1$s" class="button" data-dialog-title="%1$s" data-dialog-confirm="%2$s" />',
+							sprintf( esc_attr__( 'Uninstall %s', 'gravityforms' ), $this->get_short_title() ),
+							esc_attr( $this->uninstall_confirm_message() )
+						);
 						echo $uninstall_button; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 						?>
 
@@ -5527,7 +5532,13 @@ abstract class GFAddOn {
 					</div>
 					<div class="addon-uninstall-button">
 						<input id="addon" name="addon" type="hidden" value="<?php echo $this->get_short_title(); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>">
-						<button type="submit" aria-label="<?php printf( esc_html__( 'Uninstall %s', 'gravityforms'), $this->get_short_title() ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>" name="uninstall_addon" value="uninstall" class="button uninstall-addon red" onclick="return confirm('<?php echo esc_js( $this->uninstall_confirm_message() ); ?>');" onkeypress="return confirm('<?php echo esc_js( $this->uninstall_confirm_message() ); ?>');">
+						<button type="submit"
+							aria-label="<?php printf( esc_html__( 'Uninstall %s', 'gravityforms' ), esc_attr( $this->get_short_title() ) ); ?>"
+							name="uninstall_addon"
+							value="uninstall"
+							class="button uninstall-addon red"
+							data-dialog-title="<?php printf( esc_attr__( 'Uninstall %s', 'gravityforms' ), esc_attr( $this->get_short_title() ) ); ?>"
+							data-dialog-confirm="<?php echo esc_attr( $this->uninstall_confirm_message() ); ?>">
 							<i class="dashicons dashicons-trash"></i>
 							<?php esc_attr_e( 'Uninstall', 'gravityforms' ); ?>
 						</button>
@@ -5558,8 +5569,14 @@ abstract class GFAddOn {
 					<div class="alert error">
 						<?php echo $this->uninstall_warning_message(); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
 					</div>
-
-					<button type="submit" name="uninstall" value="uninstall" class="button red" onclick="return confirm('<?php echo esc_js( $this->uninstall_confirm_message() ); ?>');" onkeypress="return confirm('<?php echo esc_js( $this->uninstall_confirm_message() ); ?>');"><?php esc_attr_e( 'Uninstall Add-On', 'gravityforms' ); ?></button>
+					<button type="submit"
+						name="uninstall"
+						value="uninstall"
+						class="button red"
+						data-dialog-title="<?php printf( esc_attr__( 'Uninstall %s Add-On', 'gravityforms' ), esc_attr( $this->get_short_title() ) ); ?>"
+						data-dialog-confirm="<?php echo esc_attr( $this->uninstall_confirm_message() ); ?>">
+						<?php esc_attr_e( 'Uninstall Add-On', 'gravityforms' ); ?>
+					</button>
 				</div>
 			</form>
 			<?php
@@ -5608,7 +5625,8 @@ abstract class GFAddOn {
 	}
 
 	public function uninstall_confirm_message() {
-		return sprintf( __( "Warning! ALL %s settings will be deleted. This cannot be undone. 'OK' to delete, 'Cancel' to stop", 'gravityforms' ), __( $this->get_short_title() ) );
+		/* translators: %s: Add-On name */
+		return sprintf( esc_html__( "Warning! ALL %s settings will be deleted. This cannot be undone. 'OK' to delete, 'Cancel' to stop.", 'gravityforms' ), esc_html( $this->get_short_title() ) );
 	}
 	/**
 	 * Not intended to be overridden or called directly by Add-Ons.

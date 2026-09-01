@@ -1,27 +1,23 @@
 <?php
 /**
- * @file class-gravityview-field-page.php
- * @package GravityView
- * @subpackage includes\fields
+ * Backward-compatibility shim.
+ *
+ * This file was moved in GravityView 3.0. It is intentionally empty.
+ * GravityView classes and functions load automatically — you no longer
+ * need to require GravityView files in your code.
+ *
+ * @deprecated 3.0
  */
 
-class GravityView_Field_Page extends GravityView_Field {
-
-	var $name = 'page';
-
-	var $is_searchable = false;
-
-	/** @see GF_Field_Page */
-	var $_gf_field_class_name = 'GF_Field_Page';
-
-	var $group = 'standard';
-
-	var $icon = 'dashicons-media-text';
-
-	public function __construct() {
-		$this->label = esc_html__( 'Page', 'gk-gravityview' );
-		parent::__construct();
-	}
+if ( ! defined( 'ABSPATH' ) ) {
+	die;
 }
 
-new GravityView_Field_Page();
+if ( function_exists( '_deprecated_file' ) ) {
+	_deprecated_file(
+		plugin_basename( __FILE__ ),
+		'3.0',
+		'',
+		'This file was moved in GravityView 3.0 and will be removed in a future release. GravityView classes and functions load automatically — you no longer need to require them.'
+	);
+}

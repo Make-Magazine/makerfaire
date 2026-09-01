@@ -760,10 +760,9 @@ class Popover_Regular_Btn_Widget extends Widget_Base {
     if($pop_title!=''){
 
       $allowed_tags = [ 'h2','h3','h4','h5','h6','div','span' ];
+      $title_tag = isset($pop_tag) && in_array($pop_tag, $allowed_tags) ? Utils::validate_html_tag( $pop_tag ):'h4';
 
-      $title_tag = isset($pop_tag) && in_array($pop_tag, $allowed_tags) ? $pop_tag:'h4';
-
-      printf('<%1$s class="pop-title">%2$s</%1$s>',wp_kses_post($pop_tag),esc_attr($pop_title));
+      printf('<%1$s class="pop-title">%2$s</%1$s>', $title_tag  ,esc_attr($pop_title));
 
     }
 

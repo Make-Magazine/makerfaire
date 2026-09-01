@@ -397,7 +397,7 @@ if ( class_exists( 'GFForms' ) ) {
 						<div class="gform-settings-field gform-settings-field__select">
 							<label class="gform-settings-label"><?php esc_html_e( 'User', 'gravityforms' ); ?></label>
 							<div class="gform-webapi-user-select">
-								<!-- Default author dropdown is populated dynamically in js/src/admin/settings/gfwebapi.js -->
+								<!-- dropdown is populated dynamically in js/src/admin/settings/gfwebapi.js -->
 							</div>
 						</div>
 
@@ -657,8 +657,7 @@ if ( class_exists( 'GFForms' ) ) {
 						array(
 							'name'    => 'impersonate_account',
 							'label'   => esc_html__( 'Impersonate account', 'gravityforms' ),
-							'type'    => 'select',
-							'choices' => self::get_users(),
+							'type'    => 'webapi_user_select',
 						),
 					)
 				),
@@ -751,6 +750,32 @@ if ( class_exists( 'GFForms' ) ) {
 				<img id="gfwebapi-qrcode" alt="API QR code" src="<?php echo esc_url( GFCommon::get_base_url() ); ?>/images/spinner.svg"/>
 			</div>
 
+			<?php
+		}
+
+		/**
+		 * Output the user select field for impersonating an account when using the API key.
+		 *
+		 * @since 2.10.4
+		 *
+		 * @return void
+		 */
+		public function settings_webapi_user_select() {
+			$current_id    = $this->get_setting( 'impersonate_account' );
+			$current_label = '';
+			if ( $current_id ) {
+				$user          = get_user_by( 'id', absint( $current_id ) );
+				$current_label = $user ? $user->user_login : '';
+			}
+			//dropdown is populated dynamically in js/src/admin/settings/gfwebapi.js
+			?>
+			<div id="gform-webapi-impersonate-account-select" class="gform-webapi-v1-user-select"></div>
+			<input type="hidden"
+				id="gform-webapi-impersonate-account-value"
+				name="_gform_setting_impersonate_account"
+				value="<?php echo esc_attr( $current_id ); ?>"
+				data-label="<?php echo esc_attr( $current_label ); ?>"
+			/>
 			<?php
 		}
 

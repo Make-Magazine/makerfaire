@@ -1,17 +1,17 @@
 <?php
 
 /**
- * @file class-gravityview-inline-edit-field-select.php
+ * @file class-gravityview-inline-edit-field-created-by.php
  *
  * @since 1.0
  */
 class GravityView_Inline_Edit_Field_Created_By extends GravityView_Inline_Edit_Field {
 
-	var $gv_field_name = 'created_by';
+	public $gv_field_name = 'created_by';
 
-	var $inline_edit_type = 'select2';
+	public $inline_edit_type = 'select2';
 
-	var $set_value = true;
+	public $set_value = true;
 
 
 	/**
@@ -22,7 +22,7 @@ class GravityView_Inline_Edit_Field_Created_By extends GravityView_Inline_Edit_F
 	 * @param int $field_id
 	 * @param array $entry
 	 * @param $current_form
-	 * @param GF_Field_Date $gf_field
+	 * @param GF_Field $gf_field
 	 *
 	 * @return array
 	 */

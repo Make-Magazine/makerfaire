@@ -347,6 +347,20 @@ const ko = window.ko;
 
 		};
 
+		self.triggerGformPostRender = function( formId, currentPage ) {
+			// GF core fires both variants; add-ons may bind to either event name.
+			[ 'gform/postRender', 'gform/post_render' ].forEach( function( event ) {
+				gform?.utils?.trigger({
+					event: event,
+					native: false,
+					data: {
+						formId: formId,
+						currentPage: currentPage,
+					}
+				});
+			} );
+		};
+
 		self.openModal = function( trigger ) {
 			/**
 			 * Filter whether the nested form modal should open or not.
@@ -382,15 +396,8 @@ const ko = window.ko;
 			}
 			self.initIframe( self.nestedFormId );
 
-			// GF 2.9+ initialization
-			gform?.utils?.trigger({
-				event: 'gform/post_render',
-				native: false,
-				data: {
-					formId: self.nestedFormId,
-					currentPage: $( `#gform_source_page_number_${self.nestedFormId}` ).val(),
-				}
-			});
+			// GF 2.9+ initialization.
+			self.triggerGformPostRender( self.nestedFormId, $( `#gform_source_page_number_${self.nestedFormId}` ).val() );
 		};
 
 		self.saveParentFocus = function( trigger ) {
@@ -556,7 +563,7 @@ const ko = window.ko;
 				if ( $button[0].style.display !== 'none' || ( isWooCommercePage && $button[0].style.display === '' ) ) {
 
 					var isSubmitButton = ( $button.attr( 'type' ) === 'submit' || $button.attr( 'type' ) === 'image' ),
-						label          = isSubmitButton ? self.getSubmitButtonLabel() : $button.val(),
+						label          = isSubmitButton ? self.getSubmitButtonLabel() : self.getButtonLabel( $button ),
 						classes        = [ 'tingle-btn', 'tingle-btn--primary' ],
 						isDisabled     = $button.is( ':disabled' );
 
@@ -662,6 +669,24 @@ const ko = window.ko;
 			}
 
 			return self.getModalTitle();
+		}
+
+		/**
+		 * Get the label of one of the child form's own buttons (e.g. Next, Previous).
+		 *
+		 * Gravity Forms 3.0 renders these as `<button>` elements with the label as their inner content.
+		 * Prior versions rendered them as `<input type="button" />` where the label came from the value
+		 * attribute.
+		 *
+		 * @since 1.2.31
+		 */
+		self.getButtonLabel = function( $button ) {
+
+			if ( $button.is( 'button' ) ) {
+				return $button.html();
+			}
+
+			return $button.val();
 		}
 
 		self.getThemeColor = function( propertyName, fallbackValue ) {
@@ -1584,15 +1609,8 @@ const ko = window.ko;
 						var current_page = $( `#gform_source_page_number_${formId}` ).val();
 						$( document ).trigger( 'gform_page_loaded', [ formId, current_page] );
 
-						// Trigger gform/post_render to ensure Signature fields are initialized on page navigation
-						gform?.utils?.trigger({
-							event: 'gform/post_render',
-							native: false,
-							data: {
-								formId: formId,
-								currentPage: current_page,
-							}
-						});
+						// Trigger GF 2.9+ post-render events to ensure add-ons initialize on page navigation.
+						self.triggerGformPostRender( formId, current_page );
 						window[ `gf_submitting_${formId}` ] = false;
 					} else if ( ! is_redirect) {
 						var confirmation_content = $( this ).contents().find( '.GF_AJAX_POSTBACK' ).html();

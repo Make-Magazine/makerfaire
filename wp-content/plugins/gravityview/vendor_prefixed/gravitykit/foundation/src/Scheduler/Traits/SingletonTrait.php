@@ -1,9 +1,6 @@
 <?php
 /**
  * Singleton trait for classes that need to implement the singleton pattern.
- *
- * @license GPL-2.0-or-later
- * Modified using {@see https://github.com/BrianHenryIE/strauss}.
  */
 
 namespace GravityKit\GravityView\Foundation\Scheduler\Traits;

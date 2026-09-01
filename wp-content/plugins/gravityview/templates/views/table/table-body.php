@@ -19,6 +19,18 @@ if ( 1 === (int) $gravityview->view->settings->get( 'no_entries_options', '0' ) 
 	$no_results_css_class = 'gv-no-results gv-no-results-text';
 }
 
+$column_count = $gravityview->fields->by_position( 'directory_table-columns' )->by_visible( $gravityview->view )->count();
+
+/**
+ * Filters the number of table columns used for colspan calculations.
+ *
+ * @since 3.0.0
+ *
+ * @param int                  $column_count Number of visible table columns.
+ * @param \GV\Template_Context $gravityview  The template context.
+ */
+$column_count = apply_filters( 'gravityview/template/table/columns/count', $column_count, $gravityview );
+
 ?>
 	<tbody>
 		<?php
@@ -35,8 +47,8 @@ if ( 1 === (int) $gravityview->view->settings->get( 'no_entries_options', '0' ) 
 				$template::tr_before( $gravityview );
 
 				?>
-				<td colspan="<?php echo $gravityview->fields->by_position( 'directory_table-columns' )->by_visible( $gravityview->view )->count() ? : ''; ?>" class="<?php echo esc_attr( $no_results_css_class ); ?>">
-					<?php echo gv_no_results( true, $gravityview ); ?>
+				<td colspan="<?php echo $column_count ? (int) $column_count : ''; ?>" class="<?php echo esc_attr( $no_results_css_class ); ?>" role="status">
+					<?php echo gv_no_results( true, $gravityview ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- No-results output may contain markup and is run through wp_kses_post() by the renderer. ?>
 				</td>
 				<?php
 
@@ -49,7 +61,7 @@ if ( 1 === (int) $gravityview->view->settings->get( 'no_entries_options', '0' ) 
 		} else {
 			foreach ( $gravityview->entries->all() as $entry ) {
 
-				// Add `alt` class to alternate rows
+				// Add `alt` class to alternate rows.
 				$alt = empty( $alt ) ? 'alt' : '';
 
 				/** @filter `gravityview/template/table/entry/class` */

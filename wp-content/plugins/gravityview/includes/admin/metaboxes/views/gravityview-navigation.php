@@ -1,44 +1,23 @@
 <?php
 /**
- * Display the tab navigation for the Settings metabox
+ * Backward-compatibility shim.
  *
- * @package GravityView
- * @subpackage Gravityview/admin/metaboxes/views
- * @since 1.8
+ * This file was moved in GravityView 3.0. It is intentionally empty.
+ * GravityView classes and functions load automatically — you no longer
+ * need to require GravityView files in your code.
  *
- * @global GravityView_Metabox_Tab[] $metaboxes
- * @global WP_Post $post
+ * @deprecated 3.0
  */
 
-?>
-<ul class="ui-tabs-nav ui-helper-reset ui-helper-clearfix ui-widget-header ui-corner-all">
-	<?php
+if ( ! defined( 'ABSPATH' ) ) {
+	die;
+}
 
-	foreach ( $metaboxes as $metabox ) {
-		$class = ! isset( $class ) ? 'nav-tab-active' : '';
-		if ( $metabox->extra_nav_class ) {
-			$class .= ' ' . gravityview_sanitize_html_class( (string) $metabox->extra_nav_class );
-		}
-		?>
-	<li class="ui-state-default">
-		<a class="nav-tab ui-tabs-anchor <?php echo $class; ?>" href="#<?php echo esc_attr( $metabox->id ); ?>">
-			<span class="<?php echo $metabox->icon_class_name; ?>"></span>&nbsp;
-			<?php
-			/**
-			 * Modifies the metabox title for the navigation tab.
-			 *
-			 * @since 2.26
-			 *
-			 * @param string                  $title   The metabox title.
-			 * @param GravityView_Metabox_Tab $metabox The metabox object.
-			 */
-			$title = apply_filters( 'gk/gravityview/metaboxes/navigation/title', esc_html( $metabox->title ), $metabox );
-
-			echo $title; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped - Intent is to allow HTML.
-			?>
-		</a>
-	</li>
-		<?php
-	}
-	?>
-</ul>
+if ( function_exists( '_deprecated_file' ) ) {
+	_deprecated_file(
+		plugin_basename( __FILE__ ),
+		'3.0',
+		'',
+		'This file was moved in GravityView 3.0 and will be removed in a future release. GravityView classes and functions load automatically — you no longer need to require them.'
+	);
+}

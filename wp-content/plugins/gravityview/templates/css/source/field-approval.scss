@@ -1,3 +1,5 @@
+@use "sass:color";
+
 /**
  * Styles for GravityView frontend Approve/Unapprove toggles
  * @since 1.19
@@ -68,7 +70,7 @@
 		content: "\f147";
 		width: $font-size;
 		height: $font-size;
-		border: 1px solid darken($background, 7%);
+		border: 1px solid color.adjust($background, $lightness: -7%);
 		padding: 4px;
 		-webkit-border-radius: 2px;
 		-moz-border-radius: 2px;
@@ -90,10 +92,10 @@
 	}
 
 	&:hover::before {
-		background: darken($background, 2.5%);
+		background: color.adjust($background, $lightness: -2.5%);
 	}
 
 	&:active::before {
-		background: darken($background, 7%);
+		background: color.adjust($background, $lightness: -7%);
 	}
 }

@@ -3,11 +3,11 @@
 }
 
 .spellbook-app__search-highlight {
-    background-color: rgba(144, 46, 239, 0.1);
-    color: #902EEF;
-    padding: 0 2px;
-    border-radius: 2px;
-    font-weight: 500;
+	background-color: rgba(144, 46, 239, 0.1);
+	color: #902EEF;
+	padding: 0 2px;
+	border-radius: 2px;
+	font-weight: 500;
 }
 
 .spellbook-plugin-settings-modal .components-modal__content {
@@ -106,57 +106,57 @@
 }
 
 .version-tag--outdated {
-    background-color:rgb(249, 236, 197) !important;
-    color: #a16938 !important;
+	background-color:rgb(249, 236, 197) !important;
+	color: #a16938 !important;
 	border: 1px solid rgb(233, 209, 187) !important;
-    cursor: pointer;
+	cursor: pointer;
 }
 
 .version-tag--available {
-    background-color: #e1f6ed !important;
-    color: #276a52 !important;
-    border: 1px solid #aed9b6 !important;
-    cursor: pointer;
+	background-color: #e1f6ed !important;
+	color: #276a52 !important;
+	border: 1px solid #aed9b6 !important;
+	cursor: pointer;
 }
 
 .changelog-modal {
-    width: 60vw !important;
+	width: 60vw !important;
 }
 
 .changelog-modal .components-modal__content {
-    padding: 2rem;
+	padding: 2rem;
 }
 
 .changelog-modal h1,
 .changelog-modal h2,
 .changelog-modal h3,
 .changelog-modal h4 {
-    margin-top: 1.5rem;
-    margin-bottom: 1rem;
+	margin-top: 1.5rem;
+	margin-bottom: 1rem;
 }
 
 .changelog-modal h1:first-child,
 .changelog-modal h2:first-child,
 .changelog-modal h3:first-child,
 .changelog-modal h4:first-child {
-    margin-top: 0;
+	margin-top: 0;
 }
 
 .changelog-modal ul {
-    margin: 1rem 0;
-    padding-left: 2rem;
+	margin: 1rem 0;
+	padding-left: 2rem;
 }
 
 .changelog-modal li {
-    margin: 0.5rem 0;
+	margin: 0.5rem 0;
 	list-style: disc;
 }
 
 .changelog-modal code {
-    background: #f5f5f5;
-    padding: 0.2rem 0.4rem;
-    border-radius: 3px;
-    font-size: 0.9em;
+	background: #f5f5f5;
+	padding: 0.2rem 0.4rem;
+	border-radius: 3px;
+	font-size: 0.9em;
 }
 
 .gform-card--integration .gform-text.gform-text--color-dark-red {
@@ -165,10 +165,10 @@
 
 .changelog-modal__loading,
 .changelog-modal__error {
-    padding: 2rem;
-    text-align: center;
+	padding: 2rem;
+	text-align: center;
 }
 
 .changelog-modal__error {
-    color: #666;
+	color: #666;
 }

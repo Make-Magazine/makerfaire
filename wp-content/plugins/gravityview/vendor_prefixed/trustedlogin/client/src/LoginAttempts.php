@@ -5,9 +5,6 @@
  * @package TrustedLogin
  *
  * @copyright 2026 TrustedLogin LLC
- *
- * @license GPL-2.0-or-later
- * Modified using {@see https://github.com/BrianHenryIE/strauss}.
  */
 
 namespace GravityKit\GravityView\Foundation\ThirdParty\TrustedLogin;

@@ -1,5 +1,42 @@
 # Elementor Pro - by Elementor.com
 
+#### 4.2.3 - 2026-08-31
+
+* Tweak: Updated WordPress compatibility to version 7.1
+
+#### 4.2.2 - 2026-08-19
+
+* Fix: Improved code security enforcement in Dynamic Tags
+* Fix: Improved code security enforcement in Form widget
+* Fix: Dynamic tags are not supported in email recipient fields in Form - Atomic Editor
+
+#### 4.2.1 - 2026-07-28
+
+* Fix: Child product categories display the parent category image when Loop Taxonomy is used in a Product Archive template - Atomic Editor
+* Fix: ACF Dynamic Tags display default values instead of item data in Loops - Atomic Editor
+* Fix: ACF fields display in a flat list instead of being grouped by field group in Dynamic Tag - Atomic Editor
+
+#### 4.2.0 - 2026-07-20
+
+* New: Introducing Loop for building dynamic content layouts - Atomic Editor
+* Tweak: Added Email 2 as an additional action after submit in Atomic Form - Atomic Editor
+* Tweak: Improved the settings UI in Atomic Form - Atomic Editor
+* Tweak: Added autocomplete support for better accessibility in Atomic Form - Atomic Editor
+* Tweak: Added accessibility support for Atomic Form success and error messages after submission - Atomic Editor
+* Fix: Local styles are not loaded inside Shortcode or Template widgets - Atomic Editor ([#32921](https://github.com/elementor/elementor/issues/32921))
+* Fix: Empty overrides in nested Components show the default value instead of remaining empty - Atomic Editor
+* Fix: Classes created from Components override the expected class priority - Atomic Editor
+* Fix: Redoing detach Component inside another Component leaves stale exposed properties behind - Atomic Editor
+* Fix: Atomic Form elements cannot be copied and pasted - Atomic Editor
+* Fix: Metadata is missing from email submissions in Atomic Form - Atomic Editor
+* Fix: Sub-menu indicators flicker while the page is loading in WordPress Menu widget
+* Fix: Load on Click duplicates the initial posts instead of loading the next posts when using multiple Posts widgets
+* Fix: Buttons are not keyboard accessible in Flip Box widget
+* Fix: Non-existent pages can trigger a fatal error in Archive and 404 templates
+* Fix: Custom Search Results URLs can trigger a fatal error in Search widget
+* Fix: Headings are highlighted inconsistently when scrolling down and back up in Table of Contents widget
+* Fix: PHP warnings appear when WooCommerce coupons are disabled in Cart and Checkout widgets
+
 #### 4.1.3 - 2026-07-14
 
 * Fix: Content section isn't expanded by default when adding atomic element inside Atomic Form - Atomic Editor

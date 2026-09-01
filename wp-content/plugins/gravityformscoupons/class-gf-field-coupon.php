@@ -291,6 +291,11 @@ class GF_Field_Coupon extends GF_Field {
 
 			if ( ! empty( $_POST[ 'is_submit_' . $form_id ] ) && $get_from_post_global_var ) {
 				$this->_value_details = rgpost( "gf_coupons_{$form_id}" );
+			} elseif ( $this->allowsPrepopulate ) {
+				$form = GFAPI::get_form( $form_id );
+				$this->validate( $value, $form );
+
+				$value = $this->failed_validation ? '' : $value;
 			}
 		}
 

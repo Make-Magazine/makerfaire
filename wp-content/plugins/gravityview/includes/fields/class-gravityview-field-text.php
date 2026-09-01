@@ -1,28 +1,23 @@
 <?php
 /**
- * @file class-gravityview-field-text.php
- * @package GravityView
- * @subpackage includes\fields
+ * Backward-compatibility shim.
+ *
+ * This file was moved in GravityView 3.0. It is intentionally empty.
+ * GravityView classes and functions load automatically — you no longer
+ * need to require GravityView files in your code.
+ *
+ * @deprecated 3.0
  */
 
-class GravityView_Field_Text extends GravityView_Field {
-
-	var $name = 'text';
-
-	var $_gf_field_class_name = 'GF_Field_Text';
-
-	var $is_searchable = true;
-
-	var $search_operators = array( 'contains', 'is', 'isnot', 'starts_with', 'ends_with' );
-
-	var $group = 'standard';
-
-	var $icon = 'dashicons-editor-textcolor';
-
-	public function __construct() {
-		$this->label = esc_html__( 'Single Line Text', 'gk-gravityview' );
-		parent::__construct();
-	}
+if ( ! defined( 'ABSPATH' ) ) {
+	die;
 }
 
-new GravityView_Field_Text();
+if ( function_exists( '_deprecated_file' ) ) {
+	_deprecated_file(
+		plugin_basename( __FILE__ ),
+		'3.0',
+		'',
+		'This file was moved in GravityView 3.0 and will be removed in a future release. GravityView classes and functions load automatically — you no longer need to require them.'
+	);
+}

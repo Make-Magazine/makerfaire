@@ -35,22 +35,25 @@ abstract class GP_Feed_Plugin extends GFFeedAddOn {
 		 * The reason for it showing "Array" is some perks define the requirements as
 		 *
 		 * 'plugins'      => array(
-		 *		'gravityperks/gravityperks.php' => array(
-		 *			'name'    => 'Gravity Perks',
-		 *			'version' => '2.2.3',
-		 *		),
-		 *	),
+		 *      'gravityperks/gravityperks.php' => array(
+		 *          'name'    => 'Gravity Perks',
+		 *          'version' => '2.2.3',
+		 *      ),
+		 *  ),
 		 *
 		 * ... which is invalid. It should be:
 		 *
 		 * 'plugins'      => array(
-		 * 		'gravityperks/gravityperks.php',
+		 *      'gravityperks/gravityperks.php',
 		 * )
 		 */
 		if ( is_array( $parent_result ) && count( $parent_result['errors'] ) === 1 ) {
 			$error = array_shift( $parent_result['errors'] );
 			if ( strpos( $error, 'gravityperks/gravityperks.php' ) !== false || strpos( $error, 'Gravity Perks' ) !== false || strpos( $error, 'Array' ) !== false ) {
-				return array( 'meets_requirements' => true, 'errors' => array() );
+				return array(
+					'meets_requirements' => true,
+					'errors'             => array(),
+				);
 			}
 		}
 

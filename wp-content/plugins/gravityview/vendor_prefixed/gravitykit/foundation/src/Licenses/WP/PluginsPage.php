@@ -1,15 +1,11 @@
 <?php
-/**
- * @license GPL-2.0-or-later
- *
- * Modified using {@see https://github.com/BrianHenryIE/strauss}.
- */
 
 namespace GravityKit\GravityView\Foundation\Licenses\WP;
 
 use Exception;
 use GravityKit\GravityView\Foundation\Core;
 use GravityKit\GravityView\Foundation\Helpers\Arr;
+use GravityKit\GravityView\Foundation\Helpers\Core as CoreHelpers;
 use GravityKit\GravityView\Foundation\Licenses\Framework;
 use GravityKit\GravityView\Foundation\Settings\Framework as SettingsFramework;
 use GravityKit\GravityView\Foundation\Licenses\ProductManager;
@@ -102,6 +98,8 @@ class PluginsPage {
 		add_action( 'after_plugin_row', [ $this, 'display_notices' ], 11 );
 
 		add_filter( 'plugin_action_links', [ $this, 'modify_product_action_links' ], 10, 3 );
+
+		add_filter( 'network_admin_plugin_action_links', [ $this, 'modify_network_product_action_links' ], 10, 3 );
 
 		// Disable/enable the "Group GravityKit products" setting.
 		if ( isset( $_REQUEST['gk_disable_grouping'] ) || isset( $_REQUEST['gk_enable_grouping'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification
@@ -660,6 +658,48 @@ JS;
 	}
 
 	/**
+	 * Replaces the Network Activate link for paid products without a network license.
+	 *
+	 * @since 1.25.0
+	 *
+	 * @param array  $links       Plugin action links.
+	 * @param string $plugin_path Plugin path.
+	 * @param array  $plugin_data Plugin data.
+	 *
+	 * @return array
+	 */
+	public function modify_network_product_action_links( $links, $plugin_path, $plugin_data ) {
+		if ( empty( $links['activate'] ) || empty( $plugin_data['TextDomain'] ) ) {
+			return $links;
+		}
+
+		static $products;
+
+		if ( ! is_array( $products ) ) {
+			try {
+				$products = ProductManager::get_instance()->get_products_data();
+			} catch ( Exception $e ) {
+				$products = [];
+			}
+		}
+
+		$product = $products[ $plugin_data['TextDomain'] ] ?? null;
+
+		if ( ! $product || $product['third_party'] || $product['free'] || ! empty( $product['network_licensed'] ) ) {
+			return $links;
+		}
+
+		$links['activate'] = sprintf(
+			'<a href="%s" title="%s">%s</a>',
+			esc_url_raw( Framework::get_instance()->get_link_to_product_search( $product['id'] ) ),
+			esc_attr__( 'A network license is required to activate this product for all sites on the network. Click to open the licensing page.', 'gk-gravityview' ),
+			esc_html__( 'Network Activate…', 'gk-gravityview' )
+		);
+
+		return $links;
+	}
+
+	/**
 	 * Groups all GravityKit products under a single entry on the Plugins page if the "Group GravityKit products" setting is enabled.
 	 *
 	 * @since 1.2.0
@@ -813,10 +853,11 @@ JS;
 
 			$update_transient = get_site_transient( 'update_plugins' );
 
+			// Unlicensed updates never reach the update transient, so count from normalized product data.
 			$has_updates = array_filter(
 				$products,
 				function ( $product ) use ( $update_transient ) {
-					return ! empty( $product['path'] ) && isset( $update_transient->response[ $product['path'] ] );
+					return ! empty( $product['update_available'] ) || ( ! empty( $product['path'] ) && isset( $update_transient->response[ $product['path'] ] ) );
 				}
 			);
 
@@ -858,6 +899,37 @@ JS;
 
 			$update_transient = get_site_transient( 'update_plugins' );
 			$has_wp_update    = $product && ! empty( $product['path'] ) && isset( $update_transient->response[ $product['path'] ] );
+
+			// Unlicensed updates never reach the update transient; derive the row from product data so it can explain itself.
+			if ( $product && ! $product['free'] && ! $has_wp_update && ! empty( $product['update_available'] ) && ! ProductManager::get_instance()->is_product_update_authorized( $product ) ) {
+				$notice = strtr(
+					esc_html_x( 'There is a new version [version] of [product] available. An active license is required to update. [link]Visit the licensing page[/link].', 'Placeholders inside [] are not to be translated.', 'gk-gravityview' ),
+					[
+						'[product]' => $product['name'],
+						'[version]' => $product['server_version'],
+						'[link]'    => '<a href="' . esc_url_raw( Framework::get_instance()->get_link_to_product_search( $product['id'] ) ) . '">',
+						'[/link]'   => '</a>',
+					]
+				);
+
+				// Red only when the outdated product is actually running here; dormant products get an informational yellow.
+				$notice_type = ProductManager::get_instance()->is_product_active_in_current_context( $product['path'] ) ? 'error' : 'warning';
+
+				add_filter(
+					'gk/foundation/products/plugins-page-notices',
+					function ( $notices ) use ( $plugin_path, $notice, $notice_type ) {
+						$notices[ $plugin_path ]   = $notices[ $plugin_path ] ?? [];
+						$notices[ $plugin_path ][] = [
+							'type'   => $notice_type,
+							'notice' => $notice,
+						];
+
+						return $notices;
+					}
+				);
+
+				return;
+			}
 
 			if ( ! $product || ! $has_wp_update || $product['free'] ) {
 				return;
@@ -905,12 +977,14 @@ JS;
 						'[details_link]'  => sprintf(
 							'<a href="%s" class="thickbox open-plugin-details-modal" aria-label="%s">',
 							esc_url( $details_url ),
+							// translators: %1$s: Product name. %2$s: Version number.
 							esc_attr( sprintf( __( 'View %1$s version %2$s details', 'gk-gravityview' ), $product['name'], $offered_version ) )
 						),
 						'[/details_link]' => '</a>',
 						'[update_link]'   => sprintf(
 							'<a href="%s" class="update-link" aria-label="%s">',
 							esc_url( $update_url ),
+							// translators: %s: Product name.
 							esc_attr( sprintf( __( 'Update %s now', 'gk-gravityview' ), $product['name'] ) )
 						),
 						'[/update_link]'  => '</a>',
@@ -968,12 +1042,25 @@ JS;
 			return;
 		}
 
-		$licenses_data = LicenseManager::get_instance()->get_licenses_data();
-
+		// Inactive products don't nag, and the nag is context-owned: subsites flag their own site-activated
+		// products; network-activated ones are the network admin's to license or deactivate. A pending update
+		// already renders the license-required row, which names the same fix — don't say it twice.
 		$unlicensed_products = array_filter(
 			$products,
-			function ( $product ) use ( $licenses_data ) {
-				return empty( array_intersect( array_keys( $licenses_data ), $product['licenses'] ) );
+			function ( $product ) {
+				if ( ! empty( $product['update_available'] ) ) {
+					return false;
+				}
+
+				if ( CoreHelpers::is_network_admin() ) {
+					return ! empty( $product['network_activated'] ) && empty( $product['network_licensed'] );
+				}
+
+				if ( ! empty( $product['network_activated'] ) ) {
+					return false;
+				}
+
+				return empty( $product['licensed'] ) && ProductManager::get_instance()->is_product_active_in_current_context( $product['path'] );
 			}
 		);
 

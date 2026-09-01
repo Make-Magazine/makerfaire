@@ -11,6 +11,60 @@ abstract class GV_DataTables_Extension {
 	 */
 	protected $script_priority = 10;
 
+	/**
+	 * DataTables-template View IDs resolved this request, keyed by post ID.
+	 *
+	 * Shared across all extension subclasses: each of the ~8 extensions runs
+	 * the same is-this-a-DataTables-post resolution on the same render.
+	 *
+	 * @since 3.10.0
+	 *
+	 * @var array<int, int[]>
+	 */
+	private static $datatables_view_ids_cache = array();
+
+	/**
+	 * Clears the per-request View resolution cache.
+	 *
+	 * @since 3.10.0
+	 *
+	 * @return void
+	 */
+	public static function flush_views_cache() {
+		self::$datatables_view_ids_cache = array();
+	}
+
+	/**
+	 * Returns the IDs of DataTables-template Views connected to a post.
+	 *
+	 * @since 3.10.0
+	 *
+	 * @param WP_Post|null $post The post to inspect.
+	 *
+	 * @return int[] View IDs using the datatables_table template.
+	 */
+	protected function get_datatables_view_ids( $post ) {
+		if ( ! $post instanceof WP_Post ) {
+			return array();
+		}
+
+		if ( isset( self::$datatables_view_ids_cache[ $post->ID ] ) ) {
+			return self::$datatables_view_ids_cache[ $post->ID ];
+		}
+
+		$view_ids = array();
+
+		$views = \GV\View_Collection::from_post( $post );
+
+		foreach ( $views->all() as $view ) {
+			if ( $this->is_datatables( $view->as_data() ) ) {
+				$view_ids[] = $view->ID;
+			}
+		}
+
+		return self::$datatables_view_ids_cache[ $post->ID ] = $view_ids;
+	}
+
 	function __construct() {
 
 		/**
@@ -38,8 +92,6 @@ abstract class GV_DataTables_Extension {
 		add_action( 'gravityview_datatables_settings_row', array( $this, 'settings_row' ), 10, 2 );
 
 		add_filter( 'gravityview_dt_default_settings', array( $this, 'defaults') );
-
-		add_filter( 'gravityview_tooltips', array( $this, 'tooltips' ) );
 	}
 
 	/**
@@ -50,16 +102,6 @@ abstract class GV_DataTables_Extension {
 	function add_html_class( $classes = '' ) {
 
 		return $classes;
-	}
-
-	/**
-	 * Register the tooltip with Gravity Forms
-	 * @param  array  $tooltips Existing tooltips
-	 * @return array           Modified tooltips
-	 */
-	function tooltips( $tooltips = array() ) {
-
-		return $tooltips;
 	}
 
 	/**
@@ -155,23 +197,13 @@ abstract class GV_DataTables_Extension {
 			return false;
 		}
 
-		$script = false;
-
-		$views = \GV\View_Collection::from_post( $post );
-
-		foreach ( $views->all() as $view ) {
-
-			$view_data = $view->as_data();
-
-			if ( ! $this->is_datatables( $view_data ) || ! $this->is_enabled( $view->ID ) ) {
-				continue;
+		foreach ( $this->get_datatables_view_ids( $post ) as $view_id ) {
+			if ( $this->is_enabled( $view_id ) ) {
+				return true;
 			}
-
-			$script = true;
 		}
 
-		return $script;
-
+		return false;
 	}
 
 	/**

@@ -222,9 +222,6 @@ class GP_Populate_Anything extends GP_Plugin {
 
 	public function pre_init() {
 		parent::pre_init();
-
-		// Must happen on pre_init to intercept the 'gform_export_form' filter.
-		gppa_export();
 	}
 
 	/**
@@ -3022,6 +3019,19 @@ class GP_Populate_Anything extends GP_Plugin {
 
 		$hydrated_value = $field_value || $field_value === '0' ? $field_value : $preselected_choice_value;
 
+		/*
+		 * Serialized values (typically sourced from List fields) can't be rendered by fields that expect a scalar, so
+		 * flatten them into a readable string. This is handled here rather than only in populated_value() so it also
+		 * applies when the field is repopulated via AJAX after form load.
+		 *
+		 * List fields are intentionally left serialized here as GF_Field_List::to_array() handles the serialized value
+		 * and the on-load prepopulate path (populated_value()) requires a non-array value to hook into.
+		 */
+		if ( $field->get_input_type() !== 'list' ) {
+			$hydrated_value = $this->maybe_convert_serialized_value( $hydrated_value, $field );
+			$field_value    = $hydrated_value;
+		}
+
 		// Store hydrated value for use in other perks (currently GPRO)
 		$field->gppa_hydrated_value = $hydrated_value;
 
@@ -3073,7 +3083,12 @@ class GP_Populate_Anything extends GP_Plugin {
 				&& $field->visibility == 'administrative'
 				&& ( gp_populate_anything()->is_field_dynamically_populated( $field ) || rgar( $field, 'allowsPrepopulate' ) )
 			) {
-				$field->inputType = 'adminonly_hidden';
+				// GF 3.0.0-beta.2+ triggers adminonly_hidden via context property instead of overwriting inputType.
+				if ( version_compare( GFForms::$version, '3.0.0-beta.2', '>=' ) ) {
+					$field->set_context_property( 'adminonly_hidden', true );
+				} else {
+					$field->inputType = 'adminonly_hidden';
+				}
 			}
 
 			/**
@@ -3083,7 +3098,9 @@ class GP_Populate_Anything extends GP_Plugin {
 			/**
 			 * @todo deprecate this filter in favor of "populate"
 			 */
-			$input_html     = apply_filters( 'gppa_hydrate_input_html', GFCommon::get_field_input( $field, $result['field_value'], rgar( $entry, 'id' ), $form_id, $form ), $field );
+			// Coerce scalar null to '' so esc_textarea() et al. don't trigger an htmlspecialchars() deprecation on PHP 8.1+.
+			$input_value    = is_array( $result['field_value'] ) ? $result['field_value'] : (string) $result['field_value'];
+			$input_html     = apply_filters( 'gppa_hydrate_input_html', GFCommon::get_field_input( $field, $input_value, rgar( $entry, 'id' ), $form_id, $form ), $field );
 			$result['html'] = apply_filters( 'gppa_hydrate_field_html', $input_html, $form, $result, $field );
 			$default_value  = $field->get_value_default(); // Cache default value
 			/**
@@ -3684,6 +3701,17 @@ class GP_Populate_Anything extends GP_Plugin {
 	 * @param $hydrated_field array
 	 */
 	public function batch_field_html_maxlen_counter( $html, $field, $form, $fields, $entry_id, $hydrated_field ) {
+		/**
+		 * As of GF 3.0, the counter is configured with the data-text-counter-max/data-text-counter-template
+		 * attributes that are already part of the replacement markup, and it is rendered by a script that listens
+		 * for input events on the form rather than one bound to each input. GFFormDisplay::get_counter_init_script()
+		 * is deprecated and the jquery.textareaCounter library it depends on is no longer enqueued, so appending its
+		 * script would throw "jQuery(...).textareaCount is not a function" and abort the field replacement.
+		 */
+		if ( version_compare( GFForms::$version, '3.0.0', '>=' ) ) {
+			return $html;
+		}
+
 		if ( ! class_exists( 'GFFormDisplay' ) ) {
 			require_once( GFCommon::get_base_path() . '/form_display.php' );
 		}
@@ -3826,10 +3854,12 @@ class GP_Populate_Anything extends GP_Plugin {
 				$value[ $index ] = $this->get_submitted_choice_label( $choice_value, $field, $lead['id'] );
 			}
 
-			if ( method_exists( 'GF_Field', 'get_value_all_fields_merge_tag' ) ) {
+			// GF 2.9.31 deprecated GFCommon::get_lead_field_display() in favor of GF_Field::get_value_all_fields_merge_tag().
+			if ( version_compare( GFForms::$version, '2.9.31', '>=' ) ) {
 				return $field->get_value_all_fields_merge_tag( $value, $lead, false, 'html' );
 			}
 
+			// GF 2.9.29 changed the third parameter of GFCommon::get_lead_field_display() from $currency to $entry.
 			if ( version_compare( GFForms::$version, '2.9.29', '>=' ) ) {
 				return GFCommon::get_lead_field_display( $field, $value, $lead );
 			}
@@ -3852,7 +3882,12 @@ class GP_Populate_Anything extends GP_Plugin {
 				continue;
 			}
 
-			$entry_value    = RGFormsModel::get_lead_field_value( $entry, $field );
+			$entry_value = RGFormsModel::get_lead_field_value( $entry, $field );
+
+			if ( ! is_string( $entry_value ) ) {
+				continue;
+			}
+
 			list( $value, ) = explode( '|', $entry_value );
 
 			$product['name'] = $this->get_submitted_choice_label( $value, $field, rgar( $entry, 'id' ) );
@@ -4418,18 +4453,64 @@ class GP_Populate_Anything extends GP_Plugin {
 		);
 
 		// Add filter.
-		add_filter( 'gform_field_value_' . $filter_name, function( $val ) use ( $value ) {
-			// If the value is serialized, unserialize it so that it displays correctly in the form.
-			// Otherwise, the serialized value will be displayed as a string.
-			// This is specifically the case for List fields.
-			if ( is_serialized( $value ) ) {
-				$value = maybe_unserialize( $value );
-			}
-
-			return $value;
+		add_filter( 'gform_field_value_' . $filter_name, function( $val ) use ( $value, $form_id, $input_id ) {
+			return $this->maybe_convert_serialized_value( $value, GFAPI::get_field( $form_id, $input_id ) );
 		} );
 
 		return $filter_name;
+
+	}
+
+	/**
+	 * If the value is serialized, unserialize it so that it displays correctly in the form. Otherwise, the serialized
+	 * value will be displayed as a string. This is specifically the case for List fields.
+	 *
+	 * Only unserialize for fields that can actually handle an array value. Passing an array to a field that expects a
+	 * scalar (e.g. Paragraph) results in a fatal error, so such values are flattened into a readable string instead.
+	 *
+	 * @param mixed          $value The value to convert.
+	 * @param \GF_Field|null $field The field being populated.
+	 *
+	 * @return mixed
+	 */
+	public function maybe_convert_serialized_value( $value, $field ) {
+
+		if ( ! is_string( $value ) || ! is_serialized( $value ) ) {
+			return $value;
+		}
+
+		if ( $field && $field->get_input_type() === 'list' ) {
+			return maybe_unserialize( $value );
+		}
+
+		return $this->flatten_serialized_value( $value );
+
+	}
+
+	/**
+	 * Convert a serialized (typically List field) value into a human-readable string for fields that
+	 * can't accept an array value, such as Paragraph, Single Line Text, or Hidden.
+	 *
+	 * @param string $value The serialized value.
+	 *
+	 * @return string
+	 */
+	public function flatten_serialized_value( $value ) {
+
+		$unserialized = maybe_unserialize( $value );
+
+		if ( ! is_array( $unserialized ) ) {
+			return $value;
+		}
+
+		$rows = array();
+
+		foreach ( $unserialized as $row ) {
+			// Multi-column List fields store each row as an array of column => value.
+			$rows[] = is_array( $row ) ? implode( ', ', array_map( 'strval', $row ) ) : (string) $row;
+		}
+
+		return implode( "\n", $rows );
 
 	}
 
@@ -4646,6 +4727,10 @@ class GP_Populate_Anything extends GP_Plugin {
 		}
 
 		$data = self::maybe_decode_json( WP_REST_Server::get_raw_data() );
+
+		if ( ! is_array( $data ) ) {
+			$data = array();
+		}
 
 		// Copy $data onto $_REQUEST and $_POST
 		$_REQUEST = array_merge( $_REQUEST, $data );

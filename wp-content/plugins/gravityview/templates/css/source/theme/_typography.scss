@@ -1,0 +1,163 @@
+/**
+ * GravityView Theme — Typography
+ *
+ * Heading styles, field labels, paragraph spacing, and text utilities.
+ *
+ * @package   GravityView
+ * @license   GPL2
+ * @since     TBD
+ */
+
+.gv-themed {
+	h1, h2, h3, h4 {
+		font-family: var(--gv-font-family);
+		font-weight: var(--gv-font-weight-semibold);
+		line-height: var(--gv-line-height-tight);
+		color: var(--gv-color-text);
+		margin-block-start: 0;
+		margin-block-end: var(--gv-space-3);
+	}
+
+	h1 {
+		font-size: var(--gv-font-size-2xl);
+	}
+
+	h2 {
+		font-size: var(--gv-font-size-xl);
+	}
+
+	h3 {
+		font-size: var(--gv-font-size-lg);
+	}
+
+	h4 {
+		font-size: var(--gv-font-size-md);
+	}
+
+	// .gv-field — wrapper around label + value pair.
+	// Display flex with column direction is layout-identical to the
+	// previous block flow (label stacks above value). Switching the
+	// direction token to `row` puts label inline with value. Resolves
+	// the recurring "label + value on same line" customer ask.
+	// `column-gap` only takes effect in row direction, so the
+	// inter-element spacing comes from the same token in both modes.
+	.gv-field {
+		display: flex;
+		flex-direction: var(--gv-field-label-direction);
+		column-gap: var(--gv-field-label-margin-block-end);
+		// Vertical gap between consecutive fields inside an entry.
+		// `:last-child` collapse below keeps the entry padding clean.
+		margin-block-end: var(--gv-entry-field-gap);
+
+		&:last-child {
+			margin-block-end: 0;
+		}
+	}
+
+	.gv-field-label {
+		font-size: var(--gv-field-label-font-size);
+		font-weight: var(--gv-field-label-font-weight);
+		color: var(--gv-field-label-color);
+		text-transform: var(--gv-field-label-text-transform);
+		letter-spacing: var(--gv-field-label-letter-spacing);
+		line-height: var(--gv-line-height-tight);
+		// Vertical gap below label in column (stacked) mode.
+		// In row (inline) mode this is moot — see `.gv-field`
+		// column-gap for inter-element spacing in that direction.
+		margin-block-end: var(--gv-field-label-margin-block-end);
+	}
+
+	p {
+		margin-block-start: 0;
+		margin-block-end: var(--gv-space-3);
+	}
+
+	small,
+	.gv-text-muted {
+		font-size: var(--gv-font-size-sm);
+		color: var(--gv-color-text-muted);
+	}
+
+	// Caption / hint text — lightweight by design. Customers tuning
+	// "Light Weight" in Studio see these utility paragraphs respond.
+	.gv-text-xs {
+		font-size: var(--gv-font-size-xs);
+		font-weight: var(--gv-font-weight-light);
+		color: var(--gv-color-text-muted);
+	}
+
+	// =========================================================
+	// Links — four states wired to dedicated tokens so each can
+	// be edited independently. The `:not(.button)` exclusion keeps
+	// button-style anchors (.gv-search-clear, .gv-search-button)
+	// on their own button rules; those have higher specificity
+	// and would win anyway, but the explicit exclusion documents
+	// intent.
+	//
+	// `.gv-themed` sits ON the `.gv-container` element, so the
+	// primary arm is a same-element compound; the descendant arm
+	// covers nested or embedded Views.
+	//
+	// Browsers restrict :visited to colour-only properties for
+	// privacy; we only override `color` there for that reason.
+	// =========================================================
+	&.gv-container a:not(.button),
+	.gv-container a:not(.button) {
+		color: var(--gv-color-link);
+		transition: color var(--gv-transition-fast) var(--gv-easing-standard);
+
+		&:hover,
+		&:focus-visible {
+			color: var(--gv-color-link-hover);
+		}
+
+		&:active {
+			color: var(--gv-color-link-active);
+		}
+
+		&:visited {
+			color: var(--gv-color-link-visited);
+		}
+	}
+
+	// =========================================================
+	// Destructive link: the Delete Entry field renders a bare
+	// anchor inside a `gv-field-{form_id}-delete_link` wrapper
+	// (td in Table, div elsewhere), so the field class is the
+	// only stable hook. Painted with the error tokens to signal
+	// a destructive action, matching `.gv-button-delete`.
+	// Declared after the four-state block so it wins the
+	// same-specificity tie; `:visited` stays red on purpose, a
+	// destructive action never reads as "already visited".
+	// =========================================================
+	&.gv-container [class*="-delete_link"] a:not(.button),
+	.gv-container [class*="-delete_link"] a:not(.button) {
+		color: var(--gv-color-error);
+
+		&:hover,
+		&:focus-visible,
+		&:active {
+			color: var(--gv-color-error-hover);
+		}
+
+		&:visited {
+			color: var(--gv-color-error);
+		}
+	}
+
+	// =========================================================
+	// SC 1.4.1 Use of Color: anchors inside flowing paragraph
+	// content (Paragraph Text fields, Custom Content, wpautop
+	// output) carry a resting underline: link blue against body
+	// text is roughly 2.2:1, so hue alone cannot mark them for
+	// low-vision readers. Chrome anchors (card titles, pagination,
+	// back link, buttons) live outside `<p>` wrappers or carry the
+	// excluded button classes and keep their decoration-free
+	// component treatment. Table-layout cells get the matching
+	// rule in `_table.scss` / `_datatables.scss` because the cell
+	// link rules there carry higher specificity.
+	// =========================================================
+	p a:not(.button):not([class*="gv-button"]) {
+		text-decoration: underline;
+	}
+}

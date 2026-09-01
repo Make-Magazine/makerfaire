@@ -1,28 +1,23 @@
 <?php
 /**
- * @package GravityView
- * @subpackage Gravityview/admin/metaboxes/views
- * @global $post
+ * Backward-compatibility shim.
+ *
+ * This file was moved in GravityView 3.0. It is intentionally empty.
+ * GravityView classes and functions load automatically — you no longer
+ * need to require GravityView files in your code.
+ *
+ * @deprecated 3.0
  */
-global $post;
 
-// View template settings
-$current_settings = gravityview_get_template_settings( $post->ID );
+if ( ! defined( 'ABSPATH' ) ) {
+	die;
+}
 
-?>
-
-<table class="form-table">
-<?php
-
-	GravityView_Render_Settings::render_setting_row( 'single_title', $current_settings );
-
-	GravityView_Render_Settings::render_setting_row( 'back_link_label', $current_settings );
-
-	GravityView_Render_Settings::render_setting_row( 'hide_empty_single', $current_settings );
-
-	GravityView_Render_Settings::render_setting_row( 'mark_entry_as_read', $current_settings );
-
-	GravityView_Render_Settings::render_setting_row( 'single_entry_slug', $current_settings );
-
-?>
-</table>
+if ( function_exists( '_deprecated_file' ) ) {
+	_deprecated_file(
+		plugin_basename( __FILE__ ),
+		'3.0',
+		'',
+		'This file was moved in GravityView 3.0 and will be removed in a future release. GravityView classes and functions load automatically — you no longer need to require them.'
+	);
+}

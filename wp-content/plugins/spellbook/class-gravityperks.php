@@ -1,16 +1,17 @@
 <?php
-if ( ! defined( 'ABSPATH' ) )
+if ( ! defined( 'ABSPATH' ) ) {
 	exit;
+}
 
 class GravityPerks {
 
-	public static $version = SPELLBOOK_VERSION;
+	public static $version          = SPELLBOOK_VERSION;
 	public static $tooltip_template = '<h6>%s</h6> %s';
 
 	private static $basename;
-	private static $slug = 'gravityperks';
+	private static $slug                      = 'gravityperks';
 	private static $min_gravity_forms_version = '2.2';
-	private static $min_wp_version = '4.8';
+	private static $min_wp_version            = '4.8';
 	/**
 	 * @var GWAPI
 	 */
@@ -119,6 +120,21 @@ class GravityPerks {
 					GWPerksPage::load_perk_settings();
 				}
 
+				/**
+				 * Filter whether the support chat widget is enabled on the Spellbook admin page.
+				 *
+				 * @param bool $enabled Whether the support chat is enabled. Default true.
+				 *
+				 * @example Disable the support chat widget
+				 * <code>
+				 * add_filter( 'spellbook_support_chat_enabled', '__return_false' );
+				 * </code>
+				 *
+				 * @since 3.0.27
+				 */
+				if ( apply_filters( 'spellbook_support_chat_enabled', true ) ) {
+					add_action( 'admin_footer', array( __CLASS__, 'output_helpscout_beacon' ) );
+				}
 			}
 
 			if ( self::is_gf_version_lte( '2.5-beta-1' ) && self::is_gravity_page() ) {
@@ -248,22 +264,22 @@ class GravityPerks {
 		switch ( rgar( $can_update, 'code' ) ) {
 			case 'invalid_or_missing_license':
 				$message = sprintf( __( 'Auto-updates disabled; enter %s license in Spellbook to enable.', 'spellbook' ), $can_update['suite_name'] );
-				$html = '<em>' . $message . '</em>';
+				$html    = '<em>' . $message . '</em>';
 				return $html;
 
 			case 'unregistered_product':
 				$message = sprintf( __( 'Auto-updates disabled; register %s in Spellbook.', 'spellbook' ), $can_update['plugin_name'] );
-				$html = '<em>' . $message . '</em>';
+				$html    = '<em>' . $message . '</em>';
 				return $html;
 
 			case 'expired_license':
 				$message = sprintf( __( 'Auto-updates disabled; %s license has expired.', 'spellbook' ), $can_update['suite_name'] );
-				$html = '<em>' . $message . '</em>';
+				$html    = '<em>' . $message . '</em>';
 				return $html;
 
 			case 'free_plugin_missing_email_or_license':
 				$message = __( 'Auto-updates disabled; free plugins require a license or email to enable auto-updates.', 'spellbook' );
-				$html = '<em>' . $message . '</em>';
+				$html    = '<em>' . $message . '</em>';
 				return $html;
 		}
 
@@ -393,15 +409,15 @@ class GravityPerks {
 		global $pagenow;
 
 		$plugin_file = $plugin_file ? $plugin_file : self::$basename;
-		$is_perk = $plugin_file != self::$basename;
-		$action = $is_perk ? array( 'GWPerks', 'after_product_plugin_row' ) : array( 'GWPerks', 'after_plugin_row' );
+		$is_perk     = $plugin_file != self::$basename;
+		$action      = $is_perk ? array( 'GWPerks', 'after_product_plugin_row' ) : array( 'GWPerks', 'after_plugin_row' );
 
 		$is_plugins_page = self::is_plugins_page();
 
 		switch ( $error_slug ) {
 
 			case 'gravity_forms_required':
-				$message = self::get_message( $error_slug, $plugin_file );
+				$message          = self::get_message( $error_slug, $plugin_file );
 				$message_function = array(
 					new GP_Late_Static_Binding( array(
 						'message' => $message,
@@ -416,7 +432,7 @@ class GravityPerks {
 				break;
 
 			case 'wp_required':
-				$message = self::get_message( $error_slug, $plugin_file );
+				$message          = self::get_message( $error_slug, $plugin_file );
 				$message_function = array(
 					new GP_Late_Static_Binding( array(
 						'message' => $message,
@@ -431,7 +447,7 @@ class GravityPerks {
 				break;
 
 			case 'gravity_perks_required':
-				$message = self::get_message( $error_slug, $plugin_file );
+				$message          = self::get_message( $error_slug, $plugin_file );
 				$message_function = array(
 					new GP_Late_Static_Binding( array(
 						'message' => $message,
@@ -473,24 +489,24 @@ class GravityPerks {
 	public static function get_message( $message_slug, $plugin_file = false ) {
 
 		$min_gravity_forms_version = self::$min_gravity_forms_version;
-		$min_wp_version = self::$min_wp_version;
+		$min_wp_version            = self::$min_wp_version;
 
 		// if a $plugin_file is provided AND it is not the same as the base plugin, let's assume it is a perk
 		$is_perk = $plugin_file && $plugin_file != self::$basename;
 
 		if ( $is_perk ) {
 			require_once( ABSPATH . 'wp-admin/includes/plugin.php' );
-			$perk = GWPerk::get_perk( $plugin_file );
+			$perk      = GWPerk::get_perk( $plugin_file );
 			$perk_data = GWPerk::get_perk_data( $plugin_file );
 
 			if ( $perk->is_old_school() ) {
 				$min_gravity_forms_version = $perk->get_property( 'min_gravity_forms_version' );
-				$min_wp_version = $perk->get_property( 'min_wp_version' );
+				$min_wp_version            = $perk->get_property( 'min_wp_version' );
 			} else {
 				$requirements = $perk->parent->minimum_requirements();
 
 				$min_gravity_forms_version = rgars( $requirements, 'gravityforms/version' );
-				$min_wp_version = rgars( $requirements, 'wordpress/version' );
+				$min_wp_version            = rgars( $requirements, 'wordpress/version' );
 			}
 		}
 
@@ -499,19 +515,19 @@ class GravityPerks {
 			case 'gravity_forms_required':
 				if ( class_exists( 'GFForms' ) ) {
 					return sprintf( __( 'Current Gravity Forms version (%1$s) does not meet minimum Gravity Forms version requirement (%2$s).', 'spellbook' ),
-						GFForms::$version, $min_gravity_forms_version );
+					GFForms::$version, $min_gravity_forms_version );
 				} else {
 					return sprintf( __( 'Gravity Forms %1$s or greater is required. Activate it now or %2$spurchase it today!%3$s', 'spellbook' ),
-						$min_gravity_forms_version, '<a href="' . GW_GFORM_AFFILIATE_URL . '">', '</a>' );
+					$min_gravity_forms_version, '<a href="' . GW_GFORM_AFFILIATE_URL . '">', '</a>' );
 				}
 
 			case 'wp_required':
 				if ( isset( $perk ) ) {
 					return sprintf( __( '%1$s requires WordPress %2$s or greater. You must upgrade WordPress in order to use this perk.', 'spellbook' ),
-						$perk_data['Name'], $min_wp_version );
+					$perk_data['Name'], $min_wp_version );
 				} else {
 					return sprintf( __( 'Spellbook requires WordPress %1$s or greater. You must upgrade WordPress in order to use Spellbook.', 'spellbook' ),
-						$min_wp_version );
+					$min_wp_version );
 				}
 
 			case 'gravity_perks_required':
@@ -519,9 +535,9 @@ class GravityPerks {
 					$perk_data['Name'],
 					$perk->get_property( 'min_gravity_perks_version' ),
 					'<a href="' . gw_add_utm_params(GW_BUY_URL, array(
-						'page' => 'plugins',
+						'page'      => 'plugins',
 						'component' => 'plugin-notice',
-						'text' => 'spellbook-required'
+						'text'      => 'spellbook-required',
 					)) . '" target="_blank">',
 					'</a>'
 				);
@@ -564,10 +580,10 @@ class GravityPerks {
 					GW_MANAGE_PERKS_URL,
 					$can_update['type'],
 					gw_add_utm_params(GW_BUY_URL, array(
-						'page' => 'plugins',
+						'page'      => 'plugins',
 						'component' => 'plugin-row',
-						'text' => 'invalid-license'
-					)),
+						'text'      => 'invalid-license',
+					))
 				);
 
 				self::display_plugin_row_message( "<p>{$message}</p>", $plugin_data, true, $plugin_file );
@@ -578,7 +594,7 @@ class GravityPerks {
 					__( 'Register %1$s in <a href="%2$s">Spellbook</a> to receive access to automatic upgrades and support for this %3$s.', 'spellbook' ),
 					$can_update['plugin_name'],
 					GW_MANAGE_PERKS_URL,
-					$can_update['type'],
+					$can_update['type']
 				);
 
 				self::display_plugin_row_message( "<p>{$message}</p>", $plugin_data, true, $plugin_file );
@@ -589,11 +605,11 @@ class GravityPerks {
 					__( 'Your license for %1$s has expired. <a href="%2$s" target="_blank">Renew</a> to receive access to automatic upgrades and support for this %3$s.', 'spellbook' ),
 					$can_update['suite_name'],
 					gw_add_utm_params(rgars( $can_update, 'license_data/extend_url', GW_ACCOUNT_URL ), array(
-						'page' => 'plugins',
+						'page'      => 'plugins',
 						'component' => 'plugin-row',
-						'text' => 'expired-license'
+						'text'      => 'expired-license',
 					)),
-					$can_update['type'],
+					$can_update['type']
 				);
 
 				self::display_plugin_row_message( "<p>{$message}</p>", $plugin_data, true, $plugin_file );
@@ -602,7 +618,7 @@ class GravityPerks {
 			case 'free_plugin_missing_email_or_license':
 				$message = sprintf(
 					__( 'Updating free plugins in Spellbook requires a license or email. <a href="%1$s" target="_blank">Enter in Spellbook</a>', 'spellbook' ),
-					GW_MANAGE_PERKS_URL,
+					GW_MANAGE_PERKS_URL
 				);
 
 				self::display_plugin_row_message( "<p>{$message}</p>", $plugin_data, true, $plugin_file );
@@ -622,7 +638,7 @@ class GravityPerks {
 
 	public static function display_plugin_row_message( $message, $plugin_data, $is_error = false, $plugin_file = false ) {
 
-		$id = sanitize_title( $plugin_data['Name'] );
+		$id        = sanitize_title( $plugin_data['Name'] );
 		$is_active = false;
 
 		if ( $plugin_file ) {
@@ -789,9 +805,9 @@ class GravityPerks {
 	}
 
 	public static function add_bulk_plugin_notices( $upgrader, $hook_extra ) {
-		$plugins = rgar( $hook_extra, 'plugins' );
+		$plugins            = rgar( $hook_extra, 'plugins' );
 		$available_products = self::$api->get_products();
-		$errors = array();
+		$errors             = array();
 
 		if ( ! is_array( $plugins ) || empty( $plugins ) ) {
 			return;
@@ -817,26 +833,26 @@ class GravityPerks {
 						__( 'Your %1$s license is invalid or missing. <a href="%2$s" target="_blank">Enter in Spellbook</a> or <a href="%3$s" target="_blank">Buy License</a>.', 'spellbook' ),
 						$can_update['suite_name'],
 						GW_MANAGE_PERKS_URL,
-						GW_BUY_URL,
+						GW_BUY_URL
 					);
 					break;
 
 				case 'unregistered_product':
-					$errors[] = sprintf( __( '%s is unregistered. <a href="%s" target="_blank">Register in Spellbook</a>', 'spellbook' ), $can_update['plugin_name'], GW_MANAGE_PERKS_URL );
+					$errors[] = sprintf( __( '%1$s is unregistered. <a href="%2$s" target="_blank">Register in Spellbook</a>', 'spellbook' ), $can_update['plugin_name'], GW_MANAGE_PERKS_URL );
 					break;
 
 				case 'expired_license':
 					$errors[ $can_update['type'] . '_expired' ] = sprintf(
 						__( 'Your %1$s license has expired. <a href="%2$s" target="_blank">Renew License</a>', 'spellbook' ),
 						$can_update['suite_name'],
-						rgars( $can_update, 'license_data/extend_url', GW_ACCOUNT_URL ),
+						rgars( $can_update, 'license_data/extend_url', GW_ACCOUNT_URL )
 					);
 					break;
 
 				case 'free_plugin_missing_email_or_license':
 					$errors[] = sprintf(
 						__( 'Updating free plugins in Spellbook requires a license or email. <a href="%1$s" target="_blank">Enter in Spellbook</a>', 'spellbook' ),
-						GW_MANAGE_PERKS_URL,
+						GW_MANAGE_PERKS_URL
 					);
 					break;
 			}
@@ -859,7 +875,7 @@ class GravityPerks {
 		}
 
 		$message_singular = __( '<strong>Uh-oh!</strong> We ran into a problem when updating your Gravity Wiz plugins.', 'spellbook' );
-		$message_plural = __( '<strong>Uh-oh!</strong> We ran into some problems when updating your Gravity Wiz plugins.', 'spellbook' );
+		$message_plural   = __( '<strong>Uh-oh!</strong> We ran into some problems when updating your Gravity Wiz plugins.', 'spellbook' );
 
 		if ( count( $errors ) > 0 ) {
 			$upgrader->skin->feedback( sprintf(
@@ -897,8 +913,8 @@ class GravityPerks {
 	 */
 	public static function refresh_active_perks( $old_value ) {
 
-		$plugins = self::get_plugins();
-		$perks = array();
+		$plugins       = self::get_plugins();
+		$perks         = array();
 		$network_perks = array();
 
 		foreach ( $plugins as $plugin_file => $plugin ) {
@@ -972,7 +988,7 @@ class GravityPerks {
 		}
 
 		$is_error = true;
-		$message = '';
+		$message  = '';
 
 		switch ( $error ) {
 			case 'networkperks':
@@ -1084,7 +1100,7 @@ class GravityPerks {
 	// TODO SPELLBOOK AUDIT
 	public static function get_api_error_message() {
 
-		$message = __( 'Oops! Your site is having some trouble communicating with our API.', 'spellbook' );
+		$message  = __( 'Oops! Your site is having some trouble communicating with our API.', 'spellbook' );
 		$message .= sprintf( '&nbsp;<a href="%s" target="_blank">%s</a>', 'https://' . GW_DOMAIN . '/documentation/troubleshooting-licensing-api/', __( 'Let\'s get this fixed.', 'spellbook' ) );
 
 		return $message;
@@ -1099,7 +1115,7 @@ class GravityPerks {
 			return self::$installed_plugins;
 		}
 
-		$plugins = self::get_plugins();
+		$plugins           = self::get_plugins();
 		$available_plugins = self::$api->get_products();
 		$installed_plugins = array();
 
@@ -1175,7 +1191,7 @@ class GravityPerks {
 						unset( $submenu['gf_edit_forms'][ $key ] );
 
 						// Add SVG icon to the label
-						$svg_icon = '<svg width="16" height="16" viewBox="0 0 1200 1200" style="display:inline-block;vertical-align:text-bottom;fill:currentColor;" xmlns="http://www.w3.org/2000/svg"><path d="m770.63 534.19c-157.6 31.5-279.84 153.74-311.44 311.44-0.84375 4.3125-4.6875 7.5-9.1875 7.5s-8.3438-3.1875-9.1875-7.5c-31.5-157.6-153.74-279.84-311.44-311.44-4.3125-0.84375-7.5-4.6875-7.5-9.1875s3.1875-8.3438 7.5-9.1875c157.6-31.5 279.84-153.74 311.44-311.44 0.84375-4.4062 4.6875-7.5 9.1875-7.5s8.3438 3.1875 9.1875 7.5c31.5 157.6 153.74 279.84 311.44 311.44 4.4062 0.84375 7.5 4.6875 7.5 9.1875s-3.1875 8.3438-7.5 9.1875zm300 337.87c-91.219-18.281-161.9-88.969-180.19-180.19-0.84375-4.3125-4.6875-7.5-9.1875-7.5s-8.3438 3.1875-9.1875 7.5c-18.281 91.219-88.969 161.9-180.19 180.19-4.3125 0.84375-7.5 4.6875-7.5 9.1875s3.1875 8.3438 7.5 9.1875c91.219 18.281 161.9 88.969 180.19 180.19 0.84375 4.4062 4.6875 7.5 9.1875 7.5s8.3438-3.1875 9.1875-7.5c18.281-91.219 88.969-161.9 180.19-180.19 4.4062-0.84375 7.5-4.6875 7.5-9.1875s-3.1875-8.3438-7.5-9.1875zm-266.26-600.37c62.719 12.562 111.38 61.219 123.94 123.94 0.84375 4.4062 4.6875 7.5 9.1875 7.5s8.3438-3.1875 9.1875-7.5c12.562-62.719 61.219-111.38 123.94-123.94 4.4062-0.84375 7.5-4.6875 7.5-9.1875s-3.1875-8.3438-7.5-9.1875c-62.719-12.562-111.38-61.219-123.94-123.94-0.84375-4.4062-4.6875-7.5-9.1875-7.5s-8.3438 3.1875-9.1875 7.5c-12.562 62.719-61.219 111.38-123.94 123.94-4.3125 0.84375-7.5 4.6875-7.5 9.1875s3.1875 8.3438 7.5 9.1875z"/></svg>';
+						$svg_icon     = '<svg width="16" height="16" viewBox="0 0 1200 1200" style="display:inline-block;vertical-align:text-bottom;fill:currentColor;" xmlns="http://www.w3.org/2000/svg"><path d="m770.63 534.19c-157.6 31.5-279.84 153.74-311.44 311.44-0.84375 4.3125-4.6875 7.5-9.1875 7.5s-8.3438-3.1875-9.1875-7.5c-31.5-157.6-153.74-279.84-311.44-311.44-4.3125-0.84375-7.5-4.6875-7.5-9.1875s3.1875-8.3438 7.5-9.1875c157.6-31.5 279.84-153.74 311.44-311.44 0.84375-4.4062 4.6875-7.5 9.1875-7.5s8.3438 3.1875 9.1875 7.5c31.5 157.6 153.74 279.84 311.44 311.44 4.4062 0.84375 7.5 4.6875 7.5 9.1875s-3.1875 8.3438-7.5 9.1875zm300 337.87c-91.219-18.281-161.9-88.969-180.19-180.19-0.84375-4.3125-4.6875-7.5-9.1875-7.5s-8.3438 3.1875-9.1875 7.5c-18.281 91.219-88.969 161.9-180.19 180.19-4.3125 0.84375-7.5 4.6875-7.5 9.1875s3.1875 8.3438 7.5 9.1875c91.219 18.281 161.9 88.969 180.19 180.19 0.84375 4.4062 4.6875 7.5 9.1875 7.5s8.3438-3.1875 9.1875-7.5c18.281-91.219 88.969-161.9 180.19-180.19 4.4062-0.84375 7.5-4.6875 7.5-9.1875s-3.1875-8.3438-7.5-9.1875zm-266.26-600.37c62.719 12.562 111.38 61.219 123.94 123.94 0.84375 4.4062 4.6875 7.5 9.1875 7.5s8.3438-3.1875 9.1875-7.5c12.562-62.719 61.219-111.38 123.94-123.94 4.4062-0.84375 7.5-4.6875 7.5-9.1875s-3.1875-8.3438-7.5-9.1875c-62.719-12.562-111.38-61.219-123.94-123.94-0.84375-4.4062-4.6875-7.5-9.1875-7.5s-8.3438 3.1875-9.1875 7.5c-12.562 62.719-61.219 111.38-123.94 123.94-4.3125 0.84375-7.5 4.6875-7.5 9.1875s3.1875 8.3438 7.5 9.1875z"/></svg>';
 						$spellbook[0] = $spellbook[0] . ' ' . $svg_icon;
 
 						// Add it back at the end
@@ -1191,7 +1207,7 @@ class GravityPerks {
 			add_filter( 'wp_admin_notice_markup', '__return_empty_string' );
 			add_action( 'admin_notices', function() {
 				remove_all_actions( 'admin_notices' );
-			}, PHP_INT_MIN );
+			}, -999999 );
 		}
 
 		// Add Spellbook menu item (SVG icon added later in admin_menu hook)
@@ -1291,6 +1307,22 @@ class GravityPerks {
 
 
 
+	// HELP SCOUT BEACON //
+
+	/**
+	 * Output the Help Scout Beacon script on the Spellbook admin page.
+	 *
+	 * Can be disabled with the `spellbook_helpscout_beacon_enabled` filter:
+	 *     add_filter( 'spellbook_helpscout_beacon_enabled', '__return_false' );
+	 */
+	public static function output_helpscout_beacon() {
+		?>
+		<script type="text/javascript">!function(e,t,n){function a(){var e=t.getElementsByTagName("script")[0],n=t.createElement("script");n.type="text/javascript",n.async=!0,n.src="https://beacon-v2.helpscout.net",e.parentNode.insertBefore(n,e)}if(e.Beacon=n=function(t,n,a){e.Beacon.readyQueue.push({method:t,options:n,data:a})},n.readyQueue=[],"complete"===t.readyState)return a();e.attachEvent?e.attachEvent("onload",a):e.addEventListener("load",a,!1)}(window,document,window.Beacon||function(){});</script>
+		<script type="text/javascript">window.Beacon('init', '6a082810-cbf7-40aa-9cdb-6734ea8f1783')</script>
+		<?php
+	}
+
+
 	// HELPERS //
 
 	public static function get_base_url() {
@@ -1303,6 +1335,11 @@ class GravityPerks {
 	}
 
 	public static function is_gravity_page() {
+		// The deprecated RGForms class was removed in Gravity Forms 3.0.
+		if ( is_callable( array( 'GFForms', 'is_gravity_page' ) ) ) {
+			return GFForms::is_gravity_page();
+		}
+
 		return class_exists( 'RGForms' ) ? RGForms::is_gravity_page() : false;
 	}
 
@@ -1317,7 +1354,7 @@ class GravityPerks {
 	public static function is_gravity_perks_page( $page = false ) {
 
 		$current_page = self::get_current_page();
-		$gp_pages = array( 'gwp_perks', 'gwp_settings' );
+		$gp_pages     = array( 'gwp_perks', 'gwp_settings' );
 
 		if ( $page ) {
 			return $current_page == $page;
@@ -1385,7 +1422,7 @@ class GravityPerks {
 			}
 
 			$dismissed[] = $pointer;
-			$dismissed = implode( ',', $dismissed );
+			$dismissed   = implode( ',', $dismissed );
 
 			update_user_meta( get_current_user_id(), 'dismissed_wp_pointers', $dismissed );
 
@@ -1470,8 +1507,8 @@ class GravityPerks {
 
 	public static function log( $message ) {
 		$backtrace = debug_backtrace();
-		$caller = $backtrace[1];
-		$method = '';
+		$caller    = $backtrace[1];
+		$method    = '';
 		if ( isset( $caller['class'] ) && $caller['class'] ) {
 			$method .= $caller['class'] . '::';
 		}
@@ -1576,12 +1613,12 @@ class GravityPerks {
 	public static function update_perk_option( $updated_options ) {
 
 		$all_perk_options = self::get_perk_options();
-		$is_new = true;
+		$is_new           = true;
 
 		foreach ( $all_perk_options as &$perk_options ) {
 
 			if ( $perk_options['slug'] == $updated_options['slug'] ) {
-				$is_new = false;
+				$is_new       = false;
 				$perk_options = $updated_options;
 			}
 		}
@@ -1596,7 +1633,7 @@ class GravityPerks {
 	public static function is_debug() {
 
 		$enabled_via_constant = defined( 'GP_DEBUG' ) && GP_DEBUG;
-		$enabled_via_query = isset( $_GET['gp_debug'] ) && current_user_can( 'update_core' );
+		$enabled_via_query    = isset( $_GET['gp_debug'] ) && current_user_can( 'update_core' );
 
 		return $enabled_via_constant || $enabled_via_query;
 	}

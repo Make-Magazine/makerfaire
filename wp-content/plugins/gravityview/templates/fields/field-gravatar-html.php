@@ -36,10 +36,30 @@ $settings['args'] = array(
  */
 $settings = apply_filters( 'gravityview/fields/gravatar/settings', $settings, $gravityview );
 
+$alt = \GV\Utils::get( $settings, 'alt', '' );
+
+if ( empty( $alt ) ) {
+	$entry = $gravityview->entry->as_entry();
+	$created_by = \GV\Utils::get( $entry, 'created_by' );
+
+	if ( $created_by ) {
+		$user = get_userdata( $created_by );
+
+		if ( $user ) {
+			/* translators: %s: user display name */
+			$alt = sprintf( __( 'Avatar for %s', 'gk-gravityview' ), $user->display_name );
+		}
+	}
+
+	if ( empty( $alt ) ) {
+		$alt = __( 'User avatar', 'gk-gravityview' );
+	}
+}
+
 echo get_avatar(
 	\GV\Utils::get( $settings, 'email' ),
 	\GV\Utils::get( $settings, 'size', 96 ),
 	\GV\Utils::get( $settings, 'default', '' ),
-	\GV\Utils::get( $settings, 'alt', '' ),
+	$alt,
 	\GV\Utils::get( $settings, 'args', array() ) // You can set via filter above
 );

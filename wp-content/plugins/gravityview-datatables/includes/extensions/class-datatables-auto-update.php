@@ -67,7 +67,7 @@ class GV_Extension_DataTables_Auto_Update extends GV_DataTables_Extension {
                 <td>
                     <input name="datatables_settings[update_interval]"
                            placeholder="<?php echo esc_attr( self::DEFAULT_INTERVAL_MINUTES ); ?>"
-                           id="gravityview_dt_update_interval" type="number" min="0" step="any"
+                           id="gravityview_dt_update_interval" type="number" min="1" step="any"
                            value="<?php echo esc_attr( $update_interval ); ?>" class="small-text"/>
                 </td>
             </tr>
@@ -80,20 +80,24 @@ class GV_Extension_DataTables_Auto_Update extends GV_DataTables_Extension {
 	 * Add config of update interval to js settings. Only runs when `auto_update` is enabled.
 	 *
 	 * @inheritDoc
-	 * @return array DataTables configuration array with `updateInterval` key set to value as microseconds.
+	 * @return array DataTables configuration array with `updateInterval` key set to value as milliseconds.
 	 */
 	function add_config( $dt_config, $view_id, $post, $object ) {
 
-		$update_interval = $this->get_setting( $view_id, 'update_interval', self::DEFAULT_INTERVAL_MINUTES );
+		// If it's already been overridden upstream, leave it untouched (already
+		// milliseconds); otherwise convert the View's minutes setting. Checked by key, not
+		// emptiness: an upstream 0 is a real override value, not "unset."
+		if ( array_key_exists( 'updateInterval', $dt_config ) ) {
+			return $dt_config;
+		}
 
-		// If it's already been overridden upstream, use the value. Otherwise, use the View setting.
-		$update_interval = empty( $dt_config['update_interval'] ) ? $update_interval : $dt_config['update_interval'];
+		$update_interval = $this->get_setting( $view_id, 'update_interval', self::DEFAULT_INTERVAL_MINUTES );
 
 		if ( empty( $update_interval ) ) {
 			return $dt_config;
 		}
 
-		// Convert minutes to microseconds.
+		// The setting is in minutes; DataTables expects milliseconds.
 		$dt_config['updateInterval'] = floatval( $update_interval ) * 60 * 1000;
 
 		gravityview()->log->debug( '[update_interval_add_config] Inserting Update Interval config. Data:', array( 'data' => $dt_config ) );

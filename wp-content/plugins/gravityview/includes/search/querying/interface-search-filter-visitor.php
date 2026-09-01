@@ -1,36 +1,23 @@
 <?php
-
-namespace GV\Search\Querying;
-
 /**
- * Represents a Filter Visitor, that get's applied recursively down the tree.
+ * Backward-compatibility shim.
  *
- * @since $ver$
+ * This file was moved in GravityView 3.0. It is intentionally empty.
+ * GravityView classes and functions load automatically — you no longer
+ * need to require GravityView files in your code.
+ *
+ * @deprecated 3.0
  */
-interface Search_Filter_Visitor {
-	/**
-	 * Order of operations.
-	 *
-	 * @since $ver$
-	 */
-	public const ORDER_PRE  = 'pre-order';
-	public const ORDER_POST = 'post-order';
 
-	/**
-	 * Visits the Search Filter.
-	 *
-	 * @since $ver$
-	 *
-	 * @param Search_Filter $search_filter The Search Filter.
-	 */
-	public function visit( Search_Filter $search_filter ): void;
+if ( ! defined( 'ABSPATH' ) ) {
+	die;
+}
 
-	/**
-	 * Returns the order the visitor should visit.
-	 *
-	 * @since $ver$
-	 *
-	 * @return string|null
-	 */
-	public function get_order(): ?string;
+if ( function_exists( '_deprecated_file' ) ) {
+	_deprecated_file(
+		plugin_basename( __FILE__ ),
+		'3.0',
+		'',
+		'This file was moved in GravityView 3.0 and will be removed in a future release. GravityView classes and functions load automatically — you no longer need to require them.'
+	);
 }

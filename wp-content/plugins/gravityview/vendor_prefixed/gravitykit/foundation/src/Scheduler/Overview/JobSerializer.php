@@ -5,9 +5,6 @@
  *
  * This is the API boundary — internal model changes don't break the frontend
  * as long as JobSerializer's output shape stays stable.
- *
- * @license GPL-2.0-or-later
- * Modified using {@see https://github.com/BrianHenryIE/strauss}.
  */
 
 namespace GravityKit\GravityView\Foundation\Scheduler\Overview;

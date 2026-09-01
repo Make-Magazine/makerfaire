@@ -1,46 +1,23 @@
 <?php
-
-namespace GV\Search\Fields;
-
 /**
- * Represents a search field that filters on starred entries.
+ * Backward-compatibility shim.
  *
- * @since 2.42
+ * This file was moved in GravityView 3.0. It is intentionally empty.
+ * GravityView classes and functions load automatically — you no longer
+ * need to require GravityView files in your code.
  *
- * @extends Search_Field<string>
+ * @deprecated 3.0
  */
-final class Search_Field_Is_Starred extends Search_Field {
-	/**
-	 * @inheritDoc
-	 * @since 2.42
-	 */
-	protected string $icon = 'dashicons-star-half';
 
-	/**
-	 * @inheritdoc
-	 * @since 2.42
-	 */
-	protected static string $type = 'is_starred';
+if ( ! defined( 'ABSPATH' ) ) {
+	die;
+}
 
-	/**
-	 * @inheritDoc
-	 * @since 2.42
-	 */
-	protected static string $field_type = 'boolean';
-
-	/**
-	 * @inheritDoc
-	 * @since 2.42
-	 */
-	protected function get_name(): string {
-		return esc_html__( 'Is Starred', 'gk-gravityview' );
-	}
-
-	/**
-	 * @inheritDoc
-	 * @since 2.42
-	 */
-	public function get_description(): string {
-		return esc_html__( 'Filter on starred entries', 'gk-gravityview' );
-	}
+if ( function_exists( '_deprecated_file' ) ) {
+	_deprecated_file(
+		plugin_basename( __FILE__ ),
+		'3.0',
+		'',
+		'This file was moved in GravityView 3.0 and will be removed in a future release. GravityView classes and functions load automatically — you no longer need to require them.'
+	);
 }

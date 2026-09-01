@@ -13,6 +13,7 @@ declare global {
             sourcePage: number;
             updateProgressIndicator: (page: number) => void;
         };
+        gformRedirect?: () => void;
         gformInitSpinner: (formId: number, spinnerUrl?: string) => void;
         gformOrigInitSpinner: (formId: number, spinnerUrl?: string) => void;
         gf_global: {

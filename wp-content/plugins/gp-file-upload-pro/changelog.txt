@@ -1,5 +1,15 @@
 # Changelog
 
+## 1.5.14 | August 27, 2026
+
+- Added support for drag-and-drop sorting of existing files rendered on Gravity Flow when editing entries.
+- Fixed an issue where an unexpected (non-JSON) upload response could cause GP File Upload Pro to silently treat a failed upload as successful.
+- Fixed issue where uploaded files were not displayed in the field when the form was embedded with certain page builders. Files still uploaded to the server but did not appear in the uploader.
+
+## 1.5.13 | August 19, 2026
+
+- Fixed issue where WebP images were not previewed or croppable in Safari.
+
 ## 1.5.12 | May 13, 2026
 
 - Fixed issue where pressing enter in a text field after cropping an image would reopen the cropper.

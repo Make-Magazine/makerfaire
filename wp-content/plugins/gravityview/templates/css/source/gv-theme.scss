@@ -1,0 +1,13 @@
+/**
+ * GravityView Theme: entry point Grunt compiles.
+ *
+ * The actual SCSS lives in `theme/` and is composed by
+ * `theme/gv-theme.scss`; this shim re-exports it so the
+ * compiled output lands at `templates/css/gv-theme.css`.
+ * Uses `@use` (not `@import`): Dart Sass 3.0 removes `@import`,
+ * and the partials under `theme/` are already on the module
+ * system. Compiled exclusively by the `theme_css` Grunt
+ * task (minified + expanded + sourcemap in one run).
+ */
+
+@use "theme/gv-theme";

@@ -22,13 +22,13 @@ if ( ! class_exists( 'GFForms' ) ) {
  */
 class GravityView_Inline_Edit_Field_Survey extends GravityView_Inline_Edit_Field {
 
-	var $gv_field_name = 'survey';
+	public $gv_field_name = 'survey';
 
-	var $inline_edit_type = 'survey';
+	public $inline_edit_type = 'survey';
 
-	var $set_value = false;
+	public $set_value = false;
 
-	var $standard_live_update = false;
+	public $standard_live_update = false;
 
 	/**
 	 * Dynamically set inline type and attributes for Survey subtypes: likert, rank, rating, radio, checkbox, select, text, textarea.
@@ -48,8 +48,8 @@ class GravityView_Inline_Edit_Field_Survey extends GravityView_Inline_Edit_Field
 		}
 
 		// Pass choices to JavaScript for fields that need them (not needed for text/textarea)
-		if ( ! in_array( $subtype, array( 'text', 'textarea' ) ) ) {
-			$wrapper_attributes['data-source'] = json_encode( $gf_field->choices );
+		if ( ! in_array( $subtype, array( 'text', 'textarea' ), true ) ) {
+			$wrapper_attributes['data-source'] = wp_json_encode( $gf_field->choices );
 		}
 
 		$wrapper_attributes['data-value']   = $value;
@@ -87,11 +87,23 @@ class GravityView_Inline_Edit_Field_Survey extends GravityView_Inline_Edit_Field
 				}
 			}
 
-			return empty( $values ) ? '' : json_encode( $values );
+			if ( empty( $values ) ) {
+				return '';
+			}
+
+			$encoded = wp_json_encode( $values );
+
+			return false !== $encoded ? $encoded : '';
 		} else {
 			// Single row: just return the main field value
 			$value = rgar( $entry, $field_id );
-			return empty( $value ) ? '' : json_encode( $value );
+			if ( empty( $value ) ) {
+				return '';
+			}
+
+			$encoded = wp_json_encode( $value );
+
+			return false !== $encoded ? $encoded : '';
 		}
 	}
 
@@ -124,7 +136,13 @@ class GravityView_Inline_Edit_Field_Survey extends GravityView_Inline_Edit_Field
 			++$choice_number;
 		}
 
-		return ! empty( $checkbox_values ) ? json_encode( $checkbox_values ) : '';
+		if ( empty( $checkbox_values ) ) {
+			return '';
+		}
+
+		$encoded = wp_json_encode( $checkbox_values );
+
+		return false !== $encoded ? $encoded : '';
 	}
 
 	/**
@@ -153,7 +171,7 @@ class GravityView_Inline_Edit_Field_Survey extends GravityView_Inline_Edit_Field
 	 *
 	 * @return array Array of field update information
 	 */
-	public function updated_result( $update_result, $entry = array(), $form_id = 0, GF_Field $gf_field = null ) {
+	public function updated_result( $update_result, $entry = array(), $form_id = 0, ?GF_Field $gf_field = null ) {
 		if ( ! $gf_field ) {
 			return $update_result;
 		}

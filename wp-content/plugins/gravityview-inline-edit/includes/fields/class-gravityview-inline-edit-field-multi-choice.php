@@ -6,11 +6,11 @@
  * @since 2.6.0
  */
 class GravityView_Inline_Edit_Field_Multi_Choice extends GravityView_Inline_Edit_Field {
-	var $gv_field_name = 'multi_choice';
+	public $gv_field_name = 'multi_choice';
 
-	var $inline_edit_type = 'radiolist'; // Default to radio, but will be dynamic.
+	public $inline_edit_type = 'radiolist'; // Default to radio, but will be dynamic.
 
-	var $set_value = true;
+	public $set_value = true;
 
 	/**
 	 * Adds value and type inline attributes, and enqueue custom field scripts.

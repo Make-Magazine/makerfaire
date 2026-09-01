@@ -1,29 +1,23 @@
 <?php
 /**
- * @global array $entry
- * @global array $form
- * @global array $field_settings
+ * Backward-compatibility shim.
+ *
+ * This file was moved in GravityView 3.0. It is intentionally empty.
+ * GravityView classes and functions load automatically — you no longer
+ * need to require GravityView files in your code.
+ *
+ * @deprecated 3.0
  */
 
-$gravityview_view = GravityView_View::getInstance();
-
-$view_id = $gravityview_view->getViewId();
-
-extract( $gravityview_view->getCurrentField() );
-
-// Only show the link to logged-in users with the right caps.
-if ( ! GravityView_Delete_Entry::check_user_cap_delete_entry( $entry, $field_settings ) ) {
-	return;
+if ( ! defined( 'ABSPATH' ) ) {
+	die;
 }
 
-$link_text = empty( $field_settings['delete_link'] ) ? __( 'Delete Entry', 'gk-gravityview' ) : $field_settings['delete_link'];
-
-$link_text = apply_filters( 'gravityview_entry_link', GravityView_API::replace_variables( $link_text, $form, $entry ) );
-
-$href = GravityView_Delete_Entry::get_delete_link( $entry, $view_id );
-
-$attributes = array(
-	'onclick' => GravityView_Delete_Entry::get_confirm_dialog(),
-);
-
-echo gravityview_get_link( $href, $link_text, $attributes );
+if ( function_exists( '_deprecated_file' ) ) {
+	_deprecated_file(
+		plugin_basename( __FILE__ ),
+		'3.0',
+		'',
+		'This file was moved in GravityView 3.0 and will be removed in a future release. GravityView classes and functions load automatically — you no longer need to require them.'
+	);
+}

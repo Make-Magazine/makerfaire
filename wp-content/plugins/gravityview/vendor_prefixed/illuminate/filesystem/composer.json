@@ -21,7 +21,7 @@
     },
     "autoload": {
         "psr-4": {
-            "Illuminate\\Filesystem\\": ""
+            "GravityKit\\GravityView\\Foundation\\ThirdParty\\Illuminate\\Filesystem\\": ""
         }
     },
     "extra": {

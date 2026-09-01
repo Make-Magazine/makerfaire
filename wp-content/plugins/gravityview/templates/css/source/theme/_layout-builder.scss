@@ -1,0 +1,163 @@
+/**
+ * GravityView Theme — Layout Builder
+ *
+ * Card-based entry styling for Layout Builder Views.
+ * Scoped to `.gv-layout-builder-container.gv-themed`.
+ *
+ * @package   GravityView
+ * @license   GPL2
+ * @since     TBD
+ */
+
+@use "tokens" as *;
+
+// =========================================================
+// Entry blocks — card treatment
+//
+// `gv-layout-builder-container` is passed into `gv_container_class()`,
+// so it sits on the SAME element as `.gv-themed`: every scope in this
+// file is a same-element compound.
+// =========================================================
+// Inter-entry spacing comes from the parent
+// `.gv-layout-builder-multiple-container`'s `gap: var(--gv-grid-gap)`
+// (`_card-grid.scss`); a margin-block-end here would stack with it.
+.gv-layout-builder-container.gv-themed .gv-layout-builder-view--entry {
+	@include gv-entry-card($hover-bg: var(--gv-color-surface-hover));
+}
+
+// Override legacy margin-top: 1em on adjacent entries; grid gap handles spacing.
+.gv-themed .gv-layout-builder-view--entry + .gv-layout-builder-view--entry {
+	margin-block-start: 0;
+}
+
+// =========================================================
+// Grid rows — flexbox instead of floats
+// =========================================================
+.gv-layout-builder-container.gv-themed .gv-grid-row {
+	display: flex;
+	// Explicit direction: the Layout Builder template's own stylesheet
+	// stacks rows at <=768px while Modern stacks at <=640px. Without an
+	// explicit row direction here, the legacy column rule wins the
+	// 641-768px band and rows stack with half-width columns.
+	flex-direction: row;
+	flex-wrap: wrap;
+	gap: var(--gv-space-3);
+
+	// The legacy stylesheet's clearfix pseudos become anonymous flex
+	// items here, each eating a gap slot and overflowing the line so
+	// the columns wrap into a stack.
+	&::before,
+	&::after {
+		display: none;
+	}
+}
+
+// =========================================================
+// Grid columns — flex-basis widths, no floats
+// =========================================================
+.gv-layout-builder-container.gv-themed [class*="gv-grid-col-"] {
+	float: none;
+	padding: 0;
+	// Own the column-divider system: the template stylesheet draws its
+	// own hairline with a gutter that the padding reset above strips,
+	// leaving text cramped against the line. Dividers re-drawn below.
+	border: 0;
+	box-sizing: border-box;
+	// Flex items default to min-width: auto, so a long word inside a
+	// column inflates its minimum past the flex-basis and wraps the
+	// whole column onto its own line, stacking the row. Zeroing the
+	// minimum keeps columns at their fractional widths; break-word
+	// keeps oversized words from overflowing narrow cards.
+	min-width: 0;
+	overflow-wrap: break-word;
+}
+
+.gv-layout-builder-container.gv-themed .gv-grid-col-1-1 {
+	flex-basis: 100%;
+	max-width: 100%;
+}
+
+.gv-layout-builder-container.gv-themed .gv-grid-col-1-2 {
+	flex: 1 1 calc(50% - var(--gv-space-3) / 2);
+	max-width: calc(50% - var(--gv-space-3) / 2);
+}
+
+.gv-layout-builder-container.gv-themed .gv-grid-col-1-3 {
+	flex: 1 1 calc(33.333% - var(--gv-space-3) * 2 / 3);
+	max-width: calc(33.333% - var(--gv-space-3) * 2 / 3);
+}
+
+.gv-layout-builder-container.gv-themed .gv-grid-col-2-3 {
+	flex: 1 1 calc(66.666% - var(--gv-space-3) / 3);
+	max-width: calc(66.666% - var(--gv-space-3) / 3);
+}
+
+.gv-layout-builder-container.gv-themed .gv-grid-col-1-4 {
+	flex: 1 1 calc(25% - var(--gv-space-3) * 3 / 4);
+	max-width: calc(25% - var(--gv-space-3) * 3 / 4);
+}
+
+.gv-layout-builder-container.gv-themed .gv-grid-col-3-4 {
+	flex: 1 1 calc(75% - var(--gv-space-3) / 4);
+	max-width: calc(75% - var(--gv-space-3) / 4);
+}
+
+// =========================================================
+// Field values
+// =========================================================
+.gv-layout-builder-container.gv-themed .gv-grid-value {
+	padding-block: var(--gv-space-1);
+}
+
+// Consecutive fields stacked in a column need first-party separation:
+// without it the gap between two fields is whatever the host theme
+// happens to add, and on themes that add nothing the fields (and any
+// divider hairlines) butt against each other.
+.gv-layout-builder-container.gv-themed [class*="gv-grid-col-"] > * + * {
+	margin-block-start: var(--gv-space-3);
+}
+
+// Vertical divider between side-by-side columns, with a matching
+// gutter so text never touches the line.
+.gv-layout-builder-container.gv-themed .gv-grid-row > [class*="gv-grid-col-"] + [class*="gv-grid-col-"] {
+	border-inline-start: 1px solid var(--gv-color-row-divider);
+	padding-inline-start: var(--gv-space-3);
+}
+
+.gv-layout-builder-container.gv-themed .gv-field-label {
+	display: block;
+	margin-block-end: var(--gv-space-1);
+}
+
+// =========================================================
+// Featured entries — hero card treatment.
+//
+// `--gv-radius-xl` gives the featured card a softer, more
+// prominent silhouette than the resting entry-card radius;
+// shadow + accent rail finish the affordance.
+// =========================================================
+.gv-layout-builder-container.gv-themed .gv-featured-entry {
+	border-inline-start: var(--gv-border-width-3) solid var(--gv-color-primary);
+	border-radius: var(--gv-radius-xl);
+	box-shadow: var(--gv-shadow-sm);
+}
+
+// =========================================================
+// Mobile responsive — stack all columns
+// =========================================================
+@media (max-width: #{$gv-breakpoint-sm}) {
+	.gv-layout-builder-container.gv-themed .gv-grid-row > [class*="gv-grid-col-"] + [class*="gv-grid-col-"] {
+		// Stacked columns: a left-edge divider reads as clutter.
+		border-inline-start: 0;
+		padding-inline-start: 0;
+	}
+
+	.gv-layout-builder-container.gv-themed .gv-grid-row {
+		flex-direction: column;
+	}
+
+	.gv-layout-builder-container.gv-themed [class*="gv-grid-col-"] {
+		flex-basis: 100%;
+		max-width: 100%;
+	}
+}

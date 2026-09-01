@@ -1,9 +1,4 @@
 <?php
-/**
- * @license GPL-2.0-or-later
- *
- * Modified using {@see https://github.com/BrianHenryIE/strauss}.
- */
 
 namespace GravityKit\GravityView\Foundation\Logger;
 
@@ -105,6 +100,15 @@ class Framework implements LoggerInterface {
 	private $_logger_enabled = null;
 
 	/**
+	 * Whether the Monolog instance and handler have been built.
+	 *
+	 * @since 1.25.0
+	 *
+	 * @var bool
+	 */
+	private $_initialized = false;
+
+	/**
 	 * Class constructor.
 	 *
 	 * @since 1.0.0
@@ -119,6 +123,26 @@ class Framework implements LoggerInterface {
 
 		$this->_logger_id    = $logger_id;
 		$this->_logger_title = $logger_title;
+	}
+
+	/**
+	 * Lazily builds the Monolog instance and its handler on first use.
+	 *
+	 * Deferred out of the constructor: loggers are instantiated during `plugins_loaded`, and
+	 * building the handler reads plugin settings, which materializes every plugin's settings
+	 * (and fires their filters) before `after_setup_theme`, tripping WordPress 6.7's
+	 * just-in-time translation notice through those filter callbacks.
+	 *
+	 * @since 1.25.0
+	 *
+	 * @return void
+	 */
+	private function initialize() {
+		if ( $this->_initialized ) {
+			return;
+		}
+
+		$this->_initialized = true;
 
 		/**
 		 * Changes path where logs are stored.
@@ -134,7 +158,7 @@ class Framework implements LoggerInterface {
 		$logger_handler = $this->get_logger_handler();
 
 		if ( $logger_handler ) {
-			$this->_logger = new MonologLogger( $logger_id );
+			$this->_logger = new MonologLogger( $this->_logger_id );
 
 			$this->_logger->pushHandler( $logger_handler );
 		}
@@ -279,6 +303,8 @@ class Framework implements LoggerInterface {
 	 * @return void
 	 */
 	public function close_handlers() {
+		$this->initialize();
+
 		if ( ! $this->_logger ) {
 			return;
 		}
@@ -298,6 +324,8 @@ class Framework implements LoggerInterface {
 	 * @return string
 	 */
 	public function get_log_file() {
+		$this->initialize();
+
 		$hash = substr( Encryption::get_instance()->hash( FoundationCore::ID ), 0, 10 );
 
 		return sprintf( '%s/%s/gravitykit-%s.log', WP_CONTENT_DIR, $this->_log_path, $hash );
@@ -311,6 +339,8 @@ class Framework implements LoggerInterface {
 	 * @return string
 	 */
 	public function get_log_path() {
+		$this->initialize();
+
 		return $this->_log_path;
 	}
 
@@ -370,6 +400,8 @@ class Framework implements LoggerInterface {
 	 * @return mixed|void
 	 */
 	public function __call( $name, array $arguments = [] ) {
+		$this->initialize();
+
 		// phpcs:disable WordPress.PHP.DevelopmentFunctions.error_log_error_log
 		/**
 		 * Allows logging of WP heartbeat requests.

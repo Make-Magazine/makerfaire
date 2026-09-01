@@ -223,7 +223,7 @@ class EDD {
 	 * @return object
 	 */
 	public function format_product_data( $product ) {
-		$licenses_data = LicenseManager::get_instance()->get_licenses_data();
+		$licenses_data = LicenseManager::get_instance()->get_all_licenses_data();
 
 		$download_link = self::pick_download_link( $product, $licenses_data );
 

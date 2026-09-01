@@ -5,9 +5,6 @@
  * Each task runs as a separate Action Scheduler action. After a task completes,
  * the next eligible task is scheduled as a new AS action. This lets AS handle
  * time budgeting, loopback chaining, failure detection, and memory monitoring.
- *
- * @license GPL-2.0-or-later
- * Modified using {@see https://github.com/BrianHenryIE/strauss}.
  */
 
 namespace GravityKit\GravityView\Foundation\Scheduler\Handlers;
@@ -377,6 +374,11 @@ class TaskExecutor {
 			// callbacks check Core::scheduler()->should_continue() and checkpoint via
 			// Core::scheduler()->checkpoint() when time runs low.
 			$task->set_meta( 'deadline', microtime( true ) + $this->get_task_time_budget() );
+
+			// should_continue() compares against this to tell the task's own
+			// growth from a process that simply started full; without it the
+			// memory check stays off.
+			$task->set_meta( 'memory_baseline', memory_get_usage( true ) );
 
 			// Write sentinel before execution. If the process dies, the sentinel
 			// persists and is detected on the next admin page load.

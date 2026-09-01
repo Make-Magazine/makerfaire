@@ -2,10 +2,7 @@
 /**
  * GravityKit Job Scheduler.
  * Main entry point for background job scheduling. Uses Action Scheduler under the hood.
- * *
- * @license GPL-2.0-or-later
- * Modified using {@see https://github.com/BrianHenryIE/strauss}.
- */
+ * */
 
 namespace GravityKit\GravityView\Foundation\Scheduler;
 
@@ -302,28 +299,183 @@ class JobScheduler {
 	}
 
 	/**
-	 * Checks whether a task callback should continue processing within its time budget.
+	 * Checks whether a task callback should keep working, or stop and checkpoint.
 	 *
-	 * Compares the current wall-clock time against the task's injected deadline.
-	 * Call this in loops or before expensive operations to support cooperative
-	 * time budgeting. Returns true (keep going) when no deadline is set, so
-	 * tasks work correctly even without time budget enforcement.
+	 * Call it in loops or before expensive operations. Returns true when no
+	 * deadline is set, so tasks work without time budget enforcement.
 	 *
 	 * @since 1.16.0
+	 * @since 1.29.0 Stops when memory runs low, not only when time does.
 	 *
-	 * @param array $args   The task args (deadline lives in `$args['_meta']['deadline']`).
+	 * @param array $args   The task args. The deadline and the memory baseline
+	 *                      live in `$args['_meta']`; the memory check only runs
+	 *                      when the executor recorded both there.
 	 * @param int   $margin Seconds before the deadline to stop. Default: 2.
 	 *
-	 * @return bool True if there is still time remaining.
+	 * @return bool True if the task should keep working.
 	 */
 	public static function should_continue( array $args, int $margin = 2 ): bool {
-		$deadline = $args[ Task::META_KEY ]['deadline'] ?? null;
+		$meta = $args[ Task::META_KEY ] ?? null;
+		$meta = is_array( $meta ) ? $meta : [];
 
+		$deadline = $meta['deadline'] ?? null;
+
+		// Only the executor sets a deadline, and only a task it started has a
+		// rerun for a stop to checkpoint into. Without one, saying stop would
+		// end the work rather than resume it.
 		if ( null === $deadline ) {
 			return true;
 		}
 
+		// Memory can run out long before the deadline (`SAVEQUERIES` alone can
+		// fill a request), and exhausting the limit abandons work a checkpoint
+		// would have saved.
+		$baseline = $meta['memory_baseline'] ?? null;
+
+		if ( is_numeric( $baseline ) && ! self::has_memory_headroom( max( 0.0, (float) $baseline ) ) ) {
+			return false;
+		}
+
 		return microtime( true ) < ( (float) $deadline - max( 0, $margin ) );
+	}
+
+	/**
+	 * Whether enough memory remains to keep working in this process.
+	 *
+	 * Reports headroom when the limit cannot be read, so a check that cannot
+	 * answer never stops work. An unlimited limit is an answer rather than a
+	 * silence, and is measured against a ceiling: nothing caps the process, but
+	 * the kernel still will, and it does not checkpoint first.
+	 *
+	 * @since 1.29.0
+	 *
+	 * @param float $baseline Bytes allocated when the task started.
+	 *
+	 * @return bool Whether the task should keep working.
+	 */
+	private static function has_memory_headroom( float $baseline ): bool {
+		$limit = self::memory_limit_bytes();
+
+		// 0 means the limit could not be read, which is not the same as knowing
+		// there is none: without a number there is nothing to be a share of.
+		if ( 0 === $limit ) {
+			return true;
+		}
+
+		if ( $limit < 0 ) {
+			/**
+			 * Modifies the ceiling a task is measured against when PHP has no
+			 * memory limit of its own.
+			 *
+			 * @since 1.29.0
+			 *
+			 * @param int $ceiling Bytes.
+			 */
+			$ceiling = 32 * 1024 * 1024 * 1024;
+
+			if ( function_exists( 'apply_filters' ) ) {
+				$ceiling = apply_filters( 'gk/foundation/scheduler/unlimited-memory-ceiling', $ceiling );
+			}
+
+			// A ceiling that is not a positive finite number turns the check
+			// off rather than becoming a limit every task instantly exceeds.
+			$ceiling = is_numeric( $ceiling ) ? (float) $ceiling : 0.0;
+
+			if ( ! is_finite( $ceiling ) || $ceiling <= 0 ) {
+				return true;
+			}
+
+			$limit = $ceiling >= (float) PHP_INT_MAX ? PHP_INT_MAX : (int) $ceiling;
+		}
+
+		/**
+		 * Modifies the share of the memory limit a task may use before it is
+		 * told to stop and checkpoint.
+		 *
+		 * Defaults to 0.9, matching Action Scheduler's own batch cutoff so a
+		 * stopped task is never rerun by the same already-full process.
+		 *
+		 * @since 1.29.0
+		 *
+		 * @param float $threshold Share of the limit, between 0 and 1 exclusive.
+		 */
+		$threshold = 0.9;
+
+		if ( function_exists( 'apply_filters' ) ) {
+			$filtered  = apply_filters( 'gk/foundation/scheduler/memory-threshold', $threshold );
+			$threshold = is_numeric( $filtered ) ? (float) $filtered : $threshold;
+		}
+
+		// Outside this range the check would stop every task immediately, or
+		// never stop one. NAN is rejected explicitly: every comparison against it
+		// is false, so it passes the range check and then makes the memory
+		// comparison below false too, stopping every task.
+		if ( ! is_finite( $threshold ) || $threshold <= 0 || $threshold >= 1 ) {
+			$threshold = 0.9;
+		}
+
+		$cutoff = $limit * $threshold;
+
+		// Stopping only helps when a rerun would start lower than the process
+		// is now. Past-the-cutoff before the task did anything means a fresh
+		// process starts there too; stopping would checkpoint in place until
+		// the no-progress watchdog fails the task, so let it run instead.
+		if ( $baseline >= $cutoff ) {
+			return true;
+		}
+
+		// `true` reports memory actually allocated from the system, which is
+		// what the limit is enforced against.
+		return memory_get_usage( true ) < $cutoff;
+	}
+
+	/**
+	 * Returns this process's memory limit in bytes.
+	 *
+	 * Resolves without WordPress loaded.
+	 *
+	 * @since 1.29.0
+	 *
+	 * @return int Bytes, -1 when PHP has no limit, or 0 when it cannot be read.
+	 */
+	private static function memory_limit_bytes(): int {
+		// Hosts can disable ini_get(), and this runs inside the loop every task
+		// calls, so an unguarded call would fatal every job on such a host.
+		if ( ! function_exists( 'ini_get' ) ) {
+			return 0;
+		}
+
+		$raw = trim( (string) ini_get( 'memory_limit' ) );
+
+		if ( '' === $raw ) {
+			return 0;
+		}
+
+		if ( '-1' === $raw ) {
+			return -1;
+		}
+
+		if ( function_exists( 'wp_convert_hr_to_bytes' ) ) {
+			return (int) wp_convert_hr_to_bytes( $raw );
+		}
+
+		// PHP's shorthand: a number with an optional G, M or K suffix.
+		$value = (int) $raw;
+		$unit  = strtolower( substr( $raw, -1 ) );
+
+		if ( 'g' === $unit ) {
+			return $value * 1024 * 1024 * 1024;
+		}
+
+		if ( 'm' === $unit ) {
+			return $value * 1024 * 1024;
+		}
+
+		if ( 'k' === $unit ) {
+			return $value * 1024;
+		}
+
+		return $value;
 	}
 
 	/**
@@ -365,12 +517,60 @@ class JobScheduler {
 	 * @since 1.16.0
 	 *
 	 * @param array $next_args Keys to merge into task args for the next execution.
-	 * @param array $job_data  Keys to merge into job-level shared data.
+	 * @param array $job_data  Job-level shared data; replaces the stored array.
 	 *
 	 * @return NextRunRules
 	 */
 	public static function checkpoint_with_data( array $next_args, array $job_data ): NextRunRules {
 		$rules = self::checkpoint( $next_args );
+		$rules->set_job_data( $job_data );
+
+		return $rules;
+	}
+
+	/**
+	 * Creates a NextRunRules object that marks the task as finished.
+	 *
+	 * Counterpart to `checkpoint()` for the completion path. The scheduler
+	 * treats a non-null return with rerun disabled as task completion, so
+	 * `return GravityKitFoundation::scheduler()->complete();` is equivalent
+	 * to `return null;` — use it as the base for `complete_with_data()` or
+	 * when chaining `set_next_task_args()` to pass args to the next task.
+	 *
+	 * Resolves through the winning Foundation instance so the returned object
+	 * lives in the same namespace as the Task that will consume it, even when
+	 * multiple vendored Foundation copies coexist. Never construct
+	 * `new NextRunRules()` directly in a plugin for this reason.
+	 *
+	 * @since 1.29.0
+	 *
+	 * @return NextRunRules
+	 */
+	public static function complete(): NextRunRules {
+		$rules = new NextRunRules();
+		$rules->rerun( false );
+
+		return $rules;
+	}
+
+	/**
+	 * Completes the task while storing job-level shared data.
+	 *
+	 * Use this when a task is done and needs to pass results to downstream
+	 * tasks (processed count, generated file path). The task is marked
+	 * completed — rerun stays disabled — and the array replaces the job-level
+	 * shared data, which the scheduler persists for the remaining tasks. To
+	 * keep existing keys, merge them in: `complete_with_data( array_merge(
+	 * (array) $job_data, [ 'file' => $path ] ) )`.
+	 *
+	 * @since 1.29.0
+	 *
+	 * @param array $job_data The job-level shared data to store.
+	 *
+	 * @return NextRunRules
+	 */
+	public static function complete_with_data( array $job_data ): NextRunRules {
+		$rules = self::complete();
 		$rules->set_job_data( $job_data );
 
 		return $rules;

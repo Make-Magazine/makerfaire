@@ -7,6 +7,7 @@ import { getFileType } from "./helpers/isImage";
 import Storage from './classes/Storage';
 import debounce from 'debounce';
 import sortHidddenGFInput from "./helpers/sortHidddenGFInput";
+import sortExistingFiles from "./helpers/sortExistingFiles";
 import loadWithBlueimp from "./helpers/loadWithBlueimp";
 import replaceFile from "./helpers/replaceFile";
 import triggerUpload from "./helpers/triggerUpload";
@@ -103,6 +104,15 @@ export default class GPFUPField {
 
 		this.removeGFPreview();
 
+		/**
+		 * Existing files (e.g. when editing an entry via the Entry Detail page or a Gravity Flow User Input step) are
+		 * rendered with Gravity Forms' own markup rather than GPFUP's file list. gform_post_render is not fired in all
+		 * of these contexts, so this is also initialized on ready. sortExistingFiles() is idempotent.
+		 */
+		if (this.enableSorting) {
+			$(() => sortExistingFiles(this.fieldId));
+		}
+
 		$(document).on('gform_post_render', async (e, formId) => {
 			if (formId != this.formId) {
 				return;
@@ -133,6 +143,10 @@ export default class GPFUPField {
 
 			/* Remove GF preview again in case it still exists. Needed for GPNF. */
 			this.removeGFPreview();
+
+			if (this.enableSorting) {
+				sortExistingFiles(this.fieldId);
+			}
 
 			this.addStoreSubscriptions();
 
@@ -208,7 +222,16 @@ export default class GPFUPField {
 		for ( const uploadedFile of uploadedFilesInField ) {
 			const file = new window.mOxie.File(null, new Blob(['asdf']));
 			file.name = uploadedFile.uploaded_filename;
-			file.id = uploadedFile.temp_filename?.match(/o_[a-z0-9]+(?=\.)/)?.[0];
+			/**
+			 * Prefer the Plupload file ID that Gravity Forms stores alongside the file. Parsing
+			 * it back out of the temp filename is a fallback for versions that don't include it,
+			 * and breaks whenever GF changes how temp filenames are composed.
+			 */
+			file.id = uploadedFile.id;
+
+			if (!file.id) {
+				file.id = uploadedFile.temp_filename?.match(/o_[a-z0-9]+(?=\.)/)?.[0];
+			}
 
 			if (!file.id && uploadedFile.temp_filename) {
 				file.id = uploadedFile.temp_filename;
@@ -364,12 +387,22 @@ export default class GPFUPField {
 					// Loop over files, set size and type, and set loading flag if URL is present to show spinner.
 					for (const file of this.up.files) {
 						const id = file.id ?? file.name;
+						const info = rehydrationInfo[id];
+
+						/**
+						 * A file we can't find rehydration info for still renders; throwing here
+						 * would abort the mount and leave every file in the field without a preview.
+						 */
+						if (!info) {
+							continue;
+						}
+
 						const previewBase64 = await parent.storage.getPreview(file.id);
 
-						file.size = rehydrationInfo[id].size;
-						file.type = rehydrationInfo[id].type;
+						file.size = info.size;
+						file.type = info.type;
 
-						if (previewBase64 || !rehydrationInfo[id].url) {
+						if (previewBase64 || !info.url) {
 							continue;
 						}
 
@@ -789,7 +822,24 @@ export default class GPFUPField {
 		});
 
 		this.Uploader.bind('FileUploaded', (up: Plupload.Uploader, file: any, result: any) => {
-			var response = JSON.parse(result.response);
+			var response;
+
+			try {
+				response = JSON.parse(result.response);
+			} catch (e) {
+				/**
+				 * An HTTP 200 can still carry a body that isn't clean JSON (e.g. stray PHP output prepended
+				 * to the envelope by another plugin/theme, an empty body, or a cache/WAF interstitial). Without
+				 * this guard, JSON.parse throws, the handler aborts before handleFileError, and the failed upload
+				 * is swallowed: no error is shown and the form is free to submit with the file missing. Route it
+				 * through the existing error path so it surfaces as a visible, retryable failure.
+				 */
+				this.handleFileError(up, file, {
+					code: 'unexpected_server_response',
+					message: this.strings.unexpected_server_response || 'Unexpected server response during upload. Please try again.',
+				});
+				return;
+			}
 
 			if(response.status == 'error'){
 				this.handleFileError(up, file, response.error);

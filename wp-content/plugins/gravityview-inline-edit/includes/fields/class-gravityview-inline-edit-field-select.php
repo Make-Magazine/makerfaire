@@ -6,12 +6,12 @@
  * @since 1.0
  */
 class GravityView_Inline_Edit_Field_Select extends GravityView_Inline_Edit_Field {
-	var $gv_field_name = 'select';
+	public $gv_field_name = 'select';
 
 	/** @var GF_Field_Select $gf_field */
-	var $inline_edit_type = 'select';
+	public $inline_edit_type = 'select';
 
-	var $set_value = true;
+	public $set_value = true;
 
 	/**
 	 * @since 1.4.4
@@ -32,7 +32,7 @@ class GravityView_Inline_Edit_Field_Select extends GravityView_Inline_Edit_Field
 			$placeholder_exists = false;
 
 			foreach ( $gf_field->choices as $choice ) {
-				if ( $choice['text'] === $gf_field->placeholder && $choice['value'] === null ) {
+				if ( rgar( $choice, 'text' ) === $gf_field->placeholder && null === rgar( $choice, 'value' ) ) {
 					$placeholder_exists = true;
 
 					break;
@@ -53,7 +53,7 @@ class GravityView_Inline_Edit_Field_Select extends GravityView_Inline_Edit_Field
 			}
 		}
 
-		$wrapper_attributes['data-source'] = json_encode( $gf_field->choices );
+		$wrapper_attributes['data-source'] = wp_json_encode( $gf_field->choices );
 
 		return parent::modify_inline_edit_attributes( $wrapper_attributes, $field_input_type, $field_id, $entry, $current_form, $gf_field );
 	}

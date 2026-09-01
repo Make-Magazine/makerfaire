@@ -1,62 +1,23 @@
 <?php
-
 /**
- * Endpoint responsible for firing off notifications.
- * @since $ver$
- * @todo Create a Notifier (Interface and GF implementation) that can be replaced to aid with unit tests.
+ * Backward-compatibility shim.
+ *
+ * This file was moved in GravityView 3.0. It is intentionally empty.
+ * GravityView classes and functions load automatically — you no longer
+ * need to require GravityView files in your code.
+ *
+ * @deprecated 3.0
  */
-final class GravityView_Notifications {
-	/**
-	 * Passes along notification triggers to {@see GFAPI::send_notifications()}
-	 *
-	 * @internal
-	 * @since $ver$
-	 *
-	 * @param int    $entry_id ID of entry being updated
-	 * @param string $event    Hook that triggered the notification. This is used as the key in the GF notifications
-	 *                         array.
-	 * @param array  $entry    The entry object.
-	 */
-	public static function send_notifications( int $entry_id = 0, string $event = '', array $entry = [] ): void {
-		if ( ! $entry ) {
-			$entry = GFAPI::get_entry( $entry_id );
-		}
 
-		if ( ! $entry || is_wp_error( $entry ) ) {
-			gravityview()->log->error( 'Entry not found at ID #{entry_id}', array( 'entry_id' => $entry_id ) );
+if ( ! defined( 'ABSPATH' ) ) {
+	die;
+}
 
-			return;
-		}
-
-		$form = GVCommon::get_form( $entry['form_id'] );
-
-		if ( ! $form ) {
-			gravityview()->log->error(
-				'Form not found at ID #{form_id} for entry #{entry_id}',
-				[
-					'form_id'  => $entry['form_id'],
-					'entry_id' => $entry_id
-				]
-			);
-
-			return;
-		}
-
-		$form = gf_apply_filters( [ 'gform_pre_render', $form['id'] ], $form, false, [] );
-
-		// Force synchronous delivery for GV notification events. GV notifications
-		// are triggered by admin actions (delete, approve) where the entry may no
-		// longer exist by the time a background request processes the queue.
-		$disable_async = static function () {
-			return false;
-		};
-
-		add_filter( 'gform_is_asynchronous_notifications_enabled', $disable_async );
-
-		try {
-			GFAPI::send_notifications( $form, $entry, $event );
-		} finally {
-			remove_filter( 'gform_is_asynchronous_notifications_enabled', $disable_async );
-		}
-	}
+if ( function_exists( '_deprecated_file' ) ) {
+	_deprecated_file(
+		plugin_basename( __FILE__ ),
+		'3.0',
+		'',
+		'This file was moved in GravityView 3.0 and will be removed in a future release. GravityView classes and functions load automatically — you no longer need to require them.'
+	);
 }

@@ -5,9 +5,6 @@
  * Provides health checks for queue runner, WP-Cron, loopback,
  * recovery, PHP limits, and last activity. Used by the Background
  * Jobs UI and WordPress Site Health.
- *
- * @license GPL-2.0-or-later
- * Modified using {@see https://github.com/BrianHenryIE/strauss}.
  */
 
 namespace GravityKit\GravityView\Foundation\Scheduler\Overview;
@@ -498,7 +495,7 @@ class Diagnostics {
 		}
 
 		if ( $as_time ) {
-			// translators: [time] is replaced with a human-readable time difference (e.g., "45 seconds").
+			// translators: [time] is replaced with a human-readable time difference (e.g., "3 minutes").
 			$parts[] = 'Action Scheduler: ' . strtr( __( '[time] ago', 'gk-gravityview' ), [ '[time]' => human_time_diff( $as_time ) ] );
 		} else {
 			$parts[] = 'Action Scheduler: ' . __( 'never', 'gk-gravityview' );

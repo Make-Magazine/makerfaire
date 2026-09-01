@@ -7,11 +7,11 @@
  */
 class GravityView_Inline_Edit_Field_Radio extends GravityView_Inline_Edit_Field {
 
-	var $gv_field_name = 'radio';
+	public $gv_field_name = 'radio';
 
-	var $inline_edit_type = 'radiolist';
+	public $inline_edit_type = 'radiolist';
 
-	var $set_value = true;
+	public $set_value = true;
 
 	/**
 	 * Add value and type inline attributes, and enqueue custom field scripts
@@ -34,7 +34,7 @@ class GravityView_Inline_Edit_Field_Radio extends GravityView_Inline_Edit_Field 
 			$is_other_choice = true;
 
 			foreach ( $gf_field->choices as $choice ) {
-				if ( $radio_field_value === $choice['value'] ) {
+				if ( $radio_field_value === rgar( $choice, 'value' ) ) {
 					$is_other_choice = false;
 				}
 			}
@@ -50,7 +50,7 @@ class GravityView_Inline_Edit_Field_Radio extends GravityView_Inline_Edit_Field 
 			$radio_field_value = GFCommon::get_other_choice_value( $gf_field );
 		}
 
-		$wrapper_attributes['data-source'] = json_encode( $gf_field->choices );
+		$wrapper_attributes['data-source'] = wp_json_encode( $gf_field->choices );
 
 		parent::add_field_template( $this->inline_edit_type, $gf_field->get_field_input( $current_form, $radio_field_value, $entry ), $current_form['id'], $field_id );
 

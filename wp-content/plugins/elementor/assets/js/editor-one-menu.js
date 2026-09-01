@@ -51,11 +51,12 @@ var EditorOneEventManager = exports.EditorOneEventManager = /*#__PURE__*/functio
   }, {
     key: "dispatchEvent",
     value: function dispatchEvent(eventName, payload) {
-      if (!this.isEventsManagerAvailable() || !this.canSendEvents()) {
-        return false;
-      }
       try {
-        return this.getEventsManager().dispatchEvent(eventName, payload);
+        if (!this.isEventsManagerAvailable() || !this.canSendEvents()) {
+          return false;
+        }
+        this.getEventsManager().dispatchEvent(eventName, payload);
+        return true;
       } catch (error) {
         return false;
       }
@@ -414,6 +415,51 @@ var EditorOneEventManager = exports.EditorOneEventManager = /*#__PURE__*/functio
         location_l1: this.toLowerSnake(config === null || config === void 0 || (_config$secondaryLoca13 = config.secondaryLocations) === null || _config$secondaryLoca13 === void 0 ? void 0 : _config$secondaryLoca13.wpDashThemeBuilder),
         interaction_description: 'core_user_clicked_theme_builder_menu_item'
       }));
+    }
+  }, {
+    key: "sendSidebarMenuItemClicked",
+    value: function sendSidebarMenuItemClicked(_ref8) {
+      var eventId = _ref8.eventId,
+        groupEventId = _ref8.groupEventId;
+      try {
+        var _config$windowNames, _config$triggers13, _config$targetTypes14, _config$interactionRe16, _config$locations12, _config$names13;
+        var config = this.getConfig();
+        var payload = this.createBasePayload({
+          window_name: config === null || config === void 0 || (_config$windowNames = config.windowNames) === null || _config$windowNames === void 0 ? void 0 : _config$windowNames.sidebarMenu,
+          interaction_type: this.toLowerSnake(config === null || config === void 0 || (_config$triggers13 = config.triggers) === null || _config$triggers13 === void 0 ? void 0 : _config$triggers13.click),
+          target_type: config === null || config === void 0 || (_config$targetTypes14 = config.targetTypes) === null || _config$targetTypes14 === void 0 ? void 0 : _config$targetTypes14.link,
+          target_name: eventId,
+          interaction_result: config === null || config === void 0 || (_config$interactionRe16 = config.interactionResults) === null || _config$interactionRe16 === void 0 ? void 0 : _config$interactionRe16.pageOpened,
+          target_location: this.toLowerSnake(config === null || config === void 0 || (_config$locations12 = config.locations) === null || _config$locations12 === void 0 ? void 0 : _config$locations12.sidebar)
+        });
+        if (groupEventId) {
+          payload.location_l1 = groupEventId;
+        }
+        return this.dispatchEvent(config === null || config === void 0 || (_config$names13 = config.names) === null || _config$names13 === void 0 || (_config$names13 = _config$names13.editorOne) === null || _config$names13 === void 0 ? void 0 : _config$names13.sidebarMenuItemClicked, payload);
+      } catch (error) {
+        return false;
+      }
+    }
+  }, {
+    key: "sendSidebarMenuGroupToggled",
+    value: function sendSidebarMenuGroupToggled(_ref9) {
+      var eventId = _ref9.eventId,
+        isExpanded = _ref9.isExpanded;
+      try {
+        var _config$interactionRe17, _config$interactionRe18, _config$names14, _config$windowNames2, _config$triggers14, _config$targetTypes15, _config$locations13;
+        var config = this.getConfig();
+        var interactionResult = isExpanded ? config === null || config === void 0 || (_config$interactionRe17 = config.interactionResults) === null || _config$interactionRe17 === void 0 ? void 0 : _config$interactionRe17.expanded : config === null || config === void 0 || (_config$interactionRe18 = config.interactionResults) === null || _config$interactionRe18 === void 0 ? void 0 : _config$interactionRe18.collapsed;
+        return this.dispatchEvent(config === null || config === void 0 || (_config$names14 = config.names) === null || _config$names14 === void 0 || (_config$names14 = _config$names14.editorOne) === null || _config$names14 === void 0 ? void 0 : _config$names14.sidebarMenuGroupToggled, this.createBasePayload({
+          window_name: config === null || config === void 0 || (_config$windowNames2 = config.windowNames) === null || _config$windowNames2 === void 0 ? void 0 : _config$windowNames2.sidebarMenu,
+          interaction_type: this.toLowerSnake(config === null || config === void 0 || (_config$triggers14 = config.triggers) === null || _config$triggers14 === void 0 ? void 0 : _config$triggers14.click),
+          target_type: config === null || config === void 0 || (_config$targetTypes15 = config.targetTypes) === null || _config$targetTypes15 === void 0 ? void 0 : _config$targetTypes15.toggle,
+          target_name: eventId,
+          interaction_result: interactionResult,
+          target_location: this.toLowerSnake(config === null || config === void 0 || (_config$locations13 = config.locations) === null || _config$locations13 === void 0 ? void 0 : _config$locations13.sidebar)
+        }));
+      } catch (error) {
+        return false;
+      }
     }
   }]);
 }();

@@ -1,9 +1,4 @@
 <?php
-/**
- * @license MIT
- *
- * Modified using {@see https://github.com/BrianHenryIE/strauss}.
- */
 
 namespace GravityKit\GravityView\QueryFilters\Repository;
 
@@ -54,14 +49,16 @@ final class DefaultRepository implements FormRepository, UserRepository {
 			array_unshift(
 				$filter['values'],
 				[
-					'value' => '{user:ID}',
-					'text'  => esc_html__( 'Currently Logged-in User', 'gk-query-filters', 'gk-gravityview' ),
+					'value'  => '{user:ID}',
+					'text'   => esc_html__( 'Currently Logged-in User', 'gk-query-filters', 'gk-gravityview' ),
+					'pinned' => true,
 				],
 				[
-					'value' => '{user:ID:disabled_admin}',
-					'text'  => esc_html__(
+					'value'  => '{user:ID:disabled_admin}',
+					'text'   => esc_html__(
 						'Currently Logged-in User (Disabled for Administrators)',
 						'gk-query-filters', 'gk-gravityview' ),
+					'pinned' => true,
 				]
 			);
 
@@ -486,22 +483,24 @@ final class DefaultRepository implements FormRepository, UserRepository {
 
 				$current_user_filters = [
 					[
-						'text'  => __( 'Currently Logged-in User (Disabled for Administrators)', 'gk-query-filters', 'gk-gravityview' ),
-						'value' => 'created_by_or_admin',
+						'text'   => __( 'Currently Logged-in User (Disabled for Administrators)', 'gk-query-filters', 'gk-gravityview' ),
+						'value'  => 'created_by_or_admin',
+						'pinned' => true,
 					],
 					[
-						'text'  => __( 'Currently Logged-in User', 'gk-query-filters', 'gk-gravityview' ),
-						'value' => 'created_by',
+						'text'   => __( 'Currently Logged-in User', 'gk-query-filters', 'gk-gravityview' ),
+						'value'  => 'created_by',
+						'pinned' => true,
 					],
 				];
 
 				foreach ( $current_user_filters as $user_filter ) {
-					// Add to the beginning on the value options
 					array_unshift( $filter['values'], $user_filter );
 				}
 
-				$filter['operators'][] = 'isempty';
-				$filter['operators'][] = 'isnotempty';
+				$filter['auto_endpoint'] = 'users';
+				$filter['operators'][]   = 'isempty';
+				$filter['operators'][]   = 'isnotempty';
 			}
 
 			// Process filter operators (and nested filters recursively).

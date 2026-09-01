@@ -3,9 +3,6 @@
  * Network-wide job action service.
  *
  * Wraps mutations with switch_to_blog context switching for multisite.
- *
- * @license GPL-2.0-or-later
- * Modified using {@see https://github.com/BrianHenryIE/strauss}.
  */
 
 namespace GravityKit\GravityView\Foundation\Scheduler\Overview;

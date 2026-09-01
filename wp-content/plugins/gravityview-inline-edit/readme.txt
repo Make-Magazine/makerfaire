@@ -20,6 +20,43 @@ Inline Editing is a powerful way to quickly make changes to a form entry without
 
 == Changelog ==
 
+= 2.11.0 on August 6, 2026 =
+
+This release adds a rich text editor for inline editing, restores Gravity Forms 3.0 compatibility for phone and masked text fields, and strengthens data handling and security.
+
+#### 🚀 Added
+* A rich text editor for inline editing. Paragraph fields that use the rich text editor are now edited in place with a formatting toolbar (bold, italic, underline, lists, quotes, and links) instead of showing HTML tags, and your formatting is saved exactly as you see it. Submit with the Update button or Cmd/Ctrl+Enter, and cancel with Esc.
+
+#### ✨ Improved
+* Improved data validation and security when saving edited fields.
+* An entry can no longer be edited through a form it does not belong to.
+* Strengthened permission checks for the inline file-upload action.
+* Inline uploads now honor the field's allowed file types, rejecting a disallowed type with a clear message.
+* Better compatibility with PHP 8.0, 8.4, and newer versions.
+* Files larger than the field's maximum size are now rejected, with a clear message.
+* More detailed error logging when number field calculations fail to update.
+* Deleted or unavailable Views no longer cause fatal errors.
+
+#### 🐛 Fixed
+* List field values were not showing correctly when editing, resulting in empty or incorrect data.
+* Uploaded files could be saved to the wrong directory when multiple uploads happened on the same page.
+* Button and toggle text with special characters (like quotes or ampersands) could display incorrectly.
+* Number fields with calculations stopped updating when a single calculation failed.
+* The User Registration Add-On integration was triggering errors before verifying the Add-On was active.
+* PHP notices when editing checkbox, select, survey, and radio fields with missing choice values.
+* Product field errors when the field data was unavailable.
+* Entry Creator, Source URL, Date Created and Entry Tags could not be edited inline.
+* An inline edit that failed to save could still appear to have saved, showing a value that was not stored.
+* Clearing a file upload field that held multiple files removed only the first file, leaving the others on the server.
+* Phone fields set to Gravity Forms 3.0's "International (formatted)" format could not be edited inline: every edit was rejected and the entry kept its old number. This is the format Gravity Forms 3.0 gives a new phone field, and the one it falls back to for a phone field with no format of its own.
+* Text fields with an input mask rejected every inline edit on Gravity Forms 3.0, which began checking the mask when the entry is saved. The mask's punctuation is now filled in for you, so typing `5559876543` into a `(999) 999-9999` field stores `(555) 987-6543`. A value the mask cannot hold is still refused, with Gravity Forms naming the format it expects.
+* The "Toggle Inline Edit" button never appeared on an entries view with no rows, such as a search that matched nothing or an empty Trash filter.
+
+#### 💻 Developer Updates
+* Inline edit saves now use `GF_Field::get_value_save_input()` on Gravity Forms 3.0+ instead of the deprecated `GFFormsModel::prepare_value()`.
+* Inline edit saves for number, product, and address fields now use `GF_Field::get_value_entry_detail()` instead of `GFCommon::get_lead_field_display()`, deprecated in Gravity Forms 3.0.
+* Now uses the current GravityView hooks instead of ones deprecated in GravityView 2.55.
+
 = 2.10.0 on June 4, 2026 =
 
 This release includes internal component updates and bug fixes for improved stability and compatibility, and fixes a PHP warning.

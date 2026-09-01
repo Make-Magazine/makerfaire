@@ -1,19 +1,23 @@
 <?php
-namespace GV;
+/**
+ * Backward-compatibility shim.
+ *
+ * This file was moved in GravityView 3.0. It is intentionally empty.
+ * GravityView classes and functions load automatically. You no longer
+ * need to require GravityView files in your code.
+ *
+ * @deprecated 3.0
+ */
 
-/** If this file is called directly, abort. */
-if ( ! defined( 'GRAVITYVIEW_DIR' ) ) {
-	die();
+if ( ! defined( 'ABSPATH' ) ) {
+	die;
 }
 
-/**
- * The Field HTML Template class .
- *
- * Attached to a \GV\Field and used by a \GV\Field_Renderer.
- */
-class Field_HTML_Template extends Field_Template {
-	/**
-	 * @var string The template slug to be loaded (like "table", "list", "plain")
-	 */
-	public static $slug = 'html';
+if ( function_exists( '_deprecated_file' ) ) {
+	_deprecated_file(
+		plugin_basename( __FILE__ ),
+		'3.0',
+		'',
+		'This file was moved in GravityView 3.0 and will be removed in a future release. GravityView classes and functions load automatically. You no longer need to require them.'
+	);
 }

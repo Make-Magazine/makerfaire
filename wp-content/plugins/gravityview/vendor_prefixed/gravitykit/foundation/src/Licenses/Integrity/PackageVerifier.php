@@ -1,9 +1,4 @@
 <?php
-/**
- * @license GPL-2.0-or-later
- *
- * Modified using {@see https://github.com/BrianHenryIE/strauss}.
- */
 
 namespace GravityKit\GravityView\Foundation\Licenses\Integrity;
 
@@ -87,6 +82,33 @@ final class PackageVerifier {
 	 * @var string|null
 	 */
 	public static $active_channel_override = null;
+
+	/**
+	 * Integrity block for a build the user picked from the build browser.
+	 *
+	 * A one-off build is not on any channel, so the product cache holds no signature for it. This
+	 * carries the store's own signed record for exactly one install. Set by ProductManager
+	 * immediately before triggering the upgrader, cleared immediately after.
+	 *
+	 * @since 1.31.0
+	 *
+	 * @var array|null
+	 */
+	public static $selected_build = null;
+
+	/**
+	 * Whether the current download is a build the user deliberately picked to install.
+	 *
+	 * Rollback protection exists to stop an update response walking a site backward. Picking an
+	 * earlier release in the admin, behind a confirmation, is the opposite: the site owner asked
+	 * for it. Like $is_channel_switch, this is set in-process around the upgrade call and is never
+	 * derived from a response body.
+	 *
+	 * @since 1.31.0
+	 *
+	 * @var bool
+	 */
+	public static $is_selected_build_install = false;
 
 	/**
 	 * Product ID expected for installs started through ProductManager.
@@ -298,6 +320,22 @@ final class PackageVerifier {
 			return $reply;
 		}
 
+		if ( self::product_identity_conflict( $package, $hook_extra ) ) {
+			self::log(
+				'error',
+				'[product_identity_mismatch] action=blocked',
+				[
+					'package' => $package,
+					'plugin'  => $hook_extra['plugin'] ?? '',
+				]
+			);
+
+			return new WP_Error(
+				'gk_product_identity_mismatch',
+				esc_html__( 'This download is for a different GravityKit product than the one being installed. Retrying will not help — please contact GravityKit support.', 'gk-gravityview' )
+			);
+		}
+
 		if ( ! SignatureVerifier::is_available() ) {
 			self::log( 'error', '[sodium_unavailable] action=blocked' );
 
@@ -351,9 +389,11 @@ final class PackageVerifier {
 		$sha256_hex = hash_file( 'sha256', $temp_file );
 
 		if ( $sha256_hex !== $signature_data['sha256'] ) {
+			// Cached signature may lag a republished build; try a one-shot refresh-and-retry before
+			// failing. Only this path self-heals — tamper/revocation/missing below stay loud.
 			self::log(
-				'error',
-				'[hash_mismatch] action=blocked',
+				'warning',
+				'[hash_mismatch] action=self_heal_attempt',
 				[
 					'expected' => $signature_data['sha256'],
 					'actual'   => $sha256_hex,
@@ -361,13 +401,31 @@ final class PackageVerifier {
 				]
 			);
 
-			// phpcs:ignore WordPress.PHP.NoSilencedErrors.Discouraged -- Best-effort cleanup; may already be gone.
-			@unlink( $temp_file );
+			$healed = self::self_heal_hash_mismatch( $package, $hook_extra, (string) $sha256_hex, $signature_data['sha256'], $temp_file );
 
-			return new WP_Error(
-				'gk_signature_hash_mismatch',
-				esc_html__( 'This download does not match what we published. Often a network glitch — retry once. If it fails again, stop and contact GravityKit support.', 'gk-gravityview' )
-			);
+			if ( ! $healed ) {
+				self::log(
+					'error',
+					'[hash_mismatch] action=blocked',
+					[
+						'expected' => $signature_data['sha256'],
+						'actual'   => $sha256_hex,
+						'package'  => $package,
+					]
+				);
+
+				// phpcs:ignore WordPress.PHP.NoSilencedErrors.Discouraged -- Best-effort cleanup; may already be gone.
+				@unlink( $temp_file );
+
+				return new WP_Error(
+					'gk_signature_hash_mismatch',
+					esc_html__( 'This download does not match what we published. Often a network glitch — retry once. If it fails again, stop and contact GravityKit support.', 'gk-gravityview' )
+				);
+			}
+
+			$signature_data = $healed['signature_data'];
+			$temp_file      = $healed['temp_file'];
+			$sha256_hex     = $healed['sha256'];
 		}
 
 		if ( self::is_key_revoked( $signature_data['signing_key_id'] ) ) {
@@ -470,7 +528,45 @@ final class PackageVerifier {
 					$incoming_version = $update->new_version ?? $update->version ?? '';
 				}
 
-				if ( $installed_version && $incoming_version && self::is_rollback( $incoming_version, $installed_version, self::$is_channel_switch ) ) {
+				// The transient's version is advertised by whoever answered the update check, so a
+				// downgrade can be labelled as an upgrade. The signed filename cannot be, and it names
+				// the version actually being installed, so it wins outright wherever it is available.
+				$signed_version = self::version_from_signed_filename( (string) $signature_data['filename'] );
+
+				if ( '' !== $signed_version ) {
+					$incoming_version = $signed_version;
+				}
+
+				// A stable recovery offered by EDD for a withdrawn channel is an intentional transition,
+				// not a downgrade; it arrives through the normal update path, which sets no switch flag.
+				//
+				// The transient's flag alone is not enough to authorize waiving rollback protection --
+				// it is data, and whoever answers the update check influences it. Require the locally
+				// recorded channel-exit to agree, so the waiver rests on something this site wrote
+				// itself when its channel was withdrawn.
+				$is_stable_recovery = is_object( $update )
+					&& ! empty( $update->gk_stable_recovery )
+					&& ! empty( $update->gk_product_text_domain )
+					&& ChannelManager::get_instance()->is_exit_version(
+						(string) $update->gk_product_text_domain,
+						$installed_version
+					);
+
+				// A channel may legitimately move a user backward -- a bad build reverted, or a
+				// cross-channel switch to a lower track. EDD offers those; without this the verifier
+				// refused them and the offer was re-made forever. Corroborated against the locally
+				// stored channel preference, which the update response cannot set.
+				$is_channel_update = is_object( $update )
+					&& ! empty( $update->gk_channel_update )
+					&& ! empty( $update->gk_product_text_domain )
+					&& (bool) ChannelManager::get_instance()->get_channel( (string) $update->gk_product_text_domain );
+
+				$is_authorized_transition = self::$is_channel_switch
+					|| self::$is_selected_build_install
+					|| $is_stable_recovery
+					|| $is_channel_update;
+
+				if ( $installed_version && $incoming_version && self::is_rollback( $incoming_version, $installed_version, $is_authorized_transition ) ) {
 					self::log(
 						'warning',
 						'[rollback_blocked] action=blocked',
@@ -539,6 +635,120 @@ final class PackageVerifier {
 	}
 
 	/**
+	 * Returns whether the product the download URL claims to be disagrees with the product actually
+	 * being installed.
+	 *
+	 * The product ID travels in the URL path as an unsigned, merely base64-encoded token payload, so
+	 * anything able to choose the package URL can point a genuine, correctly-signed GravityKit
+	 * download at a different product — substituting one product's build for another, or an older
+	 * release. Every identity we hold must agree before the download is trusted.
+	 *
+	 * @since 1.28.0
+	 *
+	 * @param string $package    Download URL.
+	 * @param array  $hook_extra Upgrader extra arguments.
+	 *
+	 * @return bool True when the identities conflict and the download must be rejected.
+	 */
+	private static function product_identity_conflict( string $package, array $hook_extra ): bool {
+		$claimed_by_url = self::extract_product_id_from_url( $package );
+		$expected       = null !== self::$expected_product_id ? (int) self::$expected_product_id : null;
+
+		// A caller that told us which product it is installing outranks the URL's own claim.
+		if ( null !== $claimed_by_url && null !== $expected && $claimed_by_url !== $expected ) {
+			return true;
+		}
+
+		$plugin_path = isset( $hook_extra['plugin'] ) && is_string( $hook_extra['plugin'] ) ? $hook_extra['plugin'] : '';
+
+		if ( '' === $plugin_path ) {
+			return false;
+		}
+
+		// resolve_signature_data() falls back to the update transient's product ID, which is populated
+		// from the same unauthenticated response, so it has to be reconciled here too.
+		$claimed = $claimed_by_url ?? $expected ?? self::product_id_from_transient( $plugin_path );
+
+		if ( null === $claimed ) {
+			return false;
+		}
+
+		try {
+			$products = ProductManager::get_instance()->get_products_data();
+		} catch ( Throwable $e ) {
+			return false;
+		}
+
+		$matches = 0;
+
+		foreach ( $products as $product ) {
+			if ( (string) ( $product['path'] ?? '' ) === $plugin_path ) {
+				++$matches;
+
+				// WordPress tells us which plugin it is updating; the claimed product must be that one.
+				if ( (int) ( $product['id'] ?? 0 ) !== $claimed ) {
+					return true;
+				}
+			}
+		}
+
+		// Paths come from the catalog, so a forged response could map several products onto the target
+		// plugin and satisfy the check with whichever one it wants. Ambiguity is treated as conflict.
+		return $matches > 1;
+	}
+
+	/**
+	 * Returns the product ID the update transient advertises for a plugin, or null.
+	 *
+	 * @since 1.28.0
+	 *
+	 * @param string $plugin_path Plugin path relative to the plugins directory.
+	 *
+	 * @return int|null
+	 */
+	private static function product_id_from_transient( string $plugin_path ): ?int {
+		$transient = get_site_transient( 'update_plugins' );
+		$update    = is_object( $transient ) ? ( $transient->response[ $plugin_path ] ?? null ) : null;
+
+		// Core sets `id` to `w.org/plugins/{slug}` for wp.org-hosted plugins (some of ours are listed
+		// there too). That is not a product ID, and casting it would yield 0 and read as a mismatch.
+		if ( ! is_object( $update ) || ! isset( $update->id ) || ! is_numeric( $update->id ) ) {
+			return null;
+		}
+
+		$product_id = (int) $update->id;
+
+		return $product_id > 0 ? $product_id : null;
+	}
+
+	/**
+	 * Returns the version encoded in a signed package filename, or an empty string.
+	 *
+	 * The filename is covered by the package signature, so the version it carries cannot be forged,
+	 * unlike the version advertised in the update transient.
+	 *
+	 * A trailing build hash (`…-3.0.2-beefc6467.zip`) is discarded, because `version_compare()` sorts
+	 * a suffixed string below the bare version and a dev build of the installed release would then
+	 * read as a downgrade. A pre-release identifier (`…-3.0.0-beta.2.zip`) is kept, because there it
+	 * sorts below the stable release correctly and dropping it would let a beta pass as the stable.
+	 *
+	 * @since 1.28.0
+	 *
+	 * @param string $filename Signed package filename.
+	 *
+	 * @return string
+	 */
+	private static function version_from_signed_filename( string $filename ): string {
+		$identifiers = implode( '|', array_map( 'preg_quote', ChannelManager::DEFAULT_PRERELEASE_IDENTIFIERS ) );
+
+		if ( ! preg_match( '/-(\d+(?:\.\d+)+(?:-(?:' . $identifiers . ')[0-9a-z.]*)?)(?:-[0-9a-f]{7,40})?\.zip$/i', $filename, $matches ) ) {
+			return '';
+		}
+
+		return $matches[1];
+	}
+
+	/**
 	 * Returns whether this download belongs to a GravityKit-managed product even when its URL
 	 * host is not accepted. Used to fail closed if a Store/API/update path supplies a non-GK host.
 	 *
@@ -571,18 +781,83 @@ final class PackageVerifier {
 		}
 
 		foreach ( $products as $product ) {
-			// Hidden third-party entries are catalog records for dependency resolution only; their
-			// updates flow through the publisher's host, so a non-GK URL is the expected case.
-			if ( ! empty( $product['hidden'] ) && ! empty( $product['third_party'] ) ) {
+			if ( (string) ( $product['path'] ?? '' ) !== $plugin_path ) {
 				continue;
 			}
 
-			if ( (string) ( $product['path'] ?? '' ) === $plugin_path ) {
+			// Hidden third-party entries update through the publisher's own host, so a non-GK URL is
+			// expected for them. Both flags come from the unauthenticated products response, so honour
+			// them only when the installed plugin does not present itself as ours.
+			// Unknown authorship keeps the third-party exemption: get_plugins() is an admin-only
+			// include, and the attack this guards against targets an installed product of ours, which
+			// always resolves positively.
+			if ( ! empty( $product['hidden'] ) && ! empty( $product['third_party'] ) && true !== self::plugin_declares_gravitykit_author( $plugin_path ) ) {
+				continue;
+			}
+
+			return true;
+		}
+
+		return false;
+	}
+
+	/**
+	 * Returns whether the installed plugin's own header declares GravityKit as its author.
+	 *
+	 * Read from the plugin on disk rather than the products response so a forged catalog cannot
+	 * disown one of our products to escape verification. Only the author fields are consulted: a
+	 * third-party add-on legitimately names GravityView in its title or Plugin URI, and treating that
+	 * as ours would block its publisher's own updates.
+	 *
+	 * @since 1.28.0
+	 *
+	 * @param string $plugin_path Plugin path relative to the plugins directory.
+	 *
+	 * @return bool|null True if ours, false if another publisher's, null when it cannot be determined.
+	 */
+	private static function plugin_declares_gravitykit_author( string $plugin_path ): ?bool {
+		if ( ! function_exists( 'get_plugins' ) ) {
+			return null;
+		}
+
+		$plugin = get_plugins()[ $plugin_path ] ?? null;
+
+		if ( ! is_array( $plugin ) ) {
+			return null;
+		}
+
+		$author = strtolower( ( $plugin['Author'] ?? '' ) . ' ' . ( $plugin['AuthorURI'] ?? '' ) );
+
+		// `katz web services` covers pre-2016 GravityView headers, which predate the GravityKit name.
+		foreach ( [ 'gravitykit', 'gravityview.co', 'katz web services' ] as $marker ) {
+			if ( false !== strpos( $author, $marker ) ) {
 				return true;
 			}
 		}
 
 		return false;
+	}
+
+	/**
+	 * Checks whether a version's suffix is a bare commit hash, which carries no ordering.
+	 *
+	 * `3.2.0-b89efabaa` qualifies. `3.2.0-gov.2` and `3.2.0-beta.1` do not, because a counted suffix
+	 * orders correctly and must keep being compared.
+	 *
+	 * An all-digit suffix is NOT excluded. About 1.4% of git short hashes are all digits, and
+	 * excluding them refused every subsequent update on a hash-served channel for those builds. The
+	 * build-number case it was meant to protect cannot reach here anyway: a 7+ character suffix is
+	 * stripped from the incoming version by `version_from_signed_filename()`, so no ordering
+	 * survives to be compared.
+	 *
+	 * @since 1.31.0
+	 *
+	 * @param string $version Version string to inspect.
+	 *
+	 * @return bool
+	 */
+	private static function has_commit_hash_suffix( string $version ): bool {
+		return (bool) preg_match( '/^v?\d+(\.\d+)*-[0-9a-f]{7,40}$/i', trim( $version ) );
 	}
 
 	/**
@@ -608,8 +883,28 @@ final class PackageVerifier {
 			return false;
 		}
 
-		// Leaving a pre-release for a stable version is a channel transition, not a rollback.
+		// Leaving a pre-release for a stable version is a channel transition, not a rollback. An older
+		// stable replacing a pre-release is indistinguishable from `superseded_by` doing the same, so
+		// version arithmetic cannot narrow this; only a signed version could.
 		if ( ChannelManager::is_prerelease_version( $installed_version ) && ! ChannelManager::is_prerelease_version( $incoming_version ) ) {
+			return false;
+		}
+
+		// Commit-hash suffixes sort alphabetically, so `3.2.0-a1b2c3d` reads as older than
+		// `3.2.0-z9y8x7w` for no reason connected to when either was built. With identical base
+		// versions there is no ordering to appeal to, and the signature verified above is what
+		// establishes provenance.
+		//
+		// The INSTALLED side is what must be hash-shaped: `version_from_signed_filename()` strips the
+		// trailing hash, so on the real update path the incoming version arrives bare (`3.2.0`), and
+		// requiring a hash on both sides meant this never fired. A bare incoming equal to the
+		// installed base is the same build track. A counted suffix like `-gov.2`, or an all-digit
+		// suffix that is really a build number, still orders and stays blocked.
+		$same_base = ChannelManager::strip_build_suffix( $incoming_version ) === ChannelManager::strip_build_suffix( $installed_version );
+
+		if ( $same_base && self::has_commit_hash_suffix( $installed_version )
+			&& ( self::has_commit_hash_suffix( $incoming_version )
+				|| ChannelManager::strip_build_suffix( $installed_version ) === $incoming_version ) ) {
 			return false;
 		}
 
@@ -627,6 +922,18 @@ final class PackageVerifier {
 	 * @return array|null Keys: signature, signing_key_id, sha256, filename, slug. Null if not resolvable.
 	 */
 	private static function resolve_signature_data( string $package, array $hook_extra ): ?array {
+		// A build picked from the build browser is not on any channel, so the product cache cannot
+		// describe it. The store's signed record for that one build stands in.
+		if ( is_array( self::$selected_build ) && ! empty( self::$selected_build['signature'] ) && ! empty( self::$selected_build['filename'] ) ) {
+			return [
+				'signature'      => (string) self::$selected_build['signature'],
+				'signing_key_id' => (string) ( self::$selected_build['signing_key_id'] ?? '' ),
+				'sha256'         => (string) ( self::$selected_build['sha256'] ?? '' ),
+				'filename'       => (string) self::$selected_build['filename'],
+				'slug'           => (string) ( self::$selected_build['slug'] ?? '' ),
+			];
+		}
+
 		$product_id = self::extract_product_id_from_url( $package );
 
 		if ( ! $product_id ) {
@@ -692,6 +999,86 @@ final class PackageVerifier {
 		}
 
 		return null;
+	}
+
+	/**
+	 * Forces one products refetch (as the Licenses UI "Refresh" does) and re-checks the downloaded
+	 * file against the fresh signature, re-downloading once only if the file on disk still mismatches.
+	 *
+	 * Heals the common case where the cached signature lags a republished build. One-shot, no
+	 * throttle: the path is update-gated and a stale cache must recover the moment the store is correct.
+	 *
+	 * Cross-channel false-heal safety relies on resolve_signature_data() being pinned to a single
+	 * channel: it never scans channels for any sha that happens to match the bytes.
+	 *
+	 * @since 1.25.0
+	 *
+	 * @param string $package        The package URL.
+	 * @param array  $hook_extra     Upgrader extra arguments.
+	 * @param string $downloaded_sha sha256 of the file already downloaded to $temp_file.
+	 * @param string $expected_sha   The stale cached sha256 the download just failed against.
+	 * @param string $temp_file      Path to the already-downloaded file.
+	 *
+	 * @return array{signature_data: array, temp_file: string, sha256: string}|null Healed context, or null.
+	 */
+	private static function self_heal_hash_mismatch( string $package, array $hook_extra, string $downloaded_sha, string $expected_sha, string $temp_file ): ?array {
+		try {
+			ProductManager::get_instance()->get_products_data( [ 'skip_remote_cache' => true ] );
+		} catch ( Throwable $e ) {
+			self::log( 'error', '[self_heal] action=refresh_failed reason=' . $e->getMessage() );
+
+			return null;
+		}
+
+		$fresh = self::resolve_signature_data( $package, $hook_extra );
+
+		if ( ! $fresh || empty( $fresh['sha256'] ) ) {
+			return null;
+		}
+
+		if ( $downloaded_sha === $fresh['sha256'] ) {
+			self::log( 'warning', '[self_heal] action=recovered mode=rehash', [ 'sha256' => $downloaded_sha ] );
+
+			return [
+				'signature_data' => $fresh,
+				'temp_file'      => $temp_file,
+				'sha256'         => $downloaded_sha,
+			];
+		}
+
+		// The refresh did not move the advertised sha (store unchanged, or it degraded to stale
+		// cache under lock contention). Re-downloading from the same URL cannot help — fail now.
+		if ( $expected_sha === $fresh['sha256'] ) {
+			self::log( 'warning', '[self_heal] action=refresh_noop sha256=' . $fresh['sha256'] );
+
+			return null;
+		}
+
+		$retry_file = download_url( $package );
+
+		if ( is_wp_error( $retry_file ) || ! is_string( $retry_file ) || ! is_file( $retry_file ) ) {
+			return null;
+		}
+
+		$retry_sha = hash_file( 'sha256', $retry_file );
+
+		if ( $retry_sha !== $fresh['sha256'] ) {
+			// phpcs:ignore WordPress.PHP.NoSilencedErrors.Discouraged -- Best-effort cleanup; may already be gone.
+			@unlink( $retry_file );
+
+			return null;
+		}
+
+		// phpcs:ignore WordPress.PHP.NoSilencedErrors.Discouraged -- Best-effort cleanup; may already be gone.
+		@unlink( $temp_file );
+
+		self::log( 'warning', '[self_heal] action=recovered mode=redownload', [ 'sha256' => $retry_sha ] );
+
+		return [
+			'signature_data' => $fresh,
+			'temp_file'      => $retry_file,
+			'sha256'         => $retry_sha,
+		];
 	}
 
 	/**

@@ -11,7 +11,9 @@ if ( ! isset( $gravityview ) || empty( $gravityview->template ) ) {
 	return;
 }
 
-$entry          = $gravityview->entry->as_entry();
+// Notes belong to a single entry, so a joined View has to use the entry from the field's own
+// form rather than whichever one Multi_Entry happens to hold first.
+$entry          = $gravityview->entry->from_field( $gravityview->field, $gravityview->entry )->as_entry();
 $field_settings = $gravityview->field->as_configuration();
 
 if ( ! class_exists( 'GravityView_Entry_Notes' ) ) {
@@ -22,6 +24,27 @@ $visibility_settings   = empty( $field_settings['notes'] ) ? array() : $field_se
 $show_notes_logged_out = ( ! empty( $visibility_settings['view'] ) && ! empty( $visibility_settings['view_loggedout'] ) );
 
 if ( ! GVCommon::has_cap( array( 'gravityview_view_entry_notes', 'gravityview_add_entry_notes', 'gravityview_delete_entry_notes' ) ) && ! $show_notes_logged_out ) {
+	return;
+}
+
+$notes_output = \GV\Utils::get( $field_settings, 'notes_output', 'notes' );
+
+// Summary modes are plain text, so they survive CSV and spreadsheet exports.
+if ( in_array( $notes_output, GravityView_Field_Notes::get_summary_modes(), true ) ) {
+	if ( ! GravityView_Field_Notes::can_view_notes( $field_settings ) ) {
+		return;
+	}
+
+	// Merge tags resolve against the form the entry belongs to, which in a unioned View is
+	// not the View's primary form.
+	$entry_form = GVCommon::get_form( \GV\Utils::get( $entry, 'form_id', 0 ) );
+
+	if ( ! $entry_form ) {
+		$entry_form = $gravityview->view->form ? $gravityview->view->form->form : [];
+	}
+
+	echo esc_html( GravityView_Field_Notes::get_summary_output( GravityView_Field_Notes::get_visible_notes( $entry['id'], $field_settings ), $notes_output, $field_settings, $entry_form, $entry ) );
+
 	return;
 }
 

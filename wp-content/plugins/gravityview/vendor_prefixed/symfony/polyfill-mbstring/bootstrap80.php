@@ -7,8 +7,6 @@
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
- *
- * Modified using {@see https://github.com/BrianHenryIE/strauss}.
  */
 
 use GravityKit\GravityView\Symfony\Polyfill\Mbstring as p;
@@ -124,7 +122,7 @@ if (!function_exists('mb_chr')) {
     function mb_chr(?int $codepoint, ?string $encoding = null): string|false { return p\Mbstring::mb_chr((int) $codepoint, $encoding); }
 }
 if (!function_exists('mb_scrub')) {
-    function mb_scrub(?string $string, ?string $encoding = null): string { $encoding ??= mb_internal_encoding(); return mb_convert_encoding((string) $string, $encoding, $encoding); }
+    function mb_scrub(?string $string, ?string $encoding = null): string { return p\Mbstring::mb_scrub($string, $encoding); }
 }
 if (!function_exists('mb_str_split')) {
     function mb_str_split(?string $string, ?int $length = 1, ?string $encoding = null): array { return p\Mbstring::mb_str_split((string) $string, (int) $length, $encoding); }

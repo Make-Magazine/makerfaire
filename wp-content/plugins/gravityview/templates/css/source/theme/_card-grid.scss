@@ -1,0 +1,182 @@
+/**
+ * GravityView Theme — Card Grid Integration
+ *
+ * Makes `.gv-themed` an alias for the standalone `.gv-card-grid` system.
+ * Theme adds token-based gap/spacing values on top of the base grid.
+ *
+ * The standalone gv-card-grid.css uses hardcoded pixel values (16px, 12px)
+ * for widget gaps. Theme overrides those with design token variables
+ * (--gv-space-4, --gv-space-3) for consistency with the rest of the system.
+ *
+ * @package   GravityView
+ * @license   GPL2
+ * @since     TBD
+ */
+
+// Sass-side breakpoint variables (`$gv-breakpoint-sm`/`-md`/`-lg`)
+// come from `_tokens.scss`. `@use` doesn't transitively expose them
+// like `@import` did — each consumer pulls them explicitly.
+@use "tokens" as *;
+
+// =========================================================
+// Make .gv-themed work as a grid scope (alias for .gv-card-grid)
+// =========================================================
+// The `gv-template-*` wrapper is the PARENT of the marked container,
+// so the modern scope uses `:has()` (Baseline 2023). The wrapper has
+// a single child; grid display here only guarantees the container
+// stretches the full wrapper width.
+[class*="gv-template-"]:has(> .gv-themed) {
+	display: grid;
+}
+
+// The `gv-*-multiple-container` classes are passed into
+// `gv_container_class()`, so they sit on the SAME element as
+// `.gv-themed`: every scope below is a same-element compound.
+.gv-themed.gv-list-multiple-container,
+.gv-themed.gv-layout-builder-multiple-container,
+.gv-themed.gv-diy-multiple-container {
+	display: grid;
+	// auto-fill + max() lets the grid honour two intents at once:
+	//   - keep cards ≥ --gv-card-min-width (wraps to fewer columns when too tight)
+	//   - never show more than --gv-grid-columns (cap)
+	// When --gv-card-min-width is 0 the max() resolves to the fixed
+	// per-column slice, producing exactly N columns — same as before.
+	grid-template-columns: repeat(
+		auto-fill,
+		minmax(
+			max(
+				var(--gv-card-min-width),
+				calc(100% / var(--gv-grid-columns) - var(--gv-grid-gap))
+			),
+			1fr
+		)
+	);
+	gap: var(--gv-grid-gap);
+	align-items: var(--gv-grid-align);
+}
+
+// Widgets & non-entry elements — span all columns
+.gv-themed.gv-list-multiple-container > .gv-widgets-header,
+.gv-themed.gv-list-multiple-container > .gv-widgets-footer,
+.gv-themed.gv-list-multiple-container > .gv-no-results,
+.gv-themed.gv-layout-builder-multiple-container > .gv-widgets-header,
+.gv-themed.gv-layout-builder-multiple-container > .gv-widgets-footer,
+.gv-themed.gv-layout-builder-multiple-container > .gv-no-results,
+.gv-themed.gv-diy-multiple-container > .gv-widgets-header,
+.gv-themed.gv-diy-multiple-container > .gv-widgets-footer,
+.gv-themed.gv-diy-multiple-container > .gv-no-results {
+	grid-column: 1 / -1;
+}
+
+// Neutralize legacy float-based rules + use design tokens for gaps
+.gv-themed .gv-widgets-header,
+.gv-themed .gv-widgets-footer {
+	display: block;
+
+	&::before,
+	&::after {
+		display: none;
+	}
+
+	.gv-grid-row {
+		// Flex the row so columns can be vertically aligned with `align-items`.
+		display: flex;
+		flex-wrap: wrap;
+
+		&::before,
+		&::after {
+			display: none;
+		}
+	}
+
+	[class*="gv-grid-col-"] {
+		display: flex;
+		flex-direction: column;
+		gap: var(--gv-space-4);
+	}
+
+	.gv-widget-search .gv-grid {
+		display: flex;
+		flex-direction: column;
+		gap: var(--gv-space-3);
+
+		> .gv-grid-row {
+			width: 100%;
+		}
+	}
+}
+
+// Header sits *above* the entries: nudge widgets to the bottom of the header
+// so they hug the entries below. Footer is the mirror image — top-aligned to
+// hug the entries above.
+.gv-themed .gv-widgets-header .gv-grid-row {
+	align-items: flex-end;
+}
+
+.gv-themed .gv-widgets-footer .gv-grid-row {
+	align-items: flex-start;
+}
+
+// Card cells — flex column for equal-height alignment
+.gv-themed.gv-list-multiple-container > .gv-list-view,
+.gv-themed.gv-layout-builder-multiple-container > .gv-layout-builder-view--entry,
+.gv-themed.gv-diy-multiple-container > .gv-diy-view {
+	display: flex;
+	flex-direction: column;
+}
+
+// Cards in a grid container let the grid `gap` own the spacing, so the
+// card's own block-end margin is zeroed. The multiple-container class is
+// the reliable carrier (it sits on the `.gv-themed` element and is
+// always present in a grid); the per-View grid variables are emitted as
+// a stylesheet rule, not an inline `style` attribute, so an attribute
+// selector would never match.
+.gv-themed.gv-list-multiple-container > .gv-list-view,
+.gv-themed.gv-layout-builder-multiple-container > .gv-layout-builder-view--entry,
+.gv-themed.gv-diy-multiple-container > .gv-diy-view {
+	margin-block-end: 0;
+}
+
+// Push the list view footer to the bottom of equal-height cards. When
+// equal height is off (`--gv-grid-align: start`) the card is sized to
+// its content, so `margin-block-start: auto` has no spare space to
+// distribute and resolves to no offset on its own.
+.gv-themed.gv-list-multiple-container > .gv-list-view .gv-list-view-footer {
+	margin-block-start: auto;
+}
+
+// =========================================================
+// Responsive breakpoints
+// =========================================================
+// Viewport-width breakpoints. At ≤1024px: max 3 columns
+// (4+ become 3; 1-3 stay unchanged). At ≤768px: max 2.
+// At ≤640px: force single column.
+@media (max-width: #{$gv-breakpoint-lg}) {
+	.gv-themed.gv-list-multiple-container,
+	.gv-themed.gv-layout-builder-multiple-container,
+	.gv-themed.gv-diy-multiple-container {
+		// Self-contained cap: an explicit per-View -lg value wins; any
+		// other source of --gv-grid-columns (Custom CSS token overrides
+		// included) still gets capped at 3.
+		// gv-token-purity-ok: the 3 is the lg-breakpoint column cap, not a themable token
+		grid-template-columns: repeat(var(--gv-grid-columns-lg, min(var(--gv-grid-columns), 3)), 1fr);
+	}
+}
+
+@media (max-width: #{$gv-breakpoint-md}) {
+	.gv-themed.gv-list-multiple-container,
+	.gv-themed.gv-layout-builder-multiple-container,
+	.gv-themed.gv-diy-multiple-container {
+		// Same self-contained cap as -lg above, at 2 columns.
+		// gv-token-purity-ok: the 2 is the md-breakpoint column cap, not a themable token
+		grid-template-columns: repeat(var(--gv-grid-columns-md, min(var(--gv-grid-columns), 2)), 1fr);
+	}
+}
+
+@media (max-width: #{$gv-breakpoint-sm}) {
+	.gv-themed.gv-list-multiple-container,
+	.gv-themed.gv-layout-builder-multiple-container,
+	.gv-themed.gv-diy-multiple-container {
+		grid-template-columns: 1fr;
+	}
+}

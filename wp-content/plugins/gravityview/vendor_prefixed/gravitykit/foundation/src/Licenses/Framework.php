@@ -1,9 +1,4 @@
 <?php
-/**
- * @license GPL-2.0-or-later
- *
- * Modified using {@see https://github.com/BrianHenryIE/strauss}.
- */
 
 namespace GravityKit\GravityView\Foundation\Licenses;
 
@@ -71,37 +66,42 @@ class Framework {
 		$is_network_activated = is_multisite() && $this->is_network_activated();
 
 		$permissions = [
-			// Licenses.
-			'view_licenses'       =>
+			// Licenses. Site admins manage their own blog's (site-scope) licenses even when a host plugin
+			// is network-activated; network-scope operations are separately capability-gated at activation.
+			'view_licenses'           =>
 				( ! is_super_admin() && current_user_can( 'gk_foundation_view_licenses' ) ) ||
-				( ! $is_network_activated && current_user_can( 'manage_options' ) ) ||
+				current_user_can( 'manage_options' ) ||
 				( $is_network_activated && current_user_can( 'manage_network_options' ) && CoreHelpers::is_network_admin() ),
-			'manage_licenses'     =>
+			'manage_licenses'         =>
 				( ! is_super_admin() && current_user_can( 'gk_foundation_manage_licenses' ) ) ||
-				( ! $is_network_activated && current_user_can( 'manage_options' ) ) ||
+				current_user_can( 'manage_options' ) ||
 				( $is_network_activated && current_user_can( 'manage_network_options' ) && CoreHelpers::is_network_admin() ),
+			// Only a network admin may manage a network-wide (or legacy) license; mirrors the server guard in LicenseManager.
+			'manage_network_licenses' => is_multisite() && current_user_can( 'manage_network_options' ),
 			// Products.
-			'view_products'       =>
+			'view_products'           =>
 				( ! is_super_admin() && current_user_can( 'gk_foundation_view_products' ) ) ||
 				( ! is_multisite() && current_user_can( 'install_plugins' ) ) ||
 				( is_multisite() && ( current_user_can( 'activate_plugins' ) || current_user_can( 'manage_network_plugins' ) ) ),
-			'install_products'    =>
+			// Install/update work from any admin screen for super admins; installs started on a subsite
+			// still site-activate there (ProductManager passes is_network_admin() as the activation scope).
+			'install_products'        =>
 				( ! is_super_admin() && current_user_can( 'gk_foundation_install_products' ) ) ||
 				( ! $is_network_activated && current_user_can( 'install_plugins' ) ) ||
-				( $is_network_activated && current_user_can( 'manage_network_plugins' ) && CoreHelpers::is_network_admin() ),
-			'update_products'     =>
+				( $is_network_activated && current_user_can( 'manage_network_plugins' ) ),
+			'update_products'         =>
 				( ! is_super_admin() && current_user_can( 'gk_foundation_update_products' ) ) ||
 				( ! $is_network_activated && current_user_can( 'update_plugins' ) ) ||
-				( $is_network_activated && current_user_can( 'manage_network_plugins' ) && CoreHelpers::is_network_admin() ),
-			'activate_products'   =>
+				( $is_network_activated && current_user_can( 'manage_network_plugins' ) ),
+			'activate_products'       =>
 				( ! is_super_admin() && current_user_can( 'gk_foundation_activate_products' ) ) ||
 				( ! is_multisite() && current_user_can( 'activate_plugins' ) ) ||
 				( is_multisite() && ( current_user_can( 'activate_plugins' ) || current_user_can( 'manage_network_plugins' ) ) ),
-			'delete_products'     =>
+			'delete_products'         =>
 				( ! is_super_admin() && current_user_can( 'gk_foundation_delete_products' ) ) ||
 				( ! $is_network_activated && current_user_can( 'delete_plugins' ) ) ||
 				( $is_network_activated && current_user_can( 'manage_network_plugins' ) && CoreHelpers::is_network_admin() ),
-			'deactivate_products' =>
+			'deactivate_products'     =>
 				( ! is_super_admin() && current_user_can( 'gk_foundation_deactivate_products' ) ) ||
 				( ! is_multisite() && current_user_can( 'install_plugins' ) ) ||
 				( is_multisite() && ( current_user_can( 'activate_plugins' ) || current_user_can( 'manage_network_plugins' ) ) ),
@@ -146,11 +146,22 @@ class Framework {
 			return;
 		}
 
-		if ( ! CoreHelpers::is_cli() && ! is_admin() && ( ! defined( 'DOING_AJAX' ) || ! DOING_AJAX ) ) {
+		if ( ! CoreHelpers::is_cli() && ! is_admin() && ! wp_doing_cron() && ( ! defined( 'DOING_AJAX' ) || ! DOING_AJAX ) ) {
 			return;
 		}
 
-		if ( ! $this->current_user_can( 'view_licenses' ) && ! $this->current_user_can( 'view_products' ) ) {
+		// Boots before the capability gate below so a permission-gated user's connection AJAX still
+		// resolves to a translated permission error (each route checks per-call) instead of a bare
+		// unknown-route response.
+		Connection\AccountLicenses::get_instance()->init();
+
+		// Plugin auto-updates run in WP-Cron, and manual update checks run in WP-CLI; neither has a
+		// current user to check capabilities against. Only enforce the capability gate for interactive
+		// admin/AJAX (UI) requests, so the update hooks (EDD::check_for_product_updates) still register
+		// in those background contexts and GravityKit products are not dropped from the update transient.
+		$is_background_update_context = CoreHelpers::is_cli() || wp_doing_cron();
+
+		if ( ! $is_background_update_context && ! $this->current_user_can( 'view_licenses' ) && ! $this->current_user_can( 'view_products' ) ) {
 			return;
 		}
 
@@ -164,12 +175,16 @@ class Framework {
 		$this->_product_manager->init();
 		$this->_license_manager->init();
 
+		BuildBrowser::get_instance()->init();
 		EDD::get_instance()->init();
 		ProductHistoryManager::get_instance()->init();
 		PluginsPage::get_instance()->init();
 		UpdatesPage::get_instance()->init();
 
-		$this->add_gk_submenu_item();
+		// Build the translated submenu title on `init`, not during Core boot (which runs on
+		// `plugins_loaded`, before `after_setup_theme`), to avoid WordPress 6.7's just-in-time
+		// translation notice. The menu is not consumed until `admin_menu`.
+		add_action( 'init', [ $this, 'add_gk_submenu_item' ] );
 
 		/**
 		 * Fires when the class has finished initializing.
@@ -339,6 +354,7 @@ class Framework {
 			[
 				'appTitle'                  => $this->get_framework_title(),
 				'isNetworkAdmin'            => CoreHelpers::is_network_admin(),
+				'isMultisite'               => is_multisite(),
 				'permissions'               => $this->_permissions,
 				'frontendFoundationVersion' => FoundationCore::VERSION,
 				'languageDirection'         => is_rtl() ? 'rtl' : 'ltr',

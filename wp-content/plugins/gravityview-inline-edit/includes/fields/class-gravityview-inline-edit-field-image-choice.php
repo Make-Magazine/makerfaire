@@ -6,11 +6,11 @@
  * @since 2.3.0
  */
 class GravityView_Inline_Edit_Field_Image_Choice extends GravityView_Inline_Edit_Field {
-	var $gv_field_name = 'image_choice';
+	public $gv_field_name = 'image_choice';
 
-	var $inline_edit_type = 'image_choice';
+	public $inline_edit_type = 'image_choice';
 
-	var $set_value = false;
+	public $set_value = false;
 
 	/**
 	 * Add value and type inline attributes, and enqueue custom field scripts
@@ -37,7 +37,7 @@ class GravityView_Inline_Edit_Field_Image_Choice extends GravityView_Inline_Edit
 			$image_choice_value = self::_get_inline_edit_value( $gf_field, $entry, false );
 		}
 
-		$wrapper_attributes['data-value'] = json_encode( $image_choice_value );
+		$wrapper_attributes['data-value'] = wp_json_encode( $image_choice_value );
 
 		// Add image HTML to choices.
 		$decorator = new ChoiceDecorator( $gf_field );
@@ -52,7 +52,7 @@ class GravityView_Inline_Edit_Field_Image_Choice extends GravityView_Inline_Edit
 			);
 		}
 
-		$wrapper_attributes['data-source'] = json_encode( $gf_field->choices );
+		$wrapper_attributes['data-source'] = wp_json_encode( $gf_field->choices );
 
 		parent::add_field_template( $this->inline_edit_type, $gf_field->get_field_input( $current_form, $image_choice_value, $entry ), $current_form['id'], $field_id );
 
@@ -76,7 +76,7 @@ class GravityView_Inline_Edit_Field_Image_Choice extends GravityView_Inline_Edit
 		$choice_number   = 1;
 
 		for ( $i = 0; $i < count( $gf_field->choices ); $i++ ) {
-			if ( $choice_number % 10 == 0 ) {
+			if ( 0 === $choice_number % 10 ) { // Skip numbers ending in 0 so that 5.1 doesn't conflict with 5.10
 				$choice_number++;
 			}
 			$input_id = $field_id . '.' . $choice_number;
@@ -94,7 +94,7 @@ class GravityView_Inline_Edit_Field_Image_Choice extends GravityView_Inline_Edit
 			return '';
 		}
 
-		return $as_json ? json_encode( $checklist_value ) : $checklist_value;
+		return $as_json ? wp_json_encode( $checklist_value ) : $checklist_value;
 	}
 }
 

@@ -1,14 +1,10 @@
 <?php
-/**
- * @license MIT
- *
- * Modified by gravitykit on 28-April-2026 using {@see https://github.com/BrianHenryIE/strauss}.
- */
 
 namespace GravityKit\AdvancedFilter\QueryFilters\Filter\Visitor;
 
 use GFCommon;
 use GravityKit\AdvancedFilter\QueryFilters\Filter\Filter;
+use GravityKit\AdvancedFilter\QueryFilters\MergeTag\FormMergeModifier;
 use GravityKit\AdvancedFilter\QueryFilters\Repository\FormRepository;
 use GravityView_API;
 
@@ -73,6 +69,10 @@ final class ProcessMergeTagsVisitor implements EntryAwareFilterVisitor {
 		foreach ( $value as $i => $unprocessed ) {
 			if ( ! is_string( $unprocessed ) ) {
 				// Only process strings.
+				continue;
+			}
+
+			if ( ! $this->entry && FormMergeModifier::references_existing_field( $unprocessed, $form ) ) {
 				continue;
 			}
 

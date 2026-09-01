@@ -20,6 +20,7 @@ var _frontendHandlers = __webpack_require__(/*! @elementor/frontend-handlers */ 
 var _alpinejs = __webpack_require__(/*! @elementor/alpinejs */ "@elementor/alpinejs");
 var _utils = __webpack_require__(/*! ./utils */ "../modules/atomic-widgets/assets/js/frontend/utils.js");
 var _lodash = _interopRequireDefault(__webpack_require__(/*! lodash */ "../node_modules/lodash/lodash.js"));
+let webmcpFormListenersRegistered = false;
 (0, _frontendHandlers.registerBySelector)({
   id: 'atomic-form-submit-handler',
   selector: _utils.ATOMIC_FORM_SELECTOR,
@@ -27,6 +28,65 @@ var _lodash = _interopRequireDefault(__webpack_require__(/*! lodash */ "../node_
     element
   }) => handleAtomicFormSubmit(element)
 });
+function registerWebmcpFormListeners() {
+  if (webmcpFormListenersRegistered) {
+    return;
+  }
+  webmcpFormListenersRegistered = true;
+  window.addEventListener('toolactivated', ({
+    toolName
+  }) => {
+    resetWebmcpFormState(toolName);
+  });
+  window.addEventListener('toolcancel', ({
+    toolName
+  }) => {
+    resetWebmcpFormState(toolName);
+  });
+}
+function resetWebmcpFormState(toolName) {
+  document.querySelectorAll(_utils.ATOMIC_FORM_SELECTOR).forEach(form => {
+    if (form.getAttribute('toolname') !== toolName) {
+      return;
+    }
+    delete form.dataset.atomicFormSubmitting;
+    form.querySelectorAll('button[type="submit"], input[type="submit"]').forEach(button => {
+      button.disabled = false;
+    });
+  });
+}
+function extractAgentToolData(payload) {
+  if (!payload || 'object' !== typeof payload) {
+    return null;
+  }
+  if (undefined !== payload.data) {
+    return payload.data;
+  }
+  const {
+    message: ignoredMessage,
+    ...rest
+  } = payload;
+  if (!Object.keys(rest).length) {
+    return null;
+  }
+  return rest;
+}
+function buildAgentToolResponse(response, state) {
+  const payload = response?.data ?? null;
+  const message = payload?.message ?? response?.message ?? '';
+  return {
+    success: 'success' === state,
+    state,
+    message,
+    data: extractAgentToolData(payload)
+  };
+}
+function respondToAgentIfInvoked(event, response, state) {
+  if (!event?.agentInvoked || 'function' !== typeof event.respondWith) {
+    return;
+  }
+  event.respondWith(Promise.resolve(buildAgentToolResponse(response, state)));
+}
 function registerAtomicFormAlpineData(form) {
   if (!form || !_alpinejs.Alpine?.data) {
     return;
@@ -42,6 +102,10 @@ function registerAtomicFormAlpineData(form) {
       }
       event.preventDefault();
       if (form.dataset.atomicFormSubmitting) {
+        respondToAgentIfInvoked(event, {
+          success: false,
+          message: 'Form is already submitting.'
+        }, 'error');
         return;
       }
       form.dataset.atomicFormSubmitting = 'true';
@@ -50,32 +114,42 @@ function registerAtomicFormAlpineData(form) {
         button.disabled = true;
       });
       const payload = buildAtomicFormPayload(form);
-      if (payload) {
-        try {
-          const response = await submitAtomicForm(payload);
-          const state = response?.success ? 'success' : 'error';
-          setFormState(form, state);
-          if (response?.success) {
-            form.reset();
-            form.addEventListener('input', () => {
-              setFormState(form, 'default');
-            }, {
-              once: true
-            });
-          }
-        } catch (error) {
-          setFormState(form, 'error');
-        } finally {
-          clearAtomicFormSubmittingState(form, submitButtons);
-        }
-      } else {
+      if (!payload) {
         setFormState(form, 'error');
+        respondToAgentIfInvoked(event, {
+          success: false,
+          message: 'Invalid form payload.'
+        }, 'error');
+        clearAtomicFormSubmittingState(form, submitButtons);
+        return;
+      }
+      try {
+        const response = await submitAtomicForm(payload);
+        const state = response?.success ? 'success' : 'error';
+        setFormState(form, state);
+        if (response?.success) {
+          form.reset();
+          form.addEventListener('input', () => {
+            setFormState(form, 'default');
+          }, {
+            once: true
+          });
+        }
+        respondToAgentIfInvoked(event, response, state);
+      } catch (error) {
+        setFormState(form, 'error');
+        respondToAgentIfInvoked(event, {
+          success: false,
+          message: error?.message ?? 'Submission failed.'
+        }, 'error');
+      } finally {
         clearAtomicFormSubmittingState(form, submitButtons);
       }
     }
   }));
 }
 function handleAtomicFormSubmit(form) {
+  registerWebmcpFormListeners();
   registerAtomicFormAlpineData(form);
   return refreshDom(form);
 }
@@ -257,6 +331,7 @@ function setFormState(element, state) {
   }
   element.classList.remove('form-state-default', 'form-state-success', 'form-state-error');
   element.classList.add(`form-state-${state}`);
+  setFocusOnMessageElement(element, state);
 }
 function refreshDom(element) {
   if (!_alpinejs.Alpine?.nextTick || !_alpinejs.Alpine?.destroyTree || !_alpinejs.Alpine?.initTree) {
@@ -267,6 +342,12 @@ function refreshDom(element) {
     _alpinejs.Alpine.initTree(element);
   });
   return () => _alpinejs.Alpine.destroyTree(element);
+}
+function setFocusOnMessageElement(element, type) {
+  const messageElement = element.querySelector(`[data-e-type="e-form-${type}-message"]`);
+  messageElement?.focus({
+    focusVisible: true
+  });
 }
 
 /***/ }),

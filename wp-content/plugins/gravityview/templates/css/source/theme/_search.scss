@@ -1,0 +1,928 @@
+/**
+ * GravityView Theme — Search Bar
+ *
+ * Clean flexbox layout with properly styled inputs, selects, buttons,
+ * and date pickers. Scoped to `.gv-themed .gv-widget-search`.
+ *
+ * @package   GravityView
+ * @license   GPL2
+ * @since     TBD
+ */
+
+@use "tokens" as *;
+
+// =========================================================
+// Search form container
+// =========================================================
+.gv-themed .gv-widget-search {
+	padding: var(--gv-widget-padding-block) var(--gv-widget-padding-inline);
+	// Search widget reads `--gv-color-surface-alt` (the dedicated
+	// "Section Background" token, default `#f2f3f5`) so it visually
+	// separates from entry-card backgrounds (`--gv-color-surface`,
+	// default `#ffffff`). When both consumed the same var, customers
+	// couldn't tell where the search bar ended and the cards began.
+	background: var(--gv-color-surface-alt);
+	border: 1px solid var(--gv-widget-border-color);
+	border-radius: var(--gv-widget-border-radius);
+	// Reset legacy `.gv-widget-search { margin: 20px -10px }` — that
+	// negative inline margin pulls the form 20px wider than its
+	// container, which on mobile makes the inputs (width: 100% of
+	// form) appear to bleed past the surrounding content.
+	margin-block-start: 0;
+	margin-block-end: var(--gv-widget-margin-block-end);
+	margin-inline: 0;
+	max-width: 100%;
+	box-sizing: border-box;
+
+	// =========================================================
+	// Reset — zero out legacy margins and force wrappers to fill
+	// their grid cell. Without this, `.gv-search-box { margin: 0 10px }`,
+	// `p { margin: 0 0 .75em 0 }`, and various block-level wrappers
+	// shrink the input below its column width and create offset
+	// alignment between rows.
+	//
+	// Specificity is doubled (`&&`) so the modern reset wins against
+	// legacy `.gv-widget-search .gv-search-box { margin: 0 10px }`
+	// without resorting to `!important`.
+	// =========================================================
+	&.gv-widget-search {
+		.gv-search-widget-area,
+		.gv-search-box,
+		.gv-search,
+		.gv-search > p,
+		.gv-search-box > p {
+			width: auto;
+			min-width: 0;
+			// Cap wrappers at their container: a box whose content floors wider
+			// than its grid cell (e.g. the combined date-range calendar) must
+			// shrink and wrap internally, not overlap the neighboring column.
+			max-width: 100%;
+			margin: 0;
+			padding: 0;
+			box-sizing: border-box;
+		}
+
+		input,
+		select,
+		textarea {
+			margin: 0;
+			box-sizing: border-box;
+		}
+	}
+
+	// =========================================================
+	// Active search state
+	// =========================================================
+	.gv-is-search & {
+		border-color: var(--gv-color-primary-subtle);
+	}
+
+	// Doubled to out-rank the variant block's `display: none`.
+	&.gv-widget-search.gv-is-search .gv-search-box-submit .gv-search-clear,
+	.gv-is-search &.gv-widget-search .gv-search-box-submit .gv-search-clear {
+		display: inline-flex;
+	}
+
+	// =========================================================
+	// Rows layout — space between stacked widget areas
+	// =========================================================
+	&.gv-search-rows {
+		display: flex;
+		flex-direction: column;
+		gap: var(--gv-search-row-gap);
+	}
+
+	// =========================================================
+	// Horizontal layout
+	// =========================================================
+	&.gv-search-horizontal .gv-search-widget-area,
+	&.gv-search-rows .gv-search-widget-area.gv-search-horizontal {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: flex-start;
+		column-gap: var(--gv-search-col-gap);
+		row-gap: var(--gv-search-row-gap);
+
+		.gv-search-box {
+			flex: 1 1 var(--gv-search-field-min-width);
+		}
+	}
+
+	// =========================================================
+	// Vertical layout
+	// =========================================================
+	&.gv-search-vertical .gv-search-widget-area {
+		display: flex;
+		flex-direction: column;
+		gap: var(--gv-space-3);
+	}
+
+	// =========================================================
+	// Labels — inherit the document font and lock down theme
+	// overrides like `text-transform: uppercase` on form labels.
+	// =========================================================
+	label {
+		display: block;
+		font-family: inherit;
+		font-size: var(--gv-font-size-sm);
+		font-weight: var(--gv-font-weight-medium);
+		line-height: var(--gv-line-height-tight);
+		color: var(--gv-color-text-secondary);
+		text-transform: none;
+		letter-spacing: normal;
+		margin-block-end: var(--gv-space-1);
+	}
+
+	// =========================================================
+	// Text inputs + select share a metric base so themes can't
+	// drift their heights apart (some themes set
+	// `input { line-height: 2 }` or similar). We pin font, padding,
+	// border, and line-height explicitly and strip the platform
+	// `appearance` so the box math is predictable across all
+	// text-shaped controls.
+	// =========================================================
+	%gv-themed-form-control {
+		width: 100%;
+		box-sizing: border-box;
+		// Reset any theme-set fixed `height`. Our rendered height is
+		// driven by padding + line-height·font-size + border, so a
+		// theme's `input { height: 50px }` would otherwise force the
+		// control to that height. We leave `min-height` alone so the
+		// touch-target rule in `_a11y.scss` (44px under
+		// `@media (pointer: coarse)`) still applies on touch devices.
+		height: auto;
+		padding: var(--gv-space-2) var(--gv-space-3);
+		// Border width is its own customer-facing token so the
+		// "Input Border Width" inspector tile drives every shipped
+		// control. Default cascades from `--gv-control-border-color`
+		// (which itself derives from `--gv-color-border-strong` per
+		// the spec — the "form-control outline" of record).
+		border: var(--gv-control-border-width) solid var(--gv-control-border-color, var(--gv-color-border-strong));
+		border-radius: var(--gv-control-radius);
+		font-family: inherit;
+		font-size: var(--gv-font-size-base);
+		font-weight: var(--gv-font-weight-normal);
+		font-style: normal;
+		line-height: var(--gv-line-height-tight);
+		color: var(--gv-color-text);
+		background: var(--gv-control-bg);
+		caret-color: var(--gv-color-text);
+		appearance: none;
+		-webkit-appearance: none;
+		// Defensive locks against common theme overrides.
+		text-transform: none;
+		letter-spacing: normal;
+		text-decoration: none;
+		box-shadow: none;
+		outline: 0;
+		transition: border-color var(--gv-transition-fast) var(--gv-easing-standard),
+		            box-shadow var(--gv-transition-fast) var(--gv-easing-standard);
+
+		&:focus {
+			border-color: var(--gv-color-primary);
+			box-shadow: var(--gv-shadow-focus);
+			outline: none;
+		}
+
+		// Disabled state — paint via the dedicated control-disabled
+		// tokens so a customer adjusting "Disabled Input Background"
+		// in Studio sees every disabled control change consistently.
+		&:disabled {
+			background-color: var(--gv-control-bg-disabled);
+			border-color: var(--gv-control-border-color-disabled);
+			color: var(--gv-control-text-disabled);
+			cursor: not-allowed;
+		}
+
+		&::placeholder {
+			color: var(--gv-color-placeholder);
+			font-family: inherit;
+			font-size: var(--gv-font-size-sm);
+			font-weight: var(--gv-font-weight-normal);
+			font-style: normal;
+			text-transform: none;
+			letter-spacing: normal;
+			opacity: 1; // Firefox dims placeholders to 0.54 by default; we already pick a lighter color.
+		}
+	}
+
+	input[type="text"],
+	input[type="search"],
+	input[type="number"],
+	input[type="date"],
+	input[type="email"],
+	input[type="tel"],
+	.gv-datepicker {
+		@extend %gv-themed-form-control;
+	}
+
+	// =========================================================
+	// Select elements — share the form-control base, then add the
+	// dropdown chevron and extra inline-end padding.
+	//
+	// `z-index: var(--gv-z-dropdown)` so the in-page list-box
+	// rendering of `<select multiple>` (and any future custom
+	// dropdown decoration) sits above neighbouring search-row
+	// chrome. Customers tuning the dropdown layer (sticky site
+	// header beneath, autocomplete popovers above) re-point
+	// `--gv-z-dropdown` and every search-bar dropdown follows.
+	// =========================================================
+	select {
+		@extend %gv-themed-form-control;
+		padding-inline-end: var(--gv-space-8);
+		background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1.41.59L6 5.17 10.59.59 12 2 6 8 0 2z' fill='%23607382'/%3E%3C/svg%3E");
+		background-repeat: no-repeat;
+		background-position: right var(--gv-space-3) center;
+		position: relative;
+		z-index: var(--gv-z-dropdown);
+
+		// RTL: text starts at the physical right, so flip the chevron
+		// to the physical left. The `padding-inline-end` reservation
+		// is logical and already maps to the left in RTL, so only the
+		// background-position needs the override.
+		&:dir(rtl) {
+			background-position: left var(--gv-space-3) center;
+		}
+
+		// Multi-selects render as a list box (no dropdown), so the
+		// chevron and extra inline-end padding don't make sense.
+		// Restore native list-box appearance.
+		&[multiple] {
+			appearance: auto;
+			-webkit-appearance: auto;
+			background-image: none;
+			padding-inline-end: var(--gv-space-3);
+			height: auto;
+			line-height: var(--gv-line-height-normal);
+		}
+	}
+
+	// =========================================================
+	// Search + Clear buttons share dimensions so a primary <input>
+	// and a secondary <a> render at identical heights.
+	//
+	// Both use the same font-size/weight/line-height/padding, plus
+	// a 1px border (transparent on the primary). That way the box
+	// math matches even though one is a form control and the other
+	// is an inline link.
+	// =========================================================
+	// Selector scoped to `.gv-search-box-submit` AND doubled on
+	// `.gv-widget-search` so the rule reads 5 classes total. Some
+	// themes (e.g. Frost) target `input` directly with the font
+	// shorthand at low specificity but win because of where they
+	// load in the cascade — the doubled class buys us decisive
+	// override room without `!important`.
+	&.gv-widget-search .gv-search-box-submit .gv-search-button,
+	&.gv-widget-search .gv-search-box-submit .gv-search-clear {
+		align-items: center;
+		justify-content: center;
+		box-sizing: border-box;
+		// Reset theme-set fixed height. Leave `min-height` intact so
+		// the touch-target rule in `_a11y.scss` still applies.
+		height: auto;
+		// Vertical padding bumped 2px to compensate for `line-height: 1`,
+		// keeping the total height at 38px to match `<input>`/`<select>`.
+		padding: calc(var(--gv-space-2) + var(--gv-border-width-2)) var(--gv-space-5);
+		margin: 0;
+		border: var(--gv-border-width-1) solid transparent;
+		border-radius: var(--gv-control-radius);
+		// `<a>Reset</a>` centers its text-node child via flex
+		// (`align-items: center`), but `<input type="submit">` value
+		// text is rendered by the browser's internal text layout —
+		// not as a flex child. With any `line-height > 1`, the leading
+		// half-spaces cause the two to drift by a pixel.
+		//
+		// Set `line-height: 1` (no leading) and use padding alone to
+		// produce the 38px control height that matches `<input>` and
+		// `<select>`:
+		//
+		//   10px (padding-top) + 16px (line=font-size) + 10px (padding-bottom) + 2px (border) = 38px
+		font-family: inherit;
+		font-size: var(--gv-font-size-base);
+		font-weight: var(--gv-font-weight-medium);
+		font-style: normal;
+		line-height: 1;
+		text-align: center;
+		// Defensive locks against common theme overrides for buttons.
+		text-transform: none;
+		letter-spacing: normal;
+		text-decoration: none;
+		box-shadow: none;
+		outline: 0;
+		appearance: none;
+		-webkit-appearance: none;
+		vertical-align: middle;
+		cursor: pointer;
+		transition: background-color var(--gv-transition-fast) var(--gv-easing-standard),
+		            border-color var(--gv-transition-fast) var(--gv-easing-standard),
+		            color var(--gv-transition-fast) var(--gv-easing-standard),
+		            box-shadow var(--gv-transition-fast) var(--gv-easing-standard);
+	}
+
+	// Same doubled-class scope as the shared chrome block above: the
+	// per-button paint, display, and focus ring must sit at the same
+	// specificity or the chrome resets (transparent border,
+	// box-shadow: none, outline: 0) win and the buttons lose their
+	// border and focus state.
+	&.gv-widget-search .gv-search-box-submit .gv-search-button {
+		display: inline-flex;
+		background-color: var(--gv-button-bg);
+		color: var(--gv-button-color);
+
+		&:hover {
+			background-color: var(--gv-button-bg-hover);
+		}
+
+		&:focus-visible {
+			outline: none;
+			box-shadow: var(--gv-shadow-focus);
+		}
+	}
+
+	&.gv-widget-search .gv-search-box-submit .gv-search-clear {
+		display: none; // shown when the form carries `.gv-is-search`, or by fe-views.js when inputs change.
+		background: transparent;
+		color: var(--gv-color-text-secondary);
+		border-color: var(--gv-color-border);
+		transition: opacity var(--gv-transition-medium) var(--gv-easing-decelerate),
+		            background-color var(--gv-transition-fast) var(--gv-easing-standard),
+		            color var(--gv-transition-fast) var(--gv-easing-standard),
+		            border-color var(--gv-transition-fast) var(--gv-easing-standard);
+
+		&:hover {
+			border-color: var(--gv-color-primary);
+			color: var(--gv-color-primary);
+			text-decoration: none;
+		}
+
+		&:focus-visible {
+			outline: none;
+			box-shadow: var(--gv-shadow-focus);
+		}
+	}
+
+	// Disabled search / clear buttons — paint the dedicated
+	// disabled-button tokens so a customer adjusting "Disabled
+	// Button Background" in Studio sees both buttons follow.
+	.gv-search-button:disabled,
+	.gv-search-button[aria-disabled="true"],
+	.gv-search-clear:disabled,
+	.gv-search-clear[aria-disabled="true"] {
+		background-color: var(--gv-button-bg-disabled);
+		color: var(--gv-button-color-disabled);
+		border-color: var(--gv-button-bg-disabled);
+		cursor: not-allowed;
+	}
+
+	// Search first, Clear/Reset second. Matches legacy search-flexbox's
+	// `order: -111` (declared here so the order holds without the legacy
+	// stylesheet) and keeps the Search button stationary when Clear pops
+	// in mid-click.
+	.gv-search-box.gv-search-box-submit .gv-search-button {
+		order: -111;
+	}
+
+	.gv-search-box.gv-search-box-submit .gv-search-clear {
+		order: 0;
+	}
+
+	// =========================================================
+	// Date — override legacy display:flex on date box
+	// =========================================================
+	.gv-search-box.gv-search-date {
+		display: block;
+
+		input {
+			display: block;
+			float: none;
+			width: 100%;
+			margin-block-end: 0;
+		}
+	}
+
+	// =========================================================
+	// Date range + Number range — two inputs side by side.
+	//
+	// The legacy markup wraps both inputs inside a single `<p>` so
+	// flex on the outer `.gv-search-date-range` / `.gv-search-number-range`
+	// div has nothing to lay out — we flex the `<p>` itself.
+	// Also overrides legacy `.gv-search-box.gv-search-date input { display: block; width: 100% }`
+	// and `.gv-search-box.gv-search-number input { margin-bottom: .5em; margin-right: 1%; flex: 1 1 49% }`
+	// which would otherwise stack the inputs and add stray margins.
+	// =========================================================
+	.gv-search-date-range,
+	.gv-search-box.gv-search-date.gv-search-date-range,
+	.gv-search-number-range,
+	.gv-search-box.gv-search-number.gv-search-number-range {
+		> p {
+			display: flex;
+			flex-wrap: wrap;
+			align-items: center;
+			gap: var(--gv-space-2);
+			margin: 0;
+		}
+
+		input {
+			display: inline-block;
+			flex: 1 1 0;
+			width: auto;
+			min-width: 0;
+			margin: 0;
+		}
+	}
+
+	// Single number search (not a range) — reset legacy
+	// `.gv-search-box.gv-search-number input { margin-bottom: .5em; margin-right: 1% }`
+	// so the lone input sits flush with no stray margins.
+	.gv-search-box.gv-search-number:not(.gv-search-number-range) input {
+		margin: 0;
+	}
+
+	// =========================================================
+	// Checkbox / Radio
+	// =========================================================
+	.gv-search-field-checkbox,
+	.gv-search-field-radio {
+		// Production templates wrap the choice labels in <p>;
+		// legacy markup used <ul>/<li>. Both get the same
+		// flex-column layout so options stack with a consistent
+		// gap regardless of which template version is active.
+		ul,
+		p {
+			list-style: none;
+			margin: 0;
+			padding: 0;
+			display: flex;
+			flex-direction: column;
+			gap: var(--gv-space-2);
+		}
+
+		li {
+			margin: 0;
+		}
+
+		// `.gv-check-radio` would otherwise inherit the generic
+		// `.gv-themed .gv-widget-search label` rule (block display,
+		// secondary colour, `margin-block-end: var(--gv-space-1)`)
+		// and add extra space below each option on top of the
+		// `<ul>` flex gap. Reset margin/colour/weight here.
+		label.gv-check-radio {
+			display: flex;
+			align-items: center;
+			gap: var(--gv-space-2);
+			margin: 0;
+			font-size: var(--gv-font-size-sm);
+			font-weight: var(--gv-font-weight-normal);
+			color: var(--gv-color-text);
+			cursor: pointer;
+		}
+
+		input[type="checkbox"],
+		input[type="radio"] {
+			accent-color: var(--gv-color-primary);
+		}
+	}
+
+	// Single checkbox renders the `.gv-check-radio` label directly
+	// (no `<ul>` / `<li>` and no separate field label above). To
+	// keep the field label visually aligned with other fields'
+	// labels — which sit above their input — flex the label as a
+	// column with `column-reverse` so the text appears above the
+	// checkbox even though `<input>` comes first in the DOM.
+	.gv-search-field-single_checkbox label.gv-check-radio {
+		display: flex;
+		flex-direction: column-reverse;
+		align-items: flex-start;
+		gap: var(--gv-space-1);
+		margin: 0;
+		// Match the generic field-label appearance (the text rendered
+		// above the checkbox is the field label, not an option label).
+		font-family: inherit;
+		font-size: var(--gv-font-size-sm);
+		font-weight: var(--gv-font-weight-medium);
+		line-height: var(--gv-line-height-tight);
+		color: var(--gv-color-text-secondary);
+		text-transform: none;
+		letter-spacing: normal;
+		cursor: pointer;
+	}
+
+	// Checkbox / radio — keep native rendering. The wrapping
+	// `<label class="gv-check-radio">` is the actual tap target
+	// (already enforced via `_a11y.scss`), so the input itself
+	// doesn't need a minimum size. Constraining width/height clips
+	// the platform's circle/check graphic, which renders slightly
+	// outside the input's content box on some browsers.
+	.gv-check-radio {
+		input[type="checkbox"],
+		input[type="radio"] {
+			flex-shrink: 0;
+			accent-color: var(--gv-color-primary);
+		}
+	}
+
+	// =========================================================
+	// Link-type search
+	// =========================================================
+	.gv-search-field-link .gv-search-box-links {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		gap: 0;
+		list-style: none;
+		margin: 0;
+		padding: 0;
+
+		li {
+			display: inline-flex;
+			align-items: center;
+
+			&::after {
+				content: "|";
+				margin-inline: var(--gv-space-2);
+				color: var(--gv-color-border);
+			}
+
+			&:last-child::after {
+				content: none;
+			}
+		}
+
+		a {
+			color: var(--gv-color-primary);
+			text-decoration: none;
+			font-size: var(--gv-font-size-sm);
+
+			&:hover {
+				text-decoration: underline;
+			}
+		}
+
+		.active {
+			font-weight: var(--gv-font-weight-semibold);
+		}
+	}
+
+	// =========================================================
+	// Paragraph resets inside search
+	// =========================================================
+	p {
+		margin: 0;
+		padding: 0;
+	}
+
+	// =========================================================
+	// Submit box layout — Clear + Search in a flex row, and let the
+	// box itself align to the end of its parent flex column's cross
+	// axis. `align-self: end` is logical, so it maps to the right
+	// edge in LTR and the left edge in RTL automatically. Width is
+	// reset from the legacy `width: 100%` so the box content-sizes
+	// rather than spanning the column.
+	// =========================================================
+	.gv-search-box-submit {
+		display: flex;
+		flex-wrap: nowrap;
+		align-items: center;
+		gap: var(--gv-space-2);
+		// `max-content` so the box sizes to its natural content width
+		// (Reset + gap + Search) instead of shrinking under flex column
+		// default width:auto. Combined with `align-self: end`, the box
+		// hugs its buttons and parks them at the cross-axis end.
+		width: max-content;
+		max-width: 100%;
+		align-self: end;
+	}
+
+	// When the submit box sits in a column-flex widget area (the default
+	// layout, in the General or Advanced section), `align-self: end` above
+	// parks it at the right edge of its half-width column — the form's
+	// center. Left-align it there so it sits below the fields. The
+	// horizontal-row layout keeps the end alignment.
+	.gv-search-widget-area:not(.gv-search-horizontal) > .gv-search-box-submit {
+		align-self: start;
+	}
+
+	// =========================================================
+	// Reset the search widget's *internal* legacy `.gv-grid` and
+	// rebuild as a clean CSS Grid. The legacy float-based grid
+	// (`width: 50%` cols + `padding-right: 1em` gutters + a parent
+	// `.gv-widget-search` flexbox) fights with modern alignment.
+	// We zero everything out and use a 24-column grid so all of
+	// `1/2`, `1/3`, `2/3`, `1/4`, `3/4`, `1/6`, `1/8` map cleanly.
+	// =========================================================
+	.gv-widget-search-general-search,
+	.gv-widget-search-general-search .gv-grid {
+		// Flex column with `gap` so sibling `.gv-grid-row` blocks
+		// get vertical spacing via the parent. Setting `row-gap`
+		// on the `.gv-grid-row` itself is misleading — that property
+		// only spaces *implicit grid rows within a single grid*
+		// (when cells wrap), not separate `.gv-grid-row` siblings.
+		display: flex;
+		flex-direction: column;
+		gap: var(--gv-search-row-gap);
+		width: 100%;
+		margin: 0;
+		padding: 0;
+		// `flex: 0 0 auto` so this element takes its own width without
+		// growing along its parent flex axis (the form). With
+		// `width: 100%` above it spans the full form width regardless.
+		flex: 0 0 auto;
+		// Override the legacy `.gv-grid { direction: ltr; text-align: left }`
+		// reset so the search widget inherits the document's writing
+		// direction. In RTL, grid columns and `align-self: end` flip
+		// naturally — so the Submit Button lands on the left edge in
+		// RTL and the right edge in LTR.
+		direction: inherit;
+		text-align: inherit;
+
+		&::before,
+		&::after {
+			display: none;
+		}
+	}
+
+	.gv-widget-search-general-search .gv-grid-row {
+		display: grid;
+		grid-template-columns: repeat(24, minmax(0, 1fr));
+		column-gap: var(--gv-search-col-gap);
+		// `row-gap` here would only apply if cells wrap to multiple
+		// implicit rows of this single grid (rare with our 24-track
+		// total). Vertical spacing between sibling `.gv-grid-row`
+		// elements is handled by the parent's `flex-direction: column;
+		// gap: var(--gv-search-row-gap)`.
+		align-items: start;
+		margin: 0;
+		padding: 0;
+		// Drop the legacy `direction: ltr; text-align: left` so the grid
+		// inherits the document's writing direction. In RTL the Submit
+		// Button column ends up on the left edge automatically.
+		direction: inherit;
+		text-align: inherit;
+
+		&::before,
+		&::after {
+			display: none;
+		}
+
+		> [class*="gv-grid-col-"] {
+			float: none;
+			width: auto;
+			min-width: 0;
+			margin: 0;
+			padding: 0;
+			grid-column: span 24; // sane default for unknown classes
+		}
+
+		// Stack multiple `.gv-search-widget-area` children inside a
+		// single grid cell with a small top margin on each subsequent
+		// sibling. Avoids making the cell itself a flex column, which
+		// reacted with legacy `flex: 1 1 10em` on `.gv-search-box` and
+		// inflated the cell to fill its grid track vertically.
+		> [class*="gv-grid-col-"] > .gv-search-widget-area + .gv-search-widget-area {
+			margin-block-start: calc(var(--gv-search-row-gap) / 2);
+		}
+
+		> .gv-grid-col-1-1 { grid-column: span 24; }
+		> .gv-grid-col-1-2 { grid-column: span 12; }
+		> .gv-grid-col-1-3 { grid-column: span 8; }
+		> .gv-grid-col-2-3 { grid-column: span 16; }
+		> .gv-grid-col-1-4 { grid-column: span 6; }
+		> .gv-grid-col-3-4 { grid-column: span 18; }
+		> .gv-grid-col-1-6 { grid-column: span 4; }
+		> .gv-grid-col-1-8 { grid-column: span 3; }
+
+		// The row's `align-items: start` sticks every cell to the top, so
+		// a submit-only cell renders its buttons beside the neighbor's
+		// label, not its input. Bottom-align the submit cell to share the
+		// input baseline. The `.gv-search-col-submit` marker (stamped in
+		// search-fields.php) works on every browser; the `:has()` arm is
+		// progressive enhancement. Keep them as separate rules.
+		> [class*="gv-grid-col-"].gv-search-col-submit {
+			align-self: end;
+		}
+
+		> [class*="gv-grid-col-"]:has(.gv-search-box-submit) {
+			align-self: end;
+		}
+	}
+
+	// Each grid cell should layout as a clean block. The legacy
+	// `.gv-search-widget-area` flex behaviour adds gaps and stretch
+	// rules that fight with the grid cell width — drop them inside
+	// the general search and let `.gv-search-box` flow as a normal
+	// block child that naturally fills its grid cell.
+	.gv-widget-search-general-search {
+		.gv-search-widget-area {
+			display: flex;
+			flex-direction: column;
+			gap: calc(var(--gv-search-row-gap) / 2);
+			// Override legacy `.gv-widget-search.gv-search-rows .gv-search-widget-area { align-items: flex-start }`
+			// which content-sizes the search boxes inside instead of letting
+			// them stretch to the column's full width.
+			align-items: stretch;
+
+			// Reset legacy `.gv-search-horizontal .gv-search-box { flex: 1 1 10em }`
+			// — applied to the form-level horizontal class, this gives every box
+			// a 10em flex-basis. In our column-direction widget-area, that
+			// 10em basis is on the *main* (vertical) axis and inflates each
+			// box to 160px tall, blowing up the grid track. Force boxes to
+			// content-size in the column's main axis.
+			> .gv-search-box {
+				flex: 0 0 auto;
+			}
+		}
+
+		.gv-search-widget-area.gv-search-horizontal {
+			flex-direction: row;
+			flex-wrap: wrap;
+			align-items: flex-start;
+			column-gap: var(--gv-search-col-gap);
+			row-gap: var(--gv-search-row-gap);
+
+			> .gv-search-box {
+				flex: 1 1 var(--gv-search-field-min-width);
+			}
+		}
+	}
+}
+
+// =========================================================
+// Mobile: stack everything at ≤640px viewport width
+// =========================================================
+@media (max-width: #{$gv-breakpoint-sm}) {
+	.gv-themed .gv-widget-search {
+		padding: var(--gv-space-3);
+
+		&.gv-search-horizontal .gv-search-widget-area .gv-search-box,
+		&.gv-search-rows .gv-search-widget-area.gv-search-horizontal .gv-search-box {
+			flex: 1 1 100%;
+		}
+
+		.gv-search-box-submit {
+			flex-direction: column;
+			align-items: stretch;
+
+			.gv-search-button,
+			.gv-search-clear {
+				width: 100%;
+				text-align: center;
+			}
+		}
+
+		// Collapse the inner 24-track grid down to a single column.
+		// Just overriding `grid-column: 1 / -1` on the cells would
+		// keep all 24 column gaps (368px of gutters at 16px each),
+		// squeezing cells against their input min-content. Replacing
+		// the grid template removes the wasted gutters entirely and
+		// lets each cell breathe in its full row.
+		.gv-widget-search-general-search .gv-grid-row {
+			grid-template-columns: 1fr;
+		}
+		.gv-widget-search-general-search .gv-grid-row > [class*="gv-grid-col-"] {
+			grid-column: 1 / -1;
+		}
+	}
+}
+
+// Query-Filters date + choices fields expose `--gk-filters-*` theming
+// tokens; map them to GravityView tokens so the pickers match the View.
+// Their popover/dropdown portals to `<body>` (outside `.gv-themed`), so the
+// tokens are also re-stated at a `body:has(.gv-themed)` scope.
+@mixin gv-qf-calendar-tokens {
+	--gk-filters-calendar-bg: var(--gv-color-surface);
+	--gk-filters-calendar-text: var(--gv-color-text);
+	--gk-filters-calendar-control-text: var(--gv-color-text);
+	--gk-filters-calendar-text-muted: var(--gv-color-text-secondary);
+	--gk-filters-calendar-text-subtle: var(--gv-color-text-secondary);
+	--gk-filters-calendar-border: var(--gv-color-border-strong);
+	--gk-filters-calendar-border-subtle: var(--gv-color-border);
+	--gk-filters-calendar-divider: var(--gv-color-border);
+	--gk-filters-calendar-accent: var(--gv-color-primary);
+	--gk-filters-calendar-accent-hover: var(--gv-color-primary-hover);
+	--gk-filters-calendar-on-accent: var(--gv-color-on-primary);
+	--gk-filters-calendar-hover-bg: var(--gv-color-surface-hover);
+	--gk-filters-calendar-icon: var(--gv-color-text-secondary);
+	--gk-filters-calendar-icon-active-bg: var(--gv-color-surface-hover);
+	--gk-filters-calendar-selected-bg: var(--gv-color-primary);
+	--gk-filters-calendar-on-selected: var(--gv-color-on-primary);
+	--gk-filters-calendar-range-bg: var(--gv-color-surface-alt);
+	--gk-filters-calendar-date-hover-border: var(--gv-color-primary);
+	--gk-filters-calendar-disabled: var(--gv-color-text-disabled);
+	--gk-filters-calendar-sidebar-bg: var(--gv-color-surface-alt);
+	--gk-filters-calendar-shadow: var(--gv-shadow-xl);
+
+	// Match GravityView form controls: radius, type, padding, focus, popover.
+	// Subtract one space unit (--gv-space-1) for the field's intrinsic inner
+	// padding so the edge-to-text spacing equals GravityView's control padding
+	// instead of double-padding.
+	--gk-filters-calendar-control-radius: var(--gv-control-radius);
+	--gk-filters-calendar-field-font-size: var(--gv-font-size-base);
+	--gk-filters-calendar-field-padding-block: calc(var(--gv-space-2) - var(--gv-space-1));
+	--gk-filters-calendar-field-padding-inline: calc(var(--gv-space-3) - var(--gv-space-1));
+	--gk-filters-calendar-focus-ring: var(--gv-shadow-focus);
+	--gk-filters-calendar-popover-radius: var(--gv-radius-lg);
+
+	// Lift the portaled popover above the themed search `<select>`, which sits
+	// at `--gv-z-dropdown` (100). QF's own default is 50, so the select would
+	// otherwise paint through the open calendar.
+	--gk-filters-calendar-popover-z-index: var(--gv-z-popover);
+}
+
+@mixin gv-qf-choices-tokens {
+	--gk-filters-choices-bg: var(--gv-color-surface);
+	--gk-filters-choices-text: var(--gv-color-text);
+	--gk-filters-choices-control-text: var(--gv-color-text);
+	--gk-filters-choices-text-muted: var(--gv-color-text-secondary);
+	--gk-filters-choices-border: var(--gv-color-border-strong);
+	--gk-filters-choices-border-subtle: var(--gv-color-border);
+	--gk-filters-choices-accent: var(--gv-color-primary);
+	--gk-filters-choices-hover-bg: var(--gv-color-surface-hover);
+	--gk-filters-choices-active-bg: var(--gv-color-surface-alt);
+	--gk-filters-choices-icon: var(--gv-color-text-secondary);
+	--gk-filters-choices-icon-active-bg: var(--gv-color-surface-hover);
+	--gk-filters-choices-disabled-bg: var(--gv-color-surface-disabled);
+	--gk-filters-choices-disabled-text: var(--gv-color-text-disabled);
+	--gk-filters-choices-chip-bg: var(--gv-color-surface-alt);
+	--gk-filters-choices-chip-border: var(--gv-color-border);
+	--gk-filters-choices-spinner-track: var(--gv-color-border);
+	--gk-filters-choices-shadow: var(--gv-shadow-xl);
+
+	// Match GravityView form controls: radius, type, padding, focus.
+	// Subtract one space unit (--gv-space-1) for the field's intrinsic inner
+	// padding so the edge-to-text spacing equals GravityView's control padding.
+	--gk-filters-choices-control-radius: var(--gv-control-radius);
+	--gk-filters-choices-field-font-size: var(--gv-font-size-base);
+	--gk-filters-choices-field-padding-block: calc(var(--gv-space-2) - var(--gv-space-1));
+	--gk-filters-choices-field-padding-inline: calc(var(--gv-space-3) - var(--gv-space-1));
+	--gk-filters-choices-focus-ring: var(--gv-shadow-focus);
+
+	// Lift the portaled popover above the themed search `<select>`, which sits
+	// at `--gv-z-dropdown` (100). QF's own default is 50, so the select would
+	// otherwise paint through the open dropdown.
+	--gk-filters-choices-popover-z-index: var(--gv-z-popover);
+}
+
+.gv-themed .gk-calendar-root {
+	@include gv-qf-calendar-tokens;
+}
+
+.gv-themed .gk-choices-root {
+	@include gv-qf-choices-tokens;
+}
+
+// Popovers portal to <body>, outside `.gv-themed`, so each `.gk-*-content`
+// needs a `body:has(.gv-themed)` arm. Keep that arm in its OWN rule -- never
+// comma-joined with the descendant arm: a browser below the `:has()` floor
+// drops the whole selector list if one selector is invalid, killing both.
+// No body marker class (it leaks theme scope page-wide). See AGENTS.md
+// "Theming scope".
+.gv-themed .gk-calendar-content {
+	@include gv-qf-calendar-tokens;
+}
+
+body:has(.gv-themed) .gk-calendar-content {
+	@include gv-qf-calendar-tokens;
+}
+
+.gv-themed .gk-choices-content {
+	@include gv-qf-choices-tokens;
+}
+
+body:has(.gv-themed) .gk-choices-content {
+	@include gv-qf-choices-tokens;
+}
+
+// A separate (start + end) date-range picker holds two full pickers. When the
+// search column is too narrow for them side by side, let them stack instead of
+// overflowing. Group the two tighter than the inter-field spacing since they
+// are one field. Selector matches the legacy gv-default-styles rule's
+// specificity (plus `.gv-themed`) so the tighter gap wins.
+.gv-themed .gv-widget-search .gv-search-box .gv-date-range-picker {
+	flex-wrap: wrap;
+	gap: var(--gv-space-2);
+
+	// Separate mode nests one picker per date in `.gv-date-picker`; combined
+	// mode mounts `.gk-calendar-root` directly in this container. The `auto`
+	// basis keeps each at its natural width and wraps when they no longer
+	// fit; `min-width: 0` lifts QF's 175px `.gk-calendar-input-wrapper`
+	// floor so narrow grid columns contain the control instead of letting
+	// it overlap the neighboring field.
+	> .gv-date-picker,
+	> .gk-calendar-root {
+		flex: 1 1 auto;
+		min-width: 0;
+	}
+
+	.gk-calendar-root {
+		min-width: 0;
+	}
+
+	// `overflow: hidden` truncates the date segments at the input border when
+	// the column is narrower than they are, instead of letting the text paint
+	// past the border. The calendar popover is portaled to `<body>`, so
+	// clipping here never clips it.
+	.gk-calendar-input-wrapper {
+		min-width: 0;
+		overflow: hidden;
+	}
+}

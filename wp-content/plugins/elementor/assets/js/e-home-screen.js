@@ -431,7 +431,8 @@ var _baseTracking = _interopRequireDefault(__webpack_require__(/*! ./base-tracki
 function _callSuper(t, o, e) { return o = (0, _getPrototypeOf2.default)(o), (0, _possibleConstructorReturn2.default)(t, _isNativeReflectConstruct() ? Reflect.construct(o, e || [], (0, _getPrototypeOf2.default)(t).constructor) : o.apply(t, e)); }
 function _isNativeReflectConstruct() { try { var t = !Boolean.prototype.valueOf.call(Reflect.construct(Boolean, [], function () {})); } catch (t) {} return (_isNativeReflectConstruct = function _isNativeReflectConstruct() { return !!t; })(); }
 var PROMO_MENU_ITEMS = {
-  go_elementor_pro: 'Upgrade'
+  go_elementor_pro: 'Upgrade',
+  'elementor-one-upgrade': 'Upgrade'
 };
 var MenuPromotionTracking = /*#__PURE__*/function (_BaseTracking) {
   function MenuPromotionTracking() {
@@ -2778,120 +2779,6 @@ var _default = exports["default"] = TopSection;
 
 /***/ }),
 
-/***/ "../modules/home/assets/js/icons/ai-loader-icon.js":
-/*!*********************************************************!*\
-  !*** ../modules/home/assets/js/icons/ai-loader-icon.js ***!
-  \*********************************************************/
-/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
-
-"use strict";
-
-
-var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault */ "../node_modules/@babel/runtime/helpers/interopRequireDefault.js");
-Object.defineProperty(exports, "__esModule", ({
-  value: true
-}));
-exports["default"] = void 0;
-var _react = _interopRequireDefault(__webpack_require__(/*! react */ "react"));
-var _ui = __webpack_require__(/*! @elementor/ui */ "@elementor/ui");
-var _aiStarsIcon = _interopRequireDefault(__webpack_require__(/*! ./ai-stars-icon */ "../modules/home/assets/js/icons/ai-stars-icon.js"));
-var AiLoaderIcon = function AiLoaderIcon() {
-  return /*#__PURE__*/_react.default.createElement(_ui.Box, {
-    sx: {
-      position: 'relative',
-      width: 40,
-      height: 40
-    }
-  }, /*#__PURE__*/_react.default.createElement(_ui.Box, {
-    sx: {
-      position: 'relative',
-      width: 40,
-      height: 40,
-      borderRadius: '50%',
-      background: 'linear-gradient(180deg, #FFFFFF 0%, #F3F1FA 100%)',
-      boxShadow: '0px 6px 14px rgba(0, 0, 0, 0.28)'
-    }
-  }), /*#__PURE__*/_react.default.createElement(_ui.Box, {
-    sx: {
-      position: 'absolute',
-      top: 8,
-      left: 8,
-      width: 24,
-      height: 24,
-      pointerEvents: 'none'
-    }
-  }, /*#__PURE__*/_react.default.createElement(_ui.SvgIcon, {
-    viewBox: "0 0 24 24",
-    sx: {
-      width: 24,
-      height: 24
-    }
-  }, /*#__PURE__*/_react.default.createElement("defs", null, /*#__PURE__*/_react.default.createElement("linearGradient", {
-    id: "siteBuilderLoaderGradient",
-    x1: "10.6213",
-    y1: "18.7556",
-    x2: "21.3988",
-    y2: "18.6768",
-    gradientUnits: "userSpaceOnUse"
-  }, /*#__PURE__*/_react.default.createElement("stop", {
-    offset: "0",
-    stopColor: "#696199"
-  }), /*#__PURE__*/_react.default.createElement("stop", {
-    offset: "1",
-    stopColor: "#C945C9"
-  }))), /*#__PURE__*/_react.default.createElement("path", {
-    fillRule: "evenodd",
-    clipRule: "evenodd",
-    d: "M6.58319 3.89317C8.18657 2.82183 10.0716 2.25 12 2.25C12.4142 2.25 12.75 2.58579 12.75 3C12.75 3.41421 12.4142 3.75 12 3.75C10.3683 3.75 8.77326 4.23385 7.41655 5.14038C6.05984 6.0469 5.00242 7.33537 4.378 8.84286C3.75358 10.3504 3.5902 12.0092 3.90853 13.6095C4.22685 15.2098 5.01259 16.6798 6.16637 17.8336C7.32016 18.9874 8.79017 19.7732 10.3905 20.0915C11.9909 20.4098 13.6497 20.2464 15.1571 19.622C16.6646 18.9976 17.9531 17.9402 18.8596 16.5835C19.7661 15.2267 20.25 13.6317 20.25 12C20.25 11.5858 20.5858 11.25 21 11.25C21.4142 11.25 21.75 11.5858 21.75 12C21.75 13.9284 21.1782 15.8134 20.1068 17.4168C19.0355 19.0202 17.5127 20.2699 15.7312 21.0078C13.9496 21.7458 11.9892 21.9389 10.0979 21.5627C8.20656 21.1865 6.46927 20.2579 5.10571 18.8943C3.74215 17.5307 2.81355 15.7934 2.43735 13.9021C2.06114 12.0108 2.25422 10.0504 2.99218 8.26884C3.73013 6.48726 4.97982 4.96452 6.58319 3.89317Z",
-    fill: "url(#siteBuilderLoaderGradient)"
-  }))), /*#__PURE__*/_react.default.createElement(_aiStarsIcon.default, {
-    sx: {
-      position: 'absolute',
-      top: '50%',
-      left: '50%',
-      transform: 'translate(-50%, -50%)',
-      width: 10,
-      height: 10
-    }
-  }));
-};
-var _default = exports["default"] = AiLoaderIcon;
-
-/***/ }),
-
-/***/ "../modules/home/assets/js/icons/ai-stars-icon.js":
-/*!********************************************************!*\
-  !*** ../modules/home/assets/js/icons/ai-stars-icon.js ***!
-  \********************************************************/
-/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
-
-"use strict";
-
-
-var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault */ "../node_modules/@babel/runtime/helpers/interopRequireDefault.js");
-Object.defineProperty(exports, "__esModule", ({
-  value: true
-}));
-exports["default"] = void 0;
-var _react = _interopRequireDefault(__webpack_require__(/*! react */ "react"));
-var _extends2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime/helpers/extends */ "../node_modules/@babel/runtime/helpers/extends.js"));
-var _ui = __webpack_require__(/*! @elementor/ui */ "@elementor/ui");
-var AiStarsIcon = function AiStarsIcon(props) {
-  return /*#__PURE__*/_react.default.createElement(_ui.SvgIcon, (0, _extends2.default)({
-    viewBox: "0 0 10 10",
-    sx: {
-      width: 10,
-      height: 10
-    }
-  }, props), /*#__PURE__*/_react.default.createElement("path", {
-    d: "M4.79985 0.226562L5.07501 0.970157C5.72321 2.72191 7.10436 4.10306 8.85611 4.75126L9.59971 5.02642L8.85611 5.30157C7.10436 5.94978 5.72321 7.33092 5.07501 9.08267L4.79985 9.82627L4.5247 9.08267C3.87649 7.33092 2.49534 5.94978 0.743595 5.30157L0 5.02642L0.743594 4.75126C2.49534 4.10306 3.87649 2.72191 4.5247 0.970157L4.79985 0.226562Z",
-    fill: "#0C0D0E"
-  }));
-};
-var _default = exports["default"] = AiStarsIcon;
-
-/***/ }),
-
 /***/ "../modules/home/assets/js/icons/arrow-right-icon.js":
 /*!***********************************************************!*\
   !*** ../modules/home/assets/js/icons/arrow-right-icon.js ***!
@@ -3009,34 +2896,22 @@ exports["default"] = void 0;
 var _react = _interopRequireDefault(__webpack_require__(/*! react */ "react"));
 var _propTypes = _interopRequireDefault(__webpack_require__(/*! prop-types */ "../node_modules/prop-types/index.js"));
 var _i18n = __webpack_require__(/*! @wordpress/i18n */ "@wordpress/i18n");
-var _ui = __webpack_require__(/*! @elementor/ui */ "@elementor/ui");
 var _CopyPageIcon = _interopRequireDefault(__webpack_require__(/*! @elementor/icons/CopyPageIcon */ "@elementor/icons/CopyPageIcon"));
 var _WebsiteIcon = _interopRequireDefault(__webpack_require__(/*! @elementor/icons/WebsiteIcon */ "@elementor/icons/WebsiteIcon"));
 var _styledComponents = __webpack_require__(/*! ./styled-components */ "../modules/home/assets/js/site-builder/components/styled-components.js");
 var SiteTypeLayoutToggle = function SiteTypeLayoutToggle(_ref) {
   var isOnePage = _ref.isOnePage,
     onIsOnePageChange = _ref.onIsOnePageChange;
-  var theme = (0, _ui.useTheme)();
-  var multiColor = !isOnePage ? theme.palette.secondary.contrastText : theme.palette.text.secondary;
-  var onePageColor = isOnePage ? theme.palette.secondary.contrastText : theme.palette.text.secondary;
   return /*#__PURE__*/_react.default.createElement(_styledComponents.LayoutToggleContainer, null, /*#__PURE__*/_react.default.createElement(_styledComponents.LayoutChip, {
     isSelected: !isOnePage,
-    icon: /*#__PURE__*/_react.default.createElement(_CopyPageIcon.default, {
-      sx: {
-        color: multiColor
-      }
-    }),
+    icon: /*#__PURE__*/_react.default.createElement(_CopyPageIcon.default, null),
     label: (0, _i18n.__)('Multi-page', 'elementor'),
     onClick: function onClick() {
       return onIsOnePageChange(false);
     }
   }), /*#__PURE__*/_react.default.createElement(_styledComponents.LayoutChip, {
     isSelected: isOnePage,
-    icon: /*#__PURE__*/_react.default.createElement(_WebsiteIcon.default, {
-      sx: {
-        color: onePageColor
-      }
-    }),
+    icon: /*#__PURE__*/_react.default.createElement(_WebsiteIcon.default, null),
     label: (0, _i18n.__)('One-page', 'elementor'),
     onClick: function onClick() {
       return onIsOnePageChange(true);
@@ -3107,7 +2982,6 @@ var StepWithInput = exports.StepWithInput = function StepWithInput(_ref) {
     onKeyDown = _ref.onKeyDown,
     onSubmit = _ref.onSubmit,
     placeholder = _ref.placeholder;
-  var canSubmit = Boolean(inputValue.trim());
   return /*#__PURE__*/_react.default.createElement(_styledComponents.PlannerInputRow, null, /*#__PURE__*/_react.default.createElement(_styledComponents.PlannerTextField, {
     placeholder: placeholder,
     variant: "outlined",
@@ -3120,8 +2994,9 @@ var StepWithInput = exports.StepWithInput = function StepWithInput(_ref) {
     variant: "contained",
     size: "medium",
     endIcon: /*#__PURE__*/_react.default.createElement(_arrowRightIcon.default, null),
-    onClick: onSubmit,
-    disabled: !canSubmit
+    onClick: function onClick() {
+      return inputValue.trim() && onSubmit();
+    }
   }, buttonLabel));
 };
 StepWithInput.propTypes = {
@@ -3167,7 +3042,7 @@ var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/inte
 Object.defineProperty(exports, "__esModule", ({
   value: true
 }));
-exports.SuggestionChip = exports.PlannerTextField = exports.PlannerRoot = exports.PlannerPreviewInner = exports.PlannerPreviewImage2 = exports.PlannerPreviewImage1 = exports.PlannerPreviewFrame = exports.PlannerPreviewContainer = exports.PlannerLoaderBadge = exports.PlannerInputRow = exports.PlannerInputColumn = exports.PlannerHeading = exports.PlannerGrid = exports.PlannerContent = exports.PlannerChipsRow = exports.PlannerBackground = exports.LayoutToggleContainer = exports.LayoutChip = exports.GenerateSiteButton = exports.CreateSiteButton = void 0;
+exports.SuggestionChip = exports.PlannerTextField = exports.PlannerRoot = exports.PlannerPreviewImage = exports.PlannerPreviewContainer = exports.PlannerInputRow = exports.PlannerInputColumn = exports.PlannerHeading = exports.PlannerGrid = exports.PlannerContent = exports.PlannerChipsRow = exports.PlannerBackground = exports.LayoutToggleContainer = exports.LayoutChip = exports.GenerateSiteButton = exports.CreateSiteButton = void 0;
 var _defineProperty2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime/helpers/defineProperty */ "../node_modules/@babel/runtime/helpers/defineProperty.js"));
 var _ui = __webpack_require__(/*! @elementor/ui */ "@elementor/ui");
 function ownKeys(e, r) { var t = Object.keys(e); if (Object.getOwnPropertySymbols) { var o = Object.getOwnPropertySymbols(e); r && (o = o.filter(function (r) { return Object.getOwnPropertyDescriptor(e, r).enumerable; })), t.push.apply(t, o); } return t; }
@@ -3183,7 +3058,7 @@ var PlannerRoot = exports.PlannerRoot = (0, _ui.styled)(_ui.Paper)(function (_re
     borderRadius: theme.spacing(1),
     border: '1px solid',
     borderColor: theme.palette.divider,
-    minHeight: theme.spacing(26.75),
+    minHeight: theme.spacing(23.25),
     gap: theme.spacing(2)
   };
 });
@@ -3207,6 +3082,7 @@ var PlannerGrid = exports.PlannerGrid = (0, _ui.styled)(_ui.Box)(function (_ref3
   return {
     position: 'absolute',
     inset: 0,
+    insetInlineStart: '-21px',
     backgroundImage: 'linear-gradient(rgba(0,0,0,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(0,0,0,0.03) 1px, transparent 1px)',
     backgroundSize: "".concat(theme.spacing(5), " ").concat(theme.spacing(5)),
     zIndex: 0
@@ -3215,11 +3091,8 @@ var PlannerGrid = exports.PlannerGrid = (0, _ui.styled)(_ui.Box)(function (_ref3
 var PlannerPreviewContainer = exports.PlannerPreviewContainer = (0, _ui.styled)(_ui.Box)(function (_ref4) {
   var theme = _ref4.theme;
   return (0, _defineProperty2.default)({
-    position: 'relative',
-    zIndex: 1,
     display: 'none',
-    alignItems: 'center',
-    justifyContent: 'center',
+    position: 'relative',
     flexShrink: 0,
     width: theme.spacing(31.5),
     height: '100%',
@@ -3228,74 +3101,26 @@ var PlannerPreviewContainer = exports.PlannerPreviewContainer = (0, _ui.styled)(
     display: 'flex'
   });
 });
-var PlannerPreviewInner = exports.PlannerPreviewInner = (0, _ui.styled)(_ui.Box)(function (_ref6) {
+var PlannerPreviewImage = exports.PlannerPreviewImage = (0, _ui.styled)(_ui.Box)(function () {
+  return {
+    width: '100%',
+    height: 'auto',
+    display: 'block'
+  };
+});
+var PlannerContent = exports.PlannerContent = (0, _ui.styled)(_ui.Stack)(function (_ref6) {
   var theme = _ref6.theme;
   return {
-    position: 'relative',
-    width: theme.spacing(31.5),
-    height: theme.spacing(18.5)
-  };
-});
-var PlannerPreviewFrame = exports.PlannerPreviewFrame = (0, _ui.styled)(_ui.Box)(function (_ref7) {
-  var theme = _ref7.theme;
-  return {
-    position: 'absolute',
-    inset: 0,
-    border: '1px dashed',
-    borderColor: '#696199',
-    borderRadius: theme.spacing(1.75),
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'flex-end',
-    gap: '3.7px',
-    padding: '8.5px',
-    paddingInlineEnd: '0'
-  };
-});
-var PlannerPreviewImage1 = exports.PlannerPreviewImage1 = (0, _ui.styled)(_ui.Box)(function (_ref8) {
-  var theme = _ref8.theme;
-  return {
-    height: '121px',
-    width: 'auto',
-    objectFit: 'cover',
-    borderRadius: theme.spacing(1.25),
-    flexShrink: 0
-  };
-});
-var PlannerPreviewImage2 = exports.PlannerPreviewImage2 = (0, _ui.styled)(_ui.Box)(function (_ref9) {
-  var theme = _ref9.theme;
-  return {
-    height: '121px',
-    width: 'auto',
-    objectFit: 'cover',
-    borderRadius: theme.spacing(1.25),
-    flexShrink: 0,
-    marginInlineEnd: '-1px'
-  };
-});
-var PlannerLoaderBadge = exports.PlannerLoaderBadge = (0, _ui.styled)(_ui.Box)(function (_ref0) {
-  var theme = _ref0.theme;
-  return {
-    position: 'absolute',
-    top: theme.spacing(1),
-    right: theme.spacing(-2.5)
-  };
-});
-var PlannerContent = exports.PlannerContent = (0, _ui.styled)(_ui.Stack)(function (_ref1) {
-  var theme = _ref1.theme;
-  return (0, _defineProperty2.default)({
     position: 'relative',
     zIndex: 1,
     flex: 1,
     gap: theme.spacing(1),
     paddingBlock: theme.spacing(3),
-    paddingInline: theme.spacing(3)
-  }, theme.breakpoints.up('md'), {
-    paddingInline: theme.spacing(4)
-  });
+    paddingInline: theme.spacing(2)
+  };
 });
-var PlannerHeading = exports.PlannerHeading = (0, _ui.styled)(_ui.Typography)(function (_ref11) {
-  var theme = _ref11.theme;
+var PlannerHeading = exports.PlannerHeading = (0, _ui.styled)(_ui.Typography)(function (_ref7) {
+  var theme = _ref7.theme;
   return {
     fontFamily: '"Poppins", sans-serif',
     fontWeight: 400,
@@ -3311,8 +3136,8 @@ var PlannerHeading = exports.PlannerHeading = (0, _ui.styled)(_ui.Typography)(fu
 PlannerHeading.defaultProps = {
   variant: 'h4'
 };
-var PlannerInputRow = exports.PlannerInputRow = (0, _ui.styled)(_ui.Box)(function (_ref12) {
-  var theme = _ref12.theme;
+var PlannerInputRow = exports.PlannerInputRow = (0, _ui.styled)(_ui.Box)(function (_ref8) {
+  var theme = _ref8.theme;
   return (0, _defineProperty2.default)({
     display: 'flex',
     flexDirection: 'column',
@@ -3325,8 +3150,8 @@ var PlannerInputRow = exports.PlannerInputRow = (0, _ui.styled)(_ui.Box)(functio
     alignItems: 'center'
   });
 });
-var PlannerInputColumn = exports.PlannerInputColumn = (0, _ui.styled)(_ui.Box)(function (_ref14) {
-  var theme = _ref14.theme;
+var PlannerInputColumn = exports.PlannerInputColumn = (0, _ui.styled)(_ui.Box)(function (_ref0) {
+  var theme = _ref0.theme;
   return {
     display: 'flex',
     flexDirection: 'column',
@@ -3334,8 +3159,8 @@ var PlannerInputColumn = exports.PlannerInputColumn = (0, _ui.styled)(_ui.Box)(f
     alignItems: 'flex-start'
   };
 });
-var PlannerTextField = exports.PlannerTextField = (0, _ui.styled)(_ui.TextField)(function (_ref15) {
-  var theme = _ref15.theme;
+var PlannerTextField = exports.PlannerTextField = (0, _ui.styled)(_ui.TextField)(function (_ref1) {
+  var theme = _ref1.theme;
   return (0, _defineProperty2.default)((0, _defineProperty2.default)((0, _defineProperty2.default)({
     width: '100%'
   }, theme.breakpoints.up('sm'), {
@@ -3343,14 +3168,17 @@ var PlannerTextField = exports.PlannerTextField = (0, _ui.styled)(_ui.TextField)
   }), '& .MuiOutlinedInput-root', {
     borderRadius: theme.spacing(1),
     height: theme.spacing(5),
-    boxShadow: '0px 3px 14px 0px rgba(0, 0, 0, 0.06)',
+    boxShadow: "0px 3px 14px 2px ".concat(theme.palette.divider),
     overflow: 'hidden',
+    border: '1px solid transparent',
+    backgroundImage: "linear-gradient(".concat(theme.palette.common.white, ", ").concat(theme.palette.common.white, "), linear-gradient(89deg, #212121 25.85%, #696199 46.02%, #C945C9 60.81%, #212121 82.38%)"),
+    backgroundOrigin: 'border-box',
+    backgroundClip: 'padding-box, border-box',
     '& fieldset': {
-      borderColor: theme.palette.divider
+      border: 'none'
     },
     '&.Mui-focused fieldset': {
-      borderColor: theme.palette.divider,
-      borderWidth: '1px'
+      border: 'none'
     }
   }), '& .MuiInputBase-input', {
     border: 'none',
@@ -3359,16 +3187,16 @@ var PlannerTextField = exports.PlannerTextField = (0, _ui.styled)(_ui.TextField)
     paddingInline: theme.spacing(2)
   });
 });
-var PlannerChipsRow = exports.PlannerChipsRow = (0, _ui.styled)(_ui.Box)(function (_ref17) {
-  var theme = _ref17.theme;
+var PlannerChipsRow = exports.PlannerChipsRow = (0, _ui.styled)(_ui.Box)(function (_ref11) {
+  var theme = _ref11.theme;
   return {
     display: 'flex',
     gap: theme.spacing(1),
     flexWrap: 'wrap'
   };
 });
-var GenerateSiteButton = exports.GenerateSiteButton = (0, _ui.styled)(_ui.Button)(function (_ref18) {
-  var theme = _ref18.theme;
+var GenerateSiteButton = exports.GenerateSiteButton = (0, _ui.styled)(_ui.Button)(function (_ref12) {
+  var theme = _ref12.theme;
   return {
     backgroundColor: theme.palette.text.primary,
     color: theme.palette.common.white,
@@ -3385,8 +3213,8 @@ var GenerateSiteButton = exports.GenerateSiteButton = (0, _ui.styled)(_ui.Button
     }
   };
 });
-var CreateSiteButton = exports.CreateSiteButton = (0, _ui.styled)(_ui.Button)(function (_ref19) {
-  var theme = _ref19.theme;
+var CreateSiteButton = exports.CreateSiteButton = (0, _ui.styled)(_ui.Button)(function (_ref13) {
+  var theme = _ref13.theme;
   return {
     backgroundColor: theme.palette.text.primary,
     border: '1px solid',
@@ -3400,30 +3228,27 @@ var CreateSiteButton = exports.CreateSiteButton = (0, _ui.styled)(_ui.Button)(fu
       backgroundColor: '#22252a',
       borderColor: '#22252a',
       color: theme.palette.common.white
-    },
-    '&&.Mui-disabled': {
-      borderColor: theme.palette.action.disabledBackground
     }
   };
 });
-var SuggestionChip = exports.SuggestionChip = (0, _ui.styled)(_ui.Chip)(function (_ref20) {
-  var theme = _ref20.theme,
-    selected = _ref20.selected;
+var SuggestionChip = exports.SuggestionChip = (0, _ui.styled)(_ui.Chip)(function (_ref14) {
+  var theme = _ref14.theme;
   return {
-    cursor: selected ? 'default' : 'pointer',
-    backgroundColor: selected ? theme.palette.text.secondary : theme.palette.common.white,
-    borderColor: selected ? 'none' : theme.palette.divider,
-    color: selected ? theme.palette.common.white : theme.palette.text.secondary,
+    backgroundColor: theme.palette.common.white,
+    borderColor: theme.palette.divider,
+    color: theme.palette.text.secondary,
     fontSize: theme.spacing(1.625),
-    '&&:hover': {
-      backgroundColor: theme.palette.text.secondary,
-      color: theme.palette.common.white,
-      borderColor: 'none'
+    '&:not(.Mui-disabled):hover': {
+      backgroundColor: '#f3f3f4'
+    },
+    '&.Mui-disabled': {
+      opacity: 1,
+      color: theme.palette.text.disabled
     }
   };
 });
-var LayoutToggleContainer = exports.LayoutToggleContainer = (0, _ui.styled)(_ui.Box)(function (_ref21) {
-  var theme = _ref21.theme;
+var LayoutToggleContainer = exports.LayoutToggleContainer = (0, _ui.styled)(_ui.Box)(function (_ref15) {
+  var theme = _ref15.theme;
   return {
     alignItems: 'center',
     backgroundColor: theme.palette.common.white,
@@ -3436,9 +3261,9 @@ var LayoutChip = exports.LayoutChip = (0, _ui.styled)(_ui.Chip, {
   shouldForwardProp: function shouldForwardProp(prop) {
     return 'isSelected' !== prop;
   }
-})(function (_ref22) {
-  var theme = _ref22.theme,
-    isSelected = _ref22.isSelected;
+})(function (_ref16) {
+  var theme = _ref16.theme,
+    isSelected = _ref16.isSelected;
   return {
     backgroundColor: isSelected ? theme.palette.secondary.main : 'transparent',
     border: 'none',
@@ -3453,7 +3278,15 @@ var LayoutChip = exports.LayoutChip = (0, _ui.styled)(_ui.Chip, {
       paddingInlineEnd: theme.spacing(0.5)
     },
     '&& .MuiChip-icon': {
-      fontSize: theme.spacing(1.75)
+      fontSize: theme.spacing(1.75),
+      color: isSelected ? theme.palette.secondary.contrastText : theme.palette.text.secondary
+    },
+    '&&:hover': {
+      backgroundColor: isSelected ? theme.palette.secondary.dark : theme.palette.action.hover,
+      color: isSelected ? theme.palette.secondary.contrastText : theme.palette.text.primary,
+      '&& .MuiChip-icon': {
+        color: isSelected ? theme.palette.secondary.contrastText : theme.palette.text.primary
+      }
     }
   };
 });
@@ -3542,7 +3375,7 @@ var SuggestionChips = function SuggestionChips(_ref) {
       },
       size: "small",
       variant: "outlined",
-      selected: selectedChip === suggestion
+      disabled: selectedChip === suggestion
     });
   }));
 };
@@ -3567,18 +3400,48 @@ var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/inte
 Object.defineProperty(exports, "__esModule", ({
   value: true
 }));
-exports["default"] = void 0;
+exports["default"] = exports.clearHomeScreenSnapshot = void 0;
 var _regenerator = _interopRequireDefault(__webpack_require__(/*! @babel/runtime/regenerator */ "../node_modules/@babel/runtime/regenerator/index.js"));
 var _asyncToGenerator2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime/helpers/asyncToGenerator */ "../node_modules/@babel/runtime/helpers/asyncToGenerator.js"));
-var _defineProperty2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime/helpers/defineProperty */ "../node_modules/@babel/runtime/helpers/defineProperty.js"));
 var _slicedToArray2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime/helpers/slicedToArray */ "../node_modules/@babel/runtime/helpers/slicedToArray.js"));
 var _toConsumableArray2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime/helpers/toConsumableArray */ "../node_modules/@babel/runtime/helpers/toConsumableArray.js"));
+var _defineProperty2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime/helpers/defineProperty */ "../node_modules/@babel/runtime/helpers/defineProperty.js"));
 var _react = __webpack_require__(/*! react */ "react");
 function ownKeys(e, r) { var t = Object.keys(e); if (Object.getOwnPropertySymbols) { var o = Object.getOwnPropertySymbols(e); r && (o = o.filter(function (r) { return Object.getOwnPropertyDescriptor(e, r).enumerable; })), t.push.apply(t, o); } return t; }
 function _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t = null != arguments[r] ? arguments[r] : {}; r % 2 ? ownKeys(Object(t), !0).forEach(function (r) { (0, _defineProperty2.default)(e, r, t[r]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(e, Object.getOwnPropertyDescriptors(t)) : ownKeys(Object(t)).forEach(function (r) { Object.defineProperty(e, r, Object.getOwnPropertyDescriptor(t, r)); }); } return e; }
 var SETTINGS_PATH = 'elementor/v1/site-builder/snapshot';
 var HOME_SCREEN_PATH = 'elementor/v1/site-builder/home-screen';
 var DEFAULT_SITE_TYPE_SUGGESTIONS = Object.freeze(['Business website', 'Portfolio website', 'E-commerce store']);
+var buildRestHeaders = function buildRestHeaders() {
+  var _window$elementorHome;
+  return {
+    'X-WP-Nonce': ((_window$elementorHome = window.elementorHomeScreenData) === null || _window$elementorHome === void 0 ? void 0 : _window$elementorHome.wpRestNonce) || ''
+  };
+};
+var getRestBaseUrl = function getRestBaseUrl() {
+  var _window$wpApiSettings;
+  return ((_window$wpApiSettings = window.wpApiSettings) === null || _window$wpApiSettings === void 0 ? void 0 : _window$wpApiSettings.root) || '/wp-json/';
+};
+var clearHomeScreenSnapshot = exports.clearHomeScreenSnapshot = function clearHomeScreenSnapshot(siteKey, fullSnapshot) {
+  if (!siteKey) {
+    return;
+  }
+  var remaining = _objectSpread({}, fullSnapshot !== null && fullSnapshot !== void 0 ? fullSnapshot : {});
+  delete remaining[siteKey];
+  if (fullSnapshot && Object.prototype.hasOwnProperty.call(fullSnapshot, siteKey)) {
+    delete fullSnapshot[siteKey];
+  }
+  fetch("".concat(getRestBaseUrl()).concat(SETTINGS_PATH), {
+    method: 'POST',
+    credentials: 'include',
+    headers: _objectSpread({
+      'Content-Type': 'application/json'
+    }, buildRestHeaders()),
+    body: JSON.stringify({
+      value: remaining
+    })
+  }).catch(function () {});
+};
 var sanitizeSuggestions = function sanitizeSuggestions(value) {
   var _ref = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {},
     limit = _ref.limit;
@@ -3594,16 +3457,13 @@ var withDefaultSiteTypeSuggestions = function withDefaultSiteTypeSuggestions(val
   return stored.length ? stored : (0, _toConsumableArray2.default)(DEFAULT_SITE_TYPE_SUGGESTIONS);
 };
 var hasCompleteSnapshot = function hasCompleteSnapshot(snapshotStep, snapshotEntry, plannerSteps) {
-  if (null === snapshotStep) {
+  if (!snapshotEntry) {
     return false;
   }
-  if (snapshotStep >= plannerSteps.DEPLOYED_TO_PLUGIN) {
-    return Array.isArray(snapshotEntry === null || snapshotEntry === void 0 ? void 0 : snapshotEntry.pageSuggestions) && snapshotEntry.pageSuggestions.length > 0;
+  if (null !== snapshotStep && snapshotStep >= plannerSteps.DEPLOYED_TO_PLUGIN) {
+    return Array.isArray(snapshotEntry.pageSuggestions) && snapshotEntry.pageSuggestions.length > 0;
   }
   return true;
-};
-var hasEntryWithoutSession = function hasEntryWithoutSession(snapshotEntry, snapshotStep) {
-  return snapshotEntry !== undefined && null === snapshotStep;
 };
 var deriveInitialStateForSiteKey = function deriveInitialStateForSiteKey(siteKey, snapshot, plannerSteps) {
   if (!siteKey) {
@@ -3627,14 +3487,6 @@ var deriveInitialStateForSiteKey = function deriveInitialStateForSiteKey(siteKey
     };
   }
   var siteTypeSuggestions = withDefaultSiteTypeSuggestions(snapshotEntry === null || snapshotEntry === void 0 ? void 0 : snapshotEntry.siteTypeSuggestions);
-  if (hasEntryWithoutSession(snapshotEntry, snapshotStep)) {
-    return {
-      sessionStep: null,
-      pageSuggestions: [],
-      siteTypeSuggestions: siteTypeSuggestions,
-      isResolved: true
-    };
-  }
   return {
     sessionStep: null,
     pageSuggestions: [],
@@ -3670,7 +3522,6 @@ var useSiteBuilderState = function useSiteBuilderState(siteBuilderData) {
     error = _useState0[0],
     setError = _useState0[1];
   (0, _react.useEffect)(function () {
-    var _window$elementorHome, _window$wpApiSettings;
     var applyState = function applyState(next) {
       setSessionStep(next.sessionStep);
       setPageSuggestions(next.pageSuggestions);
@@ -3698,19 +3549,9 @@ var useSiteBuilderState = function useSiteBuilderState(siteBuilderData) {
       });
       return;
     }
-    if (hasEntryWithoutSession(snapshotEntry, snapshotStep)) {
-      applyState({
-        sessionStep: null,
-        pageSuggestions: [],
-        siteTypeSuggestions: withDefaultSiteTypeSuggestions(snapshotEntry === null || snapshotEntry === void 0 ? void 0 : snapshotEntry.siteTypeSuggestions)
-      });
-      return;
-    }
     var isMounted = true;
-    var restHeaders = {
-      'X-WP-Nonce': ((_window$elementorHome = window.elementorHomeScreenData) === null || _window$elementorHome === void 0 ? void 0 : _window$elementorHome.wpRestNonce) || ''
-    };
-    var baseUrl = ((_window$wpApiSettings = window.wpApiSettings) === null || _window$wpApiSettings === void 0 ? void 0 : _window$wpApiSettings.root) || '/wp-json/';
+    var restHeaders = buildRestHeaders();
+    var baseUrl = getRestBaseUrl();
     var settingsUrl = "".concat(baseUrl).concat(SETTINGS_PATH);
     var writeSnapshot = function writeSnapshot(entry) {
       return fetch(settingsUrl, {
@@ -3832,13 +3673,13 @@ exports["default"] = void 0;
 var _react = _interopRequireWildcard(__webpack_require__(/*! react */ "react"));
 var _slicedToArray2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime/helpers/slicedToArray */ "../node_modules/@babel/runtime/helpers/slicedToArray.js"));
 var _propTypes = _interopRequireDefault(__webpack_require__(/*! prop-types */ "../node_modules/prop-types/index.js"));
-var _aiLoaderIcon = _interopRequireDefault(__webpack_require__(/*! ../icons/ai-loader-icon */ "../modules/home/assets/js/icons/ai-loader-icon.js"));
 var _siteTypeLayoutToggle = _interopRequireDefault(__webpack_require__(/*! ./components/site-type-layout-toggle */ "../modules/home/assets/js/site-builder/components/site-type-layout-toggle.js"));
 var _suggestionChips = _interopRequireDefault(__webpack_require__(/*! ./components/suggestion-chips */ "../modules/home/assets/js/site-builder/components/suggestion-chips.js"));
 var _stepActions = __webpack_require__(/*! ./components/step-actions */ "../modules/home/assets/js/site-builder/components/step-actions.js");
-var _useSiteBuilderState2 = _interopRequireDefault(__webpack_require__(/*! ./hooks/use-site-builder-state */ "../modules/home/assets/js/site-builder/hooks/use-site-builder-state.js"));
+var _useSiteBuilderState2 = _interopRequireWildcard(__webpack_require__(/*! ./hooks/use-site-builder-state */ "../modules/home/assets/js/site-builder/hooks/use-site-builder-state.js"));
 var _styledComponents = __webpack_require__(/*! ./components/styled-components */ "../modules/home/assets/js/site-builder/components/styled-components.js");
 function _interopRequireWildcard(e, t) { if ("function" == typeof WeakMap) var r = new WeakMap(), n = new WeakMap(); return (_interopRequireWildcard = function _interopRequireWildcard(e, t) { if (!t && e && e.__esModule) return e; var o, i, f = { __proto__: null, default: e }; if (null === e || "object" != _typeof(e) && "function" != typeof e) return f; if (o = t ? n : r) { if (o.has(e)) return o.get(e); o.set(e, f); } for (var _t in e) "default" !== _t && {}.hasOwnProperty.call(e, _t) && ((i = (o = Object.defineProperty) && Object.getOwnPropertyDescriptor(e, _t)) && (i.get || i.set) ? o(f, _t, i) : f[_t] = e[_t]); return f; })(e, t); }
+var SITE_BUILDER_READY_TIMEOUT_MS = 30000;
 var getStepConfig = function getStepConfig(step, stepConfigs, plannerSteps) {
   var _plannerSteps$INIT, _configs$initStep, _configs;
   var normalizedStep = Number(step);
@@ -3848,7 +3689,7 @@ var getStepConfig = function getStepConfig(step, stepConfigs, plannerSteps) {
   return (_configs = configs[Number.isFinite(normalizedStep) ? normalizedStep : initStep]) !== null && _configs !== void 0 ? _configs : fallback;
 };
 var SiteBuilder = function SiteBuilder(_ref) {
-  var _siteBuilderData$plan, _plannerSteps$INIT2;
+  var _siteBuilderData$plan, _plannerSteps$INIT2, _siteBuilderData$step;
   var siteBuilderData = _ref.siteBuilderData;
   var _useSiteBuilderState = (0, _useSiteBuilderState2.default)(siteBuilderData),
     sessionStep = _useSiteBuilderState.sessionStep,
@@ -3867,6 +3708,7 @@ var SiteBuilder = function SiteBuilder(_ref) {
     setIsOnePage = _useState4[1];
   var isInitStep = ((_plannerSteps$INIT2 = plannerSteps.INIT) !== null && _plannerSteps$INIT2 !== void 0 ? _plannerSteps$INIT2 : 0) === Number(sessionStep);
   var showLayoutToggle = isInitStep && Boolean(inputValue.trim());
+  var stepImage = siteBuilderData === null || siteBuilderData === void 0 || (_siteBuilderData$step = siteBuilderData.stepImages) === null || _siteBuilderData$step === void 0 ? void 0 : _siteBuilderData$step[sessionStep !== null && sessionStep !== void 0 ? sessionStep : plannerSteps.INIT];
   var handleInputChange = function handleInputChange(event) {
     setInputValue(event.target.value);
   };
@@ -3879,16 +3721,42 @@ var SiteBuilder = function SiteBuilder(_ref) {
     if (requiresInput && !prompt.trim()) {
       return;
     }
-    var url = new URL(siteBuilderData.siteBuilderUrl, window.location.origin);
+    var newWindow = window.open(siteBuilderData.siteBuilderUrl, '_blank');
+    if (!newWindow) {
+      return;
+    }
+    var payload = {};
     if (prompt) {
       var _plannerSteps$WIREFRA;
-      var paramName = sessionStep >= ((_plannerSteps$WIREFRA = plannerSteps.WIREFRAMES) !== null && _plannerSteps$WIREFRA !== void 0 ? _plannerSteps$WIREFRA : 3) ? 'page_title' : 'site_type';
-      url.searchParams.append(paramName, prompt);
+      var paramName = sessionStep >= ((_plannerSteps$WIREFRA = plannerSteps.WIREFRAMES) !== null && _plannerSteps$WIREFRA !== void 0 ? _plannerSteps$WIREFRA : 3) ? 'pageTitle' : 'siteType';
+      payload[paramName] = prompt;
     }
     if (isInitStep) {
-      url.searchParams.append('is_one_page', isOnePage ? 'true' : 'false');
+      payload.isOnePage = isOnePage;
     }
-    window.open(url.toString(), '_blank');
+    var _onReady = function onReady(event) {
+      var _event$data;
+      if (event.source !== newWindow) {
+        return;
+      }
+      if (event.origin !== window.location.origin) {
+        return;
+      }
+      if (((_event$data = event.data) === null || _event$data === void 0 ? void 0 : _event$data.type) !== 'site-builder/ready') {
+        return;
+      }
+      clearTimeout(timeoutId);
+      window.removeEventListener('message', _onReady);
+      (0, _useSiteBuilderState2.clearHomeScreenSnapshot)(siteBuilderData === null || siteBuilderData === void 0 ? void 0 : siteBuilderData.siteKey, siteBuilderData === null || siteBuilderData === void 0 ? void 0 : siteBuilderData.site_builder_snapshot);
+      newWindow.postMessage({
+        type: 'site-builder/init',
+        payload: payload
+      }, window.location.origin);
+    };
+    var timeoutId = setTimeout(function () {
+      return window.removeEventListener('message', _onReady);
+    }, SITE_BUILDER_READY_TIMEOUT_MS);
+    window.addEventListener('message', _onReady);
   };
   var handleKeyDown = function handleKeyDown(event) {
     if ('Enter' === event.key) {
@@ -3901,15 +3769,11 @@ var SiteBuilder = function SiteBuilder(_ref) {
     "data-testid": "e-site-builder"
   }, /*#__PURE__*/_react.default.createElement(_styledComponents.PlannerBackground, {
     bgimage: siteBuilderData === null || siteBuilderData === void 0 ? void 0 : siteBuilderData.bgImage
-  }), /*#__PURE__*/_react.default.createElement(_styledComponents.PlannerGrid, null), /*#__PURE__*/_react.default.createElement(_styledComponents.PlannerPreviewContainer, null, /*#__PURE__*/_react.default.createElement(_styledComponents.PlannerPreviewInner, null, /*#__PURE__*/_react.default.createElement(_styledComponents.PlannerPreviewFrame, null, (siteBuilderData === null || siteBuilderData === void 0 ? void 0 : siteBuilderData.previewImage1) && /*#__PURE__*/_react.default.createElement(_styledComponents.PlannerPreviewImage1, {
+  }), /*#__PURE__*/_react.default.createElement(_styledComponents.PlannerGrid, null), isLoading ? /*#__PURE__*/_react.default.createElement(_stepActions.StepLoader, null) : /*#__PURE__*/_react.default.createElement(_react.default.Fragment, null, /*#__PURE__*/_react.default.createElement(_styledComponents.PlannerPreviewContainer, null, stepImage && /*#__PURE__*/_react.default.createElement(_styledComponents.PlannerPreviewImage, {
     component: "img",
-    src: siteBuilderData.previewImage1,
+    src: stepImage,
     alt: ""
-  }), (siteBuilderData === null || siteBuilderData === void 0 ? void 0 : siteBuilderData.previewImage2) && /*#__PURE__*/_react.default.createElement(_styledComponents.PlannerPreviewImage2, {
-    component: "img",
-    src: siteBuilderData.previewImage2,
-    alt: ""
-  })), /*#__PURE__*/_react.default.createElement(_styledComponents.PlannerLoaderBadge, null, /*#__PURE__*/_react.default.createElement(_aiLoaderIcon.default, null)))), /*#__PURE__*/_react.default.createElement(_styledComponents.PlannerContent, null, isLoading ? /*#__PURE__*/_react.default.createElement(_stepActions.StepLoader, null) : /*#__PURE__*/_react.default.createElement(_react.default.Fragment, null, /*#__PURE__*/_react.default.createElement(_styledComponents.PlannerHeading, null, stepConfig.title), (0, _stepActions.getStepAction)(stepConfig, {
+  })), /*#__PURE__*/_react.default.createElement(_styledComponents.PlannerContent, null, /*#__PURE__*/_react.default.createElement(_styledComponents.PlannerHeading, null, stepConfig.title), (0, _stepActions.getStepAction)(stepConfig, {
     inputValue: inputValue,
     onInputChange: handleInputChange,
     onKeyDown: handleKeyDown,

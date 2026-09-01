@@ -56,9 +56,11 @@ class Input extends Atomic_Widget_Base {
 				->default( '' ),
 			'type' => String_Prop_Type::make()
 				->default( 'text' )
-				->enum( [ 'text', 'email', 'number', 'tel', 'password' ] ),
+				->enum( [ 'text', 'email', 'number', 'tel', 'password', 'url' ] ),
 			'required' => Boolean_Prop_Type::make()
 				->default( false ),
+			'autocomplete' => Boolean_Prop_Type::make()
+				->default( true ),
 			'readonly' => Boolean_Prop_Type::make()
 				->default( false ),
 			'attributes' => Attributes_Prop_Type::make()->meta( Overridable_Prop_Type::ignore() ),
@@ -98,9 +100,15 @@ class Input extends Atomic_Widget_Base {
 								'label' => __( 'Password', 'elementor-pro' ),
 								'value' => 'password',
 							],
+							[
+								'label' => __( 'URL', 'elementor-pro' ),
+								'value' => 'url',
+							],
 						] ),
 					Switch_Control::bind_to( 'required' )
 						->set_label( __( 'Required', 'elementor-pro' ) ),
+					Switch_Control::bind_to( 'autocomplete' )
+						->set_label( __( 'Autocomplete', 'elementor-pro' ) ),
 					Switch_Control::bind_to( 'readonly' )
 						->set_label( __( 'Read only', 'elementor-pro' ) ),
 				] ),

@@ -1,9 +1,6 @@
 <?php
 /**
  * Scheduler execution health check.
- *
- * @license GPL-2.0-or-later
- * Modified using {@see https://github.com/BrianHenryIE/strauss}.
  */
 
 namespace GravityKit\GravityView\Foundation\Scheduler\Models;
@@ -211,11 +208,27 @@ class HealthCheck {
 	 * @return bool True if loopback is blocked.
 	 */
 	private static function probe_loopback(): bool {
-		$url      = \apply_filters( 'as_async_request_queue_runner_query_url', \admin_url( 'admin-ajax.php' ) );
+		$url = \apply_filters( 'as_async_request_queue_runner_query_url', \admin_url( 'admin-ajax.php' ) );
+
+		/**
+		 * Filters the timeout for the loopback connectivity probe.
+		 *
+		 * Increase this on slow servers where a healthy loopback request
+		 * legitimately takes longer than the default, to avoid a false
+		 * "loopback blocked" diagnosis. Scoped to the probe only, so it
+		 * does not affect other HTTP requests.
+		 *
+		 * @since 1.22.0
+		 *
+		 * @param int    $timeout Loopback probe timeout in seconds. Default 2.
+		 * @param string $url     The loopback URL being probed.
+		 */
+		$timeout = (int) \apply_filters( 'gk/foundation/scheduler/health-check/loopback-timeout', self::PROBE_TIMEOUT, $url );
+
 		$response = \wp_remote_get(
 			$url,
 			[
-				'timeout'     => self::PROBE_TIMEOUT,
+				'timeout'     => $timeout,
 				// Loopback requests follow WordPress core's convention — default off, filterable
 				// via `https_local_ssl_verify` so anyone overriding it for Site Health picks up
 				// the same behaviour here. See wp-admin/includes/class-wp-site-health.php and

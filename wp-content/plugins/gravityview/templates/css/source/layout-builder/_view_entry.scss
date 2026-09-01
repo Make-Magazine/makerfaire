@@ -14,7 +14,8 @@
         display: flex;
 
         & + .gv-grid-row {
-            div[class^=gv-field-] {
+            div[class^=gv-field-],
+            div[class*=" gv-field-"] {
                 margin-top: $padding;
                 border-top: 1px solid $color-border;
                 padding-top: $padding;
@@ -22,7 +23,8 @@
         }
     }
 
-    div[class^=gv-field-] {
+    div[class^=gv-field-],
+    div[class*=" gv-field-"] {
         .gv-field-label {
             color: $color-label;
             font-size: .8em;
@@ -40,7 +42,8 @@
             }
         }
 
-        & + div[class^=gv-field-] {
+        & + div[class^=gv-field-],
+        & + div[class*=" gv-field-"] {
             margin-top: $padding;
             border-top: 1px solid $color-border;
             padding-top: $padding;

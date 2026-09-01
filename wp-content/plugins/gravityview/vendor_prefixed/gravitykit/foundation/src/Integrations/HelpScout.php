@@ -1,9 +1,4 @@
 <?php
-/**
- * @license GPL-2.0-or-later
- *
- * Modified using {@see https://github.com/BrianHenryIE/strauss}.
- */
 
 namespace GravityKit\GravityView\Foundation\Integrations;
 
@@ -15,8 +10,6 @@ use GravityKit\GravityView\Foundation\Helpers\Arr;
 
 class HelpScout {
 	const HS_BEACON_KEY = 'e899c3af-bfb9-479a-9579-38e758664fb7';
-
-	const HASH_KEY = 't4MTtLRuIH74gBuQ/2OVpj0NscYAjdg9nY1rw67PiT8=';
 
 	/**
 	 * Class instance.
@@ -165,10 +158,10 @@ JS;
 				'name'  => mb_substr( $current_user->display_name, 0, 80 ),
 				'email' => mb_substr( $current_user->user_email, 0, 80 ),
 			],
+			// No signature: a secure-mode key would ship in every copy.
 			'identify'     => [
 				'email'                 => mb_substr( $current_user->user_email, 0, 80 ),
 				'name'                  => mb_substr( $current_user->display_name, 0, 80 ),
-				'signature'             => hash_hmac( 'sha256', mb_substr( $current_user->user_email, 0, 80 ), self::HASH_KEY ),
 				'affiliate_id'          => mb_substr( Arr::get( $foundation_settings, 'affiliate_id', '' ) ?: '', 0, 255 ),
 				'is_super_admin'        => is_super_admin(),
 				'alt_emails'            => mb_substr( sprintf( 'Admin: %s / GV Support: %s', get_bloginfo( 'admin_email' ), Arr::get( $foundation_settings, 'support_email' ) ), 0, 255 ),

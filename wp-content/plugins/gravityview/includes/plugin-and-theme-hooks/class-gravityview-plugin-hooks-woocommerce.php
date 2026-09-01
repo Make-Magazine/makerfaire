@@ -1,57 +1,23 @@
 <?php
 /**
- * Add WooCommerce scripts and styles to GravityView no-conflict list
+ * Backward-compatibility shim.
  *
- * @file      class-gravityview-plugin-hooks-woocommerce.php
- * @package   GravityView
- * @license   GPL2+
- * @author    GravityKit <hello@gravitykit.com>
- * @link      http://www.gravitykit.com
- * @copyright Copyright 2015, Katz Web Services, Inc.
+ * This file was moved in GravityView 3.0. It is intentionally empty.
+ * GravityView classes and functions load automatically — you no longer
+ * need to require GravityView files in your code.
  *
- * @since 1.15.2
+ * @deprecated 3.0
  */
 
-/**
- * @inheritDoc
- */
-class GravityView_Plugin_Hooks_WooCommerce extends GravityView_Plugin_and_Theme_Hooks {
-
-	use GravityView_Permalink_Override_Trait;
-
-	/**
-	 * The function name to fetch WooCommerce page IDs.
-	 *
-	 * @since TODO
-	 *
-	 * @var string
-	 */
-	protected $function_name = 'wc_get_page_id';
-
-	/**
-	 * @inheritDoc
-	 */
-	protected $style_handles = array(
-		'woocommerce_admin_menu_styles',
-		'woocommerce_admin_styles',
-	);
-
-	/**
-	 * Remove the permalink structure for LearnDash post types.
-	 *
-	 * @since TODO
-	 *
-	 * @return bool Whether to remove the permalink structure from View rendered links.
-	 */
-	protected function should_disable_permalink_structure() {
-		$page_id = wc_get_page_id( 'myaccount' );
-
-		if ( get_the_ID() !== $page_id ) {
-			return false;
-		}
-
-		return true;
-	}
+if ( ! defined( 'ABSPATH' ) ) {
+	die;
 }
 
-new GravityView_Plugin_Hooks_WooCommerce();
+if ( function_exists( '_deprecated_file' ) ) {
+	_deprecated_file(
+		plugin_basename( __FILE__ ),
+		'3.0',
+		'',
+		'This file was moved in GravityView 3.0 and will be removed in a future release. GravityView classes and functions load automatically — you no longer need to require them.'
+	);
+}

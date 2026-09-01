@@ -1,35 +1,23 @@
 <?php
-namespace GV;
+/**
+ * Backward-compatibility shim.
+ *
+ * This file was moved in GravityView 3.0. It is intentionally empty.
+ * GravityView classes and functions load automatically. You no longer
+ * need to require GravityView files in your code.
+ *
+ * @deprecated 3.0
+ */
 
-/** If this file is called directly, abort. */
-if ( ! defined( 'GRAVITYVIEW_DIR' ) ) {
-	die();
+if ( ! defined( 'ABSPATH' ) ) {
+	die;
 }
 
-/**
- * Filtering window settings:
- *
- * Offset and limit, pagination.
- */
-class Entry_Offset {
-
-	/** @var int The offset. */
-	public $offset = 0;
-
-	/** @var int The limit. */
-	public $limit = 20;
-
-	/**
-	 * Return a search_criteria format for this offset.
-	 *
-	 * @param int $page The page. Default: 1
-	 *
-	 * @return array ['page_size' => N, 'offset' => N]
-	 */
-	public function to_paging( $page = 1 ) {
-		return array(
-			'page_size' => $this->limit,
-			'offset'    => ( ( $page - 1 ) * $this->limit ) + $this->offset,
-		);
-	}
+if ( function_exists( '_deprecated_file' ) ) {
+	_deprecated_file(
+		plugin_basename( __FILE__ ),
+		'3.0',
+		'',
+		'This file was moved in GravityView 3.0 and will be removed in a future release. GravityView classes and functions load automatically. You no longer need to require them.'
+	);
 }

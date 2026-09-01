@@ -1,24 +1,23 @@
 <?php
 /**
- * Display the search Entry ID input box
+ * Backward-compatibility shim.
  *
- * @file class-search-widget.php See for usage
+ * This file was moved in GravityView 3.0. It is intentionally empty.
+ * GravityView classes and functions load automatically — you no longer
+ * need to require GravityView files in your code.
  *
- * @global array $data
+ * @deprecated 3.0
  */
 
-$view_id      = \GV\Utils::get( $data, 'view_id', null );
-$search_field = \GV\Utils::get( $data, 'search_field', null );
-$value        = \GV\Utils::get( $search_field, 'value' );
-$label        = \GV\Utils::get( $search_field, 'label' );
-$custom_class = \GV\Utils::get( $search_field, 'custom_class', '' );
-?>
+if ( ! defined( 'ABSPATH' ) ) {
+	die;
+}
 
-<div class="gv-search-box gv-search-field-entry_id <?php echo $custom_class; ?>">
-	<div class="gv-search">
-		<?php if ( ! gv_empty( $label, false, false ) ) { ?>
-		<label for="gv_entry_id_<?php echo (int) $view_id; ?>"><?php echo esc_html( $label ); ?></label>
-		<?php } ?>
-		<p><input type="text" name="gv_id" id="gv_entry_id_<?php echo (int) $view_id; ?>" value="<?php echo esc_attr( $value ); ?>" /></p>
-	</div>
-</div>
+if ( function_exists( '_deprecated_file' ) ) {
+	_deprecated_file(
+		plugin_basename( __FILE__ ),
+		'3.0',
+		'',
+		'This file was moved in GravityView 3.0 and will be removed in a future release. GravityView classes and functions load automatically — you no longer need to require them.'
+	);
+}

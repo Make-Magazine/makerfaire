@@ -1,29 +1,23 @@
 <?php
 /**
- * @package GravityView
- * @subpackage Gravityview/admin/metaboxes/views
- * @global $post
+ * Backward-compatibility shim.
+ *
+ * This file was moved in GravityView 3.0. It is intentionally empty.
+ * GravityView classes and functions load automatically — you no longer
+ * need to require GravityView files in your code.
+ *
+ * @deprecated 3.0
  */
-global $post;
 
-// View template settings
-$current_settings = gravityview_get_template_settings( $post->ID );
+if ( ! defined( 'ABSPATH' ) ) {
+	die;
+}
 
-?>
-
-<table class="form-table striped">
-<?php
-
-	/**
-	 * Render Edit Entry metabox settings, if enabled.
-	 *
-	 * @see GravityView_Edit_Entry_Admin::view_settings_metabox
-	 *
-	 * @since 2.9
-	 *
-	 * @param array $current_settings The View settings.
-	 */
-	do_action( 'gravityview/metaboxes/edit_entry', $current_settings );
-
-?>
-</table>
+if ( function_exists( '_deprecated_file' ) ) {
+	_deprecated_file(
+		plugin_basename( __FILE__ ),
+		'3.0',
+		'',
+		'This file was moved in GravityView 3.0 and will be removed in a future release. GravityView classes and functions load automatically — you no longer need to require them.'
+	);
+}

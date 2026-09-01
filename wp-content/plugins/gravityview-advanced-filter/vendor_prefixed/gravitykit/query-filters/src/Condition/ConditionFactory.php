@@ -1,9 +1,4 @@
 <?php
-/**
- * @license MIT
- *
- * Modified by gravitykit on 28-April-2026 using {@see https://github.com/BrianHenryIE/strauss}.
- */
 
 namespace GravityKit\AdvancedFilter\QueryFilters\Condition;
 
@@ -12,11 +7,10 @@ use GF_Query_Column;
 use GF_Query_Literal;
 use GFAPI;
 use GF_Query;
-use GF_Query_Call;
 use GF_Query_Condition;
 use GFCommon;
-use GFFormsModel;
 use GravityKit\AdvancedFilter\QueryFilters\Condition\FactoryHandler\CreatedByFactoryHandler;
+use GravityKit\AdvancedFilter\QueryFilters\Condition\FactoryHandler\FieldComparisonFactoryHandler;
 use GravityKit\AdvancedFilter\QueryFilters\Filter\Filter;
 
 /**
@@ -96,7 +90,10 @@ final class ConditionFactory {
 		 */
 		$handlers = apply_filters(
 			'gk/query-filters/condition/factory-handlers',
-			[ new CreatedByFactoryHandler() ]
+			[
+				new CreatedByFactoryHandler(),
+				new FieldComparisonFactoryHandler(),
+			]
 		);
 
 		// Locked filters are not handled by custom handlers.
@@ -119,13 +116,30 @@ final class ConditionFactory {
 		$value    = $filter->value();
 		$operator = $filter->operator();
 
+		$is_has_all = 'has_all' === $operator;
+		if ( $is_has_all ) {
+			$operator = 'in';
+		}
+
 		if ( $this->is_not_contains( $filter ) ) {
 			$value    = '%' . $value . '%';
 			$operator = GF_Query_Condition::NLIKE;
 		}
 
+		// GF_Query_Condition requires a Series (array) on the right-hand side for IN/NOT IN; coerce scalars.
+		if ( in_array( $operator, [ 'in', 'notin' ], true ) && ! is_array( $value ) ) {
+			$value = [ $value ];
+		}
+
 		$field      = GFAPI::get_field( $form_id, $filter->key() ) ?: null;
 		$is_numeric = $field && $this->is_numeric_field( $field ) && is_numeric( $value );
+
+		if ( ! $is_has_all ) {
+			$choice_condition = $this->from_choice_inputs( $field, $form_id, $filter->key(), $value, $operator );
+			if ( $choice_condition ) {
+				return $choice_condition;
+			}
+		}
 
 		$condition = array_filter(
 			[
@@ -148,8 +162,11 @@ final class ConditionFactory {
 		}
 
 		$query_parts = $query->_introspect();
-		$where       = $query_parts['where'];
 		$field       = GFAPI::get_field( $form_id, $filter->key() ) ?: null;
+		$where       = $query_parts['where'] ?? null;
+		if ( ! $where instanceof GF_Query_Condition ) {
+			return null;
+		}
 
 		if ( $field ) {
 			$where = $this->update_empty_numeric_filter_condition( $filter, $where, $field );
@@ -158,35 +175,28 @@ final class ConditionFactory {
 			}
 		}
 
+		if ( $is_has_all ) {
+			$where = Has_All_Condition::wraps( $where );
+		}
+
 		if ( ! is_numeric( $filter->key() ) || 0 === (int) $filter->key() ) {
 			return $where;
 		}
 
-		global $wpdb;
-		$sub_query = $wpdb->prepare(
-			sprintf(
-				"SELECT 1 FROM `%s` WHERE (`meta_key` LIKE %%s OR `meta_key` = %%d) AND `entry_id` = `%s`.`id`",
-				GFFormsModel::get_entry_meta_table_name(),
-				$query->_alias( null, $form_id )
-			),
-			sprintf( '%d.%%', $filter->key() ),
-			$filter->key()
-		);
+		$column = new GF_Query_Column( (string) (int) $filter->key(), $form_id );
+		$where  = Owned_Entry_Condition::wraps( $where, $form_id );
 
-		// In case of a negative operator, entries without the meta key should also be excluded.
-		if ( $this->is_negative_lookup( $filter, $where ) ) {
-			return GF_Query_Condition::_or(
-				$where,
-				new GF_Query_Condition( new GF_Query_Call( 'NOT EXISTS', [ $sub_query ] ) )
-			);
+		$absent_or_match = $this->from_absent_or_match( $field, $form_id, $filter->key(), $value, $operator );
+		if ( $absent_or_match && $this->is_negative_lookup( $filter, $where ) ) {
+			return $absent_or_match;
 		}
 
-		// In case of `isnotempty` search, the meta key MUST exist.
+		if ( $this->is_negative_lookup( $filter, $where ) ) {
+			return GF_Query_Condition::_or( $where, Field_Presence_Condition::absent( $column ) );
+		}
+
 		if ( empty( $filter->value() ) && GF_Query_Condition::NEQ === $where->operator ) {
-			$where = GF_Query_Condition::_and(
-				$where,
-				new GF_Query_Condition( new GF_Query_Call( 'EXISTS', [ $sub_query ] ) )
-			);
+			$where = GF_Query_Condition::_and( $where, Field_Presence_Condition::present( $column ) );
 		}
 
 		return $where;
@@ -264,6 +274,106 @@ final class ConditionFactory {
 	}
 
 	/**
+	 * Returns a condition matching a choice field on the values stored across its inputs.
+	 *
+	 * A field storing its choices across entry inputs (a checkbox) keeps no row under its parent ID,
+	 * so Gravity Forms matches the parent ID with a subquery correlated to the form's own table. A
+	 * form joined through meta has no such table, and the subquery references one the query never
+	 * selects from. Naming the owning entry directly needs no table of its own.
+	 *
+	 * Returns null for anything but a membership comparison against non-empty values on a choice
+	 * field, leaving the filter to the regular path, which answers whether the field is filled.
+	 *
+	 * @since 2.16.0
+	 *
+	 * @param GF_Field|null $field    The field being filtered.
+	 * @param int           $form_id  The form ID.
+	 * @param string|int    $key      The filter key.
+	 * @param mixed         $value    The filter value(s).
+	 * @param string        $operator The filter operator.
+	 *
+	 * @return GF_Query_Condition|null The condition, or null to fall through.
+	 */
+	private function from_choice_inputs( ?GF_Field $field, int $form_id, $key, $value, string $operator ): ?GF_Query_Condition {
+		if ( ! $field || ! in_array( $operator, [ 'in', 'is', '=' ], true ) ) {
+			return null;
+		}
+
+		$key = (string) $key;
+		if ( ! ctype_digit( $key ) ) {
+			return null;
+		}
+
+		if ( ! is_array( $field->get_entry_inputs() ) || ! is_array( $field->choices ?? null ) || ! $field->choices ) {
+			return null;
+		}
+
+		$values = [];
+		foreach ( (array) $value as $choice_value ) {
+			if ( ! is_scalar( $choice_value ) || '' === (string) $choice_value ) {
+				return null;
+			}
+
+			$values[] = (string) $choice_value;
+		}
+
+		if ( [] === $values ) {
+			return null;
+		}
+
+		return new Choice_Value_Condition( new GF_Query_Column( $key, $form_id ), $values );
+	}
+
+	/**
+	 * Returns a negative comparison that also matches entries storing no value for the field.
+	 *
+	 * Gravity Forms answers "this entry holds no value for the field" with a subquery keyed on the
+	 * form's own table. A form joined through meta has no table, so that subquery names one the query
+	 * never selects from; building the comparison here resolves the entry while the SQL renders.
+	 *
+	 * Returns null for anything but a plain negative comparison on a single-value text field, leaving
+	 * the filter to the regular path, which compares numeric and product values on their own terms.
+	 *
+	 * @since 2.16.0
+	 *
+	 * @param GF_Field|null $field    The field being filtered.
+	 * @param int           $form_id  The form ID.
+	 * @param string|int    $key      The filter key.
+	 * @param mixed         $value    The filter value.
+	 * @param string        $operator The filter operator.
+	 *
+	 * @return GF_Query_Condition|null The condition, or null to fall through.
+	 */
+	private function from_absent_or_match( ?GF_Field $field, int $form_id, $key, $value, string $operator ): ?GF_Query_Condition {
+		$compare = [
+			'isnot'                   => GF_Query_Condition::NEQ,
+			'is_not'                  => GF_Query_Condition::NEQ,
+			'!='                      => GF_Query_Condition::NEQ,
+			GF_Query_Condition::NEQ   => GF_Query_Condition::NEQ,
+			GF_Query_Condition::NLIKE => GF_Query_Condition::NLIKE,
+		][ $operator ] ?? null;
+
+		if (
+			! $field
+			|| null === $compare
+			|| ! is_scalar( $value )
+			|| ! ctype_digit( (string) $key )
+			|| is_array( $field->get_entry_inputs() )
+			|| $this->is_numeric_field( $field )
+			|| $this->is_product_field( $field )
+		) {
+			return null;
+		}
+
+		$column = new GF_Query_Column( (string) $key, $form_id );
+
+		return GF_Query_Condition::_or(
+			new Field_Match_Condition( $column, $compare, new GF_Query_Literal( (string) $value ) ),
+			Field_Presence_Condition::absent( $column )
+		);
+	}
+
+	/**
 	 * Whether the provided field is numeric.
 	 *
 	 * @since 2.0.0
@@ -336,15 +446,8 @@ final class ConditionFactory {
 	 * @return bool
 	 */
 	private function is_product_field( GF_Field $field ): bool {
-		if ( 'quantity' === $field->type ) {
+		if ( in_array( $field->type, [ 'quantity', 'number' ], true ) ) {
 			return false;
-		}
-
-		if (
-			'number' === $field->get_input_type()
-			&& 'currency' === ( $field->numberFormat ?? null )
-		) {
-			return true;
 		}
 
 		return GFCommon::is_product_field( $field->type ?? '' );

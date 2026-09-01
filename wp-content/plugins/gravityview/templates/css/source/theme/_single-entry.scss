@@ -1,0 +1,145 @@
+/**
+ * GravityView Theme — Single Entry
+ *
+ * Styling for single-entry detail views (Table and List layouts).
+ * Scoped to `.gv-themed`.
+ *
+ * @package   GravityView
+ * @license   GPL2
+ * @since     TBD
+ */
+
+@use "tokens" as *;
+
+// =========================================================
+// Table single entry
+//
+// `gv-table-single-container` (and `gv-list-single-container` below)
+// are passed into `gv_container_class()`, so they sit on the SAME
+// element as `.gv-themed` (same-element compounds).
+// =========================================================
+.gv-table-single-container.gv-themed {
+	background: var(--gv-color-surface);
+	border: var(--gv-entry-border-width) var(--gv-entry-border-style) var(--gv-entry-border-color);
+	border-radius: var(--gv-radius-lg);
+	box-shadow: var(--gv-entry-shadow);
+	padding: var(--gv-space-6);
+
+	table.gv-table-view-content {
+		width: 100%;
+		border-collapse: collapse;
+		border: none;
+
+		tr {
+			border-block-end: 1px solid var(--gv-color-row-divider);
+
+			&:last-child {
+				border-block-end: none;
+			}
+		}
+
+		th[scope="row"] {
+			width: var(--gv-single-entry-label-width);
+			font-size: var(--gv-field-label-font-size);
+			font-weight: var(--gv-field-label-font-weight);
+			color: var(--gv-field-label-color);
+			text-transform: var(--gv-field-label-text-transform);
+			letter-spacing: var(--gv-field-label-letter-spacing);
+			padding: var(--gv-space-3);
+			vertical-align: top;
+			text-align: start;
+		}
+
+		td {
+			padding: var(--gv-space-3);
+			color: var(--gv-color-text);
+			vertical-align: top;
+		}
+
+		// Section headers
+		.gv-section th {
+			width: 100%;
+			font-size: var(--gv-font-size-md);
+			font-weight: var(--gv-font-weight-semibold);
+			color: var(--gv-color-text);
+			text-transform: none;
+			letter-spacing: normal;
+			padding-block-start: var(--gv-space-6);
+			border-block-end: var(--gv-border-width-2) solid var(--gv-color-border);
+		}
+	}
+}
+
+// =========================================================
+// List single entry
+// =========================================================
+.gv-list-single-container.gv-themed {
+
+	// Card styling is on .gv-list-view, not the outer container,
+	// so the back link sits outside the card boundary. No hover lift
+	// on a single entry: there is nothing to click into.
+	.gv-list-view {
+		@include gv-entry-card($hover: false);
+		margin-block-end: 0;
+	}
+
+	.gv-list-view-title {
+		border-block-end: none;
+		padding: 0;
+		margin-block-end: var(--gv-space-4);
+
+		h3 {
+			font-size: var(--gv-font-size-xl);
+			font-weight: var(--gv-font-weight-semibold);
+			margin: 0;
+			padding: 0;
+		}
+
+		h4 {
+			font-size: var(--gv-font-size-base);
+			color: var(--gv-color-text-secondary);
+			font-weight: var(--gv-font-weight-normal);
+			margin: 0;
+		}
+	}
+
+	// Content zone — single column, no image/description split
+	.gv-list-view-content {
+		display: flex;
+		flex-direction: column;
+		gap: var(--gv-space-4);
+		padding: 0;
+
+		&::before,
+		&::after {
+			display: none;
+		}
+	}
+
+	// Field labels
+	.gv-field-label {
+		display: block;
+		margin-block-end: var(--gv-space-1);
+	}
+
+	// Footer
+	.gv-list-view-footer {
+		border-block-start: 1px solid var(--gv-color-row-divider);
+		background-color: transparent;
+		padding-block-start: var(--gv-space-3);
+		margin-block-start: var(--gv-space-4);
+		padding-inline: 0;
+		padding-block-end: 0;
+	}
+}
+
+// =========================================================
+// Images in single entry
+// =========================================================
+.gv-table-single-container.gv-themed img,
+.gv-list-single-container.gv-themed img {
+	max-width: 100%;
+	height: auto;
+	border-radius: var(--gv-radius-md);
+	margin-block-end: var(--gv-space-3);
+}

@@ -1,38 +1,23 @@
 <?php
-
 /**
- * HTML input type - pass pure HTML into settings in the `desc` key
+ * Backward-compatibility shim.
  *
- * @since 1.17
+ * This file was moved in GravityView 3.0. It is intentionally empty.
+ * GravityView classes and functions load automatically — you no longer
+ * need to require GravityView files in your code.
+ *
+ * @deprecated 3.0
  */
-class GravityView_FieldType_html extends GravityView_FieldType {
 
-	/**
-	 * Display HTML, wrapped in container class
-	 */
-	public function render_option() {
-		?>
-		<div class="<?php echo $this->get_label_class(); ?>" id="<?php echo $this->get_field_id(); ?>">
-			<?php echo $this->get_field_desc(); ?>
-		</div>
-		<?php
-	}
+if ( ! defined( 'ABSPATH' ) ) {
+	die;
+}
 
-	/**
-	 * @since 1.17
-	 * @return string
-	 */
-	public function get_field_desc() {
-		$html = $this->field['desc'] ?? '';
-		if ( is_callable( $html ) ) {
-			return (string) $html(
-				[
-					'name'  => $this->name,
-					'value' => $this->value,
-				]
-			);
-		}
-
-		return (string) $html;
-	}
+if ( function_exists( '_deprecated_file' ) ) {
+	_deprecated_file(
+		plugin_basename( __FILE__ ),
+		'3.0',
+		'',
+		'This file was moved in GravityView 3.0 and will be removed in a future release. GravityView classes and functions load automatically — you no longer need to require them.'
+	);
 }

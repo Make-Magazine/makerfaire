@@ -1,0 +1,188 @@
+/**
+ * GravityView Theme — Bulk Actions toolbar
+ *
+ * Themes the frontend Bulk Actions toolbar for table Views — the action
+ * `<select>`, the Apply button, and the selection summary/links — so it
+ * matches the themed search controls and buttons. The toolbar's flex
+ * layout ships in the shared table stylesheet (`table-view-legacy.scss`);
+ * this partial only paints the controls to the Vantage look.
+ *
+ * Scoped to `.gv-themed`; legacy Views keep the classic native chrome.
+ *
+ * @package   GravityView
+ * @license   GPL2
+ * @link      https://www.gravitykit.com
+ * @since     TBD
+ */
+
+@use "tokens" as *;
+
+.gv-themed {
+	// Toolbar row — re-affirm spacing with theme tokens so the toolbar's
+	// rhythm matches the search bar. `display: flex` itself ships in the
+	// table stylesheet; only spacing and color are themed here.
+	.gv-bulk-actions {
+		gap: var(--gv-space-3);
+		margin-block-end: var(--gv-space-4);
+		color: var(--gv-color-text);
+		// Match the widget-zone chrome (pagination / Page Info), which
+		// ships at `--gv-font-size-sm`. The legacy table stylesheet sets
+		// the toolbar to `1rem`; override it so the controls don't read
+		// larger than the surrounding widgets.
+		font-size: var(--gv-font-size-sm);
+	}
+
+	// Action <select> — mirror the themed search `<select>`: the
+	// form-control base plus the dropdown chevron. Sized to its content
+	// (not full width) so a host theme's `select { width: 100% }` can't
+	// stretch it across the row and wrap the Apply button below it.
+	.gv-bulk-actions-select {
+		width: auto;
+		max-width: 100%;
+		box-sizing: border-box;
+		height: auto;
+		margin: 0;
+		// Extra inline-end padding reserves room for the chevron, matching
+		// the search-bar select. Vertical padding + `line-height` (no forced
+		// min-height) yields the same height as the Apply button so the two
+		// controls align; touch targets follow the `_a11y.scss` rule.
+		padding: var(--gv-space-2) var(--gv-space-8) var(--gv-space-2) var(--gv-space-3);
+		border: var(--gv-control-border-width) solid var(--gv-control-border-color, var(--gv-color-border-strong));
+		border-radius: var(--gv-control-radius);
+		font-family: inherit;
+		font-size: var(--gv-font-size-sm);
+		font-weight: var(--gv-font-weight-normal);
+		font-style: normal;
+		line-height: var(--gv-line-height-normal);
+		color: var(--gv-color-text);
+		background-color: var(--gv-control-bg);
+		// Same chevron SVG as the search-bar select (`_search.scss`).
+		background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1.41.59L6 5.17 10.59.59 12 2 6 8 0 2z' fill='%23607382'/%3E%3C/svg%3E");
+		background-repeat: no-repeat;
+		background-position: right var(--gv-space-3) center;
+		appearance: none;
+		-webkit-appearance: none;
+		text-transform: none;
+		letter-spacing: normal;
+		cursor: pointer;
+		transition: border-color var(--gv-transition-fast) var(--gv-easing-standard),
+		            box-shadow var(--gv-transition-fast) var(--gv-easing-standard);
+
+		// RTL: chevron flips to the physical left; the inline-end padding
+		// is logical and already maps to the left.
+		&:dir(rtl) {
+			background-position: left var(--gv-space-3) center;
+		}
+
+		&:focus,
+		&:focus-visible {
+			border-color: var(--gv-color-primary);
+			box-shadow: var(--gv-shadow-focus);
+			outline: none;
+		}
+
+		&:disabled {
+			background-color: var(--gv-control-bg-disabled);
+			border-color: var(--gv-control-border-color-disabled);
+			color: var(--gv-control-text-disabled);
+			cursor: not-allowed;
+		}
+	}
+
+	// Apply button — themed primary button, matching `.gv-button`.
+	// `!important` survives ONLY on the paint axes (background, color,
+	// border, box-shadow), mirroring `_buttons.scss`, so it beats the
+	// host theme / Gravity Forms paint on the shared `.button` class
+	// without blocking `--gv-button-*` token customization.
+	.gv-bulk-actions .gv-bulk-actions-apply {
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		gap: var(--gv-space-2);
+		box-sizing: border-box;
+		min-height: var(--gv-button-min-height);
+		margin: 0;
+		padding: var(--gv-button-padding-block) var(--gv-button-padding-inline);
+		border: var(--gv-button-border-width) solid var(--gv-button-border-color) !important;
+		border-radius: var(--gv-button-radius);
+		font-family: inherit;
+		font-size: var(--gv-button-font-size);
+		font-weight: var(--gv-button-font-weight);
+		line-height: var(--gv-line-height-normal);
+		text-align: center;
+		text-decoration: none;
+		text-transform: none;
+		letter-spacing: normal;
+		appearance: none;
+		-webkit-appearance: none;
+		cursor: pointer;
+		background-color: var(--gv-button-bg) !important;
+		color: var(--gv-button-color) !important;
+		box-shadow: none !important;
+		transition: background-color var(--gv-transition-fast) var(--gv-easing-standard),
+		            border-color var(--gv-transition-fast) var(--gv-easing-standard),
+		            color var(--gv-transition-fast) var(--gv-easing-standard),
+		            box-shadow var(--gv-transition-fast) var(--gv-easing-standard);
+
+		&:hover,
+		&:focus,
+		&:active {
+			background-color: var(--gv-button-bg-hover) !important;
+			border-color: var(--gv-button-border-color-hover) !important;
+			color: var(--gv-button-color) !important;
+			text-decoration: none;
+		}
+
+		&:focus-visible {
+			outline: none;
+			box-shadow: var(--gv-shadow-focus) !important;
+		}
+
+		// Disabled until rows are selected — keep it visibly inert but
+		// on-theme.
+		&:disabled,
+		&[disabled] {
+			background-color: var(--gv-button-bg-disabled) !important;
+			color: var(--gv-button-color-disabled) !important;
+			border-color: var(--gv-button-bg-disabled) !important;
+			cursor: not-allowed;
+			pointer-events: none;
+		}
+	}
+
+	// Selection summary text — quiet helper copy that sits next to the
+	// controls.
+	.gv-bulk-actions-selection-summary {
+		color: var(--gv-color-text-secondary);
+		font-size: var(--gv-font-size-sm);
+	}
+
+	// Selection summary row (rendered inside the table, below the header).
+	// `surface-warning` is the only status surface whose pairing with
+	// neutral `--gv-color-text` is contrast-verified, so a primary/info
+	// "selection" tint would need a new verified pair before it's safe.
+	.gv-bulk-actions-selection-row td {
+		background: var(--gv-color-surface-warning);
+		border-block: var(--gv-border-width-1) solid var(--gv-color-border);
+		color: var(--gv-color-text);
+	}
+
+	.gv-bulk-actions-selection-row .gv-bulk-actions-selection-summary {
+		color: var(--gv-color-text);
+	}
+
+	// Inline action links (clear, select-all, show-selected, show-all)
+	// adopt the theme's link color instead of `currentColor`.
+	.gv-bulk-actions-clear,
+	.gv-bulk-actions-select-all,
+	.gv-bulk-actions-show-selected,
+	.gv-bulk-actions-show-all {
+		color: var(--gv-color-link);
+		font-size: var(--gv-font-size-sm);
+
+		&:hover,
+		&:focus-visible {
+			color: var(--gv-color-link-hover);
+		}
+	}
+}

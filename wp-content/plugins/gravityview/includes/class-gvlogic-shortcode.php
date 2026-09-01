@@ -1,24 +1,23 @@
 <?php
 /**
- * Shortcode to handle showing/hiding content in merge tags. Works great with GravityView Custom Content fields
+ * Backward-compatibility shim.
  *
- * @deprecated
- * @since develop
- * @see \GV\Shortcodes\gvlogic
+ * This file was moved in GravityView 3.0. It is intentionally empty.
+ * GravityView classes and functions load automatically — you no longer
+ * need to require GravityView files in your code.
+ *
+ * @deprecated 3.0
  */
-class GVLogic_Shortcode {
-	public static $instance = null;
 
-	public static function get_instance() {
-		if ( is_null( self::$instance ) ) {
-			return self::$instance = new self(); // Nothing
-		}
+if ( ! defined( 'ABSPATH' ) ) {
+	die;
+}
 
-		return self::$instance;
-	}
-
-	public function shortcode( $atts, $content = '', $tag = '' ) {
-		$shortcode = new \GV\Shortcodes\gvlogic();
-		return $shortcode->callback( $atts, $content, $tag );
-	}
+if ( function_exists( '_deprecated_file' ) ) {
+	_deprecated_file(
+		plugin_basename( __FILE__ ),
+		'3.0',
+		'',
+		'This file was moved in GravityView 3.0 and will be removed in a future release. GravityView classes and functions load automatically — you no longer need to require them.'
+	);
 }

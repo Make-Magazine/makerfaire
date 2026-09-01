@@ -59,7 +59,7 @@
 
 	// Ensures gform.applyFilters exists (needed for merge tags compatibility and fix conflict with Yoast)
 	window.gform = window.gform || {};
-	window.gform.applyFilters = window.gform.applyFilters || function (a, v, ...args) { return v; };
+	window.gform.applyFilters = window.gform.applyFilters || function (_a, v, ..._args) { return v; };
 
    const $spinner = $( '<svg class="loading" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2 12C2 6.47715 6.47715 2 12 2V5C8.13401 5 5 8.13401 5 12H2Z" fill="currentColor"></path></svg>' );
 
@@ -113,10 +113,93 @@
 		*/
 	   smoothScrollFocusDelay: 300,
 
+	   /**
+		* @since $ver$
+		* @type {object} Per-template serialized field configurations, stored when switching away.
+		*/
+	   templateSnapshots: {},
+
+	   /**
+		* Selector matching the field configuration inputs, as serialized into `gv_fields`.
+		*
+		* @since $ver$
+		* @type {string}
+		*/
+	   fieldsInputsSelector: ':input[name^="fields["]',
+
 	   init: function () {
 
 		   // short tag
 		   var vcfg = viewConfiguration;
+
+		   // Safari-specific save-performance fix.
+		   //
+		   // Submitting the View edit form is pathologically slow in Safari
+		   // (~9 s) along *both* paths the browser exposes:
+		   //
+		   //   • Clicking Publish/Update/Save Draft → handled in serializeForm
+		   //     by replacing $.trigger('click') with native form.submit().
+		   //   • Pressing Enter inside an input (implicit submission) → the
+		   //     browser runs its native submit() algorithm, which does enough
+		   //     pre-submit work in Safari that `novalidate` alone doesn't
+		   //     help. So we intercept the Enter keydown before the browser
+		   //     starts that work and route through our fast submit path.
+		   //
+		   // novalidate is set as defense-in-depth for any other path that
+		   // might still flow through HTML5 constraint validation.
+		   $( '#post' ).attr( 'novalidate', 'novalidate' );
+
+		   // Listen at the document level in capture phase so we run BEFORE any
+		   // inner widget that might stopPropagation/preventDefault on keydown
+		   // (Selectwoo, autocomplete, jQuery UI, etc.). Bubble-phase listeners
+		   // on the form are silently swallowed if any descendant calls
+		   // stopPropagation, which is why a form-level handler didn't help.
+		   document.addEventListener( 'keydown', function ( e ) {
+			   if ( e.key !== 'Enter' ) {
+				   return;
+			   }
+			   if ( e.altKey || e.ctrlKey || e.metaKey || e.shiftKey || e.isComposing ) {
+				   return;
+			   }
+
+			   var target = e.target;
+			   var form   = document.getElementById( 'post' );
+			   if ( ! target || ! form || ! form.contains( target ) ) {
+				   return;
+			   }
+			   if ( target.tagName !== 'INPUT' ) {
+				   return;
+			   }
+
+			   // Skip controls whose Enter behavior shouldn't be hijacked.
+			   var type = ( target.type || 'text' ).toLowerCase();
+			   if ( [ 'checkbox', 'radio', 'submit', 'reset', 'button', 'image', 'file', 'range' ].indexOf( type ) > -1 ) {
+				   return;
+			   }
+
+			   // Don't interfere with autocomplete/menu widgets that handle Enter themselves,
+			   // or with CodeMirror dialogs (e.g. the Ctrl+F search field in Custom CSS/JS editors).
+			   if ( target.closest && target.closest( '.ui-autocomplete, .ui-menu, .select2-search__field, .selectwoo-search__field, [role="combobox"], [aria-autocomplete], .CodeMirror-dialog' ) ) {
+				   return;
+			   }
+
+			   // Cancel the browser's slow implicit-submission path entirely.
+			   e.preventDefault();
+			   e.stopImmediatePropagation();
+
+			   // Route through the submit handler chain. Use a native SubmitEvent so
+			   // jQuery-bound submit listeners (including our own processFormSubmit)
+			   // still fire. serializeForm will then call native form.submit().
+			   var submitEvent;
+			   try {
+				   submitEvent = new SubmitEvent( 'submit', { bubbles: true, cancelable: true } );
+			   } catch ( err ) {
+				   submitEvent = new Event( 'submit', { bubbles: true, cancelable: true } );
+			   }
+			   if ( form.dispatchEvent( submitEvent ) ) {
+				   form.submit();
+			   }
+		   }, true );
 
 		   //select form dropdown
 		   vcfg.gvSelectForm = $( '#gravityview_form_id' );
@@ -186,6 +269,21 @@
 					   .trigger( 'click', { before: $( this ).closest( '.gv-fields' ) } );
 			   } )
 
+			   // Clicks can land before init_tooltips() binds the field picker; lazily bind
+			   // this element and re-dispatch so the first click always works. See GVIEW-228.
+			   .on( 'click', '.gv-add-field', function ( e, data ) {
+				   if ( $( this ).is( ':ui-tooltip' ) ) {
+					   return;
+				   }
+
+				   e.preventDefault();
+
+				   viewConfiguration.init_tooltips( this );
+
+				   // Forward the event data so the `before` payload set by .gv-add-field-before is preserved.
+				   $( this ).trigger( 'click', data );
+			   } )
+
 			   // Bind duplicate field action to duplication button.
 			   .on( 'click', '.gv-field-duplicate', vcfg.duplicateField )
 
@@ -220,13 +318,16 @@
 			   .on( 'click', ".gv-field-controls .gv-field-settings", vcfg.openFieldSettings )
 
 			   // Double-clicking a field/widget label opens settings
-			   .on( 'dblclick', ".gv-fields:not(.gv-nonexistent-form-field) h5", vcfg.openFieldSettings )
+			   .on( 'dblclick', ".gv-fields:not(.gv-nonexistent-form-field):not(.gv-bulk-actions-ghost-field) h5", vcfg.openFieldSettings )
+
+			   // Clicking the Bulk Actions ghost field settings control opens the widget settings.
+			   .on( 'click', '.gv-bulk-actions-ghost-settings', vcfg.openBulkActionsGhostFieldSettings )
 
 			   .on( 'change', "#gravityview_settings", vcfg.changedSettingsAction )
 
 			   .on( 'click', 'div[data-js="gform-simplebar"]', vcfg.changedSettingsAction )
 
-			   .on( 'click', '.gv-field-details--toggle', function( e ) {
+			   .on( 'click', '.gv-field-details--toggle', function( _e ) {
 
 				   var $dialog = $( this ).parents('.ui-dialog');
 
@@ -245,7 +346,7 @@
 			   /**
 				* When dismissing tab configuration warnings, don't show to the user again
 				*/
-			   .on( 'click', '.gv-section .is-dismissible .notice-dismiss', function( e ) {
+			   .on( 'click', '.gv-section .is-dismissible .notice-dismiss', function( _e ) {
 
 				   var warning_name = $( this ).parents( '.gv-section' ).attr( 'id' ) + '-' + $( '#post_ID' ).val();
 
@@ -258,6 +359,12 @@
 
 			   .on( 'gravityview/loaded gravityview/tabs-ready gravityview/field-added gravityview/field-removed gravityview/all-fields-removed gravityview/show-as-entry gravityview/view-config-updated', vcfg.toggleRemoveAllFields )
 
+			   .on( 'gravityview/loaded gravityview/field-added gravityview/field-removed gravityview/all-fields-removed', vcfg.updateBulkActionsActionSelects )
+
+			   .on( 'gravityview/loaded gravityview/tabs-ready gravityview/field-added gravityview/field-removed gravityview/all-fields-removed gravityview/view-config-updated', vcfg.updateBulkActionsGhostField )
+
+			   .on( 'change', '[data-fieldid="bulk_actions"] [name$="[bulk_actions_checkbox_position]"]', vcfg.updateBulkActionsGhostField )
+
 			   .on( 'search keydown keyup', '.gv-field-filter-form input:visible', vcfg.setupFieldFilters )
 
 			   // Only start tracking changes after the View is loaded to prevent this from being run multiple times.
@@ -267,23 +374,23 @@
 
 			   .on( 'change', ".gv-dialog-options", vcfg.toggleCheckboxes )
 
-			   .on( 'focus', '.gv-add-field', function( e ) {
+			   .on( 'focus', '.gv-add-field', function( _e ) {
 				   $( this ).parent('.gv-fields').addClass( 'trigger--hover' );
 			   })
 
-			   .on( 'blur', '.gv-add-field', function( e ) {
+			   .on( 'blur', '.gv-add-field', function( _e ) {
 				   $( this ).parent('.gv-fields').removeClass( 'trigger--hover' );
 			   })
 
 			   .on( 'keydown', '.gv-add-field', function( e ) {
-				   if ( 13 !== e.keyCode && 32 !== e.keyCode ) {
+				   if ( 'Enter' !== e.key && ' ' !== e.key ) {
 					   return true;
 				   }
 				   $( this ).parent( '.gv-fields' ).addClass( 'trigger--active' );
 			   })
 
 			   .on( 'keyup', '.gv-add-field', function( e ) {
-				   if ( 13 !== e.keyCode && 32 !== e.keyCode ) {
+				   if ( 'Enter' !== e.key && ' ' !== e.key ) {
 					   return true;
 				   }
 				   $( this ).parent( '.gv-fields' ).removeClass( 'trigger--active' );
@@ -291,7 +398,7 @@
 
 			   .on( 'gravityview/dropdown/activate gravityview/dropdown/install', vcfg.enableLockedTemplate )
 
-			   .on( 'gravityview/dialog-opened', function( e, dialog ) {
+			   .on( 'gravityview/dialog-opened', function( _e, dialog ) {
 					const $parent = $( dialog ).parent();
 
 					// Skip warning dialogs, such as when changing the View type.
@@ -312,21 +419,31 @@
 						$parent.find('.ui-dialog-titlebar').append( $expandButton );
 					}
 
-					// Initialize selectWoo for multiselect fields.
-					var $select2Elements = $( dialog ).find( '.gv-select2' ).not( '.select2-hidden-accessible' );
-					if ( typeof $.fn.selectWoo === 'function' && $select2Elements.length ) {
-						var $dialogContent = $( dialog );
+					vcfg.initTomSelectFields( dialog );
+				} )
 
-						$select2Elements.each( function() {
-							var $el = $( this );
-							$el.selectWoo( {
-								width: '100%',
-								allowClear: true,
-								placeholder: $el.data( 'placeholder' ) || '',
-								dropdownParent: $dialogContent
-							} );
-						} );
-					}
+				// jQuery UI's dialogopen fires on every open (gravityview/dialog-opened only fires once per
+				// dialog init), so the TomSelect openOnFocus suppression must hook this event for the
+				// subsequent-open case to also be covered.
+				.on( 'dialogopen', function ( e ) {
+					const dialog = e.target;
+
+					$( dialog ).find( '.gv-tom-select.tomselected' ).each( function () {
+						const ts = this.tomselect;
+
+						if ( ! ts ) {
+							return;
+						}
+
+						const originalOpenOnFocus = ts.settings.openOnFocus;
+						ts.settings.openOnFocus = false;
+
+						if ( ts.isOpen ) {
+							ts.close();
+						}
+
+						window.setTimeout( function () { ts.settings.openOnFocus = originalOpenOnFocus; }, 400 );
+					} );
 				} )
 
 				.on( 'click', '.gv-dialog-expand', function(e) {
@@ -439,7 +556,7 @@
 		* @since 2.10
 		* @param e
 		*/
-	   toggleTabConfigurationWarnings: function ( e ) {
+	   toggleTabConfigurationWarnings: function ( _e ) {
 
 		   const tabs = {
 			   single: {
@@ -491,7 +608,7 @@
 		*
 		* @param {Event} event
 		*/
-	   changedSettingsAction: function (event) {
+	   changedSettingsAction: function (_event) {
 		   // Revalidate all current tab fields, as new fields may appear when settings are changed.
 		   var $tabFields = viewGeneralSettings.metaboxObj.find( '[name^=template_settings]:visible' );
 		   $tabFields.each( function () {
@@ -654,12 +771,14 @@
 		   }
 
 		   if ( $one.is( ':checked' ) ) {
-			   $two.prop( 'disabled', true );
+			   // .serialize() skips disabled inputs, so a box left checked
+			   // while disabled reads as on in the UI but never reaches POST.
+			   $two.prop( 'checked', false ).prop( 'disabled', true );
 			   return;
 		   }
 
 		   if ( $two.is(':checked') ) {
-			   $one.prop( 'disabled', true );
+			   $one.prop( 'checked', false ).prop( 'disabled', true );
 		   }
 	   },
 
@@ -673,45 +792,84 @@
 		* @param {boolean} reverse_logic If true, find items that do not match the attribute value. True = `requires-not`; false = `requires`
 		*/
 	   toggleRequired: function( currentTarget, data_attr, reverse_logic ) {
-		   let $parent = $( currentTarget, '#post' );
+		   const $root = $( currentTarget, '#post' );
 
-		   $parent
+		   $root
 			   .find( '[data-' + data_attr + ']' )
 			   .each( function ()  {
-				   var $this = $( this ),
-					   requires = $this.data( data_attr ),
-					   requires_array = requires.split('='),
-					   requires_name = requires_array[0],
-					   requires_value = requires_array[1];
+				   const $this = $( this );
+				   const requires = String( $this.data( data_attr ) || '' );
+				   const conditions = requires.split( ',' ).map( function ( condition ) {
+					   return condition.trim();
+				   } ).filter( Boolean );
 
-				   // Scope to closest .gv-dialog-options if it exists, to avoid problems with nested dialogs.
+				   // Scope to the closest per-action panel first so each panel's
+				   // controlling checkbox only gates its own dependents. Fall back to
+				   // the dialog (handles nested dialogs), then to the original root.
+				   const $actionPanel = $this.closest('.gv-bulk-action-settings-panel');
 				   const $options = $this.closest('.gv-dialog-options');
-				   if ($options.length > 0) {
-					   $parent = $options;
-				   }
+				   const $parent = $actionPanel.length > 0
+					   ? $actionPanel
+					   : ( $options.length > 0 ? $options : $root );
 
-				   const $input = $parent.find('[name$="[' + requires_name + ']"]').filter(':input');
+				   const shouldShow = conditions.every( function ( condition ) {
+					   // Each condition supports comparison operators (=, !=, >, <, >=, <=);
+					   // a bare "name" or "name=value" falls through to equality.
+					   const operatorMatch = condition.match( /^([a-zA-Z0-9_-]+)\s*(>=|<=|!=|>|<|=)\s*(.+)$/ );
+					   let requiresName;
+					   let requiresValue;
+					   let operator = '=';
 
-				   if ( $input.is('[type=checkbox]') ) {
-					   if ( reverse_logic ) {
-							// Sometimes there's extra hidden input next to checkbox that causes false positives
-							$this.toggle( $input.filter(':not(:checked)').filter(':not(:hidden)').length > 0 );
+					   if ( operatorMatch ) {
+						   requiresName  = operatorMatch[1];
+						   operator      = operatorMatch[2];
+						   requiresValue = operatorMatch[3];
 					   } else {
-						   $this.toggle( $input.is(':checked') );
+						   const separatorIndex = condition.indexOf( '=' );
+						   requiresName  = separatorIndex > -1 ? condition.substring( 0, separatorIndex ) : condition;
+						   requiresValue = separatorIndex > -1 ? condition.substring( separatorIndex + 1 ) : undefined;
 					   }
-				   } else if ( $input.is('[type=radio]') ) {
-					   if ( reverse_logic ) {
-						   $this.toggle( !$input.filter('[value="' + requires_value + '"]').is(':checked') );
-					   } else {
-						   $this.toggle( $input.filter('[value="' + requires_value + '"]').is(':checked') );
+
+					   const $input = $parent.find('[name$="[' + requiresName + ']"]').filter(':input');
+
+					   // The input this condition depends on isn't in scope, so there's nothing to
+					   // evaluate against. A missing dependency input must not hide an otherwise-valid
+					   // setting, so leave the row alone instead of gating on a control that isn't there.
+					   if ( ! $input.length ) {
+						   return true;
 					   }
-				   } else if ( requires_value !== undefined ) {
-					   if ( reverse_logic ) {
-						   $this.toggle( $input.val() !== requires_value );
-					   } else {
-						   $this.toggle( $input.val() === requires_value );
+
+					   const $checkboxes = $input.filter('[type=checkbox]');
+					   const $radios = $input.filter('[type=radio]');
+					   let matches = false;
+
+					   if ( $checkboxes.length ) {
+						   matches = $checkboxes.is(':checked');
+					   } else if ( $radios.length ) {
+						   const radioOn = requiresValue === undefined ? $radios.is(':checked') : $radios.filter('[value="' + requiresValue + '"]').is(':checked');
+						   matches = operator === '!=' ? ! radioOn : radioOn;
+					   } else if ( requiresValue !== undefined ) {
+						   const numVal    = parseFloat( $input.val() );
+						   const numTarget = parseFloat( requiresValue );
+
+						   if ( operator !== '=' && operator !== '!=' && ! isNaN( numVal ) && ! isNaN( numTarget ) ) {
+							   switch ( operator ) {
+								   case '>':  matches = numVal >  numTarget; break;
+								   case '<':  matches = numVal <  numTarget; break;
+								   case '>=': matches = numVal >= numTarget; break;
+								   case '<=': matches = numVal <= numTarget; break;
+							   }
+						   } else if ( operator === '!=' ) {
+							   matches = $input.val() !== requiresValue;
+						   } else {
+							   matches = $input.val() === requiresValue;
+						   }
 					   }
-				   }
+
+					   return reverse_logic ? ! matches : matches;
+				   } );
+
+				   $this.toggle( shouldShow );
 			   });
 
 	   },
@@ -722,7 +880,7 @@
 		* @param  {jQueryEvent} e [description]
 		* @return {bool}   [description]
 		*/
-	   switchTooltipLayout: function ( e ) {
+	   switchTooltipLayout: function ( _e ) {
 
 		   var layout = $( this ).data( 'value' );
 
@@ -1216,6 +1374,8 @@
 
 		   vcfg.currentTemplateId = '';
 		   vcfg.currentFormId = vcfg.gvSelectForm.val();
+		   // Snapshots belong to the previous form; restoring them would bring back stale fields.
+		   vcfg.templateSnapshots = {};
 		   vcfg.setUnsavedChanges( true );
 		   $( document.body ).trigger( 'gravityview_form_change' ).addClass( 'gv-form-changed' );
 	   },
@@ -1295,7 +1455,7 @@
 				   $sortableEls = $( '.ui-widget-content[aria-hidden="false"]' ).find( '.active-drop-widget, .active-drop-field' );
 
 				   if ( $sortableEls.length ) {
-					   $sortableEls.each( ( i, el ) => {
+					   $sortableEls.each( ( _i, el ) => {
 						   if ( !$( el ).hasClass( 'ui-sortable' ) ) {
 							   return;
 						   }
@@ -1333,7 +1493,7 @@
 				   $sortableEls = $( '.ui-widget-content[aria-hidden="false"]' ).find( '.active-drop-widget, .active-drop-field' );
 
 				   if ( $sortableEls.length ) {
-					   $sortableEls.each( ( i, el ) => {
+					   $sortableEls.each( ( _i, el ) => {
 						   if ( !$( el ).hasClass( 'ui-sortable' ) ) {
 							   return;
 						   }
@@ -1379,6 +1539,29 @@
 				   return;
 			   }
 
+			   /**
+				* Fires before GravityView attaches its own Merge Tag autocomplete to a CodeMirror
+				* editor.
+				*
+				* Destroying the autocomplete afterwards is not an alternative: the handlers below
+				* keep calling `close` and `search` on this instance, and jQuery UI throws on a
+				* destroyed widget.
+				*
+				* @since  3.3.3
+				*
+				* @param  {jQueryEvent} event    Cancelable. `preventDefault()` to keep GravityView
+				*                                from setting up merge tags on this field.
+				* @param  {jQuery}      textarea The textarea CodeMirror was initialized from.
+				* @param  {Object}      editor   The `wp.codeEditor` instance.
+				*/
+			   var setupEvent = $.Event( 'gravityview/merge-tags/setup' );
+
+			   $( document.body ).trigger( setupEvent, [ $( this ), editor ] );
+
+			   if ( setupEvent.isDefaultPrevented() ) {
+				   return;
+			   }
+
 			   // Leave room for Merge Tags icon.
 			   editor.codemirror.setSize( '95%' );
 
@@ -1403,7 +1586,7 @@
 					   collision: 'none'
 				   },
 				   source: mergeTags,
-				   select: function ( event, ui ) {
+				   select: function ( _event, ui ) {
 					   // insert the merge tag value without curly braces
 					   var val = ui.item.value.replace( /^{|}$/gm, '' );
 					   var currentEditorCursorPos = editor.codemirror.getCursor();
@@ -1432,7 +1615,7 @@
 				   closeAutocompletion();
 			   } );
 
-			   editor.codemirror.on( 'keydown', function ( el, e ) {
+			   editor.codemirror.on( 'keydown', function ( _el, e ) {
 				   if ( !$autocompleteEl.is( ':visible' ) ) {
 					   return;
 				   }
@@ -1446,7 +1629,7 @@
 				   }
 			   } );
 
-			   editor.codemirror.on( 'change', function ( e, obj ) {
+			   editor.codemirror.on( 'change', function ( _e, obj ) {
 				   // detect curly braces and update the cursor position
 				   if ( obj.text[ 0 ] === '{}' ) {
 					   initialEditorCursorPos = editor.codemirror.getCursor();
@@ -1620,7 +1803,7 @@
 		* @return {void}
 		*/
 	   getSortableFields: function ( context, id ) {
-		   return new Promise((resolve, reject) => {
+		   return new Promise((resolve, _reject) => {
 			   var vcfg = viewConfiguration;
 
 			   // While it's loading, disable the field, remove previous options, and add loading message.
@@ -1860,6 +2043,14 @@
 		   } else if ( currentTemplate !== selectedTemplateId ) {
 			   // warn if fields are configured
 			   if ( vcfg.getConfiguredFields().length ) {
+				   // Tell the user what will actually happen: a restore of their
+				   // previous configuration, or a migration into the new layout.
+				   const willRestore = !! vcfg._getRestorableSnapshot( selectedTemplateId );
+
+				   $( '#gravityview_switch_template_dialog' )
+					   .find( '.gv-switch-template--migrate' ).toggle( ! willRestore ).end()
+					   .find( '.gv-switch-template--restore' ).toggle( willRestore );
+
 				   vcfg.showDialog( '#gravityview_switch_template_dialog' );
 			   } else {
 				   vcfg.toggleViewTypeMetabox();
@@ -1909,6 +2100,9 @@
 		   } else {
 
 			   if( ! slugmatch || changeAllSection ) {
+				   // Keep the outgoing configuration around so switching back can restore it.
+				   vcfg.snapshotCurrentTemplate();
+
 				   //change view configuration active areas
 				   vcfg.updateActiveAreas( selectedTemplateId, ( selectedFormId * 1 ) );
 			   } else {
@@ -1932,7 +2126,7 @@
 
 		   $( '.gv-view-template-notice' ).hide();
 
-		   const { _wpNonce: nonce, _wpAjaxAction: action, _wpAjaxUrl: url, ajaxRouter, frontendFoundationVersion } = window.gvGlobals.foundation_licenses_router;
+		   const { _wpNonce: nonce, _wpAjaxAction: action, _wpAjaxUrl: url, ajaxRouter, frontendFoundationVersion } = gvGlobals.foundation_licenses_router;
 
 		   const request = {
 			   nonce,
@@ -1944,9 +2138,15 @@
 		   };
 
 		   $.post( url, request )
-			   .fail( response => 	defer.reject( response.responseText ))
+			   .fail( (response) => {
+				   viewConfiguration.performingAjaxAction = false;
+
+				   defer.reject( response.responseText );
+			   } )
 			   .done( (response) => {
 				   if ( !response.success ) {
+					   viewConfiguration.performingAjaxAction = false;
+
 					   defer.reject( response.data );
 
 					   return;
@@ -2184,13 +2384,29 @@
 		* @param {string} template The selected template ID.
 		* @param {int} form_id The selected form ID.
 		*/
+	   /**
+		* Re-renders the zone configuration for a template.
+		*
+		* When switching back to a template whose field set is unchanged since we
+		* stored it, the stored configuration is re-rendered as-is. Otherwise, the
+		* outgoing template and live configuration are sent so the server migrates
+		* the fields into the new layout's zones.
+		*
+		* @param {string} template The selected template ID.
+		* @param {int} form_id The selected form ID.
+		* @return {Promise} Resolves when the zones have been updated (or recovery ran).
+		*/
 	   updateActiveAreas: function ( template, form_id ) {
 		   var vcfg = viewConfiguration;
+
+		   const snapshot = vcfg._getRestorableSnapshot( template );
 
 		   var data = {
 			   action: 'gv_get_active_areas',
 			   template_id: template,
 			   form_id: form_id,
+			   current_template_id: snapshot ? template : vcfg._getCurrentTemplateId(),
+			   gv_fields: snapshot ? snapshot.gv_fields : vcfg._serializeFields(),
 			   nonce: gvGlobals.nonce
 		   };
 
@@ -2242,7 +2458,7 @@
 		* @param {object} data `action`, `template_id` and `nonce` keys
 		*/
 	   updateViewConfig: function ( data ) {
-		   return new Promise( ( resolve, reject ) => {
+		   return new Promise( ( resolve, _reject ) => {
 			   const vcfg = viewConfiguration;
 			   const section = vcfg._getTemplateSection();
 			   const update_directory = ( section === 'directory' || section === null );
@@ -2256,40 +2472,93 @@
 			   }
 
 			   $.post( ajaxurl, data, function ( response ) {
+				   var content = null;
+
 				   if ( response ) {
-					   var content = JSON.parse( response );
-
-					   if ( update_directory ) {
-						   $( '#directory-header-widgets' ).html( content.header );
-						   $( '#directory-footer-widgets' ).html( content.footer );
-						   $( '#directory-active-fields' ).append( content.directory );
-
-						   // Update the template and form ID for all [data-templateid] buttons.
-						   $( '#directory-header-widgets a[data-templateid], #directory-footer-widgets a[data-templateid]' )
-							   .attr( 'data-templateid', data.template_id )
-							   .attr( 'data-formid', data.form_id );
+					   if ( typeof response === 'object' ) {
+						   content = response;
+					   } else {
+						   try {
+							   content = JSON.parse( response );
+						   } catch ( error ) {
+							   console.error( 'GravityView: could not parse the View configuration response.', error, response );
+						   }
 					   }
-
-					   if ( update_single ) {
-						   $( '#single-active-fields' ).append( content.single );
-					   }
-
-					   vcfg.showViewConfig();
-					   vcfg.waiting( 'stop' );
-
-					   /**
-						* Triggers after the AJAX is loaded for the zone
-						* @since 2.10
-						* @param {object} JSON response with `header` `footer` (widgets) `directory` and `single` (contexts) properties
-						*/
-					   $( document.body ).trigger( 'gravityview/view-config-updated', content, section );
 				   }
 
+				   // The zones were emptied above; saving now would lose the configuration.
+				   if ( ! content ) {
+					   vcfg.handleViewConfigError();
+					   resolve();
+
+					   return;
+				   }
+
+				   if ( update_directory ) {
+					   // gv_get_active_areas responses have no header/footer keys; jQuery's
+					   // .html( undefined ) is a no-op getter, so widgets survive a template
+					   // switch on purpose. Preset responses do carry both keys.
+					   $( '#directory-header-widgets' ).html( content.header );
+					   $( '#directory-footer-widgets' ).html( content.footer );
+					   $( '#directory-active-fields' ).append( content.directory );
+
+					   // Update the template and form ID for all [data-templateid] buttons.
+					   $( '#directory-header-widgets a[data-templateid], #directory-footer-widgets a[data-templateid]' )
+						   .attr( 'data-templateid', data.template_id )
+						   .attr( 'data-formid', data.form_id );
+				   }
+
+				   if ( update_single ) {
+					   $( '#single-active-fields' ).append( content.single );
+				   }
+
+				   // The replaced zone markup has no sortable instances yet; reinitialize
+				   // so fields are immediately draggable. Untouched panels are skipped by
+				   // init_droppables' per-panel guard.
+				   $( '.ui-tabs-panel' ).each( function () {
+					   vcfg.init_droppables( this );
+				   } );
+
+				   vcfg.showViewConfig();
+				   vcfg.waiting( 'stop' );
+
+				   /**
+					* Triggers after the AJAX is loaded for the zone
+					* @since 2.10
+					* @param {object} JSON response with `header` `footer` (widgets) `directory` and `single` (contexts) properties
+					*/
+				   $( document.body ).trigger( 'gravityview/view-config-updated', content, section );
+
+				   resolve();
+			   } ).fail( function () {
+				   vcfg.handleViewConfigError();
 				   resolve();
 			   } );
 
 			   vcfg.setUnsavedChanges( true );
 		   });
+	   },
+
+	   /**
+		* Recovers the editor UI when a zone configuration request fails.
+		*
+		* The zones are emptied before the request is sent, so saving in this state
+		* would lose the configuration. Warn the user to reload without saving.
+		*
+		* @since $ver$
+		*/
+	   handleViewConfigError: function () {
+		   viewConfiguration.waiting( 'stop' );
+		   viewConfiguration.showViewConfig();
+
+		   /**
+			* Triggers when a zone configuration request failed and recovery ran.
+			*
+			* @since $ver$
+			*/
+		   $( document.body ).trigger( 'gravityview/view-config-error' );
+
+		   window.alert( gvGlobals.config_load_error );
 	   },
 
 	   /**
@@ -2338,13 +2607,13 @@
 						   // Show available fields according to the selected context (single or directory, general or advanced).
 						   return $( '#' + context + '-available-fields-' + ( formId || templateId ) ).html();
 					   case 'widget':
-						   return $( "#directory-available-widgets" ).html();
+						   return viewConfiguration.filterWidgetsByTemplate( $( "#directory-available-widgets" ).html(), templateId );
 				   }
 			   },
 			   close: function () {
 				   $( this ).attr( 'data-tooltip', null );
 			   },
-			   open: function( event, tooltip ) {
+			   open: function( _event, tooltip ) {
 				   $( this )
 					   .attr( 'data-tooltip', 'active' )
 					   .attr( 'data-tooltip-id', $( this ).attr( 'aria-describedby' ) );
@@ -2453,12 +2722,12 @@
 
 			   // Normalize the search input for accent-insensitive comparison
 			   var normalizedInput = normalizeString( input );
-			   
+
 			   // Get and normalize the field values
 			   var fieldTitle = $( this ).find( '.gv-field-label' ).attr( 'data-original-title' ) || '';
 			   var fieldId = $( this ).attr( 'data-fieldid' ) || '';
 			   var parentLabel = $( this ).attr( 'data-parent-label' ) || '';
-			   
+
 			   // Perform accent-insensitive matching
 			   var match_title = normalizedInput === '' || normalizeString( fieldTitle ).indexOf( normalizedInput ) !== -1;
 			   var match_id = normalizedInput === '' || normalizeString( fieldId ).indexOf( normalizedInput ) !== -1;
@@ -2487,6 +2756,703 @@
 		   } );
 	   },
 
+	   /**
+		* Initializes Tom Select controls inside a View editor dialog.
+		*
+		* @since 3.0.0
+		*
+		* @param {Element} context Dialog element.
+		* @return {void}
+		*/
+	   initTomSelectFields: function ( context ) {
+		   if ( typeof window.TomSelect !== 'function' ) {
+			   return;
+		   }
+
+		   $( context ).find( '.gv-tom-select:not(.tomselected)' ).each( function () {
+			   const frameworkOptions = {
+				   plugins: {
+					   remove_button: {
+						   title: gvGlobals.label_remove || 'Remove'
+					   },
+					   drag_drop: {}
+				   },
+				   maxOptions: null,
+				   placeholder: $( this ).data( 'placeholder' ) || ''
+			   };
+			   const pickerConfig = viewConfiguration.getTomSelectPickerConfig( this );
+			   const tomSelect = new window.TomSelect( this, viewConfiguration.mergeTomSelectOptions( frameworkOptions, pickerConfig ) );
+
+			   tomSelect.on( 'change', function () {
+				   viewConfiguration.syncTomSelectOptionOrder( tomSelect );
+				   viewConfiguration.updateBulkActionsWidgetSummary( tomSelect );
+			   } );
+
+			   $( this ).closest( 'form' ).on( 'submit', function () {
+				   viewConfiguration.syncTomSelectOptionOrder( tomSelect );
+			   } );
+
+			   viewConfiguration.initBulkActionsActionSelect( this, tomSelect );
+			   viewConfiguration.initBulkActionDependentSetting( this, tomSelect );
+			   viewConfiguration.updateBulkActionsWidgetSummary( tomSelect );
+		   } );
+	   },
+
+	   /**
+		* Returns picker config overrides from a select element.
+		*
+		* @since TBD
+		*
+		* @param {HTMLSelectElement} select Select element.
+		* @return {Object}
+		*/
+	   getTomSelectPickerConfig: function ( select ) {
+		   const configJson = select.getAttribute( 'data-picker-config' );
+
+		   if ( ! configJson ) {
+			   return {};
+		   }
+
+		   try {
+			   return JSON.parse( configJson ) || {};
+		   } catch ( e ) {
+			   console.warn( 'Invalid GravityView picker_config JSON.', e );
+
+			   return {};
+		   }
+	   },
+
+	   /**
+		* Merges framework TomSelect options with author picker config.
+		*
+		* @since TBD
+		*
+		* @param {Object} frameworkOptions Framework defaults.
+		* @param {Object} pickerConfig     Author overrides.
+		* @return {Object}
+		*/
+	   mergeTomSelectOptions: function ( frameworkOptions, pickerConfig ) {
+		   const options = Object.assign( {}, frameworkOptions, pickerConfig );
+
+		   if ( pickerConfig.plugins && typeof pickerConfig.plugins === 'object' && ! Array.isArray( pickerConfig.plugins ) ) {
+			   options.plugins = Object.assign( {}, frameworkOptions.plugins || {}, pickerConfig.plugins );
+		   }
+
+		   return options;
+	   },
+
+	   /**
+		* Initializes live option refresh for a dependent bulk action setting.
+		*
+		* @since TBD
+		*
+		* @param {HTMLSelectElement} select    Select element.
+		* @param {Object}            tomSelect TomSelect instance.
+		* @return {void}
+		*/
+	   initBulkActionDependentSetting: function ( select, tomSelect ) {
+		   const dependsJson = select.getAttribute( 'data-depends-on' );
+
+		   if ( ! dependsJson ) {
+			   return;
+		   }
+
+		   let dependsOn = [];
+
+		   try {
+			   dependsOn = JSON.parse( dependsJson ) || [];
+		   } catch ( e ) {
+			   console.warn( 'Invalid GravityView depends_on JSON.', e );
+			   return;
+		   }
+
+		   if ( ! Array.isArray( dependsOn ) || ! dependsOn.length ) {
+			   return;
+		   }
+
+		   const $panel = $( select ).closest( '[data-bulk-action-settings-panel]' );
+		   const actionKey = select.getAttribute( 'data-bulk-action-key' ) || $panel.attr( 'data-bulk-action-settings-panel' ) || '';
+		   const settingKey = select.getAttribute( 'data-bulk-action-setting-key' ) || '';
+		   const refresh = viewConfiguration.debounce( function () {
+			   viewConfiguration.refreshBulkActionSettingOptions( $panel, actionKey, settingKey, tomSelect );
+		   }, 250 );
+
+		   $panel.on( 'change', ':input[name]', function () {
+			   const changedKey = viewConfiguration.getBulkActionSettingKeyFromName( this.name, actionKey );
+
+			   if ( changedKey && dependsOn.indexOf( changedKey ) !== -1 ) {
+				   refresh();
+			   }
+		   } );
+	   },
+
+	   /**
+		* Refreshes one bulk action setting's options from the server.
+		*
+		* @since TBD
+		*
+		* @param {jQuery} $panel     Action settings panel.
+		* @param {string} actionKey  Action key.
+		* @param {string} settingKey Setting key.
+		* @param {Object} tomSelect  TomSelect instance.
+		* @return {void}
+		*/
+	   refreshBulkActionSettingOptions: function ( $panel, actionKey, settingKey, tomSelect ) {
+		   if ( ! actionKey || ! settingKey ) {
+			   return;
+		   }
+
+		   tomSelect.disable();
+
+		   $.ajax( {
+			   type: 'POST',
+			   url: window.ajaxurl || ajaxurl,
+			   dataType: 'json',
+			   data: {
+				   action: 'gv_bulk_action_setting_options',
+				   nonce: gvGlobals.nonce,
+				   view_id: parseInt( $( '#post_ID' ).val(), 10 ) || 0,
+				   action_key: actionKey,
+				   setting_key: settingKey,
+				   current_drawer_state: viewConfiguration.collectBulkActionDrawerState( $panel, actionKey )
+			   }
+		   } ).done( function ( response ) {
+			   if ( ! response || ! response.success ) {
+				   console.warn( 'GravityView bulk action setting options could not be refreshed.', response );
+				   return;
+			   }
+
+			   viewConfiguration.replaceTomSelectOptions( tomSelect, response.data && response.data.options ? response.data.options : {} );
+		   } ).fail( function ( jqXHR ) {
+			   console.warn( 'GravityView bulk action setting options request failed.', jqXHR );
+		   } ).always( function () {
+			   tomSelect.enable();
+		   } );
+	   },
+
+	   /**
+		* Collects current setting values from an action settings drawer.
+		*
+		* @since TBD
+		*
+		* @param {jQuery} $panel    Action settings panel.
+		* @param {string} actionKey Action key.
+		* @return {Object}
+		*/
+	   collectBulkActionDrawerState: function ( $panel, actionKey ) {
+		   const state = {};
+
+		   $panel.find( ':input[name]' ).each( function () {
+			   const settingKey = viewConfiguration.getBulkActionSettingKeyFromName( this.name, actionKey );
+
+			   if ( ! settingKey || this.disabled ) {
+				   return;
+			   }
+
+			   const isArray = /\[\]$/.test( this.name );
+			   let value = $( this ).val();
+
+			   if ( this.type === 'checkbox' && ! this.checked ) {
+				   return;
+			   }
+
+			   if ( isArray ) {
+				   if ( ! Array.isArray( state[ settingKey ] ) ) {
+					   state[ settingKey ] = [];
+				   }
+
+				   if ( Array.isArray( value ) ) {
+					   state[ settingKey ] = state[ settingKey ].concat( value );
+				   } else if ( value !== null && value !== '' ) {
+					   state[ settingKey ].push( value );
+				   }
+
+				   return;
+			   }
+
+			   state[ settingKey ] = value;
+		   } );
+
+		   return state;
+	   },
+
+	   /**
+		* Returns a bulk action setting key parsed from an input name.
+		*
+		* @since TBD
+		*
+		* @param {string} name      Input name.
+		* @param {string} actionKey Action key.
+		* @return {string}
+		*/
+	   getBulkActionSettingKeyFromName: function ( name, actionKey ) {
+		   const marker = '[' + actionKey + '][';
+		   const markerIndex = name.indexOf( marker );
+
+		   if ( markerIndex === -1 ) {
+			   return '';
+		   }
+
+		   const afterMarker = name.substring( markerIndex + marker.length );
+		   const endIndex = afterMarker.indexOf( ']' );
+
+		   return endIndex === -1 ? '' : afterMarker.substring( 0, endIndex );
+	   },
+
+	   /**
+		* Replaces TomSelect options while preserving still-valid selections.
+		*
+		* @since TBD
+		*
+		* @param {Object} tomSelect TomSelect instance.
+		* @param {Object} options   Options keyed by value.
+		* @return {void}
+		*/
+	   replaceTomSelectOptions: function ( tomSelect, options ) {
+		   const currentValue = tomSelect.getValue();
+		   const currentValues = Array.isArray( currentValue ) ? currentValue : [ currentValue ];
+		   const optionKeys = Object.keys( options );
+		   const allowed = {};
+
+		   optionKeys.forEach( function ( key ) {
+			   allowed[ key ] = true;
+		   } );
+
+		   tomSelect.clear( true );
+		   tomSelect.clearOptions();
+
+		   optionKeys.forEach( function ( key ) {
+			   tomSelect.addOption( {
+				   value: key,
+				   text: String( options[ key ] )
+			   } );
+		   } );
+
+		   const nextValues = currentValues.filter( function ( value ) {
+			   return value && allowed[ value ];
+		   } );
+
+		   if ( tomSelect.settings.maxItems === 1 ) {
+			   tomSelect.setValue( nextValues[ 0 ] || '', true );
+		   } else {
+			   tomSelect.setValue( nextValues, true );
+		   }
+
+		   tomSelect.refreshOptions( false );
+	   },
+
+	   /**
+		* Debounces a function.
+		*
+		* @since TBD
+		*
+		* @param {Function} callback Callback.
+		* @param {number}   wait     Wait time in milliseconds.
+		* @return {Function}
+		*/
+	   debounce: function ( callback, wait ) {
+		   let timeout = null;
+
+		   return function () {
+			   const args = arguments;
+			   const context = this;
+
+			   window.clearTimeout( timeout );
+			   timeout = window.setTimeout( function () {
+				   callback.apply( context, args );
+			   }, wait );
+		   };
+	   },
+
+	   /**
+		* Initializes a Bulk Actions action selector whose options depend on configured View fields.
+		*
+		* @since 3.0.0
+		*
+		* @param {HTMLSelectElement} select    Original select element.
+		* @param {Object}            tomSelect TomSelect instance.
+		* @return {void}
+		*/
+	   initBulkActionsActionSelect: function ( select, tomSelect ) {
+		   const requirementsJson = select.getAttribute( 'data-bulk-actions-field-requirements' );
+
+		   if ( ! requirementsJson ) {
+			   return;
+		   }
+
+		   let requirements = {};
+
+		   try {
+			   requirements = JSON.parse( requirementsJson ) || {};
+		   } catch ( e ) {
+			   requirements = {};
+		   }
+
+		   const options = {};
+
+		   Object.keys( tomSelect.options ).forEach( function ( key ) {
+			   options[ key ] = Object.assign( {}, tomSelect.options[ key ] );
+		   } );
+
+		   const state = {
+			   tomSelect: tomSelect,
+			   requirements: requirements,
+			   options: options,
+			   initialItems: tomSelect.items.slice( 0 ),
+			   manuallyRemoved: {},
+			   syncing: false
+		   };
+
+		   tomSelect.on( 'item_remove', function ( value ) {
+			   if ( ! state.syncing ) {
+				   state.manuallyRemoved[ value ] = true;
+			   }
+		   } );
+
+		   $( select ).data( 'gvBulkActionsSelect', state );
+		   this.updateBulkActionsActionSelect( state );
+	   },
+
+	   /**
+		* Updates all initialized Bulk Actions action selectors.
+		*
+		* @since 3.0.0
+		*
+		* @return {void}
+		*/
+	   updateBulkActionsActionSelects: function () {
+		   $( '.gv-tom-select[data-bulk-actions-field-requirements]' ).each( function () {
+			   const state = $( this ).data( 'gvBulkActionsSelect' );
+
+			   if ( state ) {
+				   viewConfiguration.updateBulkActionsActionSelect( state );
+			   }
+		   } );
+	   },
+
+	   /**
+		* Updates one Bulk Actions action selector.
+		*
+		* @since 3.0.0
+		*
+		* @param {Object} state Bulk Actions select state.
+		* @return {void}
+		*/
+	   updateBulkActionsActionSelect: function ( state ) {
+		   const configuredFields = this.getBulkActionsConfiguredFieldIds();
+		   const tomSelect = state.tomSelect;
+
+		   Object.keys( state.requirements ).forEach( function ( actionKey ) {
+			   const requiredFields = Array.isArray( state.requirements[ actionKey ] ) ? state.requirements[ actionKey ].map( String ) : [];
+			   const isAvailable = requiredFields.every( function ( fieldId ) {
+				   return configuredFields.indexOf( fieldId ) !== -1;
+			   } );
+
+			   if ( ! isAvailable ) {
+				   state.syncing = true;
+				   tomSelect.removeItem( actionKey, true );
+				   state.syncing = false;
+				   tomSelect.removeOption( actionKey, true );
+
+				   return;
+			   }
+
+			   if ( ! tomSelect.options[ actionKey ] && state.options[ actionKey ] ) {
+				   tomSelect.addOption( state.options[ actionKey ] );
+			   }
+
+			   if (
+				   state.initialItems.indexOf( actionKey ) !== -1
+				   && ! state.manuallyRemoved[ actionKey ]
+				   && tomSelect.items.indexOf( actionKey ) === -1
+			   ) {
+				   state.syncing = true;
+				   tomSelect.addItem( actionKey, true );
+				   state.syncing = false;
+			   }
+		   } );
+
+		   tomSelect.refreshOptions( false );
+		   tomSelect.refreshItems();
+		   tomSelect.updateOriginalInput( { silent: true } );
+		   this.syncTomSelectOptionOrder( tomSelect );
+		   this.updateBulkActionsWidgetSummary( tomSelect );
+	   },
+
+	   /**
+		* Updates the Bulk Actions widget summary in the View editor.
+		*
+		* @since 3.0.0
+		*
+		* @param {Object} tomSelect TomSelect instance.
+		* @return {void}
+		*/
+	   updateBulkActionsWidgetSummary: function ( tomSelect ) {
+		   const select = tomSelect && tomSelect.input;
+
+		   if ( ! select || ! select.getAttribute( 'data-bulk-actions-widget-summary' ) ) {
+			   return;
+		   }
+
+		   const labels = tomSelect.items.map( function ( value ) {
+			   return tomSelect.options[ value ] ? tomSelect.options[ value ].text : '';
+		   } ).filter( Boolean );
+		   const summary = this.formatBulkActionsWidgetSummary( labels, select );
+		   const $widget = $( select ).closest( '[data-fieldid="bulk_actions"]' );
+
+		   if ( ! $widget.length ) {
+			   return;
+		   }
+
+		   let $summary = $widget.find( '.gv-bulk-actions-widget-summary' );
+
+		   if ( ! $summary.length ) {
+			   let $fieldInfo = $widget.find( '.gv-field-info' );
+
+			   if ( ! $fieldInfo.length ) {
+				   $widget.find( 'h5' ).append( '<span class="gv-field-info"></span>' );
+				   $fieldInfo = $widget.find( '.gv-field-info' );
+			   }
+
+			   $fieldInfo.html( '<span class="gv-bulk-actions-widget-summary"></span>' );
+			   $summary = $widget.find( '.gv-bulk-actions-widget-summary' );
+		   }
+
+		   $summary.text( summary ).attr( 'aria-label', summary );
+	   },
+
+	   /**
+		* Formats the Bulk Actions widget summary.
+		*
+		* @since 3.0.0
+		*
+		* @param {string[]}          labels Selected action labels.
+		* @param {HTMLSelectElement} select Original select element.
+		* @return {string}
+		*/
+	   formatBulkActionsWidgetSummary: function ( labels, select ) {
+		   if ( ! labels.length ) {
+			   return $( select ).data( 'bulkActionsSummaryEmpty' ) || 'No actions selected';
+		   }
+
+		   const visible = labels.slice( 0, 3 );
+		   const remaining = labels.length - visible.length;
+
+		   if ( remaining > 0 ) {
+			   const template = 1 === remaining
+				   ? $( select ).data( 'bulkActionsSummaryMoreOne' )
+				   : $( select ).data( 'bulkActionsSummaryMoreMany' );
+
+			   visible.push( ( template || '+[count] actions' ).replace( '[count]', remaining.toLocaleString() ) );
+		   }
+
+		   return visible.join( ', ' );
+	   },
+
+	   /**
+		* Returns field IDs configured in the multiple-entry layout.
+		*
+		* @since 3.0.0
+		*
+		* @return {string[]} Configured field IDs.
+		*/
+	   getBulkActionsConfiguredFieldIds: function () {
+		   const fields = [];
+
+		   $( '#directory-active-fields .active-drop-field .gv-fields:not(.gv-bulk-actions-ghost-field)[data-fieldid]' ).each( function () {
+			   const fieldId = String( $( this ).attr( 'data-fieldid' ) || '' );
+
+			   if ( fieldId && fields.indexOf( fieldId ) === -1 ) {
+				   fields.push( fieldId );
+			   }
+		   } );
+
+		   return fields;
+	   },
+
+	   /**
+		* Returns the active Bulk Actions widget row.
+		*
+		* @since 3.0.0
+		*
+		* @return {jQuery} Bulk Actions widget row.
+		*/
+	   getBulkActionsWidget: function () {
+		   return $( '#directory-header-widgets [data-fieldid="bulk_actions"], #directory-footer-widgets [data-fieldid="bulk_actions"]' ).first();
+	   },
+
+	   /**
+		* Returns where the Bulk Actions selection checkbox should be shown.
+		*
+		* @since 3.0.0
+		*
+		* @param {jQuery} $widget Bulk Actions widget row.
+		* @return {string} first|last
+		*/
+	   getBulkActionsCheckboxPosition: function ( $widget ) {
+		   const value = $widget.find( '[name$="[bulk_actions_checkbox_position]"]' ).val();
+
+		   return 'last' === value ? 'last' : 'first';
+	   },
+
+	   /**
+		* Creates the visual-only Bulk Actions selection checkbox row.
+		*
+		* @since 3.0.0
+		*
+		* @return {jQuery} Ghost field row.
+		*/
+	   createBulkActionsGhostField: function () {
+		   const title = gvGlobals.label_bulk_actions_configure || 'Configure Bulk Actions';
+		   const label = gvGlobals.label_bulk_actions_selection_checkbox || 'Selection Checkbox';
+		   const summary = gvGlobals.label_bulk_actions_ghost_summary || 'Configured in the Bulk Actions widget';
+		   const $field = $( '<div/>', {
+			   class: 'gv-fields gv-bulk-actions-ghost-field',
+			   title: title
+		   } );
+		   const $heading = $( '<h5/>', {
+			   class: 'selectable gfield field-id-bulk-actions-selection-checkbox'
+		   } );
+		   const $controls = $( '<span/>', {
+			   class: 'gv-field-controls'
+		   } );
+		   const $settingsButton = $( '<button/>', {
+			   type: 'button',
+			   class: 'gv-bulk-actions-ghost-settings',
+			   title: title,
+			   'aria-label': title
+		   } ).append(
+			   $( '<span/>', {
+				   class: 'dashicons dashicons-admin-generic',
+				   'aria-hidden': 'true'
+			   } )
+		   );
+		   const $label = $( '<span/>', {
+			   class: 'gv-field-label',
+			   title: title
+		   } ).append(
+			   $( '<i/>', {
+				   class: 'dashicons dashicons-list-view',
+				   'aria-hidden': 'true'
+			   } ),
+			   $( '<span/>', {
+				   class: 'gv-field-label-text-container'
+			   } ).text( label )
+		   );
+		   const $info = $( '<span/>', {
+			   class: 'gv-field-info'
+		   } ).append(
+			   $( '<span/>', {
+				   class: 'gv-bulk-actions-ghost-field-summary'
+			   } ).text( summary )
+		   );
+
+		   $controls.append( $settingsButton );
+		   $heading.append( $controls, $label, $info );
+		   $field.append( $heading );
+
+		   return $field;
+	   },
+
+	   /**
+		* Adds, removes, or moves the Bulk Actions ghost field row.
+		*
+		* @since 3.0.0
+		*
+		* @return {void}
+		*/
+	   updateBulkActionsGhostField: function () {
+		   const $tableColumns = $( '#directory-active-fields .active-drop-field[data-areaid="directory_table-columns"]' ).first();
+		   const $widget = viewConfiguration.getBulkActionsWidget();
+		   const $ghostFields = $( '.gv-bulk-actions-ghost-field' );
+		   const shouldDisplay = $tableColumns.length && $widget.length;
+
+		   if ( ! shouldDisplay ) {
+			   $ghostFields.remove();
+			   viewConfiguration.toggleDropMessage();
+			   viewConfiguration.toggleRemoveAllFields();
+
+			   return;
+		   }
+
+		   let $ghostField = $ghostFields.first();
+
+		   $ghostFields.not( $ghostField ).remove();
+
+		   if ( ! $ghostField.length ) {
+			   $ghostField = viewConfiguration.createBulkActionsGhostField();
+		   }
+
+		   const position = viewConfiguration.getBulkActionsCheckboxPosition( $widget );
+		   const $realFields = $tableColumns.children( '.gv-fields:not(.gv-bulk-actions-ghost-field)' );
+
+		   $ghostField.attr( 'data-bulk-actions-checkbox-position', position );
+
+		   if ( 'last' === position || ! $realFields.length ) {
+			   $ghostField.appendTo( $tableColumns );
+		   } else {
+			   $ghostField.insertBefore( $realFields.first() );
+		   }
+
+		   viewConfiguration.toggleDropMessage();
+		   viewConfiguration.toggleRemoveAllFields();
+	   },
+
+	   /**
+		* Opens the Bulk Actions widget settings from the ghost field row.
+		*
+		* @since 3.0.0
+		*
+		* @param {jQueryEvent} e Click or keydown event.
+		* @return {void}
+		*/
+	   openBulkActionsGhostFieldSettings: function ( e ) {
+		   if ( 'keydown' === e.type && 13 !== e.keyCode && 32 !== e.keyCode ) {
+			   return;
+		   }
+
+		   e.preventDefault();
+		   e.stopImmediatePropagation();
+
+		   const $widget = viewConfiguration.getBulkActionsWidget();
+		   const $settingsButton = $widget.find( '.gv-field-settings' ).first();
+
+		   if ( $settingsButton.length ) {
+			   $settingsButton.trigger( 'click' );
+		   }
+	   },
+
+	   /**
+		* Keeps the original multiselect option order aligned with TomSelect item order.
+		*
+		* @since 3.0.0
+		*
+		* @param {Object} tomSelect TomSelect instance.
+		* @return {void}
+		*/
+	   syncTomSelectOptionOrder: function ( tomSelect ) {
+		   const select = tomSelect && tomSelect.input;
+
+		   if ( ! select || ! select.multiple ) {
+			   return;
+		   }
+
+		   const options = Array.prototype.slice.call( select.options );
+		   const findOption = function ( value ) {
+			   return options.filter( function ( option ) {
+				   return option.value === value;
+			   } )[ 0 ] || null;
+		   };
+
+		   tomSelect.items.forEach( function ( value ) {
+			   const option = findOption( value );
+
+			   if ( option ) {
+				   select.appendChild( option );
+			   }
+		   } );
+	   },
+
 
 	   /**
 		* Get fields configured in each context
@@ -2504,7 +3470,104 @@
 			   ? selectors[ section ]
 			   : '#directory-active-fields, #single-active-fields, #edit-active-fields';
 
-		   return $( selector ).find( '.gv-fields' );
+		   return $( selector ).find( '.gv-fields:not(.gv-bulk-actions-ghost-field)' );
+	   },
+
+	   /**
+		* Returns a stable fingerprint of the configured fields (sorted unique IDs).
+		*
+		* Reads every `fields[<zone>][<uid>][...]` input inside the whole #post form —
+		* the same scope `_serializeFields()` snapshots — so adding or removing a field
+		* in ANY zone (including Edit Entry) invalidates stored snapshots. Migration
+		* preserves the unique ID keys, so an unchanged fingerprint means no fields
+		* were added or removed since a snapshot was taken. Zones are deliberately
+		* excluded from the hash: the same fields in different zones is still "no change".
+		*
+		* @since $ver$
+		* @return {string} The fingerprint.
+		*/
+	   getFieldsFingerprint: function () {
+		   const ids = {};
+
+		   $( '#post' ).find( viewConfiguration.fieldsInputsSelector ).each( function () {
+			   const match = ( this.name || '' ).match( /^fields\[[^\]]+\]\[([^\]]+)\]/ );
+
+			   if ( match ) {
+				   ids[ match[ 1 ] ] = true;
+			   }
+		   } );
+
+		   return Object.keys( ids ).sort().join( ',' );
+	   },
+
+	   /**
+		* Returns the snapshot storage key for a template, scoped by the active section.
+		*
+		* @since $ver$
+		* @param {string} template The template ID.
+		* @return {string} The storage key.
+		*/
+	   _snapshotKey: function ( template ) {
+		   return ( viewConfiguration._getTemplateSection() || 'all' ) + '::' + template;
+	   },
+
+	   /**
+		* Serializes the current field configuration, in the same format the Save flow posts.
+		*
+		* Deliberately scoped to the whole #post form, not just the directory/single
+		* containers: the Edit Entry zone inputs must ride along so they survive the
+		* migration round trip unchanged.
+		*
+		* @since $ver$
+		* @return {string} The serialized `fields[...]` inputs.
+		*/
+	   _serializeFields: function () {
+		   return $( '#post' ).find( viewConfiguration.fieldsInputsSelector ).serialize();
+	   },
+
+	   /**
+		* Returns the stored configuration for a template when restoring it is safe.
+		*
+		* Restoring is safe when no fields were added or removed since the snapshot
+		* was taken: migration preserves field unique IDs, so an unchanged
+		* fingerprint guarantees the same field set.
+		*
+		* @since $ver$
+		* @param {string} template The template ID being switched to.
+		* @return {object|null} The snapshot, or null when none is restorable.
+		*/
+	   _getRestorableSnapshot: function ( template ) {
+		   const vcfg = viewConfiguration;
+		   const snapshot = vcfg.templateSnapshots[ vcfg._snapshotKey( template ) ];
+
+		   if ( snapshot && snapshot.fingerprint === vcfg.getFieldsFingerprint() ) {
+			   return snapshot;
+		   }
+
+		   return null;
+	   },
+
+	   /**
+		* Stores the current field configuration for the active template.
+		*
+		* When switching back to this template later, the stored configuration is
+		* re-rendered by the server instead of migrating the then-current fields,
+		* so the exact arrangement is restored.
+		*
+		* @since $ver$
+		*/
+	   snapshotCurrentTemplate: function () {
+		   const vcfg = viewConfiguration;
+		   const template = vcfg._getCurrentTemplateId();
+
+		   if ( ! template ) {
+			   return;
+		   }
+
+		   vcfg.templateSnapshots[ vcfg._snapshotKey( template ) ] = {
+			   gv_fields: vcfg._serializeFields(),
+			   fingerprint: vcfg.getFieldsFingerprint()
+		   };
 	   },
 
 	   /**
@@ -2514,7 +3577,7 @@
 		* @return void
 		*/
 	   getAvailableFields: function( preset, templateid ) {
-		   return new Promise( ( resolve, reject ) => {
+		   return new Promise( ( resolve, _reject ) => {
 			   var vcfg = viewConfiguration;
 
 			   vcfg.toggleDropMessage();
@@ -2584,7 +3647,7 @@
 		   } );
 
 		   const triggerClick = ( el ) => {
-			   return new Promise( ( resolve, reject ) => {
+			   return new Promise( ( resolve, _reject ) => {
 				   $( document.body ).one( 'gravityview/field-added', function () {
 					   resolve();
 				   } );
@@ -2645,6 +3708,7 @@
 			   field_type: $addButton.attr( 'data-objecttype' ),
 			   input_type: $newField.attr( 'data-inputtype' ),
 			   form_id: parseInt( $field.attr( 'data-formid' ), 10 ) || vcfg.currentFormId,
+			   view_id: parseInt( $( '#post_ID' ).val(), 10 ) || 0,
 			   nonce: gvGlobals.nonce
 		   };
 
@@ -2677,7 +3741,7 @@
 				   // Make the response a jQuery object.
 				   response = $(response);
 
-				   $field.find( '.gv-dialog-options :input' ).each( function ( i, el ) {
+				   $field.find( '.gv-dialog-options :input' ).each( function ( _i, el ) {
 					   if ( !$( el ).attr( 'name' ) ) {
 						   return;
 					   }
@@ -2788,9 +3852,11 @@
 		* @param wrapper
 		*/
 	   filterFields: function ( source, wrapper ) {
+		   const objectType = $( source ).attr( 'data-objecttype' ) || 'field';
+		   const activeDropSelector = '.active-drop-' + objectType + ' [data-fieldid]';
 		   const fields = $( source )
 			   .closest( '.gv-section' )
-			   .find( '[data-fieldid]' )
+			   .find( activeDropSelector )
 			   .map(
 				   ( _, el ) => $( el ).data( 'fieldid' )
 			   )
@@ -2812,6 +3878,33 @@
 
 		   content = $content.html();
 		   $( wrapper ).html( content );
+	   },
+
+	   /**
+		* Filters widget picker content by the current directory template.
+		*
+		* @since 3.0.0
+		*
+		* @param {string} content Widget picker HTML.
+		* @param {string} templateId Current directory template ID.
+		* @return {string} Filtered widget picker HTML.
+		*/
+	   filterWidgetsByTemplate: function ( content, templateId ) {
+		   if ( !content || !templateId ) {
+			   return content;
+		   }
+
+		   const $content = $( '<div>' ).html( content );
+
+		   $content.find( '[data-show-in-template]' ).each( function () {
+			   const templates = ( $( this ).attr( 'data-show-in-template' ) || '' ).split( /\s+/ );
+
+			   if ( templates.indexOf( templateId ) === -1 ) {
+				   $( this ).remove();
+			   }
+		   } );
+
+		   return $content.html();
 	   },
 	   /**
 		* Re-initialize Merge Tags
@@ -2911,6 +4004,114 @@
 	   },
 
 	   // Sortables and droppables
+	   /**
+		* Alt+drag copy support for the drag-and-drop sortables.
+		*
+		* Holding Alt while dropping duplicates the dragged item: the original element completes the move, and a copy with the same settings is placed back into the source slot.
+		*
+		* @since 3.2.0
+		*/
+	   altCopy: {
+		   $item: null,
+
+		   /**
+			* Pre-drag clone of the item. A cross-area drop renames the original's inputs to the target area before `stop` fires, so the copy must be built from this snapshot, which keeps the source-area names placeField matches settings by.
+			*/
+		   $snapshot: null,
+		   $sourceAnchor: null,
+		   sourceAnchorIsNext: false,
+		   $sourceDrop: null,
+		   active: false,
+
+		   start: function ( ui ) {
+			   const altCopy = viewConfiguration.altCopy;
+
+			   if ( !ui.item.find( '.gv-field-duplicate' ).length ) {
+				   return;
+			   }
+
+			   altCopy.$item = ui.item;
+			   altCopy.$snapshot = ui.item.clone();
+			   altCopy.$sourceDrop = ui.item.closest( '.active-drop' );
+
+			   const $liveInputs = ui.item.find( ':input' );
+
+			   altCopy.$snapshot.find( ':input' ).each( function ( i, el ) {
+				   const $live = $liveInputs.eq( i );
+
+				   if ( $live.is( ':checkbox, :radio' ) ) {
+					   $( el ).prop( 'checked', $live.prop( 'checked' ) );
+				   } else {
+					   $( el ).val( $live.val() );
+				   }
+			   } );
+
+			   const $prev = ui.item.prev( '.gv-fields' );
+			   const $next = ui.item.next( '.gv-fields' );
+
+			   altCopy.sourceAnchorIsNext = !$prev.length && !!$next.length;
+			   altCopy.$sourceAnchor = $prev.length ? $prev : ( $next.length ? $next : null );
+
+			   $( document )
+				   .on( 'keydown.gv-alt-copy keyup.gv-alt-copy', function ( e ) {
+					   altCopy.toggle( e.altKey );
+				   } )
+				   .on( 'mouseup.gv-alt-copy', function () {
+					   altCopy.lock();
+				   } );
+		   },
+
+		   sort: function ( event ) {
+			   if ( viewConfiguration.altCopy.$item ) {
+				   viewConfiguration.altCopy.toggle( event.altKey );
+			   }
+		   },
+
+		   toggle: function ( on ) {
+			   const altCopy = viewConfiguration.altCopy;
+
+			   if ( altCopy.active === on || !altCopy.$item ) {
+				   return;
+			   }
+
+			   altCopy.active = on;
+			   $( document.body ).toggleClass( 'gv-alt-copy', on );
+			   altCopy.$item.toggle( on );
+		   },
+
+		   /**
+			* Latches the copy decision at the moment of the drop. The sortables revert-animate before `beforeStop`/`stop` fire, so a user releasing Alt right after dropping must not cancel the copy.
+			*/
+		   lock: function () {
+			   $( document ).off( '.gv-alt-copy' );
+		   },
+
+		   stop: function () {
+			   const altCopy = viewConfiguration.altCopy;
+
+			   $( document ).off( '.gv-alt-copy' );
+			   $( document.body ).removeClass( 'gv-alt-copy' );
+
+			   if ( altCopy.active && altCopy.$item ) {
+				   altCopy.$item.show();
+
+				   viewConfiguration.placeField(
+					   altCopy.$snapshot,
+					   altCopy.$sourceDrop.closest( '.active-drop-container' ).find( 'a.gv-add-field' ),
+					   altCopy.$sourceAnchor || undefined,
+					   altCopy.sourceAnchorIsNext
+				   );
+			   }
+
+			   altCopy.$item = null;
+			   altCopy.$snapshot = null;
+			   altCopy.$sourceAnchor = null;
+			   altCopy.sourceAnchorIsNext = false;
+			   altCopy.$sourceDrop = null;
+			   altCopy.active = false;
+		   }
+	   },
+
 	   init_droppables: function ( panel ) {
 
 		   // Already initialized.
@@ -2924,19 +4125,25 @@
 		   $( panel ).find( ".active-drop-widget" ).sortable( {
 			   placeholder: "fields-placeholder",
 			   items: '> .gv-fields',
+			   cancel: 'input, textarea, select, option, button:not(.gv-field-action)',
+			   tolerance: 'pointer',
 			   distance: 2,
 			   revert: 75,
+			   helper: 'clone',
 			   connectWith: ".active-drop-widget",
-			   start: function( event, ui ) {
+			   sort: vcfg.altCopy.sort,
+			   start: function( _event, ui ) {
+				   vcfg.altCopy.start( ui );
 				   $( '#directory-fields, #single-fields' ).find( ".active-drop-container-widget" ).addClass('is-receivable');
 			   },
-			   stop: function( event, ui ) {
+			   stop: function( _event, _ui ) {
+				   vcfg.altCopy.stop();
 				   $( '#directory-fields, #single-fields' ).find( ".active-drop-container-widget" ).removeClass('is-receivable');
 			   },
-			   change: function( event, ui ) {
+			   change: function( _event, _ui ) {
 				   vcfg.setUnsavedChanges( true );
 			   },
-			   receive: function ( event, ui ) {
+			   receive: function( _event, ui ) {
 				   // Check if field comes from another active area and if so, update name attributes.
 
 				   var sender_area = ui.sender.attr( 'data-areaid' ), receiver_area = $( this ).attr( 'data-areaid' );
@@ -2953,20 +4160,27 @@
 		   //fields
 		   $( panel ).find( ".active-drop-field" ).sortable( {
 			   placeholder: "fields-placeholder",
-			   items: '> .gv-fields',
+			   items: '> .gv-fields:not(.gv-bulk-actions-ghost-field)',
+			   cancel: 'input, textarea, select, option, button:not(.gv-field-action)',
+			   tolerance: 'pointer',
 			   distance: 2,
 			   revert: 75,
+			   helper: 'clone',
 			   connectWith: ".active-drop-field",
-			   start: function( event, ui ) {
+			   sort: vcfg.altCopy.sort,
+			   start: function( _event, ui ) {
+				   vcfg.altCopy.start( ui );
 				   $( document.body ).find( ".active-drop-container-field" ).addClass('is-receivable');
 			   },
-			   stop: function( event, ui ) {
+			   stop: function( _event, _ui ) {
+				   vcfg.altCopy.stop();
 				   $( document.body ).find( ".active-drop-container-field" ).removeClass('is-receivable');
+				   vcfg.updateBulkActionsGhostField();
 			   },
-			   change: function( event, ui ) {
+			   change: function( _event, _ui ) {
 				   vcfg.setUnsavedChanges( true );
 			   },
-			   receive: function ( event, ui ) {
+			   receive: function( _event, ui ) {
 				   // Check if field comes from another active area and if so, update name attributes.
 				   if ( ui.item.find( ".gv-dialog-options" ).length > 0 ) {
 
@@ -2980,6 +4194,7 @@
 				   }
 
 				   vcfg.toggleDropMessage();
+				   vcfg.updateBulkActionsGhostField();
 			   }
 		   } );
 
@@ -2987,10 +4202,15 @@
 		   $( panel ).find( ".active-drop-search" ).sortable( {
 			   placeholder: "fields-placeholder",
 			   items: '> .gv-fields',
+			   cancel: 'input, textarea, select, option, button:not(.gv-field-action)',
+			   tolerance: 'pointer',
 			   distance: 2,
 			   revert: 75,
+			   helper: 'clone',
 			   connectWith: ".active-drop-search",
+			   sort: vcfg.altCopy.sort,
 			   start: function ( _, ui ) {
+				   vcfg.altCopy.start( ui );
 				   const allowedSections = ui.item.data( 'allowed-sections' );
 				   let $containers = $( document.body ).find( '.active-drop-container-search' );
 
@@ -3004,7 +4224,8 @@
 
 				   $containers.addClass( 'is-receivable' );
 			   },
-			   stop: function( _, ui ) {
+			   stop: function( _, _ui ) {
+				   vcfg.altCopy.stop();
 				   $( document.body ).find( ".active-drop-container-search" ).removeClass( 'is-receivable' );
 			   },
 			   change: function( ) {
@@ -3083,7 +4304,7 @@
 		   vcfg.setUnsavedChanges( true );
 
 		   // Nice little easter egg: when holding down control, get rid of all fields in the zone at once.
-		   if ( e.altKey && $( area ).find( '.gv-fields' ).length > 1 ) {
+		   if ( e.altKey && $( area ).find( '.gv-fields:not(.gv-bulk-actions-ghost-field)' ).length > 1 ) {
 			   vcfg.removeAllFields( e, area );
 
 			   return;
@@ -3126,7 +4347,7 @@
 			   area = $( e.originalEvent.target ).parents( 'div[data-areaid="' + area_id + '"]' )[ 0 ];
 		   }
 
-		   $( area ).find( '.gv-fields' ).remove();
+		   $( area ).find( '.gv-fields:not(.gv-bulk-actions-ghost-field)' ).remove();
 
 		   $( document.body ).trigger( 'gravityview/all-fields-removed' );
 
@@ -3137,7 +4358,7 @@
 		   let has_fields = false;
 
 		   $( ".active-drop:visible" ).each( function ( _index, item ) {
-			   has_fields = ( $( this ).find( '.gv-fields' ).length > 1 );
+			   has_fields = ( $( this ).find( '.gv-fields:not(.gv-bulk-actions-ghost-field)' ).length > 1 );
 			   $( '.clear-all-fields', $( item ).parents( '.gv-droppable-area' ) ).toggleClass( 'gv-hide', ! has_fields );
 		   } );
 	   },
@@ -3167,8 +4388,11 @@
 
 		   vcfg.updateVisibilitySettings( e, true );
 
-		   // Toggle checkbox when changing field visibility
-		   $( document.body ).on( 'change', '.gv-fields input[type=checkbox]', vcfg.updateVisibilitySettings );
+		   // Runs on every dialog open with nothing unbinding on close, so
+		   // the namespaced .off() keeps this to one delegated handler.
+		   $( document.body )
+			   .off( 'change.gv-field-visibility', '.gv-fields input[type=checkbox]' )
+			   .on( 'change.gv-field-visibility', '.gv-fields input[type=checkbox]', vcfg.updateVisibilitySettings );
 
 		   var buttons = [
 			   {
@@ -3224,7 +4448,7 @@
 		* @param  {boolean} inverse   Should the logic be flipped (unchecked = show)?
 		* @return {void}
 		*/
-	   toggleVisibility: function ( $checkbox, $toggled, first_run, inverse ) {
+	   toggleVisibility: function ( $checkbox, $toggled, _first_run, inverse ) {
 
 		   var speed = 0;
 
@@ -3333,18 +4557,60 @@
 			   'type': 'hidden'
 		   } ) );
 
-		   // Make sure slow browsers did append all the serialized data to the form
-		   setTimeout( function () {
+		   $post.data( 'gv-valid', true );
 
-			   $post.data( 'gv-valid', true );
+		   // Submit the form natively. We avoid both jQuery's trigger('click')
+		   // (pathologically slow in Safari with this many delegated handlers)
+		   // and form.requestSubmit() (whose internal HTML5 constraint-validation
+		   // walk takes ~9s in Safari with this many form controls, even when no
+		   // required/pattern rules exist).
+		   //
+		   // Instead: fire a 'submit' event ourselves so any submit-time handlers
+		   // (WP's updateText/timestamp validation, our own, etc.) still run, then
+		   // call native form.submit() which is instant because it skips both the
+		   // synthetic-click chain and constraint validation.
+		   var form      = $post[ 0 ];
+		   var submitter = ( 'click' === e.type && e.target ) ? e.target : null;
 
-			   if ( 'click' === e.type ) {
-				   $( e.target ).trigger('click');
-			   } else {
-				   $post.trigger('submit');
-			   }
+		   // Native form.submit() omits the submit button's name=value from the
+		   // form data, so WordPress can't tell whether the user clicked Publish
+		   // vs. Save Draft (post status won't transition). Re-inject it as a
+		   // hidden input with a marker so we can clean it up on resubmit.
+		   //
+		   // i18n: WordPress's server-side post-status logic checks the submit
+		   // button's HTML *name* attribute (e.g. "publish", "save"), which is
+		   // not localized. submitter.value is localized ("Publish" / "Publicar"
+		   // / "公開") but is irrelevant to the status-transition decision.
+		   $post.find( 'input[type=hidden][data-gv-submitter]' ).remove();
+		   if ( submitter && submitter.name ) {
+			   var $hidden = $( '<input/>', {
+				   type: 'hidden',
+				   name: submitter.name,
+				   value: submitter.value
+			   } ).attr( 'data-gv-submitter', '1' );
+			   $post.append( $hidden );
+		   }
 
-		   }, 101 );
+		   var submitEvent;
+		   try {
+			   // SubmitEvent supported in Safari 15+, all modern browsers.
+			   submitEvent = new SubmitEvent( 'submit', { bubbles: true, cancelable: true, submitter: submitter } );
+		   } catch ( err ) {
+			   submitEvent = new Event( 'submit', { bubbles: true, cancelable: true } );
+		   }
+
+		   if ( form.dispatchEvent( submitEvent ) ) {
+			   form.submit();
+		   } else {
+			   // Another submit listener cancelled the event, so the page
+			   // never navigates and this context survives to the next save
+			   // click. Without resetting the guards that click would
+			   // short-circuit on this attempt's stale gv-serialized, and
+			   // the inputs disabled above would stay out of .serialize().
+			   $post.removeData( 'gv-valid' );
+			   $post.removeData( 'gv-serialized' );
+			   $post.find( '[name^=fields]' ).filter(':input').prop( 'disabled', false );
+		   }
 
 		   return false;
 	   },
@@ -3510,7 +4776,7 @@
 
 		   viewGeneralSettings.templateId = $( this ).val();
 
-		   $( 'tr[data-show-if]' ).each( viewGeneralSettings.toggleSetting );
+		   $( '[data-show-if]' ).each( viewGeneralSettings.toggleSetting );
 
 	   },
 
@@ -3529,7 +4795,6 @@
 		   if ( viewGeneralSettings.templateId.length > 0 && templates.indexOf( viewGeneralSettings.templateId ) > -1 ) {
 			   row.show();
 		   } else {
-			   row.find( 'select, input' ).val( '' ).prop( 'checked', false );
 			   row.hide();
 		   }
 
@@ -3560,14 +4825,14 @@
 			   // Make tabs
 			   .tabs( {
 				   active: active_settings_tab,
-				   create: function ( event, ui ) {
+				   create: function( _event, ui ) {
 					   // When the Custom Code tab is active on-load, we need a small amount of
 					   // time before instantiating CodeMirror.
 					   setTimeout( function() {
 						   viewConfiguration.setupCodeMirror( ui.panel );
 					   }, 50 );
 				   },
-				   activate: function ( event, ui ) {
+				   activate: function( _event, ui ) {
 					   // When the tab is activated, set a new cookie
 					   $.cookie( cookie_key, ui.newTab.index(), {
 						   path: gvGlobals.admin_cookiepath
@@ -3593,7 +4858,7 @@
 		*
 		* @return {void}
 		*/
-	   tabsCreate: function( event, ui ){
+	   tabsCreate: function( _event, _ui ){
 		   var $container = $( this ),
 			   $panels = $container.find( '.ui-tabs-panel' ),
 			   max = [];
@@ -3615,7 +4880,7 @@
 		*
 		* @return {void}
 		*/
-	   enableSettingTab: function( e, tab ) {
+	   enableSettingTab: function( _e, tab ) {
 
 		   viewGeneralSettings.metaboxObj
 			   .tabs('enable', $( tab ).attr('id') );
@@ -3634,7 +4899,7 @@
 		*
 		* @return {void}
 		*/
-	   disableSettingTab: function( e, tab ) {
+	   disableSettingTab: function( _e, tab ) {
 
 		   viewGeneralSettings.metaboxObj
 			   .tabs('disable', $( tab ).attr('id') );
@@ -3669,11 +4934,10 @@
 	   // start the View Configuration magic
 	   viewConfiguration.init();
 
-	   //datepicker
-	   $( '.gv-datepicker' ).datepicker( {
-		   dateFormat: "yy-mm-dd",
-		   constrainInput: false // Allow strtotime() configurations
-	   } );
+	   // Attach calendar popover to date fields (allows freetext like relative dates).
+	   if ( jQuery.fn.attachCalendarPopover ) {
+		   $( '.gv-datepicker' ).attachCalendarPopover( { showTodayButton: true } );
+	   }
 
 	   // Save the state on a per-post basis
 	   var cookie_key = 'gv-active-tab-' + $( '#post_ID' ).val();
@@ -3694,7 +4958,7 @@
 		   active: activate_tab,
 		   hide: false,
 		   show: false,
-		   create: function ( event, ui ) {
+		   create: function( _event, ui ) {
 			   viewConfiguration.init_droppables( ui.panel );
 
 			   /** @since 2.14.1 */
@@ -3702,7 +4966,7 @@
 				   .trigger( 'gravityview/tab-ready', ui.panel )
 				   .trigger( 'gravityview/tabs-ready' );
 		   },
-		   activate: function ( event, ui ) {
+		   activate: function( _event, ui ) {
 			   // When the tab is activated, set a new cookie
 			   $.cookie( cookie_key, ui.newTab.index(), { path: gvGlobals.cookiepath } );
 
@@ -3738,6 +5002,7 @@
 		   initDroppables: viewConfiguration.init_droppables,
 		   setCustomLabel: viewConfiguration.setCustomLabel,
 		   ignoreEscape: viewConfiguration.ignoreEscape,
+		   setUnsavedChanges: viewConfiguration.setUnsavedChanges,
 	   };
 
 	   $( document.body ).trigger( 'gravityview/loaded' );

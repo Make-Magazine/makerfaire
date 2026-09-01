@@ -2,7 +2,7 @@
 Tags: GravityView, Gravity Forms, filtering, conditional logic
 Requires at least: 4.4
 Requires PHP: 7.4
-Tested up to: 6.9.4
+Tested up to: 7.1
 Contributors: GravityKit
 License: GPLv3 or later
 
@@ -15,6 +15,46 @@ Filter which entries are shown in a View based on their values.
 3. Follow the instructions
 
 == Changelog ==
+
+= 4.7.1 on August 20, 2026 =
+
+This release refines the date and choice pickers used by conditional logic, and fixes choice dropdowns on non-HTTPS sites, `form:` merge tags, and Number field comparisons.
+
+#### ✨ Improved
+* Enhanced conditional logic:
+  - Date filters now have a clear button, so a date can be emptied without selecting over it;
+  - The date picker's calendar and clear buttons now sit inside the field and level with the value, so a date field is recognizable before reading it;
+  - Dynamic Lookup filters now use the Lookup plugin's own choice API when available (Gravity Forms Lookup Field 1.8 or newer), with the previous integration kept as a fallback for older versions.
+
+#### 🐛 Fixed
+* The searchable dropdown for choice-based filters did not load on sites accessed over plain HTTP (non-HTTPS), which prevented selecting values and saving field changes.
+* Numeric comparisons on Number fields using the currency format returned incorrect results when the site currency uses a dot as the thousand separator (e.g. Euro).
+* A `form:` merge tag modifier was ignored unless it was written as the first modifier with no spaces around its colon, so filter values such as `{:1:maxwords:5,form:4}` and `{:1: form:4}` showed a value from the main form instead of the joined form.
+* The condition value dropdown detached from its input when the page was scrolled while it was open.
+* Switching a condition between single-value and multi-value operators could save a mismatched value for fields whose choices are loaded on demand.
+* Date picker segments were skipped by keyboard navigation, and the calendar button did not indicate which field it opened. Tab now enters the field once, the arrow keys move between segments, and the button's accessible name includes its field.
+* Emptying a date resized the whole date field in locales whose placeholder letters are wider than digits (e.g. `jjjj`).
+* Screen readers announced nothing when focus moved between two adjacent choice fields. Each is now exposed as a labelled group naming its own field.
+
+#### 💻 Developer Updates
+* Now uses the current GravityView hooks instead of ones deprecated in GravityView 2.55.
+
+= 4.7.0 on July 9, 2026 =
+
+This release adds type-to-search with paginated results to choice-based filters, lets filters compare one field against another, and fixes the "has ALL of" operator on multi-value fields.
+
+#### ✨ Improved
+* Advanced filters can now be configured directly on the new View screen, before the View is saved.
+* Enhanced conditional logic:
+  - Choice-based filters now offer a searchable dropdown whose results page in as you scroll, so fields with large option lists stay fast and usable instead of trying to render every choice at once. This covers the standard choice fields (Drop Down, Checkbox, Radio, Multi Select) as well as Dynamic Lookup and Populate Anything fields, which draw their options from large external data sets.
+  - Now uses a fully keyboard-accessible value picker;
+  - New "has NONE of" operator for multi-value filters;
+  - New keyboard-accessible Date Picker.
+  - Use a field merge tag (e.g. `{Threshold:2}`) as a filter value to compare two fields of an entry instead of a static value.
+  - Compare against a field on a joined form ([Multiple Forms](https://www.gravitykit.com/extensions/multiple-forms/)) with a `form:` modifier, e.g. `{Reorder threshold:1:form:123}`.
+
+#### 🐛 Fixed
+* The "has ALL of" operator on Checkbox and other multi-value fields matched every entry instead of only those containing all the selected values.
 
 = 4.6.1 on April 27, 2026 =
 

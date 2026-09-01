@@ -1,19 +1,23 @@
 <?php
-namespace GV\Mocks;
-
 /**
- * Gravity Forms GF_Query does not support NULL condition clauses.
+ * Backward-compatibility shim.
  *
- * Implement them as needed.
+ * This file was moved in GravityView 3.0. It is intentionally empty.
+ * GravityView classes and functions load automatically. You no longer
+ * need to require GravityView files in your code.
+ *
+ * @deprecated 3.0
  */
-class GF_Query_Condition_IS_NULL extends \GF_Query_Condition {
-	private $override_placeholder = '{GF_Query_Condition_IS_NULL_override}';
 
-	public function __construct( $left = null, $operator = null, $right = null ) {
-		parent::__construct( $left, self::EQ, new \GF_Query_Literal( $this->override_placeholder ) );
-	}
+if ( ! defined( 'ABSPATH' ) ) {
+	die;
+}
 
-	public function sql( $query ) {
-		return str_replace( "= '{$this->override_placeholder}'", 'IS NULL', parent::sql( $query ) );
-	}
+if ( function_exists( '_deprecated_file' ) ) {
+	_deprecated_file(
+		plugin_basename( __FILE__ ),
+		'3.0',
+		'',
+		'This file was moved in GravityView 3.0 and will be removed in a future release. GravityView classes and functions load automatically. You no longer need to require them.'
+	);
 }

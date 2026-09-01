@@ -12,11 +12,11 @@ trait GWAPI_Wiz_Bundle_Upgrade {
 	public function check_and_handle_wiz_bundle_upgrade( $license_data, $from_type ) {
 		// Only handle mismatch errors for perk/connect types
 		if ( $license_data['license'] !== 'item_name_mismatch' ||
-			! in_array( $from_type, [ 'perk', 'connect' ] ) ) {
+			! in_array( $from_type, array( 'perk', 'connect' ) ) ) {
 			return false;
 		}
 
-		$returned_item_name = $license_data['item_name'] ?? '';
+		$returned_item_name = isset( $license_data['item_name'] ) ? $license_data['item_name'] : '';
 
 		// Check if this is an upgrade to Wiz Bundle (decode URL encoding)
 		if ( urldecode( $returned_item_name ) !== 'Wiz Bundle' ) {

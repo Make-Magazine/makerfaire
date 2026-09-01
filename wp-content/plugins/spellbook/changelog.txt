@@ -1,6 +1,20 @@
 
 # Changelog
 
+## 3.0.29 | August 27, 2026
+
+- Fixed issue where checked checkboxes in Spellbook perk settings iframe could appear unchecked in WordPress 7.0 due to missing admin color scheme CSS variables.
+- Fixed empty category headers appearing when search results contain deprecated plugins.
+
+## 3.0.28 | July 15, 2026
+
+- Fixed issue where perk field settings displayed incorrectly in the form editor with Gravity Forms 3.0 due to Spellbook's admin styles no longer being enqueued.
+
+## 3.0.27 | June 25, 2026
+
+- Fixed issue where installing GS Product Configurator showed "An unknown error occurred" despite installing successfully.
+- Added support chat on Spellbook page. This can be disabled by adding the following PHP snippet to your site: `add_filter( 'spellbook_support_chat_enabled', '__return_false' );`
+
 ## 3.0.26 | May 27, 2026
 
 - Fixed 'Upgrade to Install' showing for already-registered plugins in some situations.

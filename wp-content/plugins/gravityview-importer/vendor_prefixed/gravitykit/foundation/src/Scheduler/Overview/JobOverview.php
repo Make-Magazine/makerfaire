@@ -83,7 +83,10 @@ class JobOverview {
 	 * @since 1.12.0
 	 */
 	public function __construct() {
-		if ( ! class_exists( 'ActionScheduler' ) ) {
+		// The UI/AJAX here reaches DbStore (extends ActionScheduler_DBStore), so gate on
+		// that exact class — matching Core::init's scheduler guard. A torn AS tree that
+		// loads ActionScheduler but not ActionScheduler_DBStore must not register this.
+		if ( ! class_exists( 'ActionScheduler_DBStore' ) ) {
 			return;
 		}
 

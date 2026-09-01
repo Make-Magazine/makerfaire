@@ -374,11 +374,12 @@ var EditorOneEventManager = exports.EditorOneEventManager = /*#__PURE__*/functio
   }, {
     key: "dispatchEvent",
     value: function dispatchEvent(eventName, payload) {
-      if (!this.isEventsManagerAvailable() || !this.canSendEvents()) {
-        return false;
-      }
       try {
-        return this.getEventsManager().dispatchEvent(eventName, payload);
+        if (!this.isEventsManagerAvailable() || !this.canSendEvents()) {
+          return false;
+        }
+        this.getEventsManager().dispatchEvent(eventName, payload);
+        return true;
       } catch (error) {
         return false;
       }
@@ -738,6 +739,51 @@ var EditorOneEventManager = exports.EditorOneEventManager = /*#__PURE__*/functio
         interaction_description: 'core_user_clicked_theme_builder_menu_item'
       }));
     }
+  }, {
+    key: "sendSidebarMenuItemClicked",
+    value: function sendSidebarMenuItemClicked(_ref8) {
+      var eventId = _ref8.eventId,
+        groupEventId = _ref8.groupEventId;
+      try {
+        var _config$windowNames, _config$triggers13, _config$targetTypes14, _config$interactionRe16, _config$locations12, _config$names13;
+        var config = this.getConfig();
+        var payload = this.createBasePayload({
+          window_name: config === null || config === void 0 || (_config$windowNames = config.windowNames) === null || _config$windowNames === void 0 ? void 0 : _config$windowNames.sidebarMenu,
+          interaction_type: this.toLowerSnake(config === null || config === void 0 || (_config$triggers13 = config.triggers) === null || _config$triggers13 === void 0 ? void 0 : _config$triggers13.click),
+          target_type: config === null || config === void 0 || (_config$targetTypes14 = config.targetTypes) === null || _config$targetTypes14 === void 0 ? void 0 : _config$targetTypes14.link,
+          target_name: eventId,
+          interaction_result: config === null || config === void 0 || (_config$interactionRe16 = config.interactionResults) === null || _config$interactionRe16 === void 0 ? void 0 : _config$interactionRe16.pageOpened,
+          target_location: this.toLowerSnake(config === null || config === void 0 || (_config$locations12 = config.locations) === null || _config$locations12 === void 0 ? void 0 : _config$locations12.sidebar)
+        });
+        if (groupEventId) {
+          payload.location_l1 = groupEventId;
+        }
+        return this.dispatchEvent(config === null || config === void 0 || (_config$names13 = config.names) === null || _config$names13 === void 0 || (_config$names13 = _config$names13.editorOne) === null || _config$names13 === void 0 ? void 0 : _config$names13.sidebarMenuItemClicked, payload);
+      } catch (error) {
+        return false;
+      }
+    }
+  }, {
+    key: "sendSidebarMenuGroupToggled",
+    value: function sendSidebarMenuGroupToggled(_ref9) {
+      var eventId = _ref9.eventId,
+        isExpanded = _ref9.isExpanded;
+      try {
+        var _config$interactionRe17, _config$interactionRe18, _config$names14, _config$windowNames2, _config$triggers14, _config$targetTypes15, _config$locations13;
+        var config = this.getConfig();
+        var interactionResult = isExpanded ? config === null || config === void 0 || (_config$interactionRe17 = config.interactionResults) === null || _config$interactionRe17 === void 0 ? void 0 : _config$interactionRe17.expanded : config === null || config === void 0 || (_config$interactionRe18 = config.interactionResults) === null || _config$interactionRe18 === void 0 ? void 0 : _config$interactionRe18.collapsed;
+        return this.dispatchEvent(config === null || config === void 0 || (_config$names14 = config.names) === null || _config$names14 === void 0 || (_config$names14 = _config$names14.editorOne) === null || _config$names14 === void 0 ? void 0 : _config$names14.sidebarMenuGroupToggled, this.createBasePayload({
+          window_name: config === null || config === void 0 || (_config$windowNames2 = config.windowNames) === null || _config$windowNames2 === void 0 ? void 0 : _config$windowNames2.sidebarMenu,
+          interaction_type: this.toLowerSnake(config === null || config === void 0 || (_config$triggers14 = config.triggers) === null || _config$triggers14 === void 0 ? void 0 : _config$triggers14.click),
+          target_type: config === null || config === void 0 || (_config$targetTypes15 = config.targetTypes) === null || _config$targetTypes15 === void 0 ? void 0 : _config$targetTypes15.toggle,
+          target_name: eventId,
+          interaction_result: interactionResult,
+          target_location: this.toLowerSnake(config === null || config === void 0 || (_config$locations13 = config.locations) === null || _config$locations13 === void 0 ? void 0 : _config$locations13.sidebar)
+        }));
+      } catch (error) {
+        return false;
+      }
+    }
   }]);
 }();
 var createDebouncedFinderSearch = exports.createDebouncedFinderSearch = function createDebouncedFinderSearch() {
@@ -1046,6 +1092,27 @@ var _default = exports["default"] = createFlexboxType;
 
 /***/ }),
 
+/***/ "../modules/atomic-widgets/assets/js/editor/atomic-element-types/create-grid-type.js":
+/*!*******************************************************************************************!*\
+  !*** ../modules/atomic-widgets/assets/js/editor/atomic-element-types/create-grid-type.js ***!
+  \*******************************************************************************************/
+/***/ ((__unused_webpack_module, exports) => {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", ({
+  value: true
+}));
+exports["default"] = void 0;
+var createGridType = function createGridType() {
+  var GridView = elementor.modules.elements.views.createAtomicElementBase('e-grid');
+  return new elementor.modules.elements.types.AtomicElementBase('e-grid', GridView);
+};
+var _default = exports["default"] = createGridType;
+
+/***/ }),
+
 /***/ "../modules/atomic-widgets/assets/js/editor/component.js":
 /*!***************************************************************!*\
   !*** ../modules/atomic-widgets/assets/js/editor/component.js ***!
@@ -1321,9 +1388,29 @@ function createAtomicElementBaseView(type) {
 
       // Defer to wait for everything to render.
       setTimeout(function () {
+        if (_this5.isAtomicGridContainer()) {
+          _this5.reInitEmptyView();
+        }
         _this5.droppableInitialize();
         _this5.updateHandlesPosition();
       });
+    },
+    destroyEmptyView: function destroyEmptyView() {
+      if (this.isAtomicGridContainer()) {
+        return;
+      }
+      return Marionette.CompositeView.prototype.destroyEmptyView.apply(this, arguments);
+    },
+    isAtomicGridContainer: function isAtomicGridContainer() {
+      return 'e-grid' === type;
+    },
+    reInitEmptyView: function reInitEmptyView() {
+      var _this$el;
+      if ((_this$el = this.el) !== null && _this$el !== void 0 && _this$el.querySelector(':scope > .elementor-empty-view')) {
+        return;
+      }
+      delete this._showingEmptyView;
+      this.showEmptyView();
     },
     onDestroy: function onDestroy() {
       BaseElementView.prototype.onDestroy.apply(this, arguments);
@@ -1464,7 +1551,7 @@ function createAtomicElementBaseView(type) {
       var _this7 = this;
       var items = '> .elementor-element, > .elementor-empty-view .elementor-first-add';
       return {
-        axis: null,
+        axis: this.isAtomicGridContainer() ? 'vertical' : null,
         items: items,
         groups: ['elementor-element'],
         horizontalThreshold: 0,
@@ -1482,39 +1569,24 @@ function createAtomicElementBaseView(type) {
           elementor.getPreviewView().onPanelElementDragEnd();
           var draggedView = elementor.channels.editor.request('element:dragged'),
             draggedElement = draggedView === null || draggedView === void 0 ? void 0 : draggedView.getContainer().view.el,
-            containerElement = event.currentTarget.parentElement,
+            isEmptyViewTarget = _this7.emptyViewIsCurrentlyBeingDraggedOver(),
+            containerElement = isEmptyViewTarget ? _this7.el : event.currentTarget.parentElement,
             elements = Array.from((containerElement === null || containerElement === void 0 ? void 0 : containerElement.querySelectorAll(':scope > .elementor-element')) || []);
-          var targetIndex = elements.indexOf(event.currentTarget);
+          var targetIndex = isEmptyViewTarget ? elements.length : elements.indexOf(event.currentTarget);
           if (_this7.isPanelElement(draggedView, draggedElement)) {
-            var _elementorCommon;
-            if (_this7.draggingOnBottomOrRightSide(side) && !_this7.emptyViewIsCurrentlyBeingDraggedOver()) {
+            if (_this7.draggingOnBottomOrRightSide(side) && !isEmptyViewTarget) {
               targetIndex++;
             }
             _this7.onDrop(event, {
               at: targetIndex
             });
-            if ((_elementorCommon = elementorCommon) !== null && _elementorCommon !== void 0 && (_elementorCommon = _elementorCommon.eventsManager) !== null && _elementorCommon !== void 0 && _elementorCommon.dispatchEvent) {
-              var selectedElement = elementor.channels.panelElements.request('element:selected');
-              if (selectedElement) {
-                var _selectedElement$mode, _selectedElement$mode2, _selectedElement$mode3, _selectedElement$mode4;
-                var elType = (_selectedElement$mode = (_selectedElement$mode2 = selectedElement.model) === null || _selectedElement$mode2 === void 0 ? void 0 : _selectedElement$mode2.get('elType')) !== null && _selectedElement$mode !== void 0 ? _selectedElement$mode : '';
-                var widgetType = (_selectedElement$mode3 = (_selectedElement$mode4 = selectedElement.model) === null || _selectedElement$mode4 === void 0 ? void 0 : _selectedElement$mode4.get('widgetType')) !== null && _selectedElement$mode3 !== void 0 ? _selectedElement$mode3 : '';
-                var elementName = 'widget' === elType ? widgetType : elType;
-                elementorCommon.eventsManager.dispatchEvent('add_element', {
-                  location: 'editor_panel',
-                  element_name: elementName,
-                  element_type: elType,
-                  widget_type: widgetType
-                });
-              }
-            }
             return;
           }
           if (_this7.isParentElement(draggedView.getContainer().id)) {
             return;
           }
-          if (_this7.emptyViewIsCurrentlyBeingDraggedOver()) {
-            _this7.moveDroppedItem(draggedView, 0);
+          if (isEmptyViewTarget) {
+            _this7.moveDroppedItem(draggedView, targetIndex);
             return;
           }
           _this7.moveExistingElement(side, draggedView, containerElement, elements, targetIndex, draggedElement);
@@ -1874,7 +1946,10 @@ exports.getElementChildren = getElementChildren;
 var _toConsumableArray2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime/helpers/toConsumableArray */ "../node_modules/@babel/runtime/helpers/toConsumableArray.js"));
 function getElementChildren(model) {
   var _model$get$models, _model$get;
-  var childModels = (_model$get$models = model === null || model === void 0 || (_model$get = model.get('elements')) === null || _model$get === void 0 ? void 0 : _model$get.models) !== null && _model$get$models !== void 0 ? _model$get$models : [];
+  if (!model) {
+    return [];
+  }
+  var childModels = (_model$get$models = (_model$get = model.get('elements')) === null || _model$get === void 0 ? void 0 : _model$get.models) !== null && _model$get$models !== void 0 ? _model$get$models : [];
   var children = childModels.flatMap(getElementChildren);
   return [model].concat((0, _toConsumableArray2.default)(children));
 }
@@ -1935,10 +2010,13 @@ var _getRandomStyleId = __webpack_require__(/*! ./get-random-style-id */ "../mod
 function ownKeys(e, r) { var t = Object.keys(e); if (Object.getOwnPropertySymbols) { var o = Object.getOwnPropertySymbols(e); r && (o = o.filter(function (r) { return Object.getOwnPropertyDescriptor(e, r).enumerable; })), t.push.apply(t, o); } return t; }
 function _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t = null != arguments[r] ? arguments[r] : {}; r % 2 ? ownKeys(Object(t), !0).forEach(function (r) { (0, _defineProperty2.default)(e, r, t[r]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(e, Object.getOwnPropertyDescriptors(t)) : ownKeys(Object(t)).forEach(function (r) { Object.defineProperty(e, r, Object.getOwnPropertyDescriptor(t, r)); }); } return e; }
 function regenerateLocalStyleIds(container) {
+  if (!(container !== null && container !== void 0 && container.model)) {
+    return;
+  }
   var allElements = (0, _getElementChildren.getElementChildren)(container.model);
   var styledElements = allElements.filter(function (model) {
     var _model$get;
-    return Object.keys((_model$get = model.get('styles')) !== null && _model$get !== void 0 ? _model$get : {}).length > 0;
+    return model && Object.keys((_model$get = model.get('styles')) !== null && _model$get !== void 0 ? _model$get : {}).length > 0;
   });
   updateElementsStyleIdsInsideOut(styledElements);
 }
@@ -2956,6 +3034,7 @@ var _createAtomicElementBaseView = _interopRequireDefault(__webpack_require__(/*
 var _atomicElementBaseModel = _interopRequireDefault(__webpack_require__(/*! ./atomic-element-base-model */ "../modules/atomic-widgets/assets/js/editor/atomic-element-base-model.js"));
 var _createDivBlockType = _interopRequireDefault(__webpack_require__(/*! ./atomic-element-types/create-div-block-type */ "../modules/atomic-widgets/assets/js/editor/atomic-element-types/create-div-block-type.js"));
 var _createFlexboxType = _interopRequireDefault(__webpack_require__(/*! ./atomic-element-types/create-flexbox-type */ "../modules/atomic-widgets/assets/js/editor/atomic-element-types/create-flexbox-type.js"));
+var _createGridType = _interopRequireDefault(__webpack_require__(/*! ./atomic-element-types/create-grid-type */ "../modules/atomic-widgets/assets/js/editor/atomic-element-types/create-grid-type.js"));
 function _callSuper(t, o, e) { return o = (0, _getPrototypeOf2.default)(o), (0, _possibleConstructorReturn2.default)(t, _isNativeReflectConstruct() ? Reflect.construct(o, e || [], (0, _getPrototypeOf2.default)(t).constructor) : o.apply(t, e)); }
 function _isNativeReflectConstruct() { try { var t = !Boolean.prototype.valueOf.call(Reflect.construct(Boolean, [], function () {})); } catch (t) {} return (_isNativeReflectConstruct = function _isNativeReflectConstruct() { return !!t; })(); }
 var Module = /*#__PURE__*/function (_elementorModules$edi) {
@@ -2981,8 +3060,17 @@ var Module = /*#__PURE__*/function (_elementorModules$edi) {
   }, {
     key: "registerAtomicElements",
     value: function registerAtomicElements() {
-      elementor.elementsManager.registerElementType((0, _createDivBlockType.default)());
-      elementor.elementsManager.registerElementType((0, _createFlexboxType.default)());
+      this.registerAtomicElementTypeIfAbsent((0, _createDivBlockType.default)());
+      this.registerAtomicElementTypeIfAbsent((0, _createFlexboxType.default)());
+      this.registerAtomicElementTypeIfAbsent((0, _createGridType.default)());
+    }
+  }, {
+    key: "registerAtomicElementTypeIfAbsent",
+    value: function registerAtomicElementTypeIfAbsent(elementType) {
+      if (elementor.elementsManager.getElementTypeClass(elementType.getType())) {
+        return;
+      }
+      elementor.elementsManager.registerElementType(elementType);
     }
   }]);
 }(elementorModules.editor.utils.Module);

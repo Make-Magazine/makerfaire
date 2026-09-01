@@ -1,6 +1,14 @@
 
 # Changelog
 
+## 1.3.8 | August 27, 2026
+
+- Improved performance of Steps navigation by avoiding duplicate page validity calculations.
+
+## 1.3.7 | August 19, 2026
+
+- Fixed issue where submitting a form using GP Page Transitions, page conditional logic, and a redirect confirmation resulted in a frozen page.
+
 ## 1.3.6 | February 4, 2026
 
 - Fixed issue where in some cases progressing to the third page or later of multi-page forms resulted in blank pages when using a combination of GP Populate Anything, GP Limit Dates, or GF Stripe plugins.

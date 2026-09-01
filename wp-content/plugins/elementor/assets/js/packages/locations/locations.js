@@ -1,3 +1,347 @@
-/*! For license information please see locations.js.LICENSE.txt */
-!function(){"use strict";var e={"./packages/packages/libs/locations/src/components/error-boundary.tsx":function(e,n,t){t.r(n),t.d(n,{default:function(){return ErrorBoundary}});var r=t("react");class ErrorBoundary extends r.Component{state={hasError:!1};static getDerivedStateFromError(){return{hasError:!0}}render(){return this.state.hasError?this.props.fallback:this.props.children}}},"./packages/packages/libs/locations/src/components/injected-component-wrapper.tsx":function(e,n,t){t.r(n),t.d(n,{default:function(){return InjectedComponentWrapper}});var r=t("react"),c=t("./packages/packages/libs/locations/src/components/error-boundary.tsx");function InjectedComponentWrapper({children:e}){return r.createElement(c.default,{fallback:null},r.createElement(r.Suspense,{fallback:null},e))}},"./packages/packages/libs/locations/src/create-location.tsx":function(e,n,t){t.r(n),t.d(n,{createLocation:function(){return createLocation}});var r=t("react"),c=t("./packages/packages/libs/locations/src/injections.tsx");function _extends(){return _extends=Object.assign?Object.assign.bind():function(e){for(var n=1;n<arguments.length;n++){var t=arguments[n];for(var r in t)({}).hasOwnProperty.call(t,r)&&(e[r]=t[r])}return e},_extends.apply(null,arguments)}function createLocation(){const e=new Map,n=(0,c.createGetInjections)(e),t=(0,c.createUseInjections)(n),o=function createSlot(e){return n=>{const t=e();return r.createElement(r.Fragment,null,t.map(({id:e,component:t})=>r.createElement(t,_extends({},n,{key:e}))))}}(t),a=function createInject(e){return({component:n,id:t,options:r={}})=>{!e.has(t)||r?.overwrite?e.set(t,{id:t,component:(0,c.wrapInjectedComponent)(n),priority:r.priority??c.DEFAULT_PRIORITY}):console.warn(`An injection with the id "${t}" already exists. Did you mean to use "options.overwrite"?`)}}(e);return c.flushInjectionsFns.push(()=>e.clear()),{inject:a,getInjections:n,useInjections:t,Slot:o}}},"./packages/packages/libs/locations/src/create-replaceable-location.tsx":function(e,n,t){t.r(n),t.d(n,{createReplaceableLocation:function(){return createReplaceableLocation}});var r=t("react"),c=t("./packages/packages/libs/locations/src/injections.tsx");function createReplaceableLocation(){const e=new Map,n=(0,c.createGetInjections)(e),t=(0,c.createUseInjections)(n),o=function createReplaceable(e){return n=>{const t=e(),{component:c}=t.find(({condition:e})=>e?.(n))??{};return c?r.createElement(c,n):n.children}}(t),a=function createRegister(e){return({component:n,id:t,condition:r=()=>!0,options:o={}})=>{e.set(t,{id:t,component:(0,c.wrapInjectedComponent)(n),condition:r,priority:o.priority??c.DEFAULT_PRIORITY})}}(e);return c.flushInjectionsFns.push(()=>e.clear()),{getInjections:n,useInjections:t,inject:a,Slot:o}}},"./packages/packages/libs/locations/src/injections.tsx":function(e,n,t){t.r(n),t.d(n,{DEFAULT_PRIORITY:function(){return o},createGetInjections:function(){return createGetInjections},createUseInjections:function(){return createUseInjections},flushAllInjections:function(){return flushAllInjections},flushInjectionsFns:function(){return a},wrapInjectedComponent:function(){return wrapInjectedComponent}});var r=t("react"),c=t("./packages/packages/libs/locations/src/components/injected-component-wrapper.tsx");const o=10,a=[];function flushAllInjections(){a.forEach(e=>e())}function createGetInjections(e){return()=>[...e.values()].sort((e,n)=>e.priority-n.priority)}function createUseInjections(e){return()=>(0,r.useMemo)(()=>e(),[])}function wrapInjectedComponent(e){return n=>r.createElement(c.default,null,r.createElement(e,n))}},"./packages/packages/libs/locations/src/types.ts":function(e,n,t){t.r(n)},react:function(e){e.exports=window.React}},n={};function __webpack_require__(t){var r=n[t];if(void 0!==r)return r.exports;var c=n[t]={exports:{}};return e[t](c,c.exports,__webpack_require__),c.exports}__webpack_require__.n=function(e){var n=e&&e.__esModule?function(){return e.default}:function(){return e};return __webpack_require__.d(n,{a:n}),n},__webpack_require__.d=function(e,n){for(var t in n)__webpack_require__.o(n,t)&&!__webpack_require__.o(e,t)&&Object.defineProperty(e,t,{enumerable:!0,get:n[t]})},__webpack_require__.o=function(e,n){return Object.prototype.hasOwnProperty.call(e,n)},__webpack_require__.r=function(e){"undefined"!=typeof Symbol&&Symbol.toStringTag&&Object.defineProperty(e,Symbol.toStringTag,{value:"Module"}),Object.defineProperty(e,"__esModule",{value:!0})};var t={};!function(){__webpack_require__.r(t),__webpack_require__.d(t,{__flushAllInjections:function(){return r.flushAllInjections},createLocation:function(){return e.createLocation},createReplaceableLocation:function(){return n.createReplaceableLocation}});__webpack_require__("./packages/packages/libs/locations/src/types.ts");var e=__webpack_require__("./packages/packages/libs/locations/src/create-location.tsx"),n=__webpack_require__("./packages/packages/libs/locations/src/create-replaceable-location.tsx"),r=__webpack_require__("./packages/packages/libs/locations/src/injections.tsx")}(),(window.elementorV2=window.elementorV2||{}).locations=t}(),window.elementorV2.locations?.init?.();
+/******/ (function() { // webpackBootstrap
+/******/ 	"use strict";
+/******/ 	var __webpack_modules__ = ({
+
+/***/ "./packages/packages/libs/locations/src/components/error-boundary.tsx":
+/*!****************************************************************************!*\
+  !*** ./packages/packages/libs/locations/src/components/error-boundary.tsx ***!
+  \****************************************************************************/
+/***/ (function(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": function() { return /* binding */ ErrorBoundary; }
+/* harmony export */ });
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "react");
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
+
+class ErrorBoundary extends react__WEBPACK_IMPORTED_MODULE_0__.Component {
+  state = {
+    hasError: false
+  };
+  static getDerivedStateFromError() {
+    // Update state so the next render will show the fallback UI.
+    return {
+      hasError: true
+    };
+  }
+  render() {
+    if (this.state.hasError) {
+      return this.props.fallback;
+    }
+    return this.props.children;
+  }
+}
+
+/***/ }),
+
+/***/ "./packages/packages/libs/locations/src/components/injected-component-wrapper.tsx":
+/*!****************************************************************************************!*\
+  !*** ./packages/packages/libs/locations/src/components/injected-component-wrapper.tsx ***!
+  \****************************************************************************************/
+/***/ (function(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": function() { return /* binding */ InjectedComponentWrapper; }
+/* harmony export */ });
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "react");
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _error_boundary__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./error-boundary */ "./packages/packages/libs/locations/src/components/error-boundary.tsx");
+
+
+
+function InjectedComponentWrapper({
+  children
+}) {
+  return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(_error_boundary__WEBPACK_IMPORTED_MODULE_1__["default"], {
+    fallback: null
+  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react__WEBPACK_IMPORTED_MODULE_0__.Suspense, {
+    fallback: null
+  }, children));
+}
+
+/***/ }),
+
+/***/ "./packages/packages/libs/locations/src/create-location.tsx":
+/*!******************************************************************!*\
+  !*** ./packages/packages/libs/locations/src/create-location.tsx ***!
+  \******************************************************************/
+/***/ (function(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   createLocation: function() { return /* binding */ createLocation; }
+/* harmony export */ });
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "react");
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _injections__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./injections */ "./packages/packages/libs/locations/src/injections.tsx");
+function _extends() { return _extends = Object.assign ? Object.assign.bind() : function (n) { for (var e = 1; e < arguments.length; e++) { var t = arguments[e]; for (var r in t) ({}).hasOwnProperty.call(t, r) && (n[r] = t[r]); } return n; }, _extends.apply(null, arguments); }
+
+
+function createLocation() {
+  const injections = new Map();
+  const getInjections = (0,_injections__WEBPACK_IMPORTED_MODULE_1__.createGetInjections)(injections);
+  const useInjections = (0,_injections__WEBPACK_IMPORTED_MODULE_1__.createUseInjections)(getInjections);
+  const Slot = createSlot(useInjections);
+  const inject = createInject(injections);
+
+  // Push the clear function to the flushInjectionsFns array, so we can flush all injections at once.
+  _injections__WEBPACK_IMPORTED_MODULE_1__.flushInjectionsFns.push(() => injections.clear());
+  return {
+    inject,
+    getInjections,
+    useInjections,
+    Slot
+  };
+}
+function createSlot(useInjections) {
+  return props => {
+    const injections = useInjections();
+    return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react__WEBPACK_IMPORTED_MODULE_0__.Fragment, null, injections.map(({
+      id,
+      component: Component
+    }) => /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(Component, _extends({}, props, {
+      key: id
+    }))));
+  };
+}
+function createInject(injections) {
+  return ({
+    component,
+    id,
+    options = {}
+  }) => {
+    if (injections.has(id) && !options?.overwrite) {
+      // eslint-disable-next-line no-console
+      console.warn(`An injection with the id "${id}" already exists. Did you mean to use "options.overwrite"?`);
+      return;
+    }
+    injections.set(id, {
+      id,
+      component: (0,_injections__WEBPACK_IMPORTED_MODULE_1__.wrapInjectedComponent)(component),
+      priority: options.priority ?? _injections__WEBPACK_IMPORTED_MODULE_1__.DEFAULT_PRIORITY
+    });
+  };
+}
+
+/***/ }),
+
+/***/ "./packages/packages/libs/locations/src/create-replaceable-location.tsx":
+/*!******************************************************************************!*\
+  !*** ./packages/packages/libs/locations/src/create-replaceable-location.tsx ***!
+  \******************************************************************************/
+/***/ (function(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   createReplaceableLocation: function() { return /* binding */ createReplaceableLocation; }
+/* harmony export */ });
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "react");
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _injections__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./injections */ "./packages/packages/libs/locations/src/injections.tsx");
+
+
+function createReplaceableLocation() {
+  const injections = new Map();
+  const getInjections = (0,_injections__WEBPACK_IMPORTED_MODULE_1__.createGetInjections)(injections);
+  const useInjections = (0,_injections__WEBPACK_IMPORTED_MODULE_1__.createUseInjections)(getInjections);
+  const Slot = createReplaceable(useInjections);
+  const inject = createRegister(injections);
+
+  // Push the clear function to the flushInjectionsFns array, so we can flush all injections at once.
+  _injections__WEBPACK_IMPORTED_MODULE_1__.flushInjectionsFns.push(() => injections.clear());
+  return {
+    getInjections,
+    useInjections,
+    inject,
+    Slot
+  };
+}
+function createReplaceable(useInjections) {
+  return props => {
+    const injections = useInjections();
+    const {
+      component: Component
+    } = injections.find(({
+      condition
+    }) => condition?.(props)) ?? {};
+    if (!Component) {
+      return props.children;
+    }
+    return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(Component, props);
+  };
+}
+function createRegister(injections) {
+  return ({
+    component,
+    id,
+    condition = () => true,
+    options = {}
+  }) => {
+    injections.set(id, {
+      id,
+      component: (0,_injections__WEBPACK_IMPORTED_MODULE_1__.wrapInjectedComponent)(component),
+      condition,
+      priority: options.priority ?? _injections__WEBPACK_IMPORTED_MODULE_1__.DEFAULT_PRIORITY
+    });
+  };
+}
+
+/***/ }),
+
+/***/ "./packages/packages/libs/locations/src/injections.tsx":
+/*!*************************************************************!*\
+  !*** ./packages/packages/libs/locations/src/injections.tsx ***!
+  \*************************************************************/
+/***/ (function(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   DEFAULT_PRIORITY: function() { return /* binding */ DEFAULT_PRIORITY; },
+/* harmony export */   createGetInjections: function() { return /* binding */ createGetInjections; },
+/* harmony export */   createUseInjections: function() { return /* binding */ createUseInjections; },
+/* harmony export */   flushAllInjections: function() { return /* binding */ flushAllInjections; },
+/* harmony export */   flushInjectionsFns: function() { return /* binding */ flushInjectionsFns; },
+/* harmony export */   wrapInjectedComponent: function() { return /* binding */ wrapInjectedComponent; }
+/* harmony export */ });
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "react");
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _components_injected_component_wrapper__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./components/injected-component-wrapper */ "./packages/packages/libs/locations/src/components/injected-component-wrapper.tsx");
+
+
+
+const DEFAULT_PRIORITY = 10;
+
+// Allow flushing all injections at once, for testing purposes.
+const flushInjectionsFns = [];
+function flushAllInjections() {
+  flushInjectionsFns.forEach(flush => flush());
+}
+function createGetInjections(injections) {
+  return () => [...injections.values()].sort((a, b) => a.priority - b.priority);
+}
+function createUseInjections(getInjections) {
+  return () => (0,react__WEBPACK_IMPORTED_MODULE_0__.useMemo)(() => getInjections(), []);
+}
+function wrapInjectedComponent(Component) {
+  return props => /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(_components_injected_component_wrapper__WEBPACK_IMPORTED_MODULE_1__["default"], null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(Component, props));
+}
+
+/***/ }),
+
+/***/ "./packages/packages/libs/locations/src/types.ts":
+/*!*******************************************************!*\
+  !*** ./packages/packages/libs/locations/src/types.ts ***!
+  \*******************************************************/
+/***/ (function(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+
+
+/***/ }),
+
+/***/ "react":
+/*!**************************!*\
+  !*** external ["React"] ***!
+  \**************************/
+/***/ (function(module) {
+
+module.exports = window["React"];
+
+/***/ })
+
+/******/ 	});
+/************************************************************************/
+/******/ 	// The module cache
+/******/ 	var __webpack_module_cache__ = {};
+/******/ 	
+/******/ 	// The require function
+/******/ 	function __webpack_require__(moduleId) {
+/******/ 		// Check if module is in cache
+/******/ 		var cachedModule = __webpack_module_cache__[moduleId];
+/******/ 		if (cachedModule !== undefined) {
+/******/ 			return cachedModule.exports;
+/******/ 		}
+/******/ 		// Create a new module (and put it into the cache)
+/******/ 		var module = __webpack_module_cache__[moduleId] = {
+/******/ 			// no module.id needed
+/******/ 			// no module.loaded needed
+/******/ 			exports: {}
+/******/ 		};
+/******/ 	
+/******/ 		// Execute the module function
+/******/ 		__webpack_modules__[moduleId](module, module.exports, __webpack_require__);
+/******/ 	
+/******/ 		// Return the exports of the module
+/******/ 		return module.exports;
+/******/ 	}
+/******/ 	
+/************************************************************************/
+/******/ 	/* webpack/runtime/compat get default export */
+/******/ 	!function() {
+/******/ 		// getDefaultExport function for compatibility with non-harmony modules
+/******/ 		__webpack_require__.n = function(module) {
+/******/ 			var getter = module && module.__esModule ?
+/******/ 				function() { return module['default']; } :
+/******/ 				function() { return module; };
+/******/ 			__webpack_require__.d(getter, { a: getter });
+/******/ 			return getter;
+/******/ 		};
+/******/ 	}();
+/******/ 	
+/******/ 	/* webpack/runtime/define property getters */
+/******/ 	!function() {
+/******/ 		// define getter functions for harmony exports
+/******/ 		__webpack_require__.d = function(exports, definition) {
+/******/ 			for(var key in definition) {
+/******/ 				if(__webpack_require__.o(definition, key) && !__webpack_require__.o(exports, key)) {
+/******/ 					Object.defineProperty(exports, key, { enumerable: true, get: definition[key] });
+/******/ 				}
+/******/ 			}
+/******/ 		};
+/******/ 	}();
+/******/ 	
+/******/ 	/* webpack/runtime/hasOwnProperty shorthand */
+/******/ 	!function() {
+/******/ 		__webpack_require__.o = function(obj, prop) { return Object.prototype.hasOwnProperty.call(obj, prop); }
+/******/ 	}();
+/******/ 	
+/******/ 	/* webpack/runtime/make namespace object */
+/******/ 	!function() {
+/******/ 		// define __esModule on exports
+/******/ 		__webpack_require__.r = function(exports) {
+/******/ 			if(typeof Symbol !== 'undefined' && Symbol.toStringTag) {
+/******/ 				Object.defineProperty(exports, Symbol.toStringTag, { value: 'Module' });
+/******/ 			}
+/******/ 			Object.defineProperty(exports, '__esModule', { value: true });
+/******/ 		};
+/******/ 	}();
+/******/ 	
+/************************************************************************/
+var __webpack_exports__ = {};
+// This entry needs to be wrapped in an IIFE because it needs to be isolated against other modules in the chunk.
+!function() {
+/*!*******************************************************!*\
+  !*** ./packages/packages/libs/locations/src/index.ts ***!
+  \*******************************************************/
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   __flushAllInjections: function() { return /* reexport safe */ _injections__WEBPACK_IMPORTED_MODULE_3__.flushAllInjections; },
+/* harmony export */   createLocation: function() { return /* reexport safe */ _create_location__WEBPACK_IMPORTED_MODULE_1__.createLocation; },
+/* harmony export */   createReplaceableLocation: function() { return /* reexport safe */ _create_replaceable_location__WEBPACK_IMPORTED_MODULE_2__.createReplaceableLocation; }
+/* harmony export */ });
+/* harmony import */ var _types__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./types */ "./packages/packages/libs/locations/src/types.ts");
+/* harmony import */ var _create_location__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./create-location */ "./packages/packages/libs/locations/src/create-location.tsx");
+/* harmony import */ var _create_replaceable_location__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./create-replaceable-location */ "./packages/packages/libs/locations/src/create-replaceable-location.tsx");
+/* harmony import */ var _injections__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./injections */ "./packages/packages/libs/locations/src/injections.tsx");
+
+
+
+
+}();
+(window.elementorV2 = window.elementorV2 || {}).locations = __webpack_exports__;
+/******/ })()
+;
+window.elementorV2.locations?.init?.();
 //# sourceMappingURL=locations.js.map

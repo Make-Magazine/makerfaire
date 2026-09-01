@@ -1,0 +1,150 @@
+<?php
+/**
+ * Password field type.
+ *
+ * PSR-4 migration of the legacy GravityView_Field_Password class.
+ *
+ * @package GravityKit\GravityView\Field\Types
+ * @license GPL2+
+ * @since 3.0.0
+ */
+
+namespace GravityKit\GravityView\Field\Types;
+
+class Password extends \GravityView_Field {
+
+	var $name = 'password';
+
+	var $is_searchable = false;
+
+	/** @see GF_Field_Password */
+	var $_gf_field_class_name = 'GF_Field_Password';
+
+	var $group = 'advanced';
+
+	public function __construct() {
+		$this->label = esc_html__( 'Password', 'gk-gravityview' );
+
+		$this->add_hooks();
+
+		parent::__construct();
+
+		add_filter( 'gravityview/field/password/value', [$this, 'get_value'], 10, 6 );
+	}
+
+	/**
+	 * Filter the value of the field, future.
+	 *
+	 * @since 2.0
+	 *
+	 * @param mixed       $value  The value of the field.
+	 * @param \GV\Field   $field  The field as seen by future.
+	 * @param \GV\View    $view   The view requested in.
+	 * @param \GV\Source  $source The data source (form).
+	 * @param \GV\Entry   $entry  The entry.
+	 * @param \GV\Request $request The request context.
+	 *
+	 * @return mixed $value The filtered value.
+	 */
+	public function get_value( $value, $field, $view, $source, $entry, $request ) {
+		/** Passwords should never be exposed. */
+		return '';
+	}
+
+
+	/**
+	 * Add filters to modify the front-end label and the Add Field label
+	 *
+	 * @since 1.17
+	 *
+	 * @return void
+	 */
+	function add_hooks() {
+		add_filter( 'gravityview/common/get_form_fields', [$this, 'add_form_fields'], 10, 3 );
+
+		add_filter( 'gravityview/template/field/label', [ $this, 'filter_field_label' ], 10, 2 );
+	}
+
+	/**
+	 * Uses the GV Admin Field label for the Password field instead of the per-input setting.
+	 *
+	 * @since 3.1.0
+	 *
+	 * @param string               $label   Field label HTML.
+	 * @param \GV\Template_Context $context The template context.
+	 *
+	 * @return string If a custom field label isn't set, return the field label for the password field.
+	 */
+	public function filter_field_label( $label, $context ) {
+		$form  = $context->view && $context->view->form ? $context->view->form->form : [];
+		$entry = $context->entry ? $context->entry->as_entry() : [];
+
+		return $this->field_label( $label, $context->field->as_configuration(), $form, $entry );
+	}
+
+	/**
+	 * Use the GV Admin Field label for the Password field instead of the per-input setting
+	 *
+	 * @since 1.17
+	 *
+	 * @param string $label Field label HTML
+	 * @param array  $field GravityView field array
+	 * @param array  $form Gravity Forms form array
+	 * @param array  $entry Gravity Forms entry array
+	 *
+	 * @return string If a custom field label isn't set, return the field label for the password field
+	 */
+	function field_label( $label = '', $field = [], $form = [], $entry = [] ) {
+
+		// If using a custom label, no need to fetch the parent label
+		if ( ! is_numeric( $field['id'] ) || ! empty( $field['custom_label'] ) ) {
+			return $label;
+		}
+
+		$field_object = \GFFormsModel::get_field( $form, $field['id'] );
+
+		if ( $field_object && 'password' === $field_object->type ) {
+			$label = $field['label'];
+		}
+
+		return $label;
+	}
+
+	/**
+	 * If a form has list fields, add the columns to the field picker
+	 *
+	 * @since 1.17
+	 *
+	 * @param array $fields Associative array of fields, with keys as field type
+	 * @param array $form GF Form array
+	 * @param bool  $include_parent_field Whether to include the parent field when getting a field with inputs
+	 *
+	 * @return array $fields with list field columns added, if exist. Unmodified if form has no list fields.
+	 */
+	function add_form_fields( $fields = [], $form = [], $include_parent_field = true ) {
+
+		foreach ( $fields as $key => $field ) {
+			if ( 'password' === $field['type'] ) {
+
+				// The Enter Password input
+				if ( floor( $key ) === floatval( $key ) ) {
+
+					if ( ! empty( $field['parent'] ) ) {
+						$field['label']      = $field['parent']->label;
+						$field['adminOnly']  = $field['parent']->adminOnly;
+						$field['adminLabel'] = $field['parent']->adminLabel;
+						// Don't show as a child input
+						unset( $field['parent'] );
+					}
+
+					$fields[ $key ] = $field;
+				} else {
+					// The Confirm Password input
+					unset( $fields[ $key ] );
+				}
+			}
+		}
+
+		return $fields;
+	}
+}

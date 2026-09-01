@@ -1,9 +1,4 @@
 <?php
-/**
- * @license GPL-2.0-or-later
- *
- * Modified using {@see https://github.com/BrianHenryIE/strauss}.
- */
 
 namespace GravityKit\GravityView\Foundation\Scheduler;
 
@@ -11,17 +6,25 @@ if ( ! defined( 'ABSPATH' ) ) {
 	return;
 }
 
-$dir_path      = __DIR__;
-$vendor_folder = 'vendor';
-$pos           = strpos( $dir_path, $vendor_folder );
-$in_vendor     = false !== $pos;
+// Resolve the bundled Action Scheduler across vendor/, Strauss vendor_prefixed/, and
+// standalone layouts without being fooled by an ancestor folder named like "vendor…".
+// Every load goes through is_readable + include_once so a file that is missing or
+// half-written during a plugin update (the window after the check, before the load)
+// degrades to "background jobs paused" (see Core::init) instead of a site-wide fatal.
+$resolver = __DIR__ . '/VendorPathResolver.php';
 
-// It is autoloaded by Composer and needs to be required early, before the 'plugins_loaded' action with priority 0.
-$vendor_path = $in_vendor
-	? substr( $dir_path, 0, $pos + strlen( $vendor_folder ) )
-	: dirname( __DIR__, 2 ) . '/vendor';
+if ( is_readable( $resolver ) ) {
+	include_once $resolver;
+}
 
-require_once $vendor_path . '/woocommerce/action-scheduler/action-scheduler.php';
+if ( class_exists( VendorPathResolver::class, false ) ) {
+	$action_scheduler = VendorPathResolver::resolve( __DIR__ );
+
+	// Must load early, before the 'plugins_loaded' action at priority 0.
+	if ( null !== $action_scheduler && is_readable( $action_scheduler ) ) {
+		include_once $action_scheduler;
+	}
+}
 
 // ── Preemptive AS initialization to prevent old-copy hijacking ────────────
 //

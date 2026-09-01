@@ -1,60 +1,23 @@
 <?php
-namespace GV;
+/**
+ * Backward-compatibility shim.
+ *
+ * This file was moved in GravityView 3.0. It is intentionally empty.
+ * GravityView classes and functions load automatically. You no longer
+ * need to require GravityView files in your code.
+ *
+ * @deprecated 3.0
+ */
 
-/** If this file is called directly, abort. */
-if ( ! defined( 'GRAVITYVIEW_DIR' ) ) {
-	die();
+if ( ! defined( 'ABSPATH' ) ) {
+	die;
 }
 
-/**
- * The Legacy Entry Template class .
- *
- * A back-compatibility layer for old templates to work.
- */
-class Entry_Legacy_Template extends Entry_Template {
-	/**
-	 * Render an old template.
-	 */
-	public function render() {
-		if ( ! class_exists( 'GravityView_Template' ) ) {
-			return;
-		}
-
-		$entries = new \GV\Entry_Collection();
-		$entries->add( $this->entry );
-
-		$context = array(
-			'view'    => $this->view,
-			'fields'  => $this->view->fields->by_visible( $this->view ),
-			'entries' => $entries,
-			'entry'   => $this->entry,
-			'request' => $this->request,
-		);
-
-		global $post;
-
-		if ( $post ) {
-			$context['post'] = $post;
-		}
-
-		\GV\Mocks\Legacy_Context::push( $context );
-
-		$sections = array( 'single' );
-
-		$sections = apply_filters( 'gravityview_render_view_sections', $sections, $this->view->settings->get( 'template' ) );
-
-		$template = \GravityView_View::getInstance();
-
-		$hook_name = 'gravityview_template_slug_' . $this->view->settings->get( 'template' );
-		if ( has_filter( $hook_name ) ) {
-			\GravityView_Deprecated_Hook_Notices::deprecated_hook( $hook_name, '2.55', 'gravityview_get_template_id' );
-		}
-		$slug = apply_filters( $hook_name, 'table', 'directory' );
-
-		foreach ( $sections as $section ) {
-			$template->render( $slug, $section, false );
-		}
-
-		\GV\Mocks\Legacy_Context::pop();
-	}
+if ( function_exists( '_deprecated_file' ) ) {
+	_deprecated_file(
+		plugin_basename( __FILE__ ),
+		'3.0',
+		'',
+		'This file was moved in GravityView 3.0 and will be removed in a future release. GravityView classes and functions load automatically. You no longer need to require them.'
+	);
 }

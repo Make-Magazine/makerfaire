@@ -1,15 +1,15 @@
 <?php
-/**
- * @license GPL-2.0-or-later
- *
- * Modified using {@see https://github.com/BrianHenryIE/strauss}.
- */
 
 namespace GravityKit\GravityView\Foundation;
 
-const MIN_PHP_VERSION = '7.2.0';
+const MIN_PHP_VERSION = '7.4.0';
 
 require_once __DIR__ . '/Helpers/Core.php';
+
+// Output::protect() has to be callable while a product's own plugin file loads,
+// which is before the autoloader exists — the same reason Core is required
+// directly above. Both are dependency-free.
+require_once __DIR__ . '/Helpers/Output.php';
 
 /**
  * Determines if a plugin should load.

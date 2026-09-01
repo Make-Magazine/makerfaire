@@ -1,36 +1,23 @@
 <?php
 /**
- * Register RCP scripts and styles to GravityView no-conflict list
+ * Backward-compatibility shim.
  *
- * @file      class-gravityview-theme-hooks-rcp.php
- * @package   GravityView
- * @license   GPL2+
- * @author    GravityKit <hello@gravitykit.com>
- * @link      https://www.gravitykit.com
- * @copyright Copyright 2017, Katz Web Services, Inc.
+ * This file was moved in GravityView 3.0. It is intentionally empty.
+ * GravityView classes and functions load automatically — you no longer
+ * need to require GravityView files in your code.
  *
- * @since 1.21.5
+ * @deprecated 3.0
  */
 
-/**
- * @inheritDoc
- */
-class GravityView_Theme_Hooks_RCP extends GravityView_Plugin_and_Theme_Hooks {
-
-	/**
-	 * @inheritDoc
-	 * @since 1.21.5
-	 */
-	protected $script_handles = array(
-		'rcp-admin-scripts',
-		'bbq',
-	);
-
-	/**
-	 * @inheritDoc
-	 * @since 1.21.5
-	 */
-	protected $constant_name = 'RCP_PLUGIN_VERSION';
+if ( ! defined( 'ABSPATH' ) ) {
+	die;
 }
 
-new GravityView_Theme_Hooks_RCP();
+if ( function_exists( '_deprecated_file' ) ) {
+	_deprecated_file(
+		plugin_basename( __FILE__ ),
+		'3.0',
+		'',
+		'This file was moved in GravityView 3.0 and will be removed in a future release. GravityView classes and functions load automatically — you no longer need to require them.'
+	);
+}

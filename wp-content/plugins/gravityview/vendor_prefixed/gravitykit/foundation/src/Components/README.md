@@ -65,7 +65,7 @@ The `SecureDownload` component provides a secure way to download files from Word
 ### Basic Usage
 
 ```php
-$secure_download = \GravityKit\Foundation\Core::secure_download();
+$secure_download = \GravityKit\GravityView\Foundation\Core::secure_download();
 ```
 
 #### Generate a download link (with smart defaults)

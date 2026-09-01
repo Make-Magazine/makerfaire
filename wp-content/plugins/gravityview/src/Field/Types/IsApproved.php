@@ -1,0 +1,213 @@
+<?php
+/**
+ * Is Approved field type.
+ *
+ * PSR-4 migration of the legacy GravityView_Field_Is_Approved class.
+ *
+ * @package GravityKit\GravityView\Field\Types
+ * @license GPL2+
+ * @since 3.0.0
+ */
+
+namespace GravityKit\GravityView\Field\Types;
+
+use GravityView_Entry_Approval;
+use GravityView_Entry_Approval_Status;
+
+use function gravityview;
+
+/**
+ * @since 3.0.0
+ */
+class IsApproved extends \GravityView_Field {
+
+	public $name = 'is_approved';
+
+	public $search_operators = ['is', 'isnot'];
+
+	public $contexts = ['single', 'multiple'];
+
+	public $group = 'meta';
+
+	public $is_sortable = true;
+
+	public $is_numeric = true;
+
+	public $is_searchable = true;
+
+	/**
+	 * @var string Approval status is stored in entry meta under this key
+	 * @since 1.18
+	 */
+	var $entry_meta_key = 'is_approved';
+
+	/**
+	 * @var bool Don't add to the "columns to display" list; GravityView adds our own approval column
+	 * @since 1.18
+	 */
+	var $entry_meta_is_default_column = false;
+
+	public $_custom_merge_tag = 'approval_status';
+
+	public $icon = 'dashicons-yes-alt';
+
+	public function __construct() {
+
+		$this->label                = esc_html__( 'Approval Status', 'gk-gravityview' );
+		$this->description          = esc_html__( 'Display the entry\'s current approval status.', 'gk-gravityview' );
+		$this->default_search_label = __( 'Approval:', 'gk-gravityview' );
+
+		$this->add_hooks();
+
+		parent::__construct();
+	}
+
+	private function add_hooks() {
+		add_filter( 'gravityview_entry_default_fields', [$this, 'add_default_field'], 10, 3 );
+	}
+
+	/**
+	 * Convert entry approval status value to label in the field output. Uses labels from the field setting.
+	 *
+	 * @since 2.10
+	 *
+	 * @param string $approval_status Status to pass to {@see GravityView_Entry_Approval_Status::maybe_convert_status}
+	 * @param bool   $html Whether to return HTML or plaintext string value
+	 *
+	 * @return string The field setting label for the current status. Uses defaults, if not configured.
+	 */
+	public static function get_output( $approval_status = '', $field_settings = [], $html = false ) {
+
+		$status     = GravityView_Entry_Approval_Status::maybe_convert_status( $approval_status );
+		$status_key = GravityView_Entry_Approval_Status::get_key( $status );
+
+		// "approved_label", "unapproved_label", "disapproved_label" setting keys
+		$field_setting_key = sprintf( '%s_label', $status_key );
+
+		$default_label = GravityView_Entry_Approval_Status::get_label( $status );
+
+		$value = \GV\Utils::get( $field_settings, $field_setting_key, $default_label );
+		if ( empty( $value ) ) {
+			$value = $default_label;
+		}
+
+		if ( ! $html ) {
+			return $value;
+		}
+
+		return sprintf( '<span class="gv-approval-%s">%s</span>', esc_attr( $status_key ), $value );
+	}
+
+	/**
+	 *
+	 *
+	 * @filter `gravityview_entry_default_fields`
+	 *
+	 * @param  array        $entry_default_fields Array of fields shown by default
+	 * @param  string|array $form form_ID or form object
+	 * @param  string       $zone Either 'single', 'directory', 'header', 'footer'
+	 *
+	 * @return array
+	 */
+	function add_default_field( $entry_default_fields, $form, $zone ) {
+
+		if ( 'edit' !== $zone ) {
+			$entry_default_fields[ $this->name ] = [
+				'label' => $this->label,
+				'desc'  => $this->description,
+				'type'  => $this->name,
+			];
+		}
+
+		return $entry_default_fields;
+	}
+
+	/**
+	 * Add custom merge tags to merge tag options
+	 *
+	 * @since 1.16
+	 *
+	 * @param array      $form GF Form array
+	 * @param GF_Field[] $fields Array of fields in the form
+	 *
+	 * @return array Modified merge tags
+	 */
+	protected function custom_merge_tags( $form = [], $fields = [] ) {
+
+		$merge_tags = [
+			[
+				'label' => __( 'Approval Status', 'gk-gravityview' ),
+				'tag'   => '{approval_status}',
+			],
+		];
+
+		return $merge_tags;
+	}
+
+	/**
+	 * Display the approval status of an entry
+	 *
+	 * @see https://docs.gravitykit.com/article/389-approvalstatus-merge-tag Read how to use the `{approval_status}` merge tag
+	 *
+	 * @since 1.18
+	 *
+	 * @param array  $matches Array of Merge Tag matches found in text by preg_match_all
+	 * @param string $text Text to replace
+	 * @param array  $form Gravity Forms form array
+	 * @param array  $entry Entry array
+	 * @param bool   $url_encode Whether to URL-encode output
+	 * @param bool   $esc_html Whether to apply `esc_html()` to output
+	 *
+	 * @return string Text, with user variables replaced, if they existed
+	 */
+	public function replace_merge_tag( $matches = [], $text = '', $form = [], $entry = [], $url_encode = false, $esc_html = false ) {
+
+		$return = $text;
+
+		/**
+		 * @var array $match {
+		 *      @type string $match[0] Full matched merge tag ("{gv_approval}")
+		 *      @type string $match[1] Modifier ("value", "label", or empty string)
+		 * }
+		 */
+		foreach ( $matches as $match ) {
+
+			if ( empty( $entry ) ) {
+				gravityview()->log->error( 'No entry data available. Returning empty string.' );
+				$replacement = '';
+			} else {
+				$replacement = GravityView_Entry_Approval::get_entry_status( $entry, $match[1] );
+			}
+
+			$return = str_replace( $match[0], $replacement, $return );
+		}
+
+		return $return;
+	}
+
+	public function field_options( $field_options, $template_id, $field_id, $context, $input_type, $form_id ) {
+
+		$field_options['approved_label'] = [
+			'type'        => 'text',
+			'label'       => __( 'Approved Label', 'gk-gravityview' ),
+			'desc'        => __( 'If the entry is approved, display this value', 'gk-gravityview' ),
+			'placeholder' => GravityView_Entry_Approval_Status::get_label( 'approved' ),
+		];
+
+		$field_options['disapproved_label'] = [
+			'type'        => 'text',
+			'label'       => __( 'Disapproved Label', 'gk-gravityview' ),
+			'desc'        => __( 'If the entry is not approved, display this value', 'gk-gravityview' ),
+			'placeholder' => GravityView_Entry_Approval_Status::get_label( 'disapproved' ),
+		];
+
+		$field_options['unapproved_label'] = [
+			'type'        => 'text',
+			'label'       => __( 'Unapproved Label', 'gk-gravityview' ),
+			'desc'        => __( 'If the entry has not yet been approved or disapproved, display this value', 'gk-gravityview' ),
+			'placeholder' => GravityView_Entry_Approval_Status::get_label( 'unapproved' ),
+		];
+
+		return $field_options;
+	}
+}

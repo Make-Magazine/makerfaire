@@ -41,5 +41,14 @@ class One {
 	public static function get_manage_subscription_url(): string {
 		return admin_url( 'admin.php?page=elementor-home#/home/tool-manager' );
 	}
+
+	/**
+	 * Get the URL mismatch fix modal URL when One is connected.
+	 *
+	 * @return string
+	 */
+	public static function get_url_mismatch_url(): string {
+		return admin_url( 'admin.php?page=elementor-home#/home/url-mismatch' );
+	}
 }
 

@@ -101,7 +101,7 @@ final class GravityView_Inline_Edit {
 		 */
 		$edit_style = apply_filters( 'gravityview-inline-edit/edit-style', $default_style );
 
-		return in_array( $edit_style, array( 'jquery-editable', 'jqueryui-editable', 'bootstrap3-editable' ) ) ? $edit_style : $default_style;
+		return in_array( $edit_style, array( 'jquery-editable', 'jqueryui-editable', 'bootstrap3-editable' ), true ) ? $edit_style : $default_style;
 	}
 
 	/**
@@ -124,7 +124,7 @@ final class GravityView_Inline_Edit {
 		 */
 		$edit_mode = apply_filters( 'gravityview-inline-edit/edit-mode', $edit_mode );
 
-		return in_array( $edit_mode, array( 'popup', 'inline' ) ) ? $edit_mode : 'popup';
+		return in_array( $edit_mode, array( 'popup', 'inline' ), true ) ? $edit_mode : 'popup';
 	}
 
 	/**
@@ -155,7 +155,7 @@ final class GravityView_Inline_Edit {
 		include_once( GRAVITYEDIT_DIR . 'includes/fields/class-gravityview-inline-edit-field.php' );
 
 		// Load all field files automatically
-		foreach ( glob( GRAVITYEDIT_DIR . 'includes/fields/class-gravityview-inline-edit-field*.php' ) as $gv_inline_field_filename ) {
+		foreach ( glob( GRAVITYEDIT_DIR . 'includes/fields/class-gravityview-inline-edit-field*.php' ) ?: array() as $gv_inline_field_filename ) {
 			include_once( $gv_inline_field_filename );
 		}
 	}

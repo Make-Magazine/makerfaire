@@ -128,7 +128,7 @@ class GV_Extension_DataTables_Scroller extends GV_DataTables_Extension {
             return;
 		}
 
-        $Data = new GV_Extension_DataTables_Data;
+        $Data = GV_Extension_DataTables_Data::get_instance();
 
 		$config = $Data->get_datatables_script_configuration( $post, $gravityview->view );
 
@@ -138,8 +138,20 @@ class GV_Extension_DataTables_Scroller extends GV_DataTables_Extension {
             return;
 		}
 
+		// Only the plugin's own settings UI is trusted to produce a unit; this value can also
+		// arrive from the `gravityview_datatables_js_options` filter, so reduce it to a number
+		// rather than pasting a caller's string into a style rule.
+		$height = (float) str_replace( array( 'px', 'px;' ), '', $height );
+
+		if ( $height <= 0 ) {
+			return;
+		}
+
         echo '<style>';
-        printf( '.gv-container-%d table.gv-datatables.dataTable tbody { height: %spx!important; }', $gravityview->view->ID, str_replace( array( 'px', 'px;' ), '', $height ) );
+        // `tbody tr`, not `tbody`: Scroller feeds a numeric rowHeight straight into its positioning
+        // math, so each rendered row must actually be that height. Height on the row group is only
+        // a minimum for the whole group, inert once the rows' natural content exceeds it.
+        printf( '.gv-container-%d table.gv-datatables.dataTable tbody tr { height: %spx!important; }', (int) $gravityview->view->ID, $height );
         echo '</style>';
 
 	}

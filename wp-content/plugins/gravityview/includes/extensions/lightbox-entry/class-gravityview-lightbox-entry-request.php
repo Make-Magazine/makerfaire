@@ -1,63 +1,23 @@
 <?php
+/**
+ * Backward-compatibility shim.
+ *
+ * This file was moved in GravityView 3.0. It is intentionally empty.
+ * GravityView classes and functions load automatically — you no longer
+ * need to require GravityView files in your code.
+ *
+ * @deprecated 3.0
+ */
 
-use GV\Frontend_Request;
-use GV\GF_Entry;
-use GV\View;
+if ( ! defined( 'ABSPATH' ) ) {
+	die;
+}
 
-class GravityView_Lightbox_Entry_Request extends Frontend_Request {
-	/**
-	 * Gravity Forms entry object.
-	 *
-	 * @since 2.29.0
-	 *
-	 * @var GF_Entry
-	 */
-	private $entry;
-
-	/**
-	 * GravityView View object.
-	 *
-	 * @since 2.29.0
-	 *
-	 * @var View
-	 */
-	private $view;
-
-	/**
-	 * Class constructor.
-	 *
-	 * @param View     $view
-	 * @param GF_Entry $entry
-	 */
-	public function __construct( View $view, GF_Entry $entry ) {
-		$this->entry = $entry;
-		$this->view  = $view;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 *
-	 * @since 2.29.0
-	 */
-	public function is_entry( $form_id = 0 ) {
-		return $this->entry;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 *
-	 * @since 2.29.0
-	 */
-	public function is_view( $return_view = true ) {
-		return $return_view ? $this->view : true;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 *
-	 * @since 2.29.0
-	 */
-	public function is_renderable(): bool {
-		return true;
-	}
+if ( function_exists( '_deprecated_file' ) ) {
+	_deprecated_file(
+		plugin_basename( __FILE__ ),
+		'3.0',
+		'',
+		'This file was moved in GravityView 3.0 and will be removed in a future release. GravityView classes and functions load automatically — you no longer need to require them.'
+	);
 }

@@ -1,7 +1,7 @@
 === GravityView ===
 Tags: gravity forms, directory, gravity forms directory
 Requires at least: 4.7
-Tested up to: 7.0.0
+Tested up to: 7.1
 Requires PHP: 7.4.0
 Stable tag: trunk
 Contributors: The GravityKit Team
@@ -21,18 +21,292 @@ Beautifully display your Gravity Forms entries. Learn more on [gravitykit.com](h
 
 == Changelog ==
 
-= 2.61.1 on June 4, 2026 =
+= 3.3.3 on August 27, 2026 =
 
-This update resolves several Post Image field issues when editing entries.
+This release fixes multiple minor View editor problems that could lose your widgets or your most recent changes, and cleans up field settings that showed up where they do not apply.
+
+#### 🔒 Security
+* Hardens how the Support Port identifies you to our support system.
 
 #### 🐛 Fixed
-* Issues with the Post Image field's Alternative Text:
-  - Not shown when editing an entry;
-  - Discarded when saving;
-  - Not copied to the image in the Media Library.
+* Issues in the View editor:
+  - Updating a View before the Widgets area fully loaded removed the View's configured widgets;
+  - Checking one of two mutually exclusive field options, such as opening a link in a lightbox or in a new window, left the other option checked, so both were saved;
+  - Changes made after a save that another plugin interrupted were missing from the next save;
+  - Field settings added by other plugins under their own grouping did not appear in the field settings dialog.
+  - The "Open in a lightbox?" and "Open link in a new tab or window?" field settings appeared when configuring Single Entry and Edit Entry fields, where they do nothing.
+* URLs entered with a leading space were rejected as invalid.
+* Fields with a Custom CSS Class were missing the separator line above them on single entry screens using the Layout Builder layout.
+
+#### 💻 Developer Updates
+* Added the `gravityview/merge-tags/setup` JavaScript trigger, fired on `document.body` before GravityView sets up Merge Tag autocomplete in the View editor. Handlers get the textarea and the `wp.codeEditor` instance, and can call `preventDefault()` to take over the field with their own merge tag picker.
 
 #### 🔧 Updated
-* [Foundation](https://www.gravitykit.com/foundation/) to version 1.21.0.
+* [Foundation](https://www.gravitykit.com/foundation/) to version 1.31.1.
+
+= 3.3.2 on August 20, 2026 =
+
+#### 🐛 Fixed
+* Edit Entry ignored changes to fields, and could clear stored values, on forms where a field with its Gravity Forms visibility set to "Hidden" controls conditional logic or dynamically populated choices.
+* View settings that store multiple checkbox choices, such as the Form Notifications setting added by PDF for GravityView, were discarded when saving a View.
+* GravityView shortcodes inside code blocks were mangled, showing encoded text starting with `b64:` in place of the attribute values.
+* Issues with entry approval in the Gravity Forms Entries list:
+  - Clicking the approval toggle did nothing, and choosing a status from its popover reported that the request was invalid on WordPress 7.1;
+  - Confirmation messages did not appear after a bulk Approve, Disapprove, or Reset Approval;
+  - The approval column was added to forms that do not have any entries yet, so the "no entries" message did not line up with the table.
+* Single entry links opened the list of entries instead of the entry on sites running Formidable Forms Pro, when a Formidable view used `entry` as its detail parameter.
+
+#### 🔧 Updated
+* [Foundation](https://www.gravitykit.com/foundation/) to version 1.30.0.
+
+= 3.3.1 on August 13, 2026 =
+
+This release fixes several issues affecting Views that combine entries from multiple forms, View display settings, and Export Link widget visibility.
+
+#### 🐛 Fixed
+* Issues in Views that combine entries from multiple forms ([Multiple Forms](https://www.gravitykit.com/extensions/multiple-forms/) extension):
+  - The Entry Notes field showed another form's notes;
+  - Choice-based fields from joined forms were missing the setting that chooses between showing the choice value or the choice label.
+* The Export Link widget offered a download link to visitors who are not allowed to export on Views with "Prevent Direct Access" enabled or Views that are not published publicly.
+* Issues with View display settings:
+  - The "Hide the View" and "Hide View until search is performed" settings had no effect on Views using a theme or multiple columns;
+  - Views lost their theme, custom CSS class, and the "Hide the View" setting when the site's theme contained a GravityView template override.
+
+#### 🔧 Updated
+* [Foundation](https://www.gravitykit.com/foundation/) to version 1.29.0.
+
+= 3.3.0 on August 6, 2026 =
+
+This release adds display options to the Entry Notes field, improves drag-and-drop in the View editor, resolves an HTML escaping issue in the View editor, and fixes issues with search, multi-form Views, and the View block.
+
+#### 🚀 Added
+* The Entry Notes field can now display the number of notes, a simple Yes/No, or custom text (merge tags supported) instead of the notes themselves — useful for flagging entries that have been commented on, including in exports.
+
+#### ✨ Improved
+* Dragging a field in the View editor now follows the pointer, so the zone under the mouse receives the field — narrow and empty zones are easier to target.
+
+#### 🐛 Fixed
+* HTML in a form field's label was output without escaping in the View editor.
+* The Entry Notes field exported an empty column to CSV.
+* Searching by Entry Date returned the wrong entries on sites with a non-UTC timezone — results were shifted by the timezone offset, so entries from the searched date were missing while entries from a neighboring day appeared.
+* Table layouts using a theme other than Legacy displayed a solid white background behind the table, so rounded corners looked square on colored or dark pages.
+* Issues in Views that combine entries from multiple forms using the [Multiple Forms](https://www.gravitykit.com/extensions/multiple-forms/) extension:
+  - Pagination and entry totals counted only the primary form's entries on Gravity Forms 3.0, so pages of results could be missing and reported counts were too low;
+  - Single entry pages could open the wrong entry, or none at all, on sites that use custom entry slugs.
+* Dragging fields in the View editor: the Move and Duplicate buttons wrapped onto a second line in narrow columns, and a field could not be picked up when the drag started on those buttons.
+* View block issues in the block editor:
+  - Enabling Preview loaded the site's front-end styles into the editor and changed its appearance — preview styles now load only inside the editor canvas;
+  - The block's controls (View selector, Preview toggle) appeared unstyled;
+  - A preview that failed once kept showing the error after a later preview succeeded.
+* An "Entry meta already set" error was repeatedly logged when another plugin (e.g., GravityBoard) had already registered the same entry meta key.
+* PHP warnings ("Undefined array key 10") appeared above Views on sites with custom code attached to the deprecated `gravityview_after` action at a non-default priority.
+* URLs registered by other plugins (such as Uncanny Toolkit Pro's group sign-up pages) redirected to the home page on sites that use a static front page.
+* GravityView's notification events (entry approved, updated, deleted, duplicated) were not sent — with no error — on sites where another plugin modified the form through the `gform_pre_render` filter.
+
+#### 💻 Developer Updates
+* Views that combine entries from multiple forms now pass an extra `union` key in the SQL fragments array filtered by `gform_gf_query_sql`, holding the `UNION ALL` statements and the subquery's closing alias. Code that rebuilds that array from a fixed list of keys needs to carry it through, or the query loses its unioned forms.
+
+#### 🔧 Updated
+* [Foundation](https://www.gravitykit.com/foundation/) to version 1.28.0.
+
+= 3.2.0 on July 30, 2026 =
+
+This release adds Alt/Option-drag copying and accessibility improvements to the View editor, improves how Views combine entries from multiple forms, and resolves issues with lightboxes and embedded Views, Checkbox sorting, and fatal errors.
+
+#### 🚀 Added
+* Hold Alt/Option while dropping a dragged field, widget, or search field in the View editor to copy it instead of moving it — the original stays in place and the copy keeps its settings.
+
+#### ✨ Improved
+* Keyboard and screen reader accessibility in the View editor:
+  - Rows and fields can now be reordered without a mouse using Move buttons in a keyboard-navigable toolbar (Up and Down to reorder, Left and Right to move a field between columns), with a screen reader announcement after each move;
+  - Better keyboard and screen reader support for layout controls;
+  - Various other screen reader improvements.
+* Views that combine entries from multiple forms using the [Multiple Forms](https://www.gravitykit.com/extensions/multiple-forms/) extension now display their results reliably.
+
+#### 🐛 Fixed
+* Sorting a View by a Checkbox field left the rows unchanged — clicking the column header now sorts by the first checked choice, in both directions.
+* Pressing Ctrl+F to search inside the Custom CSS and Custom JavaScript editors saved the View and reloaded the page instead of opening the search.
+* Issues with Views embedded in blocks:
+  - An entry opened in a lightbox showed "The requested entry could not be found." when the View was placed inside a Group, Columns, or other container block;
+  - The lightbox now reads the embed page's filtering context only when that page actually displays the View;
+  - Blocks that reference a View without displaying it (Entry, Entry Field, Entry Link, and View Details) are no longer counted as embeds of that View on the page.
+* Opening an entry in a View that uses the [Maps](https://www.gravitykit.com/products/maps/) single entry layout logged a PHP warning on every request, and the "Go back" link could lose its View reference or not render at all.
+* Opening a single entry from a View embedded on the site's static front page showed the theme's "not found" page when the entry link contained extra URL parameters.
+* Setting `--gv-shadow-color` removed every shadow instead of tinting them — the variable now accepts a normal CSS color (see Developer Updates).
+* Fatal errors when a percent sign appeared in a Search Bar field label (e.g., "100% sure") or in a Table layout row attribute name added by a custom filter.
+
+#### 💻 Developer Updates
+* `--gv-shadow-color` is now a true `<color>` value (default `#121961`), tinted via `color-mix()` instead of `rgb(var(--gv-shadow-color) / <alpha>)` — **if you set this variable in your own CSS, replace `18 25 97` with `#121961`**, since the old three-number value now falls back to the default tint on browsers with `@property` support (Chrome 85+, Safari 16.4+, Firefox 128+) and removes the shadow on Firefox 113–127 and Safari 16.2–16.3.
+* `color-mix()` requires Chromium 111+, Safari 16.2+, or Firefox 113+ — older engines keep shadows at the default tint via static `rgba()` fallbacks, except per-View shadow depth overrides, which are emitted unguarded and render without a shadow.
+
+#### 🔧 Updated
+* [Foundation](https://www.gravitykit.com/foundation/) to version 1.27.0.
+
+= 3.1.1 on July 23, 2026 =
+
+This update resolves a lightbox error in Views with page-dependent Advanced Filtering conditions and clears a stuck dashboard warning about the extension being inactive.
+
+#### 🐛 Fixed
+* Opening an entry in a lightbox showed "The requested entry could not be found." when the View's [Advanced Filtering](https://www.gravitykit.com/products/advanced-filter/) conditions depended on the page the View was embedded on (e.g., using `{custom_field:...}` or `{embed_post:...}` merge tags).
+* A dashboard warning that the [Advanced Filtering](https://www.gravitykit.com/products/advanced-filter/) extension was inactive could remain stuck and non-dismissible after the extension was reactivated; it is now cleared automatically.
+
+#### 🔧 Updated
+* [Foundation](https://www.gravitykit.com/foundation/) to version 1.26.0.
+
+= 3.1.0 on July 16, 2026 =
+
+This release adds a Table layout row-header setting for better screen reader support and a View editor warning when the Edit Entries bulk action can't run on the frontend, restores the LifterLMS integration, scopes a front-end search to the View it was performed on, includes security hardening for embedded Views, and fixes an issue that could prevent activation on some configurations, along with several lightbox, access, accessibility, and Vantage-style layout issues.
+
+#### 🚀 Added
+* Table layout: a new "Use this field as a row header" field setting renders that column's cells as `<th scope="row">` instead of `<td>`, so screen readers announce the identifying cell (like a name or title) as context for the other cells in the row.
+
+#### ✨ Improved
+* Hardened the "Enhanced Security" embed secret. Existing embeds keep working; if one ever stops rendering, re-copy its embed code from the View editor. Developers can require the new secret on specific Views (see Developer Updates).
+* The View editor now warns when the Edit Entries bulk action can't run on the frontend because the View's form uses conditional logic, instead of allowing the action to be configured and silently do nothing.
+* Phone field compatibility with Gravity Forms 3.0+.
+
+#### 🐛 Fixed
+* An entry opened in a lightbox showed "The requested entry could not be found." when the View's filtering depended on a value from the page request (e.g., [Advanced Filtering](https://www.gravitykit.com/products/advanced-filter/) configured to read a URL parameter).
+* An entry opened in a lightbox could show a raw error (`{"code":"rest_cookie_invalid_nonce",...}`) instead of the entry when the visitor had logged out or their session expired (for example, a tab left open past the daily security-token refresh). The lightbox now falls back to the normal access-controlled response: a public entry displays, and a restricted one shows the friendly "could not be found" message.
+* The confirmation message did not display after duplicating or deleting an entry from the front end.
+* On the List layout, placing heading markup (such as an `<h1>` in a Custom Content field) in the Listing Title or Subtitle zones left an empty heading in the page that accessibility checkers like WAVE flagged as an "Empty heading" error. The layout's heading wrapper now becomes a `<div>` when the field's content is itself a heading, and is omitted entirely when there is nothing to display.
+* Entries appeared in the Multiple Entries layout but showed "You are not allowed to view this content." when opened or edited, even by administrators. This affected entries whose status was saved with different capitalization (e.g., `Active` instead of `active`), which can happen when entries are imported.
+* A Search Bar Date Range field overflowed its column in both "Separate Fields" and "Combined" modes, running off-screen or overlapping the adjacent field; the pickers now shrink to the available width and stack when the column is narrow.
+* The Search Bar's Search button rendered at the horizontal center of the form instead of below the search fields, and on browsers without `:has()` support it aligned with a neighboring field's label instead of its input.
+* The Search Bar's Clear/Reset button was missing on pages without an active search, so changing inputs no longer revealed the Reset button; it is now always part of the form again and appears when there is something to reset or clear.
+* Removing the last widget from a widget-area row and updating the View removed the row itself from the editor with no way to add it back; the default full-width and half-width rows now always stay available as drop targets.
+* Activating GravityView could prevent a site from loading when its theme or another plugin already included the same email-obfuscation library.
+* A deprecation warning ("The gravityview_template_..._options hook is deprecated") was logged blaming an add-on such as [Gravity Flow](https://gravityflow.io/) when the add-on registered a custom field or widget type, even though GravityView itself attaches that hook on the add-on's behalf.
+* The GravityView integration was missing from the [LifterLMS](https://lifterlms.com/) Settings → Integrations screen (and the "My Forms" student dashboard tab with it) since the 3.0 update.
+* The `[gv_entry_link]` shortcode with `lightbox="true"` opened a full page instead of the lightbox when the View's entries were loaded over AJAX, such as on the [DataTables](https://www.gravitykit.com/products/datatables/) layout.
+* A [DataTables](https://www.gravitykit.com/products/datatables/) View using the Vantage theme rendered a narrow table pushed to one side of the View, with empty space beside it, when FixedHeader or FixedColumns was enabled.
+* A "translation loading triggered too early" (`_load_textdomain_just_in_time`) notice appeared on WordPress 6.7 and newer because some widgets and field types loaded translations too early.
+* Single entry pages could fail to load when custom entry slugs were enabled and an entry link was built for an entry that could not be resolved, such as by the [WPML](https://wpml.org/) language switcher rebuilding entry links in the page header.
+* A Time field's "Override Date Format" box showed the default format (e.g. `h:i A`) even when left empty and could not be cleared, and saving the View baked that format in. The default is now shown as a placeholder hint, so the box stays empty and the field keeps following the form's time format.
+* Duplicating an entry failed when the request had no user agent, such as from WP-CLI or other server-side requests.
+* Suppressing an internal deprecated-hook notice could remove an identical suppression filter registered by other code on `deprecated_hook_trigger_error`, causing deprecation notices that the other code had silenced to print.
+* When multiple Views were embedded on the same page and one had a search bar, performing a search also filtered the other Views, so a View set to hide when it has no entries showed "This search returned no results." instead. A search now applies only to the View it was performed on.
+
+#### 💻 Developer Updates
+* Entry approval checks now accept the lowercase `approved` value in the `is_approved` entry meta, matching the already-accepted `Approved` and `1` values.
+* Edit Entry now uses `GFAPI::get_entry()` and `GF_Field::get_value_save_input()` instead of `GFFormsModel::get_lead()` and `GFFormsModel::prepare_value()`, deprecated in Gravity Forms 3.0.
+* GravityView no longer listens to its own deprecated hooks, clearing deprecated-hook entries from debugging tools like Query Monitor. The deprecated hooks still fire for third-party code.
+* Added `gk/gravityview/template/options/pre-context` filter to modify typed field options before they are filtered by context.
+* Added `gk/gravityview/deprecated-hook-notices/product-dirs` filter to register additional directories as GravityKit products for deprecated-hook classification, and the internal product list now refreshes until Foundation has fully initialized.
+* Added `gk/gravityview/field-output/fix-heading-wrapper` filter to disable the automatic demotion and suppression of heading wrappers in field output.
+* Added the `gk/gravityview/search/scope-to-view` filter (default `true`) to control whether a front-end search is scoped to the View it was performed on. Return `false` to restore the legacy behavior where one search bar filters every View on the page.
+* Added the `gk/gravityview/view/secret/allow-legacy` filter to control whether a View accepts the embed secret it used before this release. Existing embeds keep working by default; return `false` to require the current site-specific secret.
+
+#### 🔧 Updated
+* [Foundation](https://www.gravitykit.com/foundation/) to version 1.25.0.
+
+= 3.0.2 on June 26, 2026 =
+
+This release hardens lightbox entry access, fixes opening and editing entries in a lightbox, and fixes an issue with the Bulk Edit action's field picker.
+
+#### 🔒 Security
+* Hardens access control for entries opened in a lightbox. We recommend updating to the latest version.
+
+#### 🐛 Fixed
+* Fixes an entry showing "The requested entry could not be found." when opened or edited in a lightbox (a regression introduced in 3.0.1), even though the same entry opened correctly as a full page. This affected Views set to "Embed Only" and Views using a custom entry slug.
+* When using the Bulk Actions "Edit Entries" action with "Pick specific fields", a selected form field was not shown the next time the View editor settings were opened, causing the selection to be lost when the View was saved again.
+
+#### 🔧 Updated
+* [Foundation](https://www.gravitykit.com/foundation/) to version 1.24.2.
+
+= 3.0.1 on June 22, 2026 =
+
+This release includes several security hardening improvements and fixes a handful of display and shortcode issues.
+
+#### 🔒 Security
+* Hardens access control and output escaping across several areas. We recommend updating to the latest version.
+
+#### 🐛 Fixed
+* The "Container Tag" setting on [DIY Layout](https://www.gravitykit.com/products/diy-layout/) was hidden in the View editor.
+* Adding a single input of a Chained Selects field to a View (for example, only the "City" dropdown) displayed the entire field with every dropdown's label and value, instead of just that input's value.
+* A View using the Vantage theme's table layout could extend past the screen edge on mobile devices instead of fitting within the viewport.
+* The GravityView "My Forms" tab on a [LifterLMS student dashboard](https://lifterlms.com/docs/student-dashboard/) could appear in the wrong position or have a broken link, depending on which other dashboard tabs were enabled (for example, when the "My Certificates" tab was disabled).
+* The GravityKit icon in the WordPress admin toolbar appeared vertically off-center (sitting too low) inside the WordPress admin, while displaying correctly on the frontend.
+* The `[gv_entry_link]` shortcode could point to the wrong View when another View was embedded earlier in the same post or page.
+* The `[gvlogic]` shortcode's `in` and `not_in` operators did not match values stored as comma-separated lists (such as List and Multi-Select fields) or single values, only JSON arrays.
+
+= 3.0.0 on June 18, 2026 =
+
+GravityView 3.0 is the biggest release in years: **Give your Views a fresh look** with the new Vantage theme, users no longer need WordPress admin access to perform **bulk actions** on entries, a powerful new way to create Views using your AI agent, and more!
+
+#### 🚀 Added
+* Vantage: a new, great-looking theme for Views.
+  - Built-in card layout capability with the Columns control.
+  - For existing Views, enable Vantage in your View Settings' Styles tab.
+  - A site-wide Default theme setting (GravityKit → Settings → GravityView → Appearance) that applies Vantage to new Views by default.
+* Frontend bulk actions on table-layout Views, applied to selected entries:
+  - Delete, Approve, Disapprove, Export;
+  - Bulk Edit of field values, including complex field types (dropdown, radio, checkbox, multiselect, Name inputs, and Address text inputs);
+  - Resend Notifications to (re)send Gravity Forms notifications;
+  - Download Attachments to package file-upload attachments into a single ZIP download;
+  - Optional background processing on each action, for large entry sets.
+* Create and configure Views using the [GravityKit MCP](https://www.gravitykit.com/mcp/):
+  - Control everything about your View using your AI assistant;
+  - Also create and edit your Gravity Forms forms;
+  - Powered by the WordPress Abilities API, available in WordPress 6.9 and newer.
+* Search Bar improvements:
+  - Date range presets in the Search Bar, including This Week, This Year, Last Year, and the last four completed quarters.
+  - "Date range layout" setting: two separate date pickers, or a new combined date range picker.
+  - Minimum and maximum date settings on date fields limit the dates a visitor can select in the picker. Supports absolute dates (e.g. 2026-01-31) and relative dates (e.g. "-1 year", "now").
+* Revision history for Views, with one-click restore from the Revisions box in the Edit View screen.
+
+#### ✨ Improved
+* Switching View types (for example, from Table to Layout Builder) now maintains your configured fields instead of resetting the configuration.
+* When creating a new View, the editor has form fields pre-filled for all layout types (previously only for Table and DataTables layout types).
+* Added a Display Mode setting to the Page Links widget to improve View navigation, with three options: Numbers with arrows (default, unchanged), Numbers with Previous/Next labels, or Previous/Next only.
+* Multiple Views on the same page can now be paginated independently of one another.
+* Loading the block editor is now significantly faster on sites with many Views.
+
+#### 💻 Developer Updates
+
+Check out the new [GravityKit Developer MCP](https://mcp.gravitykit.dev) - develop faster by enabling your AI to quickly find what it needs!
+
+* [Read what you need to know about the GravityView 3.0 migration.](https://www.gravitykit.dev/migrating-to-3-0-dev-guide/)
+* Added a **[GravityView Theme CSS Token System](https://www.gravitykit.dev/gravityview/css-tokens/)** for easily styling every aspect of a View.
+* Refactored the codebase to use a PSR-4 autoloaded `GravityKit\GravityView\*` namespace, with core classes moved from `includes/` and `future/` into a unified `src/` directory. Lazy-loaded class aliases keep legacy `\GV\*` and `GravityView_*` class names working.
+* Added formal `Contracts` interfaces for core components, including Views, Entries, Fields, Forms, and Widgets.
+* Added the GravityView Abilities layer: a set of `gk-gravityview/*` abilities registered with the WordPress Abilities API that make View authoring — creating Views and configuring their fields, widgets, search, and layouts — available over REST and to AI agents through MCP. Add-ons can register their own abilities and hook into the View lifecycle to extend what's automatable (for example, `gk/gravityview/rest/view/cloned` and `gk/gravityview/rest/view-config/apply/after`).
+* Added the [`gk/gravityview/bulk-actions/*` filter and action namespace](https://www.gravitykit.dev/search/?q=gk%2Fgravityview%2Fbulk-actions%2F) for the new frontend bulk actions. Register or modify the available actions with [`gk/gravityview/bulk-actions/actions`](https://www.gravitykit.dev/docs/gravityview/filters/gk-gravityview-bulk-actions-actions/), gate them with [`gk/gravityview/bulk-actions/action-is-available`](https://www.gravitykit.dev/docs/gravityview/filters/gk-gravityview-bulk-actions-action-is-available/), and configure per-action settings and field requirements with [`gk/gravityview/bulk-actions/action-config`](https://www.gravitykit.dev/docs/gravityview/filters/gk-gravityview-bulk-actions-action-config/), [`gk/gravityview/bulk-actions/action-settings`](https://www.gravitykit.dev/docs/gravityview/filters/gk-gravityview-bulk-actions-action-settings/), and [`gk/gravityview/bulk-actions/action-field-requirements`](https://www.gravitykit.dev/docs/gravityview/filters/gk-gravityview-bulk-actions-action-field-requirements/).
+* Added background-processing controls for bulk actions with [many new hooks](https://www.gravitykit.dev/search/?q=gk%2Fgravityview%2Fbulk-actions%2Fbackground)
+* Added [`gk/gravityview/admin/field-type/class` filter](https://www.gravitykit.dev/docs/gravityview/filters/gk-gravityview-admin-field-type-class/) to modify the field-type rendering class. Its default is now the PSR-4 namespaced class name (`GravityKit\GravityView\Admin\FieldTypes\{Type}`):
+  - Deprecated `gravityview/setting/class/{$field_type}` in its favor (existing hooks continue to fire);
+  - Removed the `gravityview/setting/class_file/{$field_type}` filter and the `src/Admin/Rendering/field-types/` directory it gated;
+  - Legacy `GravityView_FieldType_*` names continue to resolve via `class_alias()`.
+* Replaced the jQuery UI datepicker with a modern, accessible date picker from Query Filters across the Search Bar and View editor.
+  - Removed the jQuery UI datepicker dependency: the `jquery-ui-datepicker` script and the Google-hosted `ajax.googleapis.com/.../smoothness/jquery-ui.css` stylesheet are no longer enqueued.
+* Deprecated the `gravityview_datepicker_settings` filter and the `GravityView_Widget_Search::add_datepicker_localization()` / `add_datepicker_js_dependency()` methods that fed it. Use [`gk/query-filters/date-picker/translations`](https://www.gravitykit.dev/docs/query-filters/filters/gk-query-filters-date-picker-translations/) and [`gk/query-filters/date-range-picker/translations`](https://www.gravitykit.dev/docs/query-filters/filters/gk-query-filters-date-range-picker-translations/) instead. `fe-views.datepicker()` is now a no-op shim retained for backward compatibility with external callers.
+* Added [`gk/gravityview/view/revisions/tracked-meta-keys` filter](https://www.gravitykit.dev/docs/gravityview/filters/gk-gravityview-view-revisions-tracked-meta-keys/) to register additional View meta keys for revision tracking.
+* Added [`gk/gravityview/view/revisions/restored` action](https://www.gravitykit.dev/docs/gravityview/actions/gk-gravityview-view-revisions-restored/), fired after a View revision is restored.
+* Added per-View pagination parameters (`pagenum_{View ID}`) so multiple Views on a page can paginate independently. The parameter is always honored when present; to generate per-View pagination links instead of the shared `?pagenum=`, enable the new [`gk/gravityview/pagination/scoped-keys` filter](https://www.gravitykit.dev/docs/gravityview/filters/gk-gravityview-pagination-scoped-keys/) (off by default).
+* Added [`gk/gravityview/search/datepicker/min-date` and `gk/gravityview/search/datepicker/max-date` filters](https://www.gravitykit.dev/docs/gravityview/filters/gk-gravityview-search-datepicker-bound/) to set or override a Search Bar date field's selectable range per View.
+* Added [`gk/gravityview/search/date-range-picker/presets` filter](https://www.gravitykit.dev/docs/gravityview/filters/gk-gravityview-search-date-range-picker-presets/) to customize the date range preset list.
+* Added [`gk/gravityview/admin-views/template-switch/fields` filter](https://www.gravitykit.dev/docs/gravityview/filters/gk-gravityview-admin-views-template-switch-fields/) to modify the migrated field configuration when a View's layout is switched in the editor.
+* Added `gravityview/view-config-error` JavaScript event on `document.body`, fired after the View editor recovers from a failed zone configuration request.
+* In the `gravityview_page_links_args` filter, `type` is now force-overridden to `array` when the Page Links widget's Display Mode is set to "Previous / Next only" or when "Show First / Last links" is enabled (those modes post-process the link list). Filters that set `type` to `list` or `plain` continue to work for the other modes.
+
+= 2.62.0 on June 11, 2026 =
+
+This release fixes empty entry links and several Edit Entry issues, improves Entry Locking, and stops a duplicate admin notice for Views with Enhanced Security enabled.
+
+#### ✨ Improved
+* The "missing secret" admin notice for a View with Enhanced Security embedded without its `secret` attribute now appears once per page, instead of a separate notice for every entry visited.
+* Entry Locking now releases the lock as soon as the editor leaves the page and stores a single transient per entry, so other users can edit sooner and the options table stays cleaner.
+
+#### 🐛 Fixed
+* The `{gv_entry_link}` merge tag and `[gv_entry_link]` shortcode produced empty links on the Single Entry page of a View with Enhanced Security enabled.
+* Saving a View in Safari is faster.
+* Multiple issues with Edit Entry page behavior:
+  - The "Cancel" button required a second click to leave Edit Entry after taking over a locked entry;
+  - The "Cancel" button returned to the previous edit instead of the Single Entry after an entry had been updated;
+  - Pressing Enter while editing an entry with a File Upload or Post Image field cleared form fields instead of submitting the form.
+
+#### 🔧 Updated
+* [Foundation](https://www.gravitykit.com/foundation/) to version 1.22.0.
 
 = 2.61.0 on May 28, 2026 =
 
@@ -151,6 +425,7 @@ This release resolves an issue where the "Search in visible fields only" setting
 This release adds a safeguard against unfiltered entry display when Advanced Filtering is inactive, and fixes issues with the Connected Views dropdown and search queries containing typographic quotes.
 
 #### 🚀 Added
+* Search is now powered by Query Filters, allowing powerful future search improvements.
 * A safeguard that prevents unfiltered entries from being displayed when a View has Advanced Filtering conditional logic configured but the extension is not active.
 
 #### 🐛 Fixed
@@ -288,6 +563,22 @@ This release introduces the ability to filter Entry Notes by type, resolves mult
 #### 🚀 Added
 * Entry Notes field setting to filter displayed note types, such as hiding notification confirmations while showing only user notes.
 
+#### 💻 Developer Updates
+* Migrated the entire codebase to PSR-4 autoloading under the `GravityKit\GravityView` namespace. All classes from `includes/` (`GravityView_*`) and `future/` (`\GV\*`) now live in `src/` with `class_alias()` bridges preserving full backwards compatibility.
+* Removed the `includes/` and `future/` directories. All class files are now consolidated under `src/`.
+* Removed the Composer classmap autoloader in favor of PSR-4 autoloading with lazy SPL autoloaders for legacy aliases.
+* Reorganized `src/Support/` into domain-specific directories: `Data/`, `Logging/`, `Media/`, `Migration/`, `Renderer/`, `Template/`, `Utils/`, `Frontend/`, `Core/`, `GravityForms/`, and `Wrappers/`.
+* Added a deprecation tracking layer that logs usage of old class names, helping developers identify code that should be updated.
+* Added a developer migration guide (`docs/developer-migration-guide.md`) with class mapping tables and code examples.
+* Consolidated 48 individual integration hook `wp_loaded` callbacks into a single filesystem-based discovery and registration system.
+* Added `Assets` and `Path` helper classes to centralize plugin URL and file path resolution.
+* Moved template, partial, and asset files to standardized locations within `src/`.
+* Replaced scattered `plugins_url()` calls with the centralized `Assets` helper.
+* Replaced `json_encode()` calls with `wp_json_encode()` for WordPress coding standards compliance.
+* Added backslash prefixes to global function calls in namespaced files for consistency and performance.
+* Removed `future/loader.php`. The bootstrap logic now runs directly from `gravityview.php`. Any code that explicitly required `future/loader.php` will need to be updated.
+* Legacy class aliases are now registered via a lazy SPL autoloader at `plugins_loaded` priority 0. Code that calls `class_exists('GravityView_*')` before `plugins_loaded` (e.g., in mu-plugins) may get `false` where the old classmap autoloader returned `true`. Use the `plugins_loaded` hook with priority >= 1 to safely check for GravityView classes.
+
 #### 🐛 Fixed
 * Hidden fields not appearing on the Edit Entry page when the `gravityview/edit_entry/reveal_hidden_field` filter returns `true`.
 * Multi-column List fields with data on the Edit Entry page no longer display serialized array data when revealed via conditional logic.
@@ -295,6 +586,11 @@ This release introduces the ability to filter Entry Notes by type, resolves mult
 * The "Unapproved" entries filter preventing other plugins from modifying the entry query.
 * Layout Builder template now has distinct CSS classes for Single Entry (`gv-layout-builder-single-container`) and Multiple Entries (`gv-layout-builder-multiple-container`) views, matching the pattern used by Table and List templates.
 * File Upload field secure download links now open files (PDFs, images, etc.) in the browser instead of forcing a download.
+* Prevented potential PHP warnings in View joins and unions retrieval when post meta contains unexpected data.
+* Fixed PHP 8.3 deprecation warning for implicit float-to-int conversion when processing Gravity Forms fields with sub-inputs.
+* Added missing `get_instance()` method to the Gutenberg Blocks class.
+* Fixed PHP 8.4 deprecation warnings for implicit nullable parameter types in Entry, Field, Renderer, and Template classes.
+* Fixed PHP 8.5 null array offset deprecation in Table and List template files.
 
 #### 💻 Developer Updates
 * Added `gk/gravityview/field/notes/type-labels` filter to modify the labels displayed for note types in the Entry Notes field settings.

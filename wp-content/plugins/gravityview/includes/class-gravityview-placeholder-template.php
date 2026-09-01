@@ -1,44 +1,23 @@
 <?php
 /**
- * GravityView placeholder templates
+ * Backward-compatibility shim.
  *
- * @file class-gravityview-placeholder-template.php
- * @package   GravityView
- * @license   GPL2+
- * @author    Katz Web Services, Inc.
- * @link      http://www.gravitykit.com
- * @copyright Copyright 2021, Katz Web Services, Inc.
+ * This file was moved in GravityView 3.0. It is intentionally empty.
+ * GravityView classes and functions load automatically — you no longer
+ * need to require GravityView files in your code.
  *
- * @since 2.10
+ * @deprecated 3.0
  */
-class GravityView_Placeholder_Template extends GravityView_Template {
 
-	/**
-	 * @since
-	 * @var mixed|string The template ID.
-	 */
-	private $id;
+if ( ! defined( 'ABSPATH' ) ) {
+	die;
+}
 
-	function __construct( $id = 'template_placeholder', $settings = array() ) {
-
-		$default_template_settings = array(
-			'type'        => 'custom',
-			'buy_source'  => 'https://www.gravitykit.com/pricing/',
-			'slug'        => '',
-			'template_id' => '',
-			'label'       => '',
-			'description' => '',
-			'logo'        => '',
-			'icon'        => '',
-			'price_id'    => '',
-			'textdomain'  => '',
-		);
-
-		$settings = wp_parse_args( $settings, $default_template_settings );
-
-		$this->id       = $id;
-		$this->settings = $settings;
-
-		parent::__construct( $id, $settings, array(), array() );
-	}
+if ( function_exists( '_deprecated_file' ) ) {
+	_deprecated_file(
+		plugin_basename( __FILE__ ),
+		'3.0',
+		'',
+		'This file was moved in GravityView 3.0 and will be removed in a future release. GravityView classes and functions load automatically — you no longer need to require them.'
+	);
 }

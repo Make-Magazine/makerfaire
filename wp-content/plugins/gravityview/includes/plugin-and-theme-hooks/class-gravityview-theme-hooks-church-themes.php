@@ -1,63 +1,23 @@
 <?php
 /**
- * Add Church Themes compatibility to GravityView
+ * Backward-compatibility shim.
  *
- * @file      class-gravityview-theme-hooks-church-themes.php
- * @package   GravityView
- * @license   GPL2
- * @author    GravityKit <hello@gravitykit.com>
- * @link      http://www.gravitykit.com
- * @copyright Copyright 2016, Katz Web Services, Inc.
+ * This file was moved in GravityView 3.0. It is intentionally empty.
+ * GravityView classes and functions load automatically — you no longer
+ * need to require GravityView files in your code.
  *
- * @since 1.17
+ * @deprecated 3.0
  */
 
-/**
- * @inheritDoc
- * @since 1.17
- */
-class GravityView_Theme_Hooks_Church_Themes extends GravityView_Plugin_and_Theme_Hooks {
-
-	/**
-	 * Church Themes framework version number
-	 *
-	 * @inheritDoc
-	 * @since 1.17
-	 */
-	protected $constant_name = 'CTFW_VERSION';
-
-	/**
-	 * Add filters
-	 *
-	 * @since 1.17
-	 *
-	 * @return void
-	 */
-	protected function add_hooks() {
-		parent::add_hooks();
-
-		add_filter( 'ctfw_has_content', array( $this, 'if_gravityview_return_true' ) );
-	}
-
-	/**
-	 * Tell Church Themes that GravityView has content if the current page is a GV post type or has shortcode
-	 *
-	 * @since 1.17
-	 *
-	 * @param bool $has_content Does the post have content?
-	 *
-	 * @return bool True: It is GV post type, or has shortcode, or $has_content was true.
-	 */
-	public function if_gravityview_return_true( $has_content = false ) {
-
-		if ( ! class_exists( 'GravityView_frontend' ) ) {
-			return $has_content;
-		}
-
-		$instance = GravityView_frontend::getInstance();
-
-		return ( $instance->is_gravityview_post_type || $instance->post_has_shortcode ) ? true : $has_content;
-	}
+if ( ! defined( 'ABSPATH' ) ) {
+	die;
 }
 
-new GravityView_Theme_Hooks_Church_Themes();
+if ( function_exists( '_deprecated_file' ) ) {
+	_deprecated_file(
+		plugin_basename( __FILE__ ),
+		'3.0',
+		'',
+		'This file was moved in GravityView 3.0 and will be removed in a future release. GravityView classes and functions load automatically — you no longer need to require them.'
+	);
+}

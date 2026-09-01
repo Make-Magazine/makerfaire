@@ -1,12 +1,23 @@
 <?php
 /**
- * Display hidden field input
+ * Backward-compatibility shim.
  *
- * @file class-search-widget.php See for usage
+ * This file was moved in GravityView 3.0. It is intentionally empty.
+ * GravityView classes and functions load automatically — you no longer
+ * need to require GravityView files in your code.
  *
- * @global array $data
+ * @deprecated 3.0
  */
 
-$search_field = \GV\Utils::get( $data, 'search_field', null );
-?>
-<input type="hidden" name="<?php echo esc_attr( $search_field['name'] ?? '' ); ?>" value="<?php echo esc_attr( $search_field['value'] ?? '' ); ?>">
+if ( ! defined( 'ABSPATH' ) ) {
+	die;
+}
+
+if ( function_exists( '_deprecated_file' ) ) {
+	_deprecated_file(
+		plugin_basename( __FILE__ ),
+		'3.0',
+		'',
+		'This file was moved in GravityView 3.0 and will be removed in a future release. GravityView classes and functions load automatically — you no longer need to require them.'
+	);
+}

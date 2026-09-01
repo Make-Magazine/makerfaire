@@ -29,15 +29,23 @@ export const useProductFilterSearch = <T extends BaseProduct>({
 
     // Then apply filters
     const filteredResults = useMemo(() => {
+        // Deprecated products are only shown while still installed; hide the rest so
+        // callers (e.g. section headers) don't count products that never render.
+        const visibleResults = Object.fromEntries(
+            Object.entries(searchResults).filter(
+                ([_, product]) => !(product.is_deprecated && !product.is_installed)
+            )
+        );
+
         // Only return all results for 'all' filter
         if (activeFilter === 'all') {
-            return searchResults;
+            return visibleResults;
         }
 
         // For other filters, always apply the filter even if the tab is hidden
 
         return Object.fromEntries(
-            Object.entries(searchResults).filter(([_, product]) => {
+            Object.entries(visibleResults).filter(([_, product]) => {
                 switch (activeFilter) {
                     case 'active':
                         return product.is_active;

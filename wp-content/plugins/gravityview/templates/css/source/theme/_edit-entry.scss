@@ -1,0 +1,126 @@
+/**
+ * GravityView Theme — Edit Entry
+ *
+ * Harmonized button styling and form layout improvements for edit entry.
+ * The Edit Entry wrapper has no `.gv-container` ancestor, so the
+ * renderer stamps `gv-themed` directly on `.gv-edit-entry-wrapper`
+ * when the View has Theme enabled; the compound arm is the
+ * primary scope. The descendant arm covers wrappers rendered inside
+ * a marked container.
+ * Does NOT restyle Gravity Forms' own `.gform_wrapper.gravity-theme` internals.
+ *
+ * @package   GravityView
+ * @license   GPL2
+ * @since     TBD
+ */
+
+.gv-edit-entry-wrapper.gv-themed,
+.gv-themed .gv-edit-entry-wrapper {
+
+	// =========================================================
+	// Title
+	// =========================================================
+	.gv-edit-entry-title {
+		font-size: var(--gv-font-size-xl);
+		font-weight: var(--gv-font-weight-semibold);
+		color: var(--gv-color-text);
+		margin-block-end: var(--gv-space-4);
+		padding-block-end: var(--gv-space-3);
+		border-block-end: 1px solid var(--gv-entry-border-color);
+	}
+
+	// =========================================================
+	// Notice — Edit Entry scope.
+	//
+	// Padding + margin live here; the variant paint (surface +
+	// border-inline-start colour) lives on the canonical
+	// `.gv-notice--{kind}` mixin in `_a11y.scss` so it stays in
+	// sync with the SC 1.4.1 status-pairing contract. Legacy
+	// `.gv-notice.error` keeps painting the error surface here
+	// for templates that haven't migrated to the new variant
+	// classes yet.
+	// =========================================================
+	.gv-notice {
+		padding: var(--gv-space-3) var(--gv-space-4);
+		margin-block-end: var(--gv-space-4);
+
+		&.error {
+			border-inline-start-color: var(--gv-color-error);
+			background: var(--gv-color-surface-error);
+			color: var(--gv-color-error);
+		}
+
+		&.success {
+			border-inline-start-color: var(--gv-color-success);
+			background: var(--gv-color-surface-success);
+			color: var(--gv-color-success);
+		}
+
+		&.info {
+			border-inline-start-color: var(--gv-color-info);
+			background: var(--gv-color-surface-info);
+			color: var(--gv-color-info);
+		}
+	}
+
+	// =========================================================
+	// Inline form-validation states (SC 1.3.1, SC 3.3.1).
+	//
+	// Gravity Forms tags invalid controls with `aria-invalid` and
+	// the legacy `.gfield_error` ancestor; both surfaces get the
+	// same red-tinted treatment so the dual channel (icon/label
+	// + colour) reads on every render path.
+	// =========================================================
+	input[aria-invalid="true"],
+	textarea[aria-invalid="true"],
+	select[aria-invalid="true"],
+	.gfield_error input,
+	.gfield_error textarea,
+	.gfield_error select {
+		border-color: var(--gv-color-error);
+		background-color: var(--gv-color-surface-error);
+	}
+
+	// =========================================================
+	// Disabled form controls.
+	//
+	// Pair the dedicated `--gv-color-control-bg-disabled` /
+	// `-border-color-disabled` / `-text-disabled` tokens so a
+	// customer changing the disabled-surface hue in Studio sees
+	// every disabled input update consistently across Edit Entry,
+	// Search Bar, and Maps autocomplete.
+	// =========================================================
+	input:disabled,
+	textarea:disabled,
+	select:disabled {
+		background-color: var(--gv-control-bg-disabled);
+		border-color: var(--gv-control-border-color-disabled);
+		color: var(--gv-control-text-disabled);
+		cursor: not-allowed;
+	}
+
+	// Push Delete to the opposite end of the button-bar from
+	// Update / Cancel. Clear the legacy `alignright pull-right`
+	// float so `margin-inline-start: auto` can take effect.
+	.gv-button-delete {
+		float: none !important;
+		margin-inline-start: auto !important;
+	}
+
+	// =========================================================
+	// Form footer — `#publishing-action` may or may not be wrapped in
+	// `.gform-footer` depending on Gravity Forms version, so target both
+	// scopes. `!important` is required because Gravity Forms' theme
+	// framework resets descendant layout via `.gform-theme--framework *`.
+	// =========================================================
+	.gform-footer #publishing-action,
+	#publishing-action {
+		display: flex !important;
+		flex-wrap: wrap;
+		align-items: center;
+		gap: var(--gv-space-3);
+		padding-block-start: var(--gv-space-4);
+		border-block-start: 1px solid var(--gv-entry-border-color);
+		margin-block-start: var(--gv-space-6);
+	}
+}

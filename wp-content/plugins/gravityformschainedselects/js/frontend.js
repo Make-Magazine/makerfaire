@@ -295,7 +295,13 @@
 			}
 
 			var $spinnerTarget = this.elem.closest( 'span' );
-			gformInitializeSpinner( this.formId, $spinnerTarget, 'gform-chainedselect-spinner-' + inputId );
+
+            if ( gform?.spinner?.show ) {
+                gform.spinner.show( this.formId, $spinnerTarget );
+            }  else {
+                gformInitializeSpinner( this.formId, $spinnerTarget, 'gform-chainedselect-spinner-' + inputId );
+            }
+
 		};
 
         this.destroy = function() {
@@ -305,7 +311,11 @@
                 return;
             }
 
-            gformRemoveSpinner( 'gform-chainedselect-spinner-' + inputId );
+            if ( gform?.spinner?.hide ) {
+                gform.spinner.hide();
+            } else {
+                gformRemoveSpinner( 'gform-chainedselect-spinner-' + inputId );
+            }
         };
 
         this.formUsesFramework = function( formId ) {

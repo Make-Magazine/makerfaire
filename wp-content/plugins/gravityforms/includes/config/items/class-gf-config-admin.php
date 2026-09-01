@@ -47,6 +47,11 @@ class GF_Config_Admin extends GF_Config {
 					'edit_form'   => esc_html__( 'Edit Form', 'gravityforms' ),
 					'insert_form' => esc_html__( 'Insert Form', 'gravityforms' ),
 				),
+				'dialog' => array(
+					'cancel' => esc_html__( 'Cancel', 'gravityforms' ),
+					'close'  => esc_html__( 'Close', 'gravityforms' ),
+					'ok'     => esc_html__( 'OK', 'gravityforms' ),
+				),
 			),
 			'bulk_actions' => $this->get_bulk_action_config(),
 		);
@@ -67,56 +72,56 @@ class GF_Config_Admin extends GF_Config {
 					'title'    => esc_html__( 'Bulk Delete', 'gravityforms' ),
 					'starting' => esc_html__( 'Starting bulk delete...', 'gravityforms' ),
 					'progress' => esc_html__( 'Deleting Gravity Forms entries...', 'gravityforms' ),
-					'complete' => esc_html__( 'Deletion complete!', 'gravityforms' ),
+					'complete' => esc_html__( 'Completed deleting entries!', 'gravityforms' ),
 					'error'    => esc_html__( 'Error starting bulk delete.', 'gravityforms' ),
 				),
 				'trash'  => array(
 					'title'    => esc_html__( 'Bulk Trash', 'gravityforms' ),
 					'starting' => esc_html__( 'Starting bulk trash...', 'gravityforms' ),
 					'progress' => esc_html__( 'Trashing Gravity Forms entries...', 'gravityforms' ),
-					'complete' => esc_html__( 'Entries moved to trash!', 'gravityforms' ),
+					'complete' => esc_html__( 'Completed moving entries to trash!', 'gravityforms' ),
 					'error'    => esc_html__( 'Error starting bulk trash.', 'gravityforms' ),
 				),
 				'spam'   => array(
 					'title'    => esc_html__( 'Bulk Mark as Spam', 'gravityforms' ),
 					'starting' => esc_html__( 'Starting bulk spam marking...', 'gravityforms' ),
 					'progress' => esc_html__( 'Marking Gravity Forms entries as spam...', 'gravityforms' ),
-					'complete' => esc_html__( 'Entries marked as spam!', 'gravityforms' ),
+					'complete' => esc_html__( 'Completed marking entries as spam!', 'gravityforms' ),
 					'error'    => esc_html__( 'Error starting bulk spam.', 'gravityforms' ),
 				),
 				'restore' => array(
 					'title'    => esc_html__( 'Bulk Restore', 'gravityforms' ),
 					'starting' => esc_html__( 'Starting bulk restore...', 'gravityforms' ),
 					'progress' => esc_html__( 'Restoring Gravity Forms entries...', 'gravityforms' ),
-					'complete' => esc_html__( 'Entries restored!', 'gravityforms' ),
+					'complete' => esc_html__( 'Completed restoring entries!', 'gravityforms' ),
 					'error'    => esc_html__( 'Error starting bulk restore.', 'gravityforms' ),
 				),
 				'unspam' => array(
 					'title'    => esc_html__( 'Bulk Unmark as Spam', 'gravityforms' ),
 					'starting' => esc_html__( 'Starting bulk unspam...', 'gravityforms' ),
 					'progress' => esc_html__( 'Restoring Gravity Forms entries from spam...', 'gravityforms' ),
-					'complete' => esc_html__( 'Entries unmarked as spam!', 'gravityforms' ),
+					'complete' => esc_html__( 'Completed unmarking entries as spam!', 'gravityforms' ),
 					'error'    => esc_html__( 'Error starting bulk unspam.', 'gravityforms' ),
 				),
 				'delete_entries' => array(
 					'title'    => esc_html__( 'Bulk Delete Entries', 'gravityforms' ),
 					'starting' => esc_html__( 'Starting bulk entry deletion...', 'gravityforms' ),
 					'progress' => esc_html__( 'Deleting Gravity Forms entries...', 'gravityforms' ),
-					'complete' => esc_html__( 'Entry deletion complete!', 'gravityforms' ),
+					'complete' => esc_html__( 'Completed deleting entries!', 'gravityforms' ),
 					'error'    => esc_html__( 'Error starting bulk entry deletion.', 'gravityforms' ),
 				),
 				'mark_read' => array(
 					'title'    => esc_html__( 'Bulk Mark as Read', 'gravityforms' ),
 					'starting' => esc_html__( 'Starting bulk mark as read...', 'gravityforms' ),
 					'progress' => esc_html__( 'Marking Gravity Forms entries as read...', 'gravityforms' ),
-					'complete' => esc_html__( 'Entries marked as read!', 'gravityforms' ),
+					'complete' => esc_html__( 'Completed marking entries as read!', 'gravityforms' ),
 					'error'    => esc_html__( 'Error starting bulk mark as read.', 'gravityforms' ),
 				),
 				'mark_unread' => array(
 					'title'    => esc_html__( 'Bulk Mark as Unread', 'gravityforms' ),
 					'starting' => esc_html__( 'Starting bulk mark as unread...', 'gravityforms' ),
 					'progress' => esc_html__( 'Marking Gravity Forms entries as unread...', 'gravityforms' ),
-					'complete' => esc_html__( 'Entries marked as unread!', 'gravityforms' ),
+					'complete' => esc_html__( 'Completed marking entries as unread!', 'gravityforms' ),
 					'error'    => esc_html__( 'Error starting bulk mark as unread.', 'gravityforms' ),
 				),
 			),
@@ -154,7 +159,7 @@ class GF_Config_Admin extends GF_Config {
 
 		$filter          = rgget( 'filter' );
 		$search          = rgget( 's' );
-		$field_id        = rgget( 'field_id' );
+		$field_id        = rgget( 'field_id' ) === 'entry_id' ? 'id' : rgget( 'field_id' );
 		$operator        = rgget( 'operator' );
 		$search_criteria = array();
 

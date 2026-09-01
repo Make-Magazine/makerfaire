@@ -231,61 +231,6 @@ __( 'images', 'elementor' );
 __( 'blocks', 'elementor' );
 __( 'Loading', 'elementor' );
 __( 'Show prompt history', 'elementor' );
-__( 'Cancel', 'elementor' );
-__( 'Yes, leave', 'elementor' );
-__( 'Preview unavailable', 'elementor' );
-__( 'Hero section on [topic] with heading, text, buttons on the right, and an image on the left', 'elementor.com' ) },
-	// Translators: [Topic] is a placeholder for the user - please translate it as well
-	{ text: __( 'About Us section on [topic] with heading, text, and big image below', 'elementor.com' ) },
-	{ text: __( 'Team section with four image boxes showcasing team members', 'elementor.com' ) },
-	// Translators: [Topic] is a placeholder for the user - please translate it as well
-	{ text: __( 'FAQ section with a toggle widget showcasing FAQs about [topic]', 'elementor.com' ) },
-	{ text: __( 'Gallery section with a carousel displaying three images at once', 'elementor.com' ) },
-	// Translators: [Topic] is a placeholder for the user - please translate it as well
-	{ text: __( 'Contact section with a form for [topic]', 'elementor.com' ) },
-	{ text: __( 'Client section featuring companies\' logos', 'elementor.com' ) },
-	// Translators: [Topic] is a placeholder for the user - please translate it as well
-	{ text: __( 'Testimonial section with testimonials, each featuring a star rating and an image', 'elementor.com' ) },
-	// Translators: [Topic] is a placeholder for the user - please translate it as well
-	{ text: __( 'Service section about [topic], showcasing four services with buttons', 'elementor.com' ) },
-	// Translators: [Topic] is a placeholder for the user - please translate it as well
-	{ text: __( 'Stats section with counters displaying data about [topic]', 'elementor.com' ) },
-	{ text: __( 'Quote section with colored background, featuring a centered quote', 'elementor.com' ) },
-	// Translators: [Topic] is a placeholder for the user - please translate it as well
-	{ text: __( 'Pricing section for [topic] with a pricing list', 'elementor.com' ) },
-	// Translators: [Topic] is a placeholder for the user - please translate it as well
-	{ text: __( 'Subscribe section featuring a simple email form, inviting users to stay informed on [topic]', 'elementor.com' ) },
-] );
-
-const IconButtonWithTooltip = ( { tooltip, ...props } ) => (
-	<Tooltip title={ tooltip }>
-		<Box component="span" sx={ { cursor: props.disabled ? 'default' : 'pointer' } }>
-			<IconButton { ...props } />
-		</Box>
-	</Tooltip>
-);
-
-IconButtonWithTooltip.propTypes = {
-	tooltip: PropTypes.string,
-	disabled: PropTypes.bool,
-};
-
-const BackButton = ( props ) => (
-	<IconButtonWithTooltip size="small" color="secondary" tooltip={ __( 'Back to results', 'elementor' );
-__( 'Edit prompt', 'elementor' );
-__( 'Generate', 'elementor' );
-__( "Press '/' for suggested prompts or describe the layout you want to create", 'elementor' );
-__( 'Suggested Prompts', 'elementor' );
-__( 'Upgrade your plan for best results.', 'elementor' );
-__( 'You won’t be able to use layouts with Elementor Pro widgets until you do.', 'elementor' );
-__( 'Go Pro', 'elementor' );
-__( 'Go Pro', 'elementor' );
-__( 'Pro', 'elementor' );
-__( "This result includes an Elementor Pro widget that's not available with your current plan. Upgrade to use all the widgets in this result.", 'elementor' );
-__( 'AI', 'elementor' );
-__( 'Beta', 'elementor' );
-__( 'Reference a website', 'elementor' );
-__( 'Create variations from Template Library', 'elementor' );
 __( 'None', 'elementor' );
 __( 'Photographic', 'elementor' );
 __( 'None', 'elementor' );
@@ -366,6 +311,61 @@ __( 'Generate images', 'elementor' );
 __( 'Generate again', 'elementor' );
 __( 'Enhance prompt', 'elementor' );
 __( 'Back', 'elementor' );
+__( 'Cancel', 'elementor' );
+__( 'Yes, leave', 'elementor' );
+__( 'Preview unavailable', 'elementor' );
+__( 'Hero section on [topic] with heading, text, buttons on the right, and an image on the left', 'elementor.com' ) },
+	// Translators: [Topic] is a placeholder for the user - please translate it as well
+	{ text: __( 'About Us section on [topic] with heading, text, and big image below', 'elementor.com' ) },
+	{ text: __( 'Team section with four image boxes showcasing team members', 'elementor.com' ) },
+	// Translators: [Topic] is a placeholder for the user - please translate it as well
+	{ text: __( 'FAQ section with a toggle widget showcasing FAQs about [topic]', 'elementor.com' ) },
+	{ text: __( 'Gallery section with a carousel displaying three images at once', 'elementor.com' ) },
+	// Translators: [Topic] is a placeholder for the user - please translate it as well
+	{ text: __( 'Contact section with a form for [topic]', 'elementor.com' ) },
+	{ text: __( 'Client section featuring companies\' logos', 'elementor.com' ) },
+	// Translators: [Topic] is a placeholder for the user - please translate it as well
+	{ text: __( 'Testimonial section with testimonials, each featuring a star rating and an image', 'elementor.com' ) },
+	// Translators: [Topic] is a placeholder for the user - please translate it as well
+	{ text: __( 'Service section about [topic], showcasing four services with buttons', 'elementor.com' ) },
+	// Translators: [Topic] is a placeholder for the user - please translate it as well
+	{ text: __( 'Stats section with counters displaying data about [topic]', 'elementor.com' ) },
+	{ text: __( 'Quote section with colored background, featuring a centered quote', 'elementor.com' ) },
+	// Translators: [Topic] is a placeholder for the user - please translate it as well
+	{ text: __( 'Pricing section for [topic] with a pricing list', 'elementor.com' ) },
+	// Translators: [Topic] is a placeholder for the user - please translate it as well
+	{ text: __( 'Subscribe section featuring a simple email form, inviting users to stay informed on [topic]', 'elementor.com' ) },
+] );
+
+const IconButtonWithTooltip = ( { tooltip, ...props } ) => (
+	<Tooltip title={ tooltip }>
+		<Box component="span" sx={ { cursor: props.disabled ? 'default' : 'pointer' } }>
+			<IconButton { ...props } />
+		</Box>
+	</Tooltip>
+);
+
+IconButtonWithTooltip.propTypes = {
+	tooltip: PropTypes.string,
+	disabled: PropTypes.bool,
+};
+
+const BackButton = ( props ) => (
+	<IconButtonWithTooltip size="small" color="secondary" tooltip={ __( 'Back to results', 'elementor' );
+__( 'Edit prompt', 'elementor' );
+__( 'Generate', 'elementor' );
+__( "Press '/' for suggested prompts or describe the layout you want to create", 'elementor' );
+__( 'Suggested Prompts', 'elementor' );
+__( 'Upgrade your plan for best results.', 'elementor' );
+__( 'You won’t be able to use layouts with Elementor Pro widgets until you do.', 'elementor' );
+__( 'Go Pro', 'elementor' );
+__( 'Go Pro', 'elementor' );
+__( 'Pro', 'elementor' );
+__( "This result includes an Elementor Pro widget that's not available with your current plan. Upgrade to use all the widgets in this result.", 'elementor' );
+__( 'AI', 'elementor' );
+__( 'Beta', 'elementor' );
+__( 'Reference a website', 'elementor' );
+__( 'Create variations from Template Library', 'elementor' );
 __( 'Want to see your %s generation history for as far as the past 90 days?', 'elementor' );
 __( 'Want to see your %s generation history for the past 90 days?', 'elementor' );
 __( 'Upgrade now', 'elementor' );
@@ -386,12 +386,6 @@ __( 'Prompt history modal', 'elementor' );
 __( 'F', 'elementor' );
 __( 'Last 7 days', 'elementor' );
 __( 'Last 30 days', 'elementor' );
-__( 'Loading...', 'elementor' );
-__( 'The app is not responding. Please try again later. (#408)', 'elementor' );
-__( 'Preview', 'elementor' );
-__( 'Remove', 'elementor' );
-__( 'You’ve got the power.', 'elementor' );
-__( 'Craft your prompt to affect content, images and/or colors - whichever you decide.', 'elementor' );
 __( 'Variations', 'elementor' );
 __( 'Create new versions of the original image.', 'elementor' );
 __( 'Resize', 'elementor' );
@@ -447,3 +441,9 @@ __( 'Cleanup', 'elementor' );
 __( 'Remove unwanted area from your image.', 'elementor' );
 __( 'Undo', 'elementor' );
 __( 'Redo', 'elementor' );
+__( 'Loading...', 'elementor' );
+__( 'The app is not responding. Please try again later. (#408)', 'elementor' );
+__( 'Preview', 'elementor' );
+__( 'Remove', 'elementor' );
+__( 'You’ve got the power.', 'elementor' );
+__( 'Craft your prompt to affect content, images and/or colors - whichever you decide.', 'elementor' );

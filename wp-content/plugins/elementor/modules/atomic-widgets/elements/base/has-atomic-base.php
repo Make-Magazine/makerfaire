@@ -7,6 +7,7 @@ use Elementor\Modules\AtomicWidgets\Controls\Base\Atomic_Control_Base;
 use Elementor\Modules\AtomicWidgets\Controls\Section;
 use Elementor\Modules\AtomicWidgets\Elements\Atomic_Form\Atomic_Form;
 use Elementor\Modules\AtomicWidgets\Elements\Loader\Frontend_Assets_Loader;
+use Elementor\Modules\AtomicWidgets\Logger\Logger;
 use Elementor\Modules\AtomicWidgets\PropsResolver\Render_Props_Resolver;
 use Elementor\Modules\AtomicWidgets\PropTypes\Contracts\Prop_Type;
 use Elementor\Modules\AtomicWidgets\Styles\Style_Schema;
@@ -29,6 +30,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 trait Has_Atomic_Base {
 	use Has_Base_Styles;
+	use Has_Base_Settings;
 
 	public function has_widget_inner_wrapper(): bool {
 		return false;
@@ -88,19 +90,70 @@ trait Has_Atomic_Base {
 	private function parse_atomic_styles( array $data ): array {
 		$styles = $data['styles'] ?? [];
 		$style_parser = Style_Parser::make( Style_Schema::get() );
+		$validated_styles = [];
 
 		foreach ( $styles as $style_id => $style ) {
 			$result = $style_parser->parse( $style );
 
 			if ( ! $result->is_valid() ) {
-				$widget_id = $data['id'] ?? 'unknown';
-				throw new \Exception( esc_html( "Styles validation failed for style `$style_id`. Widget ID: `$widget_id`. " . $result->errors()->to_string() ) );
+				Logger::warning(
+					$this->format_styles_validation_error_message(
+						$style_id,
+						$data,
+						$style,
+						$result->errors()->to_string()
+					)
+				);
+				continue;
 			}
 
-			$styles[ $style_id ] = $result->unwrap();
+			$validated_styles[ $style_id ] = $result->unwrap();
 		}
 
-		return $styles;
+		return $validated_styles;
+	}
+
+	private function format_styles_validation_error_message(
+		string $style_id,
+		array $data,
+		array $style,
+		string $validation_errors
+	): string {
+		$widget_id = $data['id'] ?? 'unknown';
+		$structure_label = $this->get_editor_structure_label( $data );
+		$style_label = isset( $style['label'] ) && is_string( $style['label'] ) ? $style['label'] : null;
+
+		$message_parts = [
+			"Styles validation failed for style `$style_id` (widget `$widget_id`)",
+		];
+
+		if ( $structure_label ) {
+			$message_parts[] = "Structure label: `$structure_label`";
+		} else {
+			$element_name = $this->get_title();
+
+			if ( '' === $element_name ) {
+				$element_name = $this->get_name();
+			}
+
+			$message_parts[] = "Element: `$element_name`";
+		}
+
+		if ( $style_label ) {
+			$message_parts[] = "Style label: `$style_label`";
+		}
+
+		return implode( '. ', $message_parts ) . '. ' . $validation_errors;
+	}
+
+	private function get_editor_structure_label( array $data ): ?string {
+		$title = $data['editor_settings']['title'] ?? $this->editor_settings['title'] ?? null;
+
+		if ( ! is_string( $title ) || '' === $title ) {
+			return null;
+		}
+
+		return $title;
 	}
 
 	private function parse_atomic_settings( array $settings ): array {
@@ -302,6 +355,10 @@ trait Has_Atomic_Base {
 
 		if ( isset( $data['title'] ) && is_string( $data['title'] ) ) {
 			$editor_data['title'] = sanitize_text_field( $data['title'] );
+		}
+
+		if ( isset( $data['grid_outline'] ) && is_bool( $data['grid_outline'] ) ) {
+			$editor_data['grid_outline'] = $data['grid_outline'];
 		}
 
 		return $editor_data;

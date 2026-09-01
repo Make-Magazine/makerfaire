@@ -1,3 +1,114 @@
-/*! For license information please see env.js.LICENSE.txt */
-!function(){"use strict";var n={d:function(e,t){for(var r in t)n.o(t,r)&&!n.o(e,r)&&Object.defineProperty(e,r,{enumerable:!0,get:t[r]})},o:function(n,e){return Object.prototype.hasOwnProperty.call(n,e)},r:function(n){"undefined"!=typeof Symbol&&Symbol.toStringTag&&Object.defineProperty(n,Symbol.toStringTag,{value:"Module"}),Object.defineProperty(n,"__esModule",{value:!0})}},e={};n.r(e),n.d(e,{InvalidEnvError:function(){return InvalidEnvError},__resetEnv:function(){return __resetEnv},initEnv:function(){return initEnv},parseEnv:function(){return parseEnv}});let t=null;function initEnv(n){t=n}function __resetEnv(){t=null}function parseEnv(n,e=n=>n){let r={},o=!1;const i=new Proxy(r,{get(n,e){return o||parse(),r[e]},ownKeys(){return o||parse(),Reflect.ownKeys(r)},getOwnPropertyDescriptor(){return{configurable:!0,enumerable:!0}}}),parse=()=>{try{const o=t?.[n];if(!o)throw new InvalidEnvError("Settings object not found");if("object"!=typeof o)throw new InvalidEnvError(`Expected settings to be \`object\`, but got \`${typeof o}\``);r=e(o)}catch(e){if(!(e instanceof InvalidEnvError))throw e;console.warn(`${n} - ${e.message}`),r={}}finally{o=!0}};return{validateEnv:parse,env:i}}class InvalidEnvError extends Error{}(window.elementorV2=window.elementorV2||{}).env=e}(),window.elementorV2.env?.init?.();
+/******/ (function() { // webpackBootstrap
+/******/ 	"use strict";
+/******/ 	// The require scope
+/******/ 	var __webpack_require__ = {};
+/******/ 	
+/************************************************************************/
+/******/ 	/* webpack/runtime/define property getters */
+/******/ 	!function() {
+/******/ 		// define getter functions for harmony exports
+/******/ 		__webpack_require__.d = function(exports, definition) {
+/******/ 			for(var key in definition) {
+/******/ 				if(__webpack_require__.o(definition, key) && !__webpack_require__.o(exports, key)) {
+/******/ 					Object.defineProperty(exports, key, { enumerable: true, get: definition[key] });
+/******/ 				}
+/******/ 			}
+/******/ 		};
+/******/ 	}();
+/******/ 	
+/******/ 	/* webpack/runtime/hasOwnProperty shorthand */
+/******/ 	!function() {
+/******/ 		__webpack_require__.o = function(obj, prop) { return Object.prototype.hasOwnProperty.call(obj, prop); }
+/******/ 	}();
+/******/ 	
+/******/ 	/* webpack/runtime/make namespace object */
+/******/ 	!function() {
+/******/ 		// define __esModule on exports
+/******/ 		__webpack_require__.r = function(exports) {
+/******/ 			if(typeof Symbol !== 'undefined' && Symbol.toStringTag) {
+/******/ 				Object.defineProperty(exports, Symbol.toStringTag, { value: 'Module' });
+/******/ 			}
+/******/ 			Object.defineProperty(exports, '__esModule', { value: true });
+/******/ 		};
+/******/ 	}();
+/******/ 	
+/************************************************************************/
+var __webpack_exports__ = {};
+/*!*************************************************!*\
+  !*** ./packages/packages/libs/env/src/index.ts ***!
+  \*************************************************/
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   InvalidEnvError: function() { return /* binding */ InvalidEnvError; },
+/* harmony export */   __resetEnv: function() { return /* binding */ __resetEnv; },
+/* harmony export */   initEnv: function() { return /* binding */ initEnv; },
+/* harmony export */   parseEnv: function() { return /* binding */ parseEnv; }
+/* harmony export */ });
+let globalEnv = null;
+function initEnv(env) {
+  globalEnv = env;
+}
+function __resetEnv() {
+  globalEnv = null;
+}
+function parseEnv(key, parseFn = rawSettings => rawSettings) {
+  let parsedEnv = {};
+  let isParsed = false;
+
+  // Proxy the exposed object so users will be able to access the properties
+  // as if it was a plain object, while still having automatic parsing.
+  const proxiedEnv = new Proxy(parsedEnv, {
+    get(target, property) {
+      if (!isParsed) {
+        parse();
+      }
+      return parsedEnv[property];
+    },
+    ownKeys() {
+      if (!isParsed) {
+        parse();
+      }
+      return Reflect.ownKeys(parsedEnv);
+    },
+    getOwnPropertyDescriptor() {
+      return {
+        configurable: true,
+        enumerable: true
+      };
+    }
+  });
+  const parse = () => {
+    try {
+      const env = globalEnv?.[key];
+      if (!env) {
+        throw new InvalidEnvError(`Settings object not found`);
+      }
+      if (typeof env !== 'object') {
+        throw new InvalidEnvError(`Expected settings to be \`object\`, but got \`${typeof env}\``);
+      }
+      parsedEnv = parseFn(env);
+    } catch (e) {
+      // If something in the validation goes wrong, we return an empty object instead of throwing,
+      // so it'll fail in the component level rather than the module level.
+      if (e instanceof InvalidEnvError) {
+        // eslint-disable-next-line no-console
+        console.warn(`${key} - ${e.message}`);
+        parsedEnv = {};
+      } else {
+        throw e;
+      }
+    } finally {
+      isParsed = true;
+    }
+  };
+  return {
+    validateEnv: parse,
+    env: proxiedEnv
+  };
+}
+class InvalidEnvError extends Error {}
+(window.elementorV2 = window.elementorV2 || {}).env = __webpack_exports__;
+/******/ })()
+;
+window.elementorV2.env?.init?.();
 //# sourceMappingURL=env.js.map

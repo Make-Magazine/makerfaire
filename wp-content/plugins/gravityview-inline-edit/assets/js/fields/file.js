@@ -54,6 +54,46 @@
         },
 
         /**
+         Returns the first selected file larger than the field's maximum size, or null.
+
+         @method oversizedFile()
+         **/
+        oversizedFile: function() {
+            var maxFileSize = $( this.options.scope ).data( 'max-file-size' );
+
+            if ( ! maxFileSize ) {
+                return null;
+            }
+
+            var maxBytes = maxFileSize * 1048576;
+            var oversized = null;
+
+            $.each( this.$tpl[0].files, function ( i, file ) {
+                if ( file.size > maxBytes ) {
+                    oversized = file;
+                    return false;
+                }
+            });
+
+            return oversized;
+        },
+
+        /**
+         Returns the localized "file too large" message.
+
+         @method maxFileSizeError()
+         **/
+        maxFileSizeError: function() {
+            var maxFileSize = $( this.options.scope ).data( 'max-file-size' );
+
+            if ( gv_inline_x.maxFileSizeError ) {
+                return gv_inline_x.maxFileSizeError.replace( '%s', maxFileSize );
+            }
+
+            return 'File exceeds size limit. Maximum file size: ' + maxFileSize + 'MB.';
+        },
+
+        /**
          Activates input: sets focus on the first field.
 
          @method activate()
@@ -66,6 +106,17 @@
                 contentType: false,
                 processData: false,
                 type: 'POST',
+                beforeSend: function() {
+                    // x-editable sends the request regardless of what the params callback returns;
+                    // false from beforeSend is the only thing that aborts it.
+                    if ( ! self.oversizedFile() ) {
+                        return;
+                    }
+
+                    $( self.options.scope ).html( self.maxFileSizeError() );
+
+                    return false;
+                },
                 success:function(response) {
                     if ( response.success === false ) {
                         $( self.options.scope ).html( response.data[ 0 ].message );

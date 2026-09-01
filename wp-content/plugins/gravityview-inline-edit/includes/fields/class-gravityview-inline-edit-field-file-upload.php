@@ -7,9 +7,9 @@
  */
 class GravityView_Inline_Edit_Field_File_Upload extends GravityView_Inline_Edit_Field {
 
-	var $gv_field_name = 'fileupload';
+	public $gv_field_name = 'fileupload';
 
-	var $inline_edit_type = 'file';
+	public $inline_edit_type = 'file';
 
 
 	/**
@@ -20,7 +20,7 @@ class GravityView_Inline_Edit_Field_File_Upload extends GravityView_Inline_Edit_
 	 * @param $field_id
 	 * @param $entry
 	 * @param $current_form
-	 * @param GF_Field_MultiSelect $gf_field
+	 * @param GF_Field_FileUpload $gf_field
 	 *
 	 * @return mixed
 	 */
@@ -28,6 +28,12 @@ class GravityView_Inline_Edit_Field_File_Upload extends GravityView_Inline_Edit_
 
 		if ( $gf_field->multipleFiles === true ) {
 			$wrapper_attributes['data-multiple'] = true;
+		}
+
+		// Pass max file size to the frontend for client-side validation.
+		$max_file_size = $gf_field->maxFileSize > 0 ? (int) $gf_field->maxFileSize : 0;
+		if ( $max_file_size > 0 ) {
+			$wrapper_attributes['data-max-file-size'] = $max_file_size;
 		}
 
 		return parent::modify_inline_edit_attributes( $wrapper_attributes, $field_input_type, $field_id, $entry, $current_form, $gf_field );

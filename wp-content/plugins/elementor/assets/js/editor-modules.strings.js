@@ -98,12 +98,12 @@ __( 'Paste from other site', 'elementor' );
 __( 'Copy All Content', 'elementor' );
 __( 'Delete All Content', 'elementor' );
 __( 'Grid', 'elementor' );
-__( 'The value inserted isn\'t in the breakpoint boundaries', 'elementor' );
 __( 'Show Panel', 'elementor' );
 __( 'Hide Panel', 'elementor' );
 __( 'Custom Positioning', 'elementor' );
 __( 'Collapse all elements', 'elementor' );
 __( 'Expand all elements', 'elementor' );
+__( 'The value inserted isn\'t in the breakpoint boundaries', 'elementor' );
 __( 'Check out Global Fonts', 'elementor' );
 __( 'Save time by applying Global Fonts to change the style of multiple elements at once. Click %s to see what Global Fonts you already have.', 'elementor' );
 __( 'Got it!', 'elementor' );
@@ -215,6 +215,8 @@ __( 'Some styles were added as static values because the variable limit was reac
 __( 'Icon Library', 'elementor' );
 __( 'Insert', 'elementor' );
 __( 'Keyboard Shortcuts', 'elementor' );
+__( 'Cannot load editor', 'elementor' );
+__( 'Server Error', 'elementor' );
 __( 'Dynamic Content', 'elementor' );
 __(
 					'Create more personalized and dynamic sites by populating data from various sources with dozens of dynamic tags to choose from.',
@@ -231,8 +233,6 @@ __(
 					text: hasProAndNotConnected
 						? __( 'Connect & Activate', 'elementor' );
 __( 'Upgrade', 'elementor' );
-__( 'Cannot load editor', 'elementor' );
-__( 'Server Error', 'elementor' );
 __( 'Type Here', 'elementor' );
 __( 'Structure', 'elementor' );
 __( 'Link copied!', 'elementor' );
@@ -290,7 +290,6 @@ __( 'Edit %s', 'elementor' );
 __( 'Saving has been disabled until you’re reconnected.', 'elementor' );
 __( 'Server Error', 'elementor' );
 __( 'Elements', 'elementor' );
-__( 'Select template', 'elementor' );
 __( '%1$s of %2$s templates used', 'elementor' );
 __( 'Name', 'elementor' );
 __( 'Type', 'elementor' );
@@ -401,6 +400,7 @@ __( 'Renew my subscription', 'elememntor' );
 __( 'Renew my subscription', 'elementor' );
 __( 'Empty folder', 'elememntor' );
 __( 'Connected successfully.', 'elementor' );
+__( 'Select template', 'elementor' );
 __( 'Have a look', 'elementor' );
 __( 'Library sections', 'elementor' );
 __( 'Folders you create will appear here.', 'elementor' );

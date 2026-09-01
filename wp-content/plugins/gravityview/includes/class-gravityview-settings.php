@@ -1,25 +1,23 @@
 <?php
-
 /**
- * GravityView Settings class (get/set) using the Gravity Forms App framework
+ * Backward-compatibility shim.
  *
- * @since 1.7.4 (Before, used the Redux Framework)
- * @deprecated Use gravityview()->plugin->settings
+ * This file was moved in GravityView 3.0. It is intentionally empty.
+ * GravityView classes and functions load automatically — you no longer
+ * need to require GravityView files in your code.
+ *
+ * @deprecated 3.0
  */
-class GravityView_Settings extends \GV\Plugin_Settings {
-	/**
-	 * @deprecated Use gravityview()->plugin->settings
-	 * @return \GV\Settings
-	 */
-	public function __wakeup() {}
-	public function __clone() {}
 
-	/**
-	 * @deprecated Use gravityview()->plugin->settings
-	 * @return \GV\Plugin_Settings
-	 */
-	public static function get_instance() {
-		gravityview()->log->warning( '\GravityView_Settings is deprecated. Use gravityview()->plugin->settings instead.' );
-		return gravityview()->plugin->settings;
-	}
+if ( ! defined( 'ABSPATH' ) ) {
+	die;
+}
+
+if ( function_exists( '_deprecated_file' ) ) {
+	_deprecated_file(
+		plugin_basename( __FILE__ ),
+		'3.0',
+		'',
+		'This file was moved in GravityView 3.0 and will be removed in a future release. GravityView classes and functions load automatically — you no longer need to require them.'
+	);
 }

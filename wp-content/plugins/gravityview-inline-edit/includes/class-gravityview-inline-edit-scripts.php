@@ -112,13 +112,38 @@ final class GravityView_Inline_Edit_Scripts {
 
 		$view = \GV\View::by_id( $item_id['view_id'] );
 
+		if ( ! $view ) {
+			return;
+		}
+
 		// Only DataTables, please
-		if( 'datatables_table' !== $view->settings->get('template') ) {
+		if ( 'datatables_table' !== $view->settings->get( 'template' ) ) {
 			return;
 		}
 
 		foreach ( $this->_custom_field_scripts as $script ) {
 			wp_enqueue_script( $script );
+		}
+
+		// TinyMCE for the richtext editor is normally enqueued when a rich text field renders, but on
+		// DataTables that render happens in an AJAX request, too late to add page scripts. Load it here,
+		// up front, when the View's form actually has a rich text Paragraph field.
+		if ( ! function_exists( 'wp_enqueue_editor' ) ) {
+			return;
+		}
+
+		$form_id = $view->form instanceof \GV\GF_Form ? $view->form->ID : 0;
+		$form    = $form_id ? GFAPI::get_form( $form_id ) : null;
+
+		if ( ! is_array( $form ) || empty( $form['fields'] ) ) {
+			return;
+		}
+
+		foreach ( $form['fields'] as $field ) {
+			if ( 'textarea' === rgobj( $field, 'type' ) && ! empty( $field->useRichTextEditor ) ) {
+				wp_enqueue_editor();
+				break;
+			}
 		}
 	}
 
@@ -158,7 +183,10 @@ final class GravityView_Inline_Edit_Scripts {
 			'showinputs'         => false,
 			'emptytext'          => esc_html__( 'Empty', 'gk-gravityedit' ),
 			'searchforuserstext' => esc_html__( 'Search for users', 'gk-gravityedit' ),
+			'richtextDiscardConfirm' => esc_html__( 'You have unsaved changes. Discard them?', 'gk-gravityedit' ),
 			'multipleFileWarning' => esc_html__( '⚠️ Uploading files will overwrite existing ones.', 'gk-gravityedit' ),
+			/* translators: %s: maximum file size in MB */
+			'maxFileSizeError'    => esc_html__( 'File exceeds size limit. Maximum file size: %sMB.', 'gk-gravityedit' ),
 			'nofieldstext'       => $no_fields_text,
 			'week_starts_on'     => (int) get_option( 'start_of_week', 0 ), // WordPress week start setting (0 = Sunday, 1 = Monday, etc.)
 		);
@@ -261,6 +289,7 @@ final class GravityView_Inline_Edit_Scripts {
 			'number',
 			'product',
 			'radiolist',
+			'richtext',
 			'tel',
 			'textarea',
 			'url',
@@ -286,7 +315,7 @@ final class GravityView_Inline_Edit_Scripts {
 					'gktag_public',
 					'GK_ENTRY_TAGS_PUBLIC',
 					array(
-						'add_tag' => esc_html__( 'Add tag:', 'gktag', 'gk-gravityedit' ),
+						'add_tag' => esc_html__( 'Add tag:', 'gk-gravityedit' ),
 					)
 				);
 
@@ -484,7 +513,7 @@ final class GravityView_Inline_Edit_Scripts {
 		);
 
 		// Only allow valid theme options
-		$jquery_ui_theme = in_array( $jquery_ui_theme, $jquery_themes ) ? $jquery_ui_theme : 'base';
+		$jquery_ui_theme = in_array( $jquery_ui_theme, $jquery_themes, true ) ? $jquery_ui_theme : 'base';
 
 		$script_debug = ( defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ) ? '' : '.min';
 
@@ -506,7 +535,7 @@ final class GravityView_Inline_Edit_Scripts {
 		$poshytip_themes = array( 'darkgray', 'green', 'skyblue', 'twitter', 'violet', 'yellow', 'yellowsimple' );
 
 		// Only allow valid theme options
-		$poshytip_theme = in_array( $poshytip_theme, $poshytip_themes ) ? $poshytip_theme : 'yellowsimple';
+		$poshytip_theme = in_array( $poshytip_theme, $poshytip_themes, true ) ? $poshytip_theme : 'yellowsimple';
 
 		$registered_styles['poshytip'] = wp_register_style( 'poshytip', GRAVITYVIEW_INLINE_URL . 'bower_components/poshytip/src/tip-' . $poshytip_theme . '/tip-' . $poshytip_theme . '.css' );
 
@@ -515,9 +544,6 @@ final class GravityView_Inline_Edit_Scripts {
 		$registered_styles['gv-inline-edit-wysihtml5'] = wp_register_style( 'gv-inline-edit-wysihtml5', GRAVITYVIEW_INLINE_URL . 'assets/css/bootstrap-wysihtml5-0.0.3.css', array(), GravityView_Inline_Edit::get_version() );
 
 		$registered_styles['gv-inline-edit-select2'] = wp_register_style( 'gv-inline-edit-select2', GRAVITYVIEW_INLINE_URL . 'assets/css/select2'.$script_debug.'.css', array(), GravityView_Inline_Edit::get_version() );
-
-
-		wp_register_style( 'gv-inline-edit-select2', GRAVITYVIEW_INLINE_URL . 'assets/css/select2'.$script_debug.'.css', array(), GravityView_Inline_Edit::get_version() );
 
 		//Supported versions and their corresponding file names and dependencies
 		$supported_styles_versions = array(
@@ -544,7 +570,7 @@ final class GravityView_Inline_Edit_Scripts {
 
 		// Some styles weren't registered.
 		if ( count( $registered_styles ) !== count( array_filter( $registered_styles ) ) ) {
-			GravityKitFoundation::logger()->error( 'One or more styles failed to register: ' . print_r( array_diff( $registered_styles, array_filter( $registered_styles ) ), true ) );
+			GravityKitFoundation::logger()->error( 'One or more styles failed to register: ' . wp_json_encode( array_diff( $registered_styles, array_filter( $registered_styles ) ) ) );
 		}
 
 		$this->_styles = array_merge( $registered_styles, $this->_styles );
@@ -559,7 +585,7 @@ final class GravityView_Inline_Edit_Scripts {
 	 */
 	public function enqueue_styles() {
 
-		// Make sure styles have been enqueued (espacially on block themes)
+		// Ensures the styles are registered (especially on block themes).
 		if( ! wp_style_is( 'gv-inline-edit-fields', 'registered' ) ) {
 			$this->register_scripts_and_styles();
 		}

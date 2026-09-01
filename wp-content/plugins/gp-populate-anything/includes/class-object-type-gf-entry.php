@@ -99,6 +99,13 @@ class GPPA_Object_Type_GF_Entry extends GPPA_Object_Type {
 				'orderby'   => true,
 				'operators' => $this->supported_operators(),
 			),
+			'payment_date'   => array(
+				'label'     => esc_html__( 'Payment Date', 'gp-populate-anything' ),
+				'value'     => 'payment_date',
+				'callable'  => '__return_empty_array',
+				'orderby'   => true,
+				'operators' => $this->supported_operators(),
+			),
 			'payment_method' => array(
 				'label'     => esc_html__( 'Payment Method', 'gp-populate-anything' ),
 				'value'     => 'payment_method',
@@ -391,8 +398,8 @@ class GPPA_Object_Type_GF_Entry extends GPPA_Object_Type {
 			$is_field     = is_a( $source_field, 'GF_Field' );
 			$field        = GFAPI::get_field( $form_id, $field_id );
 
-			// Parse date_created and date_updated as a date value in filters
-			$source_is_date = ! $is_field && in_array( $field_id, array( 'date_created', 'date_updated' ), true );
+			// Parse date_created, date_updated, and payment_date as a date value in filters
+			$source_is_date = ! $is_field && in_array( $field_id, array( 'date_created', 'date_updated', 'payment_date' ), true );
 
 			/*
 			 * Cast numeric values to float to allow for numeric comparisons. Exclude those that start with 0 as they
@@ -625,10 +632,28 @@ class GPPA_Object_Type_GF_Entry extends GPPA_Object_Type {
 
 		$has_status_filter = false;
 		foreach ( $gf_query_where_groups as $gf_query_where_index => $gf_query_where_group ) {
-			if (
-				! empty( $gf_query_where_group[0]->get_columns() )
-				&& $gf_query_where_group[0]->get_columns()[0]->field_id === 'status'
-			) {
+			/*
+			 * Filter groups are not guaranteed to be sequentially indexed, non-empty arrays of conditions:
+			 *
+			 *  - A group is initialized before its conditions are appended, so it is empty if every filter in it was
+			 *    skipped while processing (e.g. an unrecognized operator).
+			 *  - Third parties filtering `gppa_object_type_query` commonly remove conditions with array_filter(),
+			 *    which preserves keys and can therefore leave a group without a `0` index.
+			 *
+			 * Re-index and drop empty groups so the "status" check below can safely inspect the first condition.
+			 */
+			$gf_query_where_group = array_values( array_filter( (array) $gf_query_where_group ) );
+
+			if ( ! $gf_query_where_group ) {
+				unset( $gf_query_where_groups[ $gf_query_where_index ] );
+				continue;
+			}
+
+			$first_condition_columns = $gf_query_where_group[0] instanceof GF_Query_Condition
+				? $gf_query_where_group[0]->get_columns()
+				: array();
+
+			if ( ! empty( $first_condition_columns ) && $first_condition_columns[0]->field_id === 'status' ) {
 				$has_status_filter = true;
 			}
 

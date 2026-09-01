@@ -1,0 +1,36 @@
+/**
+ * GravityView Theme
+ *
+ * A modern design system for GravityView, derived from Gravity Forms' Orbital
+ * design tokens. Provides a complete visual redesign for Table layout Views
+ * with shared widget styling.
+ *
+ * @package   GravityView
+ * @license   GPL2
+ * @link      https://www.gravitykit.com
+ * @since     TBD
+ */
+
+// `@use` (not `@import`) — Dart Sass 3.0 removes `@import`. Each
+// partial is loaded ONCE; CSS output preserves load order. Consumer
+// partials that reference Sass variables from `_tokens.scss`
+// (`$gv-breakpoint-sm`/`-md`/`-lg`) `@use "tokens" as *;` themselves —
+// `@use` doesn't transitively expose namespace members.
+@use "properties"; // @property registrations — must come before tokens so registered initial-values are in place when token defaults declare
+@use "tokens";
+@use "base";
+@use "typography";
+@use "table";
+@use "list";
+@use "layout-builder";
+@use "card-grid";
+@use "diy";
+@use "single-entry";
+@use "search";
+@use "buttons";
+@use "bulk-actions";
+@use "edit-entry";
+@use "widgets";
+@use "datatables";
+@use "maps";
+@use "a11y";

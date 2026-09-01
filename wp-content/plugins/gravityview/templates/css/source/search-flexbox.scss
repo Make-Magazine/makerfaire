@@ -2,6 +2,44 @@
 
 $flexbox-margin: 10px;
 
+// Defensive reset (see _search.scss). Scoped to `.gv-themed` so Legacy
+// Views keep their 2.x inherited styling.
+.gv-themed .gv-widget-search {
+	input[type="search"],
+	input[type="text"],
+	input[type="email"],
+	input[type="url"],
+	input[type="number"],
+	input[type="tel"],
+	input[type="date"],
+	input[type="datetime-local"],
+	input[type="time"],
+	input[type="month"],
+	input[type="week"],
+	input[type="submit"],
+	input[type="button"],
+	input[type="reset"],
+	input[type="checkbox"],
+	input[type="radio"],
+	select,
+	textarea,
+	button,
+	a.button,
+	.button {
+		all: revert;
+	}
+
+	// Browsers have no built-in button styling for anchors; restore affordances (see _search.scss).
+	a.button {
+		display: inline-block;
+		padding: 0.4em 1em;
+		line-height: 1.4;
+		text-decoration: none;
+		cursor: pointer;
+		vertical-align: middle;
+	}
+}
+
 .gv-widget-search {
 	-js-display: flex;
 	display: flex;
@@ -105,7 +143,6 @@ $flexbox-margin: 10px;
 		/**
 		 * Range FIELDS
 		 */
-		&.gv-search-date,
 		&.gv-search-number {
 			-js-display: flex;
 			display: flex;
@@ -138,6 +175,36 @@ $flexbox-margin: 10px;
 				-moz-appearance: textfield;
 			}
 		}
+
+		.gv-date-range-picker {
+			display: flex;
+			// The Query Filters pickers floor at ~215px each (their
+			// `.gk-calendar-input-wrapper` has `min-width: 175px`), so without
+			// wrap + shrink they overflow narrow columns onto the neighboring
+			// field. The wrapper's `overflow: hidden` never clips the calendar
+			// popover — it is portaled to `<body>`. Mirrors the Vantage
+			// containment in `theme/_search.scss`.
+			flex-wrap: wrap;
+			max-width: 100%;
+			gap: 1rem;
+			margin-bottom: 0.75rem;
+
+			> .gv-date-picker,
+			> .gk-calendar-root {
+				flex: 1 1 auto;
+				min-width: 0;
+			}
+
+			.gk-calendar-root {
+				min-width: 0;
+			}
+
+			.gk-calendar-input-wrapper {
+				min-width: 0;
+				overflow: hidden;
+			}
+		}
+
 	}
 }
 

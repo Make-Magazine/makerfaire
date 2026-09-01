@@ -74,18 +74,14 @@ class GP_Read_Only extends GP_Plugin {
 		/**
 		 * Stripe Payment Elements compatibility
 		 *
-		 * This is a bizarre hook to use, but it's the only decent one I could find when the temporary lead is created
-		 * with GFFormsModel::create_lead().
+		 * Stripe's Payment Element validates via an AJAX request (gfstripe_validate_form) that runs
+		 * GFAPI::validate_form(), which fires `gform_pre_validation` but not `gform_pre_process`. We process the
+		 * hidden captures there so read-only values are present when validation runs; otherwise validation fails and
+		 * Stripe falls back to a native submission that breaks the payment capture.
 		 */
-		add_filter( 'gform_currency_pre_save_entry', function( $currency, $form ) {
-			if ( rgpost( 'action' ) !== 'gfstripe_validate_form' ) {
-				return $currency;
-			}
-
-			$this->process_hidden_captures( $form );
-
-			return $currency;
-		}, 10, 2 );
+		if ( rgpost( 'action' ) === 'gfstripe_validate_form' ) {
+			add_filter( 'gform_pre_validation', array( $this, 'process_hidden_captures' ), 11, 1 );
+		}
 
 	}
 
@@ -341,6 +337,9 @@ class GP_Read_Only extends GP_Plugin {
 			$input_html = str_replace( $_search, $replace, $input_html );
 		}
 
+		// Add the "gf-default-disabled" class to disabled controls so Gravity Forms preserves their read-only state across client-side field re-renders.
+		$input_html = $this->add_default_disabled_class( $input_html );
+
 		// add hidden capture input markup for disabled field types
 		if ( in_array( $input_type, $this->disable_attr_field_types ) ) {
 
@@ -410,6 +409,29 @@ class GP_Read_Only extends GP_Plugin {
 		return $input_html;
 	}
 
+	private function add_default_disabled_class( $input_html ) {
+		return preg_replace_callback(
+			'/<(select|input|textarea)\b([^>]*\bdisabled=([\'"])disabled\3[^>]*)>/i',
+			function ( $matches ) {
+				$tag = $matches[0];
+
+				if ( strpos( $tag, 'gf-default-disabled' ) !== false ) {
+					return $tag;
+				}
+
+				if ( preg_match( '/\bclass=([\'"])(.*?)\1/i', $tag, $class_match ) ) {
+					$new_class = sprintf( 'class=%1$s%2$s gf-default-disabled%1$s', $class_match[1], $class_match[2] );
+
+					return str_replace( $class_match[0], $new_class, $tag );
+				}
+
+				// No existing class attribute; inject one right after the tag name.
+				return preg_replace( '/^<(\w+)/', '<$1 class=\'gf-default-disabled\'', $tag );
+			},
+			$input_html
+		);
+	}
+
 	private function parse_time_string( $value ) {
 	    // Use a regular expression to match the time format
 	    if ( preg_match( '/^(\d{1,2}):(\d{2})(?:\s?(AM|PM))?$/i', $value, $matches ) ) {
@@ -456,9 +478,13 @@ class GP_Read_Only extends GP_Plugin {
 		/**
 		 * In some instances (i.e. parent submission of Nested Forms), the gform_pre_process filter may be applied to a
 		 * form that is not currently being submitted. Let's make sure we're only working with the submitted form.
-		 * Update: We also need a second check here for Gravity Flow as they use `gravityflow_submit` instead. HS#27204
+		 * Update: We also need additional checks for Gravity Flow and Stripe Payment Elements as they use
+		 * `gravityflow_submit` and `form_id`, respectively. HS#27204
 		 */
-		if ( rgpost( 'gform_submit' ) != $form['id'] && rgpost( 'gravityflow_submit' ) != $form['id'] ) {
+		$is_submitted_form = rgpost( 'gform_submit' ) == $form['id']
+			|| rgpost( 'gravityflow_submit' ) == $form['id']
+			|| ( rgpost( 'action' ) === 'gfstripe_validate_form' && rgpost( 'form_id' ) == $form['id'] );
+		if ( ! $is_submitted_form ) {
 			return $form;
 		}
 
@@ -473,6 +499,10 @@ class GP_Read_Only extends GP_Plugin {
 
 			$field = GFFormsModel::get_field( $form, $field_id );
 			switch ( $field->get_input_type() ) {
+				case 'radio':
+					// Radio fields submit a single field-level value, even when hidden capture IDs include an input ID.
+					$full_input_id = $field_id;
+					break;
 				// time fields are in array format in the POST
 				case 'time':
 					$full_input_id = $field_id;

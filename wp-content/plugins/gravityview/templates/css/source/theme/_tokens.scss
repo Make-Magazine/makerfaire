@@ -1,0 +1,598 @@
+/**
+ * GravityView Theme — Design Tokens
+ *
+ * Every `--gv-*` CSS custom property shipped by GravityView. Defaults
+ * declared inside `@layer gravitykit-base { :where(.gv-themed) { … } }`
+ * so unlayered host-theme CSS can override without specificity-bumping
+ * the consumer SCSS and per-View scoped overrides (emitted UNLAYERED by
+ * PHP at the dual-selector `[id^="gv-view-{ID}-"], .gv-container.gv-container-{ID}`)
+ * always win.
+ *
+ * Source of truth for slugs, defaults, and `@property` syntax:
+ * `src/Settings/TokenRegistry.php`. CI runs `tools/validate-tokens.php`
+ * to confirm every `var(--gv-…)` reference in any SCSS partial
+ * resolves to a declaration in this file.
+ *
+ * Spec: `docs/superpowers/specs/2026-05-19-token-system.md`.
+ *
+ * @package   GravityView
+ * @license   GPL2
+ * @since     TBD
+ */
+
+// =========================================================
+// Breakpoints — SCSS variables (can't use CSS custom props in media queries)
+// =========================================================
+$gv-breakpoint-sm: 640px;
+$gv-breakpoint-md: 768px;
+$gv-breakpoint-lg: 1024px;
+
+// =========================================================
+// Iframe / Shadow DOM inheritance notes
+//
+// CSS custom properties cascade INTO open Shadow DOM (slotted
+// content inherits the host's `:host` and document-level
+// `--gv-…` values). They do NOT cascade into iframes — each
+// iframe has its own document with its own `:root`.
+// =========================================================
+
+@layer gravitykit-base {
+:where(.gv-themed) {
+
+	// =========================================================
+	// 1. Brand colors
+	// =========================================================
+	--gv-color-primary: #204ce5;
+	--gv-color-primary-hover: #1c44ce;
+	--gv-color-primary-hover: color-mix(in oklch, var(--gv-color-primary) 90%, #000);
+	--gv-color-primary-subtle: #c3d9ff;
+	--gv-color-on-primary: #ffffff;
+
+	// =========================================================
+	// 2. Text contrast
+	// =========================================================
+	--gv-color-text: #112337;
+	// `text-hover` ships the same literal as resting `text` so hover
+	// reads as "no recolor" on an uncustomised View, and the SCSS,
+	// registry, and `@property` initial-value agree on the same value.
+	// Stays a literal (not `var(--gv-color-text)`) so a Studio recolor
+	// of resting text does not silently pull hover with it; customers
+	// who want hover to track resting set this token explicitly.
+	--gv-color-text-hover: #112337;
+	--gv-color-text-secondary: #54667a;
+	--gv-color-text-muted: #5b6470;
+	--gv-color-text-disabled: #a1a8b1;
+	--gv-color-on-disabled: var(--gv-color-text-disabled);
+	--gv-color-placeholder: #5f6772;
+
+	// =========================================================
+	// 3. Links — four states
+	// =========================================================
+	--gv-color-link: #204ce5;
+	--gv-color-link-hover: #1c44ce;
+	--gv-color-link-visited: #7c3aed;
+	--gv-color-link-active: #0c1f7a;
+
+	// =========================================================
+	// 4. Status colors
+	// =========================================================
+	--gv-color-error: #c02b0a;
+	--gv-color-error-hover: #922008;
+	--gv-color-error-hover: color-mix(in oklch, var(--gv-color-error) 90%, #000);
+	--gv-color-on-error: #ffffff;
+
+	--gv-color-success: #23692f;
+	--gv-color-success-hover: #1a4f23;
+	--gv-color-success-hover: color-mix(in oklch, var(--gv-color-success) 90%, #000);
+	--gv-color-on-success: #ffffff;
+
+	--gv-color-warning: #febc48;
+	// Icon-stroke colour for `.gv-status--warning`. Splits out the
+	// warning icon so third-party presets can theme the warning
+	// channel without forking SCSS. ≥ 3:1 on `surface-warning`
+	// (#fef0d6) — verified by tools/verify-contrast.php.
+	--gv-color-warning-icon: #b07000;
+
+	--gv-color-info: #0e7490;
+	--gv-color-info-hover: #0a5e74;
+	--gv-color-info-hover: color-mix(in oklch, var(--gv-color-info) 90%, #000);
+	--gv-color-on-info: #ffffff;
+
+	// =========================================================
+	// 5. Surfaces
+	// =========================================================
+	--gv-color-surface: #ffffff;
+	--gv-color-surface-hover: #fafafa;
+	--gv-color-surface-alt: #f2f3f5;
+	--gv-color-surface-error: #fbe2dc;
+	--gv-color-surface-success: #dcf2df;
+	--gv-color-surface-warning: #fef0d6;
+	--gv-color-surface-info: #cffafe;
+	--gv-color-surface-disabled: #edeef0;
+
+	// =========================================================
+	// 6. Borders
+	// =========================================================
+	--gv-color-border: #888888;
+	--gv-color-border-strong: #6b7280;
+	--gv-color-border-light: #e5e7eb;
+
+	// =========================================================
+	// 7. Header (table chrome)
+	// =========================================================
+	--gv-color-header-bg: var(--gv-color-surface-alt);
+	--gv-color-header-bg-hover: var(--gv-color-header-bg);
+	// `--gv-field-label-color` is always set later in this block, so
+	// no var() fallback is needed (it could never trigger).
+	--gv-color-header-text: var(--gv-field-label-color);
+	--gv-color-header-text-hover: var(--gv-color-header-text);
+
+	// =========================================================
+	// 8. Spacing scale — Tailwind-style 4-based
+	// =========================================================
+	--gv-space-1: 4px;
+	--gv-space-2: 8px;
+	--gv-space-3: 12px;
+	--gv-space-4: 16px;
+	--gv-space-5: 20px;
+	--gv-space-6: 24px;
+	--gv-space-8: 32px;
+	--gv-space-10: 40px;
+	--gv-space-12: 48px;
+	--gv-space-16: 64px;
+
+	// =========================================================
+	// 9. Radius scale
+	// =========================================================
+	--gv-radius-xs: 2px;
+	--gv-radius-sm: 4px;
+	--gv-radius-md: 6px;
+	--gv-radius-lg: 8px;
+	--gv-radius-xl: 12px;
+	--gv-radius-full: 9999px;
+
+	// =========================================================
+	// 10. Border-width scale
+	// =========================================================
+	--gv-border-width-0: 0;
+	--gv-border-width-1: 1px;
+	--gv-border-width-2: 2px;
+	--gv-border-width-3: 3px;
+	--gv-border-width-4: 4px;
+	--gv-border-width-8: 8px;
+
+	// =========================================================
+	// 11. Opacity scale
+	// =========================================================
+	--gv-opacity-0: 0;
+	--gv-opacity-10: 0.1;
+	--gv-opacity-20: 0.2;
+	--gv-opacity-30: 0.3;
+	--gv-opacity-40: 0.4;
+	--gv-opacity-50: 0.5;
+	--gv-opacity-60: 0.6;
+	--gv-opacity-70: 0.7;
+	--gv-opacity-80: 0.8;
+	--gv-opacity-90: 0.9;
+	--gv-opacity-100: 1;
+
+	// =========================================================
+	// 12. Z-index scale
+	//
+	// In-flow tiers (base through overlay, plus toast) stay small:
+	// they only compete inside the View's own stacking context.
+	// `--gv-z-modal` is the one tier consumed by body-mounted
+	// overlays (the Fancybox lightbox root), which compete with host
+	// fixed chrome: sticky headers, cookie banners, and chat widgets
+	// commonly sit in the 1000 to 99999 range, so the modal tier
+	// must clear them.
+	// =========================================================
+	--gv-z-base: 0;
+	--gv-z-raised: 10;
+	--gv-z-dropdown: 100;
+	--gv-z-popover: 200;
+	--gv-z-sticky: 300;
+	--gv-z-overlay: 400;
+	--gv-z-modal: 100000;
+	--gv-z-toast: 600;
+
+	// =========================================================
+	// 13. Shadow — a real <color> plus an alpha multiplier, so non-blue palettes
+	//     get a perceptually correct shadow.
+	// =========================================================
+	// A real <color>, not a channel triplet: a hex typed into the Studio
+	// field has to work, and `rgb(<hex> / a)` is invalid CSS.
+	//
+	// Every level ships twice. These rgba() literals are what browsers below
+	// the color-mix() floor (Chromium 111, Safari 16.2, Firefox 113) keep --
+	// they still get a shadow, it just stops tracking --gv-shadow-color. The
+	// @supports block at the end of this layer re-declares each level
+	// through color-mix(). Order is load-bearing: it is a sibling rule in
+	// this same layer at the same :where() zero specificity, so it wins
+	// only by coming second. Keep it inside the layer — an unlayered rule
+	// would beat every layered host-theme override, not just this default.
+	--gv-shadow-color: #121961;
+	--gv-shadow-alpha: 0.1;
+
+	--gv-shadow-xs: 0 1px 2px rgba(18, 25, 97, 0.05);
+	--gv-shadow-sm: 0 1px 4px rgba(18, 25, 97, 0.078);
+	--gv-shadow-md: 0 1px 3px rgba(18, 25, 97, 0.1),
+	                0 1px 2px rgba(18, 25, 97, 0.06);
+	--gv-shadow-lg: 0 4px 6px -1px rgba(18, 25, 97, 0.1),
+	                0 2px 4px -1px rgba(18, 25, 97, 0.06);
+	--gv-shadow-xl: 0 10px 15px -3px rgba(18, 25, 97, 0.1),
+	                0 4px  6px -2px rgba(18, 25, 97, 0.05);
+
+	// =========================================================
+	// 14. Motion — durations + easings
+	// =========================================================
+	--gv-motion-multiplier: 1;
+	--gv-transition-fast: calc(0.15s * var(--gv-motion-multiplier));
+	--gv-transition-medium: calc(0.25s * var(--gv-motion-multiplier));
+	--gv-transition-slow: calc(0.4s * var(--gv-motion-multiplier));
+
+	--gv-easing-standard: cubic-bezier(0.2, 0.0, 0.0, 1.0);
+	--gv-easing-decelerate: cubic-bezier(0.0, 0.0, 0.2, 1.0);
+	--gv-easing-accelerate: cubic-bezier(0.3, 0.0, 1.0, 1.0);
+	--gv-easing-emphasized: cubic-bezier(0.3, 0.0, 0.8, 0.15);
+	--gv-easing-linear: linear;
+
+	// =========================================================
+	// 15. Typography
+	// =========================================================
+	--gv-font-family: inherit;
+	// Floor at 16px so host themes that hack the root font-size
+	// (OceanWP and many starter themes ship `html { font-size: 62.5% }`,
+	// making `1rem` = 10px) don't shrink the theme stylesheet's
+	// type to ~10px. Every derived token below scales off this
+	// value via `calc(base * scale)`, so the fix needs to live at
+	// the root. `max()` still honours users who scale the root UP
+	// for accessibility.
+	--gv-font-size-base: max(1rem, 16px);
+
+	// Private scale primitives — held behind var() so Sass's calc()
+	// simplifier can't fold the multiplication at compile time.
+	--gv-_font-scale-xs: 0.75;
+	--gv-_font-scale-sm: 0.875;
+	--gv-_font-scale-md: 1.125;
+	--gv-_font-scale-lg: 1.25;
+	--gv-_font-scale-xl: 1.5;
+	--gv-_font-scale-2xl: 1.875;
+	--gv-_letter-spacing-uppercase: 0.05em;
+
+	--gv-font-size-xs: calc(var(--gv-font-size-base) * var(--gv-_font-scale-xs));
+	--gv-font-size-sm: calc(var(--gv-font-size-base) * var(--gv-_font-scale-sm));
+	--gv-font-size-md: calc(var(--gv-font-size-base) * var(--gv-_font-scale-md));
+	--gv-font-size-lg: calc(var(--gv-font-size-base) * var(--gv-_font-scale-lg));
+	--gv-font-size-xl: calc(var(--gv-font-size-base) * var(--gv-_font-scale-xl));
+	--gv-font-size-2xl: calc(var(--gv-font-size-base) * var(--gv-_font-scale-2xl));
+
+	--gv-font-weight-light: 300;
+	--gv-font-weight-normal: 400;
+	--gv-font-weight-medium: 500;
+	--gv-font-weight-semibold: 600;
+	--gv-font-weight-bold: 700;
+
+	--gv-line-height-tight: 1.25;
+	--gv-line-height-normal: 1.5;
+	--gv-line-height-relaxed: 1.75;
+	// Stacked-diacritic scripts (Thai, Burmese, Devanagari, Vietnamese
+	// etc.) clip at 1.5 line-height. Use 1.85 via the `:lang()` block
+	// in _a11y.scss.
+	--gv-line-height-cjk: 1.85;
+
+	// =========================================================
+	// 16. Focus ring — decomposed
+	// =========================================================
+	--gv-focus-ring-color: #2563eb;
+	--gv-focus-ring-width: var(--gv-border-width-2);
+	--gv-focus-ring-offset: 2px;
+	--gv-focus-ring-style: solid;
+	--gv-shadow-focus: 0 0 0 var(--gv-focus-ring-width) var(--gv-focus-ring-color);
+
+	// =========================================================
+	// 17. Layer-1 aliases — sideways resolutions inside the
+	//     globals layer. Re-stated by PHP at the scoped wrapper
+	//     so host-theme `.gv-themed { … }` rules don't break the
+	//     chain.
+	// =========================================================
+	--gv-color-row-divider: var(--gv-color-border-light);
+	--gv-color-entry-border: var(--gv-color-border-light);
+	--gv-color-zebra-bg: var(--gv-color-surface);
+	// Row hover (table view). Defaults match what `_table.scss`
+	// previously hardcoded so the upgrade is zero-visual-change.
+	// Customers asking "change row hover color" override these
+	// tokens instead of writing custom CSS.
+	--gv-color-row-hover-bg: var(--gv-color-surface-hover);
+	--gv-color-row-hover-text: var(--gv-color-text-hover);
+
+	// =========================================================
+	// 18. Layer-2 component vars — entry cards
+	// =========================================================
+	--gv-entry-bg: var(--gv-color-surface);
+	--gv-entry-bg-hover: var(--gv-entry-bg);
+	--gv-entry-border-width: var(--gv-border-width-1);
+	--gv-entry-border-style: solid;
+	--gv-entry-border-color: var(--gv-color-entry-border);
+	--gv-entry-border-width-hover: var(--gv-entry-border-width);
+	--gv-entry-border-style-hover: var(--gv-entry-border-style);
+	--gv-entry-border-color-hover: var(--gv-entry-border-color);
+	--gv-entry-radius: var(--gv-radius-lg);
+	--gv-entry-shadow: var(--gv-shadow-xs);
+	// Literal `Floating` preset from `TokenRegistry::shadow()`. Stays
+	// a literal (not `var(--gv-entry-shadow)`) so the registry
+	// default and the SCSS-layer value agree, and a Studio override of
+	// resting shadow does not silently move the hover lift with it.
+	--gv-entry-shadow-hover:
+		0 4px 6px -1px rgba(18, 25, 97, 0.1),
+		0 2px 4px -1px rgba(18, 25, 97, 0.06);
+	// Vertical gap between stacked fields inside a single entry.
+	--gv-entry-field-gap: var(--gv-space-3);
+
+	// Entry-card padding. The physical-name tokens are the
+	// customer-facing knobs; the logical-name tokens alias them so
+	// either naming works. Consumers use `padding-block` /
+	// `padding-inline`, so the values map to writing direction and
+	// RTL mirrors correctly.
+	--gv-entry-padding-top: var(--gv-space-6);
+	--gv-entry-padding-right: var(--gv-space-6);
+	--gv-entry-padding-bottom: var(--gv-space-6);
+	--gv-entry-padding-left: var(--gv-space-6);
+	--gv-entry-padding-block-start: var(--gv-entry-padding-top);
+	--gv-entry-padding-block-end: var(--gv-entry-padding-bottom);
+	--gv-entry-padding-inline-start: var(--gv-entry-padding-left);
+	--gv-entry-padding-inline-end: var(--gv-entry-padding-right);
+
+	// =========================================================
+	// 19. Layer-2 — Tables
+	// =========================================================
+	--gv-table-header-background: var(--gv-color-header-bg);
+	--gv-table-header-font-size: var(--gv-font-size-xs);
+	--gv-table-cell-padding-block: var(--gv-space-3);
+	--gv-table-cell-padding-inline: var(--gv-space-4);
+	// Cell borders — invisible by default (width 0). Customers opt-in
+	// by overriding width/color; recurring ask in support tickets.
+	--gv-table-cell-border-width: var(--gv-border-width-0);
+	--gv-table-cell-border-style: solid;
+	--gv-table-cell-border-color: var(--gv-color-border-light);
+
+	// =========================================================
+	// 20. Layer-2 — Field labels
+	// =========================================================
+	--gv-field-label-font-size: var(--gv-font-size-xs);
+	--gv-field-label-font-weight: var(--gv-font-weight-semibold);
+	--gv-field-label-color: var(--gv-color-text-muted);
+	--gv-field-label-text-transform: none;
+	--gv-field-label-letter-spacing: var(--gv-_letter-spacing-uppercase);
+	// Space below the label (label-stacked layout) or between label
+	// and value (label-inline layout).
+	--gv-field-label-margin-block-end: var(--gv-space-1);
+	// Flex direction for the label+value pair. `column` (default) =
+	// stacked; `row` = inline-with-value. Customer ask: "label + value
+	// on the same line" — recurring ticket category.
+	--gv-field-label-direction: column;
+
+	// =========================================================
+	// 21. Layer-2 — Widgets / search bar
+	// =========================================================
+	--gv-widget-padding-block: var(--gv-space-5);
+	--gv-widget-padding-inline: var(--gv-space-4);
+	--gv-widget-border-color: var(--gv-entry-border-color);
+	--gv-widget-border-radius: var(--gv-radius-lg);
+	--gv-widget-margin-block-end: var(--gv-space-8);
+	--gv-search-field-min-width: clamp(140px, 50vw, 200px);
+	--gv-search-row-gap: var(--gv-space-4);
+	--gv-search-col-gap: var(--gv-space-4);
+
+	// =========================================================
+	// 22. Layer-2 — Form controls
+	// =========================================================
+	--gv-control-bg: var(--gv-color-surface);
+	--gv-control-border-color: var(--gv-color-border-strong);
+	--gv-control-border-width: var(--gv-border-width-1);
+	--gv-control-radius: var(--gv-radius-md);
+	--gv-control-bg-disabled: var(--gv-color-surface-disabled);
+	--gv-control-border-color-disabled: var(--gv-color-border);
+	--gv-control-text-disabled: var(--gv-color-text-disabled);
+	--gv-checkbox-size: 16px;
+	--gv-map-marker-size: 18px;
+
+	// =========================================================
+	// 23. Layer-2 — Buttons
+	// =========================================================
+	// Primary button — Submit, Update, Save (form actions).
+	// Border matches bg by default so the button reads as filled.
+	--gv-button-bg: var(--gv-color-primary);
+	--gv-button-color: var(--gv-color-on-primary);
+	--gv-button-border-width: var(--gv-border-width-1);
+	--gv-button-border-color: var(--gv-button-bg);
+	--gv-button-bg-hover: var(--gv-color-primary-hover);
+	--gv-button-border-color-hover: var(--gv-button-bg-hover);
+	--gv-button-bg-disabled: var(--gv-color-surface-disabled);
+	--gv-button-color-disabled: var(--gv-color-text-disabled);
+
+	// Secondary button — Cancel, Back, neutral actions.
+	// Defaults to outlined-transparent so Cancel reads as "available
+	// but de-emphasized" next to the filled primary. Recurring
+	// ticket category: Cancel/Edit buttons "look wrong" because
+	// there were no secondary tokens to retheme them.
+	--gv-button-secondary-bg: transparent;
+	--gv-button-secondary-color: var(--gv-color-text);
+	--gv-button-secondary-border-width: var(--gv-border-width-1);
+	--gv-button-secondary-border-color: var(--gv-color-border);
+	--gv-button-secondary-bg-hover: var(--gv-color-surface-alt);
+	--gv-button-secondary-color-hover: var(--gv-color-text);
+	--gv-button-secondary-border-color-hover: var(--gv-color-text);
+
+	// Danger button — Delete, destructive actions.
+	// Defaults to outlined-error (red text + red border on transparent)
+	// to signal danger without committing to a filled red button until
+	// hover, when the surface fills with a soft error background.
+	--gv-button-danger-bg: transparent;
+	--gv-button-danger-color: var(--gv-color-error);
+	--gv-button-danger-border-width: var(--gv-border-width-1);
+	--gv-button-danger-border-color: var(--gv-color-error);
+	--gv-button-danger-bg-hover: var(--gv-color-surface-error);
+	--gv-button-danger-color-hover: var(--gv-color-error-hover);
+	--gv-button-danger-border-color-hover: var(--gv-color-error-hover);
+
+	// Universal button geometry — applies to all variants.
+	--gv-button-padding-block: var(--gv-space-2);
+	--gv-button-padding-inline: var(--gv-space-5);
+	--gv-button-radius: var(--gv-radius-md);
+	--gv-button-font-size: var(--gv-font-size-sm);
+	--gv-button-font-weight: var(--gv-font-weight-medium);
+	// `0` preserves current rendered height (~37px on default install).
+	// Customers wanting AAA 2.5.5 compliance set this to
+	// `var(--gv-size-touch-target)` (44px).
+	--gv-button-min-height: 0;
+
+	// =========================================================
+	// 24. Layer-2 — Toolbar
+	// =========================================================
+	--gv-toolbar-gap: var(--gv-space-2);
+	--gv-toolbar-padding: var(--gv-space-4);
+	--gv-toolbar-margin-block-end: var(--gv-space-4);
+
+	// =========================================================
+	// 25. Layer-2 — Pagination
+	// =========================================================
+	--gv-pagination-gap: var(--gv-space-1);
+	--gv-pagination-button-size: 36px;
+	--gv-pagination-button-radius: var(--gv-control-radius);
+	--gv-pagination-button-border-color: var(--gv-color-border-strong);
+
+	// Idle bg uses `surface`, not `transparent`: the widget zone ships
+	// `background: none`, so transparent would drop dark text on a dark host.
+	--gv-pagination-button-bg: var(--gv-color-surface);
+	--gv-pagination-button-color: var(--gv-color-text);
+
+	// Hover darkens `surface` a step (`surface-hover` was too subtle); tracks
+	// the surface so dark presets darken too.
+	--gv-pagination-button-bg-hover: color-mix(in oklch, var(--gv-color-surface) 90%, #000);
+	--gv-pagination-button-color-hover: var(--gv-color-text);
+	--gv-pagination-button-bg-active: var(--gv-color-primary);
+	--gv-pagination-button-color-active: var(--gv-color-on-primary);
+
+	// =========================================================
+	// 26. Layer-2 — Specialized (single-entry, list, map)
+	// =========================================================
+	--gv-single-entry-label-inline-size: 30%;
+	--gv-single-entry-label-width: var(--gv-single-entry-label-inline-size);  // Legacy alias
+	--gv-list-media-inline-size: 33.33%;
+	--gv-list-media-width: var(--gv-list-media-inline-size);                  // Legacy alias
+	--gv-map-infowindow-max-width: min(320px, calc(100vw - 2 * var(--gv-space-4)));
+	--gv-map-infowindow-image-max-width: 100px;
+
+	// =========================================================
+	// 27. Layer-2 — Touch targets / drag handles
+	// =========================================================
+	--gv-size-touch-target: 44px;
+	--gv-drag-handle-size: var(--gv-size-touch-target);
+	--gv-drag-handle-color: var(--gv-color-text-muted);
+
+	// =========================================================
+	// 28. Layer-2 — Scrollbar / pause
+	// =========================================================
+	--gv-scrollbar-thumb-color: var(--gv-color-border);
+	--gv-scrollbar-track-color: var(--gv-color-surface-alt);
+	--gv-auto-advance-paused: 0;
+
+	// =========================================================
+	// 29. Layout — Grid
+	// =========================================================
+	// `--gv-grid-columns-md` / `-lg` are intentionally NOT declared
+	// here: consumers read them as `var(--gv-grid-columns-md,
+	// var(--gv-grid-columns))`, and the fallback to the base column
+	// count is only live while the tokens stay unset (and
+	// unregistered; see `register_property => false` in the registry).
+	// Declaring defaults here would pin every responsive breakpoint
+	// to that value instead of tracking the customer's column count.
+	--gv-grid-columns: 1;
+	--gv-grid-gap: var(--gv-space-6);
+	--gv-grid-align: stretch;
+	--gv-card-min-width: 0px;
+
+	// =========================================================
+	// 30. Host-contrast multi-layer defense — Layer 2
+	//
+	// `--gv-self-contained` is a 0/1 toggle. When 1, _base.scss
+	// paints every widget zone + outer wrapper with surface so
+	// the View becomes a discrete chromatic container — guarantees
+	// contrast regardless of host page background.
+	//
+	// `--gv-view-wrapper-radius` and `--gv-view-wrapper-shadow`
+	// are companion tokens preset envelopes can override to round
+	// + lift the wrapper into a "card-on-page" look (only visible
+	// when self-contained = 1).
+	//
+	// Spec: docs/superpowers/specs/2026-05-20-host-contrast-multi-layer.md
+	// =========================================================
+	--gv-self-contained: 0;
+	--gv-view-wrapper-radius: 0;
+	--gv-view-wrapper-shadow: none;
+}
+
+	// Progressive enhancement for the shadow scale. The @supports test uses the
+	// exact shape below, calc() inside the mix percentage, so a browser shipping
+	// color-mix() without that support keeps the literals rather than losing its
+	// shadows.
+	@supports (color: color-mix(in srgb, red calc(0.1 * 50%), transparent)) {
+		:where(.gv-themed) {
+			--gv-shadow-xs: 0 1px 2px color-mix(in srgb, var(--gv-shadow-color) calc(var(--gv-shadow-alpha) * 50%), transparent);
+			--gv-shadow-sm: 0 1px 4px color-mix(in srgb, var(--gv-shadow-color) calc(var(--gv-shadow-alpha) * 78%), transparent);
+			--gv-shadow-md: 0 1px 3px color-mix(in srgb, var(--gv-shadow-color) calc(var(--gv-shadow-alpha) * 100%), transparent),
+			                0 1px 2px color-mix(in srgb, var(--gv-shadow-color) calc(var(--gv-shadow-alpha) * 60%), transparent);
+			--gv-shadow-lg: 0 4px 6px -1px color-mix(in srgb, var(--gv-shadow-color) calc(var(--gv-shadow-alpha) * 100%), transparent),
+			                0 2px 4px -1px color-mix(in srgb, var(--gv-shadow-color) calc(var(--gv-shadow-alpha) * 60%), transparent);
+			--gv-shadow-xl: 0 10px 15px -3px color-mix(in srgb, var(--gv-shadow-color) calc(var(--gv-shadow-alpha) * 100%), transparent),
+			                0 4px  6px -2px color-mix(in srgb, var(--gv-shadow-color) calc(var(--gv-shadow-alpha) * 50%), transparent);
+			--gv-entry-shadow-hover:
+				0 4px 6px -1px color-mix(in srgb, var(--gv-shadow-color) calc(var(--gv-shadow-alpha) * 100%), transparent),
+				0 2px 4px -1px color-mix(in srgb, var(--gv-shadow-color) calc(var(--gv-shadow-alpha) * 60%), transparent);
+		}
+	}
+
+} // @layer gravitykit-base
+
+// =========================================================
+// Shared recipes
+// =========================================================
+
+// The entry-card recipe shared by List, Layout Builder, DIY, and
+// single-entry surfaces: token-driven surface, border triple, radius,
+// shadow, and logical padding. Hover re-declares the full border
+// shorthand so independent hover width / style / color overrides take
+// effect; each `-hover` token cascades from its resting sibling, so an
+// uncustomized hover inherits the resting border seamlessly.
+@mixin gv-entry-card($hover-bg: var(--gv-entry-bg-hover), $hover: true) {
+	background: var(--gv-entry-bg);
+	border: var(--gv-entry-border-width) var(--gv-entry-border-style) var(--gv-entry-border-color);
+	border-radius: var(--gv-entry-radius);
+	box-shadow: var(--gv-entry-shadow);
+	// Logical padding: the `-top`/`-bottom`/`-left`/`-right` tokens are
+	// the customer-facing knobs; the `-inline-*` tokens alias them in
+	// the token block above so either naming works and RTL mirrors.
+	padding-block: var(--gv-entry-padding-top) var(--gv-entry-padding-bottom);
+	padding-inline: var(--gv-entry-padding-inline-start, var(--gv-entry-padding-left)) var(--gv-entry-padding-inline-end, var(--gv-entry-padding-right));
+
+	@if $hover {
+		// Hover lift: every transitioning property runs on the same
+		// fast tick + standard ease-out so the card responds in one
+		// beat, consistent with buttons and links.
+		transition: box-shadow var(--gv-transition-fast) var(--gv-easing-standard),
+		            border-color var(--gv-transition-fast) var(--gv-easing-standard),
+		            background-color var(--gv-transition-fast) var(--gv-easing-standard);
+
+		&:hover,
+		&:focus-within {
+			background-color: $hover-bg;
+			color: var(--gv-color-text-hover);
+			box-shadow: var(--gv-entry-shadow-hover);
+			border:
+				var(--gv-entry-border-width-hover)
+				var(--gv-entry-border-style-hover)
+				var(--gv-entry-border-color-hover);
+		}
+	}
+}

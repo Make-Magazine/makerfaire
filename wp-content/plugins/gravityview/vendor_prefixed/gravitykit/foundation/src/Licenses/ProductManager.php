@@ -1,9 +1,4 @@
 <?php
-/**
- * @license GPL-2.0-or-later
- *
- * Modified using {@see https://github.com/BrianHenryIE/strauss}.
- */
 
 namespace GravityKit\GravityView\Foundation\Licenses;
 
@@ -17,18 +12,24 @@ use GravityKit\GravityView\Foundation\Encryption\Encryption;
 use GravityKit\GravityView\Foundation\Helpers\Core as CoreHelpers;
 use GravityKit\GravityView\Foundation\Licenses\Integrity\PackageVerifier;
 use GravityKit\GravityView\Foundation\Licenses\WP\WPUpgraderSkin;
+use GravityKit\GravityView\Foundation\Notices\ServerNoticeHandler;
 use GravityKit\GravityView\Foundation\WP\AdminMenu;
 use Plugin_Upgrader;
 use stdClass;
 
 class ProductManager {
-	const STORE_API_ENDPOINT = 'https://store.gravitykit.com/products';
-
 	const STORE_API_VERSION = 3;
 
 	const PRODUCTS_DATA_CACHE_ID = Framework::ID . '/products/' . Core::VERSION;
 
 	const PRODUCTS_DATA_CACHE_EXPIRATION = 43200; // 12 hours in seconds.
+
+	/**
+	 * Transient containing the last successfully reconciled catalog notice hash.
+	 *
+	 * @since TBD
+	 */
+	const CATALOG_NOTICES_HASH_CACHE_ID = Framework::ID . '/product-notices/' . Core::VERSION;
 
 	/**
 	 * Duration in seconds for the force-refresh lock window.
@@ -96,6 +97,15 @@ class ProductManager {
 	private static $_instance = null;
 
 	/**
+	 * Catalog notice payload hashes synced during this request, keyed by blog ID.
+	 *
+	 * @since TBD
+	 *
+	 * @var array<int,string>
+	 */
+	private $catalog_notice_sync_hashes = [];
+
+	/**
 	 * Returns class instance.
 	 *
 	 * @since 1.0.0
@@ -130,7 +140,15 @@ class ProductManager {
 
 		add_action( 'wp_loaded', [ $this, 'ensure_update_plugins_transient' ], PHP_INT_MAX );
 
-		$this->update_manage_your_kit_submenu_badge_count();
+		// The badge triggers a products-data lookup that can call the license server, and a failed
+		// call translates its error message; doing that here (during `plugins_loaded`, before
+		// `after_setup_theme`) trips WordPress 6.7's just-in-time translation notice. The badge is
+		// not consumed until `admin_menu`.
+		if ( did_action( 'init' ) ) {
+			$this->update_manage_your_kit_submenu_badge_count();
+		} else {
+			add_action( 'init', [ $this, 'update_manage_your_kit_submenu_badge_count' ] );
+		}
 
 		$initialized = true;
 	}
@@ -260,7 +278,7 @@ class ProductManager {
 	 *
 	 * @return array|null The product object.
 	 */
-	private function get_first_product_by_payload( array $payload, array $products_data_args = [] ): ?array {
+	public function get_first_product_by_payload( array $payload, array $products_data_args = [] ): ?array {
 		$text_domains = array_filter( explode( '|', $payload['text_domain'] ?? '' ) );
 
 		if ( ! $text_domains ) {
@@ -376,7 +394,7 @@ class ProductManager {
 
 		$product_id      = $product['id'];
 		$license_manager = LicenseManager::get_instance();
-		$licenses_data   = $license_manager->get_licenses_data();
+		$licenses_data   = $license_manager->get_all_licenses_data();
 
 		// Prefer the license-scoped URL from licenses_data — it carries the `lh`
 		// attribution claim that the Store's download log uses. For free products
@@ -398,7 +416,7 @@ class ProductManager {
 				}
 
 				try {
-					$license = $license_manager->check_license( $key );
+					$license = $license_manager->check_license( $key, $license_data['url'] ?? null );
 				} catch ( Exception $e ) {
 					LoggerFramework::get_instance()->warning( "Unable to verify license key {$key} when installing product ID {$product_id}: " . $e->getMessage() );
 
@@ -490,37 +508,15 @@ class ProductManager {
 			);
 		}
 
-		$this->update_product( $product );
-
-		$backend_foundation_version = Core::VERSION;
-
-		$activation_error = null;
-
-		// After an update, the product is deactivated and needs to be reactivated. Activate it if it was active before the update.
-		if ( $product['active'] ) {
-			try {
-				$this->activate_product( $product );
-
-				// Check if the updated product comes with a newer version of the Foundation, which will be loaded if another Ajax request is made.
-				$product_foundation_version = Core::get_instance()->get_plugin_foundation_version( $product['plugin_file'], true );
-
-				$backend_foundation_version = CoreHelpers::version_compare(
-					Core::VERSION,
-					$product_foundation_version,
-					'<'
-				) ? $product_foundation_version : Core::VERSION;
-			} catch ( Exception $e ) {
-				$activation_error = $e->getMessage();
-			}
+		// Downloads are license-gated server-side; fail with a clear message instead of a broken package fetch.
+		if ( isset( $product['licenses'] ) && ! $this->is_product_update_authorized( $product ) ) {
+			throw new Exception( esc_html__( 'An active license is required to update this product.', 'gk-gravityview' ) );
 		}
 
-        return [
-            'products'         => $this->ajax_get_products_data(),
-            'activation_error' => $activation_error,
-            'ui_action'        => [
-                'reload' => CoreHelpers::version_compare( $backend_foundation_version, $payload['frontend_foundation_version'], '<>' ) || ( $product['has_admin_menu'] && $product['active'] && ! $activation_error ),
-            ],
-        ];
+		$this->update_product( $product );
+
+		// After an update the product is deactivated, so reactivate it if it was running.
+		return $this->finalize_product_change( $product, (bool) $product['active'], $payload['frontend_foundation_version'] );
 	}
 
 	/**
@@ -564,14 +560,13 @@ class ProductManager {
 		}
 
 		// Block transition if the current channel restricts it.
-		// Only enforce when a prerelease is actually installed — a stale channel value
+		// Only enforce when a channel build is actually installed — a stale channel value
 		// (e.g., from a previous install) should not restrict transitions.
-		$installed_version = $product['installed_version'] ?? '';
-		$is_prerelease     = ! empty( $installed_version ) && preg_match( '/-(alpha|beta|rc|nightly|dev)/i', $installed_version );
-		$active_key        = $product['channel'] ?: 'stable';
-		$active_channel    = $product['channels'][ $active_key ] ?? [];
+		$is_channel_build = ! empty( $product['channel_tracked'] );
+		$active_key       = $product['channel'] ?: 'stable';
+		$active_channel   = $product['channels'][ $active_key ] ?? [];
 
-		if ( $is_prerelease && isset( $active_channel['allowed_transitions'] ) && ! in_array( $payload['channel'], $active_channel['allowed_transitions'], true ) ) {
+		if ( $is_channel_build && isset( $active_channel['allowed_transitions'] ) && ! in_array( $payload['channel'], $active_channel['allowed_transitions'], true ) ) {
 			throw new Exception( esc_html__( 'Switching to this channel is not allowed from the current channel.', 'gk-gravityview' ) );
 		}
 
@@ -579,6 +574,13 @@ class ProductManager {
 
 		if ( ! $channel_data || empty( $channel_data['version'] ) || empty( $channel_data['download'] ) ) {
 			throw new Exception( esc_html__( 'No version available for this channel.', 'gk-gravityview' ) );
+		}
+
+		// A hidden channel is not on offer to this site. Leaving the tab out of the admin cannot be
+		// the gate: the channel filter is addressable by URL, so the switch has to be refused here.
+		// A channel that is already installed stays switchable, so a site is never stranded on one.
+		if ( ! empty( $channel_data['hidden'] ) && $payload['channel'] !== $product['channel'] ) {
+			throw new Exception( esc_html__( 'This channel is not available for this product.', 'gk-gravityview' ) );
 		}
 
 		// Set channel before triggering the upgrade.
@@ -617,32 +619,11 @@ class ProductManager {
 		// Re-fetch product after install/update to get updated path, installed status, etc.
 		$product = $this->get_first_product_by_payload( $payload, [ 'skip_request_cache' => true ] );
 
-		$activation_error           = null;
-		$backend_foundation_version = Core::VERSION;
-
-		if ( $product['active'] || $was_active || ! $was_installed ) {
-			try {
-				$this->activate_product( $product );
-
-				$product_foundation_version = Core::get_instance()->get_plugin_foundation_version( $product['plugin_file'], true );
-
-				$backend_foundation_version = CoreHelpers::version_compare(
-					Core::VERSION,
-					$product_foundation_version ?? '0',
-					'<'
-				) ? $product_foundation_version : Core::VERSION;
-			} catch ( Exception $e ) {
-				$activation_error = $e->getMessage();
-			}
-		}
-
-		return [
-			'products'         => $this->ajax_get_products_data(),
-			'activation_error' => $activation_error,
-			'ui_action'        => [
-				'reload' => CoreHelpers::version_compare( $backend_foundation_version, $payload['frontend_foundation_version'], '<>' ) || ( $product['has_admin_menu'] && ! $activation_error ),
-			],
-		];
+		return $this->finalize_product_change(
+			$product,
+			(bool) ( $product['active'] || $was_active || ! $was_installed ),
+			$payload['frontend_foundation_version']
+		);
 	}
 
 	/**
@@ -681,13 +662,12 @@ class ProductManager {
 		}
 
 		// Block transition if the current channel restricts it.
-		// Only enforce when a prerelease is actually installed.
-		$installed_version = $product['installed_version'] ?? '';
-		$is_prerelease     = ! empty( $installed_version ) && preg_match( '/-(alpha|beta|rc|nightly|dev)/i', $installed_version );
-		$active_key        = $product['channel'] ?: 'stable';
-		$active_channel    = $product['channels'][ $active_key ] ?? [];
+		// Only enforce when a channel build is actually installed.
+		$is_channel_build = ! empty( $product['channel_tracked'] );
+		$active_key       = $product['channel'] ?: 'stable';
+		$active_channel   = $product['channels'][ $active_key ] ?? [];
 
-		if ( $is_prerelease && isset( $active_channel['allowed_transitions'] ) && ! in_array( 'stable', $active_channel['allowed_transitions'], true ) ) {
+		if ( $is_channel_build && isset( $active_channel['allowed_transitions'] ) && ! in_array( 'stable', $active_channel['allowed_transitions'], true ) ) {
 			throw new Exception( esc_html__( 'Switching to stable is not allowed from the current channel.', 'gk-gravityview' ) );
 		}
 
@@ -700,7 +680,7 @@ class ProductManager {
 		$stable_download = $stable_channel['download'] ?? '';
 
 		if ( ! $stable_download ) {
-			$licenses_data   = LicenseManager::get_instance()->get_licenses_data();
+			$licenses_data   = LicenseManager::get_instance()->get_all_licenses_data();
 			$stable_download = EDD::pick_download_link( $product, $licenses_data );
 		}
 
@@ -737,13 +717,37 @@ class ProductManager {
 		// Re-fetch product after update to get updated path and status.
 		$product = $this->get_first_product_by_payload( $payload, [ 'skip_request_cache' => true ] );
 
+		return $this->finalize_product_change( $product, (bool) $was_active, $payload['frontend_foundation_version'] );
+	}
+
+	/**
+	 * Reactivates a product after an install/update and builds the Ajax response.
+	 *
+	 * Every flow that replaces a product's files (update, channel switch, stable switch, installing
+	 * a picked build) ends the same way: reactivate if it was running, work out whether the UI has
+	 * to reload because Foundation's version moved or an admin menu appeared, and hand back fresh
+	 * products data.
+	 *
+	 * A reload is only asked for when this call actually activated the product -- an inactive
+	 * product registers no admin menu, so nothing on the page changed.
+	 *
+	 * @since 1.31.0
+	 *
+	 * @param array $product                     Product data (re-fetched after the file change).
+	 * @param bool  $should_activate             Whether the product should be (re)activated.
+	 * @param mixed $frontend_foundation_version Foundation version string the browser has loaded.
+	 *
+	 * @return array{products: array, activation_error: null|string, ui_action: array}
+	 */
+	public function finalize_product_change( array $product, bool $should_activate, $frontend_foundation_version ): array {
 		$activation_error           = null;
 		$backend_foundation_version = Core::VERSION;
 
-		if ( $was_active ) {
+		if ( $should_activate ) {
 			try {
 				$this->activate_product( $product );
 
+				// Check if the product now carries a newer Foundation, which would be loaded on the next Ajax request.
 				$product_foundation_version = Core::get_instance()->get_plugin_foundation_version( $product['plugin_file'], true );
 
 				$backend_foundation_version = CoreHelpers::version_compare(
@@ -760,7 +764,8 @@ class ProductManager {
 			'products'         => $this->ajax_get_products_data(),
 			'activation_error' => $activation_error,
 			'ui_action'        => [
-				'reload' => CoreHelpers::version_compare( $backend_foundation_version, $payload['frontend_foundation_version'], '<>' ) || ( $product['has_admin_menu'] && ! $activation_error ),
+				'reload' => CoreHelpers::version_compare( $backend_foundation_version, $frontend_foundation_version, '<>' )
+					|| ( $product['has_admin_menu'] && $should_activate && ! $activation_error ),
 			],
 		];
 	}
@@ -982,6 +987,12 @@ class ProductManager {
 			);
 		}
 
+		// Network-wide activation requires a license that covers the whole network; single sites can still activate
+		// individually. Coverage is computed live from license data — cached product payloads may predate the flag.
+		if ( CoreHelpers::is_network_admin() && isset( $product['licenses'] ) && empty( $product['free'] ) && empty( $product['third_party'] ) && ! $this->has_network_license( $product['licenses'] ) ) {
+			throw new Exception( esc_html__( 'A network license is required to activate this product for all sites on the network.', 'gk-gravityview' ) );
+		}
+
 		$this->activate_product( $product );
 
 		// Check if the activated product comes with a newer version of the Foundation, which will be loaded if another Ajax request is made.
@@ -1028,6 +1039,71 @@ class ProductManager {
 				)
 			);
 		}
+	}
+
+	/**
+	 * Returns whether any of the given license keys covers the entire network.
+	 *
+	 * @since 1.25.0
+	 *
+	 * @param array $license_keys License keys.
+	 *
+	 * @return bool
+	 */
+	private function has_network_license( array $license_keys ): bool {
+		$license_manager = LicenseManager::get_instance();
+		$licenses_data   = $license_manager->get_licenses_data();
+
+		foreach ( $license_keys as $license_key ) {
+			if ( isset( $licenses_data[ $license_key ] ) && $license_manager->is_license_active_for_network( $licenses_data[ $license_key ] ) ) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	/**
+	 * Returns whether any of the given license keys is active for the current site.
+	 *
+	 * @since 1.25.0
+	 *
+	 * @param array $license_keys License keys.
+	 *
+	 * @return bool
+	 */
+	private function has_site_license( array $license_keys ): bool {
+		$license_manager = LicenseManager::get_instance();
+		$licenses_data   = $license_manager->get_licenses_data();
+
+		foreach ( $license_keys as $license_key ) {
+			if ( isset( $licenses_data[ $license_key ] ) && $license_manager->is_license_active_for_site( $licenses_data[ $license_key ] ) ) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	/**
+	 * Returns whether the current context holds a license that authorizes updating the product.
+	 *
+	 * Computed live from license data — cached product payloads may predate the licensed flags.
+	 *
+	 * @since 1.25.0
+	 *
+	 * @param array $product Product data.
+	 *
+	 * @return bool
+	 */
+	public function is_product_update_authorized( array $product ): bool {
+		if ( ! empty( $product['free'] ) ) {
+			return true;
+		}
+
+		$license_keys = $product['licenses'] ?? [];
+
+		return CoreHelpers::is_network_admin() ? $this->has_network_license( $license_keys ) : $this->has_site_license( $license_keys );
 	}
 
 	/**
@@ -1121,6 +1197,18 @@ class ProductManager {
 	 * @return array
 	 */
 	public function get_remote_products( bool $force_refresh = false ): array {
+		// Failed fetches are memoized for the request: successes are cached in a transient, but a
+		// failure would otherwise retry the license server on every consumer call in the request.
+		static $failed_fetch = null;
+
+		if ( $failed_fetch instanceof Exception && ! $force_refresh ) {
+			throw $failed_fetch;
+		}
+
+		if ( $force_refresh ) {
+			$failed_fetch = null;
+		}
+
 		$cache_key = self::PRODUCTS_DATA_CACHE_ID;
 		$lock_key  = $this->get_fetch_lock_key( $force_refresh );
 
@@ -1161,6 +1249,8 @@ class ProductManager {
 		try {
 			$normalized_products = $this->fetch_and_normalize_products();
 		} catch ( Exception $e ) {
+			$failed_fetch = $e;
+
 			$this->release_fetch_lock( $lock_key, $lock_token );
 			throw $e;
 		}
@@ -1352,6 +1442,7 @@ class ProductManager {
 	 * Fetches products from the API and normalizes them.
 	 *
 	 * @since 1.7.0
+	 * @since TBD Preserve server-driven product notices from the catalog response.
 	 *
 	 * @throws Exception
 	 *
@@ -1359,7 +1450,7 @@ class ProductManager {
 	 */
 	private function fetch_and_normalize_products(): array {
 		$response = Helpers::query_api(
-			self::STORE_API_ENDPOINT,
+			LicenseManager::store_url() . '/products',
 			[
 				'api_version' => self::STORE_API_VERSION,
 				'bust_cache'  => time(),
@@ -1415,10 +1506,12 @@ class ProductManager {
 						'high' => esc_url_raw( $banners['high'] ?? $product_schema['banners']['low'] ),
 					],
 					'sections'           => [
-						'description' => Arr::get( $sections, 'description', $product_schema['sections']['description'] ),
-						'changelog'   => $this->truncate_product_changelog(
-							Arr::get( $sections, 'changelog', $product_schema['sections']['changelog'] ),
-							esc_url_raw( $product['info']['link'] ?? $product_schema['link'] )
+						'description' => wp_kses_post( Arr::get( $sections, 'description', $product_schema['sections']['description'] ) ),
+						'changelog'   => wp_kses_post(
+							$this->truncate_product_changelog(
+								Arr::get( $sections, 'changelog', $product_schema['sections']['changelog'] ),
+								esc_url_raw( $product['info']['link'] ?? $product_schema['link'] )
+							)
 						),
 					],
 					'server_version'     => Arr::get( $product, 'licensing.version', $product_schema['server_version'] ),
@@ -1426,6 +1519,7 @@ class ProductManager {
 					'docs'               => esc_url_raw( $product['info']['docs_url'] ?? $product_schema['docs'] ),
 					'dependencies'       => Arr::get( $product, 'dependencies', $product_schema['dependencies'] ),
 					'update_notices'     => Arr::get( $product, 'update_notices', $product_schema['update_notices'] ),
+					'product_notices'    => Arr::get( $product, 'product_notices', $product_schema['product_notices'] ),
 					'signature'          => Arr::get( $product, 'integrity.signature', '' ),
 					'signing_key_id'     => Arr::get( $product, 'integrity.signing_key_id', '' ),
 					'sha256'             => Arr::get( $product, 'integrity.sha256', '' ),
@@ -1522,6 +1616,29 @@ class ProductManager {
 			'banners',
 		];
 
+		// A channel download URL sourced from a network-scoped (or another site's) license is that
+		// licenser's signed entitlement. A subsite admin keeps only URLs backed by the site's own
+		// licenses — they cannot install or update network products anyway (see Framework caps).
+		$can_see_network_downloads = ! is_multisite() || current_user_can( 'manage_network_options' );
+
+		$own_downloads = [];
+
+		if ( ! $can_see_network_downloads ) {
+			foreach ( LicenseManager::get_instance()->get_site_scoped_licenses_data() as $license ) {
+				foreach ( $license['products'] ?? [] as $product_id => $product_data ) {
+					if ( ! empty( $product_data['download'] ) ) {
+						$own_downloads[ $product_id ]['stable'] = (string) $product_data['download'];
+					}
+
+					foreach ( $product_data['channels'] ?? [] as $channel_name => $channel_data ) {
+						if ( ! empty( $channel_data['download'] ) ) {
+							$own_downloads[ $product_id ][ $channel_name ] = (string) $channel_data['download'];
+						}
+					}
+				}
+			}
+		}
+
 		foreach ( $products as $key => &$product ) {
 			// Unset properties that are not needed in the UI.
 			foreach ( $excluded_properties as $property ) {
@@ -1537,10 +1654,32 @@ class ProductManager {
 				continue;
 			}
 
-			// Encrypt license keys.
+			if ( ! $can_see_network_downloads ) {
+				foreach ( $product['channels'] ?? [] as $channel_name => $channel_data ) {
+					if ( empty( $channel_data['download'] ) ) {
+						continue;
+					}
+
+					// The resolved channel URL may be a network (or another site's) licenser's signed
+					// entitlement — channels are filled network-first. Replace it with the site's OWN license
+					// URL for this channel; else the public free-product link; else blank it.
+					if ( isset( $own_downloads[ $product['id'] ][ $channel_name ] ) ) {
+						$product['channels'][ $channel_name ]['download'] = $own_downloads[ $product['id'] ][ $channel_name ];
+					} elseif ( ! empty( $product['free'] ) && ! empty( $product['download_link'] ) ) {
+						$product['channels'][ $channel_name ]['download'] = (string) $product['download_link'];
+					} else {
+						$product['channels'][ $channel_name ]['download'] = '';
+					}
+				}
+			}
+
+			// Nonce derived from the key: same key → identical ciphertext this request (stable identifier),
+			// different keys → different nonces (a shared nonce reuses the XSalsa20 keystream across keys).
 			$product['licenses'] = array_map(
 				function ( $key ) {
-					return Encryption::get_instance()->encrypt( $key, false, Core::get_request_unique_string() );
+					$nonce = hash_hmac( 'sha256', $key, Core::get_request_unique_string(), true );
+
+					return Encryption::get_instance()->encrypt( $key, false, $nonce );
 				},
 				$product['licenses']
 			);
@@ -1550,17 +1689,43 @@ class ProductManager {
 	}
 
 	/**
+	 * Returns the last-known-good product data from the cache transient, or null when unavailable.
+	 *
+	 * Lets a fresh fetch that can't complete — lock contention or a slow/unreachable Store — fall back
+	 * to previously cached data so admin pages keep rendering (with slightly stale update info) instead
+	 * of showing an empty product list.
+	 *
+	 * @since 1.22.0
+	 *
+	 * @return array|null The cached product data structure, or null when no usable cache exists.
+	 */
+	private function get_stale_cached_products(): ?array {
+		$stale = WP::get_transient( self::PRODUCTS_DATA_CACHE_ID );
+
+		if ( $stale && ! is_array( $stale ) ) {
+			$stale = json_decode( $stale, true );
+		}
+
+		return is_array( $stale ) && ! empty( $stale['raw'] ) ? $stale : null;
+	}
+
+	/**
 	 * Returns a list of all GravityKit products with associated installation/activation/licensing data.
 	 *
 	 * @since 1.0.0
 	 * @since 1.2.0 Result is now keyed by product's text domain.
+	 * @since TBD Reconcile notices from valid, complete product catalogs.
 	 *
 	 * @param array $args (optional) Additional arguments. Default: ['skip_cache_remote' => false, 'skip_request_cache' => false, 'key_by' => 'text_domain'].
 	 *
 	 * @return array
 	 */
 	public function get_products_data( array $args = [] ) {
-		static $_cached_products_data;
+		static $_cached_products_data_by_blog = [];
+
+		// Licenses (and therefore product data) differ per site on multisite; don't reuse another site's cache after switch_to_blog().
+		$_cache_blog_id        = is_multisite() ? get_current_blog_id() : 0;
+		$_cached_products_data = $_cached_products_data_by_blog[ $_cache_blog_id ] ?? null;
 
 		$args = wp_parse_args(
 			$args,
@@ -1582,6 +1747,8 @@ class ProductManager {
 			$products = is_array( $products ) ? $products : null;
 		}
 
+		$catalog_notice_sync_is_valid = ! is_null( $products );
+
 		if ( is_null( $products ) ) {
 			$products = [
 				'raw'                    => [],
@@ -1591,38 +1758,38 @@ class ProductManager {
 			];
 
 			try {
-				$products['raw'] = $this->get_remote_products( $args['skip_remote_cache'] );
+				$products['raw']              = $this->get_remote_products( $args['skip_remote_cache'] );
+				$catalog_notice_sync_is_valid = ! empty( $products['raw'] );
 			} catch ( LockAcquisitionException $e ) {
-				// Lock acquisition failed - another instance is fetching.
-				// Try to use stale transient cache and re-normalize it with current data.
+				// Another instance is fetching. Fall back to the last-known-good cache and continue to
+				// normalization so installation status, licenses, and dependencies are still current.
 				LoggerFramework::get_instance()->warning(
 					'Product fetch skipped due to lock contention: ' . $e->getMessage(),
 					$e->get_data()
 				);
 
-				// Attempt to retrieve full cache structure from transient.
-				$stale_products = WP::get_transient( self::PRODUCTS_DATA_CACHE_ID );
+				$stale_products = $this->get_stale_cached_products();
 
 				if ( $stale_products ) {
-					if ( ! is_array( $stale_products ) ) {
-						$stale_products = json_decode( $stale_products, true );
-					}
-
-					if ( ! empty( $stale_products['raw'] ) ) {
-						// Use stale cache but continue to normalization to ensure installation status,
-						// licenses, and dependencies are current.
-						$products = $stale_products;
-					}
+					$products = $stale_products;
 				}
-				// If no stale cache available, $products remains with empty 'raw' array from line 1150-1155,
-				// and the code below will handle empty products appropriately.
 			} catch ( Exception $e ) {
-				// Actual API/fetch error - log but continue to cache for retry logic.
+				// Actual API/fetch error (e.g. the Store timed out or is unreachable). Fall back to the
+				// last-known-good cache so admin pages still render with (slightly stale) update info
+				// instead of an empty product list, and a slow Store does not re-fetch on every request.
 				LoggerFramework::get_instance()->error( 'Unable to get products from the API: ' . $e->getMessage() );
+
+				$stale_products = $this->get_stale_cached_products();
+
+				if ( $stale_products ) {
+					$products = $stale_products;
+				}
 			}
 
 			// Only cache if we have data (either fresh or from previous cache).
 			if ( ! empty( $products['raw'] ) ) {
+				// A stale fallback contains only the last complete, validated catalog. Re-caching it
+				// is safe; the validity flag above prevents this failed request from reconciling notices.
 				WP::set_transient(
 					self::PRODUCTS_DATA_CACHE_ID,
 					wp_json_encode( $products ),
@@ -1632,17 +1799,24 @@ class ProductManager {
 		}
 
 		if ( empty( $products['raw'] ) ) {
-			$_cached_products_data = [];
+			$_cached_products_data_by_blog[ $_cache_blog_id ] = [];
 
-			return $_cached_products_data;
+			return [];
+		}
+
+		// Only a complete, previously validated non-empty catalog may reconcile the catalog source.
+		// Error/empty fallbacks deliberately leave the last-known notice state untouched.
+		if ( $catalog_notice_sync_is_valid ) {
+			$this->sync_catalog_server_notices( $products['raw'] );
 		}
 
 		$installed_plugins_hash = md5( wp_json_encode( CoreHelpers::get_installed_plugins( $args['skip_request_cache'] ) ) ?: '' );
-		$licenses_hash          = md5( wp_json_encode( LicenseManager::get_instance()->get_licenses_data() ) ?: '' );
+		$licenses_hash          = md5( wp_json_encode( LicenseManager::get_instance()->get_all_licenses_data() ) ?: '' );
 
 		// If the installed plugins haven't changed since the last request, return the cached products data to prevent re-validating dependencies, etc.
 		if ( $installed_plugins_hash === $products['installed_plugins_hash'] && $licenses_hash === $products['licenses_hash'] ) {
-			$_cached_products_data = $products['normalized'];
+			$_cached_products_data                            = $products['normalized'];
+			$_cached_products_data_by_blog[ $_cache_blog_id ] = $_cached_products_data;
 
 			return 'text_domain' === $args['key_by'] ? $_cached_products_data : $this->key_products_by_property( $_cached_products_data, $args['key_by'] );
 		} else {
@@ -1650,14 +1824,18 @@ class ProductManager {
 			$products['licenses_hash']          = $licenses_hash;
 		}
 
-		$product_license_map = LicenseManager::get_instance()->get_product_license_map();
+		$product_license_map = LicenseManager::get_instance()->get_all_product_license_map();
 
 		$products_history = ProductHistoryManager::get_instance()->get_products_history();
 
 		$products['normalized'] = [];
 
-		$licenses_data   = LicenseManager::get_instance()->get_licenses_data();
+		$licenses_data   = LicenseManager::get_instance()->get_all_licenses_data();
 		$channel_manager = ChannelManager::get_instance();
+
+		// Display licensing is judged against the CURRENT SITE's own licenses, unlike update/download
+		// resolution, which sees every license on the install.
+		$site_licenses_data = LicenseManager::get_instance()->get_licenses_data();
 
 		// Supplement API response with additional data that can change between or during requests (e.g., activation status, etc.).
 		foreach ( $products['raw'] as $product ) {
@@ -1688,7 +1866,9 @@ class ProductManager {
 					'installed'         => ! is_null( $installed_product ),
 					'installed_version' => $installed_product['version'] ?? $product['installed_version'],
 					'active'            => $installed_product['active'] ?? $product['active'],
-					'custom_build'      => ! is_null( $installed_product ) && ChannelManager::is_custom_build_version( $installed_product['version'] ?? '', array_keys( $product['channels'] ?? [] ) ),
+					'custom_build'      => false,
+					'channel_tracked'   => false,
+					'channel_exit'      => false,
 					'update_available'  => ! is_null( $installed_product ) && CoreHelpers::version_compare( ChannelManager::strip_build_suffix( $installed_product['version'] ?? '', array_keys( $product['channels'] ?? [] ) ), $product['server_version'], '<' ),
 					'path'              => $installed_product['path'] ?? $product['path'],
 					'plugin_file'       => $installed_product['plugin_file'] ?? $product['plugin_file'],
@@ -1699,6 +1879,31 @@ class ProductManager {
 					'history'           => $products_history[ $product['text_domain'] ] ?? [],
 				]
 			);
+
+			// Whether any of the product's licenses is actually active for the current site (not merely saved),
+			// and whether any covers the entire network (gates network-wide activation).
+			$normalized_product['licensed']         = false;
+			$normalized_product['network_licensed'] = false;
+
+			foreach ( $normalized_product['licenses'] as $license_key ) {
+				if ( ! isset( $site_licenses_data[ $license_key ] ) ) {
+					continue;
+				}
+
+				$license = $site_licenses_data[ $license_key ];
+
+				if ( LicenseManager::get_instance()->is_license_active_for_site( $license ) ) {
+					$normalized_product['licensed'] = true;
+				}
+
+				if ( LicenseManager::get_instance()->is_license_active_for_network( $license ) ) {
+					$normalized_product['network_licensed'] = true;
+				}
+
+				if ( $normalized_product['licensed'] && $normalized_product['network_licensed'] ) {
+					break;
+				}
+			}
 
 			// Collect available channels from license data.
 			$product_id          = $normalized_product['id'];
@@ -1713,6 +1918,17 @@ class ProductManager {
 					if ( ! empty( $channel_data['version'] ) ) {
 						$normalized_product['channels'][ $channel_name ] = $this->build_channel_entry( $channel_data, $product_url );
 					}
+				}
+
+				// Whether this license may install other builds of the product, and whether that
+				// includes untagged branch builds. The store decides; the key itself never leaves PHP.
+				$build_access = $product_license_data['builds'] ?? [];
+
+				if ( ! empty( $build_access['available'] ) ) {
+					$normalized_product['builds'] = [
+						'available' => true,
+						'branches'  => ! empty( $build_access['branches'] ),
+					];
 				}
 
 				// Capture stable download URL from this license.
@@ -1787,9 +2003,14 @@ class ProductManager {
 
 				$superseded_channels[] = $channel_name;
 
-				// If the user is on this superseded channel, clear the preference.
+				// If the user is on this superseded channel, clear the preference. The installed
+				// version goes with it so stable recovery still recognises the build afterwards.
 				if ( $normalized_product['channel'] === $channel_name ) {
-					$channel_manager->clear_channel( $normalized_product['text_domain'] );
+					$channel_manager->clear_channel(
+						$normalized_product['text_domain'],
+						(string) ( $normalized_product['installed_version'] ?? '' )
+					);
+
 					$normalized_product['channel'] = false;
 				}
 			}
@@ -1798,13 +2019,75 @@ class ProductManager {
 				unset( $normalized_product['channels'][ $channel_name ] );
 			}
 
-			// If a prerelease is installed but the channel is gone (revoked, disabled, or superseded),
-			// mark an update as available so the user can switch back to stable.
+			// Classification runs here, after channel assembly AND supersession: computed any earlier
+			// it would compare the installed version against a channel map that is either empty or
+			// still holds channels supersession is about to remove. Decided server-side so the UI
+			// never re-derives it from version strings.
+			$installed_version_for_channel = $normalized_product['installed_version'] ?? '';
+
+			/**
+			 * Filters the channel names hidden from the admin for a product.
+			 *
+			 * A hidden channel keeps working: a site already on it still sees its badge, its updates
+			 * and the route back to stable. It is only left out of the channel tabs, so a subscriber
+			 * who pulls builds over the API is not shown a track they never browse.
+			 *
+			 * @since 1.31.0
+			 *
+			 * @param string[] $hidden      Channel names to hide.
+			 * @param array    $product     Normalized product data.
+			 * @param string   $text_domain Product text domain.
+			 */
+			$hidden_channels = (array) apply_filters(
+				'gk/foundation/licenses/channels/hidden',
+				[],
+				$normalized_product,
+				$normalized_product['text_domain']
+			);
+
+			foreach ( $normalized_product['channels'] as $channel_key => $channel_entry ) {
+				if ( in_array( $channel_key, $hidden_channels, true ) ) {
+					$normalized_product['channels'][ $channel_key ]['hidden'] = true;
+				}
+			}
+
+			$normalized_product['channel_tracked'] = $normalized_product['installed']
+				&& ChannelManager::is_channel_tracked_version( $installed_version_for_channel, $normalized_product['channels'] );
+
+			// Stamp per channel whether the installed build IS that channel's build. Decided here so
+			// the UI never re-derives it, and so the build-hash suffix is tolerated consistently.
+			foreach ( $normalized_product['channels'] as $channel_key => $channel_entry ) {
+				$normalized_product['channels'][ $channel_key ]['is_installed_build'] = $normalized_product['installed']
+					&& ! empty( $channel_entry['version'] )
+					&& ChannelManager::is_same_channel_build( $installed_version_for_channel, (string) $channel_entry['version'] );
+			}
+
+			// A channel build is not a hand-installed one-off, whatever shape its suffix takes. Gated
+			// on an active channel, so an unrelated custom build still badges as CUSTOM.
+			$normalized_product['custom_build'] = $normalized_product['installed']
+				&& ChannelManager::is_custom_build_version( $installed_version_for_channel, array_keys( $normalized_product['channels'] ) )
+				&& ! ( $normalized_product['channel'] && $normalized_product['channel_tracked'] );
+
+			// Recorded when a channel was withdrawn from under this build; proves provenance once the
+			// channel itself is gone and suffix shape can no longer establish it.
+			$normalized_product['channel_exit'] = $normalized_product['installed']
+				&& $channel_manager->is_exit_version( $normalized_product['text_domain'], $installed_version_for_channel );
+
+			// Once the recorded build is no longer what is installed, the recovery has happened (or the
+			// build was replaced some other way) and the marker would only misfire later.
+			if ( $normalized_product['installed'] && ! $normalized_product['channel_exit'] ) {
+				$channel_manager->clear_exit_version( $normalized_product['text_domain'] );
+			}
+
+			// If a channel build is installed but the channel is gone (revoked, disabled, or
+			// superseded), mark an update as available so the user can switch back to stable.
 			if ( ! $normalized_product['update_available']
 				&& $normalized_product['installed']
 				&& ! $normalized_product['channel']
-				&& ChannelManager::is_prerelease_version( $normalized_product['installed_version'], array_keys( $normalized_product['channels'] ?? [] ) )
+				&& ( ChannelManager::is_prerelease_version( $normalized_product['installed_version'], array_keys( $normalized_product['channels'] ?? [] ) )
+					|| $normalized_product['channel_exit'] )
 				&& $normalized_product['server_version']
+				&& $normalized_product['installed_version'] !== $normalized_product['server_version']
 			) {
 				$normalized_product['update_available'] = true;
 			}
@@ -1887,7 +2170,8 @@ class ProductManager {
 			}
 		}
 
-		$_cached_products_data = $products['normalized'];
+		$_cached_products_data                            = $products['normalized'];
+		$_cached_products_data_by_blog[ $_cache_blog_id ] = $_cached_products_data;
 
 		WP::set_transient(
 			self::PRODUCTS_DATA_CACHE_ID,
@@ -1927,6 +2211,10 @@ class ProductManager {
 			'link'                => $data['link'] ?? '',
 			'docs'                => $data['docs'] ?? '',
 			'allowed_transitions' => $data['allowed_transitions'] ?? null,
+			// A hidden channel is not offered in the admin at all: no tab, and no switching to it.
+			// It keeps working for a subscriber who pulls builds over the API, and a site already on
+			// one can still see it and move back to stable.
+			'hidden'              => ! empty( $data['hidden'] ),
 			'superseded_by'       => $data['superseded_by'] ?? null,
 			'signature'           => $data['signature'] ?? '',
 			'signing_key_id'      => $data['signing_key_id'] ?? '',
@@ -2073,35 +2361,28 @@ class ProductManager {
 				continue;
 			}
 
-			$channel_versions = array_keys( $product['channels'] ?? [] );
+			// When a channel build is installed the channel decides, and stable never does. This is
+			// checked BEFORE the stable branch: a commit-hash build strips to its base version and so
+			// reads as behind stable, which would otherwise suppress the product and skip the channel
+			// comparison entirely.
+			$on_channel_build = $product['installed'] && $product['channel'] && $product['channel_tracked'];
 
-			if ( $product['update_available'] ) {
-				// Suppress stable updates when actively running a prerelease channel.
-				if ( $product['channel'] && ChannelManager::is_prerelease_version( $product['installed_version'], $channel_versions ) ) {
-					continue;
+			if ( $on_channel_build ) {
+				$channel_data = $product['channels'][ $product['channel'] ] ?? [];
+
+				// Uses !== instead of version_compare because ANY version mismatch is a valid update:
+				// - Cross-channel switch (beta.2 installed, switched to alpha channel serving alpha.1).
+				// - Channel rollback (server reverts beta.3 to beta.2 due to a bad release).
+				// - A new commit-hash build, whose suffix carries no ordering at all.
+				if ( ! empty( $channel_data['version'] )
+					&& ! ChannelManager::is_same_channel_build( $product['installed_version'], $channel_data['version'] ) ) {
+					$product_paths[] = $product['path'];
 				}
 
-				$product_paths[] = $product['path'];
-
 				continue;
 			}
 
-			if ( ! $product['installed'] || ! $product['channel'] ) {
-				continue;
-			}
-
-			if ( ! ChannelManager::is_prerelease_version( $product['installed_version'], $channel_versions ) ) {
-				continue;
-			}
-
-			$channel_data = $product['channels'][ $product['channel'] ] ?? [];
-
-			// Channel update: prerelease installed and the channel's version differs.
-			// Uses !== instead of version_compare because ANY version mismatch is a valid update:
-			// - Cross-channel switch (beta.2 installed, switched to alpha channel serving alpha.1).
-			// - Channel rollback (server reverts beta.3 to beta.2 due to a bad release).
-			// Both require the user to install the channel's version regardless of direction.
-			if ( ! empty( $channel_data['version'] ) && $product['installed_version'] !== $channel_data['version'] ) {
+			if ( $product['update_available'] ) {
 				$product_paths[] = $product['path'];
 			}
 		}
@@ -2126,11 +2407,33 @@ class ProductManager {
 		}
 
 		try {
-			$update_count = count( $this->get_product_paths_with_available_update() );
+			$update_paths  = $this->get_product_paths_with_available_update();
+			$products_data = $this->get_products_data();
 		} catch ( Exception $e ) {
 			LoggerFramework::get_instance()->warning( 'Unable to get products when adding a badge count for products with updates.' );
 
 			return;
+		}
+
+		$is_network_admin = CoreHelpers::is_network_admin();
+		$update_count     = 0;
+
+		// The badge is a summons: count only updates the viewer can install, for products running in this
+		// context. Active unlicensed products are counted by the unlicensed badge instead (the sets stay disjoint).
+		foreach ( $products_data as $product ) {
+			if ( empty( $product['path'] ) || ! in_array( $product['path'], $update_paths, true ) ) {
+				continue;
+			}
+
+			$active_in_context = $is_network_admin
+				? ! empty( $product['network_activated'] )
+				: ( ! empty( $product['active'] ) && empty( $product['network_activated'] ) );
+
+			if ( ! $active_in_context || ! $this->is_product_update_authorized( $product ) ) {
+				continue;
+			}
+
+			++$update_count;
 		}
 
 		if ( ! $update_count ) {
@@ -2149,6 +2452,7 @@ class ProductManager {
 	 * Returns product data schema used in the UI and elsewhere.
 	 *
 	 * @since 1.2.0
+	 * @since TBD Added the product_notices schema field.
 	 *
 	 * @return array
 	 */
@@ -2204,6 +2508,8 @@ class ProductManager {
 			'installed'            => false,       // Boolean. Whether the product is installed.
 			'installed_version'    => '',          // String. Installed product version.
 			'custom_build'         => false,       // Boolean. Whether the installed version is a custom/dev build (hash or custom-labelled suffix, not a recognised pre-release).
+			'channel_tracked'      => false,       // Boolean. Whether the installed version came from a channel rather than a stable release. Decided server-side; the UI must not re-derive it.
+			'channel_exit'         => false,       // Boolean. Whether the installed version is the one recorded when the product's channel was cleared.
 			'update_available'     => false,       // Boolean. Whether an update is available for the product.
 			'path'                 => '',          // String. Product path.
 			'plugin_file'          => '',          // String. Product plugin file.
@@ -2214,6 +2520,7 @@ class ProductManager {
 			'required_by'          => [],          // Array. Products that depend on this product. See ProductDependencyChecker::is_a_dependency_of_any_product() for structure.
 			'history'              => [],          // Array. Product history. See ProductHistoryTracker class for structure.
 			'update_notices'       => [],          // Array. Version-keyed update notices. Each: ['title' => '', 'message' => ''].
+			'product_notices'      => [],          // Array. Server-driven notices keyed by notice ID.
 			'channel'              => false,       // String|false. User's active channel choice ('beta', 'alpha', etc., or false for stable).
 			'channels'             => [],          // Array. Available channels keyed by name. Each channel: ['version' => '', 'download' => '', 'changelog' => '', 'opt_in_notice' => null, 'opt_out_notice' => null, 'dependencies' => null, 'link' => '', 'docs' => ''].
 			'signature'            => '',          // String. Hex-encoded Ed25519 signature for the stable release ZIP.
@@ -2227,6 +2534,7 @@ class ProductManager {
 	 * Normalizes product data by merging it with the product schema.
 	 *
 	 * @since 1.2.0
+	 * @since TBD Preserve dynamic product_notices definitions.
 	 *
 	 * @param array $product Product data.
 	 *
@@ -2248,6 +2556,7 @@ class ProductManager {
 		$normalized_data['licenses']             = $product['licenses'] ?? $this->get_product_schema()['licenses'];
 		$normalized_data['channels']             = $product['channels'] ?? $this->get_product_schema()['channels'];
 		$normalized_data['update_notices']       = $product['update_notices'] ?? $this->get_product_schema()['update_notices'];
+		$normalized_data['product_notices']      = $product['product_notices'] ?? $this->get_product_schema()['product_notices'];
 
 		// Combine current and legacy text domains to match products that may have changed their text domain.
 		$normalized_data['text_domains'] = array_values(
@@ -2262,6 +2571,68 @@ class ProductManager {
 		);
 
 		return $normalized_data;
+	}
+
+	/**
+	 * Syncs server notices when a complete product catalog changes.
+	 *
+	 * @since TBD
+	 *
+	 * @param array $products Complete normalized product catalog.
+	 *
+	 * @return void
+	 */
+	private function sync_catalog_server_notices( array $products ): void {
+		$notice_products = [];
+
+		foreach ( $products as $product ) {
+			if ( ! is_array( $product ) ) {
+				continue;
+			}
+
+			$text_domain = $product['text_domain'] ?? '';
+
+			if ( ! is_scalar( $text_domain ) || '' === (string) $text_domain ) {
+				continue;
+			}
+
+			$text_domain = (string) $text_domain;
+
+			$notice_products[ $text_domain ] = [
+				'id'                 => is_numeric( $product['id'] ?? null ) ? (int) $product['id'] : 0,
+				'text_domain'        => $text_domain,
+				'text_domains'       => is_array( $product['text_domains'] ?? null ) ? $product['text_domains'] : [],
+				'text_domain_legacy' => is_scalar( $product['text_domain_legacy'] ?? null ) ? (string) $product['text_domain_legacy'] : '',
+				'product_notices'    => is_array( $product['product_notices'] ?? null ) ? $product['product_notices'] : [],
+			];
+		}
+
+		if ( empty( $notice_products ) ) {
+			return;
+		}
+
+		ksort( $notice_products, SORT_STRING );
+
+		$payload_hash = md5( wp_json_encode( $notice_products ) ?: '' );
+		$blog_id      = is_multisite() ? get_current_blog_id() : 0;
+
+		if ( ( $this->catalog_notice_sync_hashes[ $blog_id ] ?? '' ) === $payload_hash ) {
+			return;
+		}
+
+		if ( get_transient( self::CATALOG_NOTICES_HASH_CACHE_ID ) === $payload_hash ) {
+			$this->catalog_notice_sync_hashes[ $blog_id ] = $payload_hash;
+
+			return;
+		}
+
+		if ( ! ServerNoticeHandler::sync( $notice_products, Core::notices(), ServerNoticeHandler::SOURCE_CATALOG ) ) {
+			// A held source/write lock leaves the persisted hash unchanged, so the next request retries.
+			return;
+		}
+
+		$this->catalog_notice_sync_hashes[ $blog_id ] = $payload_hash;
+		set_transient( self::CATALOG_NOTICES_HASH_CACHE_ID, $payload_hash, self::PRODUCTS_DATA_CACHE_EXPIRATION );
 	}
 
 	/**

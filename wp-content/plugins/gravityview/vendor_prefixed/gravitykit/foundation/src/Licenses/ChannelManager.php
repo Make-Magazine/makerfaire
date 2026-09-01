@@ -1,14 +1,20 @@
 <?php
-/**
- * @license GPL-2.0-or-later
- *
- * Modified using {@see https://github.com/BrianHenryIE/strauss}.
- */
 
 namespace GravityKit\GravityView\Foundation\Licenses;
 
 class ChannelManager {
 	const OPTION_KEY = 'gk_product_channels';
+
+	/**
+	 * Version installed at the moment a product's channel was cleared, keyed by text domain.
+	 *
+	 * Suffix shape cannot prove a build came from a channel once the channel is gone: a commit hash
+	 * is indistinguishable from a hand-installed one-off. Recording the version on the way out keeps
+	 * the stable-recovery path working without treating every custom build as channel provenance.
+	 *
+	 * @since 1.31.0
+	 */
+	const EXIT_VERSION_OPTION_KEY = 'gk_product_channel_exit_versions';
 
 	/**
 	 * Class instance.
@@ -64,6 +70,37 @@ class ChannelManager {
 		$channels[ $text_domain ] = $channel;
 
 		update_option( self::OPTION_KEY, $channels );
+
+		// Re-entering a channel makes any recorded exit meaningless. Left behind, it would push a
+		// later sideload of that exact build back to stable.
+		$this->clear_exit_version( $text_domain );
+	}
+
+	/**
+	 * Removes a product's recorded channel-exit version.
+	 *
+	 * @since 1.31.0
+	 *
+	 * @param string $text_domain Product text domain.
+	 *
+	 * @return void
+	 */
+	public function clear_exit_version( string $text_domain ): void {
+		$versions = get_option( self::EXIT_VERSION_OPTION_KEY, [] );
+
+		if ( ! is_array( $versions ) || ! array_key_exists( $text_domain, $versions ) ) {
+			return;
+		}
+
+		unset( $versions[ $text_domain ] );
+
+		if ( $versions ) {
+			update_option( self::EXIT_VERSION_OPTION_KEY, $versions );
+
+			return;
+		}
+
+		delete_option( self::EXIT_VERSION_OPTION_KEY );
 	}
 
 	/**
@@ -71,16 +108,73 @@ class ChannelManager {
 	 *
 	 * @since 1.13.0
 	 *
-	 * @param string $text_domain Product text domain.
+	 * @param string $text_domain       Product text domain.
+	 * @param string $installed_version (optional) Version installed at the time of the exit, recorded
+	 *                                  so stable recovery still works once the channel is gone.
 	 *
 	 * @return void
 	 */
-	public function clear_channel( string $text_domain ): void {
+	public function clear_channel( string $text_domain, string $installed_version = '' ): void {
 		$channels = $this->get_channels();
 
 		unset( $channels[ $text_domain ] );
 
 		update_option( self::OPTION_KEY, $channels );
+
+		// Only a channel-shaped build is provenance worth recording. A stale channel preference on a
+		// site running plain stable would otherwise stamp that stable version as a channel exit, and
+		// the recovery path would then authorize a downgrade to whatever stable the server names.
+		if ( self::is_prerelease_version( $installed_version ) || self::is_custom_build_version( $installed_version ) ) {
+			$this->record_exit_version( $text_domain, $installed_version );
+
+			return;
+		}
+
+		$this->clear_exit_version( $text_domain );
+	}
+
+	/**
+	 * Records the version installed when a product left a channel.
+	 *
+	 * @since 1.31.0
+	 *
+	 * @param string $text_domain Product text domain.
+	 * @param string $version     Installed version at the time of the exit.
+	 *
+	 * @return void
+	 */
+	public function record_exit_version( string $text_domain, string $version ): void {
+		$versions = get_option( self::EXIT_VERSION_OPTION_KEY, [] );
+
+		if ( ! is_array( $versions ) ) {
+			$versions = [];
+		}
+
+		$versions[ $text_domain ] = trim( $version );
+
+		update_option( self::EXIT_VERSION_OPTION_KEY, $versions );
+	}
+
+	/**
+	 * Checks whether a version is the one recorded when the product left a channel.
+	 *
+	 * @since 1.31.0
+	 *
+	 * @param string $text_domain Product text domain.
+	 * @param string $version     Version to check.
+	 *
+	 * @return bool
+	 */
+	public function is_exit_version( string $text_domain, string $version ): bool {
+		$version = trim( $version );
+
+		if ( '' === $version ) {
+			return false;
+		}
+
+		$versions = get_option( self::EXIT_VERSION_OPTION_KEY, [] );
+
+		return is_array( $versions ) && ( $versions[ $text_domain ] ?? null ) === $version;
 	}
 
 	/**
@@ -118,7 +212,7 @@ class ChannelManager {
 		}
 
 		if ( empty( $product['channels'][ $channel ]['version'] ) ) {
-			$this->clear_channel( $text_domain );
+			$this->clear_channel( $text_domain, (string) ( $product['installed_version'] ?? '' ) );
 		}
 	}
 
@@ -190,6 +284,96 @@ class ChannelManager {
 		}
 
 		return (bool) preg_match( '/^v?\d+(\.\d+)*-.+$/', $version );
+	}
+
+	/**
+	 * Checks whether a version is a build the server is currently serving on some channel.
+	 *
+	 * Suffix shape cannot answer this. A channel may serve builds identified by a commit hash
+	 * (`3.3.2-b89efabaa`), which `is_prerelease_version()` deliberately rejects because an
+	 * arbitrary suffix is indistinguishable from a hand-installed one-off. The server already
+	 * states which build each channel serves, so an exact match against that is authoritative
+	 * and needs no parsing or ordering.
+	 *
+	 * @since 1.31.0
+	 *
+	 * @param string $version  Version string to check.
+	 * @param array  $channels Product channel map (channel name => channel data).
+	 *
+	 * @return bool
+	 */
+	public static function is_channel_build( string $version, array $channels ): bool {
+		$version = trim( $version );
+
+		if ( '' === $version ) {
+			return false;
+		}
+
+		foreach ( $channels as $channel_name => $channel_data ) {
+			if ( 'stable' === $channel_name || ! is_array( $channel_data ) ) {
+				continue;
+			}
+
+			if ( ! empty( $channel_data['version'] ) && $version === $channel_data['version'] ) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	/**
+	 * Checks whether an installed version is the same build a channel advertises.
+	 *
+	 * A channel's advertised version is often the human-facing one (`3.0.0-beta.2`) while the zip it
+	 * serves carries the build hash too (`3.0.0-beta.2-148f3b382`). A plain `!==` then reports a
+	 * pending update that installing can never satisfy, because the installed header never equals
+	 * what was advertised.
+	 *
+	 * @since 1.31.0
+	 *
+	 * @param string $installed_version  Version currently installed.
+	 * @param string $advertised_version Version the channel advertises.
+	 *
+	 * @return bool
+	 */
+	public static function is_same_channel_build( string $installed_version, string $advertised_version ): bool {
+		$installed  = trim( $installed_version );
+		$advertised = trim( $advertised_version );
+
+		if ( '' === $installed || '' === $advertised ) {
+			return false;
+		}
+
+		if ( $installed === $advertised ) {
+			return true;
+		}
+
+		// Same build, with the commit hash appended to the advertised version.
+		return (bool) preg_match( '/^' . preg_quote( $advertised, '/' ) . '-[0-9a-f]{7,40}$/i', $installed );
+	}
+
+	/**
+	 * Checks whether a version looks like a build obtained from a channel rather than a stable release.
+	 *
+	 * Covers the three shapes a channel build can take: a semver pre-release naming the channel
+	 * (`3.4.0-beta.1`), a build identified by a commit hash (`3.3.2-b89efabaa`), and an exact match
+	 * against what a channel is serving right now. The hash case is why suffix shape alone is not
+	 * enough -- the installed build is the PREVIOUS one, so it never equals the current version.
+	 *
+	 * @since 1.31.0
+	 *
+	 * @param string $version  Version string to check.
+	 * @param array  $channels Product channel map (channel name => channel data).
+	 *
+	 * @return bool
+	 */
+	public static function is_channel_tracked_version( string $version, array $channels ): bool {
+		$channel_names = array_keys( $channels );
+
+		return self::is_prerelease_version( $version, $channel_names )
+			|| self::is_custom_build_version( $version, $channel_names )
+			|| self::is_channel_build( $version, $channels );
 	}
 
 	/**

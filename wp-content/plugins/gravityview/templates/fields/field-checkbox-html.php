@@ -65,7 +65,7 @@ if ( ! $is_single_input ) {
 				 * @param array                $field       GravityView field array.
 				 * @param \GV\Template_Context $gravityview The template context.
 				 */
-				$output = apply_filters( 'gravityview_field_tick', '<span class="dashicons dashicons-yes"></span>', $entry, $field, $gravityview );
+				$output = apply_filters( 'gravityview_field_tick', '<span class="dashicons dashicons-yes" role="img" aria-label="' . esc_attr__( 'Checked', 'gk-gravityview' ) . '"></span>', $entry, $field, $gravityview );
 			}
 			break;
 	}

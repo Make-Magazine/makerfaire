@@ -22,6 +22,8 @@ declare global {
 			toggleDisabled: Function
 		}
 		gformDeleteUploadedFile: (formId: string, fieldId: string, deleteButton: HTMLElement) => void
+		DeleteFile: (leadId: number, fieldId: number, deleteButton: HTMLElement) => boolean | undefined
+		EndDeleteFile: (fieldId: number, fileIndex: number) => void
 		mOxie: any
 		gform_gravityforms?: {
 			strings: { [string: string]: string }

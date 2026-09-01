@@ -1,0 +1,404 @@
+/**
+ * GravityView Theme — Table Layout
+ *
+ * Complete table styling for multiple entries View.
+ * Scoped to `.gv-themed .gv-table-view`.
+ *
+ * @package   GravityView
+ * @license   GPL2
+ * @since     TBD
+ */
+
+@use "tokens" as *;
+
+// Table container — the clipping layer.
+//
+// `border-radius` here honours the customer's Card Corner Radius
+// (which gets relabelled "Table Corner Radius" in table layouts).
+// Combined with `overflow: hidden`, this clips the thead's top
+// corners and the tbody's bottom corners — the "table-as-card"
+// look — without forcing middle rows to round.
+//
+// `--gv-entry-shadow` likewise tracks the customer's Card Shadow
+// setting so the visual relationship between the card-layout
+// shadow and the table-layout shadow is one token, not two.
+//
+// `gv-table-container` is passed into `gv_container_class()`, so it
+// sits on the SAME element as `.gv-themed` (same-element compound).
+// Rules on `table.gv-table-view` target the inner `<table>`, a true
+// descendant, and keep the descendant combinator.
+.gv-table-container.gv-themed {
+	// Corners painted by the corner cells themselves (see the
+	// `border-start-start-radius` / `border-start-end-radius` /
+	// `border-end-*-radius` rules on `thead tr:first-child > *` and
+	// `tfoot tr:last-child > *` below) so the container stays square.
+	// Box-shadow lives on the `<table>` so it follows the table's
+	// rounded perimeter, not the container's square one.
+	// Horizontal scroll for wide tables — Views with many columns
+	// or long unbreakable values (entry IDs, urls, datetimes) need
+	// the container to spill rather than clip. `overflow-y: hidden`
+	// keeps the rounded corners clipping the vertical edges; the
+	// horizontal scrollbar appears only when content actually
+	// overflows. Older versions used `overflow: hidden` here which
+	// silently truncated table cells past the viewport.
+	overflow-x: auto;
+	overflow-y: hidden;
+	-webkit-overflow-scrolling: touch;
+}
+
+// Table element. Inherits the container's clipping; the radius on
+// the `<table>` itself ensures the outer border rounds to match
+// when no container wrapper is present (legacy markup).
+.gv-themed table.gv-table-view {
+	// `min-width: 100%` instead of `width: 100%` so a wide table
+	// can grow past its container — the container's `overflow-x: auto`
+	// then catches the overflow and renders a horizontal scrollbar.
+	// On narrow tables `min-width` still pins the layout to the full
+	// width, so visually it behaves identically to before.
+	min-width: 100%;
+	width: max-content;
+	border-collapse: separate;
+	border-spacing: 0;
+	// Paint the outer table border via `outline` (with negative
+	// offset) rather than `border`. A real `border` with
+	// `border-collapse: separate` offsets the cells 1px inward,
+	// which exposes a 1px ring of the table's background between
+	// the cells' rounded corners and the container's rounded edge.
+	// `outline` doesn't take layout space, so cells sit flush at
+	// the container edge and the corner cells' radii nest
+	// perfectly inside the container's curve. Modern browsers
+	// (Chrome 94+, Firefox 88+, Safari 16.4+) honour
+	// `border-radius` when drawing `outline`, so the visible line
+	// follows the rounded corners exactly like a real border would.
+	border: 0;
+	outline: var(--gv-entry-border-width) var(--gv-entry-border-style) var(--gv-entry-border-color);
+	outline-offset: calc(-1 * var(--gv-entry-border-width));
+	border-radius: var(--gv-entry-radius);
+	// Shadow on the `<table>` so it follows the table's rounded
+	// perimeter instead of the container's square one. Class-scoped
+	// to `.gv-table-view` so nested tables (e.g. `table.gfcs-value`
+	// inside a cell) don't pick up their own shadow.
+	box-shadow: var(--gv-entry-shadow, var(--gv-shadow-sm));
+}
+
+// Table header cells.
+//
+// `background` consumes the component var (`--gv-table-header-background`),
+// which derives from `--gv-color-header-bg` in `_tokens.scss`. The
+// fallback chain here lets a customer scope the change to JUST the
+// table header by overriding the component var without touching the
+// shared `--gv-color-header-bg` layer-1 token.
+// Host themes paint borders, radius, shadow, and margin on the
+// table and its sub-elements that clash with the container's chrome
+// (Twenty Twenty: `margin: 0 0 30px` on table; Hello Elementor: th
+// border + radius; Storefront: table margin). Zero them out so every
+// visible border is ours and the table sits flush in the container.
+.gv-themed table.gv-table-view,
+.gv-themed table.gv-table-view :where(thead, tbody, tfoot, tr, th, td) {
+	margin: 0;
+}
+
+.gv-themed table.gv-table-view :where(thead, tbody, tfoot, tr, th, td) {
+	border: 0;
+	border-radius: 0;
+	box-shadow: none;
+}
+
+// Round the corner cells themselves so the rounded corner is painted
+// by the cell, not clipped by the container's `overflow: hidden`.
+.gv-themed table.gv-table-view thead tr:first-child > :first-child {
+	border-start-start-radius: var(--gv-entry-radius);
+}
+.gv-themed table.gv-table-view thead tr:first-child > :last-child {
+	border-start-end-radius: var(--gv-entry-radius);
+}
+.gv-themed table.gv-table-view tfoot tr:last-child > :first-child {
+	border-end-start-radius: var(--gv-entry-radius);
+}
+.gv-themed table.gv-table-view tfoot tr:last-child > :last-child {
+	border-end-end-radius: var(--gv-entry-radius);
+}
+
+.gv-themed table.gv-table-view thead th {
+	background: var(--gv-table-header-background, var(--gv-color-header-bg));
+	font-weight: var(--gv-font-weight-semibold);
+	font-size: var(--gv-table-header-font-size);
+	text-transform: var(--gv-field-label-text-transform);
+	letter-spacing: var(--gv-field-label-letter-spacing, var(--gv-_letter-spacing-uppercase));
+	// Vertical cell border (right side). Default width 0 makes this
+	// invisible — customers asking for "show vertical lines" /
+	// "grid look" override `--gv-table-cell-border-width` to 1px.
+	// `:last-child` removes the trailing line at the table's right
+	// edge so the visible grid stops cleanly at the table boundary.
+	border-inline-end: var(--gv-table-cell-border-width)
+	                   var(--gv-table-cell-border-style)
+	                   var(--gv-table-cell-border-color);
+
+	&:last-child {
+		border-inline-end: 0;
+	}
+	// Header text uses `--gv-color-header-text`, which by default
+	// inherits the Field Label color (and from there, the
+	// `--gv-color-text-secondary` fallback). Customers can now
+	// override the header text independently from the field-label
+	// color via the Table Header section in Design Studio without
+	// affecting label typography in card / list layouts.
+	color: var(--gv-color-header-text);
+	padding-block: var(--gv-table-cell-padding-block);
+	padding-inline: var(--gv-table-cell-padding-inline);
+	border-block-end: 1px solid var(--gv-color-border);
+	text-align: start;
+	white-space: nowrap;
+	transition: background-color var(--gv-transition-fast) var(--gv-easing-standard),
+		color var(--gv-transition-fast) var(--gv-easing-standard);
+
+	// Hover: independent of the row-hover.
+	&:hover {
+		background: var(--gv-color-header-bg-hover);
+		color: var(--gv-color-header-text-hover);
+	}
+}
+
+// Header-group hover: hovering anywhere over the `<thead>` (including
+// the gaps between cells, over the row's shared background) paints
+// every header cell, so the hover reads as "you're over the header"
+// not just "you're over this column."
+.gv-themed table.gv-table-view thead:hover th {
+	background: var(--gv-color-header-bg-hover);
+	color: var(--gv-color-header-text-hover);
+}
+
+// Table body cells. Opt-in row-header cells (`th[scope='row']`) share
+// the data-cell treatment, keeping only the browser's bold weight;
+// `text-align: start` counters the browser's default th centering.
+.gv-themed table.gv-table-view tbody td,
+.gv-themed table.gv-table-view tbody th[scope='row'] {
+	text-align: start;
+	padding-block: var(--gv-table-cell-padding-block);
+	padding-inline: var(--gv-table-cell-padding-inline);
+	border-block-end: 1px solid var(--gv-color-row-divider);
+	// Same vertical cell border as thead. Width 0 by default; opt-in
+	// via `--gv-table-cell-border-width`.
+	border-inline-end: var(--gv-table-cell-border-width)
+	                   var(--gv-table-cell-border-style)
+	                   var(--gv-table-cell-border-color);
+	font-size: var(--gv-font-size-base);
+	color: var(--gv-color-text);
+	vertical-align: top;
+	line-height: var(--gv-line-height-normal);
+
+	&:last-child {
+		border-inline-end: 0;
+	}
+}
+
+// Row headers share the header cells' weight tier and background
+// shade, but keep body-size text: the cell content is still data.
+.gv-themed table.gv-table-view tbody th[scope='row'] {
+	font-weight: var(--gv-font-weight-semibold);
+	background: var(--gv-table-header-background, var(--gv-color-header-bg));
+}
+
+// Zebra striping — even rows. Defaults to `--gv-color-surface` so there
+// is no visible stripe; users opt in by darkening the token in Design
+// Studio. Sits below the row-hover rule so hover always wins.
+.gv-themed table.gv-table-view tbody tr:nth-child(even) {
+	background-color: var(--gv-color-zebra-bg);
+}
+
+// Default row background. Without an explicit value here, odd rows
+// fall through to the `<table>`-level `--gv-color-surface` rule —
+// which works visually but gets visually swallowed when a theme
+// paints the table-cell area or a plugin inserts row markup. Set
+// it explicitly on `tr` so customising "Row Background" produces
+// a predictable visible change.
+//
+// Specificity: this rule is `tbody tr` (0,0,2). The zebra rule on
+// `:nth-child(even)` and the legacy `.alt` class rule are both
+// (0,1,2), so they override naturally; `:hover` (0,1,2) always
+// wins.
+.gv-themed table.gv-table-view tbody tr {
+	background-color: var(--gv-color-surface);
+	transition: background-color var(--gv-transition-fast) var(--gv-easing-standard), color var(--gv-transition-fast) var(--gv-easing-standard);
+
+	&:hover,
+	&:hover td,
+	&:hover th[scope='row'] {
+		// Row hover tokens default to `surface-hover` / `text-hover`
+		// in `_tokens.scss` so the visual is unchanged on upgrade.
+		// Recurring customer ask — now token-themable instead of
+		// requiring custom CSS.
+		background-color: var(--gv-color-row-hover-bg);
+		color: var(--gv-color-row-hover-text);
+	}
+}
+
+// Last row: no bottom border
+.gv-themed table.gv-table-view tbody tr:last-child td,
+.gv-themed table.gv-table-view tbody tr:last-child th[scope='row'] {
+	border-block-end: none;
+}
+
+// Legacy `.alt` class — kept as a manual zebra opt-in for templates
+// that mark up alternates explicitly. Same surface as `:nth-child(even)`.
+.gv-themed table.gv-table-view tbody tr.alt {
+	background-color: var(--gv-color-zebra-bg);
+}
+
+// Table footer cells
+.gv-themed table.gv-table-view tfoot th {
+	background: var(--gv-table-header-background);
+	font-weight: var(--gv-font-weight-semibold);
+	font-size: var(--gv-table-header-font-size);
+	text-transform: var(--gv-field-label-text-transform);
+	letter-spacing: var(--gv-field-label-letter-spacing, var(--gv-_letter-spacing-uppercase));
+	// `--gv-field-label-color` is registered AND always set by the
+	// cascade in `_tokens.scss`, so a var() fallback here could never
+	// trigger; consume the token directly.
+	color: var(--gv-field-label-color);
+	padding-block: var(--gv-table-cell-padding-block);
+	padding-inline: var(--gv-table-cell-padding-inline);
+	border-block-start: 1px solid var(--gv-color-border);
+	text-align: start;
+}
+
+// Sort indicators — visually attached to the column header so they
+// follow the header's Field Label colour, not the secondary-text
+// colour the rest of the row uses.
+.gv-themed table.gv-table-view a.gv-sort {
+	color: var(--gv-field-label-color);
+	text-decoration: none;
+	transition: color var(--gv-transition-fast) var(--gv-easing-standard);
+	display: inline-flex;
+	align-items: center;
+	gap: var(--gv-space-1);
+
+	&:hover {
+		color: var(--gv-color-primary);
+		text-decoration: none;
+	}
+}
+
+.gv-themed table.gv-table-view .gv-icon-sort-asc,
+.gv-themed table.gv-table-view .gv-icon-sort-desc {
+	color: var(--gv-color-primary);
+}
+
+// Links inside table cells
+.gv-themed table.gv-table-view tbody td a,
+.gv-themed table.gv-table-view tbody th[scope='row'] a {
+	color: var(--gv-color-link);
+	text-decoration: none;
+	transition: color var(--gv-transition-fast) var(--gv-easing-standard);
+
+	&:hover,
+	&:focus-visible {
+		color: var(--gv-color-link-hover);
+		text-decoration: underline;
+	}
+
+	&:active {
+		color: var(--gv-color-link-active);
+	}
+
+	&:visited {
+		color: var(--gv-color-link-visited);
+	}
+}
+
+// SC 1.4.1 Use of Color: anchors inside flowing paragraph content
+// within cells (Paragraph Text fields, Custom Content) carry a
+// resting underline because hue alone cannot mark them against
+// surrounding body text. Standalone cell links (entry links) keep
+// the chrome treatment above.
+.gv-themed table.gv-table-view tbody td p a,
+.gv-themed table.gv-table-view tbody th[scope='row'] p a {
+	text-decoration: underline;
+}
+
+// =========================================================
+// Mobile responsive — card-like appearance per row
+// =========================================================
+@media (max-width: #{$gv-breakpoint-sm}) {
+	.gv-themed table.gv-table-view {
+		border: 0;
+		// Strip the desktop outline border. Each row paints its
+		// own card chrome below.
+		outline: 0;
+		// Desktop grows past the container (`width: max-content`) so the
+		// container's `overflow-x` can scroll wide tables. The card view has
+		// no horizontal scroll, so pin the table back to the viewport width;
+		// otherwise rows inherit the content width and overflow off-screen.
+		width: 100%;
+		min-width: 0;
+	}
+
+	// Visually hide headers but keep them in the accessibility tree
+	// so screen readers retain header-cell associations.
+	.gv-themed table.gv-table-view thead,
+	.gv-themed table.gv-table-view tfoot {
+		position: absolute;
+		width: 1px;
+		height: 1px;
+		padding: 0;
+		margin: -1px;
+		overflow: hidden;
+		clip: rect(0, 0, 0, 0);
+		white-space: nowrap;
+		border: 0;
+	}
+
+	.gv-themed table.gv-table-view tbody tr {
+		display: block;
+		// Cap the card to the container; otherwise the block row keeps the
+		// widest cell's content width and overflows the viewport.
+		max-width: 100%;
+		margin-block-end: var(--gv-space-3);
+		border: var(--gv-entry-border-width) var(--gv-entry-border-style) var(--gv-entry-border-color);
+		border-radius: var(--gv-radius-lg);
+		padding: var(--gv-space-3);
+		background: var(--gv-color-surface);
+
+		// Suppress the desktop row-hover paint. Hover state is a
+		// pointer-only affordance and on touch it sticks after a
+		// tap, repainting the card surface with `--gv-color-row-hover-bg`.
+		&:hover,
+		&:hover td,
+		&:hover th[scope='row'] {
+			background-color: var(--gv-color-surface);
+			color: var(--gv-color-text);
+		}
+	}
+
+	.gv-themed table.gv-table-view tbody td,
+	.gv-themed table.gv-table-view tbody th[scope='row'] {
+		display: block;
+		// Wrap long unbroken content inside the card instead of forcing the
+		// row wider than the viewport.
+		overflow-wrap: break-word;
+		padding-block: var(--gv-space-2);
+		padding-inline: 0;
+		border-block-end: none;
+		// Force start-aligned label + value. Several host themes
+		// (Kadence, Twenty Twenty, block themes) set
+		// `td { text-align: center }` which cascades into the
+		// `::before` pseudo and centres the label above a
+		// left-aligned value, breaking the visual hierarchy.
+		text-align: start;
+
+		&::before {
+			content: attr(data-label);
+			font-weight: var(--gv-font-weight-semibold);
+			font-size: var(--gv-font-size-sm);
+			color: var(--gv-color-text-secondary);
+			display: block;
+			text-align: start;
+			margin-block-end: var(--gv-space-1);
+		}
+	}
+
+	// Cards have no cell backgrounds; drop the row header's shade.
+	.gv-themed table.gv-table-view tbody th[scope='row'] {
+		background: none;
+	}
+}

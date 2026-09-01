@@ -85,12 +85,8 @@ class GFEntryList {
 
 		}
 
-		if ( sizeof( $forms ) == 0 ) {
-			?>
-			<div style="margin:50px 0 0 10px;">
-				<?php echo sprintf( esc_html__( "You don't have any active forms. Let's go %screate one%s", 'gravityforms' ), '<a href="?page=gf_new_form">', '</a>' ); ?>
-			</div>
-			<?php
+		if ( sizeof( $forms ) === 0 ) {
+			self::leads_page( 0 );
 		} else {
 			if ( empty( $form_id ) ) {
 				$form_id = $forms[0]->id;
@@ -103,7 +99,7 @@ class GFEntryList {
 			 *
 			 * @param int $form_id The ID of the form that the entry list is being displayed for.
 			 */
-			do_action( 'gform_pre_entry_list', $form_id );
+			gf_do_action( array( 'gform_pre_entry_list' ), $form_id );
 
 			self::leads_page( $form_id );
 
@@ -114,7 +110,7 @@ class GFEntryList {
 			 *
 			 * @param int $form_id The ID of the form that the entry list is being displayed for.
 			 */
-			do_action( 'gform_post_entry_list', $form_id );
+			gf_do_action( array( 'gform_post_entry_list' ), $form_id );
 		}
 
 		GFForms::admin_footer();
@@ -316,19 +312,35 @@ class GFEntryList {
 			return;
 		}
 
-		$form = GFFormsModel::get_form_meta( $form_id );
-		if ( empty( $form['id'] ) ) {
-			GFCommon::add_error_message( esc_html__( "Oops! We couldn't find your form. Please try again.", 'gravityforms' ) );
-			GFForms::admin_header();
+		$form    = GFFormsModel::get_form_meta( $form_id );
+		$no_form = empty( $form['id'] );
 
-			return;
+		if ( $no_form ) {
+			$form = array(
+				'id'            => 0,
+				'title'         => '',
+				'fields'        => array(),
+				'notifications' => array(),
+			);
 		}
 
 		$table = new GF_Entry_List_Table( array( 'form_id' => $form_id, 'form' => $form ) );
 
 		wp_print_styles( array( 'thickbox', 'gform_settings' ) );
 		GFForms::admin_header();
-		$table->prepare_items();
+
+		if ( $no_form ) {
+			$table->items = array();
+			$table->set_pagination_args(
+				array(
+					'total_items' => 0,
+					'per_page'    => 20,
+				)
+			);
+		} else {
+			$table->prepare_items();
+		}
+
 		$table->output_scripts();
 		?>
 			<form id="entry_list_form" method="post" class="gform-settings-panel__content gform-settings-panel__content--entry-list">
@@ -457,11 +469,8 @@ class GFEntryList {
 
 	public static function get_filter_links( $form, $include_counts = true ) {
 		$form_id = absint( rgar( $form, 'id' ) );
-		if ( empty( $form_id ) ) {
-			return array();
-		}
+		$counts  = ( ! empty( $form_id ) && $include_counts ) ? GFFormsModel::get_form_counts( $form_id ) : array();
 
-		$counts       = $include_counts ? GFFormsModel::get_form_counts( $form_id ) : array();
 		$filter_links = array(
 			array(
 				'id'            => 'all',
@@ -510,7 +519,7 @@ class GFEntryList {
 		 * @param bool  $include_counts Indicates if the database query to get the counts was performed.
 		 * @param array $counts         The number of entries that match the filters when $include_counts is true.
 		 */
-		return apply_filters( 'gform_filter_links_entry_list', $filter_links, $form, $include_counts, $counts );
+		return gf_apply_filters( array( 'gform_filter_links_entry_list' ), $filter_links, $form, $include_counts, $counts );
 	}
 
 	public static function all_leads_page() {
@@ -843,9 +852,7 @@ final class GF_Entry_List_Table extends WP_List_Table {
 		 * @param array $search_criteria An array containing the search criteria.
 		 * @param int $form_id The ID of the current form.
 		 */
-		$search_criteria = gf_apply_filters( array( 'gform_search_criteria_entry_list', $form_id ), $search_criteria, $form_id );
-
-		return $search_criteria;
+		return gf_apply_filters( array( 'gform_search_criteria_entry_list', $form_id ), $search_criteria, $form_id );
 	}
 
 	/**
@@ -889,9 +896,7 @@ final class GF_Entry_List_Table extends WP_List_Table {
 		 * @param array $table_columns The columns to be displayed in the entry list table.
 		 * @param int   $form_id       The ID of the form the entries to be listed belong to.
 		 */
-		$table_columns = apply_filters( 'gform_entry_list_columns', $table_columns, $form_id );
-
-		return apply_filters( 'gform_entry_list_columns_' . $form_id, $table_columns, $form_id );
+		return gf_apply_filters( array( 'gform_entry_list_columns', $form_id ), $table_columns, $form_id );
 	}
 
 	/**
@@ -971,7 +976,7 @@ final class GF_Entry_List_Table extends WP_List_Table {
 		}
 
 		// Filtering lead value
-		$value = apply_filters( 'gform_get_field_value', $value, $entry, $field );
+		$value = gf_apply_filters( array( 'gform_get_field_value' ), $value, $entry, $field );
 
 		switch ( $field_id ) {
 
@@ -1009,7 +1014,7 @@ final class GF_Entry_List_Table extends WP_List_Table {
 				}
 		}
 
-		$value = apply_filters( 'gform_entries_field_value', $value, $form_id, $field_id, $entry );
+		$value = gf_apply_filters( array( 'gform_entries_field_value' ), $value, $form_id, $field_id, $entry );
 
 		if ( is_array( $value ) ) {
 			$value = esc_html( implode( ', ', $value ) );
@@ -1021,7 +1026,7 @@ final class GF_Entry_List_Table extends WP_List_Table {
 		if ( $column_id == $primary ) {
 			$edit_url = $this->get_detail_url( $entry );
 			$aria_label = sprintf( esc_html__( 'View entry number %s', 'gravityforms' ), $entry['id'] );
-			$column_value = '<a aria-label="' . esc_attr__( $aria_label ) . '" href="' . $edit_url . '">' . $value . '</a>';
+			$column_value = '<a aria-label="' . esc_attr( $aria_label ) . '" href="' . $edit_url . '">' . $value . '</a>';
 
 			/**
 			 * Used to inject markup and replace the value of any primary/first column in the entry list grid.
@@ -1034,7 +1039,7 @@ final class GF_Entry_List_Table extends WP_List_Table {
 			 * @param string     $edit_url     The url to the entry edit page.
 			 * @param string     $value        The value of the field.
 			 */
-			$column_value = apply_filters( 'gform_entries_primary_column_filter', $column_value, $form_id, $field_id, $entry, $query_string, $edit_url, $value );
+			$column_value = gf_apply_filters( array( 'gform_entries_primary_column_filter' ), $column_value, $form_id, $field_id, $entry, $query_string, $edit_url, $value );
 
 			// Warning ignored because output is expected to be escaped higher up in the chain.
 			// phpcs:ignore
@@ -1050,7 +1055,7 @@ final class GF_Entry_List_Table extends WP_List_Table {
 			 * @param array  $entry        The Entry object
 			 * @param string $query_string The current page's query string
 			 */
-			echo apply_filters( 'gform_entries_column_filter', $value, $form_id, $field_id, $entry, $query_string ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+			echo gf_apply_filters( array( 'gform_entries_column_filter' ), $value, $form_id, $field_id, $entry, $query_string ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 
 			// Maintains gap between value and content from gform_entries_column which existed when using 1.9 and earlier.
 			echo '&nbsp; ';
@@ -1066,7 +1071,7 @@ final class GF_Entry_List_Table extends WP_List_Table {
 			 * @param array  $entry        The Entry object
 			 * @param string $query_string The current page's query string
 			 */
-			do_action( 'gform_entries_column', $form_id, $field_id, $value, $entry, $query_string );
+			gf_do_action( array( 'gform_entries_column' ), $form_id, $field_id, $value, $entry, $query_string );
 		}
 
 	}
@@ -1137,35 +1142,43 @@ final class GF_Entry_List_Table extends WP_List_Table {
 	/**
 	 * Displays the no items message according to the context.
 	 */
-	function no_items() {
+	public function no_items() {
 
-		switch ( $this->filter ) {
-			case 'unread' :
-				$message = isset( $_GET['field_id'] ) ? esc_html__( 'This form does not have any unread entries matching the search criteria.', 'gravityforms' ) : esc_html__( 'This form does not have any unread entries.', 'gravityforms' ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
-				break;
+		$no_forms = $this->_form['id'] === 0 ? true : false;
+		/* translators: %1 opening <a> tag, %2 closing <a> tag */
+		$no_forms_message = sprintf( esc_html__( "You don't have any forms. Let's go %1\$screate one%2\$s!", 'gravityforms' ), '<a href="admin.php?page=gf_new_form">', '</a>' );
 
-			case 'star' :
-				$message = isset( $_GET['field_id'] ) ? esc_html__( 'This form does not have any starred entries matching the search criteria.', 'gravityforms' ) : esc_html__( 'This form does not have any starred entries.', 'gravityforms' ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
-				break;
+		if ( $no_forms ) {
+			echo wp_kses_post( $no_forms_message );
+		} else {
+			switch ( $this->filter ) {
+				case 'unread':
+					$message = isset( $_GET['field_id'] ) ? esc_html__( 'This form does not have any unread entries matching the search criteria.', 'gravityforms' ) : esc_html__( 'This form does not have any unread entries.', 'gravityforms' ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+					break;
 
-			case 'spam' :
-				$message = esc_html__( 'This form does not have any spam.', 'gravityforms' );
-				break;
+				case 'star':
+					$message = isset( $_GET['field_id'] ) ? esc_html__( 'This form does not have any starred entries matching the search criteria.', 'gravityforms' ) : esc_html__( 'This form does not have any starred entries.', 'gravityforms' ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+					break;
 
-			case 'trash' :
-				$message = isset( $_GET['field_id'] ) ? esc_html__( 'This form does not have any entries in the trash matching the search criteria.', 'gravityforms' ) : esc_html__( 'This form does not have any entries in the trash.', 'gravityforms' ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
-				break;
+				case 'spam':
+					$message = esc_html__( 'This form does not have any spam.', 'gravityforms' );
+					break;
 
-			default :
-				if ( isset( $_GET['field_id'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
-					$message = esc_html__( 'This form does not have any entries matching the search criteria.', 'gravityforms' );
-				} elseif ( $this->filter ) {
-					$message = esc_html__( 'This form does not have any entries matching the selected filter.', 'gravityforms' );
-				} else {
-					$message = esc_html__( 'This form does not have any entries yet.', 'gravityforms' );
-				}
+				case 'trash':
+					$message = isset( $_GET['field_id'] ) ? esc_html__( 'This form does not have any entries in the trash matching the search criteria.', 'gravityforms' ) : esc_html__( 'This form does not have any entries in the trash.', 'gravityforms' ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+					break;
+
+				default:
+					if ( isset( $_GET['field_id'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+						$message = esc_html__( 'This form does not have any entries matching the search criteria.', 'gravityforms' );
+					} elseif ( $this->filter ) {
+						$message = esc_html__( 'This form does not have any entries matching the selected filter.', 'gravityforms' );
+					} else {
+						$message = esc_html__( 'This form does not have any entries yet.', 'gravityforms' );
+					}
+			}
+			echo $message; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- all instances of message are escaped above
 		}
-		echo $message; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- all instances of message are escaped above
 	}
 
 	/**
@@ -1219,7 +1232,7 @@ final class GF_Entry_List_Table extends WP_List_Table {
 					 */
 					$actions['delete'] = array(
 						'class' => 'delete',
-						'link'  => apply_filters( 'gform_delete_entry_link', $delete_link ),
+						'link'  => gf_apply_filters( array( 'gform_delete_entry_link' ), $delete_link ),
 					);
 				}
 				break;
@@ -1242,7 +1255,7 @@ final class GF_Entry_List_Table extends WP_List_Table {
 					 */
 					$actions['delete'] = array(
 						'class' => 'delete',
-						'link'  => apply_filters( 'gform_delete_entry_link', $delete_link ),
+						'link'  => gf_apply_filters( array( 'gform_delete_entry_link' ), $delete_link ),
 					);
 				}
 				break;
@@ -1286,7 +1299,7 @@ final class GF_Entry_List_Table extends WP_List_Table {
 			 * @param string $filter The current WP_List_Table filter.
 			 * @param array  $entry The entry of the row being rendered.
 			 */
-			$actions = apply_filters( 'gform_entries_action_links', $actions, $this->filter, $entry, $form_id );
+			$actions = gf_apply_filters( array( 'gform_entries_action_links' ), $actions, $this->filter, $entry, $form_id );
 
 			$index = 0;
 			foreach ( $actions as $action ) {
@@ -1300,7 +1313,7 @@ final class GF_Entry_List_Table extends WP_List_Table {
 
 			$query_string = $this->get_detail_query_string( $entry );
 
-			do_action( 'gform_entries_first_column_actions', $form_id, $field_id, $value, $entry, $query_string );
+			gf_do_action( array( 'gform_entries_first_column_actions' ), $form_id, $field_id, $value, $entry, $query_string );
 
 			?>
 		</div>
@@ -1316,7 +1329,7 @@ final class GF_Entry_List_Table extends WP_List_Table {
 		 * @param array  $entry         The Entry object
 		 * @param string $query_string The current page's query string
 		 */
-		do_action( 'gform_entries_first_column', $form_id, $field_id, $value, $entry, $query_string );
+		gf_do_action( array( 'gform_entries_first_column' ), $form_id, $field_id, $value, $entry, $query_string );
 
 		$this->row_index++;
 		return '<button type="button" class="toggle-row"><span class="screen-reader-text">' . __( 'Show more details' ) . '</span></button>';
@@ -1369,9 +1382,10 @@ final class GF_Entry_List_Table extends WP_List_Table {
 					$actions['mark_unread']          = esc_html__( 'Mark as Unread', 'gravityforms' );
 					$actions['add_star']             = esc_html__( 'Add Star', 'gravityforms' );
 					$actions['remove_star']          = esc_html__( 'Remove Star', 'gravityforms' );
+					$actions['resend_notifications'] = esc_html__( 'Resend Notifications', 'gravityforms' );
 				}
-				$actions['resend_notifications'] = esc_html__( 'Resend Notifications', 'gravityforms' );
-				$actions['print']                = esc_html__( 'Print', 'gravityforms' );
+
+				$actions['print'] = esc_html__( 'Print', 'gravityforms' );
 
 				if ( GFCommon::spam_enabled( $this->get_form_id() ) && GFCommon::current_user_can_any( 'gravityforms_edit_entries' ) ) {
 					$actions['spam'] = esc_html__( 'Spam', 'gravityforms' );
@@ -1410,12 +1424,22 @@ final class GF_Entry_List_Table extends WP_List_Table {
 			return;
 		}
 
-		$message      = $filter == 'trash' ? esc_html__( "WARNING! This operation cannot be undone. Empty trash? 'Ok' to empty trash. 'Cancel' to abort.", 'gravityforms' ) : esc_html__( "WARNING! This operation cannot be undone. Permanently delete all spam? 'Ok' to delete. 'Cancel' to abort.", 'gravityforms' );
-		$button_label = $filter == 'trash' ? __( 'Empty Trash', 'gravityforms' ) : __( 'Delete All Spam', 'gravityforms' );
+		$confirm_message = $filter === 'trash'
+			? esc_html__( "WARNING! This operation cannot be undone. Empty trash? 'Ok' to empty trash. 'Cancel' to abort.", 'gravityforms' )
+			: esc_html__( "WARNING! This operation cannot be undone. Permanently delete all spam? 'Ok' to delete. 'Cancel' to abort.", 'gravityforms' );
+
+		$button_label = $filter === 'trash'
+			? __( 'Empty Trash', 'gravityforms' )
+			: __( 'Delete All Spam', 'gravityforms' );
 		?>
-		<input type="submit" class="button" name="button_delete_permanently"
-			   value="<?php echo esc_attr( $button_label ); ?>"
-			   onclick="return confirm('<?php echo esc_js( $message ) ?>');"/>
+		<input
+			type="submit"
+			class="button"
+			name="button_delete_permanently"
+			value="<?php echo esc_attr( $button_label ); ?>"
+			data-dialog-title="<?php echo esc_attr( $button_label ); ?>"
+			data-dialog-confirm="<?php echo esc_attr( $confirm_message ); ?>"
+		/>
 		<?php
 	}
 
@@ -1483,7 +1507,11 @@ final class GF_Entry_List_Table extends WP_List_Table {
 
 			$entries = empty( $select_all ) ? rgpost( 'entry' ) : GFAPI::get_entry_ids( $form_id, $search_criteria );
 
-			$entry_count = count( $entries ) > 1 ? sprintf( esc_html__( '%d entries', 'gravityforms' ), count( $entries ) ) : esc_html__( '1 entry', 'gravityforms' );
+			$entry_count = count( $entries ) > 1 ? sprintf(
+				/* Translators: %d: The number of entries. */
+				esc_html__( '%d entries', 'gravityforms' ),
+				count( $entries )
+			) : esc_html__( '1 entry', 'gravityforms' );
 
 			$message_class = 'success';
 
@@ -1491,7 +1519,11 @@ final class GF_Entry_List_Table extends WP_List_Table {
 				case 'delete':
 					if ( GFCommon::current_user_can_any( 'gravityforms_delete_entries' ) ) {
 						GFFormsModel::delete_entries( $entries );
-						$message = sprintf( esc_html__( '%s deleted.', 'gravityforms' ), $entry_count );
+						$message = sprintf(
+							/* Translators: %s: The number of entries. */
+							esc_html__( '%s deleted.', 'gravityforms' ),
+							$entry_count
+						);
 					} else {
 						$message       = esc_html__( "You don't have adequate permission to delete entries.", 'gravityforms' );
 						$message_class = 'error';
@@ -1519,33 +1551,87 @@ final class GF_Entry_List_Table extends WP_List_Table {
 					break;
 
 				case 'unspam':
-					GFFormsModel::restore_entries_status( $entries );
-					$message = sprintf( esc_html__( '%s restored from the spam.', 'gravityforms' ), $entry_count );
+					if ( GFCommon::current_user_can_any( 'gravityforms_edit_entries' ) ) {
+						GFFormsModel::restore_entries_status( $entries );
+						$message = sprintf(
+							/* Translators: %s: The number of entries. */
+							esc_html__( '%s restored from the spam.', 'gravityforms' ),
+							$entry_count
+						);
+					} else {
+						$message       = esc_html__( "You don't have adequate permission to edit entries.", 'gravityforms' );
+						$message_class = 'error';
+					}
 					break;
 
 				case 'spam':
-					GFFormsModel::change_entries_status( $entries, 'spam' );
-					$message = sprintf( esc_html__( '%s marked as spam.', 'gravityforms' ), $entry_count );
+					if ( GFCommon::current_user_can_any( 'gravityforms_edit_entries' ) ) {
+						GFFormsModel::change_entries_status( $entries, 'spam' );
+						$message = sprintf(
+							/* Translators: %s: The number of entries. */
+							esc_html__( '%s marked as spam.', 'gravityforms' ),
+							$entry_count
+						);
+					} else {
+						$message       = esc_html__( "You don't have adequate permission to edit entries.", 'gravityforms' );
+						$message_class = 'error';
+					}
 					break;
 
 				case 'mark_read':
-					GFFormsModel::update_entries_property( $entries, 'is_read', 1 );
-					$message = sprintf( esc_html__( '%s marked as read.', 'gravityforms' ), $entry_count );
+					if ( GFCommon::current_user_can_any( 'gravityforms_edit_entries' ) ) {
+						GFFormsModel::update_entries_property( $entries, 'is_read', 1 );
+						$message = sprintf(
+							/* Translators: %s: The number of entries. */
+							esc_html__( '%s marked as read.', 'gravityforms' ),
+							$entry_count
+						);
+					} else {
+						$message       = esc_html__( "You don't have adequate permission to edit entries.", 'gravityforms' );
+						$message_class = 'error';
+					}
 					break;
 
 				case 'mark_unread':
-					GFFormsModel::update_entries_property( $entries, 'is_read', 0 );
-					$message = sprintf( esc_html__( '%s marked as unread.', 'gravityforms' ), $entry_count );
+					if ( GFCommon::current_user_can_any( 'gravityforms_edit_entries' ) ) {
+						GFFormsModel::update_entries_property( $entries, 'is_read', 0 );
+						$message = sprintf(
+							/* Translators: %s: The number of entries. */
+							esc_html__( '%s marked as unread.', 'gravityforms' ),
+							$entry_count
+						);
+					} else {
+						$message       = esc_html__( "You don't have adequate permission to edit entries.", 'gravityforms' );
+						$message_class = 'error';
+					}
 					break;
 
 				case 'add_star':
-					GFFormsModel::update_entries_property( $entries, 'is_starred', 1 );
-					$message = sprintf( esc_html__( '%s starred.', 'gravityforms' ), $entry_count );
+					if ( GFCommon::current_user_can_any( 'gravityforms_edit_entries' ) ) {
+						GFFormsModel::update_entries_property( $entries, 'is_starred', 1 );
+						$message = sprintf(
+							/* Translators: %s: The number of entries. */
+							esc_html__( '%s starred.', 'gravityforms' ),
+							$entry_count
+						);
+					} else {
+						$message       = esc_html__( "You don't have adequate permission to edit entries.", 'gravityforms' );
+						$message_class = 'error';
+					}
 					break;
 
 				case 'remove_star':
-					GFFormsModel::update_entries_property( $entries, 'is_starred', 0 );
-					$message = sprintf( esc_html__( '%s unstarred.', 'gravityforms' ), $entry_count );
+					if ( GFCommon::current_user_can_any( 'gravityforms_edit_entries' ) ) {
+						GFFormsModel::update_entries_property( $entries, 'is_starred', 0 );
+						$message = sprintf(
+							/* Translators: %s: The number of entries. */
+							esc_html__( '%s unstarred.', 'gravityforms' ),
+							$entry_count
+						);
+					} else {
+						$message       = esc_html__( "You don't have adequate permission to edit entries.", 'gravityforms' );
+						$message_class = 'error';
+					}
 					break;
 
 			}

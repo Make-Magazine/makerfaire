@@ -1,0 +1,1053 @@
+/**
+ * GravityView Theme: @property Registration
+ *
+ * GENERATED FROM `src/Settings/TokenRegistry.php` by
+ * `tools/build-tokens-properties.php`. DO NOT EDIT BY HAND.
+ *
+ * Two wins:
+ *
+ *   1. **Smooth transitions.** Registered `<color>` and `<length>`
+ *      properties interpolate via the `transition` shorthand at the
+ *      browser level. Unregistered custom properties cannot animate
+ *      smoothly; they snap to the end value at duration 50%.
+ *
+ *   2. **Type safety against garbage overrides.** When a registered
+ *      property receives an invalid value (e.g. `--gv-color-primary: not-a-color`)
+ *      the declaration is Invalid At Computed Value Time per CSS
+ *      Properties & Values L1 §3.3, so the property falls back to its
+ *      `initial-value` instead of being treated as an opaque string
+ *      and silently corrupting the cascade.
+ *
+ * `@property` rules MUST live at top-level (cannot be nested inside
+ * `@layer` or selector rules) per the Houdini spec: they are
+ * processed at parse time and apply globally.
+ *
+ * Browser support: Baseline newly available (Chrome 85+, Safari 16.4+,
+ * Firefox 128+). Older browsers ignore `@property` declarations and
+ * fall back to ordinary unregistered custom-property behavior. The
+ * variables still cascade, they just can't interpolate or syntax-check.
+ *
+ * @package   GravityView
+ * @license   GPL2
+ * @since     TBD
+ */
+
+@property --gv-color-primary {
+	syntax: '<color>';
+	inherits: true;
+	initial-value: #204ce5;
+}
+
+@property --gv-color-primary-hover {
+	syntax: '<color>';
+	inherits: true;
+	initial-value: #1c44ce;
+}
+
+@property --gv-color-primary-subtle {
+	syntax: '<color>';
+	inherits: true;
+	initial-value: #c3d9ff;
+}
+
+@property --gv-color-on-primary {
+	syntax: '<color>';
+	inherits: true;
+	initial-value: #ffffff;
+}
+
+@property --gv-color-text {
+	syntax: '<color>';
+	inherits: true;
+	initial-value: #112337;
+}
+
+@property --gv-color-text-hover {
+	syntax: '<color>';
+	inherits: true;
+	initial-value: #112337;
+}
+
+@property --gv-color-text-secondary {
+	syntax: '<color>';
+	inherits: true;
+	initial-value: #54667a;
+}
+
+@property --gv-color-text-muted {
+	syntax: '<color>';
+	inherits: true;
+	initial-value: #5b6470;
+}
+
+@property --gv-color-text-disabled {
+	syntax: '<color>';
+	inherits: true;
+	initial-value: #a1a8b1;
+}
+
+@property --gv-color-on-disabled {
+	syntax: '<color>';
+	inherits: true;
+	initial-value: #a1a8b1;
+}
+
+@property --gv-color-placeholder {
+	syntax: '<color>';
+	inherits: true;
+	initial-value: #5f6772;
+}
+
+@property --gv-color-link {
+	syntax: '<color>';
+	inherits: true;
+	initial-value: #204ce5;
+}
+
+@property --gv-color-link-hover {
+	syntax: '<color>';
+	inherits: true;
+	initial-value: #1c44ce;
+}
+
+@property --gv-color-link-visited {
+	syntax: '<color>';
+	inherits: true;
+	initial-value: #7c3aed;
+}
+
+@property --gv-color-link-active {
+	syntax: '<color>';
+	inherits: true;
+	initial-value: #0c1f7a;
+}
+
+@property --gv-field-label-color {
+	syntax: '<color>';
+	inherits: true;
+	initial-value: #5b6470;
+}
+
+@property --gv-control-bg {
+	syntax: '<color>';
+	inherits: true;
+	initial-value: #ffffff;
+}
+
+@property --gv-control-border-color {
+	syntax: '<color>';
+	inherits: true;
+	initial-value: #6b7280;
+}
+
+@property --gv-control-bg-disabled {
+	syntax: '<color>';
+	inherits: true;
+	initial-value: #edeef0;
+}
+
+@property --gv-control-border-color-disabled {
+	syntax: '<color>';
+	inherits: true;
+	initial-value: #888888;
+}
+
+@property --gv-control-text-disabled {
+	syntax: '<color>';
+	inherits: true;
+	initial-value: #a1a8b1;
+}
+
+@property --gv-button-bg {
+	syntax: '<color>';
+	inherits: true;
+	initial-value: #204ce5;
+}
+
+@property --gv-button-color {
+	syntax: '<color>';
+	inherits: true;
+	initial-value: #ffffff;
+}
+
+@property --gv-button-bg-hover {
+	syntax: '<color>';
+	inherits: true;
+	initial-value: #1c44ce;
+}
+
+@property --gv-button-bg-disabled {
+	syntax: '<color>';
+	inherits: true;
+	initial-value: #edeef0;
+}
+
+@property --gv-button-color-disabled {
+	syntax: '<color>';
+	inherits: true;
+	initial-value: #a1a8b1;
+}
+
+@property --gv-color-surface {
+	syntax: '<color>';
+	inherits: true;
+	initial-value: #ffffff;
+}
+
+@property --gv-color-surface-hover {
+	syntax: '<color>';
+	inherits: true;
+	initial-value: #fafafa;
+}
+
+@property --gv-color-surface-alt {
+	syntax: '<color>';
+	inherits: true;
+	initial-value: #f2f3f5;
+}
+
+@property --gv-color-surface-error {
+	syntax: '<color>';
+	inherits: true;
+	initial-value: #fbe2dc;
+}
+
+@property --gv-color-surface-success {
+	syntax: '<color>';
+	inherits: true;
+	initial-value: #dcf2df;
+}
+
+@property --gv-color-surface-warning {
+	syntax: '<color>';
+	inherits: true;
+	initial-value: #fef0d6;
+}
+
+@property --gv-color-surface-info {
+	syntax: '<color>';
+	inherits: true;
+	initial-value: #cffafe;
+}
+
+@property --gv-color-surface-disabled {
+	syntax: '<color>';
+	inherits: true;
+	initial-value: #edeef0;
+}
+
+@property --gv-color-header-bg {
+	syntax: '<color>';
+	inherits: true;
+	initial-value: #f2f3f5;
+}
+
+@property --gv-color-header-bg-hover {
+	syntax: '<color>';
+	inherits: true;
+	initial-value: #f2f3f5;
+}
+
+@property --gv-color-header-text {
+	syntax: '<color>';
+	inherits: true;
+	initial-value: #5b6470;
+}
+
+@property --gv-color-header-text-hover {
+	syntax: '<color>';
+	inherits: true;
+	initial-value: #5b6470;
+}
+
+@property --gv-color-zebra-bg {
+	syntax: '<color>';
+	inherits: true;
+	initial-value: #ffffff;
+}
+
+@property --gv-color-border {
+	syntax: '<color>';
+	inherits: true;
+	initial-value: #888888;
+}
+
+@property --gv-color-border-strong {
+	syntax: '<color>';
+	inherits: true;
+	initial-value: #6b7280;
+}
+
+@property --gv-color-border-light {
+	syntax: '<color>';
+	inherits: true;
+	initial-value: #e5e7eb;
+}
+
+@property --gv-color-row-divider {
+	syntax: '<color>';
+	inherits: true;
+	initial-value: #e5e7eb;
+}
+
+@property --gv-color-entry-border {
+	syntax: '<color>';
+	inherits: true;
+	initial-value: #e5e7eb;
+}
+
+@property --gv-color-error {
+	syntax: '<color>';
+	inherits: true;
+	initial-value: #c02b0a;
+}
+
+@property --gv-color-error-hover {
+	syntax: '<color>';
+	inherits: true;
+	initial-value: #922008;
+}
+
+@property --gv-color-on-error {
+	syntax: '<color>';
+	inherits: true;
+	initial-value: #ffffff;
+}
+
+@property --gv-color-success {
+	syntax: '<color>';
+	inherits: true;
+	initial-value: #23692f;
+}
+
+@property --gv-color-success-hover {
+	syntax: '<color>';
+	inherits: true;
+	initial-value: #1a4f23;
+}
+
+@property --gv-color-on-success {
+	syntax: '<color>';
+	inherits: true;
+	initial-value: #ffffff;
+}
+
+@property --gv-color-warning {
+	syntax: '<color>';
+	inherits: true;
+	initial-value: #febc48;
+}
+
+@property --gv-color-warning-icon {
+	syntax: '<color>';
+	inherits: true;
+	initial-value: #b07000;
+}
+
+@property --gv-color-info {
+	syntax: '<color>';
+	inherits: true;
+	initial-value: #0e7490;
+}
+
+@property --gv-color-info-hover {
+	syntax: '<color>';
+	inherits: true;
+	initial-value: #0a5e74;
+}
+
+@property --gv-color-on-info {
+	syntax: '<color>';
+	inherits: true;
+	initial-value: #ffffff;
+}
+
+@property --gv-focus-ring-color {
+	syntax: '<color>';
+	inherits: true;
+	initial-value: #2563eb;
+}
+
+@property --gv-entry-bg {
+	syntax: '<color>';
+	inherits: true;
+	initial-value: #ffffff;
+}
+
+@property --gv-font-size-base {
+	syntax: '<length-percentage>';
+	inherits: true;
+	initial-value: 16px;
+}
+
+@property --gv-font-weight-light {
+	syntax: '<integer>';
+	inherits: true;
+	initial-value: 300;
+}
+
+@property --gv-font-weight-normal {
+	syntax: '<integer>';
+	inherits: true;
+	initial-value: 400;
+}
+
+@property --gv-font-weight-medium {
+	syntax: '<integer>';
+	inherits: true;
+	initial-value: 500;
+}
+
+@property --gv-font-weight-semibold {
+	syntax: '<integer>';
+	inherits: true;
+	initial-value: 600;
+}
+
+@property --gv-font-weight-bold {
+	syntax: '<integer>';
+	inherits: true;
+	initial-value: 700;
+}
+
+@property --gv-line-height-tight {
+	syntax: '<number>';
+	inherits: true;
+	initial-value: 1.25;
+}
+
+@property --gv-line-height-normal {
+	syntax: '<number>';
+	inherits: true;
+	initial-value: 1.5;
+}
+
+@property --gv-line-height-relaxed {
+	syntax: '<number>';
+	inherits: true;
+	initial-value: 1.75;
+}
+
+@property --gv-line-height-cjk {
+	syntax: '<number>';
+	inherits: true;
+	initial-value: 1.85;
+}
+
+@property --gv-field-label-font-weight {
+	syntax: '<integer>';
+	inherits: true;
+	initial-value: 600;
+}
+
+@property --gv-_font-scale-xs {
+	syntax: '<number>';
+	inherits: true;
+	initial-value: 0.75;
+}
+
+@property --gv-_font-scale-sm {
+	syntax: '<number>';
+	inherits: true;
+	initial-value: 0.875;
+}
+
+@property --gv-_font-scale-md {
+	syntax: '<number>';
+	inherits: true;
+	initial-value: 1.125;
+}
+
+@property --gv-_font-scale-lg {
+	syntax: '<number>';
+	inherits: true;
+	initial-value: 1.25;
+}
+
+@property --gv-_font-scale-xl {
+	syntax: '<number>';
+	inherits: true;
+	initial-value: 1.5;
+}
+
+@property --gv-_font-scale-2xl {
+	syntax: '<number>';
+	inherits: true;
+	initial-value: 1.875;
+}
+
+@property --gv-space-1 {
+	syntax: '<length>';
+	inherits: true;
+	initial-value: 4px;
+}
+
+@property --gv-space-2 {
+	syntax: '<length>';
+	inherits: true;
+	initial-value: 8px;
+}
+
+@property --gv-space-3 {
+	syntax: '<length>';
+	inherits: true;
+	initial-value: 12px;
+}
+
+@property --gv-space-4 {
+	syntax: '<length>';
+	inherits: true;
+	initial-value: 16px;
+}
+
+@property --gv-space-5 {
+	syntax: '<length>';
+	inherits: true;
+	initial-value: 20px;
+}
+
+@property --gv-space-6 {
+	syntax: '<length>';
+	inherits: true;
+	initial-value: 24px;
+}
+
+@property --gv-space-8 {
+	syntax: '<length>';
+	inherits: true;
+	initial-value: 32px;
+}
+
+@property --gv-space-10 {
+	syntax: '<length>';
+	inherits: true;
+	initial-value: 40px;
+}
+
+@property --gv-space-12 {
+	syntax: '<length>';
+	inherits: true;
+	initial-value: 48px;
+}
+
+@property --gv-space-16 {
+	syntax: '<length>';
+	inherits: true;
+	initial-value: 64px;
+}
+
+@property --gv-entry-padding-top {
+	syntax: '<length-percentage>';
+	inherits: true;
+	initial-value: 24px;
+}
+
+@property --gv-entry-padding-right {
+	syntax: '<length-percentage>';
+	inherits: true;
+	initial-value: 24px;
+}
+
+@property --gv-entry-padding-bottom {
+	syntax: '<length-percentage>';
+	inherits: true;
+	initial-value: 24px;
+}
+
+@property --gv-entry-padding-left {
+	syntax: '<length-percentage>';
+	inherits: true;
+	initial-value: 24px;
+}
+
+@property --gv-entry-padding-block-start {
+	syntax: '<length-percentage>';
+	inherits: true;
+	initial-value: 24px;
+}
+
+@property --gv-entry-padding-block-end {
+	syntax: '<length-percentage>';
+	inherits: true;
+	initial-value: 24px;
+}
+
+@property --gv-entry-padding-inline-start {
+	syntax: '<length-percentage>';
+	inherits: true;
+	initial-value: 24px;
+}
+
+@property --gv-entry-padding-inline-end {
+	syntax: '<length-percentage>';
+	inherits: true;
+	initial-value: 24px;
+}
+
+@property --gv-widget-padding-block {
+	syntax: '<length-percentage>';
+	inherits: true;
+	initial-value: 20px;
+}
+
+@property --gv-widget-padding-inline {
+	syntax: '<length-percentage>';
+	inherits: true;
+	initial-value: 16px;
+}
+
+@property --gv-widget-margin-block-end {
+	syntax: '<length>';
+	inherits: true;
+	initial-value: 32px;
+}
+
+@property --gv-search-row-gap {
+	syntax: '<length>';
+	inherits: true;
+	initial-value: 16px;
+}
+
+@property --gv-search-col-gap {
+	syntax: '<length>';
+	inherits: true;
+	initial-value: 16px;
+}
+
+@property --gv-toolbar-gap {
+	syntax: '<length>';
+	inherits: true;
+	initial-value: 8px;
+}
+
+@property --gv-toolbar-padding {
+	syntax: '<length>';
+	inherits: true;
+	initial-value: 16px;
+}
+
+@property --gv-toolbar-margin-block-end {
+	syntax: '<length>';
+	inherits: true;
+	initial-value: 16px;
+}
+
+@property --gv-pagination-gap {
+	syntax: '<length>';
+	inherits: true;
+	initial-value: 4px;
+}
+
+@property --gv-pagination-button-size {
+	syntax: '<length>';
+	inherits: true;
+	initial-value: 36px;
+}
+
+@property --gv-checkbox-size {
+	syntax: '<length>';
+	inherits: true;
+	initial-value: 16px;
+}
+
+@property --gv-map-marker-size {
+	syntax: '<length>';
+	inherits: true;
+	initial-value: 18px;
+}
+
+@property --gv-radius-xs {
+	syntax: '<length>';
+	inherits: true;
+	initial-value: 2px;
+}
+
+@property --gv-radius-sm {
+	syntax: '<length>';
+	inherits: true;
+	initial-value: 4px;
+}
+
+@property --gv-radius-md {
+	syntax: '<length>';
+	inherits: true;
+	initial-value: 6px;
+}
+
+@property --gv-radius-lg {
+	syntax: '<length>';
+	inherits: true;
+	initial-value: 8px;
+}
+
+@property --gv-radius-xl {
+	syntax: '<length>';
+	inherits: true;
+	initial-value: 12px;
+}
+
+@property --gv-radius-full {
+	syntax: '<length>';
+	inherits: true;
+	initial-value: 9999px;
+}
+
+@property --gv-border-width-0 {
+	syntax: '<length>';
+	inherits: true;
+	initial-value: 0;
+}
+
+@property --gv-border-width-1 {
+	syntax: '<length>';
+	inherits: true;
+	initial-value: 1px;
+}
+
+@property --gv-border-width-2 {
+	syntax: '<length>';
+	inherits: true;
+	initial-value: 2px;
+}
+
+@property --gv-border-width-3 {
+	syntax: '<length>';
+	inherits: true;
+	initial-value: 3px;
+}
+
+@property --gv-border-width-4 {
+	syntax: '<length>';
+	inherits: true;
+	initial-value: 4px;
+}
+
+@property --gv-border-width-8 {
+	syntax: '<length>';
+	inherits: true;
+	initial-value: 8px;
+}
+
+@property --gv-widget-border-radius {
+	syntax: '<length>';
+	inherits: true;
+	initial-value: 8px;
+}
+
+@property --gv-pagination-button-radius {
+	syntax: '<length>';
+	inherits: true;
+	initial-value: 6px;
+}
+
+@property --gv-control-border-width {
+	syntax: '<length>';
+	inherits: true;
+	initial-value: 1px;
+}
+
+@property --gv-control-radius {
+	syntax: '<length>';
+	inherits: true;
+	initial-value: 6px;
+}
+
+@property --gv-focus-ring-width {
+	syntax: '<length>';
+	inherits: true;
+	initial-value: 2px;
+}
+
+@property --gv-focus-ring-offset {
+	syntax: '<length>';
+	inherits: true;
+	initial-value: 2px;
+}
+
+@property --gv-entry-radius {
+	syntax: '<length>';
+	inherits: true;
+	initial-value: 8px;
+}
+
+@property --gv-entry-border-width {
+	syntax: '<length>';
+	inherits: true;
+	initial-value: 1px;
+}
+
+@property --gv-entry-border-width-hover {
+	syntax: '<length>';
+	inherits: true;
+	initial-value: 1px;
+}
+
+@property --gv-entry-border-color {
+	syntax: '<color>';
+	inherits: true;
+	initial-value: #e5e7eb;
+}
+
+@property --gv-entry-border-color-hover {
+	syntax: '<color>';
+	inherits: true;
+	initial-value: #e5e7eb;
+}
+
+@property --gv-shadow-color {
+	syntax: '<color>';
+	inherits: true;
+	initial-value: #121961;
+}
+
+@property --gv-shadow-alpha {
+	syntax: '<number>';
+	inherits: true;
+	initial-value: 0.1;
+}
+
+@property --gv-opacity-0 {
+	syntax: '<number>';
+	inherits: true;
+	initial-value: 0;
+}
+
+@property --gv-opacity-10 {
+	syntax: '<number>';
+	inherits: true;
+	initial-value: 0.1;
+}
+
+@property --gv-opacity-20 {
+	syntax: '<number>';
+	inherits: true;
+	initial-value: 0.2;
+}
+
+@property --gv-opacity-30 {
+	syntax: '<number>';
+	inherits: true;
+	initial-value: 0.3;
+}
+
+@property --gv-opacity-40 {
+	syntax: '<number>';
+	inherits: true;
+	initial-value: 0.4;
+}
+
+@property --gv-opacity-50 {
+	syntax: '<number>';
+	inherits: true;
+	initial-value: 0.5;
+}
+
+@property --gv-opacity-60 {
+	syntax: '<number>';
+	inherits: true;
+	initial-value: 0.6;
+}
+
+@property --gv-opacity-70 {
+	syntax: '<number>';
+	inherits: true;
+	initial-value: 0.7;
+}
+
+@property --gv-opacity-80 {
+	syntax: '<number>';
+	inherits: true;
+	initial-value: 0.8;
+}
+
+@property --gv-opacity-90 {
+	syntax: '<number>';
+	inherits: true;
+	initial-value: 0.9;
+}
+
+@property --gv-opacity-100 {
+	syntax: '<number>';
+	inherits: true;
+	initial-value: 1;
+}
+
+@property --gv-z-base {
+	syntax: '<integer>';
+	inherits: true;
+	initial-value: 0;
+}
+
+@property --gv-z-raised {
+	syntax: '<integer>';
+	inherits: true;
+	initial-value: 10;
+}
+
+@property --gv-z-dropdown {
+	syntax: '<integer>';
+	inherits: true;
+	initial-value: 100;
+}
+
+@property --gv-z-popover {
+	syntax: '<integer>';
+	inherits: true;
+	initial-value: 200;
+}
+
+@property --gv-z-sticky {
+	syntax: '<integer>';
+	inherits: true;
+	initial-value: 300;
+}
+
+@property --gv-z-overlay {
+	syntax: '<integer>';
+	inherits: true;
+	initial-value: 400;
+}
+
+@property --gv-z-modal {
+	syntax: '<integer>';
+	inherits: true;
+	initial-value: 100000;
+}
+
+@property --gv-z-toast {
+	syntax: '<integer>';
+	inherits: true;
+	initial-value: 600;
+}
+
+@property --gv-grid-columns {
+	syntax: '<integer>';
+	inherits: true;
+	initial-value: 1;
+}
+
+@property --gv-grid-gap {
+	syntax: '<length>';
+	inherits: true;
+	initial-value: 24px;
+}
+
+@property --gv-card-min-width {
+	syntax: '<length>';
+	inherits: true;
+	initial-value: 0px;
+}
+
+@property --gv-single-entry-label-inline-size {
+	syntax: '<length-percentage>';
+	inherits: true;
+	initial-value: 30%;
+}
+
+@property --gv-single-entry-label-width {
+	syntax: '<length-percentage>';
+	inherits: true;
+	initial-value: 30%;
+}
+
+@property --gv-list-media-inline-size {
+	syntax: '<length-percentage>';
+	inherits: true;
+	initial-value: 33.33%;
+}
+
+@property --gv-list-media-width {
+	syntax: '<length-percentage>';
+	inherits: true;
+	initial-value: 33.33%;
+}
+
+@property --gv-map-infowindow-image-max-width {
+	syntax: '<length>';
+	inherits: true;
+	initial-value: 100px;
+}
+
+@property --gv-size-touch-target {
+	syntax: '<length>';
+	inherits: true;
+	initial-value: 44px;
+}
+
+@property --gv-drag-handle-size {
+	syntax: '<length>';
+	inherits: true;
+	initial-value: 44px;
+}
+
+@property --gv-drag-handle-color {
+	syntax: '<color>';
+	inherits: true;
+	initial-value: #5b6470;
+}
+
+@property --gv-scrollbar-thumb-color {
+	syntax: '<color>';
+	inherits: true;
+	initial-value: #888888;
+}
+
+@property --gv-scrollbar-track-color {
+	syntax: '<color>';
+	inherits: true;
+	initial-value: #f2f3f5;
+}
+
+@property --gv-auto-advance-paused {
+	syntax: '<integer>';
+	inherits: true;
+	initial-value: 0;
+}
+
+@property --gv-table-header-background {
+	syntax: '<color>';
+	inherits: true;
+	initial-value: #f2f3f5;
+}
+
+@property --gv-table-cell-padding-block {
+	syntax: '<length>';
+	inherits: true;
+	initial-value: 12px;
+}
+
+@property --gv-table-cell-padding-inline {
+	syntax: '<length>';
+	inherits: true;
+	initial-value: 16px;
+}
+
+@property --gv-widget-border-color {
+	syntax: '<color>';
+	inherits: true;
+	initial-value: #e5e7eb;
+}
+
+@property --gv-pagination-button-border-color {
+	syntax: '<color>';
+	inherits: true;
+	initial-value: #6b7280;
+}
+
+@property --gv-self-contained {
+	syntax: '<number>';
+	inherits: true;
+	initial-value: 0;
+}
+
+@property --gv-view-wrapper-radius {
+	syntax: '<length>';
+	inherits: true;
+	initial-value: 0;
+}
+
+@property --gv-motion-multiplier {
+	syntax: '<number>';
+	inherits: true;
+	initial-value: 1;
+}

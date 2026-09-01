@@ -23,50 +23,51 @@ require_once( dirname( __FILE__ ) . '/traits/trait-wiz-bundle-license.php' );
 require_once( dirname( __FILE__ ) . '/traits/trait-wiz-bundle-upgrade.php' );
 
 class GWAPI {
-    use GWAPI_Perk_License;
-    use GWAPI_Connect_License;
-    use GWAPI_Shop_License;
-    use GWAPI_GCGS_License;
-    use GWAPI_Wiz_Bundle_License;
-    use GWAPI_Wiz_Bundle_Upgrade;
+	use GWAPI_Perk_License;
+	use GWAPI_Connect_License;
+	use GWAPI_Shop_License;
+	use GWAPI_GCGS_License;
+	use GWAPI_Wiz_Bundle_License;
+	use GWAPI_Wiz_Bundle_Upgrade;
 
 	// Product type constants
-	const PRODUCT_TYPE_PERK = 'perk';
-	const PRODUCT_TYPE_CONNECT = 'connect';
-	const PRODUCT_TYPE_SHOP = 'shop';
-	const PRODUCT_TYPE_FREE = 'free';
+	const PRODUCT_TYPE_PERK       = 'perk';
+	const PRODUCT_TYPE_CONNECT    = 'connect';
+	const PRODUCT_TYPE_SHOP       = 'shop';
+	const PRODUCT_TYPE_FREE       = 'free';
 	const PRODUCT_TYPE_WIZ_BUNDLE = 'wiz-bundle';
 
 	// Product type configuration
-	public static $product_config = [
-		self::PRODUCT_TYPE_PERK => [
-			'categories' => ['perk'],
-			'item_name' => 'Gravity Perks',
-		],
-		self::PRODUCT_TYPE_CONNECT => [
-			'categories' => ['connection'],
-			'item_name' => 'Gravity Connect',
-		],
-		self::PRODUCT_TYPE_SHOP => [
-			'categories' => ['gravity-shop'],
-			'item_name' => 'GS Product Configurator',
-		],
-		self::PRODUCT_TYPE_FREE => [
-			'categories' => ['free-plugin'],
-			'item_name' => 'Free Plugins',
-			'has_license' => false,
-		],
-		self::PRODUCT_TYPE_WIZ_BUNDLE => [
-			'categories' => ['wiz-bundle'],
-			'item_name' => 'Wiz Bundle',
-			'is_bundle' => true,
+	public static $product_config = array(
+		self::PRODUCT_TYPE_PERK       => array(
+			'categories' => array( 'perk' ),
+			'item_name'  => 'Gravity Perks',
+		),
+		self::PRODUCT_TYPE_CONNECT    => array(
+			'categories' => array( 'connection' ),
+			'item_name'  => 'Gravity Connect',
+		),
+		self::PRODUCT_TYPE_SHOP       => array(
+			'categories'        => array( 'gravity-shop' ),
+			'item_name'         => 'GS Product Configurator',
 			'registration_type' => 'plugin',
-			'bundle_priority' => 1,
-		],
-	];
+		),
+		self::PRODUCT_TYPE_FREE       => array(
+			'categories'  => array( 'free-plugin' ),
+			'item_name'   => 'Free Plugins',
+			'has_license' => false,
+		),
+		self::PRODUCT_TYPE_WIZ_BUNDLE => array(
+			'categories'        => array( 'wiz-bundle' ),
+			'item_name'         => 'Wiz Bundle',
+			'is_bundle'         => true,
+			'registration_type' => 'plugin',
+			'bundle_priority'   => 1,
+		),
+	);
 
 	private $gcgs_upgrade_successful = false;
-	private $should_activate_gcgs = false;
+	private $should_activate_gcgs    = false;
 
 	private $_product_update_data = array(
 		'loaded'    => false,
@@ -240,10 +241,10 @@ class GWAPI {
 
 		$gc_gwapi = Gravity_Connect\Licensing\GWAPI::get_instance();
 
-		remove_filter( 'pre_set_site_transient_update_plugins', [ $gc_gwapi, 'pre_set_site_transient_update_plugins_filter' ], 99999 );
-		remove_filter( 'plugins_api', [ $gc_gwapi, 'products_plugins_api_filter' ], 100, 3 );
-		remove_filter( 'http_request_host_is_external', [ $gc_gwapi, 'allow_gwiz_external_redirects' ], 15, 3 );
-		remove_filter( 'upgrader_package_options', [ $gc_gwapi, 'upgrader_package_options_filter' ], 9 );
+		remove_filter( 'pre_set_site_transient_update_plugins', array( $gc_gwapi, 'pre_set_site_transient_update_plugins_filter' ), 99999 );
+		remove_filter( 'plugins_api', array( $gc_gwapi, 'products_plugins_api_filter' ), 100, 3 );
+		remove_filter( 'http_request_host_is_external', array( $gc_gwapi, 'allow_gwiz_external_redirects' ), 15, 3 );
+		remove_filter( 'upgrader_package_options', array( $gc_gwapi, 'upgrader_package_options_filter' ), 9 );
 	}
 
 	/**
@@ -262,10 +263,10 @@ class GWAPI {
 
 		$gspc_gwapi = gs_product_configurator()->gwapi_lite;
 
-		remove_filter( 'pre_set_site_transient_update_plugins', [ $gspc_gwapi, 'pre_set_site_transient_update_plugins_filter' ], 99999 );
-		remove_filter( 'plugins_api', [ $gspc_gwapi, 'products_plugins_api_filter' ], 100, 3 );
-		remove_filter( 'http_request_host_is_external', [ $gspc_gwapi, 'allow_gwiz_external_redirects' ], 15, 3 );
-		remove_filter( 'upgrader_package_options', [ $gspc_gwapi, 'upgrader_package_options_filter' ], 9 );
+		remove_filter( 'pre_set_site_transient_update_plugins', array( $gspc_gwapi, 'pre_set_site_transient_update_plugins_filter' ), 99999 );
+		remove_filter( 'plugins_api', array( $gspc_gwapi, 'products_plugins_api_filter' ), 100, 3 );
+		remove_filter( 'http_request_host_is_external', array( $gspc_gwapi, 'allow_gwiz_external_redirects' ), 15, 3 );
+		remove_filter( 'upgrader_package_options', array( $gspc_gwapi, 'upgrader_package_options_filter' ), 9 );
 	}
 
 	public function gpgs_to_gcgs_upgrader_post_install( $response, $hook_extra, $result ) {
@@ -327,7 +328,7 @@ class GWAPI {
 
 		// Get product info either from hook_extra/plugin or product_id in URL
 		$plugin_file = rgars( $options, 'hook_extra/plugin' );
-		$product = null;
+		$product     = null;
 
 		if ( empty( $plugin_file ) ) {
 			$parsed_url = parse_url( $options['package'] );
@@ -342,7 +343,7 @@ class GWAPI {
 			}
 		} else {
 			$products = $this->get_products();
-			$product = isset( $products[ $plugin_file ] ) ? $products[ $plugin_file ] : null;
+			$product  = isset( $products[ $plugin_file ] ) ? $products[ $plugin_file ] : null;
 		}
 
 		// If we don't have the plugin_file or product, bail.
@@ -403,20 +404,20 @@ class GWAPI {
 	public function get_products( $flush = false ) {
 
 		$products = $this->request( array(
-			'action'   => 'get_products',
-			'output'   => OBJECT,
-			'cache'    => true,
-			'api_params' => [
-				'download_categories' => array_merge( array_reduce(self::$product_config, function($carry, $config) {
-					return array_merge($carry, $config['categories']);
-				}, []), [ 'gravity-perks', 'spellbook' ] ),
-			],
-			'callback' => array( $this, 'process_get_products' ),
-			'flush'    => $flush,
+			'action'     => 'get_products',
+			'output'     => OBJECT,
+			'cache'      => true,
+			'api_params' => array(
+				'download_categories' => array_merge( array_reduce(self::$product_config, function( $carry, $config ) {
+					return array_merge( $carry, $config['categories'] );
+				}, array()), array( 'gravity-perks', 'spellbook' ) ),
+			),
+			'callback'   => array( $this, 'process_get_products' ),
+			'flush'      => $flush,
 		) );
 
 		if ( ! is_array( $products ) ) {
-			return [];
+			return array();
 		}
 
 		foreach ( $products as $plugin_file => $product ) {
@@ -441,13 +442,13 @@ class GWAPI {
 	public function get_product( $product_id ) {
 
 		$product = $this->request( array(
-			'action'   => 'gw_get_product',
-			'output'   => OBJECT,
-			'cache'    => true,
-			'api_params' => [
+			'action'     => 'gw_get_product',
+			'output'     => OBJECT,
+			'cache'      => true,
+			'api_params' => array(
 				'product_id' => $product_id,
-			],
-			'callback' => array( $this, 'process_get_product' ),
+			),
+			'callback'   => array( $this, 'process_get_product' ),
 		) );
 
 		return is_object( $product ) ? $product : false;
@@ -486,9 +487,9 @@ class GWAPI {
 				// class_exists() is not reliable here due to varying contexts.
 				&& ! GWPerk::is_installed( 'gc-google-sheets/gc-google-sheets.php' )
 			) {
-				$plugin_file = 'gp-google-sheets/gp-google-sheets.php';
-				$plugin->slug = 'gp-google-sheets';
-				$plugin->plugin = 'gp-google-sheets';
+				$plugin_file         = 'gp-google-sheets/gp-google-sheets.php';
+				$plugin->slug        = 'gp-google-sheets';
+				$plugin->plugin      = 'gp-google-sheets';
 				$plugin->plugin_file = 'gp-google-sheets/gp-google-sheets.php';
 			}
 
@@ -526,7 +527,7 @@ class GWAPI {
 		}
 
 		$plugin->download_link = $plugin->package;
-		$plugin->type = $this->determine_product_type( $plugin->categories );
+		$plugin->type          = $this->determine_product_type( $plugin->categories );
 
 		return $plugin;
 
@@ -638,8 +639,8 @@ class GWAPI {
 		return $this->request( array(
 			'action' => 'spellbook_announcements',
 			'output' => ARRAY_A,
-			'cache' => true,
-			'flush' => $flush,
+			'cache'  => true,
+			'flush'  => $flush,
 		) );
 
 	}
@@ -679,7 +680,7 @@ class GWAPI {
 
 		// check if our run-time cache is populated, save a little hassle of having to loop through this over and over
 		if ( $this->_product_update_data['loaded'] && ! $force_check ) {
-			$_transient_data->response  = array_merge( (array) $_transient_data->response, $this->_product_update_data['response'] );
+			$_transient_data->response = array_merge( (array) $_transient_data->response, $this->_product_update_data['response'] );
 
 			if ( ! isset( $_transient_data->no_update ) ) {
 				$_transient_data->no_update = array();
@@ -769,7 +770,7 @@ class GWAPI {
 			}
 		}
 
-		$_transient_data->response  = array_merge( (array) $_transient_data->response, $this->_product_update_data['response'] );
+		$_transient_data->response = array_merge( (array) $_transient_data->response, $this->_product_update_data['response'] );
 
 		if ( ! isset( $_transient_data->no_update ) ) {
 			$_transient_data->no_update = array();
@@ -844,7 +845,7 @@ class GWAPI {
 		}
 
 		$remote_product = rgar( $remote_products, $plugin_file );
-		$product_id = isset( $remote_product->ID ) ? $remote_product->ID : false;
+		$product_id     = isset( $remote_product->ID ) ? $remote_product->ID : false;
 
 		if ( ! $product_id ) {
 			return $_data;
@@ -860,7 +861,6 @@ class GWAPI {
 
 			$product->version = $product->legacy_version;
 		}
-
 
 		GravityPerks::log_debug( 'Ok! Everything looks good. Let\'s build the response needed for WordPress.' );
 
@@ -883,11 +883,11 @@ class GWAPI {
 	 */
 	public function validate_product_type( $product_type ) {
 		if ( empty( $product_type ) ) {
-			throw new InvalidArgumentException('Product type cannot be empty.');
+			throw new InvalidArgumentException( 'Product type cannot be empty.' );
 		}
 
 		if ( ! isset( self::$product_config[ $product_type ] ) ) {
-			throw new InvalidArgumentException('Invalid product type.');
+			throw new InvalidArgumentException( 'Invalid product type.' );
 		}
 	}
 
@@ -903,14 +903,14 @@ class GWAPI {
 	 * @return array Array of bundle product type keys
 	 */
 	public function get_bundle_types() {
-		$bundles = [];
-		foreach (self::$product_config as $type => $config) {
-			if (!empty($config['is_bundle'])) {
-				$bundles[$type] = $config['bundle_priority'] ?? 0;
+		$bundles = array();
+		foreach ( self::$product_config as $type => $config ) {
+			if ( ! empty( $config['is_bundle'] ) ) {
+				$bundles[ $type ] = isset( $config['bundle_priority'] ) ? $config['bundle_priority'] : 0;
 			}
 		}
-		arsort($bundles); // Sort by priority (highest first)
-		return array_keys($bundles);
+		arsort( $bundles ); // Sort by priority (highest first)
+		return array_keys( $bundles );
 	}
 
 	/**
@@ -919,8 +919,8 @@ class GWAPI {
 	 * @param string $product_type Product type to check
 	 * @return bool True if it's a bundle, false otherwise
 	 */
-	public function is_bundle_type($product_type) {
-		return !empty(self::$product_config[$product_type]['is_bundle']);
+	public function is_bundle_type( $product_type ) {
+		return ! empty( self::$product_config[ $product_type ]['is_bundle'] );
 	}
 
 	/**
@@ -929,8 +929,8 @@ class GWAPI {
 	 * @param string $product_type Product type
 	 * @return string Registration type ('plugin' or 'category')
 	 */
-	public function get_registration_type($product_type) {
-		return self::$product_config[$product_type]['registration_type'] ?? 'category';
+	public function get_registration_type( $product_type ) {
+		return isset( self::$product_config[ $product_type ]['registration_type'] ) ? self::$product_config[ $product_type ]['registration_type'] : 'category';
 	}
 
 	public function get_local_product_version( $plugin_file ) {
@@ -947,12 +947,12 @@ class GWAPI {
 	 * @return array|false License data array or false on failure
 	 */
 	public function get_license_data( $product_type, $flush = false ) {
-		if (empty($product_type)) {
-			throw new InvalidArgumentException('Product type cannot be empty.');
+		if ( empty( $product_type ) ) {
+			throw new InvalidArgumentException( 'Product type cannot be empty.' );
 		}
 
 		if ( ! isset( self::$product_config[ $product_type ] ) ) {
-			throw new InvalidArgumentException('Invalid product type.');
+			throw new InvalidArgumentException( 'Invalid product type.' );
 		}
 
 		$license_key = $this->get_license_key( $product_type );
@@ -961,7 +961,7 @@ class GWAPI {
 			return false;
 		}
 
-		$item_name   = self::$product_config[ $product_type ]['item_name'];
+		$item_name = self::$product_config[ $product_type ]['item_name'];
 
 		$transient_key = 'gwapi_license_data_' . $product_type;
 
@@ -979,10 +979,15 @@ class GWAPI {
 				return $this->process_license_data( $response, $product_type );
 			},
 			'api_params' => array(
-				'license'      => $license_key,
+				'license'   => $license_key,
 				'item_name' => urlencode( $item_name ),
 			),
 		) );
+
+		// Backfill the license ID if the response contains one.
+		if ( is_array( $response ) && ! empty( $response['ID'] ) ) {
+			$this->update_license_id( $product_type, (int) $response['ID'] );
+		}
 
 		// If the response contains an item_name_mismatch, nuke the license key and transient.
 		if ( is_array( $response ) && isset( $response['license'] ) && $response['license'] === 'item_name_mismatch' ) {
@@ -1012,8 +1017,8 @@ class GWAPI {
 
 		// Get product type from item name
 		$product_type = false;
-		foreach (self::$product_config as $type => $config) {
-			if (urldecode($config['item_name']) === urldecode($response['item_name'])) {
+		foreach ( self::$product_config as $type => $config ) {
+			if ( urldecode( $config['item_name'] ) === urldecode( $response['item_name'] ) ) {
 				$product_type = $type;
 				break;
 			}
@@ -1028,18 +1033,18 @@ class GWAPI {
 					GravityPerks::log_debug( "Automatically upgraded {$checking_type} license to Wiz Bundle" );
 
 					// Return the bundle license data
-					$response = $bundle_license_data;
-					$product_type = 'wiz-bundle';
+					$response          = $bundle_license_data;
+					$product_type      = 'wiz-bundle';
 					$has_valid_license = $response['license'] === 'valid';
 				}
 			}
 
 			// Existing inactive/site_inactive handling (only if not already migrated)
 			if ( ! $has_valid_license && in_array( $response['license'], array( 'inactive', 'site_inactive' ) ) && $product_type ) {
-				$license = $this->get_license_key($product_type);
-				$has_valid_license = $this->activate_license( $product_type, $license );
+				$license             = $this->get_license_key( $product_type );
+				$has_valid_license   = $this->activate_license( $product_type, $license );
 				$response['license'] = $has_valid_license ? 'valid' : $response['license'];
-			} else if ( ! $has_valid_license ) {
+			} elseif ( ! $has_valid_license ) {
 				$has_valid_license = $response['license'] == 'valid';
 			}
 		}
@@ -1100,26 +1105,26 @@ class GWAPI {
 	 * @param string $product_type Product type to deactivate license for
 	 * @return bool Whether the deactivation was successful
 	 */
-	public function deactivate_license($product_type) {
-		$this->validate_product_type($product_type);
+	public function deactivate_license( $product_type ) {
+		$this->validate_product_type( $product_type );
 
-		$license = $this->get_license_key($product_type);
-		if (!$license) {
+		$license = $this->get_license_key( $product_type );
+		if ( ! $license ) {
 			return false;
 		}
 
-		$this->request([
-			'action' => 'deactivate_license',
-			'api_params' => [
-				'license' => $license,
-				'item_name' => urlencode($this->get_product_name($product_type)),
-			],
-			'cache' => false,
-			'method' => 'POST',
-		]);
+		$this->request(array(
+			'action'     => 'deactivate_license',
+			'api_params' => array(
+				'license'   => $license,
+				'item_name' => urlencode( $this->get_product_name( $product_type ) ),
+			),
+			'cache'      => false,
+			'method'     => 'POST',
+		));
 
 		// Clear the license key no matter the response
-		switch ($product_type) {
+		switch ( $product_type ) {
 			case self::PRODUCT_TYPE_PERK:
 				$this->remove_perk_license_key();
 				break;
@@ -1144,15 +1149,15 @@ class GWAPI {
 	 * @return bool Whether the registration was successful
 	 */
 	public function register_product( $product_id, $product_type ) {
-		if (empty($product_type)) {
-			throw new InvalidArgumentException('Product type cannot be empty.');
+		if ( empty( $product_type ) ) {
+			throw new InvalidArgumentException( 'Product type cannot be empty.' );
 		}
 
 		$response = $this->request( array(
 			'action'     => 'register_product',
 			'api_params' => array(
-				'license' => $this->get_license_key($product_type),
-				'product_id' => $product_id,
+				'license'      => $this->get_license_key( $product_type ),
+				'product_id'   => $product_id,
 				'product_type' => $product_type,
 			),
 			'cache'      => false,
@@ -1170,15 +1175,15 @@ class GWAPI {
 	 * @return bool Whether the deregistration was successful
 	 */
 	public function deregister_product( $product_id, $product_type ) {
-		if (empty($product_type)) {
-			throw new InvalidArgumentException('Product type cannot be empty.');
+		if ( empty( $product_type ) ) {
+			throw new InvalidArgumentException( 'Product type cannot be empty.' );
 		}
 
 		$response = $this->request( array(
 			'action'     => 'deregister_product',
 			'api_params' => array(
-				'license' => $this->get_license_key($product_type),
-				'product_id' => $product_id,
+				'license'      => $this->get_license_key( $product_type ),
+				'product_id'   => $product_id,
 				'product_type' => $product_type,
 			),
 			'cache'      => false,
@@ -1221,8 +1226,8 @@ class GWAPI {
 	 * @param string $plugin_file Plugin file path relative to plugins directory.
 	 * @return string|false Product type constant or false if not recognized.
 	 */
-	public function get_product_type_from_file($plugin_file) {
-		if (empty($plugin_file)) {
+	public function get_product_type_from_file( $plugin_file ) {
+		if ( empty( $plugin_file ) ) {
 			return false;
 		}
 
@@ -1231,22 +1236,22 @@ class GWAPI {
 			$plugin_file === 'gc-google-sheets/gc-google-sheets.php' ||
 			$plugin_file === 'gp-google-sheets/gp-google-sheets.php'
 		) {
-			if ($this->has_gcgs_gp_license()) {
+			if ( $this->has_gcgs_gp_license() ) {
 				return self::PRODUCT_TYPE_PERK;
 			}
 
 			return self::PRODUCT_TYPE_CONNECT;
 		}
 
-		if (preg_match('/^(gw|gp-)/', $plugin_file)) {
+		if ( preg_match( '/^(gw|gp-)/', $plugin_file ) ) {
 			return self::PRODUCT_TYPE_PERK;
 		}
 
-		if (strpos($plugin_file, 'gc-') === 0) {
+		if ( strpos( $plugin_file, 'gc-' ) === 0 ) {
 			return self::PRODUCT_TYPE_CONNECT;
 		}
 
-		if (strpos($plugin_file, 'gs-') === 0) {
+		if ( strpos( $plugin_file, 'gs-' ) === 0 ) {
 			return self::PRODUCT_TYPE_SHOP;
 		}
 
@@ -1259,12 +1264,12 @@ class GWAPI {
 	 * @param string $product_type Product type to get license for
 	 * @return string|false The license key or false if not found
 	 */
-	public function get_license_key($product_type) {
-		if (empty($product_type)) {
-			throw new InvalidArgumentException('Product type cannot be empty.');
+	public function get_license_key( $product_type ) {
+		if ( empty( $product_type ) ) {
+			throw new InvalidArgumentException( 'Product type cannot be empty.' );
 		}
 
-		switch ($product_type) {
+		switch ( $product_type ) {
 			case self::PRODUCT_TYPE_PERK:
 				return $this->get_perk_license_key();
 			case self::PRODUCT_TYPE_CONNECT:
@@ -1276,7 +1281,7 @@ class GWAPI {
 			case self::PRODUCT_TYPE_FREE:
 				return null; // Free plugins do not have a license key
 			default:
-				throw new InvalidArgumentException('Invalid product type: ' . $product_type);
+				throw new InvalidArgumentException( 'Invalid product type: ' . $product_type );
 		}
 	}
 
@@ -1288,22 +1293,22 @@ class GWAPI {
 	 *
 	 * @return bool True if the license key was set successfully, false otherwise
 	 */
-	public function set_license_key($product_type, $license_key) {
-		if (empty($product_type)) {
-			throw new InvalidArgumentException('Product type cannot be empty.');
+	public function set_license_key( $product_type, $license_key ) {
+		if ( empty( $product_type ) ) {
+			throw new InvalidArgumentException( 'Product type cannot be empty.' );
 		}
 
-		switch ($product_type) {
+		switch ( $product_type ) {
 			case self::PRODUCT_TYPE_PERK:
-				return $this->set_perk_license_key($license_key);
+				return $this->set_perk_license_key( $license_key );
 			case self::PRODUCT_TYPE_CONNECT:
-				return $this->set_connect_license_key($license_key);
+				return $this->set_connect_license_key( $license_key );
 			case self::PRODUCT_TYPE_SHOP:
-				return $this->set_shop_license_key($license_key);
+				return $this->set_shop_license_key( $license_key );
 			case self::PRODUCT_TYPE_WIZ_BUNDLE:
-				return $this->set_wiz_bundle_license_key($license_key);
+				return $this->set_wiz_bundle_license_key( $license_key );
 			default:
-				throw new InvalidArgumentException('Invalid product type: ' . $product_type);
+				throw new InvalidArgumentException( 'Invalid product type: ' . $product_type );
 		}
 	}
 
@@ -1314,12 +1319,12 @@ class GWAPI {
 	 *
 	 * @return bool True if the license key was removed successfully, false otherwise
 	 */
-	public function remove_license_key($product_type) {
-		if (empty($product_type)) {
-			throw new InvalidArgumentException('Product type cannot be empty.');
+	public function remove_license_key( $product_type ) {
+		if ( empty( $product_type ) ) {
+			throw new InvalidArgumentException( 'Product type cannot be empty.' );
 		}
 
-		switch ($product_type) {
+		switch ( $product_type ) {
 			case self::PRODUCT_TYPE_PERK:
 				return $this->remove_perk_license_key();
 			case self::PRODUCT_TYPE_CONNECT:
@@ -1329,7 +1334,27 @@ class GWAPI {
 			case self::PRODUCT_TYPE_WIZ_BUNDLE:
 				return $this->remove_wiz_bundle_license_key();
 			default:
-				throw new InvalidArgumentException('Invalid product type: ' . $product_type);
+				throw new InvalidArgumentException( 'Invalid product type: ' . $product_type );
+		}
+	}
+
+	/**
+	 * Updates the stored license ID for a specific product type.
+	 * Called automatically by get_license_data() to backfill the ID from the API response.
+	 *
+	 * @param string $product_type Product type to update
+	 * @param int $id License ID from the API response
+	 */
+	public function update_license_id( $product_type, $id ) {
+		switch ( $product_type ) {
+			case self::PRODUCT_TYPE_PERK:
+				return $this->update_perk_license_id( $id );
+			case self::PRODUCT_TYPE_CONNECT:
+				return $this->update_connect_license_id( $id );
+			case self::PRODUCT_TYPE_SHOP:
+				return $this->update_shop_license_id( $id );
+			case self::PRODUCT_TYPE_WIZ_BUNDLE:
+				return $this->update_wiz_bundle_license_id( $id );
 		}
 	}
 
@@ -1339,21 +1364,21 @@ class GWAPI {
 	 * @param string $plugin_file Plugin file path relative to plugins directory.
 	 * @return string|false The license key or false if not found
 	 */
-	public function get_license_key_by_plugin_file($plugin_file) {
-		$product_type = $this->get_product_type_from_file($plugin_file);
-		if (!$product_type) {
+	public function get_license_key_by_plugin_file( $plugin_file ) {
+		$product_type = $this->get_product_type_from_file( $plugin_file );
+		if ( ! $product_type ) {
 			return false;
 		}
 
 		// If bundle key is present and type is connect or perk, use bundle key.
-		if (in_array($product_type, [self::PRODUCT_TYPE_PERK, self::PRODUCT_TYPE_CONNECT])) {
+		if ( in_array( $product_type, array( self::PRODUCT_TYPE_PERK, self::PRODUCT_TYPE_CONNECT ) ) ) {
 			$bundle_key = $this->get_wiz_bundle_license_key();
-			if ($bundle_key) {
+			if ( $bundle_key ) {
 				return $bundle_key;
 			}
 		}
 
-		return $this->get_license_key($product_type);
+		return $this->get_license_key( $product_type );
 	}
 
 	/**
@@ -1362,21 +1387,21 @@ class GWAPI {
 	 * @param string $plugin_file Plugin file path relative to plugins directory.
 	 * @return array|false The license data or false if not found
 	 */
-	public function get_license_data_by_plugin_file($plugin_file) {
-		$product_type = $this->get_product_type_from_file($plugin_file);
-		if (!$product_type) {
+	public function get_license_data_by_plugin_file( $plugin_file ) {
+		$product_type = $this->get_product_type_from_file( $plugin_file );
+		if ( ! $product_type ) {
 			return false;
 		}
 
 		// If bundle key is present and type is connect or perk, use bundle key.
-		if (in_array($product_type, [self::PRODUCT_TYPE_PERK, self::PRODUCT_TYPE_CONNECT])) {
-			$bundle_license = $this->get_license_data(self::PRODUCT_TYPE_WIZ_BUNDLE);
-			if ($bundle_license) {
+		if ( in_array( $product_type, array( self::PRODUCT_TYPE_PERK, self::PRODUCT_TYPE_CONNECT ) ) ) {
+			$bundle_license = $this->get_license_data( self::PRODUCT_TYPE_WIZ_BUNDLE );
+			if ( $bundle_license ) {
 				return $bundle_license;
 			}
 		}
 
-		return $this->get_license_data($product_type);
+		return $this->get_license_data( $product_type );
 	}
 
 	/**
@@ -1388,18 +1413,18 @@ class GWAPI {
 	private function get_any_valid_license_data() {
 		// Check bundle licenses first (by priority)
 		$bundle_types = $this->get_bundle_types();
-		foreach ($bundle_types as $type) {
-			$license_data = $this->get_license_data($type);
-			if ($license_data && $license_data['valid']) {
+		foreach ( $bundle_types as $type ) {
+			$license_data = $this->get_license_data( $type );
+			if ( $license_data && $license_data['valid'] ) {
 				$license_data['product_type'] = $type;
 				return $license_data;
 			}
 		}
 
 		// Fall back to individual licenses
-		foreach ([self::PRODUCT_TYPE_PERK, self::PRODUCT_TYPE_CONNECT, self::PRODUCT_TYPE_SHOP] as $type) {
-			$license_data = $this->get_license_data($type);
-			if ($license_data && $license_data['valid']) {
+		foreach ( array( self::PRODUCT_TYPE_PERK, self::PRODUCT_TYPE_CONNECT, self::PRODUCT_TYPE_SHOP ) as $type ) {
+			$license_data = $this->get_license_data( $type );
+			if ( $license_data && $license_data['valid'] ) {
 				$license_data['product_type'] = $type;
 				return $license_data;
 			}
@@ -1414,33 +1439,33 @@ class GWAPI {
 	 * @param string $product_version Product version
 	 * @return string Modified package URL
 	 */
-	private function prepare_free_plugin_package_url($package_url, $product_version) {
+	private function prepare_free_plugin_package_url( $package_url, $product_version ) {
 		// Always apply base replacements first
 		$replacements = array(
-			'%URL%' => rawurlencode(GWAPI::get_site_url()),
-			'%PRODUCT_VERSION%' => $product_version
+			'%URL%'             => rawurlencode( GWAPI::get_site_url() ),
+			'%PRODUCT_VERSION%' => $product_version,
 		);
 
-		$package_url = str_replace(array_keys($replacements), array_values($replacements), $package_url);
+		$package_url = str_replace( array_keys( $replacements ), array_values( $replacements ), $package_url );
 
 		// Try to get any valid license first
 		$license_data = $this->get_any_valid_license_data();
 
-		if (!empty( $license_data['ID'] )) {
+		if ( ! empty( $license_data['ID'] ) ) {
 			$replacements = array(
-				'%LICENSE_ID%' => rawurlencode($license_data['ID']),
-				'%LICENSE_HASH%' => rawurlencode(md5($this->get_license_key($license_data['product_type'])))
+				'%LICENSE_ID%'   => rawurlencode( $license_data['ID'] ),
+				'%LICENSE_HASH%' => rawurlencode( md5( $this->get_license_key( $license_data['product_type'] ) ) ),
 			);
 
-			return str_replace(array_keys($replacements), array_values($replacements), $package_url);
+			return str_replace( array_keys( $replacements ), array_values( $replacements ), $package_url );
 		}
 
 		// No valid license, try email registration
-		$email = get_option('gwp_spellbook_email');
+		$email = get_option( 'gwp_spellbook_email' );
 
-		if ($email) {
-			$package_url = remove_query_arg(['license_id', 'license_hash'], $package_url);
-			return add_query_arg('email', $email, $package_url);
+		if ( $email ) {
+			$package_url = remove_query_arg( array( 'license_id', 'license_hash' ), $package_url );
+			return add_query_arg( 'email', $email, $package_url );
 		}
 
 		return $package_url;
@@ -1455,17 +1480,17 @@ class GWAPI {
 	 * @param string $product_version Product version
 	 * @return string Modified package URL
 	 */
-	private function prepare_licensed_plugin_package_url($package_url, $plugin_file, $product_version) {
-		$license = $this->get_license_data_by_plugin_file($plugin_file);
+	private function prepare_licensed_plugin_package_url( $package_url, $plugin_file, $product_version ) {
+		$license = $this->get_license_data_by_plugin_file( $plugin_file );
 
 		$replacements = array(
-			'%URL%' => rawurlencode(GWAPI::get_site_url()),
-			'%LICENSE_ID%' => rawurlencode(isset($license['ID']) ? $license['ID'] : ''),
-			'%LICENSE_HASH%' => rawurlencode(md5($this->get_license_key_by_plugin_file($plugin_file))),
-			'%PRODUCT_VERSION%' => $product_version
+			'%URL%'             => rawurlencode( GWAPI::get_site_url() ),
+			'%LICENSE_ID%'      => rawurlencode( isset( $license['ID'] ) ? $license['ID'] : '' ),
+			'%LICENSE_HASH%'    => rawurlencode( md5( $this->get_license_key_by_plugin_file( $plugin_file ) ) ),
+			'%PRODUCT_VERSION%' => $product_version,
 		);
 
-		return str_replace(array_keys($replacements), array_values($replacements), $package_url);
+		return str_replace( array_keys( $replacements ), array_values( $replacements ), $package_url );
 	}
 
 	/**
@@ -1474,13 +1499,13 @@ class GWAPI {
 	 * @param string $plugin_file Plugin file path relative to plugins directory.
 	 * @return void
 	 */
-	public function flush_license_info_by_plugin_file($plugin_file) {
-		$product_type = $this->get_product_type_from_file($plugin_file);
-		if (!$product_type) {
+	public function flush_license_info_by_plugin_file( $plugin_file ) {
+		$product_type = $this->get_product_type_from_file( $plugin_file );
+		if ( ! $product_type ) {
 			return;
 		}
 
-		switch ($product_type) {
+		switch ( $product_type ) {
 			case self::PRODUCT_TYPE_PERK:
 				$this->flush_perk_license_info();
 				break;
@@ -1494,7 +1519,7 @@ class GWAPI {
 				$this->flush_wiz_bundle_license_info();
 				break;
 			default:
-				throw new InvalidArgumentException('Invalid product type: ' . $product_type);
+				throw new InvalidArgumentException( 'Invalid product type: ' . $product_type );
 		}
 	}
 
@@ -1526,10 +1551,10 @@ class GWAPI {
 			return false;
 		}
 
-		$variations = [
+		$variations = array(
 			$gw_plugin_basename . '.php',
 			$gw_plugin_basename . '/' . $gw_plugin_basename . '.php',
-		];
+		);
 
 		foreach ( $variations as $variation ) {
 			if ( GWPerk::is_installed( $variation ) ) {
@@ -1555,7 +1580,7 @@ class GWAPI {
 	 * } Error code if the product cannot be auto-updated, or true if it can be, null
 	 *   if the product is not found.
 	 */
-	public function can_auto_update($plugin_file) {
+	public function can_auto_update( $plugin_file ) {
 		$product = $this->get_product_by_plugin_file( $plugin_file );
 
 		if ( ! $product ) {
@@ -1564,7 +1589,7 @@ class GWAPI {
 
 		if ( $product->type === 'free' || $product->slug === 'spellbook' ) {
 			// Make sure we have any valid license or email.
-			$email = get_option('gwp_spellbook_email');
+			$email        = get_option( 'gwp_spellbook_email' );
 			$license_data = $this->get_any_valid_license_data();
 
 			$has_email_or_license = ! empty( $email ) || ! empty( $license_data );
@@ -1587,8 +1612,8 @@ class GWAPI {
 			case 'perk':
 				$suite_name = 'Gravity Perks';
 				/** @var int[] IDs of perks */
-				$registered_products = $license_data['registered_perks'] ?? [];
-				$registered_products_limit = $license_data['perk_limit'] ?? 0;
+				$registered_products       = isset( $license_data['registered_perks'] ) ? $license_data['registered_perks'] : array();
+				$registered_products_limit = isset( $license_data['perk_limit'] ) ? $license_data['perk_limit'] : 0;
 
 				$product_type = 'perk';
 				break;
@@ -1596,15 +1621,15 @@ class GWAPI {
 			case 'connect':
 				$suite_name = 'Gravity Connect';
 				/** @var int[] IDs of connections */
-				$registered_products = $license_data['registered_connections'] ?? [];
-				$registered_products_limit = $license_data['connection_limit'] ?? 0;
+				$registered_products       = isset( $license_data['registered_connections'] ) ? $license_data['registered_connections'] : array();
+				$registered_products_limit = isset( $license_data['connection_limit'] ) ? $license_data['connection_limit'] : 0;
 
 				$product_type = 'connection';
 				break;
 
 			case 'shop':
-				$suite_name = 'Gravity Shop';
-				$registered_products = null;
+				$suite_name                = 'Gravity Shop';
+				$registered_products       = null;
 				$registered_products_limit = null;
 
 				$product_type = 'plugin';
@@ -1615,10 +1640,10 @@ class GWAPI {
 		}
 
 		$base_info = array(
-			'suite_name' => $suite_name,
-			'plugin_name' => $product->name,
-			'type' => $product_type,
-			'product' => $product,
+			'suite_name'   => $suite_name,
+			'plugin_name'  => $product->name,
+			'type'         => $product_type,
+			'product'      => $product,
 			'license_data' => $license_data,
 		);
 

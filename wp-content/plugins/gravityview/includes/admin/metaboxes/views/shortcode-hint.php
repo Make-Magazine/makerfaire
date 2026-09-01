@@ -1,22 +1,23 @@
 <?php
 /**
- * @package    GravityView
- * @subpackage Gravityview/admin/metaboxes/partials
- * @global $post
+ * Backward-compatibility shim.
+ *
+ * This file was moved in GravityView 3.0. It is intentionally empty.
+ * GravityView classes and functions load automatically — you no longer
+ * need to require GravityView files in your code.
+ *
+ * @deprecated 3.0
  */
 
-global $post;
+if ( ! defined( 'ABSPATH' ) ) {
+	die;
+}
 
-$view      = \GV\View::from_post( $post );
-$shortcode = $view->get_shortcode();
-$secret    = $view->get_validation_secret( true );
-?>
-<div class="misc-pub-section gv-shortcode misc-pub-section-last">
-	<i class="dashicons dashicons-editor-code"></i>
-	<span id="gv-embed-shortcode-label"><?php esc_html_e( 'Embed Shortcode', 'gk-gravityview' ); ?></span>
-	<div>
-		<input id="gv-embed-shortcode" aria-labelledby="gv-embed-shortcode-label" type="text" readonly="readonly" value="<?php echo esc_attr( $shortcode ); ?>" class="code widefat" data-secret="<?php echo esc_attr( $secret ); ?>" />
-		<span class="howto"><?php echo esc_html__( 'Add this shortcode to a post or page to embed this view.', 'gk-gravityview' ) . ' ' . esc_html__( 'Click to copy', 'gk-gravityview' ); ?>.</span>
-		<span class="copied"><?php esc_html_e( 'Copied!', 'gk-gravityview' ); ?></span>
-	</div>
-</div>
+if ( function_exists( '_deprecated_file' ) ) {
+	_deprecated_file(
+		plugin_basename( __FILE__ ),
+		'3.0',
+		'',
+		'This file was moved in GravityView 3.0 and will be removed in a future release. GravityView classes and functions load automatically — you no longer need to require them.'
+	);
+}

@@ -1,6 +1,6 @@
 <?php
 
-use Symfony\Component\HttpFoundation\Session\Storage\Handler\AbstractSessionHandler;
+use GravityKit\GravityView\Symfony\Component\HttpFoundation\Session\Storage\Handler\AbstractSessionHandler;
 
 $parent = __DIR__;
 while (!@file_exists($parent.'/vendor/autoload.php')) {

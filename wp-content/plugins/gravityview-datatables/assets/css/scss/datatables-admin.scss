@@ -29,3 +29,25 @@
 	}
 
 }
+
+// Column-width budget notice, above the directory-table-columns fields zone. Icon plus text
+// always, matching the site's standard WP notice text color: state must never be color alone.
+.gv-dt-width-budget {
+	display: flex;
+	align-items: flex-start;
+	gap: .5em;
+	margin: 1em 0;
+	padding: .75em 1em;
+	background: #fff;
+	border: 1px solid #c3c4c7;
+	border-left: 4px solid #dba617;
+
+	&[hidden] {
+		display: none;
+	}
+
+	.dashicons-warning {
+		color: #dba617;
+		flex-shrink: 0;
+	}
+}

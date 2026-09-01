@@ -65,6 +65,13 @@ class Core extends GravityView_Extension {
 	private static $singleton;
 
 	/**
+	 * The plugin wide rest API endpoint.
+	 *
+	 * @since 4.7.0
+	 */
+	private const REST_ENDPOINT = 'gk-advanced-filter/v1';
+
+	/**
 	 * @inheritDoc
 	 * @since 3.0.0
 	 */
@@ -107,7 +114,11 @@ class Core extends GravityView_Extension {
 
 		add_action( 'wp_ajax_' . self::AJAX_ACTION_GET_FIELD_FILTERS, [ __CLASS__, 'get_field_filters_ajax' ] );
 
-		add_filter( 'gravityview_template_field_options', [ $this, 'modify_view_field_settings' ], 999, 5 );
+		if ( defined( 'GV_PLUGIN_VERSION' ) && version_compare( GV_PLUGIN_VERSION, '2.57', '>=' ) ) {
+			add_filter( 'gk/gravityview/template/options', [ $this, 'modify_view_field_settings_from_template_options' ], 999, 8 );
+		} else {
+			add_filter( 'gravityview_template_field_options', [ $this, 'modify_view_field_settings' ], 999, 5 );
+		}
 
 		add_filter( 'gravityview/template/field/output', [ $this, 'conditionally_display_field_output' ], 10, 2 );
 
@@ -117,6 +128,32 @@ class Core extends GravityView_Extension {
 		add_filter( 'gravityview_admin_directory_settings', [ $this, 'display_view_settings' ] );
 
 		add_filter( 'admin_head', [ $this, 'fix_duplicate_page_conflict' ], 20 );
+
+		add_action( 'plugins_loaded', [ $this, 'register_rest_routes' ], 10 );
+	}
+
+	/**
+	 * Remaps the current `gk/gravityview/template/options` hook to the legacy field options callback.
+	 *
+	 * @since 4.7.1
+	 *
+	 * @param array  $field_options Array of field options.
+	 * @param string $field_type    The field type (`widget` or `field`).
+	 * @param string $template_id   Table slug.
+	 * @param string $context       Context (e.g., single or directory).
+	 * @param bool   $grouped       Whether the options should be grouped.
+	 * @param int    $form_id       Form ID.
+	 * @param float  $field_id      GF Field ID.
+	 * @param string $input_type    Input type (e.g., textarea, list, select, etc.).
+	 *
+	 * @return array
+	 */
+	public function modify_view_field_settings_from_template_options( $field_options, $field_type, $template_id, $context, $grouped, $form_id, $field_id, $input_type ) {
+		if ( 'field' !== $field_type ) {
+			return $field_options;
+		}
+
+		return $this->modify_view_field_settings( $field_options, $template_id, $field_id, $context, $input_type );
 	}
 
 	/**
@@ -339,19 +376,22 @@ HTML;
 		global $post;
 
 		// Don't process any scripts below here if it's not a GravityView page.
-		if ( empty( $post->ID ) || 'gravityview' !== $post->post_type || 'post.php' !== $hook ) {
+		if ( empty( $post->ID ) || 'gravityview' !== $post->post_type || ! in_array( $hook, [ 'post.php', 'post-new.php' ], true ) ) {
 			return;
 		}
 
+		$is_new = 'post-new.php' === $hook;
 		$form_id = gravityview_get_form_id( $post->ID );
 
-		$form = ( new GFAPI() )->get_form( $form_id );
+		$form = $form_id ? ( new GFAPI() )->get_form( $form_id ) : false;
 
-		if ( ! $form ) {
+		if ( $form_id && ! $form ) {
 			return;
 		}
 
-		$filter_settings = self::get_field_filters( $post->ID );
+		$filter_settings = $is_new
+			? [ 'field_filters_complete' => [ [ 'key' => 0, 'text' => esc_attr__( 'No fields configured', 'gravityview-advanced-filter' ) ] ] ]  // We require a (fake) field to trick Query Filters.
+			: self::get_field_filters( $post->ID );
 
 		if ( $form_id && empty( $filter_settings['field_filters_complete'] ) ) {
 			do_action( 'gravityview_log_error', '[print_javascript] Filter settings were not properly set', $filter_settings );
@@ -360,25 +400,30 @@ HTML;
 		}
 
 		QueryFilters::enqueue_styles( [ 'handle' => 'gk_advanced_filters_query_filters' ] );
-		QueryFilters::create()
-		            ->with_form( $form )
-		            ->enqueue_scripts( [
-			            'fields'                  => rgar( $filter_settings, 'field_filters_complete', [] ),
-			            'conditions'              => rgar( $filter_settings, 'init_filter_vars', [] ),
-			            'target_element_selector' => '#entry_filters',
-			            'variable_name'           => 'gkQueryFilters_advanced_filters',
-						/**
-						 * Modify the maximum nesting level for advanced filters.
-						 *
-						 * @since 4.0.0
-						 *
-						 * @param int $max_level Maximum nesting level. Default 3.
-						 * @param array $form The Gravity Forms form array.
-						 *
-						 * @return int Modified maximum nesting level.
-						 */
-						'max_nesting_level'       => apply_filters( 'gk/advanced-filters/max-nesting-level', 3, $form ),
-		            ] );
+
+		$query_filters = QueryFilters::create();
+
+		if ( $form ) {
+			$query_filters = $query_filters->with_form( $form );
+		}
+
+		$query_filters->enqueue_scripts( [
+			'fields'                  => rgar( $filter_settings, 'field_filters_complete', [] ),
+			'conditions'              => rgar( $filter_settings, 'init_filter_vars', [] ),
+			'target_element_selector' => '#entry_filters',
+			'variable_name'           => 'gkQueryFilters_advanced_filters',
+			/**
+			 * Modify the maximum nesting level for advanced filters.
+			 *
+			 * @since 4.0.0
+			 *
+			 * @param int $max_level Maximum nesting level. Default 3.
+			 * @param array $form The Gravity Forms form array.
+			 *
+			 * @return int Modified maximum nesting level.
+			 */
+			'max_nesting_level'       => apply_filters( 'gk/advanced-filters/max-nesting-level', 3, $form ?: [] ),
+		] );
 
 		wp_enqueue_script( 'gravityview_adv_filter_admin', plugins_url( 'assets/js/advanced-filter.js', GRAVITYKIT_ADVANCED_FILTER_PLUGIN_FILE ), [ 'jquery' ], $this->_version );
 
@@ -712,5 +757,14 @@ HTML;
 	 */
 	public function display_view_settings(array $current_settings ): void {
 		GravityView_Render_Settings::render_setting_row( 'show_only_entries_by_current_user', $current_settings, null, '%s' );
+	}
+
+	/**
+	 * Registers the Query Filters REST routes under the plugin endpoint.
+	 *
+	 * @since 4.7.0
+	 */
+	public function register_rest_routes(): void {
+		QueryFilters::register_rest_routes( self::REST_ENDPOINT );
 	}
 }

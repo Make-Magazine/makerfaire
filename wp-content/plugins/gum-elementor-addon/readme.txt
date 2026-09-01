@@ -3,9 +3,9 @@ Contributors: celomitan
 Donate link: https://wordpressfoundation.org/donate/
 Tags: elementor, blog, slide, pricing, menu
 Requires at least: 6.0
-Tested up to: 7.0
+Tested up to: 7.1
 Requires PHP: 7.0
-Stable tag: 1.3.16
+Stable tag: 1.3.18
 License: GPLv3 or later
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
@@ -69,6 +69,12 @@ Not yet
 5. Three colors heading
 
 == Changelog ==
+= 1.3.18 =
+* Improvement: compatibility issue
+
+= 1.3.17 =
+* Security issue fixing
+
 = 1.3.16 =
 * Security issue fixing
 * Bug Fixing:  responsive button issue ( popover widget ) 

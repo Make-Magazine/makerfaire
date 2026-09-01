@@ -3,9 +3,9 @@ Contributors: mateuszgbiorczyk
 Donate link: https://ko-fi.com/gbiorczyk/?utm_source=acf-better-search&utm_medium=readme-donate
 Tags: acf search, advanced custom fields, better search, extended search, search
 Requires at least: 5.0
-Tested up to: 7.0
+Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 4.5.0
+Stable tag: 4.5.1
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -95,9 +95,12 @@ This is all very important to us and allows us to do even better things for you!
 
 == Changelog ==
 
+= 4.5.1 (2026-08-18) =
+* `[Added]` Support for WordPress 7.1
+
 = 4.5.0 (2026-06-01) =
 * `[Fixed]` Compatibility with PHP 8.4
-* `[Changed]` Minimum required PHP version from 7.1 to 7.4
+* `[Changed]` Minimum required PHP version from 7.0 to 7.4
 * `[Added]` Compatibility with PHP 8.5
 * `[Added]` Support for WordPress 7.0
 

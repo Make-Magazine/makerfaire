@@ -1,4 +1,5 @@
 import loadImage from 'blueimp-load-image';
+import { getEncodableImageType, renameToImageType } from './isImage';
 
 export default async function loadWithBlueimp({image, jpegQuality, loadImageOptions, stripMetadata}: {
 	image: MOxieFile,
@@ -13,11 +14,9 @@ export default async function loadWithBlueimp({image, jpegQuality, loadImageOpti
 		...loadImageOptions,
 	});
 
-	let blobImageType = image?.type;
-
-	if (['image/jpg', 'image/jpeg'].includes(image?.type)) {
-		blobImageType = 'image/jpeg';
-	}
+	// Falls back to PNG for WebP when the browser (e.g. Safari) can't encode WebP via canvas.
+	const blobImageType = getEncodableImageType(image?.type);
+	const convertedFromWebp = image?.type === 'image/webp' && blobImageType !== 'image/webp';
 
 	let processedBlob = await new Promise<Blob | null>((resolve) => {
 		(img.image as unknown as HTMLCanvasElement).toBlob(function (blob) {
@@ -31,7 +30,8 @@ export default async function loadWithBlueimp({image, jpegQuality, loadImageOpti
 
 	/* Create new file object for Plupload using blob and update file name */
 	const newFile = new window.mOxie.File(null, processedBlob);
-	newFile.name = image.name;
+	// Correct the extension only when the format changed (WebP -> PNG fallback).
+	newFile.name = convertedFromWebp ? renameToImageType(image.name, blobImageType) : image.name;
 
 	return newFile;
 }

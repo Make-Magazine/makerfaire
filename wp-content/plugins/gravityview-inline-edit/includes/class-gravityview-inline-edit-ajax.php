@@ -76,25 +76,25 @@ final class GravityView_Inline_Edit_AJAX {
 		$entry_id = (int) rgpost( 'entry_id' );
 		if ( 0 === $entry_id ) {
 			// translators: %s is replaced by the name of the invalid item.
-			wp_send_json_error( new WP_Error( 'fileupload_validation_failed', esc_html( sprintf( __( '%s is invalid.', 'gravityview-inline-edit', 'gk-gravityedit' ), __( 'Entry ID', 'gravityview-inline-edit', 'gk-gravityedit' ) ) ) ) );
+			wp_send_json_error( new WP_Error( 'fileupload_validation_failed', esc_html( sprintf( __( '%s is invalid.', 'gk-gravityedit' ), __( 'Entry ID', 'gk-gravityedit' ) ) ) ) );
 		}
 
 		$form_id = (int) rgpost( 'form_id' );
 		if ( 0 === $form_id ) {
 			// translators: %s is replaced by the name of the invalid item.
-			wp_send_json_error( new WP_Error( 'fileupload_validation_failed', esc_html( sprintf( __( '%s is invalid.', 'gravityview-inline-edit', 'gk-gravityedit' ), __( 'Form ID', 'gravityview-inline-edit', 'gk-gravityedit' ) ) ) ) );
+			wp_send_json_error( new WP_Error( 'fileupload_validation_failed', esc_html( sprintf( __( '%s is invalid.', 'gk-gravityedit' ), __( 'Form ID', 'gk-gravityedit' ) ) ) ) );
 		}
 
 		$form = GFAPI::get_form( $form_id );
 		if ( ! $form ) {
 			// translators: %s is replaced by the name of the invalid item.
-			wp_send_json_error( new WP_Error( 'fileupload_validation_failed', esc_html( sprintf( __( '%s is invalid.', 'gravityview-inline-edit', 'gk-gravityedit' ), __( 'Form', 'gravityview-inline-edit', 'gk-gravityedit' ) ) ) ) );
+			wp_send_json_error( new WP_Error( 'fileupload_validation_failed', esc_html( sprintf( __( '%s is invalid.', 'gk-gravityedit' ), __( 'Form', 'gk-gravityedit' ) ) ) ) );
 		}
 
 		$field_id = (int) rgpost( 'field_id' );
 		if ( 0 === $field_id ) {
 			// translators: %s is replaced by the name of the invalid item.
-			wp_send_json_error( new WP_Error( 'fileupload_validation_failed', esc_html( sprintf( __( '%s is invalid.', 'gravityview-inline-edit', 'gk-gravityedit' ), __( 'Field ID', 'gravityview-inline-edit', 'gk-gravityedit' ) ) ) ) );
+			wp_send_json_error( new WP_Error( 'fileupload_validation_failed', esc_html( sprintf( __( '%s is invalid.', 'gk-gravityedit' ), __( 'Field ID', 'gk-gravityedit' ) ) ) ) );
 		}
 
 		/** @var GF_Field_FileUpload $gf_field */
@@ -102,14 +102,35 @@ final class GravityView_Inline_Edit_AJAX {
 
 		if ( ! $gf_field ) {
 			// translators: %s is replaced by the name of the required item.
-			wp_send_json_error( new WP_Error( 'fileupload_validation_failed', esc_html( sprintf( __( '%s is required.', 'gravityview-inline-edit', 'gk-gravityedit' ), _x( 'This field', 'The value used when saying what information is required. For example, "[This field] is required."', 'gravityview-inline-edit', 'gk-gravityedit' ) ) ) ) );
+			wp_send_json_error( new WP_Error( 'fileupload_validation_failed', esc_html( sprintf( __( '%s is required.', 'gk-gravityedit' ), _x( 'This field', 'The value used when saying what information is required. For example, "[This field] is required."', 'gk-gravityedit' ) ) ) ) );
+		}
+
+		// Authorize before anything below can change state. Both the empty-files branch and the
+		// with-files branch call remove_previously_uploaded_files() before this method returns, and
+		// that deletes the entry's stored value. A check placed after either one runs too late.
+		$view_id = (int) rgpost( 'view_id' );
+		$entry   = GFAPI::get_entry( $entry_id );
+
+		// The entry must belong to the posted form. delete_file() acts on the entry's own form, but
+		// $gf_field and the capability check use the posted form, so a mismatch lets a field ID from
+		// one form target an entry in another.
+		$entry_belongs_to_form = ! is_wp_error( $entry ) && (int) rgar( $entry, 'form_id' ) === $form_id;
+
+		// Only a real file upload field belongs on this endpoint. Otherwise the removal path blanks
+		// any non-required field of any type.
+		$field_is_file_upload = $gf_field instanceof GF_Field_FileUpload;
+
+		$user_can_edit_entry = GravityView_Inline_Edit::get_instance()->can_edit_entry( $entry_id, $form_id, $view_id );
+
+		if ( ! $entry_belongs_to_form || ! $field_is_file_upload || ! $user_can_edit_entry ) {
+			wp_send_json_error( new WP_Error( 'insufficient_privileges', esc_html__( 'You are not allowed to edit this entry.', 'gk-gravityedit' ) ) );
 		}
 
 		$files = isset( $_FILES ) ? $_FILES : array();
 
 		if ( $gf_field->isRequired && empty( $files ) ) {
 			// translators: %s is replaced by the name of the required item.
-			wp_send_json_error( new WP_Error( 'fileupload_validation_failed', esc_html( sprintf( __( '%s is required.', 'gravityview-inline-edit', 'gk-gravityedit' ), _x( 'This field', 'The value used when saying what information is required. For example, "[This field] is required."', 'gravityview-inline-edit', 'gk-gravityedit' ) ) ) ) );
+			wp_send_json_error( new WP_Error( 'fileupload_validation_failed', esc_html( sprintf( __( '%s is required.', 'gk-gravityedit' ), _x( 'This field', 'The value used when saying what information is required. For example, "[This field] is required."', 'gk-gravityedit' ) ) ) ) );
 		}
 
 		// Remove if nothing is uploaded
@@ -119,9 +140,58 @@ final class GravityView_Inline_Edit_AJAX {
 			wp_send_json_success(
 				array(
 					'removed' => true,
-					'message' => esc_html__( 'Empty', 'gravityview-inline-edit', 'gk-gravityedit' ),
+					'message' => esc_html__( 'Empty', 'gk-gravityedit' ),
 				)
 			);
+		}
+
+		// Validates file sizes against the field's maxFileSize setting. GF's own validate() cannot do
+		// this here: the request posts files as input_1..input_N by file index rather than
+		// input_{field_id}, so GFFormsModel::get_submission_files() finds nothing and returns early.
+		$max_upload_size = $gf_field->maxFileSize > 0 ? $gf_field->maxFileSize * 1048576 : wp_max_upload_size();
+		$max_in_mb       = round( $max_upload_size / 1048576, 2 );
+
+		foreach ( $files as $file ) {
+			$file_size = isset( $file['size'] ) ? (int) $file['size'] : 0;
+			$php_error = isset( $file['error'] ) ? (int) $file['error'] : UPLOAD_ERR_OK;
+
+			// A file over the ini limit arrives with size 0 and UPLOAD_ERR_INI_SIZE, so the size
+			// comparison alone never catches it and Gravity Forms reports it further down with the
+			// raw php.ini directive name.
+			$exceeds_ini_limit = UPLOAD_ERR_INI_SIZE === $php_error || UPLOAD_ERR_FORM_SIZE === $php_error;
+			$exceeds_max_size  = $file_size > 0 && $file_size > $max_upload_size;
+
+			if ( $exceeds_ini_limit || $exceeds_max_size ) {
+				wp_send_json_error(
+					new WP_Error(
+						'fileupload_validation_failed',
+						/* translators: %s: maximum file size in MB */
+						esc_html( sprintf( __( 'File exceeds size limit. Maximum file size: %sMB.', 'gk-gravityedit' ), $max_in_mb ) )
+					)
+				);
+			}
+		}
+
+		// Enforce the field's allowed extensions ourselves. GF's validate() runs this check via
+		// is_invalid_file() only when it finds submission files, which happens for multi-file fields
+		// (set_uploaded_files() below) but not single-file ones — those would otherwise be gated only
+		// by WordPress's global mime list, letting a .jpg-only field accept, say, a .zip.
+		$allowed_extensions = $gf_field->get_clean_allowed_extensions();
+
+		if ( ! empty( $allowed_extensions ) ) {
+			foreach ( $files as $file ) {
+				$extension = strtolower( pathinfo( (string) rgar( $file, 'name' ), PATHINFO_EXTENSION ) );
+
+				if ( ! in_array( $extension, $allowed_extensions, true ) ) {
+					wp_send_json_error(
+						new WP_Error(
+							'fileupload_validation_failed',
+							/* translators: %s: comma-separated list of allowed file extensions */
+							esc_html( sprintf( __( 'The uploaded file type is not allowed. Allowed types: %s.', 'gk-gravityedit' ), implode( ', ', $allowed_extensions ) ) )
+						)
+					);
+				}
+			}
 		}
 
 		$uploaded_files = $files;
@@ -134,12 +204,16 @@ final class GravityView_Inline_Edit_AJAX {
 				);
 			}
 
-			$_POST['gform_uploaded_files'] = json_encode( $uploaded_files );
+			$_POST['gform_uploaded_files'] = wp_json_encode( $uploaded_files );
 
 			GFFormsModel::set_uploaded_files( $form_id );
 		}
 
-		$gf_field->validate( $uploaded_files, $form );
+		// Pass an empty value, not the new uploads: GF_Field_FileUpload::validate() adds the count of
+		// this argument (the field's existing entry files) on top of the submission it counts on its
+		// own. An inline upload replaces the field, so there are no existing files to add, and passing
+		// the new set here double-counts it and rejects a legitimate max-files upload.
+		$gf_field->validate( '', $form );
 		if ( $gf_field->failed_validation === true ) {
 			wp_send_json_error( new WP_Error( 'fileupload_validation_failed', $gf_field->validation_message ) );
 		}
@@ -152,32 +226,42 @@ final class GravityView_Inline_Edit_AJAX {
 
 		// Change upload path.
 		$gf_upload_path = GF_Field_FileUpload::get_upload_root_info( $form_id );
-		add_filter(
-			'upload_dir',
-			function ( $upload ) use ( $gf_upload_path ) {
+		$upload_dir_callback = function ( $upload ) use ( $gf_upload_path ) {
+			$upload['path'] = $gf_upload_path['path'];
+			$upload['url']  = $gf_upload_path['url'];
 
-				$upload['path'] = $gf_upload_path['path'];
-				$upload['url']  = $gf_upload_path['url'];
+			return $upload;
+		};
 
-				return $upload;
-			}
-		);
+		add_filter( 'upload_dir', $upload_dir_callback );
+
+		// A single-file field stores only the first URL, so writing any additional posted files would
+		// orphan them on disk. Keep just the first.
+		if ( ! $gf_field->multipleFiles && count( $files ) > 1 ) {
+			$files = array_slice( $files, 0, 1, true );
+		}
 
 		$urls = array();
 		foreach ( $files as $file ) {
 			$upload = wp_handle_upload( $file, array( 'test_form' => false ) );
 
-			if ( is_wp_error( $upload ) ) {
-				wp_send_json_error( $upload );
+			// A third-party upload_dir / wp_handle_upload filter can hand back a WP_Error or a
+			// non-array, so reject those too rather than dereferencing.
+			if ( is_wp_error( $upload ) || ! is_array( $upload ) || ! empty( $upload['error'] ) ) {
+				remove_filter( 'upload_dir', $upload_dir_callback );
+				$message = is_wp_error( $upload ) ? $upload->get_error_message() : rgar( (array) $upload, 'error' );
+				wp_send_json_error( new WP_Error( 'upload_failed', $message ) );
 			}
 
 			$urls[] = $upload['url'];
 		}
 
+		remove_filter( 'upload_dir', $upload_dir_callback );
+
 		$field_value = $urls;
 
 		if ( $gf_field->multipleFiles ) {
-			$result = GFAPI::update_entry_field( $entry_id, $field_id, json_encode( $field_value ) );
+			$result = GFAPI::update_entry_field( $entry_id, $field_id, wp_json_encode( $field_value ) );
 		} else {
 			$result      = GFAPI::update_entry_field( $entry_id, $field_id, $field_value[0] );
 			$field_value = $urls[0];
@@ -186,8 +270,6 @@ final class GravityView_Inline_Edit_AJAX {
 		if ( $result !== true ) {
 			wp_send_json_error( $result );
 		}
-
-		$view_id = (int) rgpost( 'view_id' );
 
 		/**
 		 * Clear the cache for an entry
@@ -207,7 +289,7 @@ final class GravityView_Inline_Edit_AJAX {
 			}
 
 			// JSON-encoded values don't work when using GFEntryList::get_icon_url( $file_path ).
-			$passed_value = is_array( $field_value ) ? json_encode( $field_value ) : $field_value;
+			$passed_value = is_array( $field_value ) ? wp_json_encode( $field_value ) : $field_value;
 
 			$output = $gf_field->get_value_entry_list( $passed_value, null, null, null, null );
 
@@ -236,7 +318,7 @@ final class GravityView_Inline_Edit_AJAX {
 		// Multiple Files is displayed in a list created by GravityView.
 		if ( $gf_field->multipleFiles ) {
 
-			$output = sprintf( "<ul class='gv-field-file-uploads %s'>", $gv_class );
+			$output = sprintf( "<ul class='gv-field-file-uploads %s'>", esc_attr( $gv_class ) );
 
 			// For each file, show as a list
 			foreach ( $files_array as $file_item ) {
@@ -271,7 +353,12 @@ final class GravityView_Inline_Edit_AJAX {
 			return;
 		}
 
-		$entry      = \GFAPI::get_entry( $entry_id );
+		$entry = \GFAPI::get_entry( $entry_id );
+
+		if ( is_wp_error( $entry ) ) {
+			return;
+		}
+
 		$value_json = RGFormsModel::get_lead_field_value( $entry, $gf_field );
 
 		if ( empty( $value_json ) ) {
@@ -279,7 +366,15 @@ final class GravityView_Inline_Edit_AJAX {
 		}
 
 		$old_files = json_decode( $value_json, true );
-		foreach ( $old_files as $file_index => $file ) {
+
+		if ( ! is_array( $old_files ) ) {
+			return;
+		}
+
+		// delete_file re-indexes the survivors after each delete, so walk from the end backward:
+		// deleting the highest index never shifts a lower one. A forward loop would delete only the
+		// first file and leave the rest orphaned on disk.
+		for ( $file_index = count( $old_files ) - 1; $file_index >= 0; $file_index-- ) {
 			RGFormsModel::delete_file( $entry_id, $field_id, $file_index );
 		}
 	}
@@ -298,14 +393,14 @@ final class GravityView_Inline_Edit_AJAX {
 			wp_die();
 		}
 
-		$search = sanitize_text_field( $_POST['search'] );
+		$search = sanitize_text_field( wp_unslash( $_POST['search'] ) );
 
 		$return = array(
 			'results' => array(),
 		);
 
 		$args = array(
-			'search'         => '*' . esc_attr( $search ) . '*',
+			'search'         => '*' . $search . '*',
 			'search_columns' => array( 'user_login', 'user_email', 'display_name', 'user_nicename' ),
 			'fields'         => array( 'ID', 'display_name' ),
 		);
@@ -336,6 +431,28 @@ final class GravityView_Inline_Edit_AJAX {
 		if ( isset( $_POST['gv_inline_edit_field'] ) ) {
 			$this->_edit_gravityview_field();
 		}
+	}
+
+	/**
+	 * Checks whether a choice is among the values submitted for a field.
+	 *
+	 * Choice values are not always strings: lookup fields and dynamically populated choices carry
+	 * database IDs, which are integers. Submitted values are always strings. Both sides are cast
+	 * before comparing so an integer choice still matches its posted value, while the comparison
+	 * stays strict so PHP does not treat '1e2' and '100' as the same choice.
+	 *
+	 * @since 2.11
+	 *
+	 * @param array $choice     The choice, expected to carry a `value` key.
+	 * @param mixed $post_value The submitted value(s) for the field.
+	 *
+	 * @return bool True: the choice is selected.
+	 */
+	private static function is_choice_selected( $choice, $post_value ) {
+		$choice_value  = (string) rgar( $choice, 'value' );
+		$posted_values = array_map( 'strval', (array) $post_value );
+
+		return in_array( $choice_value, $posted_values, true );
 	}
 
 	/**
@@ -375,7 +492,7 @@ final class GravityView_Inline_Edit_AJAX {
 	 */
 	private function _edit_gravityview_field() {
 
-		if ( ! isset( $_POST['nonce'] ) || ! wp_verify_nonce( $_POST['nonce'], 'gravityview_inline_edit' ) ) {
+		if ( ! isset( $_POST['nonce'] ) || ! wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['nonce'] ) ), 'gravityview_inline_edit' ) ) {
 			wp_send_json( new WP_Error( 'invalid_nonce', esc_html__( 'Your session has expired or the security token is invalid. Please reload the page and try again.', 'gk-gravityedit' ) ) );
 		}
 
@@ -391,17 +508,64 @@ final class GravityView_Inline_Edit_AJAX {
 		$view_id    = sanitize_key( rgpost( 'view_id' ) );
 		$post_value = rgpost( 'value' );
 
+		// Sanitizes scalar values; arrays and HTML fields are handled per field type in the switch below.
+		if ( 'wysihtml5' === $type || 'textarea' === $type || 'richtext' === $type ) {
+			// A rich text field (wysihtml5/textarea/richtext) defers sanitization to the switch case;
+			// sanitize_text_field() would strip its markup. rgpost() already unslashed $post_value, so
+			// it is intentionally left as-is: a second wp_unslash() here would eat literal backslashes
+			// the user typed (e.g. a Windows path) before the value is ever stored.
+			$post_value = (string) $post_value;
+		} elseif ( is_string( $post_value ) ) {
+			$post_value = sanitize_text_field( wp_unslash( $post_value ) );
+		} elseif ( is_array( $post_value ) ) {
+			$post_value = array_map( function ( $item ) {
+				if ( is_string( $item ) ) {
+					return sanitize_text_field( wp_unslash( $item ) );
+				}
+				if ( is_array( $item ) ) {
+					return array_map( 'sanitize_text_field', array_map( 'wp_unslash', $item ) );
+				}
+				return $item;
+			}, $post_value );
+		}
+
 		if ( ! GravityView_Inline_Edit::get_instance()->can_edit_entry( $entry_id, $form_id, $view_id ) ) {
 			wp_send_json( new WP_Error( 'insufficient_privileges', __( 'You are not allowed to edit this entry.', 'gk-gravityedit' ) ) );
 		}
-		$entry            = GFAPI::get_entry( $entry_id );
+		$entry = GFAPI::get_entry( $entry_id );
+
+		if ( is_wp_error( $entry ) ) {
+			wp_send_json( new WP_Error( 'entry_not_found', __( 'The entry could not be found.', 'gk-gravityedit' ) ) );
+		}
+
+		// The entry and form IDs are submitted independently. Without this, a field resolved from
+		// the named form is written onto an entry belonging to a different one.
+		$entry_belongs_to_form = (int) rgar( $entry, 'form_id' ) === (int) $form_id;
+
+		if ( ! $entry_belongs_to_form ) {
+			wp_send_json( new WP_Error( 'entry_form_mismatch', __( 'The entry does not belong to the form.', 'gk-gravityedit' ) ) );
+		}
+
+		$form = GFAPI::get_form( $form_id );
+
+		if ( ! $form ) {
+			wp_send_json( new WP_Error( 'form_not_found', __( 'The form could not be found.', 'gk-gravityedit' ) ) );
+		}
+
 		$entry_pre_update = $entry;
-		$form             = GFAPI::get_form( $form_id );
 
 		// Apply pre-render filter so that dynamically populated choices (e.g., via GP Populate Anything) are available during save.
 		$form = gf_apply_filters( array( 'gform_pre_render', $form_id ), $form, false, false );
 
 		$gf_field         = GFFormsModel::get_field( $form, $field_id );
+
+		// Entry meta (created_by, source_url, date_created, entry tags) has no form field, and the
+		// switch below writes it with a null field. Only a numeric ID promises a form field, so
+		// that is the only case where a missing one is an error.
+		if ( ! $gf_field && is_numeric( $field_id ) ) {
+			wp_send_json( new WP_Error( 'field_not_found', __( 'The field could not be found.', 'gk-gravityedit' ) ) );
+		}
+
 		$values_to_update = array();
 
 		// TODO: Move to inline field classes
@@ -413,7 +577,7 @@ final class GravityView_Inline_Edit_AJAX {
 				foreach ( $gf_field->inputs as $index => $input ) {
 					$_id                      = $input['id'];
 					$_input                   = explode( '.', $_id )[1];
-					$values_to_update[ $_id ] = isset( $value[ $_input ] ) ? $value[ $_input ] : $entry[ $_id ];
+					$values_to_update[ $_id ] = isset( $value[ $_input ] ) ? $value[ $_input ] : rgar( $entry, $_id, '' );
 				}
 
 				$field_validate = $values_to_update;
@@ -421,11 +585,26 @@ final class GravityView_Inline_Edit_AJAX {
 			case 'number':
 				$value                         = $field_validate = $post_value;
 				$values_to_update[ $field_id ] = $value;
-				$_POST[ 'input_' . $field_id ] = $entry[ $field_id ];
+				$_POST[ 'input_' . $field_id ] = rgar( $entry, $field_id, '' );
 				break;
 			case 'tel':
-				$value                         = $field_validate = $post_value;
+				// Gravity Forms 3.0's international phone format stores an object, not the string the
+				// editor posts. Translating here keeps validation and storage on the same value.
+				$value = GravityView_Inline_Edit_Field_Phone::prepare_save_value( $gf_field, $post_value );
+
+				if ( is_wp_error( $value ) ) {
+					wp_send_json( $value );
+				}
+
+				$field_validate                = $value;
 				$values_to_update[ $field_id ] = $value;
+				break;
+			case 'text':
+				// Gravity Forms 3.0 measures a text field's input mask when the entry is saved. The
+				// inline editor has no masked input to type into, so the mask's own punctuation is
+				// supplied here instead of by the browser.
+				$field_validate                = GravityView_Inline_Edit_Field_Text::prepare_save_value( $gf_field, $post_value );
+				$values_to_update[ $field_id ] = $field_validate;
 				break;
 			case 'checklist':
 				if ( (int) $input_id ) {
@@ -438,30 +617,34 @@ final class GravityView_Inline_Edit_AJAX {
 					}
 				} else {
 					$choice_number = 1;
-					$choices 						= $gf_field->choices;
+					$choices = $gf_field->choices;
 					if ( 'lookup' === $gf_field->type ) {
 						$choices = $gf_field->get_lookup_choices();
 					}
 
 					foreach ( $choices as $i => $choice ) {
 						if ( $choice_number % 10 === 0 ) { // hack to skip numbers ending in 0. so that 5.1 doesn't conflict with 5.10
-								++$choice_number;
-							}
-
-							$_id           = $field_id . '.' . $choice_number;
-							$current_value = rgar( $entry, $_id );
-
-							if ( ! in_array( $choice['value'], (array) $post_value ) && '' !== $current_value ) {
-								$values_to_update[ $_id ] = '';
-							}
-
-							if ( in_array( $choice['value'], (array) $post_value ) && '' === $current_value ) {
-								$values_to_update[ $_id ] = $choice['value'];
-							}
-
 							++$choice_number;
 						}
+
+						$_id           = $field_id . '.' . $choice_number;
+						$current_value = rgar( $entry, $_id );
+						$is_selected   = self::is_choice_selected( $choice, $post_value );
+
+						if ( ! $is_selected && '' !== $current_value ) {
+							$values_to_update[ $_id ] = '';
+						}
+
+						// Writes on every selected choice, not only an empty slot: a choice whose value
+						// changed since the entry was saved stays selected, so the clearing branch
+						// never runs and the stale value would survive.
+						if ( $is_selected && (string) rgar( $choice, 'value' ) !== (string) $current_value ) {
+							$values_to_update[ $_id ] = rgar( $choice, 'value' );
+						}
+
+						++$choice_number;
 					}
+				}
 
 				$field_validate = $values_to_update;
 				break;
@@ -487,8 +670,22 @@ final class GravityView_Inline_Edit_AJAX {
 				$field_validate                = $post_value;
 				$values_to_update[ $field_id ] = $field_validate;
 				break;
+			case 'textarea':
+				// A Paragraph field with the rich text editor enabled posts as `textarea`. Preserve its
+				// safe HTML with the same kses filter used for wysihtml5; a plain paragraph gets tags
+				// stripped but keeps its newlines.
+				$is_rich_text                  = $gf_field && ! empty( $gf_field->useRichTextEditor );
+				$field_validate                = $is_rich_text ? wp_kses_post( $post_value ) : sanitize_textarea_field( $post_value );
+				$values_to_update[ $field_id ] = $field_validate;
+				break;
+			case 'richtext':
 			case 'wysihtml5':
-				$field_validate                = wp_filter_post_kses( $post_value );
+				// wp_kses_post() (not wp_filter_post_kses) matches the value already unslashed above; the
+				// slashing variant strips real backslashes and slash-escapes every quote. The editor
+				// `type` is client-supplied, so only a genuine rich text field may store HTML; anything
+				// else falls back to plain-text sanitization.
+				$is_rich_text                  = $gf_field && ! empty( $gf_field->useRichTextEditor );
+				$field_validate                = $is_rich_text ? wp_kses_post( $post_value ) : sanitize_textarea_field( $post_value );
 				$values_to_update[ $field_id ] = $field_validate;
 				break;
 			case 'gvlist':
@@ -517,18 +714,22 @@ final class GravityView_Inline_Edit_AJAX {
 
 				if ( 1 === count( $value ) ) {// Single field mode
 					$saved_time = isset( $entry[ $field_id ] ) ? $entry[ $field_id ] : '00:00 AM';
-					preg_match( '/^(\d*):(\d*) ?(.*)$/', $saved_time, $time_matches );
-					for ( $i = 0; $i <= 3; $i++ ) {// From the values matched, populate the hh,mm and am/pm fields of $value
-						if ( ! isset( $value[ $i ] ) ) {
-							$value[ $i ] = $time_matches[ $i ];
+					if ( preg_match( '/^(\d*):(\d*) ?(.*)$/', $saved_time, $time_matches ) ) {
+						for ( $i = 0; $i <= 3; $i++ ) {// From the values matched, populate the hh,mm and am/pm fields of $value
+							if ( ! isset( $value[ $i ] ) ) {
+								$value[ $i ] = $time_matches[ $i ] ?? '';
+							}
 						}
 					}
 				}
-				$field_validate                = (int) sanitize_text_field( $value[1] ) . ':' . (int) sanitize_text_field( $value[2] ) . ' ' . strtoupper( sanitize_text_field( $value[3] ) );
+				$hour           = (int) sanitize_text_field( $value[1] ?? '' );
+				$minute         = (int) sanitize_text_field( $value[2] ?? '' );
+				$meridiem       = strtoupper( sanitize_text_field( $value[3] ?? '' ) );
+				$field_validate = $hour . ':' . $minute . ' ' . $meridiem;
 				$values_to_update[ $field_id ] = $field_validate;
 				break;
 			case 'product':
-				$currency                      = new RGCurrency( $entry['currency'] );
+				$currency                      = new RGCurrency( rgar( $entry, 'currency', 'USD' ) );
 				$field_validate                = $post_value;
 				$values_to_update[ $field_id ] = $currency->to_money( $post_value );
 				break;
@@ -543,13 +744,17 @@ final class GravityView_Inline_Edit_AJAX {
 
 						$_id           = $field_id . '.' . $choice_number;
 						$current_value = rgar( $entry, $_id );
+						$is_selected   = self::is_choice_selected( $choice, $post_value );
 
-						if ( ! in_array( $choice['value'], (array) $post_value ) && '' !== $current_value ) {
+						if ( ! $is_selected && '' !== $current_value ) {
 							$values_to_update[ $_id ] = '';
 						}
 
-						if ( in_array( $choice['value'], (array) $post_value ) && '' === $current_value ) {
-							$values_to_update[ $_id ] = $choice['value'];
+						// Writes on every selected choice, not only an empty slot: a choice whose value
+						// changed since the entry was saved stays selected, so the clearing branch
+						// never runs and the stale value would survive.
+						if ( $is_selected && (string) rgar( $choice, 'value' ) !== (string) $current_value ) {
+							$values_to_update[ $_id ] = rgar( $choice, 'value' );
 						}
 
 						++$choice_number;
@@ -575,15 +780,20 @@ final class GravityView_Inline_Edit_AJAX {
 						
 						$_id           = $field_id . '.' . $choice_number;
 						$current_value = rgar( $entry, $_id );
+						$is_selected   = self::is_choice_selected( $choice, $post_value );
 
-						if ( ! in_array( $choice['value'], (array) $post_value ) && '' !== $current_value ) {
+						// Uncheck if not in post_value array, check if in array.
+						if ( ! $is_selected && '' !== $current_value ) {
 							$values_to_update[ $_id ] = '';
 						}
 
-						if ( in_array( $choice['value'], (array) $post_value ) && '' === $current_value ) {
-							$values_to_update[ $_id ] = $choice['value'];
+						// Writes on every selected choice, not only an empty slot: a choice whose value
+						// changed since the entry was saved stays selected, so the clearing branch
+						// never runs and the stale value would survive.
+						if ( $is_selected && (string) rgar( $choice, 'value' ) !== (string) $current_value ) {
+							$values_to_update[ $_id ] = rgar( $choice, 'value' );
 						}
-						
+
 						++$choice_number;
 					}
 					$field_validate = $values_to_update;
@@ -625,11 +835,16 @@ final class GravityView_Inline_Edit_AJAX {
 		// Sanitize the field
 		foreach ( $values_to_update as $update_id => $update_value ) {
 			$input_name = 'input_' . str_replace( '.', '_', $update_id );
-			if ( $gf_field ) {
-				$entry[ $update_id ] = GFFormsModel::prepare_value( $form, $gf_field, $update_value, $input_name, $entry_id );
-			} else {
+			if ( ! $gf_field ) {
 				$entry[ $update_id ] = $update_value;
+
+				continue;
 			}
+
+			// GFFormsModel::prepare_value() is deprecated since Gravity Forms 3.0.
+			$entry[ $update_id ] = method_exists( $gf_field, 'get_value_save_input' )
+				? $gf_field->get_value_save_input( $update_value, $form, $input_name, $entry_id, $entry )
+				: GFFormsModel::prepare_value( $form, $gf_field, $update_value, $input_name, $entry_id );
 		}
 
 		$update_result = $this->_update_entry( $entry, $form_id, $gf_field, $type, $entry_pre_update );
@@ -751,7 +966,7 @@ final class GravityView_Inline_Edit_AJAX {
 			$values = array();
 
 			foreach ( $gf_field->inputs as $input ) {
-				$values[ $input['id'] ] = $entry[ $input['id'] ];
+				$values[ $input['id'] ] = rgar( $entry, $input['id'], '' );
 			}
 
 			if ( empty( array_filter( array_merge( $values, $field_value ) ) ) ) {
@@ -761,13 +976,14 @@ final class GravityView_Inline_Edit_AJAX {
 		}
 
 		// Get all values for the image choice field so we can pass it to the validation, because it doesn't pass existing values to the $field_value
-		if ( $gf_field instanceof \GF_Field_Checkbox && $gf_field->type === 'image_choice') {
+		if ( $gf_field instanceof \GF_Field_Checkbox && $gf_field->type === 'image_choice' ) {
+			$image_choice_values = [];
 
 			foreach ( $gf_field->inputs as $input ) {
-				$values[ $input['id'] ] = $entry[ $input['id'] ];
+				$image_choice_values[ $input['id'] ] = rgar( $entry, $input['id'], '' );
 			}
 
-			$field_value = array_filter( array_merge( $values, $field_value ) );
+			$field_value = array_filter( array_merge( $image_choice_values, $field_value ) );
 		}
 
 		// Bypass validation for decimal format.

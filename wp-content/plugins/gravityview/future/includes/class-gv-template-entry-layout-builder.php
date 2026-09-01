@@ -1,26 +1,23 @@
 <?php
-namespace GV;
+/**
+ * Backward-compatibility shim.
+ *
+ * This file was moved in GravityView 3.0. It is intentionally empty.
+ * GravityView classes and functions load automatically. You no longer
+ * need to require GravityView files in your code.
+ *
+ * @deprecated 3.0
+ */
 
-/** If this file is called directly, abort. */
-if ( ! defined( 'GRAVITYVIEW_DIR' ) ) {
-	die();
+if ( ! defined( 'ABSPATH' ) ) {
+	die;
 }
 
-require_once 'trait-gv-field-renderer.php';
-
-/**
- * The single Entry template.
- *
- * @since $ver$
- */
-final class Entry_Layout_Builder_Template extends Entry_Template {
-	use Field_Renderer_Trait;
-	/**
-	 * {@inheritDoc}
-	 *
-	 * @since $ver$
-	 *
-	 * @var string
-	 */
-	public static $slug = \GravityView_Layout_Builder::ID;
+if ( function_exists( '_deprecated_file' ) ) {
+	_deprecated_file(
+		plugin_basename( __FILE__ ),
+		'3.0',
+		'',
+		'This file was moved in GravityView 3.0 and will be removed in a future release. GravityView classes and functions load automatically. You no longer need to require them.'
+	);
 }

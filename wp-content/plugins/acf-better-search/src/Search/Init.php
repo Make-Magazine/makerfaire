@@ -31,7 +31,7 @@ class Init implements HookableInterface {
 	}
 
 	private function is_search_available(): bool {
-		$is_ajax       = ( defined( 'DOING_AJAX' ) && DOING_AJAX );
+		$is_ajax       = wp_doing_ajax();
 		$is_media_ajax = ( isset( $_POST['action'] ) && in_array( $_POST['action'], [ 'query-attachments' ] ) ); // phpcs:ignore WordPress.Security.NonceVerification.Missing
 
 		$status = ( ! $is_ajax || ! $is_media_ajax );

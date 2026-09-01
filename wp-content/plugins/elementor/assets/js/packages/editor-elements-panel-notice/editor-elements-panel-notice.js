@@ -1,3 +1,225 @@
-/*! For license information please see editor-elements-panel-notice.js.LICENSE.txt */
-!function(){"use strict";var e={"./packages/packages/core/editor-elements-panel-notice/src/components/notice-portal.tsx":function(e,t,r){r.r(t),r.d(t,{NoticePortal:function(){return NoticePortal}});var n=r("react"),o=r("@elementor/editor-v1-adapters"),i=r("@elementor/ui");const c="elementor-panel-elements-notice-area",a="panel/elements/";function NoticePortal({component:e}){const t=(0,o.__privateUseListenTo)([(0,o.v1ReadyEvent)(),(0,o.routeOpenEvent)(a)],()=>document.getElementById(c));return t?n.createElement(i.Portal,{container:t},n.createElement(e,null)):null}},"./packages/packages/core/editor-elements-panel-notice/src/init.tsx":function(e,t,r){r.r(t),r.d(t,{register:function(){return register}});var n=r("react"),o=r("@elementor/editor"),i=r("@elementor/editor-v1-adapters"),c=r("./packages/packages/core/editor-elements-panel-notice/src/components/notice-portal.tsx"),a=r("./packages/packages/core/editor-elements-panel-notice/src/utils/create-notice-view.ts");function register(e){(0,o.injectIntoTop)({id:"editor-elements-panel-notice",component:()=>n.createElement(c.NoticePortal,{component:e})}),(0,i.__privateListenTo)((0,i.v1ReadyEvent)(),()=>{window.elementor?.hooks?.addFilter("panel/elements/regionViews",(e,{notice:t})=>(e.notice={region:t,view:(0,a.createNoticeView)()},e))})}},"./packages/packages/core/editor-elements-panel-notice/src/utils/create-notice-view.ts":function(e,t,r){function createNoticeView(){return window.Marionette?.CompositeView.extend({template:"<div></div>"})}r.r(t),r.d(t,{createNoticeView:function(){return createNoticeView}})},"@elementor/editor":function(e){e.exports=window.elementorV2.editor},"@elementor/editor-v1-adapters":function(e){e.exports=window.elementorV2.editorV1Adapters},"@elementor/ui":function(e){e.exports=window.elementorV2.ui},react:function(e){e.exports=window.React}},t={};function __webpack_require__(r){var n=t[r];if(void 0!==n)return n.exports;var o=t[r]={exports:{}};return e[r](o,o.exports,__webpack_require__),o.exports}__webpack_require__.n=function(e){var t=e&&e.__esModule?function(){return e.default}:function(){return e};return __webpack_require__.d(t,{a:t}),t},__webpack_require__.d=function(e,t){for(var r in t)__webpack_require__.o(t,r)&&!__webpack_require__.o(e,r)&&Object.defineProperty(e,r,{enumerable:!0,get:t[r]})},__webpack_require__.o=function(e,t){return Object.prototype.hasOwnProperty.call(e,t)},__webpack_require__.r=function(e){"undefined"!=typeof Symbol&&Symbol.toStringTag&&Object.defineProperty(e,Symbol.toStringTag,{value:"Module"}),Object.defineProperty(e,"__esModule",{value:!0})};var r={};!function(){__webpack_require__.r(r),__webpack_require__.d(r,{register:function(){return e.register}});var e=__webpack_require__("./packages/packages/core/editor-elements-panel-notice/src/init.tsx")}(),(window.elementorV2=window.elementorV2||{}).editorElementsPanelNotice=r}(),window.elementorV2.editorElementsPanelNotice?.init?.();
+/******/ (function() { // webpackBootstrap
+/******/ 	"use strict";
+/******/ 	var __webpack_modules__ = ({
+
+/***/ "./packages/packages/core/editor-elements-panel-notice/src/components/notice-portal.tsx":
+/*!**********************************************************************************************!*\
+  !*** ./packages/packages/core/editor-elements-panel-notice/src/components/notice-portal.tsx ***!
+  \**********************************************************************************************/
+/***/ (function(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   NoticePortal: function() { return /* binding */ NoticePortal; }
+/* harmony export */ });
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "react");
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _elementor_editor_v1_adapters__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @elementor/editor-v1-adapters */ "@elementor/editor-v1-adapters");
+/* harmony import */ var _elementor_editor_v1_adapters__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_elementor_editor_v1_adapters__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var _elementor_ui__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @elementor/ui */ "@elementor/ui");
+/* harmony import */ var _elementor_ui__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_elementor_ui__WEBPACK_IMPORTED_MODULE_2__);
+
+
+
+const NOTICE_AREA_ID = 'elementor-panel-elements-notice-area';
+const ELEMENTS_PANEL_ROUTE_PREFIX = 'panel/elements/';
+function NoticePortal({
+  component: Component
+}) {
+  const container = (0,_elementor_editor_v1_adapters__WEBPACK_IMPORTED_MODULE_1__.__privateUseListenTo)([(0,_elementor_editor_v1_adapters__WEBPACK_IMPORTED_MODULE_1__.v1ReadyEvent)(), (0,_elementor_editor_v1_adapters__WEBPACK_IMPORTED_MODULE_1__.routeOpenEvent)(ELEMENTS_PANEL_ROUTE_PREFIX)], () => document.getElementById(NOTICE_AREA_ID));
+  return container ? /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(_elementor_ui__WEBPACK_IMPORTED_MODULE_2__.Portal, {
+    container: container
+  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(Component, null)) : null;
+}
+
+/***/ }),
+
+/***/ "./packages/packages/core/editor-elements-panel-notice/src/init.tsx":
+/*!**************************************************************************!*\
+  !*** ./packages/packages/core/editor-elements-panel-notice/src/init.tsx ***!
+  \**************************************************************************/
+/***/ (function(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   register: function() { return /* binding */ register; }
+/* harmony export */ });
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "react");
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _elementor_editor__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @elementor/editor */ "@elementor/editor");
+/* harmony import */ var _elementor_editor__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_elementor_editor__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var _elementor_editor_v1_adapters__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @elementor/editor-v1-adapters */ "@elementor/editor-v1-adapters");
+/* harmony import */ var _elementor_editor_v1_adapters__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_elementor_editor_v1_adapters__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var _components_notice_portal__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./components/notice-portal */ "./packages/packages/core/editor-elements-panel-notice/src/components/notice-portal.tsx");
+/* harmony import */ var _utils_create_notice_view__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./utils/create-notice-view */ "./packages/packages/core/editor-elements-panel-notice/src/utils/create-notice-view.ts");
+
+
+
+
+
+function register(Component) {
+  (0,_elementor_editor__WEBPACK_IMPORTED_MODULE_1__.injectIntoTop)({
+    id: 'editor-elements-panel-notice',
+    component: () => /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(_components_notice_portal__WEBPACK_IMPORTED_MODULE_3__.NoticePortal, {
+      component: Component
+    })
+  });
+  (0,_elementor_editor_v1_adapters__WEBPACK_IMPORTED_MODULE_2__.__privateListenTo)((0,_elementor_editor_v1_adapters__WEBPACK_IMPORTED_MODULE_2__.v1ReadyEvent)(), () => {
+    window.elementor?.hooks?.addFilter('panel/elements/regionViews', (regionViews, {
+      notice
+    }) => {
+      regionViews.notice = {
+        region: notice,
+        view: (0,_utils_create_notice_view__WEBPACK_IMPORTED_MODULE_4__.createNoticeView)()
+      };
+      return regionViews;
+    });
+  });
+}
+
+/***/ }),
+
+/***/ "./packages/packages/core/editor-elements-panel-notice/src/utils/create-notice-view.ts":
+/*!*********************************************************************************************!*\
+  !*** ./packages/packages/core/editor-elements-panel-notice/src/utils/create-notice-view.ts ***!
+  \*********************************************************************************************/
+/***/ (function(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   createNoticeView: function() { return /* binding */ createNoticeView; }
+/* harmony export */ });
+function createNoticeView() {
+  return window.Marionette?.CompositeView.extend({
+    template: `<div></div>`
+  });
+}
+
+/***/ }),
+
+/***/ "@elementor/editor":
+/*!*****************************************!*\
+  !*** external ["elementorV2","editor"] ***!
+  \*****************************************/
+/***/ (function(module) {
+
+module.exports = window["elementorV2"]["editor"];
+
+/***/ }),
+
+/***/ "@elementor/editor-v1-adapters":
+/*!***************************************************!*\
+  !*** external ["elementorV2","editorV1Adapters"] ***!
+  \***************************************************/
+/***/ (function(module) {
+
+module.exports = window["elementorV2"]["editorV1Adapters"];
+
+/***/ }),
+
+/***/ "@elementor/ui":
+/*!*************************************!*\
+  !*** external ["elementorV2","ui"] ***!
+  \*************************************/
+/***/ (function(module) {
+
+module.exports = window["elementorV2"]["ui"];
+
+/***/ }),
+
+/***/ "react":
+/*!**************************!*\
+  !*** external ["React"] ***!
+  \**************************/
+/***/ (function(module) {
+
+module.exports = window["React"];
+
+/***/ })
+
+/******/ 	});
+/************************************************************************/
+/******/ 	// The module cache
+/******/ 	var __webpack_module_cache__ = {};
+/******/ 	
+/******/ 	// The require function
+/******/ 	function __webpack_require__(moduleId) {
+/******/ 		// Check if module is in cache
+/******/ 		var cachedModule = __webpack_module_cache__[moduleId];
+/******/ 		if (cachedModule !== undefined) {
+/******/ 			return cachedModule.exports;
+/******/ 		}
+/******/ 		// Create a new module (and put it into the cache)
+/******/ 		var module = __webpack_module_cache__[moduleId] = {
+/******/ 			// no module.id needed
+/******/ 			// no module.loaded needed
+/******/ 			exports: {}
+/******/ 		};
+/******/ 	
+/******/ 		// Execute the module function
+/******/ 		__webpack_modules__[moduleId](module, module.exports, __webpack_require__);
+/******/ 	
+/******/ 		// Return the exports of the module
+/******/ 		return module.exports;
+/******/ 	}
+/******/ 	
+/************************************************************************/
+/******/ 	/* webpack/runtime/compat get default export */
+/******/ 	!function() {
+/******/ 		// getDefaultExport function for compatibility with non-harmony modules
+/******/ 		__webpack_require__.n = function(module) {
+/******/ 			var getter = module && module.__esModule ?
+/******/ 				function() { return module['default']; } :
+/******/ 				function() { return module; };
+/******/ 			__webpack_require__.d(getter, { a: getter });
+/******/ 			return getter;
+/******/ 		};
+/******/ 	}();
+/******/ 	
+/******/ 	/* webpack/runtime/define property getters */
+/******/ 	!function() {
+/******/ 		// define getter functions for harmony exports
+/******/ 		__webpack_require__.d = function(exports, definition) {
+/******/ 			for(var key in definition) {
+/******/ 				if(__webpack_require__.o(definition, key) && !__webpack_require__.o(exports, key)) {
+/******/ 					Object.defineProperty(exports, key, { enumerable: true, get: definition[key] });
+/******/ 				}
+/******/ 			}
+/******/ 		};
+/******/ 	}();
+/******/ 	
+/******/ 	/* webpack/runtime/hasOwnProperty shorthand */
+/******/ 	!function() {
+/******/ 		__webpack_require__.o = function(obj, prop) { return Object.prototype.hasOwnProperty.call(obj, prop); }
+/******/ 	}();
+/******/ 	
+/******/ 	/* webpack/runtime/make namespace object */
+/******/ 	!function() {
+/******/ 		// define __esModule on exports
+/******/ 		__webpack_require__.r = function(exports) {
+/******/ 			if(typeof Symbol !== 'undefined' && Symbol.toStringTag) {
+/******/ 				Object.defineProperty(exports, Symbol.toStringTag, { value: 'Module' });
+/******/ 			}
+/******/ 			Object.defineProperty(exports, '__esModule', { value: true });
+/******/ 		};
+/******/ 	}();
+/******/ 	
+/************************************************************************/
+var __webpack_exports__ = {};
+// This entry needs to be wrapped in an IIFE because it needs to be isolated against other modules in the chunk.
+!function() {
+/*!**************************************************************************!*\
+  !*** ./packages/packages/core/editor-elements-panel-notice/src/index.ts ***!
+  \**************************************************************************/
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   register: function() { return /* reexport safe */ _init__WEBPACK_IMPORTED_MODULE_0__.register; }
+/* harmony export */ });
+/* harmony import */ var _init__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./init */ "./packages/packages/core/editor-elements-panel-notice/src/init.tsx");
+
+}();
+(window.elementorV2 = window.elementorV2 || {}).editorElementsPanelNotice = __webpack_exports__;
+/******/ })()
+;
+window.elementorV2.editorElementsPanelNotice?.init?.();
 //# sourceMappingURL=editor-elements-panel-notice.js.map

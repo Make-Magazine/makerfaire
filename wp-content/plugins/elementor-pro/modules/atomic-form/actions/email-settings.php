@@ -10,8 +10,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Email_Settings {
 	private $email_settings;
 
-	public function __construct( array $widget_settings ) {
-		$this->email_settings = $widget_settings['email'] ?? [];
+	public function __construct( array $widget_settings, string $settings_key = Action_Type::EMAIL ) {
+		$this->email_settings = $widget_settings[ $settings_key ] ?? [];
 	}
 
 	public function to() {
@@ -53,6 +53,12 @@ class Email_Settings {
 
 	public function content_type() {
 		return $this->email_settings['send-as'] ?? 'html';
+	}
+
+	public function meta_data(): array {
+		$value = $this->email_settings['meta-data'] ?? [];
+
+		return is_array( $value ) ? $value : [];
 	}
 
 	private function normalize_address_list( $value ) {

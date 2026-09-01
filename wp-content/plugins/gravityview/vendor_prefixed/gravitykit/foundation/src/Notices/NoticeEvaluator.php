@@ -1,9 +1,4 @@
 <?php
-/**
- * @license GPL-2.0-or-later
- *
- * Modified using {@see https://github.com/BrianHenryIE/strauss}.
- */
 
 namespace GravityKit\GravityView\Foundation\Notices;
 
@@ -277,8 +272,13 @@ final class NoticeEvaluator {
 		$excludes  = [];
 		$callables = [];
 
+		// Runtime notices are declared in code and may name a function as a screen guard. Stored ones
+		// can originate from the Store response, and `is_callable()` is only a time-of-check test: a
+		// persisted ID sharing a name with a not-yet-loaded function would become invokable later.
+		$allows_callables = ! $notice instanceof StoredNoticeInterface;
+
 		foreach ( $rules as $rule ) {
-			if ( is_callable( $rule ) ) {
+			if ( ( $allows_callables || ! is_string( $rule ) ) && is_callable( $rule ) ) {
 				$callables[] = $rule;
 			} elseif ( is_string( $rule ) ) {
 				if ( 0 === strpos( $rule, 'not:' ) ) {

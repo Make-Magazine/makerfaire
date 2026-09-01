@@ -213,6 +213,62 @@ WhatsNewItemChips.propTypes = {
 
 /***/ }),
 
+/***/ "../modules/notifications/assets/js/components/whats-new-item-media.js":
+/*!*****************************************************************************!*\
+  !*** ../modules/notifications/assets/js/components/whats-new-item-media.js ***!
+  \*****************************************************************************/
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+"use strict";
+
+
+var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault */ "../node_modules/@babel/runtime/helpers/interopRequireDefault.js");
+Object.defineProperty(exports, "__esModule", ({
+  value: true
+}));
+exports.WhatsNewItemMedia = void 0;
+var _react = _interopRequireDefault(__webpack_require__(/*! react */ "react"));
+var _ui = __webpack_require__(/*! @elementor/ui */ "@elementor/ui");
+var _whatsNewItemThumbnail = __webpack_require__(/*! ./whats-new-item-thumbnail */ "../modules/notifications/assets/js/components/whats-new-item-thumbnail.js");
+/* eslint-disable react/prop-types */
+
+var WhatsNewItemMedia = exports.WhatsNewItemMedia = function WhatsNewItemMedia(_ref) {
+  var item = _ref.item;
+  if (item.youtubeEmbedId) {
+    var videoId = item.youtubeEmbedId.split('?')[0];
+    var src = "https://www.youtube.com/embed/".concat(videoId).concat(item.youtubeAutoplay ? '?autoplay=1&mute=1' : '');
+    var allow = "encrypted-media; picture-in-picture".concat(item.youtubeAutoplay ? '; autoplay' : '');
+    return /*#__PURE__*/_react.default.createElement(_ui.Box, {
+      sx: {
+        pb: 2
+      }
+    }, /*#__PURE__*/_react.default.createElement(_ui.Box, {
+      component: "iframe",
+      src: src,
+      title: item.title,
+      allow: allow,
+      allowFullScreen: true,
+      sx: {
+        aspectRatio: '16/9',
+        width: '100%',
+        display: 'block',
+        border: 'none'
+      }
+    }));
+  }
+  var mediaSrc = item.gifSrc || item.imageSrc;
+  if (!mediaSrc) {
+    return null;
+  }
+  return /*#__PURE__*/_react.default.createElement(_whatsNewItemThumbnail.WhatsNewItemThumbnail, {
+    imageSrc: mediaSrc,
+    link: item.link,
+    title: item.title
+  });
+};
+
+/***/ }),
+
 /***/ "../modules/notifications/assets/js/components/whats-new-item-thumbnail.js":
 /*!*********************************************************************************!*\
   !*** ../modules/notifications/assets/js/components/whats-new-item-thumbnail.js ***!
@@ -316,7 +372,7 @@ var _react = _interopRequireDefault(__webpack_require__(/*! react */ "react"));
 var _ui = __webpack_require__(/*! @elementor/ui */ "@elementor/ui");
 var _whatsNewItemTopicLine = __webpack_require__(/*! ./whats-new-item-topic-line */ "../modules/notifications/assets/js/components/whats-new-item-topic-line.js");
 var _wrapperWithLink = __webpack_require__(/*! ./wrapper-with-link */ "../modules/notifications/assets/js/components/wrapper-with-link.js");
-var _whatsNewItemThumbnail = __webpack_require__(/*! ./whats-new-item-thumbnail */ "../modules/notifications/assets/js/components/whats-new-item-thumbnail.js");
+var _whatsNewItemMedia = __webpack_require__(/*! ./whats-new-item-media */ "../modules/notifications/assets/js/components/whats-new-item-media.js");
 var _whatsNewItemChips = __webpack_require__(/*! ./whats-new-item-chips */ "../modules/notifications/assets/js/components/whats-new-item-chips.js");
 var WhatsNewItem = exports.WhatsNewItem = function WhatsNewItem(_ref) {
   var item = _ref.item,
@@ -340,10 +396,8 @@ var WhatsNewItem = exports.WhatsNewItem = function WhatsNewItem(_ref) {
     sx: {
       pb: 2
     }
-  }, item.title)), item.imageSrc && /*#__PURE__*/_react.default.createElement(_whatsNewItemThumbnail.WhatsNewItemThumbnail, {
-    imageSrc: item.imageSrc,
-    link: item.link,
-    title: item.title
+  }, item.title)), /*#__PURE__*/_react.default.createElement(_whatsNewItemMedia.WhatsNewItemMedia, {
+    item: item
   }), /*#__PURE__*/_react.default.createElement(_whatsNewItemChips.WhatsNewItemChips, {
     chipPlan: item.chipPlan,
     chipTags: item.chipTags,

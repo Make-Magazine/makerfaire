@@ -48,4 +48,19 @@ export default Vue.extend({
 	pointer-events: none;
 	opacity: .15;
 }
+
+.gpfup__existing-file {
+	display: flex;
+	align-items: center;
+	gap: .5rem;
+}
+
+.gpfup__existing-file .gpfup__drag-handle {
+	flex: 0 0 auto;
+	margin-right: 0;
+}
+
+.gpfup__existing-file.ghost {
+	opacity: .35;
+}
 </style>

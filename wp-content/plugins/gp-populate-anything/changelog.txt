@@ -1,5 +1,28 @@
 # Changelog
 
+## 2.1.75 | August 27, 2026
+
+- Fixed an issue where GP Populate Anything could hang on Gravity Forms 3.0 when populating conditional dynamic fields on multi-page forms, disabling form navigation buttons.
+- Fixed issue where Live Merge Tags populated a mangled date into Date fields using the Date Picker on Gravity Forms 3.0.3 and newer.
+- Fixed an issue where Elementor block parsing could corrupt Live Merge Tag values containing Gutenberg markup.
+- Fixed issue where populating a Paragraph field with a List field value from an entry caused a fatal error.
+- Fixed issue where conditionally shown fields with an input mask could break form rendering on Android devices.
+- Added "Payment Date" property to the Gravity Forms entry object type.
+
+## 2.1.74 | August 7, 2026
+
+- Fixed issue where Live Merge Tags stopped updating Date fields using the Date Picker on Gravity Forms 3.0.
+
+## 2.1.73 | July 1, 2026
+
+- Improved compatibility with Gravity Forms 3.0+ where administrative fields now use the adminonly_hidden context property instead of inputType.
+- Fixed issue where array product values could fatal during Stripe validation.
+
+## 2.1.72 | June 17, 2026
+
+- Fixed issue where GF Entry object type form references were not preserved on form export.
+- Fixed issue where dynamically populating a paragraph field with a blank value could trigger a `htmlspecialchars()` deprecation notice on PHP 8.1+.
+
 ## 2.1.71 | June 4, 2026
 
 - Fixed issue where the visible product name on Single Product fields did not update when dynamically populated via AJAX.

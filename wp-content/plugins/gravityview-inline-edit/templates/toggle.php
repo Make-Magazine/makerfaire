@@ -8,4 +8,4 @@
 <a href="#" class="<?php echo esc_attr( $link_class ); ?> inline-edit-enable"
    data-label-disabled="<?php echo esc_attr( $labels['disabled'] ); ?>"
    data-label-enabled="<?php echo esc_attr( $labels['enabled'] ); ?>"
-   data-label-toggle="<?php echo esc_attr( $labels['toggle'] ); ?>"><?php echo esc_attr( $labels['toggle'] ); ?></a>
+   data-label-toggle="<?php echo esc_attr( $labels['toggle'] ); ?>"><?php echo esc_html( $labels['toggle'] ); ?></a>

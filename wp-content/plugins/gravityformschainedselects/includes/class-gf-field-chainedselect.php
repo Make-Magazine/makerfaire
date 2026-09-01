@@ -135,7 +135,7 @@ class GF_Chained_Field_Select extends GF_Field {
 	    $handle = fopen( $path, 'r' );
 	    if( $handle !== false ) {
 
-		    while ( ( $row = fgetcsv( $handle, 1000, ',' ) ) !== false ) {
+		    while ( ( $row = fgetcsv( $handle, 1000, ',', '"', '' ) ) !== false ) {
 
 			    // filter out empty rows
 			    $row = array_filter( $row, 'strlen' );
@@ -213,7 +213,7 @@ class GF_Chained_Field_Select extends GF_Field {
 	    $limit   = apply_filters( 'gravityformschainedselects_column_unique_values_limit', 5000 );
 	    $limit   = apply_filters( 'gform_chainedselects_column_unique_values_limit', $limit );
 
-	    while ( ( $row = fgetcsv( $handle, 1000, ',' ) ) !== false ) {
+	    while ( ( $row = fgetcsv( $handle, 1000, ',', '"', '' ) ) !== false ) {
 
 		    // filter out empty rows
 		    $row = array_filter( $row );
@@ -392,7 +392,7 @@ class GF_Chained_Field_Select extends GF_Field {
 
 	    if( is_wp_error( $response ) || wp_remote_retrieve_response_code( $response ) != 200 ) {
 		    $error = new WP_Error( 'file_inaccessible', __( 'File could not be loaded.', 'gravityformschainedselects' ) );
-	    } else if( wp_remote_retrieve_header( $response, 'content-type' ) != 'text/csv' ) {
+	    } else if( strtolower( trim( strtok( (string) wp_remote_retrieve_header( $response, 'content-type' ), ';' ) ) ) !== 'text/csv' ) {
 		    $error = new WP_Error( 'invalid_content_type', __( 'File is not a CSV file.', 'gravityformschainedselects' ) );
 	    } else if ( empty( wp_remote_retrieve_body( $response ) ) ) {
 		    $error = new WP_Error( 'empty', __( 'File is empty.', 'gravityformschainedselects' ) );
@@ -799,7 +799,21 @@ class GF_Chained_Field_Select extends GF_Field {
 		return rgars( $choices, '0/noOptions' );
 	}
 
-	public function get_value_entry_detail( $value, $currency = '', $use_text = false, $format = 'html', $media = 'screen' ) {
+	/**
+	 * Format the entry value for display on the entry detail page and for the {all_fields} merge tag.
+	 *
+	 * @since 1.0
+	 * @since 1.8.2 Changed the second parameter $currency (string) to $entry (array).
+	 *
+	 * @param string|array $value    The field value.
+	 * @param array        $entry    The entry.
+	 * @param bool|false   $use_text When processing choice based fields should the choice text be returned instead of the value.
+	 * @param string       $format   The format requested for the location the merge is being used. Possible values: html, text or url.
+	 * @param string       $media    The location where the value will be displayed. Possible values: screen or email.
+	 *
+	 * @return string
+	 */
+	public function get_value_entry_detail( $value, $entry = array(), $use_text = false, $format = 'html', $media = 'screen' ) {
 
 		$filtered = is_array( $value ) ? array_filter( $value ) : '';
 		if( empty( $filtered ) ) {

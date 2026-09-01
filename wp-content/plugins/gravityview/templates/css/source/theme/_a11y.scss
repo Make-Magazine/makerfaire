@@ -1,0 +1,771 @@
+/**
+ * GravityView Theme — Accessibility
+ *
+ * Focus indicators, reduced motion, high contrast mode, screen reader
+ * utilities, and touch target enforcement. Scoped to `.gv-themed`.
+ *
+ * @package   GravityView
+ * @license   GPL2
+ * @since     TBD
+ */
+
+// =========================================================
+// Color Contrast Verification (WCAG 2.2 AA)
+//
+// Methodology: WCAG 2 relative-luminance formula on sRGB
+// linearized via BT.709 coefficients (0.2126/0.7152/0.0722).
+// Re-verify when any token default in _tokens.scss changes.
+//
+// Token pair                                                       Ratio   AA  AAA
+// ────────────────────────────────────────────────────────────────────────────────
+// --gv-color-text (#112337)            on --gv-color-surface (#fff) 15.92   ✅  ✅
+// --gv-color-text-secondary (#54667a)  on --gv-color-surface         6.13   ✅  ✗
+// --gv-color-text-secondary (#54667a)  on --gv-color-surface-alt     5.51   ✅  ✗
+// --gv-color-text-muted (#5b6470)      on --gv-color-surface         6.05   ✅  ✗
+// --gv-color-text-muted (#5b6470)      on --gv-color-surface-alt     5.44   ✅  ✗
+// --gv-color-placeholder (#5f6772)     on --gv-color-surface         5.70   ✅  ✗
+// --gv-color-primary (#204ce5)         on --gv-color-surface         6.51   ✅  ✗
+// --gv-color-on-primary (#fff)         on --gv-color-primary         6.51   ✅  ✗
+// --gv-color-error (#c02b0a)           on --gv-color-surface         5.85   ✅  ✗
+// --gv-color-success (#23692f)         on --gv-color-surface         6.07   ✅  ✗
+// --gv-color-info (#0e7490)            on --gv-color-surface         5.38   ✅  ✗
+// --gv-color-link (#204ce5)            on --gv-color-surface         6.51   ✅  ✗
+// --gv-color-link-hover (#1c44ce)      on --gv-color-surface         7.59   ✅  ✅
+// --gv-color-link-visited (#7c3aed)    on --gv-color-surface         5.70   ✅  ✗
+// --gv-color-link-active (#0c1f7a)     on --gv-color-surface        13.04   ✅  ✅
+// --gv-focus-ring-color (#2563eb)      on --gv-color-surface         5.17   ✅  (non-text 3:1 ✅)
+// --gv-color-border (#888888)          on --gv-color-surface         3.45   non-text ✅ (SC 1.4.11)
+// --gv-color-border-strong (#6b7280)   on --gv-color-surface         4.74   non-text ✅
+//
+// Status defaults that CANNOT be sole indicator (must pair w/ icon+text via .gv-status):
+//   --gv-color-warning (#febc48)       on --gv-color-surface         1.68   ✗ — pair-only
+//   --gv-color-warning-icon (#b07000)  on --gv-color-surface-warning ≥ 3   non-text ✅ (icon-only)
+//
+// APCA Lc parallel matrix (informational — WCAG 3.0 / Silver
+// direction; APCA is not part of WCAG 2.2 normatively):
+//
+// Text role                                       Lc target  Verdict
+// ─────────────────────────────────────────────────────────────────
+// Body text on surface (text → #112337)             ≥ 75     Lc 89 ✅
+// Secondary text on surface (text-secondary)        ≥ 75     Lc 76 ✅ (squeak)
+// Muted text on surface (text-muted)                ≥ 60     Lc 71 ✅
+// Placeholder on surface (#67768a)                  ≥ 60     Lc 65 ✅
+// Link on surface (#204ce5)                         ≥ 75     Lc 82 ✅
+// Focus ring on surface (non-text)                  ≥ 45     Lc 69 ✅
+// =========================================================
+
+// =========================================================
+// Focus indicators — universal `:focus-visible` for all
+// interactive elements (SC 2.4.7 Focus Visible, AA).
+//
+// The pattern pairs `box-shadow` (the visible ring) with
+// `outline: 2px solid transparent` + `outline-offset: 2px` so the
+// focus indicator survives Windows High Contrast / forced-colors
+// mode (CSS Color Adjust L1 §3.2 — UAs strip `box-shadow` in
+// forced-colors but force `transparent` outlines to a system color).
+//
+// `--gv-focus-ring-color` (#2563eb) hits ≥ 3:1 against every
+// shipped surface token (SC 1.4.11 + 2.4.11). The ring is
+// decomposed into width / offset / color / style tokens so
+// customers can tune any axis independently.
+// =========================================================
+.gv-themed {
+	a:focus-visible,
+	button:focus-visible,
+	input:focus-visible,
+	select:focus-visible,
+	textarea:focus-visible,
+	[role="button"]:focus-visible,
+	[tabindex]:focus-visible {
+		outline: var(--gv-focus-ring-width) var(--gv-focus-ring-style) transparent;
+		outline-offset: var(--gv-focus-ring-offset);
+		box-shadow: var(--gv-shadow-focus);
+
+		// SC 2.4.11 Focus Not Obscured: keep a breathing margin between
+		// a focused element and the scrollport edge when it scrolls
+		// into view.
+		scroll-margin-block: var(--gv-space-4);
+	}
+
+	// Remove default :focus ring when :focus-visible is supported,
+	// so mouse clicks don't show an outline ring.
+	a:focus:not(:focus-visible),
+	button:focus:not(:focus-visible),
+	input:focus:not(:focus-visible),
+	select:focus:not(:focus-visible),
+	textarea:focus:not(:focus-visible),
+	[role="button"]:focus:not(:focus-visible),
+	[tabindex]:focus:not(:focus-visible) {
+		outline: none;
+		box-shadow: none;
+	}
+
+}
+
+// Underline mandate (spec). Resting + visited links MUST be
+// underlined — color alone (5.70:1 distinct purple vs blue link) is
+// not enough for protanopes / deuteranopes per SC 1.4.1 Use of Color.
+// Zero-specificity `:where()` so customers can opt out per-link
+// without specificity bumps.
+:where(.gv-themed) :is(a:link, a:visited) {
+	text-decoration: underline;
+}
+
+// =========================================================
+// Focus rings inside `overflow:hidden` ancestors
+//
+// Containers with `border-radius` + `overflow:hidden` (rounded
+// corner clip) ALSO clip descendants' `box-shadow` focus rings.
+// Switch to `outline` as the visible ring inside those
+// containers — outlines render OUTSIDE the box-model and aren't
+// clipped by ancestor overflow.
+//
+// Targets the documented clipping ancestors today. Add new
+// containers to this selector if you introduce additional
+// `overflow:hidden + radius` chrome.
+// =========================================================
+// `gv-datatables-container` sits on the SAME element as `.gv-themed`
+// (compound); `.gv-map-canvas` is a true descendant of the marked
+// maps container.
+.gv-datatables-container.gv-themed,
+.gv-themed .gv-map-canvas {
+	a:focus-visible,
+	button:focus-visible,
+	input:focus-visible,
+	select:focus-visible,
+	textarea:focus-visible,
+	[role="button"]:focus-visible,
+	[tabindex]:focus-visible {
+		outline: var(--gv-focus-ring-width) var(--gv-focus-ring-style) var(--gv-focus-ring-color);
+		outline-offset: var(--gv-focus-ring-offset);
+		box-shadow: none; // box-shadow would clip; outline doesn't.
+	}
+}
+
+// =========================================================
+// Skip / Back links — visible on focus for keyboard users
+//
+// The sibling arm covers the Table single-entry placement (back link
+// before the marked container); kept as a separate rule so browsers
+// without `:has()` keep the descendant arm.
+// =========================================================
+.gv-themed .gv-back-link a {
+	&:focus-visible {
+		outline: var(--gv-focus-ring-width) var(--gv-focus-ring-style) transparent;
+		outline-offset: var(--gv-focus-ring-offset);
+		box-shadow: var(--gv-shadow-focus);
+	}
+}
+
+.gv-back-link:has(~ .gv-themed) a {
+	&:focus-visible {
+		outline: var(--gv-focus-ring-width) var(--gv-focus-ring-style) transparent;
+		outline-offset: var(--gv-focus-ring-offset);
+		box-shadow: var(--gv-shadow-focus);
+	}
+}
+
+// =========================================================
+// Status pairing rule (SC 1.4.1 — Use of Color)
+//
+// Pattern modeled on WordPress block editor's `ContrastChecker`
+// component (@wordpress/block-editor): low-contrast pairings are
+// flagged AND text + icon MUST accompany color signals.
+//
+// `--gv-color-warning` (1.69:1) cannot communicate state by color
+// alone. `--gv-color-success` (4.74:1) is marginal. Wrap status
+// indicators in `.gv-status .gv-status--{kind}` so the dual-channel
+// affordance is enforced at render.
+//
+// Two arms throughout this section: the descendant arm covers
+// status/notice markup inside the marked container; the
+// `:has(~ .gv-themed)` sibling arm covers markup echoed on the
+// `gravityview_before` hook, which renders BEFORE the container
+// opens (a preceding sibling, e.g. Duplicate/Delete Entry
+// messages). Both arms keep equal specificity.
+// =========================================================
+.gv-status:has(~ .gv-themed),
+.gv-themed .gv-status {
+	display: inline-flex;
+	align-items: center;
+	gap: var(--gv-space-2);
+	min-height: 1.5em;
+
+	// Icon slot — required for dual-channel signal.
+	// `forced-color-adjust: none` retains author semantics in Windows
+	// High Contrast Mode so the dual-channel indicator survives —
+	// the visible text label is the load-bearing affordance, the
+	// icon is the colour-independent indicator. The hairline
+	// `--gv-radius-xs` softens any background-tinted icon container
+	// without reading as a "chip."
+	.gv-status__icon {
+		flex: 0 0 auto;
+		width: 1em;
+		height: 1em;
+		fill: currentColor;
+		border-radius: var(--gv-radius-xs);
+		forced-color-adjust: none;
+	}
+
+	// Text slot — required.
+	.gv-status__text {
+		font-weight: var(--gv-font-weight-medium);
+	}
+}
+
+.gv-status--error:has(~ .gv-themed),
+.gv-themed .gv-status--error    {
+	color: var(--gv-color-error);
+	background: var(--gv-color-surface-error);
+
+	.gv-status__icon { fill: var(--gv-color-on-error, var(--gv-color-error)); }
+}
+.gv-status--success:has(~ .gv-themed),
+.gv-themed .gv-status--success  {
+	color: var(--gv-color-success);
+	background: var(--gv-color-surface-success);
+
+	.gv-status__icon { fill: var(--gv-color-on-success, var(--gv-color-success)); }
+}
+.gv-status--info:has(~ .gv-themed),
+.gv-themed .gv-status--info     {
+	color: var(--gv-color-info);
+	background: var(--gv-color-surface-info);
+
+	.gv-status__icon { fill: var(--gv-color-on-info, var(--gv-color-info)); }
+}
+.gv-status--warning:has(~ .gv-themed),
+.gv-themed .gv-status--warning  {
+	// Warning paint goes on the icon's fill + the text, NOT on the warning
+	// hue — warning yellow on white is 1.69:1 and unreadable. The
+	// surface-warning background ships a high-contrast text colour
+	// (`text` ≈ 14:1 on the `#fef0d6` tint), so the dual-channel signal
+	// is the surface tint + the icon.
+	color: var(--gv-color-text);
+	background: var(--gv-color-surface-warning);
+
+	// Icon stroke reads through `--gv-color-warning-icon` so third-party
+	// presets can theme the warning channel via the registry without
+	// forking SCSS. Default `#b07000` ≥ 3:1 on `surface-warning`.
+	.gv-status__icon { fill: var(--gv-color-warning-icon); }
+}
+
+// =========================================================
+// Canonical notice component — `.gv-notice` + role-specific
+// variants. Spec § "Status pairing" / .gv-notice contract.
+//
+// Edit Entry, save-state announcements, and inline form errors
+// all compose `.gv-notice .gv-notice--{kind}`. The Edit Entry
+// scope (`_edit-entry.scss`) layers additional padding /
+// margin-block-end; the variant paint here is universal.
+//
+// Border-inline-start carries the colour-coded affordance; the
+// background tint is the secondary channel.
+// =========================================================
+.gv-notice:has(~ .gv-themed),
+.gv-themed .gv-notice {
+	border-radius: var(--gv-radius-md);
+	border-inline-start: var(--gv-border-width-3) solid var(--gv-color-primary);
+	background: var(--gv-color-surface-alt);
+	color: var(--gv-color-text);
+}
+
+.gv-notice--info:has(~ .gv-themed),
+.gv-themed .gv-notice--info {
+	background: var(--gv-color-surface-info);
+	color: var(--gv-color-info);
+	border-inline-start-color: var(--gv-color-info);
+
+	// Inline action links inside an info notice — hover paints the
+	// dedicated info-hover token so dismissable notices show a
+	// distinct interaction signal in the same family.
+	a:hover,
+	a:focus-visible {
+		color: var(--gv-color-info-hover);
+	}
+}
+
+.gv-notice--success:has(~ .gv-themed),
+.gv-themed .gv-notice--success {
+	background: var(--gv-color-surface-success);
+	color: var(--gv-color-success);
+	border-inline-start-color: var(--gv-color-success);
+
+	a:hover,
+	a:focus-visible {
+		color: var(--gv-color-success-hover);
+	}
+}
+
+.gv-notice--warning:has(~ .gv-themed),
+.gv-themed .gv-notice--warning {
+	background: var(--gv-color-surface-warning);
+	color: var(--gv-color-text); // warning hue is not text-safe
+	border-inline-start-color: var(--gv-color-warning-icon); // darker yellow — clears SC 1.4.11
+}
+
+.gv-notice--error:has(~ .gv-themed),
+.gv-themed .gv-notice--error {
+	background: var(--gv-color-surface-error);
+	color: var(--gv-color-error);
+	border-inline-start-color: var(--gv-color-error);
+}
+
+// =========================================================
+// Disabled affordance (SC 1.4.11 / SC 4.1.2).
+//
+// Universal `[aria-disabled="true"]` / `:disabled` paint so any
+// disabled affordance — including non-input elements like
+// `[role="button"]` links that can't take `:disabled` — reads as
+// inert with the right surface + text + outline pairing.
+//
+// `pointer-events: none` is intentionally NOT set here — disabled
+// controls must remain keyboard-focusable so SR users hear the
+// "disabled" announcement (WAI-ARIA 1.2 § 6.6.4). Customer Custom
+// CSS can opt in if their flow truly forbids interaction.
+// =========================================================
+.gv-themed [aria-disabled="true"]:not(input):not(button):not(select):not(textarea) {
+	color: var(--gv-color-text-disabled);
+	background-color: var(--gv-color-surface-disabled);
+	cursor: not-allowed;
+}
+
+// Pair-disabled foreground/background where the consumer expects
+// the "on" tint (icons, badges) rather than the body-text tint.
+.gv-themed .gv-disabled-surface {
+	background-color: var(--gv-color-surface-disabled);
+	color: var(--gv-color-on-disabled);
+}
+
+// =========================================================
+// System overlay z-index layering
+//
+// Spec § Layer-2 — Scrollbar / sticky-header / pause. The
+// `--gv-z-{layer}` tokens are the contract for *any* GravityView
+// chrome that floats above the document flow:
+//
+// - `--gv-z-dropdown`  : search-bar dropdowns, autocomplete
+// - `--gv-z-sticky`    : sticky table / DataTables headers
+// - `--gv-z-popover`   : Map info windows
+// - `--gv-z-modal`     : Lightbox overlays
+// - `--gv-z-toast`     : Save / load announcement toasts
+//
+// Customers who layer GravityView under a sticky site header or
+// chat widget retune the tokens once and every consumer slides in.
+// =========================================================
+// Lightbox root: Fancybox v4 mounts `.fancybox__container` on
+// `document.body`, OUTSIDE the View container. The provider stamps
+// two classes onto that mount: `gv-lightbox` (via the `mainClass`
+// setting, always) and `gv-themed` (copied from the trigger's
+// closest marked container). Carrying `gv-themed` also makes the
+// `:where(.gv-themed)` token block apply to the mount directly, so
+// `--gv-z-modal` and the color tokens resolve there. The literal
+// var() fallback covers any mount that misses the marker.
+.fancybox__container.gv-themed,
+.fancybox__container.gv-lightbox,
+.gv-themed .gv-lightbox {
+	// gv-token-purity-ok: body-mounted overlay can miss the marker, so the literal fallback is load-bearing
+	z-index: var(--gv-z-modal, 100000);
+}
+
+// Toast announcements (save/load) — passive `role="status"`.
+// No toast emitter ships today; this is the forward-looking
+// contract. Future toast emitters MUST either mount inside the
+// View container (descendant arms) or stamp `gv-themed` on the
+// toast element itself (compound arms) so the token resolves;
+// the literal fallback covers a mount that misses both.
+.gv-themed .gv-toast,
+.gv-themed [role="status"].gv-announce,
+.gv-toast.gv-themed,
+[role="status"].gv-announce.gv-themed {
+	// gv-token-purity-ok: body-mounted toast can miss the marker, so the literal fallback is load-bearing
+	z-index: var(--gv-z-toast, 600);
+}
+
+// =========================================================
+// Screen reader utilities
+// =========================================================
+.gv-themed .gv-sr-only {
+	position: absolute;
+	width: 1px;
+	height: 1px;
+	padding: 0;
+	margin: -1px;
+	overflow: hidden;
+	clip-path: inset(50%);
+	clip: rect(0, 0, 0, 0);
+	white-space: nowrap;
+	border: 0;
+}
+
+.gv-themed .gv-sr-only-focusable {
+	position: absolute;
+	width: 1px;
+	height: 1px;
+	padding: 0;
+	margin: -1px;
+	overflow: hidden;
+	clip-path: inset(50%);
+	clip: rect(0, 0, 0, 0);
+	white-space: nowrap;
+	border: 0;
+
+	&:focus,
+	&:active {
+		position: static;
+		width: auto;
+		height: auto;
+		padding: var(--gv-space-2) var(--gv-space-4);
+		margin: 0;
+		overflow: visible;
+		clip: auto;
+		white-space: normal;
+		background: var(--gv-color-surface);
+		color: var(--gv-color-primary);
+		font-size: var(--gv-font-size-sm);
+		font-weight: var(--gv-font-weight-medium);
+		border: var(--gv-border-width-2) solid var(--gv-color-primary);
+		border-radius: var(--gv-radius-md);
+		z-index: 100000;
+	}
+}
+
+// =========================================================
+// Touch targets — ensure 44×44px minimum on interactive
+// elements for touch accessibility (WCAG 2.5.5 / 2.5.8).
+//
+// Scoped to `pointer: coarse` so we only enlarge tap targets
+// when the primary input device is a finger. On mouse/desktop
+// (`pointer: fine`), tightly packed checkbox rows and compact
+// buttons remain compact.
+// =========================================================
+@media (pointer: coarse) {
+	.gv-themed {
+		// Pagination links — scoped to `li .page-numbers` because WordPress also
+		// applies the `.page-numbers` class to the wrapping `<ul>`.
+		.gv-widget-page-links li .page-numbers {
+			min-width: var(--gv-size-touch-target);
+			min-height: var(--gv-size-touch-target);
+		}
+
+		// Buttons
+		button,
+		.gv-search-button,
+		.gv-search-clear,
+		[role="button"] {
+			min-height: var(--gv-size-touch-target);
+			min-width: var(--gv-size-touch-target);
+		}
+
+		// Checkbox and radio labels (the clickable area). Includes the
+		// single-checkbox variant (e.g. "Is Starred") which renders the
+		// `.gv-check-radio` label directly without a wrapping `<ul>`.
+		.gv-search-field-checkbox label.gv-check-radio,
+		.gv-search-field-radio label.gv-check-radio,
+		.gv-search-field-single_checkbox label.gv-check-radio {
+			min-height: var(--gv-size-touch-target);
+		}
+	}
+}
+
+// =========================================================
+// Reduced motion (SC 2.3.3 / SC 2.2.2)
+//
+// Two-part fix: re-point the motion multiplier (handles
+// `var()`-based transitions across the system) AND a wildcard
+// rule that catches hardcoded `animation:` / `@keyframes` that
+// don't consume the token. `0.01ms` not `0` per CSS Transitions
+// L1 §6 — duration=0+delay=0 suppresses `transitionend`, which
+// silently breaks JS listeners.
+// =========================================================
+@media (prefers-reduced-motion: reduce) {
+	.gv-themed {
+		--gv-motion-multiplier: 0.01;
+
+		// Durations and iteration counts only. Static `transform`
+		// values are layout, not motion, and stripping them would
+		// break positioned components; with durations at 0.01ms no
+		// transform ever animates.
+		*,
+		*::before,
+		*::after {
+			transition-duration: 0.01ms !important;
+			animation-duration: 0.01ms !important;
+			animation-iteration-count: 1 !important;
+		}
+	}
+}
+
+// =========================================================
+// prefers-contrast: more — higher-contrast palette branch
+// (SC 1.4.6 Contrast Enhanced AAA lifeline for users who turn
+// it on, AND a defensive backstop for any of our shipped pairs
+// that get clamped at the user's display gamut).
+// =========================================================
+@media (prefers-contrast: more) {
+	.gv-themed {
+		--gv-color-text-secondary: #3d4757;   // 8.30:1 on surface
+		--gv-color-text-muted: #3d4757;       // intentionally same as secondary;
+		                                      // semantic distinction sacrificed for contrast
+		--gv-color-placeholder: #3d4757;      // same — placeholder also gains parity
+		--gv-color-border: #000;              // max contrast for control outlines
+		--gv-focus-ring-color: #000;          // max contrast ring
+		--gv-focus-ring-width: var(--gv-border-width-3); // thicker ring in high-contrast mode
+
+		// SC 2.5.5 AAA — pagination buttons jump to 44px in
+		// high-contrast mode (users opting into stronger contrast
+		// often also need larger hit targets — anecdotal pattern
+		// across vision-accessibility user research). Default
+		// 36px ships AA-compliant (SC 2.5.8); high-contrast bumps
+		// to AAA.
+		--gv-pagination-button-size: var(--gv-size-touch-target);
+	}
+}
+
+// =========================================================
+// Stacked-diacritic / CJK line-height
+//
+// Scripts that stack marks above/below the baseline (Thai, Lao,
+// Burmese, Devanagari, Vietnamese with tone marks, classical CJK
+// vertical-text) clip at line-height 1.5. The `:lang()` selector
+// auto-promotes line-height to the CJK token when the document
+// `lang` attribute matches.
+// =========================================================
+.gv-themed {
+	&:lang(th),
+	&:lang(lo),
+	&:lang(my),
+	&:lang(hi),
+	&:lang(bn),
+	&:lang(ta),
+	&:lang(te),
+	&:lang(kn),
+	&:lang(ml),
+	&:lang(si),
+	&:lang(vi),
+	&:lang(zh),
+	&:lang(ja),
+	&:lang(ko) {
+		--gv-line-height-normal: var(--gv-line-height-cjk);
+	}
+}
+
+// =========================================================
+// prefers-reduced-transparency
+// Strip backdrop-filter and dilute semi-transparent backgrounds
+// for users who can't process layered visuals.
+// =========================================================
+@media (prefers-reduced-transparency: reduce) {
+	.gv-themed {
+		// Re-point any token consumer using backdrop-filter to a
+		// solid surface. Box-shadow alpha drops to zero so
+		// translucent rings don't bleed into adjacent content.
+		--gv-shadow-xs: none;
+		--gv-shadow-sm: none;
+		--gv-shadow-md: none;
+		--gv-shadow-lg: none;
+		--gv-shadow-xl: none;
+
+		* {
+			backdrop-filter: none !important;
+		}
+	}
+}
+
+// =========================================================
+// prefers-reduced-data — low-data branch
+// Drop ornamental shadows + soft-focus rings (which are nudge-only
+// in this system) so we ship less computed CSS to clients flagging
+// reduced-data intent. NOTE: prefers-reduced-data is currently
+// Editor's Draft in W3C Media Queries L5; browser support is
+// limited as of 2026-05. Recipe degrades gracefully.
+// =========================================================
+@media (prefers-reduced-data: reduce) {
+	.gv-themed {
+		--gv-shadow-xs: none;
+		--gv-shadow-sm: none;
+		--gv-shadow-md: none;
+		--gv-shadow-lg: none;
+		--gv-shadow-xl: none;
+	}
+}
+
+// =========================================================
+// @media print — print stylesheet
+//
+// Hide interactive chrome (search, pagination, focus rings),
+// flatten color tokens to print-safe defaults (black on white),
+// and zero shadows. SC 1.4.3 already passes on the default
+// print palette by collapsing to single-color.
+// =========================================================
+@media print {
+	.gv-themed {
+		// Print on white, regardless of host display palette.
+		--gv-color-surface: #fff;
+		--gv-color-surface-alt: #fff;
+		--gv-color-surface-hover: #fff;
+		--gv-color-text: #000;
+		--gv-color-text-secondary: #000;
+		--gv-color-text-muted: #000;
+		--gv-color-border: #000;
+		--gv-color-border-light: #888888;
+		--gv-color-link: #000;
+		--gv-color-link-visited: #000;
+		--gv-color-link-hover: #000;
+		--gv-color-link-active: #000;
+
+		// Zero motion + shadow on print.
+		--gv-motion-multiplier: 0.01;
+		--gv-shadow-xs: none;
+		--gv-shadow-sm: none;
+		--gv-shadow-md: none;
+		--gv-shadow-lg: none;
+		--gv-shadow-xl: none;
+		--gv-shadow-focus: none;
+
+		// Hide controls that have no print meaning.
+		.gv-widget-search,
+		.gv-widget-page-links,
+		.gv-back-link,
+		.gv-search-button,
+		.gv-search-clear,
+		.gv-drag-handle,
+		[role="button"] {
+			display: none !important;
+		}
+
+		// Underline links so the URL hint extension (in many
+		// browsers) reads correctly.
+		a {
+			text-decoration: underline;
+		}
+	}
+
+	// The Table single-entry back link renders BEFORE the marked
+	// container (sibling arm); hide it on print like its in-container
+	// siblings above.
+	.gv-back-link:has(~ .gv-themed) {
+		display: none !important;
+	}
+}
+
+// =========================================================
+// High contrast mode — ensure visibility when system forced
+// colors are active (Windows High Contrast, etc.)
+// =========================================================
+@media (forced-colors: active) {
+	.gv-themed {
+		// Re-point Layer 1 color tokens to system colors so consumer
+		// rules using `var(--gv-color-…)` paint with system-managed
+		// palette under HCM (rather than the plugin's hex defaults,
+		// which HCM strips inconsistently).
+		--gv-color-text: CanvasText;
+		--gv-color-text-secondary: CanvasText;
+		--gv-color-text-muted: CanvasText;
+		--gv-color-link: LinkText;
+		--gv-color-link-visited: VisitedText;
+		--gv-color-link-hover: LinkText;
+		--gv-color-link-active: ActiveText;
+		--gv-color-surface: Canvas;
+		--gv-color-surface-alt: Canvas;
+		--gv-color-surface-hover: Canvas;
+		--gv-color-border: CanvasText;
+		--gv-focus-ring-color: Highlight;
+		--gv-button-bg: ButtonFace;
+		--gv-button-color: ButtonText;
+
+		// Ensure borders remain visible
+		.gv-table-container table,
+		.gv-table-container th,
+		.gv-table-container td {
+			border: var(--gv-border-width-1) solid;
+		}
+
+		// Buttons and interactive elements maintain visible borders
+		button,
+		.gv-search-button,
+		.gv-search-clear,
+		.page-numbers,
+		[role="button"] {
+			border: var(--gv-border-width-1) solid;
+		}
+
+		// Input fields
+		input,
+		select,
+		textarea {
+			border: var(--gv-border-width-1) solid;
+		}
+
+		// Active/current states use system highlight colors
+		.page-numbers.current {
+			forced-color-adjust: none;
+			background: Highlight;
+			color: HighlightText;
+			border-color: Highlight;
+		}
+
+		// Focus indicators use system highlight
+		a:focus-visible,
+		button:focus-visible,
+		input:focus-visible,
+		select:focus-visible,
+		textarea:focus-visible,
+		[role="button"]:focus-visible,
+		[tabindex]:focus-visible {
+			outline: var(--gv-border-width-2) solid Highlight;
+		}
+
+		// Sorting indicators must not rely on color alone
+		.gv-datatables-container .sorting_asc::after,
+		.gv-datatables-container .sorting_desc::after {
+			forced-color-adjust: none;
+		}
+
+		// Cards and list items need visible boundaries
+		.gv-list-view,
+		.gv-layout-builder-view--entry,
+		.gv-diy-view {
+			border: var(--gv-border-width-1) solid;
+		}
+
+		// Search-result highlight (SC 1.4.1 + forced-colors strip).
+		// Forward-looking contract: when GravityView search adds
+		// term-highlighting, the matched substrings MUST be wrapped
+		// in `<mark class="gv-search-match">…</mark>` so this rule
+		// paints them with HCM-survivable system colors. No-op
+		// today (no element matches); zero CSS cost.
+		.gv-search-match,
+		mark.gv-search-match {
+			background: Mark;
+			color: MarkText;
+			forced-color-adjust: none;
+		}
+	}
+}
+
+// =========================================================
+// Drag-handle (SC 2.5.7 Dragging Movements, AA in 2.2)
+//
+// Any draggable affordance MUST be paired with a click-to-pick
+// alternative (single-pointer-event operation). The picked state
+// uses `[aria-pressed="true"]`; one click on a target moves the item.
+// =========================================================
+.gv-themed .gv-drag-handle {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	min-width: var(--gv-drag-handle-size);
+	min-height: var(--gv-drag-handle-size);
+	color: var(--gv-drag-handle-color);
+	cursor: grab;
+	background: transparent;
+	border: 0;
+
+	&[aria-pressed="true"] {
+		cursor: grabbing;
+		background: var(--gv-color-primary-subtle);
+		color: var(--gv-color-primary);
+	}
+}
+

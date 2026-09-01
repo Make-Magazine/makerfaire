@@ -742,7 +742,7 @@ class Foo {
 
     private function initialize_cli_integrations() {
         // Check if WP-CLI is running and Foundation's CLI class is available
-        if ( defined( 'WP_CLI' ) && WP_CLI && class_exists( 'GravityKit\Foundation\CLI\CLI' ) ) {
+        if ( defined( 'WP_CLI' ) && WP_CLI && class_exists( 'GravityKit\GravityView\Foundation\CLI\CLI' ) ) {
             add_filter( 'gk/foundation/cli/commands', [ $this, 'add_my_gk_tool_command' ] );
         }
     }

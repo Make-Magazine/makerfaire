@@ -28,6 +28,8 @@ class GPMultiPageNavigation {
 	errorPagesCount?: string;
 	currentPage?: string;
 	obververInitialized: boolean = false;
+	stepObserver?: MutationObserver;
+	destroyed: boolean = false;
 
 	constructor(args: GPMultiPageNavigationArgs) {
 		this.formId = args.formId;
@@ -45,7 +47,28 @@ class GPMultiPageNavigation {
 	}
 
 	init(): void {
+		/*
+		 * Bail if GF is performing a JS redirect (AJAX redirect confirmation). `gform_post_render` fires again with
+		 * the form DOM still in place, re-initializing would attach duplicate step observers that can conflict and
+		 * freeze the page mid-redirect. Mirrors the same guard in GP Page Transitions.
+		 */
+		if (window.gformRedirect) {
+			return;
+		}
+
+		// Instances are recreated on every `gform_post_render`, tear down the previous one so two instances never
+		// act on the same elements.
+		const previousInstance = (window as any)[`gpmpn_${this.formId}`] as GPMultiPageNavigation | undefined;
+		if (previousInstance && previousInstance !== this && typeof previousInstance.destroy === 'function') {
+			previousInstance.destroy();
+		}
+		(window as any)[`gpmpn_${this.formId}`] = this;
+
 		window.gform.addAction('gppt_before_transition', (curr, next, gppt) => {
+			if (this.destroyed) {
+				return;
+			}
+
 			if (!gppt.validatePage) {
 				/**
 				 * Older version of GPPT do not have the validatePage method.
@@ -81,6 +104,10 @@ class GPMultiPageNavigation {
 		});
 
 		window.gform.utils.addAsyncFilter('gform/submission/pre_submission', async (data: any) => {
+			if (this.destroyed) {
+				return data;
+			}
+
 			// If all pages are valid, reset page validity to prevent submission issues.
 			const allValid = Object.values(this.pageValidity).every(Boolean);
 			if (allValid) {
@@ -90,13 +117,17 @@ class GPMultiPageNavigation {
 		});
 
 		window.gform.addAction('gppt_after_transition', (gppt) => {
+			if (this.destroyed) {
+				return;
+			}
+
 			this.updateUI();
 			$('input#gw_page_progression').val(gppt.currentPage);
 		});
 
 		const pageLinksSelector = 'a.gpmpn-page-link, a.gwmpn-page-link, .gpmpn-page-link a';
 
-		$(document).on('click', pageLinksSelector, function(event) {
+		$(document).on(`click.gpmpn_${this.formId}`, pageLinksSelector, function(event) {
 			event.preventDefault();
 
 			const hrefArray = $(this).attr('href')?.split('#') || [];
@@ -126,7 +157,11 @@ class GPMultiPageNavigation {
 
 		this.obververInitialized = true;
 
-		const observer = new MutationObserver((mutations) => {
+		this.stepObserver = new MutationObserver((mutations) => {
+			if (this.destroyed) {
+				return;
+			}
+
 			for (const mutation of mutations) {
 				const pageId = parseInt(mutation.target?.id?.split?.('_')?.[3]);
 				if (pageId) {
@@ -141,8 +176,25 @@ class GPMultiPageNavigation {
 		for (const pageId of Object.keys(this.pageValidity)) {
 			const step = document.getElementById(`gf_step_${this.formId}_${pageId}`);
 			if (step) {
-				observer.observe(step, { attributes: true });
+				this.stepObserver.observe(step, { attributes: true });
 			}
+		}
+	}
+
+	/**
+	 * Disconnect this instance when a newer one takes over the form. The `gform` callbacks registered in init()
+	 * cannot be reliably removed, so they short-circuit via the `destroyed` flag instead.
+	 */
+	destroy(): void {
+		this.destroyed = true;
+
+		this.stepObserver?.disconnect();
+		this.stepObserver = undefined;
+
+		$(document).off(`click.gpmpn_${this.formId}`);
+
+		if ((window as any)[`gpmpn_${this.formId}`] === this) {
+			delete (window as any)[`gpmpn_${this.formId}`];
 		}
 	}
 

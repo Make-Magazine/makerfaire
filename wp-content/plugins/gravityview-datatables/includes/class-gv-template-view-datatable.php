@@ -31,15 +31,28 @@ class View_DataTable_Template extends View_Template {
 	/**
 	 * Output the table column names.
 	 *
+	 * Called for both `<thead>` (datatable-header.php) and `<tfoot>` (datatable-footer.php,
+	 * where footer field filters live). `$context` distinguishes the two so the `id` attribute
+	 * -- unlike `class`, which CSS and the JS export header format both key off of -- is not
+	 * duplicated across the document.
+	 *
+	 * @param string $context 'head' (default) or 'foot'.
+	 *
 	 * @return void
 	 */
-	public function the_columns() {
+	public function the_columns( $context = 'head' ) {
 		$fields = $this->view->fields->by_position( 'directory_table-columns' );
 		$form   = $this->view->form;
 
 		$visible_field_ids = array();
+		$id_suffix         = 'foot' === $context ? '-foot' : '';
 
 		/** @todo Add class filters from the old code. */
+		// DataTables ignores columns.width once autoWidth is off, so these <th> styles are the
+		// widths that render. They come from the same normalizer the JS config uses.
+		$normalized_widths = \GV_Extension_DataTables_Data::get_normalized_column_widths( $this->view );
+		$column_index      = 0;
+
 		foreach ( $fields->by_visible()->all() as $field ) {
 
 			if ( 'custom' == $field->type ) {
@@ -50,31 +63,34 @@ class View_DataTable_Template extends View_Template {
 
 			$column_label = apply_filters( 'gravityview/template/field_label', $field->get_label( $this->view, $form ), $field->as_configuration(), $form->form ? $form->form : null, null );
 
-			echo strtr( '<th id="gv-field-{form_id}-{field_id}" class="gv-field-{form_id}-{field_id} {css_class}" {width} scope="col"><span class="gv-field-label">{label}</span></th>', array(
+			echo strtr( '<th id="gv-field-{form_id}-{field_id}{id_suffix}" class="gv-field-{form_id}-{field_id} {css_class}" {width} scope="col"><span class="gv-field-label">{label}</span></th>', array(
 				'{form_id}'   => esc_attr( $form->ID ),
 				'{field_id}'  => esc_attr( $field->ID ),
+				'{id_suffix}' => $id_suffix,
 				'{css_class}' => gravityview_sanitize_html_class( $field->custom_class ),
-				'{width}'     => $field->width ? sprintf( ' style="width: %d%%"', $field->width ) : '',
+				'{width}'     => isset( $normalized_widths[ $column_index ] ) && null !== $normalized_widths[ $column_index ]
+					? sprintf( ' style="width: %d%%"', $normalized_widths[ $column_index ] )
+					: '',
 				'{label}'     => $column_label,
 			) );
+
+			++$column_index;
 		}
 
-		// Add hidden column headers for sort fields that aren't in the visible columns.
-		// Read from saved post meta to stay in sync with the JS config and AJAX data,
-		// which also read from post meta via get_original_sort_field_setting().
-		$original_settings  = get_post_meta( $this->view->ID, '_gravityview_template_settings', true );
-		$sort_field_setting = (array) ( isset( $original_settings['sort_field'] ) ? $original_settings['sort_field'] : [] );
-		$sort_field_setting = array_unique( $sort_field_setting );
+		// Hidden column headers for sort fields that aren't displayed as columns. This list
+		// comes from the same resolver the JS config uses, because DataTables throws
+		// "Incorrect column count" and never renders when the two disagree.
+		$hidden_sort_fields = \GV_Extension_DataTables_Data::get_hidden_sort_fields( $this->view );
 
-		foreach ( $sort_field_setting as $sort_field ) {
-			if ( empty( $sort_field ) || in_array( $sort_field, $visible_field_ids ) ) {
-				continue;
-			}
+		foreach ( $hidden_sort_fields as $hidden_sort_field ) {
+			$sort_field = $hidden_sort_field['sort_field'];
 
-			// Create a field object for the hidden sort field.
-			$hidden_field = is_numeric( $sort_field )
-				? \GV\GF_Field::by_id( $this->view->form, $sort_field )
-				: \GV\Internal_Field::by_id( $sort_field );
+			// A joined form's field is stored as `<form_id>_<field_id>`, so the label has to be
+			// read from the form that owns it, not from this View's own form.
+			$owner_form   = \GV\GF_Form::by_id( $hidden_sort_field['form_id'] );
+			$hidden_field = is_numeric( $hidden_sort_field['field_id'] ) && $owner_form
+				? \GV\GF_Field::by_id( $owner_form, $hidden_sort_field['field_id'] )
+				: \GV\Internal_Field::by_id( $hidden_sort_field['field_id'] );
 
 			if ( ! $hidden_field ) {
 				continue;
@@ -83,9 +99,10 @@ class View_DataTable_Template extends View_Template {
 			$column_label = apply_filters( 'gravityview/template/field_label', $hidden_field->get_label( $this->view, $form ), $hidden_field->as_configuration(), $form->form ? $form->form : null, null );
 
 			// Output hidden column header.
-			echo strtr( '<th id="gv-field-{form_id}-{field_id}" class="gv-field-{form_id}-{field_id} gv-hidden-sort-column" scope="col"><span class="gv-field-label">{label}</span></th>', array(
+			echo strtr( '<th id="gv-field-{form_id}-{field_id}{id_suffix}" class="gv-field-{form_id}-{field_id} gv-hidden-sort-column" scope="col"><span class="gv-field-label">{label}</span></th>', array(
 				'{form_id}'   => esc_attr( $form->ID ),
 				'{field_id}'  => esc_attr( $sort_field ),
+				'{id_suffix}' => $id_suffix,
 				'{label}'     => $column_label,
 			) );
 		}

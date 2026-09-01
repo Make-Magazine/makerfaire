@@ -1,9 +1,4 @@
 <?php
-/**
- * @license GPL-2.0-or-later
- *
- * Modified using {@see https://github.com/BrianHenryIE/strauss}.
- */
 
 namespace GravityKit\GravityView\Foundation\Translations;
 
@@ -445,11 +440,7 @@ JS;
 	 * @return void
 	 */
 	public function on_plugin_deactivation( $plugin_file ) {
-		if ( ! function_exists( 'get_plugin_data' ) ) {
-			require_once ABSPATH . 'wp-admin/includes/plugin.php';
-		}
-
-		$plugin_data = get_plugin_data( $plugin_file );
+		$plugin_data = CoreHelpers::get_plugin_data( $plugin_file );
 
 		if ( $this->is_en_locale() || ! $this->can_install_languages() ) {
 			return;

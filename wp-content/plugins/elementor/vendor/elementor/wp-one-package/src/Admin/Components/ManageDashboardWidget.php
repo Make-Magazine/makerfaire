@@ -55,6 +55,10 @@ class ManageDashboardWidget {
 			return;
 		}
 
+		if ( ! ManageWidgetState::is_plugin_installed() ) {
+			return;
+		}
+
 		add_meta_box(
 			self::WIDGET_ID,
 			$this->get_widget_title(),
@@ -93,6 +97,10 @@ class ManageDashboardWidget {
 	 */
 	public function enqueue_assets( $hook ) {
 		if ( 'index.php' !== $hook || ! current_user_can( 'manage_options' ) ) {
+			return;
+		}
+
+		if ( ! ManageWidgetState::is_plugin_installed() ) {
 			return;
 		}
 

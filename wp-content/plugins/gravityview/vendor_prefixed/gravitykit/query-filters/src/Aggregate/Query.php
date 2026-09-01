@@ -1,9 +1,4 @@
 <?php
-/**
- * @license MIT
- *
- * Modified using {@see https://github.com/BrianHenryIE/strauss}.
- */
 
 namespace GravityKit\GravityView\QueryFilters\Aggregate;
 
@@ -11,7 +6,10 @@ use GF_Query;
 use GF_Query_Call;
 use GF_Query_Column;
 use GF_Query_Condition;
+use GF_Query_Literal;
 use GFCommon;
+use GFFormsModel;
+use GravityKit\GravityView\QueryFilters\Condition\Resolves_Owner_Entry;
 use GravityKit\GravityView\QueryFilters\Util\QueryHelper;
 use InvalidArgumentException;
 use RGCurrency;
@@ -22,6 +20,8 @@ use RGCurrency;
  * @since 2.4.0
  */
 final class Query {
+	use Resolves_Owner_Entry;
+
 	/**
 	 * The operation types.
 	 *
@@ -33,6 +33,20 @@ final class Query {
 	public const OPERATION_MIN   = 'MIN';
 	public const OPERATION_MAX   = 'MAX';
 	public const OPERATION_ALL   = 'ALL';
+
+	/**
+	 * The alias holding the value being aggregated once per owning entry.
+	 *
+	 * @since 2.16.0
+	 */
+	private const VALUE_ALIAS = 'gk_aggregate_value';
+
+	/**
+	 * The alias of the subquery reducing rows to the values their entries hold.
+	 *
+	 * @since 2.16.0
+	 */
+	private const SUBQUERY_ALIAS = 'gk_aggregate';
 
 	/**
 	 * The base query.
@@ -51,6 +65,15 @@ final class Query {
 	 * @var null|string
 	 */
 	private $currency = null;
+
+	/**
+	 * Whether a table alias is defined by the base query, keyed by alias.
+	 *
+	 * @since 2.16.0
+	 *
+	 * @var array<string, bool>
+	 */
+	private $exposed_sources = [];
 
 	/**
 	 * The fields to group by.
@@ -265,6 +288,8 @@ final class Query {
 	/**
 	 * Returns an array of the count grouped by the provided group fields.
 	 *
+	 * Counts every matching row, with no field to hold a value for.
+	 *
 	 * @since 2.4.0
 	 *
 	 * @return array{count: int}.
@@ -306,7 +331,7 @@ final class Query {
 	 *
 	 * @param Field $field The field to perform the operation on.
 	 *
-	 * @return array
+	 * @return array The average, alongside the `count` of rows it averaged.
 	 */
 	public function avg( Field $field ): array {
 		return $this->process( self::OPERATION_AVG, $field );
@@ -328,11 +353,15 @@ final class Query {
 	/**
 	 * Returns an array of all the aggregate operations on the provided field.
 	 *
+	 * Every value is scoped to the field, the `count` included: it reports the rows holding a value
+	 * for it, not the rows that matched. Expect it to be lower than {@see self::count()} whenever
+	 * some matching row leaves the field empty, and read the two as answers to different questions.
+	 *
 	 * @since 2.4.0
 	 *
 	 * @param Field $field The field to perform the operation on.
 	 *
-	 * @return array
+	 * @return array The aggregates, each covering the rows that hold a value for the field.
 	 */
 	public function all( Field $field ): array {
 		return $this->process( self::OPERATION_ALL, $field );
@@ -372,6 +401,33 @@ final class Query {
 			'Summary request operation can only be one of "%s". "%s" provided.'
 		);
 
+		$base                  = $this->query;
+		$this->query           = clone $base;
+		$this->exposed_sources = [];
+
+		try {
+			return $this->run( $operation, $field );
+		} finally {
+			$this->query           = $base;
+			$this->exposed_sources = [];
+		}
+	}
+
+	/**
+	 * Builds and runs the aggregate against a throwaway copy of the query.
+	 *
+	 * Reaching every row means rewriting the `where` and dropping the limit, and the joins Gravity
+	 * Forms infers from a rewritten `where` are not the ones it inferred before. Both belong to the
+	 * copy {@see self::process()} installs, never to the query a caller handed over.
+	 *
+	 * @since 2.16.0
+	 *
+	 * @param string     $operation The aggregate operation.
+	 * @param Field|null $field     The field to aggregate, when the operation needs one.
+	 *
+	 * @return array The calculated data.
+	 */
+	private function run( string $operation, ?Field $field ): array {
 		$query = $this->query;
 
 		$is_count = $operation === self::OPERATION_COUNT;
@@ -402,25 +458,111 @@ final class Query {
 			return [];
 		}
 
-		$sql['select'] = $this->get_select_statement( $operation, $field );
-		$sql['group']  = $this->get_group_by_field_statement();
-		$sql['order']  = $this->get_order_by_statement();
-		$sql['join']   = $this->get_join_statement( $sql['join'] ?? '', $where_fields );
+		$sql['group'] = $this->get_group_by_field_statement();
+		$sql['order'] = $this->get_order_by_statement();
+		$sql['join']  = $this->get_join_statement( $sql['join'] ?? '', $where_fields );
 
-		if ( is_int( $this->limit ) ) {
-			$sql['limit'] = sprintf( 'LIMIT %d', $this->limit );
+		$tables       = trim( ( $sql['from'] ?? '' ) . ' ' . ( $sql['join'] ?? '' ) );
+		$entry_select = $sql['select'] ?? '';
+		$entry_select = is_array( $entry_select ) ? implode( ' ', $entry_select ) : (string) $entry_select;
+
+		$fans_out = count( $this->get_row_identity_columns( $tables, $entry_select ) ) > 1
+			|| $this->joins_unkeyed_entry_meta( $tables );
+
+		$deduplicated = $fans_out && $field
+			? array_values(
+				array_intersect(
+					self::OPERATION_ALL === $operation
+						? [ self::OPERATION_MIN, self::OPERATION_MAX, self::OPERATION_AVG, self::OPERATION_SUM ]
+						: [ $operation ],
+					[ self::OPERATION_MIN, self::OPERATION_MAX, self::OPERATION_AVG, self::OPERATION_SUM ]
+				)
+			)
+			: [];
+
+		if ( [] !== $deduplicated ) {
+			$statement = $this->get_deduplicated_statement( $deduplicated, $field, $sql );
+		} else {
+			$sql['select'] = $this->get_select_statement( $operation, $field, $tables, $entry_select );
+
+			if ( is_int( $this->limit ) ) {
+				$sql['limit'] = sprintf( 'LIMIT %d', $this->limit );
+			}
+
+			$statement = implode( ' ', $sql );
 		}
 
 		global $wpdb;
-		$result = $wpdb->get_results( implode( ' ', $sql ), ARRAY_A );
+		$result = $wpdb->get_results( $statement, ARRAY_A );
 
 		$result = $this->maybe_process_json_values( $result, $this->group_by );
+
+		if ( self::OPERATION_ALL === $operation && [] !== $deduplicated ) {
+			$result = $this->with_row_counts( $result );
+		}
 
 		return array_values( $result );
 	}
 
 	/**
+	 * Adds the row count to rows whose aggregates were read per owning entry.
+	 *
+	 * Reading every aggregate at once still reports how many rows matched, which the deduplicated
+	 * rows cannot answer: they hold one row per value held, not per result.
+	 *
+	 * @since 2.16.0
+	 *
+	 * @param array<int, array<string, mixed>> $rows The aggregated rows.
+	 *
+	 * @return array<int, array<string, mixed>> The rows, each carrying its count.
+	 */
+	private function with_row_counts( array $rows ): array {
+		$counts = $this->process( self::OPERATION_COUNT );
+
+		if ( [] === $this->group_by ) {
+			foreach ( $rows as $index => $row ) {
+				$rows[ $index ]['count'] = $counts[0]['count'] ?? '0';
+			}
+
+			return $rows;
+		}
+
+		$by_group = [];
+		foreach ( $counts as $row ) {
+			$by_group[ $this->get_group_key( $row ) ] = $row['count'] ?? '0';
+		}
+
+		foreach ( $rows as $index => $row ) {
+			$rows[ $index ]['count'] = $by_group[ $this->get_group_key( $row ) ] ?? '0';
+		}
+
+		return $rows;
+	}
+
+	/**
+	 * Returns the key identifying which group a row belongs to.
+	 *
+	 * @since 2.16.0
+	 *
+	 * @param array<string, mixed> $row The row.
+	 *
+	 * @return string The key.
+	 */
+	private function get_group_key( array $row ): string {
+		$key = [];
+		foreach ( $this->group_by as $group_by_field ) {
+			$key[] = (string) ( $row[ $group_by_field->alias() ] ?? '' );
+		}
+
+		return implode( "\0", $key );
+	}
+
+	/**
 	 * Returns any additional {@see GF_Query_Condition} needed for the field.
+	 *
+	 * A joined form read through entry meta gets its `meta_key` pinned explicitly: the query planner
+	 * rewrites such a join's correlation and drops the key from it, leaving the alias spanning every
+	 * meta row of the joined entry.
 	 *
 	 * @since 2.4.0
 	 *
@@ -434,8 +576,21 @@ final class Query {
 			return [];
 		}
 
-		// Adds the column to the query with an inferred join.
-		$conditions[] = new GF_Query_Condition( $column );
+		$conditions = [];
+
+		if ( ! $this->is_joined_source( $column->source ) ) {
+			$conditions[] = new GF_Query_Condition( $column );
+
+			$alias = $this->query->_alias( $column->field_id, $column->source, 'm' );
+			if ( ! $this->is_primary_source( $column->source ) && $this->join_lacks_meta_key( $alias ) ) {
+				$meta_key = new GF_Query_Column( 'meta_key', $column->source, $alias );
+
+				$conditions[] = GF_Query_Condition::_or(
+					new GF_Query_Condition( $meta_key, GF_Query_Condition::EQ, new GF_Query_Literal( (string) $column->field_id ) ),
+					new GF_Query_Condition( $meta_key, GF_Query_Condition::LIKE, new GF_Query_Literal( $column->field_id . '.%' ) )
+				);
+			}
+		}
 		// Hack to make sure the column is not NULL. GF_Query_Literal would escape the SQL as a string.
 		$conditions[] = new GF_Query_Condition(
 			new GF_Query_Call( '', [ $field->get_sql_column( $this ) ] ),
@@ -526,8 +681,8 @@ final class Query {
 		}
 
 		$ids = array_map(
-			static function ( Field $field ): string {
-				return sprintf( '`%s`', $field->alias() );
+			function ( Field $field ): string {
+				return $this->get_group_expression( $field );
 			},
 			$this->group_by
 		);
@@ -542,7 +697,7 @@ final class Query {
 	 *
 	 * @return string The SQL.
 	 */
-	private function get_select_statement( string $operation, ?Field $field ): string {
+	private function get_select_statement( string $operation, ?Field $field, string $tables = '', string $entry_select = '' ): string {
 		$select = [];
 
 		foreach ( $this->group_by as $group_by_field ) {
@@ -565,7 +720,7 @@ final class Query {
 
 		foreach ( $operations as $o ) {
 			$is_count   = $o === self::OPERATION_COUNT || is_null( $field );
-			$result_sql = 'COUNT(*)';
+			$result_sql = $this->get_count_expression( $tables, $entry_select );
 			if ( ! $is_count ) {
 				$result_sql = sprintf(
 					'ROUND(%s(CAST(%s AS DECIMAL(%4$d, %3$d))), %3$d)',
@@ -583,6 +738,182 @@ final class Query {
 	}
 
 	/**
+	 * Returns the statement aggregating a field once per entry that owns a value.
+	 *
+	 * A join yields a row per matched pair, so a field of the form being selected from repeats across
+	 * those rows. Summing them adds a value the entry holds once as many times as it matched, and
+	 * averaging them weights each entry by how often it matched. Reducing the rows to the distinct
+	 * values held, per group, before aggregating leaves both reading the entries rather than the rows.
+	 *
+	 * Grouping is part of that grain: an entry contributes to every group it appears in, but once to
+	 * each.
+	 *
+	 * @since 2.16.0
+	 *
+	 * @param string[]              $operations The aggregate operations.
+	 * @param Field                 $field      The field being aggregated.
+	 * @param array<string, string> $sql        The statement parts of the entry query.
+	 *
+	 * @return string The SQL.
+	 */
+	private function get_deduplicated_statement( array $operations, Field $field, array $sql ): string {
+		$columns = [];
+		foreach ( $this->group_by as $group_by_field ) {
+			$columns[] = $this->get_select_by_field( $group_by_field );
+		}
+
+		$source     = (int) $field->as_column()->source;
+		$columns[] = $this->owner_entry_sql( $this->query, $source, $this->exposes_source_table( $source ) );
+		$columns[] = sprintf( '%s as `%s`', $field->get_sql( $this ), self::VALUE_ALIAS );
+
+		$sql['select'] = 'SELECT DISTINCT ' . implode( ', ', $columns );
+		unset( $sql['group'], $sql['order'], $sql['limit'] );
+
+		$outer = [];
+		foreach ( $this->group_by as $group_by_field ) {
+			$outer[] = sprintf( '`%s`', $group_by_field->alias() );
+		}
+
+		foreach ( $operations as $operation ) {
+			$outer[] = sprintf(
+				'ROUND(%s(CAST(`%s` AS DECIMAL(%4$d, %3$d))), %3$d) as `%5$s`',
+				$operation,
+				self::VALUE_ALIAS,
+				$this->precision_decimals,
+				$this->precision_digits,
+				strtolower( $operation )
+			);
+		}
+
+		if ( [ self::OPERATION_AVG ] === $operations ) {
+			$outer[] = 'COUNT(*) as `count`';
+		}
+
+		$statement = sprintf(
+			'SELECT %s FROM (%s) as `%s`',
+			implode( ', ', $outer ),
+			implode( ' ', array_filter( $sql ) ),
+			self::SUBQUERY_ALIAS
+		);
+
+		if ( [] !== $this->group_by ) {
+			$statement .= sprintf(
+				' GROUP BY %s',
+				implode(
+					', ',
+					array_map(
+						static fn( Field $group_by_field ): string => sprintf( '`%s`', $group_by_field->alias() ),
+						$this->group_by
+					)
+				)
+			);
+		}
+
+		$order = $this->get_order_by_statement();
+		if ( $order ) {
+			$statement .= ' ' . $order;
+		}
+
+		if ( is_int( $this->limit ) ) {
+			$statement .= sprintf( ' LIMIT %d', $this->limit );
+		}
+
+		return $statement;
+	}
+
+	/**
+	 * Returns the expression counting matched rows.
+	 *
+	 * A row is one entry, or one entry per joined entry it matches: a join produces a row per pair by
+	 * design, and the count reports what the query returns. Meta rows are not rows in that sense, so a
+	 * multi-input field storing several values for one entry must not multiply it.
+	 *
+	 * @since 2.16.0
+	 *
+	 * @param string $tables       The `FROM` and `JOIN` clauses the query would run.
+	 * @param string $entry_select The `SELECT` the query would run.
+	 *
+	 * @return string The SQL.
+	 */
+	private function get_count_expression( string $tables, string $entry_select ): string {
+		$columns = $this->get_row_identity_columns( $tables, $entry_select );
+		if ( [] === $columns ) {
+			return 'COUNT(*)';
+		}
+
+		$first = array_shift( $columns );
+		$rest  = array_map(
+			static fn( string $column ): string => sprintf( 'COALESCE(%s, 0)', $column ),
+			$columns
+		);
+
+		return sprintf( 'COUNT(DISTINCT %s)', implode( ', ', array_merge( [ $first ], $rest ) ) );
+	}
+
+	/**
+	 * Whether the query joins entry meta without narrowing it to a key.
+	 *
+	 * A join naming a `meta_key` contributes the rows holding that key. One that leaves the key open
+	 * contributes every meta row an entry holds, which is what a search across all fields asks for, so
+	 * an entry returns as many rows as it holds matching values.
+	 *
+	 * @since 2.16.0
+	 *
+	 * @param string $tables The `FROM` and `JOIN` clauses the query would run.
+	 *
+	 * @return bool Whether entry meta is joined without a key.
+	 */
+	private function joins_unkeyed_entry_meta( string $tables ): bool {
+		$join    = '(?:(?:LEFT|RIGHT|INNER|OUTER|CROSS|FULL)\s+)*JOIN';
+		$pattern = sprintf(
+			'/^%s\s+`?%s`?[\s`]/i',
+			$join,
+			preg_quote( GFFormsModel::get_entry_meta_table_name(), '/' )
+		);
+
+		foreach ( preg_split( sprintf( '/\s+(?=%s\s)/i', $join ), $tables ) as $clause ) {
+			if ( preg_match( $pattern, $clause ) && false === stripos( $clause, 'meta_key' ) ) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	/**
+	 * Returns the columns that together identify one result row.
+	 *
+	 * Two places declare that identity and neither is complete on its own. A source selected from or
+	 * joined as a table appears in `FROM`/`JOIN` under a `t` alias. A source joined through meta has
+	 * no table, and is identified by the meta row the query selects for it, which shows up in the
+	 * query's own `SELECT` and nowhere else.
+	 *
+	 * @since 2.16.0
+	 *
+	 * @param string $tables       The `FROM` and `JOIN` clauses the query would run.
+	 * @param string $entry_select The `SELECT` the query would run.
+	 *
+	 * @return string[] The identity columns, the source selected from first.
+	 */
+	private function get_row_identity_columns( string $tables, string $entry_select ): array {
+		$columns = [];
+
+		if ( preg_match_all( '/\bAS\s+`(t\d+)`/i', $tables, $matches ) ) {
+			foreach ( array_unique( $matches[1] ) as $alias ) {
+				$columns[] = sprintf( '`%s`.`id`', $alias );
+			}
+		}
+
+		if ( preg_match_all( '/`(m\d+)`\.`entry_id`/', $entry_select, $matches ) ) {
+			foreach ( array_unique( $matches[1] ) as $alias ) {
+				$columns[] = sprintf( '`%s`.`entry_id`', $alias );
+			}
+		}
+
+		return array_values( array_unique( $columns ) );
+	}
+
+	/**
 	 * Returns the SELECT statement for a specific {@see Field}.
 	 *
 	 * @since 2.4.0
@@ -592,19 +923,31 @@ final class Query {
 	 * @return string The SQL.
 	 */
 	private function get_select_by_field( Field $field ): string {
-		if ( $field->is_json() && $this->supports_json_table() ) {
-			return sprintf(
-				'`%s`.`val` as `%s`',
-				$field->alias() . '_jt',
-				$field->alias()
-			);
-		}
-
 		return sprintf(
 			'%s as `%s`',
-			$field->get_sql( $this, true ),
+			$this->get_group_expression( $field ),
 			$field->alias()
 		);
+	}
+
+	/**
+	 * Returns the SQL expression for a {@see Field} used in both SELECT and GROUP BY.
+	 *
+	 * Grouping by this expression rather than the SELECT alias avoids ambiguity when a joined
+	 * subquery exposes a column whose name matches the alias.
+	 *
+	 * @since 2.16.0
+	 *
+	 * @param Field $field The field object.
+	 *
+	 * @return string The SQL.
+	 */
+	private function get_group_expression( Field $field ): string {
+		if ( $field->is_json() && $this->supports_json_table() ) {
+			return sprintf( '`%s`.`val`', $field->alias() . '_jt' );
+		}
+
+		return $field->get_sql( $this, true );
 	}
 
 	/**
@@ -612,14 +955,117 @@ final class Query {
 	 *
 	 * @since 2.4.0
 	 *
-	 * @param GF_Query_Column $column The column object.
+	 * @param GF_Query_Column $column       The column object.
+	 * @param string          $table_column The entry-meta column to read. Default `meta_value`.
 	 *
 	 * @return string The SQL.
 	 */
 	public function get_value_column_sql( GF_Query_Column $column, string $table_column = 'meta_value' ): string {
-		return $column->is_entry_column()
-			? $column->sql( $this->query )
-			: sprintf( "`%s`.`%s`", $this->query->_alias( $column->field_id, 0, 'm' ), $table_column );
+		if ( $column->is_entry_column() ) {
+			return $column->sql( $this->query );
+		}
+
+		if ( $this->is_joined_source( $column->source ) ) {
+			return sprintf( '`%s`.`%s`', $this->query->_alias( '', $column->source, 't' ), $column->field_id );
+		}
+
+		return sprintf( "`%s`.`%s`", $this->query->_alias( $column->field_id, $column->source ?: 0, 'm' ), $table_column );
+	}
+
+	/**
+	 * Returns whether the query's join for a meta alias carries no `meta_key`.
+	 *
+	 * A join the query does not define yet will be inferred while the SQL renders, and for a joined
+	 * source the planner drops the key from it, so an absent join counts as unkeyed.
+	 *
+	 * @since 2.16.0
+	 *
+	 * @param string $alias The meta-table alias.
+	 *
+	 * @return bool Whether the join leaves the alias unkeyed.
+	 */
+	private function join_lacks_meta_key( string $alias ): bool {
+		$sql  = QueryHelper::get_sql_from_query( $this->query );
+		$join = ( $sql['from'] ?? '' ) . ' ' . ( $sql['join'] ?? '' );
+
+		if ( ! preg_match( sprintf( '/AS\s*`%s`\s*ON\s*(\([^)]*\)|\S+(?:\s*=\s*\S+)?)/', preg_quote( $alias, '/' ) ), $join, $matches ) ) {
+			return true;
+		}
+
+		return false === strpos( $matches[1], 'meta_key' );
+	}
+
+	/**
+	 * Returns whether the source is one the query selects from.
+	 *
+	 * @since 2.16.0
+	 *
+	 * @param int|string|null $source The column source (form ID).
+	 *
+	 * @return bool Whether the source is selected from directly.
+	 */
+	private function is_primary_source( $source ): bool {
+		$from = $this->query->_introspect()['from'] ?? [];
+
+		return is_array( $from ) && in_array( (int) $source, array_map( 'intval', $from ), true );
+	}
+
+	/**
+	 * Returns whether the column source is read from a derived table of its own.
+	 *
+	 * A joined form is only sometimes exposed as a derived-table alias (`t2`, `t3`, …) carrying its
+	 * fields as columns, in which case its values are read as `t2`.`field_id`. Other joins reach the
+	 * form through the entry-meta table instead and never define that alias, so its values are read
+	 * through a meta-table alias like any other source.
+	 *
+	 * @since 2.16.0
+	 *
+	 * @param int|string|null $source The column source (form ID).
+	 *
+	 * @return bool Whether the source has a derived table exposing its fields.
+	 */
+	private function is_joined_source( $source ): bool {
+		if ( empty( $source ) ) {
+			return false;
+		}
+
+		$from = $this->query->_introspect()['from'] ?? [];
+		if ( ! is_array( $from ) ) {
+			return false;
+		}
+
+		if ( in_array( (int) $source, array_map( 'intval', $from ), true ) ) {
+			return false;
+		}
+
+		return $this->exposes_source_table( $source );
+	}
+
+	/**
+	 * Returns whether the base query defines a derived table for the source.
+	 *
+	 * The alias must close a subquery (`) AS `tN``): an alias on a plain entry table also exists in
+	 * the join SQL, but carries no field columns.
+	 *
+	 * @since 2.16.0
+	 *
+	 * @param int|string $source The column source (form ID).
+	 *
+	 * @return bool Whether the source has a derived table.
+	 */
+	private function exposes_source_table( $source ): bool {
+		$alias = $this->query->_alias( '', $source, 't' );
+
+		if ( ! isset( $this->exposed_sources[ $alias ] ) ) {
+			$sql = QueryHelper::get_sql_from_query( $this->query );
+
+			$this->exposed_sources[ $alias ] = (bool) preg_match(
+				sprintf( '/\)\s*AS\s*`%s`/', preg_quote( $alias, '/' ) ),
+				( $sql['from'] ?? '' ) . ' ' . ( $sql['join'] ?? '' )
+			);
+		}
+
+		return $this->exposed_sources[ $alias ];
 	}
 
 	/**
@@ -649,11 +1095,39 @@ final class Query {
 	 * @return string The SQL.
 	 */
 	private function get_order_by_statement(): string {
-		if ( ! $this->order_by ) {
+		$order_by = $this->get_effective_order_by();
+		if ( ! $order_by ) {
 			return '';
 		}
 
-		return 'ORDER BY ' . implode( ', ', $this->order_by );
+		return 'ORDER BY ' . implode( ', ', $order_by );
+	}
+
+	/**
+	 * Returns the ORDER BY fields with the group values appended as tie-breakers.
+	 *
+	 * Rows that tie on the requested order would otherwise come back in an engine-defined order.
+	 *
+	 * @since 2.16.0
+	 *
+	 * @return string[] The order by strings.
+	 */
+	private function get_effective_order_by(): array {
+		$order_by = $this->order_by;
+		if ( ! $order_by ) {
+			return [];
+		}
+
+		$ordered = implode( ', ', $order_by );
+		foreach ( $this->group_by as $field ) {
+			if ( false !== strpos( $ordered, sprintf( '`%s`', $field->alias() ) ) ) {
+				continue;
+			}
+
+			$order_by[] = $field->asc();
+		}
+
+		return $order_by;
 	}
 
 	/**
@@ -754,21 +1228,32 @@ final class Query {
 			}
 		}
 
-		foreach ( $this->order_by as $order_by ) {
+		$order = [];
+		foreach ( $this->get_effective_order_by() as $order_by ) {
 			if ( ! preg_match( '/`(.+)` (ASC|DESC)/is', $order_by, $matches ) ) {
 				continue;
 			}
-			$column = $matches[1];
 
-			if ( ! isset( $result[ $column ] ) ) {
+			if ( ! array_key_exists( $matches[1], $result[0] ?? [] ) ) {
 				continue;
 			}
 
-			$is_ascending = strtoupper( $matches[2] ) === 'ASC';
-			usort( $result, static function ( array $a, array $b ) use ( $column, $is_ascending ) {
-				return $is_ascending
-					? $a[ $column ] <=> $b[ $column ]
-					: $b[ $column ] <=> $a[ $column ];
+			$order[ $matches[1] ] = 'ASC' === strtoupper( $matches[2] );
+		}
+
+		if ( [] !== $order ) {
+			usort( $result, static function ( array $a, array $b ) use ( $order ): int {
+				foreach ( $order as $column => $is_ascending ) {
+					$comparison = $is_ascending
+						? $a[ $column ] <=> $b[ $column ]
+						: $b[ $column ] <=> $a[ $column ];
+
+					if ( 0 !== $comparison ) {
+						return $comparison;
+					}
+				}
+
+				return 0;
 			} );
 		}
 

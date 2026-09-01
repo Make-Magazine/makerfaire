@@ -1,0 +1,71 @@
+<?php
+/**
+ * Radio field type.
+ *
+ * PSR-4 migration of the legacy GravityView_Field_Radio class.
+ *
+ * @package GravityKit\GravityView\Field\Types
+ * @license GPL2+
+ * @since 3.0.0
+ */
+
+namespace GravityKit\GravityView\Field\Types;
+
+/**
+ * @since 3.0.0
+ */
+class Radio extends \GravityView_Field {
+
+	var $name = 'radio';
+
+	var $is_searchable = true;
+
+	var $search_operators = ['is', 'in', 'not in', 'isnot', 'contains'];
+
+	var $_gf_field_class_name = 'GF_Field_Radio';
+
+	var $group = 'standard';
+
+	var $icon = 'dashicons-marker';
+
+	public function __construct() {
+		$this->label = esc_html__( 'Radio Buttons', 'gk-gravityview' );
+		parent::__construct();
+	}
+
+	/**
+	 * Add `choice_display` setting to the field.
+	 *
+	 * @since 1.17
+	 *
+	 * @param array  $field_options
+	 * @param string $template_id
+	 * @param string $field_id
+	 * @param string $context
+	 * @param string $input_type
+	 * @param int    $form_id
+	 *
+	 * @return array
+	 */
+	public function field_options( $field_options, $template_id, $field_id, $context, $input_type, $form_id ) {
+
+		// Set the $_field_id var
+		$field_options = parent::field_options( $field_options, $template_id, $field_id, $context, $input_type, $form_id );
+
+		if ( $this->is_choice_value_enabled() ) {
+			$field_options['choice_display'] = [
+				'type'    => 'radio',
+				'value'   => 'value',
+				'label'   => __( 'What should be displayed:', 'gk-gravityview' ),
+				'desc'    => __( 'This input has a label and a value. What should be displayed?', 'gk-gravityview' ),
+				'choices' => [
+					'value' => __( 'Value of the input', 'gk-gravityview' ),
+					'label' => __( 'Label of the input', 'gk-gravityview' ),
+				],
+				'group'   => 'display',
+			];
+		}
+
+		return $field_options;
+	}
+}

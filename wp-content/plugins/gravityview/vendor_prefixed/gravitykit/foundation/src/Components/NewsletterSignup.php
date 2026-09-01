@@ -1,9 +1,4 @@
 <?php
-/**
- * @license GPL-2.0-or-later
- *
- * Modified using {@see https://github.com/BrianHenryIE/strauss}.
- */
 
 namespace GravityKit\GravityView\Foundation\Components;
 
@@ -215,6 +210,11 @@ final class NewsletterSignup {
 	 * @return array The response object.
 	 */
 	public function ajax_newsletter_signup( array $payload ): array {
+		// The Ajax router only verifies the shared nonce, which is not an authorization check; this makes a server-side request on the site's behalf, so restrict it to administrators.
+		if ( ! current_user_can( 'manage_options' ) ) {
+			throw new RuntimeException( esc_html__( 'You do not have permission to perform this action.', 'gk-gravityview' ) );
+		}
+
 		$email = (string) ( $payload['email'] ?? '' );
 
 		if ( ! is_email( $email ) ) {

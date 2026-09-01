@@ -43,6 +43,13 @@ class Admin {
 		$this->register_rest_controller();
 	}
 
+	private function should_use_url_mismatch_modal(): bool {
+		return apply_filters(
+			'elementor_pro/license/use_url_mismatch_modal',
+			One::is_connected() && $this->is_editor_one_active()
+		);
+	}
+
 	private function get_switch_account_button( string $license_status ): array {
 		return [
 			'text' => esc_html__( 'Switch account', 'elementor-pro' ),
@@ -106,7 +113,7 @@ class Admin {
 
 	public function get_errors_details() {
 		$license_data = API::get_license_data();
-		$license_page_link = self::get_url();
+		$is_one_pro_mismatch = $this->should_use_url_mismatch_modal();
 
 		return [
 			API::STATUS_EXPIRED => $this->get_expired_notice_details( $license_data ),
@@ -122,9 +129,9 @@ class Admin {
 				'buttons' => [
 					[
 						'text' => esc_html__( 'Reactivate License', 'elementor-pro' ),
-						'url' => $license_page_link,
+						'url' => $is_one_pro_mismatch ? One::get_url_mismatch_url() : self::get_url(),
 						'type' => 'error',
-						'new_tab' => true,
+						'new_tab' => ! $is_one_pro_mismatch,
 					],
 					$this->get_switch_account_button( API::STATUS_SITE_INACTIVE ),
 				],

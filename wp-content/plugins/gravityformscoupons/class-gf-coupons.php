@@ -11,7 +11,7 @@ if ( class_exists( 'GF_Field' ) ) {
 class GFCoupons extends GFFeedAddOn {
 
 	protected $_version = GF_COUPONS_VERSION;
-	protected $_min_gravityforms_version = '2.8.0';
+	protected $_min_gravityforms_version = '3.0.0-beta1';
 	protected $_slug = 'gravityformscoupons';
 	protected $_path = 'gravityformscoupons/coupons.php';
 	protected $_full_path = __FILE__;
@@ -190,21 +190,6 @@ class GFCoupons extends GFFeedAddOn {
 		return $themes;
 	}
 
-	/**
-	 * Add required scripts for to noconflict list.
-	 *
-	 * @since 3.3.0
-	 *
-	 * @param array $scripts The list of scripts to be added.
-	 *
-	 * @return mixed
-	 */
-	public function register_coupons_noconflict_scripts( $scripts ) {
-		$scripts[] = 'jquery-ui-datepicker';
-		return $scripts;
-	}
-
-
 	// # UPDATE PRODUCT INFO -------------------------------------------------------------------------------------------
 
 	/**
@@ -214,7 +199,6 @@ class GFCoupons extends GFFeedAddOn {
 
 		parent::init();
 		add_filter( 'gform_product_info', array( $this, 'add_discounts' ), 5, 3 );
-		add_filter( 'gform_noconflict_scripts', array( $this, 'register_coupons_noconflict_scripts' ) );
 
 	}
 
@@ -592,7 +576,7 @@ class GFCoupons extends GFFeedAddOn {
 		}
 
 		// Print admin styles.
-		wp_print_styles( array( 'jquery-ui-styles', 'gform_admin', 'gform_settings', 'wp-pointer' ) );
+		wp_print_styles( array( 'gform_admin', 'gform_settings', 'wp-pointer' ) );
 
 		// Display page header.
 		?>
@@ -660,9 +644,9 @@ class GFCoupons extends GFFeedAddOn {
 		if ( $this->_coupon_feed_id ) {
 			return $this->_coupon_feed_id;
 		} elseif ( ! rgempty( 'gf_feed_id' ) ) {
-			return rgpost( 'gf_feed_id' );
+			return absint( rgpost( 'gf_feed_id' ) );
 		} else {
-			return rgget( 'fid' );
+			return absint( rgget( 'fid' ) );
 		}
 	}
 
@@ -1027,17 +1011,15 @@ class GFCoupons extends GFFeedAddOn {
 					array(
 						'name'                => 'startDate',
 						'label'               => esc_html__( 'Start Date', 'gravityformscoupons' ),
-						'type'                => 'text',
+						'type'                => 'coupon_date',
 						'tooltip'             => '<h6>' . esc_html__( 'Start Date', 'gravityformscoupons' ) . '</h6>' . esc_html__( 'Enter the date when the coupon should start. Format: YYYY-MM-DD.', 'gravityformscoupons' ),
-						'class'               => 'datepicker',
 						'validation_callback' => array( $this, 'validate_coupon_date' ),
 					),
 					array(
 						'name'                => 'endDate',
 						'label'               => esc_html__( 'End Date', 'gravityformscoupons' ),
-						'type'                => 'text',
+						'type'                => 'coupon_date',
 						'tooltip'             => '<h6>' . esc_html__( 'End Date', 'gravityformscoupons' ) . '</h6>' . esc_html__( 'Enter the date when the coupon should expire. Format: YYYY-MM-DD.', 'gravityformscoupons' ),
-						'class'               => 'datepicker',
 						'validation_callback' => array( $this, 'validate_coupon_date' ),
 					),
 					array(
@@ -1107,22 +1089,14 @@ class GFCoupons extends GFFeedAddOn {
 		$currency_symbol                  = ! empty( $currency['symbol_left'] ) ? $currency['symbol_left'] : $currency['symbol_right'];
 		$percentage_placeholder           = esc_html__( 'Example: 1%', 'gravityformscoupons' );
 		$coupon_amount_validation_message = esc_html__( 'Please enter the coupon value', 'gravityformscoupons' );
-		wp_enqueue_script( array( 'jquery-ui-datepicker' ) );
-
-		$styles = '<style type="text/css">
-						td img.ui-datepicker-trigger {
-						position: relative;
-						top: 4px;
-						}
-					</style>';
 
 		$js_script = '<script type="text/javascript">
                             jQuery(document).on(\'change\', \'.gf_format_money\', function(){
-                                var cur = new Currency(gf_vars.gf_currency_config);
+                                var cur = new gform.Currency(gf_vars.gf_currency_config);
                                 jQuery(this).val(cur.toMoney(jQuery(this).val()));
                             });
                             jQuery(document).on(\'change\', \'.gf_format_percentage\', function(event){
-                                var cur = new Currency(gf_vars.gf_currency_config),
+                                var cur = new gform.Currency(gf_vars.gf_currency_config),
                                     cleanNum = cur.toNumber(jQuery(this).val()),
                                     value = cleanNum ? cur.numberFormat(cleanNum, cur.currency["decimals"], cur.currency["decimal_separator"], cur.currency["thousand_separator"]) + \'%\' : \'\';
                                 jQuery(this).val( value );
@@ -1145,7 +1119,7 @@ class GFCoupons extends GFFeedAddOn {
 								$amountInput.attr( "placeholder", placeholderText );
 							
 								// Format initial coupon amount value when there is one and it is currency.
-								var cur = new Currency( gf_vars.gf_currency_config );
+								var cur = new gform.Currency( gf_vars.gf_currency_config );
 								var couponAmount = $amountInput.val();
 								var formattedAmount;
 									
@@ -1169,18 +1143,6 @@ class GFCoupons extends GFFeedAddOn {
 									$amountErrorContainer.text( \' ' . $coupon_amount_validation_message . ' \' );
 									jQuery( \'#couponAmount\' ).parent().addClass( \'gform-settings-input__container--invalid\' );  
 								}
-								
-								jQuery( \'.datepicker\' ).each(
-									function() {
-										var image = "' . $this->get_base_url() . '/images/calendar.png";
-										jQuery( this ).datepicker( {
-											showOn: "both",
-											buttonImage: image,
-											buttonImageOnly: true,
-											dateFormat: "yy-mm-dd"
-										} );
-									}
-								);
 							});
 						</script>';
 
@@ -1210,10 +1172,64 @@ class GFCoupons extends GFFeedAddOn {
 		$html2 = $this->settings_text( $field2, false );
 
 		if ( $echo ) {
-			echo $styles . $js_script . $html . $html2;
+			echo $js_script . $html . $html2;
 		}
 
-		return $styles . $js_script . $html . $html2;
+		return $js_script . $html . $html2;
+
+	}
+
+	/**
+	 * Renders a coupon date setting using the accessible datepicker introduced in Gravity Forms 3.0.
+	 *
+	 * Outputs a text input with the gform-datepicker class (using the YYYY-MM-DD format) alongside the
+	 * accessible datepicker toggle button, which Gravity Forms initializes automatically on admin pages.
+	 *
+	 * @since 3.5.2
+	 *
+	 * @param array $field The setting properties.
+	 * @param bool  $echo  Whether to echo the output. Defaults to true.
+	 *
+	 * @return string
+	 */
+	public function settings_coupon_date( $field, $echo = true ) {
+
+		$field['type']  = 'text';
+		$field['class'] = trim( rgar( $field, 'class' ) . ' gform-datepicker ymd_dash' );
+
+		$html = '<div class="gform-settings-datepicker-wrapper">' . $this->settings_text( $field, false ) . $this->get_datepicker_toggle_button( rgar( $field, 'name' ), rgar( $field, 'label' ) ) . '</div>';
+
+		if ( $echo ) {
+			echo $html;
+		}
+
+		return $html;
+
+	}
+
+	/**
+	 * Returns the markup for the accessible datepicker toggle button.
+	 *
+	 * @since 3.5.2
+	 *
+	 * @param string $input_id The ID of the date input the toggle is associated with.
+	 * @param string $label    The label of the date input, used for the button's accessible name.
+	 *
+	 * @return string
+	 */
+	protected function get_datepicker_toggle_button( $input_id, $label = '' ) {
+
+		$aria_label = $label
+			? sprintf( __( '%s: Choose date on calendar', 'gravityformscoupons' ), $label )
+			: __( 'Choose date on calendar', 'gravityformscoupons' );
+
+		return sprintf(
+			"<button type='button' id='datepicker_toggle_%1\$s' data-datepicker-input='%1\$s' class='gform-datepicker-toggle gform-datepicker-toggle--default accCalendar aria-date-picker gform-button gform-button--simple' aria-expanded='false' aria-controls='%1\$s' aria-label='%2\$s'>
+				<span class='gform-datepicker-toggle-icon gform-datepicker-toggle-icon--default gform-icon gform-icon--date' aria-hidden='true'></span>
+			</button>",
+			esc_attr( $input_id ),
+			esc_attr( $aria_label )
+		);
 
 	}
 

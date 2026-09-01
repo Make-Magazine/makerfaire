@@ -323,14 +323,18 @@ class GP_File_Upload_Pro extends GP_Plugin {
 				$size = filesize( $path );
 			}
 
-			if ( ! empty( $file['temp_filename'] ) ) {
+			/**
+			 * Keep this in sync with how the file ID is resolved in GPFUPField.ts. Gravity Forms
+			 * includes the Plupload file ID in the uploaded file meta; parsing it back out of the
+			 * temp filename is only a fallback, as the composition of that filename is not stable
+			 * across GF versions.
+			 */
+			if ( ! empty( $file['id'] ) ) {
+				$file_id = $file['id'];
+			} elseif ( ! empty( $file['temp_filename'] ) ) {
 				preg_match( '/_(o_[a-z0-9]+)\.[a-zA-Z0-9]{1,4}/', $file['temp_filename'], $file_id_match );
 
-				if ( ! $file_id_match ) {
-					continue;
-				}
-
-				$file_id = $file_id_match[1];
+				$file_id = $file_id_match ? $file_id_match[1] : $file['temp_filename'];
 			} elseif ( ! empty( $file['uploaded_filename'] ) ) {
 				$file_id = $file['uploaded_filename'];
 			} else {
@@ -409,6 +413,7 @@ class GP_File_Upload_Pro extends GP_Plugin {
 				'does_not_meet_minimum_dimensions' => __( 'This image does not meet the minimum dimensions: {minWidth}x{minHeight}px.', 'gp-file-upload-pro' ),
 				'does_not_meet_minimum_width'      => __( 'This image does not meet the minimum width: {minWidth}px.', 'gp-file-upload-pro' ),
 				'does_not_meet_minimum_height'     => __( 'This image does not meet the minimum height: {minHeight}px.', 'gp-file-upload-pro' ),
+				'unexpected_server_response'       => __( 'Unexpected server response during upload. Please try again.', 'gp-file-upload-pro' ),
 			),
 		) );
 

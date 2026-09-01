@@ -17,7 +17,8 @@ export default function removeFileFromGFUploadedMeta(formId: string, fieldId: st
 			if( $multfile.length > 0 && files?.[inputName] ) {
 				for ( const [index, hiddenFileMeta] of Object.entries(files[inputName]) ) {
 					if (
-						hiddenFileMeta?.temp_filename?.indexOf(file.id) > 0
+						hiddenFileMeta?.id === file.id
+						|| hiddenFileMeta?.temp_filename?.indexOf(file.id) > 0
 						|| hiddenFileMeta?.uploaded_filename === file.id
 					) {
 						delete files[inputName][index];

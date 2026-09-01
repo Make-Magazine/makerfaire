@@ -52,7 +52,17 @@ class GV_Extension_DataTables_Migrate {
 
 			$previous_settings = get_post_meta( $view->ID, '_gravityview_datatables_settings', true );
 
-			if( false === $previous_settings ) {
+			// get_post_meta() with $single=true returns '' for a View with no meta, never
+			// `false`, so this must check for "nothing to migrate" directly rather than
+			// comparing against a value the function can never return.
+			if ( ! is_array( $previous_settings ) || empty( $previous_settings ) ) {
+				continue;
+			}
+
+			// A View with no TableTools keys has nothing for this migration to convert. This
+			// also protects a View that already carries modern settings (field filters,
+			// processing mode, RowGroup, etc.) from being clobbered if the migration re-runs.
+			if ( ! isset( $previous_settings['tabletools'] ) && ! isset( $previous_settings['tt_buttons'] ) ) {
 				continue;
 			}
 
@@ -66,21 +76,50 @@ class GV_Extension_DataTables_Migrate {
 				'fixedheader' => rgar( $previous_settings, 'fixedheader' ),
 				'fixedcolumns' => rgar( $previous_settings, 'fixedcolumns' ),
 				'responsive' => rgar( $previous_settings, 'responsive' ),
-				'export_buttons' => array(
-					'copy' => rgars( $previous_settings, 'tt_buttons/copy' ),
-					'csv' => rgars( $previous_settings, 'tt_buttons/csv' ),
-					'pdf' => rgars( $previous_settings, 'tt_buttons/pdf' ),
-					'print' => rgars( $previous_settings, 'tt_buttons/print' ),
-					'excel' => rgars( $previous_settings, 'tt_buttons/xls' ),
-				),
 			);
 
-			unset( $new_settings['tabletools'], $new_settings['tt_buttons'], $new_settings['export_buttons']['xls'] );
+			// Converts only the legacy keys that are actually present, onto whatever modern
+			// `export_buttons` map the View already carries. `rgars()` answers a missing key
+			// with '' rather than null, so reading all five unconditionally yields a full
+			// array of '' that the array_filter() below cannot drop (it is an array, not
+			// null) and array_merge() then writes over the View's real export_buttons.
+			$legacy_buttons = isset( $previous_settings['tt_buttons'] ) && is_array( $previous_settings['tt_buttons'] )
+				? $previous_settings['tt_buttons']
+				: array();
+
+			if ( $legacy_buttons ) {
+				$converted = array();
+
+				foreach ( array( 'copy' => 'copy', 'csv' => 'csv', 'pdf' => 'pdf', 'print' => 'print', 'excel' => 'xls' ) as $modern_key => $legacy_key ) {
+					if ( array_key_exists( $legacy_key, $legacy_buttons ) ) {
+						$converted[ $modern_key ] = $legacy_buttons[ $legacy_key ];
+					}
+				}
+
+				if ( $converted ) {
+					$existing_buttons = isset( $previous_settings['export_buttons'] ) && is_array( $previous_settings['export_buttons'] )
+						? $previous_settings['export_buttons']
+						: array();
+
+					$new_settings['export_buttons'] = array_merge( $existing_buttons, $converted );
+				}
+			}
+
+			unset( $new_settings['tabletools'], $new_settings['tt_buttons'] );
+
+			// Merges onto the previous settings instead of replacing them outright, so any
+			// modern keys the migration doesn't know about survive, then drops the legacy keys
+			// the merge just converted.
+			$merged_settings = array_merge( $previous_settings, array_filter( $new_settings, static function ( $value ) {
+				return null !== $value;
+			} ) );
+
+			unset( $merged_settings['tabletools'], $merged_settings['tt_buttons'] );
 
 			// update datatables settings on the view
-			update_post_meta( $view->ID, '_gravityview_datatables_settings', $new_settings );
+			update_post_meta( $view->ID, '_gravityview_datatables_settings', $merged_settings );
 
-			gravityview()->log->debug(  __METHOD__ . ': updating view #' . $view->ID . ' settings:', array( 'data' => $new_settings ) );
+			gravityview()->log->debug(  __METHOD__ . ': updating view #' . $view->ID . ' settings:', array( 'data' => $merged_settings ) );
 
 		} // foreach Views
 
