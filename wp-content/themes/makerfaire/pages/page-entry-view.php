@@ -19,7 +19,7 @@ if($proj_photo_size && ($proj_photo_size[0]/$proj_photo_size[1] > 1.77777)) {
                     <h2 class="faireName"><a href="/<?php echo $url_sub_path; ?>"><?php echo $faire_name;?></a></h2>
                     <h3 class="faireDate"><?php echo $faire_dates; ?></h3>
                     <div class="entry-box-items" role="list">
-                        <?php if(isset($location) && trim($location) != '' && count(array_intersect($exhibit_type, array("Exhibit", "Sponsor", "Startup Sponsor"))) > 0) { ?><span class="entry-box-item" role="listitem" aria-label="Location"><i class="fa fa-map-signs" aria-hidden="true"></i><?php echo $location; ?></span><?php } ?>
+                        <?php if(isset($location) && trim($location) != '' && count(array_intersect($exhibit_type, array("Exhibit", "Sponsor", "Startup Sponsor", "Performer", "Workshop" ))) > 0) { ?><span class="entry-box-item" role="listitem" aria-label="Location"><i class="fa fa-map-signs" aria-hidden="true"></i><?php echo $location; ?></span><?php } ?>
                         <?php if(isset($friday) && $friday == 1 && count(array_intersect($exhibit_type, array("Exhibit", "Sponsor", "Startup Sponsor"))) > 0) { ?><span class="entry-box-item" role="listitem" aria-label="Calendar Detail"><i class="fa fa-calendar-days" aria-hidden="true"></i>Friday Only</span><?php } ?>
                         <?php if(isset($satSun) && $satSun == 1 && count(array_intersect($exhibit_type, array("Exhibit", "Sponsor", "Startup Sponsor"))) > 0) { ?><span class="entry-box-item" role="listitem" aria-label="Calendar Detail"><i class="fa fa-calendar-days" aria-hidden="true"></i>Sat & Sun</span><?php } ?>
                         <?php if(!empty($exhibit_type)) { ?>
@@ -47,7 +47,7 @@ if($proj_photo_size && ($proj_photo_size[0]/$proj_photo_size[1] > 1.77777)) {
                     
                 </div>
                 <?php
-                if( $scheduleOutput != '' && $show_sched ) { ?>
+                if( $scheduleOutput != '' && $show_sched && str_starts_with($scheduleOutput, "<h4>Schedule</h4>") ) { ?>
                     <div class="entry-box">
                         <?php echo $scheduleOutput; ?>
                     </div>

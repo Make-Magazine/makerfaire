@@ -564,102 +564,90 @@ function duplicate_entry_data($form_change, $current_entry_id) {
 }
 
 /* Modify Set Entry Schedule */
+/* Modify Set Entry Schedule */
 function set_entry_schedule($entry, $form) {
-  $entry_id              = $entry['id'];
-  $entry_schedule_start  = (isset($_POST['datetimepickerstart'])   ? $_POST['datetimepickerstart']   : '');
-  $entry_schedule_end    = (isset($_POST['datetimepickerend'])     ? $_POST['datetimepickerend']     : '');
-  $entry_schedule_end    = (isset($_POST['datetimepickerend'])     ? $_POST['datetimepickerend']     : '');
-  $sched_type            = (isset($_POST['sched_type'])            ? $_POST['sched_type']            : '');
+    global $wpdb;
 
-  //location fields
-  $entry_location_subarea_change = (isset($_POST['entry_location_subarea_change']) ? $_POST['entry_location_subarea_change'] : '');
+    $entry_id              = $entry['id'];
+    $entry_schedule_start  = (isset($_POST['datetimepickerstart'])   ? $_POST['datetimepickerstart']   : '');
+    $entry_schedule_end    = (isset($_POST['datetimepickerend'])     ? $_POST['datetimepickerend']     : '');
+    $sched_type            = (isset($_POST['sched_type'])            ? $_POST['sched_type']            : '');
 
-  $form_id = $entry['form_id'];
+    //location fields
+    $entry_location_subarea_change = (isset($_POST['entry_location_subarea_change']) ? $_POST['entry_location_subarea_change'] : '');
 
-  //set the location
-  $location_id = 'NULL';
-  if ($entry_location_subarea_change != 'none') {
-    set_entry_location($entry, $form, $location_id);
-  }
+    $form_id = $entry['form_id'];
 
-  if ($entry_schedule_start != '' && $entry_schedule_end != '') {
-    $mysqli = new mysqli(DB_HOST, DB_USER, DB_PASSWORD, DB_NAME);
-    if ($mysqli->connect_errno) {
-      error_log("Failed to connect to MySQL: (" . $mysqli->connect_errno . ") " . $mysqli->connect_error);
+    //set the location
+    $location_id = 'NULL';
+    if ($entry_location_subarea_change != 'none') {
+        set_entry_location($entry, $form, $location_id);
     }
-    $insert_query = sprintf("INSERT INTO `wp_mf_schedule` (`entry_id`, location_id, `faire`, `start_dt`, `end_dt`, type)
-		SELECT $entry_id,$location_id,wp_mf_faire.faire,'$entry_schedule_start', '$entry_schedule_end', '$sched_type'
-		  from wp_mf_faire where find_in_set($form_id,form_ids) > 0");
 
-    //MySqli Insert Query
-    $insert_row = $mysqli->query($insert_query);
-    if ($insert_row) {
-      //echo 'Success! <br />';      
-      return $mysqli->insert_id;
-    } else {
-      error_log('Error :' . $insert_query . ':(' . $mysqli->errno . ') ' . $mysqli->error);
+    if ($entry_schedule_start != '' && $entry_schedule_end != '') {
+        $insert_query = sprintf("INSERT INTO `wp_mf_schedule` (`entry_id`, location_id, `faire`, `start_dt`, `end_dt`, type)
+        SELECT $entry_id,$location_id,wp_mf_faire.faire,'$entry_schedule_start', '$entry_schedule_end', '$sched_type'
+        from wp_mf_faire where find_in_set($form_id,form_ids) > 0");
+
+        //Insert Query — reuses WordPress's existing DB connection instead of opening a new one
+        $insert_row = $wpdb->query($insert_query);
+        if ($insert_row !== false) {
+            return $wpdb->insert_id;
+        } else {
+            error_log('Error :' . $insert_query . ':' . $wpdb->last_error);
+        }
     }
-  }
 }
 
 /* Modify Set Entry Location */
 function set_entry_location($entry, $form, &$location_id = '') {
-  $entry_schedule_change      = $_POST['entry_location_subarea_change'];
-  $entry_info_entry_id        = $entry['id'];
-  $update_entry_location_code = $_POST['update_entry_location_code'];
+    global $wpdb;
 
-  //$form_id=$entry['form_id'];
+    $entry_schedule_change      = $_POST['entry_location_subarea_change'];
+    $entry_info_entry_id        = $entry['id'];
+    $update_entry_location_code = $_POST['update_entry_location_code'];
 
-  $mysqli = new mysqli(DB_HOST, DB_USER, DB_PASSWORD, DB_NAME);
-  if ($mysqli->connect_errno) {
-    error_log("Failed to connect to MySQL: (" . $mysqli->connect_errno . ") " . $mysqli->connect_error);
-  }
+    $insert_query = "INSERT INTO `wp_mf_location`(`entry_id`, `subarea_id`, `location`, `location_element_id`) "
+        . " VALUES ($entry_info_entry_id,$entry_schedule_change,'$update_entry_location_code',3)";
 
-  $insert_query = "INSERT INTO `wp_mf_location`(`entry_id`, `subarea_id`, `location`, `location_element_id`) "
-    . " VALUES ($entry_info_entry_id,$entry_schedule_change,'$update_entry_location_code',3)";
-  //MySqli Insert Query
-  $insert_row = $mysqli->query($insert_query);
-  if ($insert_row) {
-    //echo 'Success! <br />';
-  } else {
-    error_log('Error :' . $insert_query . ':(' . $mysqli->errno . ') ' . $mysqli->error);
-  }
+    //Insert Query — reuses WordPress's existing DB connection instead of opening a new one
+    $insert_row = $wpdb->query($insert_query);
+    if ($insert_row !== false) {
+        //echo 'Success! <br />';
+    } else {
+        error_log('Error :' . $insert_query . ':' . $wpdb->last_error);
+    }
 
-  setLocChgRpt($entry_schedule_change, $update_entry_location_code, $entry, 'add');
-  $location_id = $mysqli->insert_id;
+    setLocChgRpt($entry_schedule_change, $update_entry_location_code, $entry, 'add');
+    $location_id = $wpdb->insert_id;
 }
 
 /* Delete entry schedule */
 function delete_entry_schedule($entry, $form) {
-  global $wpdb;
+    global $wpdb;
 
-  $delete_entry_schedule = (isset($_POST['delete_schedule_id']) ? implode(',', ($_POST['delete_schedule_id']))    : '');
-  $delete_entry_location = (isset($_POST['delete_location_id']) ? implode(',', ($_POST['delete_location_id'])) : '');
+    $delete_entry_schedule = (isset($_POST['delete_schedule_id']) ? implode(',', ($_POST['delete_schedule_id']))    : '');
+    $delete_entry_location = (isset($_POST['delete_location_id']) ? implode(',', ($_POST['delete_location_id'])) : '');
 
-  $mysqli = new mysqli(DB_HOST, DB_USER, DB_PASSWORD, DB_NAME);
-  if ($mysqli->connect_errno) {
-    error_log("Failed to connect to MySQL: (" . $mysqli->connect_errno . ") " . $mysqli->connect_error);
-  }
+    //delete schedule and location
+    if (!empty($delete_entry_schedule)) {
+        //delete from schedule and location table
+        $delete_query =  "DELETE `wp_mf_schedule`, `wp_mf_location`
+        FROM `wp_mf_schedule`, `wp_mf_location`
+        WHERE wp_mf_schedule.ID IN ($delete_entry_schedule) and location_id=wp_mf_location.id";
+        $wpdb->get_results($delete_query);
+    }
 
-  //delete schedule and location
-  if (!empty($delete_entry_schedule)) {
-    //delete from schedule and location table
-    $delete_query =  "DELETE `wp_mf_schedule`, `wp_mf_location`
-                        FROM `wp_mf_schedule`, `wp_mf_location`
-                       WHERE wp_mf_schedule.ID IN ($delete_entry_schedule) and location_id=wp_mf_location.id";
-    $wpdb->get_results($delete_query);
-  }
+    //delete location only
+    if (!empty($delete_entry_location)) {
+        //update change report
+        $location = $wpdb->get_row("SELECT subarea_id, location FROM wp_mf_location where wp_mf_location.ID IN ($delete_entry_location)");
+        setLocChgRpt($location->subarea_id, $location->location, $entry, 'delete');
 
-  //delete location only
-  if (!empty($delete_entry_location)) {
-    //update change report
-    $location = $wpdb->get_row("SELECT subarea_id, location FROM wp_mf_location where wp_mf_location.ID IN ($delete_entry_location)");
-    setLocChgRpt($location->subarea_id, $location->location, $entry, 'delete');
-
-    //delete from schedule and location table
-    $delete_query =  "DELETE FROM `wp_mf_location` WHERE wp_mf_location.ID IN ($delete_entry_location)";
-    $wpdb->get_results($delete_query);
-  }
+        //delete from schedule and location table
+        $delete_query =  "DELETE FROM `wp_mf_location` WHERE wp_mf_location.ID IN ($delete_entry_location)";
+        $wpdb->get_results($delete_query);
+    }
 }
 
 function delete_note_sidebar($notes) {

@@ -236,7 +236,6 @@ function getMTMentries($formIDs = '', $faireID = '', $years = '') {
     //find if the show location switch is turned on
     $showLoc = false;
 
-    /*  For Bay Area 23 we forced everyone to not show location    
     $query = "select show_sched from wp_mf_faire where faire = '" . $faireID . "'";
 
     $show_sched = $wpdb->get_var($query);
@@ -244,7 +243,7 @@ function getMTMentries($formIDs = '', $faireID = '', $years = '') {
     //var_dump($result);
     if ($show_sched === "1")
         $showLoc = true;
-      */
+
 
     //find all active entries for selected forms
     $query = "SELECT  entry.id                         AS entry_id, 

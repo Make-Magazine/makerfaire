@@ -547,7 +547,9 @@ function displayContent($content, $entry, $fieldData, $display = 'table') {
       $value = RGFormsModel::get_lead_field_value($entry, $field);
 
       if ($field->type != 'fileupload') {
-        $display_value = GFCommon::get_lead_field_display($field, $value, $entry['currency']);
+        if ( $field instanceof GF_Field ) {
+          $display_value = $field->get_value_entry_detail($value, $entry['currency']);
+        }
         $display_value = apply_filters('gform_entry_field_value', $display_value, $field, $entry, $form);
       } else {
         //display images in a grid
@@ -683,7 +685,9 @@ function getmetaData($entry_id, $type = '') {
                 }
 
                 $value = RGFormsModel::get_lead_field_value($entry, $formFields);
-                $display_value = GFCommon::get_lead_field_display($formFields, $value, $entry['currency']);
+                if ( $field instanceof GF_Field ) {
+                  $display_value = $field->get_value_entry_detail($value, $entry['currency']);
+                }
                 $display_value = apply_filters('gform_entry_field_value', $display_value, $formFields, $entry, $formPull);
 
                 if ($display_empty_fields || !empty($display_value) || $display_value === '0') {

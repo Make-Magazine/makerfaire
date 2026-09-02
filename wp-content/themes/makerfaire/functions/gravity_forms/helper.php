@@ -154,7 +154,9 @@ function setCatName($value, $field, $lead, $form) {
         $field_type = RGFormsModel::get_input_type($field);
         if (in_array($field_type, array('checkbox', 'radio'))) {
             $value = RGFormsModel::get_lead_field_value($lead, $field);
-            return GFCommon::get_lead_field_display($field, $value, $lead["currency"], true);
+            if ( $field instanceof GF_Field ) {
+                return $field->get_value_entry_detail($value, $lead['currency']);
+            }
             $value = get_CPT_name($value);
         }
     }

@@ -11,21 +11,21 @@ function display_entry_schedule($entry) {
     $entry_id = $entry['id'];
 
     $sql = "select location.entry_id, area.area, subarea.subarea, subarea.nicename, location.location, schedule.start_dt, schedule.end_dt
-            from  wp_mf_location location
-            join  wp_mf_faire_subarea subarea
-                            ON  location.subarea_id = subarea.ID
-            join wp_mf_faire_area area
-                            ON subarea.area_id = area.ID
-            left join wp_mf_schedule schedule
-                    on location.ID = schedule.location_id
-             where location.entry_id=$entry_id"
-        . " group by area, subarea, location, schedule.start_dt"
-        . " order by schedule.start_dt";
+                from  wp_mf_location location
+                join  wp_mf_faire_subarea subarea
+                                ON  location.subarea_id = subarea.ID
+                join wp_mf_faire_area area
+                                ON subarea.area_id = area.ID
+                left join wp_mf_schedule schedule
+                        on location.ID = schedule.location_id
+                 where location.entry_id=$entry_id"
+    . " group by area, subarea, location, schedule.start_dt"
+    . " order by schedule.start_dt";
     $results = $wpdb->get_results($sql);
 
     $schedule = "";
-    // we default to believing an entry doesn't have a schedule. if starts dates are found, this will change
     $has_schedule = false;
+    $entry_location = ""; // fallback used only for this function's own return value
 
     if ($wpdb->num_rows > 0) {
         $prev_start_dt = NULL;
@@ -33,68 +33,62 @@ function display_entry_schedule($entry) {
         $multipleLocations = NULL;
         $schedule = '<div class="schedule-items">';
 
-        //split the results into base location and schedule        
         foreach ($results as $row) {
-            //schedule data     
+            $current_location = ($row->nicename != '' ? $row->nicename : $row->subarea);
+
+            // set the entry's primary location from the FIRST row we see,
+            // whether or not that row happens to carry a scheduled time
+            if (empty($entry_location)) {
+                $entry_location = $current_location;
+            }
+            if (empty($location)) {
+                $location = $current_location;
+            }
+
             if (!is_null($row->start_dt)) { // if there is no start date, it's a base location
                 $start_dt = strtotime($row->start_dt);
                 $current_start_dt = date("l, F j", $start_dt);
                 $date = date('D j F Y', $start_dt);
                 $dow = date('D', $start_dt);
                 $day = date('j', $start_dt);
-                $current_location = ($row->nicename != '' ? $row->nicename : $row->subarea);
 
                 if ($prev_start_dt == NULL) {
                     $schedule .= "<div class='schedule-item'>
-                                    <div class='schedule-calendar'>
-                                        <span class='schedule-dow'>" . $dow . "</span>
-                                        <span class='schedule-day'>" . $day . "</span>
-                                        <img src='/wp-content/themes/makerfaire/images/calendar-blank.svg' width='65' height='72' aria-label='" . $date . "' title='" . $date . "' alt='" . $date . "' title='" . $date . "' />
-                                    </div>
-                                    <div class='schedule-details'>";
+                                        <div class='schedule-calendar'>
+                                            <span class='schedule-dow'>" . $dow . "</span>
+                                            <span class='schedule-day'>" . $day . "</span>
+                                            <img src='/wp-content/themes/makerfaire/images/calendar-blank.svg' width='65' height='72' aria-label='" . $date . "' title='" . $date . "' alt='" . $date . "' title='" . $date . "' />
+                                        </div>
+                                        <div class='schedule-details'>";
                 }
 
                 if ($prev_start_dt != $current_start_dt) {
-                    //This is not the first new date
                     if ($prev_start_dt != NULL) {
                         $schedule .= '</div></div>    
-                                      <div class="schedule-item">
-                                        <div class="schedule-calendar">
-                                            <span class="schedule-dow">' . $dow . '</span>
-                                            <span class="schedule-day">' . $day . '</span>
-                                            <img src="/wp-content/themes/makerfaire/images/calendar-blank.svg" width="65" height="72" aria-label="' . $date . '" alt="' . $date . '" title="' . $date . '" />
-                                        </div>
-                                        <div class="schedule-details">';
+                                          <div class="schedule-item">
+                                            <div class="schedule-calendar">
+                                                <span class="schedule-dow">' . $dow . '</span>
+                                                <span class="schedule-day">' . $day . '</span>
+                                                <img src="/wp-content/themes/makerfaire/images/calendar-blank.svg" width="65" height="72" aria-label="' . $date . '" alt="' . $date . '" title="' . $date . '" />
+                                            </div>
+                                            <div class="schedule-details">';
                     }
                     $prev_start_dt = $current_start_dt;
                     $prev_location = null;
                     $multipleLocations = TRUE;
                 }
 
-                // this is a new location
                 if ($prev_location != $current_location) {
                     $prev_location = $current_location;
                     $schedule .= '<b class="location">' . $current_location . '</b>';
                 }
                 $schedule .= '<div class="schedule-start">' . date("g:i a", $start_dt) . '</div>';
-                /* if you wanted to show the booth name
-                if ($row->location != '') {
-                    $schedule .= $row->location;
-                } */
 
-                // if there any start dates were found, we should show a schedule
                 $has_schedule = true;
-
-            } else {
-                //base location at faire
-                //set primary location
-                if (empty($location) || $location == "") {
-                    $location = ($row->nicename != '' ? $row->nicename : $row->subarea);
-                }
-                           
             }
+            // (no else needed anymore — location capture happens above for every row)
         } //end for each loop       
-        if ($multipleLocations == TRUE) { // this is kind of a mess to require this
+        if ($multipleLocations == TRUE) {
             $schedule .= "</div></div>";
         }
         $schedule .= "<a href='/" . $url_sub_path . "/schedule/'>Full Schedule</a></div>";
@@ -103,11 +97,11 @@ function display_entry_schedule($entry) {
     $return = '';
 
     if ($show_sched && $has_schedule) {
-        $return .=  '<h4>Schedule</h4>'
-            . $schedule;
+        $return .= '<h4>Schedule</h4>'
+        . $schedule;
+    } elseif (!empty($entry_location)) {
+        $return .= '<b class="location">' . $entry_location . '</b>';
     }
-
-
 
     return $return;
 }
