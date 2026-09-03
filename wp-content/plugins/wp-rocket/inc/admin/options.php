@@ -51,7 +51,11 @@ function rocket_after_save_options( $oldvalue, $value ) {
 				$oldvalue['do_caching_mobile_files'] !== $value['do_caching_mobile_files']
 			)
 			||
-			$oldvalue['cache_mobile'] !== $value['cache_mobile']
+			(
+				isset( $oldvalue['cache_mobile'], $value['cache_mobile'] )
+				&&
+				$oldvalue['cache_mobile'] !== $value['cache_mobile']
+			)
 		) ) {
 		rocket_generate_advanced_cache_file();
 	}
@@ -215,7 +219,8 @@ function rocket_pre_main_option( $newvalue, $oldvalue ) {
 		$newvalue = array_merge( $newvalue, $keys );
 	}
 
-	if ( ! $rocket_settings_errors ) {
+	// Added this as an additional check to ensure there's none regression for the update in inc/main.php.
+	if ( ! $is_form_submit || ! $rocket_settings_errors ) {
 		return $newvalue;
 	}
 
