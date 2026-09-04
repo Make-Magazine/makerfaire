@@ -30,6 +30,7 @@ function add_tracking_config() {
                 advId: 'QZ72KCGOPBGLLLPAE3SDSI',
                 pixId: 'RGZKRB7CHJF5RBMNCUJREU'
             },
+            pageSense: 'https://cdn.pagesense.io/js/makerfairebayarea2025/055e3d7d67e340079eb022f31bb5628c.js',
             gtmIsAnalytics: true  // GTM contains only analytics tags on this site
         };
     </script>
