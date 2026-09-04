@@ -1,0 +1,25 @@
+
+#zbs-register-widget-btn[zbs-widget-ticket-class-ids="all"], div[id^="zbs-"]:not(#zbs-register-widget-btn) {
+	background: #db2b2e;
+	display: flex;
+	justify-content: center;
+	text-align: center;
+	color: #fff;
+	padding: 12px 20px;
+	max-width: 140px;
+	font-family: "Roboto Bold";
+	cursor:pointer;
+	max-height: 45px;
+}
+div[id^="zbs-"] {
+	margin: 0 auto;
+	min-width:300px;
+}
+.zbs-fadeInUp {
+	height: calc(100vh - 15px) !important;
+	max-height: calc(100vh - 15px) !important;
+	min-height: calc(100vh - 15px) !important;
+}
+.zbs-widget-container iframe.zbs-iframe-widget {
+	min-height: calc(100vh - 20px) !important;
+}

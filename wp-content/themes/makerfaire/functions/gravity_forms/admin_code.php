@@ -147,6 +147,27 @@ function my_custom_form_setting($settings, $form) {
       'label' => 'ExpoFP Event ID'      
    );
 
+   // Backstage Buy Tickets Link
+   $mf_settings['mf_settings']['fields'][] = array(				
+      'name'  => 'backstage_tickets_link',
+      'type'  => 'text',
+      'label' => 'Backstage Buy Tickets Link'      
+   );
+
+   // Backstage Workshop Ticket Class ID
+   $mf_settings['mf_settings']['fields'][] = array(				
+      'name'  => 'backstage_workshop_id',
+      'type'  => 'text',
+      'label' => 'Backstage Workshop Ticket Class ID'      
+   );
+
+   // Turn off locations checkbox
+   $mf_settings['mf_settings']['fields'][] = array(
+      'name'  => 'hide_exhibit_locations',
+      'type'  => 'toggle',
+      'label' => 'Hide Exhibit Locations'
+   );
+
    //place MakerFaire section after Form Basics, and then append all other sections after
    $newSettings = array_merge(array_slice($settings, 0, 1, true), 
    $mf_settings,

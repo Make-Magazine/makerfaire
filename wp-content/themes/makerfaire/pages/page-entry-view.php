@@ -19,7 +19,7 @@ if($proj_photo_size && ($proj_photo_size[0]/$proj_photo_size[1] > 1.77777)) {
                     <h2 class="faireName"><a href="/<?php echo $url_sub_path; ?>"><?php echo $faire_name;?></a></h2>
                     <h3 class="faireDate"><?php echo $faire_dates; ?></h3>
                     <div class="entry-box-items" role="list">
-                        <?php if(isset($location) && trim($location) != '' && count(array_intersect($exhibit_type, array("Exhibit", "Sponsor", "Startup Sponsor", "Performer", "Workshop" ))) > 0) { ?><span class="entry-box-item" role="listitem" aria-label="Location"><i class="fa fa-map-signs" aria-hidden="true"></i><?php echo $location; ?></span><?php } ?>
+                        <?php if(isset($location) && trim($location) != '' && count(array_intersect($exhibit_type, array("Exhibit", "Sponsor", "Startup Sponsor", "Performer", "Workshop" ))) > 0 && $hideLocations == false) { ?><span class="entry-box-item" role="listitem" aria-label="Location"><i class="fa fa-map-signs" aria-hidden="true"></i><?php echo $location; ?></span><?php } ?>
                         <?php if(isset($friday) && $friday == 1 && count(array_intersect($exhibit_type, array("Exhibit", "Sponsor", "Startup Sponsor"))) > 0) { ?><span class="entry-box-item" role="listitem" aria-label="Calendar Detail"><i class="fa fa-calendar-days" aria-hidden="true"></i>Friday Only</span><?php } ?>
                         <?php if(isset($satSun) && $satSun == 1 && count(array_intersect($exhibit_type, array("Exhibit", "Sponsor", "Startup Sponsor"))) > 0) { ?><span class="entry-box-item" role="listitem" aria-label="Calendar Detail"><i class="fa fa-calendar-days" aria-hidden="true"></i>Sat & Sun</span><?php } ?>
                         <?php if(!empty($exhibit_type)) { ?>
@@ -50,6 +50,106 @@ if($proj_photo_size && ($proj_photo_size[0]/$proj_photo_size[1] > 1.77777)) {
                 if( $scheduleOutput != '' && $show_sched && str_starts_with($scheduleOutput, "<h4>Schedule</h4>") ) { ?>
                     <div class="entry-box">
                         <?php echo $scheduleOutput; ?>
+                        <?php // Buy Workshop Tickets btn ?>
+                        <?php if( count(array_intersect($exhibit_type, array( "Workshop" ))) > 0 && !empty($form['backstage_tickets_link']) && !empty($form['backstage_workshop_id'])){ ?>
+                            <div id="zbs-workshop-btn">Buy a Workshop Ticket</div>
+                            <link rel='stylesheet' href='https://static.zohocdn.com/backstage/v1.0/styles/ticket-widget/v1.3/register-widget.min.css'>
+                            <script src='https://static.zohocdn.com/backstage/v1.0/javascript/ticket-widget/v1.3/register-widget.min.js'></script>
+                            <script>
+                                window.ZBSCheckOutWidget._createWidget({
+                                    eventUrl: '<?php echo $form['backstage_tickets_link']; ?>',
+                                    modal: true,
+                                    clickableElements: ['#zbs-register-widget-btn'],
+                                    ticketClassIdVsSelectorMap: {},
+                                    ticketGroupIdVsSelectorMap: {},
+                                    skipValidation: false,
+                                    widgetOptions: {
+                                        theme: {
+                                            primaryButton: {
+                                                backgroundColor: '#ed1818',
+                                                textColor: '#ffffff',
+                                                borderColor: '#ffffff'
+                                            },
+                                            eventHeader: {
+                                                backgroundColor: '#de3423',
+                                                textColor: '#ffffff'
+                                            }
+                                        },
+                                        visibilityOptions: {
+                                            showEventHeader: false,
+                                            showCheckoutProgress: true,
+                                            showBSBranding: false,
+                                            showEventDate: true,
+                                            showEventVenue: true,
+                                            ticketClassIds: [],
+                                            ticketItemGroupIds: []
+                                        },
+                                        redirectUrl: '',
+                                        affiliate: '',
+                                        promoCode: '',
+                                        showFillInfo: false,
+                                        showRegisterModalWithInfoPage: false,
+                                        messageContents : {
+                                            'lbl.closed': 'closed',
+                                            'lbl.yet.to.start': 'yet to start',
+                                            'lbl.sales.ended': 'sales ended',
+                                            'lbl.unavailable': 'UNAVAILABLE',
+                                            'lbl.sold.out': 'SOLD OUT',
+                                            'lbl.open': 'BUY TICKETS'
+                                        }
+                                    },
+                                    onOrderComplete: function (event) {},
+                                    onClose: function (event) {}
+                                } );
+                            </script>
+                            <script>
+                                window.ZBSCheckOutWidget._createWidget({
+                                    eventUrl: '<?php echo $form['backstage_tickets_link']; ?>',
+                                    modal: true,
+                                    ticketGroupIdVsSelectorMap: {
+                                        '<?php echo $form['backstage_workshop_id']; ?>': ['#zbs-workshop-btn']
+                                    },
+                                    skipValidation: false,
+                                    widgetOptions: {
+                                        theme: {
+                                            primaryButton: {
+                                                backgroundColor: '#ed1818',
+                                                textColor: '#ffffff',
+                                                borderColor: '#ffffff'
+                                            },
+                                            eventHeader: {
+                                                backgroundColor: '#de3423',
+                                                textColor: '#ffffff'
+                                            }
+                                        },
+                                        visibilityOptions: {
+                                            showEventHeader: false,
+                                            showCheckoutProgress: true,
+                                            showBSBranding: false,
+                                            showEventDate: true,
+                                            showEventVenue: true,
+                                            ticketClassIds: [],
+                                            ticketItemGroupIds: []
+                                        },
+                                        redirectUrl: '',
+                                        affiliate: '',
+                                        promoCode: '',
+                                        showFillInfo: false,
+                                        showRegisterModalWithInfoPage: false,
+                                        messageContents : {
+                                            'lbl.closed': 'closed',
+                                            'lbl.yet.to.start': 'yet to start',
+                                            'lbl.sales.ended': 'sales ended',
+                                            'lbl.unavailable': 'UNAVAILABLE',
+                                            'lbl.sold.out': 'SOLD OUT',
+                                            'lbl.open': 'BUY TICKETS'
+                                        }
+                                    },
+                                    onOrderComplete: function (event) {},
+                                    onClose: function (event) {}
+                                } );
+                            </script>
+                        <?php } ?>
                     </div>
                 <?php
                 }                   

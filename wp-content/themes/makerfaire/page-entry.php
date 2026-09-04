@@ -99,10 +99,12 @@ if ( ! is_array( $entry ) || empty( $entry ) ) {
         }
     }
 
+
     $in_faire = ($faire_end > date("Y-m-d j:i:s") ? TRUE : FALSE);
     if($faire_year == "2025") {
         $in_faire = true; // we're letting 2025 folks edit their entries even though the faire is over
     }
+    $hideLocations = !empty($form['hide_exhibit_locations']);
 
     // build array of categories
     $mainCategoryName = '';
