@@ -467,7 +467,7 @@
 		margin-bottom: 10px;
 		.schedule-calendar {
 			position: relative;
-			img { filter: invert(19%) sepia(94%) saturate(7025%) hue-rotate(7deg) brightness(98%) contrast(104%); }
+			img { filter: brightness(0) saturate(100%) invert(27%) sepia(97%) saturate(6736%) hue-rotate(1deg) brightness(94%) contrast(106%); }
 			.schedule-dow {
 				position: absolute;
 				color: #fff;
