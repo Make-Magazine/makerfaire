@@ -611,15 +611,15 @@ function set_entry_location($entry, $form, &$location_id = '') {
         . " VALUES ($entry_info_entry_id,$entry_schedule_change,'$update_entry_location_code',3)";
 
     //Insert Query — reuses WordPress's existing DB connection instead of opening a new one
-    $insert_row = $wpdb->query($insert_query);
+    $insert_row = $wpdb->query($insert_query);   // INSERT INTO wp_mf_location
     if ($insert_row !== false) {
         //echo 'Success! <br />';
     } else {
         error_log('Error :' . $insert_query . ':' . $wpdb->last_error);
     }
 
-    setLocChgRpt($entry_schedule_change, $update_entry_location_code, $entry, 'add');
-    $location_id = $wpdb->insert_id;
+    setLocChgRpt($entry_schedule_change, $update_entry_location_code, $entry, 'add');  // ← runs BEFORE insert_id is captured
+    $location_id = $wpdb->insert_id;                                                   // ← captured AFTER
 }
 
 /* Delete entry schedule */
