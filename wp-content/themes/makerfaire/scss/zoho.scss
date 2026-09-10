@@ -16,10 +16,5 @@ div[id^="zbs-"] {
 	min-width:300px;
 }
 .zbs-fadeInUp {
-	height: calc(100vh - 15px) !important;
-	max-height: calc(100vh - 15px) !important;
-	min-height: calc(100vh - 15px) !important;
-}
-.zbs-widget-container iframe.zbs-iframe-widget {
-	min-height: calc(100vh - 20px) !important;
+	height: calc(100vh - 40px) !important;
 }
