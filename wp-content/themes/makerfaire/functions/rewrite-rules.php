@@ -4,9 +4,9 @@ function maker_url_vars($rules) {
   $newrules = array();
 
   //classic entry page for flagship faires — slug-plus-ID, legacy numeric still matches
-  $newrules['maker/entry/([A-Za-z0-9\-]*?)-?(\d+)(?:/(edit))?/?$'] =
-    'index.php?post_type=page&pagename=entry-page-do-not-delete'
-    . '&e_slug=$matches[1]&e_id=$matches[2]&edit_slug=$matches[3]';
+  $newrules['maker/entry/([^/]*?)-?(\d+)(?:/(edit))?/?$'] =
+  'index.php?post_type=page&pagename=entry-page-do-not-delete'
+  . '&e_slug=$matches[1]&e_id=$matches[2]&edit_slug=$matches[3]';
 
   //classic schedule page
   $newrules['([^\/]*)/schedule/([^/]+)/?$'] = 'index.php?pagename=$matches[1]/schedule&sched_dow=$matches[2]';
@@ -174,11 +174,16 @@ add_action( 'template_redirect', function() {
     $title = rgar( $entry, (string) MF_TITLE_FIELD );
     if ( (string) get_query_var( 'e_slug' ) !== mf_slug_from_title( $title ) ) {
         $isEdit = ( 'edit' === (string) get_query_var( 'edit_slug' ) );
-        $target = home_url( mf_entry_path( $title, $entry_id, $isEdit ) );
-        if ( ! empty( $_SERVER['QUERY_STRING'] ) ) {
-            $target .= '?' . $_SERVER['QUERY_STRING'];
+        $path   = mf_entry_path( $title, $entry_id, $isEdit );
+        $req    = strtok( $_SERVER['REQUEST_URI'], '?' );
+
+        if ( rawurldecode( untrailingslashit( $req ) ) !== rawurldecode( untrailingslashit( $path ) ) ) {
+            $target = home_url( $path );
+            if ( ! empty( $_SERVER['QUERY_STRING'] ) ) {
+                $target .= '?' . $_SERVER['QUERY_STRING'];
+            }
+            wp_safe_redirect( $target, 301 );
+            exit;
         }
-        wp_safe_redirect( $target, 301 );
-        exit;
     }
 }, 1 );
