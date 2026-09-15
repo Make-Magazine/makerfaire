@@ -109,7 +109,7 @@ function mf_set_entry_location(WP_REST_Request $request) {
     $placeholders = implode(',', array_fill(0, count($area_ids), '%d'));
     $subarea_row = $wpdb->get_row(
         $wpdb->prepare(
-            "SELECT ID, area_id FROM {$subarea_table} WHERE subarea = %s AND area_id IN ($placeholders) LIMIT 1",
+            "SELECT ID, area_id, exposure  FROM {$subarea_table} WHERE subarea = %s AND area_id IN ($placeholders) LIMIT 1",
             array_merge([$zone], $area_ids)
         )
     );
@@ -159,11 +159,12 @@ function mf_set_entry_location(WP_REST_Request $request) {
     }
 
     return [
-        'success'     => true,
-        'entry_id'    => $entry_id,
-        'subarea_id'  => intval($subarea_id),
-        'area_id'     => intval($area_id),
-        'location'    => $booth,
-        'location_id' => $location_id,
+        'success'      => true,
+        'entry_id'     => $entry_id,
+        'subarea_id'   => intval($subarea_id),
+        'area_id'      => intval($area_id),
+        'exposure'     => $subarea_row->exposure,
+        'location'     => $booth,
+        'location_id'  => $location_id,
     ];
 }
