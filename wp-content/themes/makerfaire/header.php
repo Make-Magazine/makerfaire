@@ -15,7 +15,7 @@
         <title><?php bloginfo('name'); ?> | <?php is_front_page() ? 'Make • Create • Craft • Build • Play' : wp_title(''); ?></title>
         <?php
         // Make sure we stop indexing of any maker pages, the application forms, author pages or attachment pages
-        if (get_post_type() == 'maker' || is_page(array(876, 877, 878, 371)) || is_author() || is_attachment()) {
+        if (is_page(array(876, 877, 878, 371)) || is_author() || is_attachment()) {
             echo '<meta name="robots" content="noindex, follow">';
         }
         ?>
