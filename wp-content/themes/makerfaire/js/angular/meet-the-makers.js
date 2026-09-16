@@ -66,6 +66,7 @@ mtm.controller('mtmMakers', ['$scope', '$sce', '$filter', '$http', function ($sc
     $scope.layout = layout;
     $scope.category = '';
     $scope.type = '';
+    $scope.location = '';
     $scope.tags = [];
     $scope.makers = [];
     catJson = [];
@@ -76,20 +77,19 @@ mtm.controller('mtmMakers', ['$scope', '$sce', '$filter', '$http', function ($sc
     var faireID = jQuery('#mtm-faire').val();
     formIDs = replaceAll(formIDs, ",", "-");
  
-    //ACF-driven filter presets set on the page itself (entry_type / category fields).
+    //ACF-driven filter presets set on the page itself (entry_type / category / location fields).
     //When present, these lock the results and take priority over any ?category=/?type= URL param.
     //Either field may hold multiple values separated by commas, e.g. "Robotics, Woodworking" -
     //makers matching ANY of the listed values are kept.
     var presetCategory = jQuery('#mtm-preset-category').val();
     var presetType = jQuery('#mtm-preset-type').val();
+    var presetLocation = jQuery('#mtm-preset-location').val();
     var presetCategories = splitPresetList(presetCategory);
     var presetTypes = splitPresetList(presetType);
+    var presetLocations = splitPresetList(presetLocation);
     $scope.presetCategory = presetCategories.length > 0;
     $scope.presetType = presetTypes.length > 0;
- 
-    if (initialLocation) {
-        $scope.makerSearch.location = initialLocation;
-    }
+    $scope.presetLocation = presetLocations.length > 0;
  
     if (!$scope.presetCategory && initialCategory) {
         $scope.makerSearch.categories = initialCategory;
@@ -97,6 +97,10 @@ mtm.controller('mtmMakers', ['$scope', '$sce', '$filter', '$http', function ($sc
  
     if (!$scope.presetType && initialType) {
         $scope.makerSearch.types = initialType;
+    }
+
+    if (!$scope.presetLocation && initialLocation) {
+        $scope.makerSearch.location = initialLocation;
     }
  
     if (handsOn == "true") {
@@ -136,7 +140,12 @@ mtm.controller('mtmMakers', ['$scope', '$sce', '$filter', '$http', function ($sc
                     return listContainsAny(maker.types, presetTypes);
                 });
             }
-            if ((presetCategories.length > 0 || presetTypes.length > 0) && $scope.makers.length <= 0) {
+            if (presetLocations.length > 0) {
+                $scope.makers = $scope.makers.filter(function (maker) {
+                    return listContainsAny(maker.location, presetLocations);
+                });
+            }
+            if ((presetCategories.length > 0 || presetTypes.length > 0 || presetLocations.length > 0) && $scope.makers.length <= 0) {
                 jQuery('.mtm .loading').html(noMakerText);
             }
  
@@ -335,9 +344,17 @@ function listContainsAny(items, needles) {
     if (!items) {
         return false;
     }
+    var list;
+    if (Array.isArray(items)) {
+        list = items;
+    } else if (typeof items === 'object') {
+        list = Object.keys(items).map(function (key) { return items[key]; });
+    } else {
+        list = [items];
+    }
     return needles.some(function (needle) {
         var target = needle.trim().toLowerCase();
-        return items.some(function (item) {
+        return list.some(function (item) {
             return String(item).trim().toLowerCase() === target;
         });
     });

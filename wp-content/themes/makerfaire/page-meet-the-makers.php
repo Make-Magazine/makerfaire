@@ -16,6 +16,7 @@ if ($noMakerText == '')
 //value and the matching dropdown is hidden (a URL ?category=/?type= param is ignored).
 $presetCategory = get_field('category');
 $presetType     = get_field('entry_type');
+$presetLocation = get_field('location');
  
 //faire name
 $faire     = get_field('faire');
@@ -56,6 +57,7 @@ $faireName = (isset($results[0]->faire_name)?$results[0]->faire_name:'');
         <input type="hidden" id="noMakerText" value="<?php echo $noMakerText; ?>" />
         <input type="hidden" id="mtm-preset-category" value="<?php echo esc_attr($presetCategory); ?>" />
         <input type="hidden" id="mtm-preset-type" value="<?php echo esc_attr($presetType); ?>" />
+        <input type="hidden" id="mtm-preset-location" value="<?php echo esc_attr($presetLocation); ?>" />
  
         <form class="mtm-filter-wrap" ng-cloak role="form">
             <div class="search-wrapper">
@@ -80,6 +82,7 @@ $faireName = (isset($results[0]->faire_name)?$results[0]->faire_name:'');
             </div>
  
             <!-- Area Filter -->
+             <?php if (empty($presetLocation)): ?>
             <div class="dropdown form-control" ng-if="locations.length > 0">
                 <button class="btn btn-link dropdown-toggle" type="button" id="location-dropdownMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
                     <span ng-if="makerSearch.location != ''">{{makerSearch.location}}</span>
@@ -95,6 +98,7 @@ $faireName = (isset($results[0]->faire_name)?$results[0]->faire_name:'');
                     </li>
                 </ul>
             </div>
+            <?php endif; ?>
  
             <!--Category filter (hidden when the "category" ACF field locks the page to one category) -->
             <?php if (empty($presetCategory)): ?>
