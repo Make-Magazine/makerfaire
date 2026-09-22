@@ -650,17 +650,48 @@ function mf_project_category($entry, $field_id = '320') {
  * windows-1252 by this point, so widths measure correctly without it.
  */
 function mf_fit_font($pdf, $family, $style, $text, $width, $startSize, $minSize, $maxLines) {
-   $size = $startSize;
+   $size      = $startSize;
+   $effective = mf_effective_width($width);
 
    while ($size > $minSize) {
       $pdf->SetFont($family, $style, $size);
-      if (mf_count_lines($pdf, $text, $width) <= $maxLines) {
+
+      /* Two conditions, both required:
+       *
+       * 1. No single word may be wider than the column. FPDF's MultiCell breaks an
+       *    over-wide word CHARACTER BY CHARACTER — that is what turned
+       *    "COMMUNICATIONS" into "COMMUNICATIO / NS". Shrinking until the longest word
+       *    fits is what stops words being cut in half.
+       * 2. The whole string must still wrap to no more than $maxLines.
+       */
+      if (mf_longest_word_width($pdf, $text) <= $effective
+         && mf_count_lines($pdf, $text, $width) <= $maxLines) {
          return $size;
       }
+
       $size -= 1;
    }
 
    return $minSize;
+}
+
+/** Usable width inside a MultiCell of $width, i.e. less FPDF's cell margin on each side. */
+function mf_effective_width($width) {
+   return max(1, $width - 2 * FPDF_CELL_MARGIN);
+}
+
+/** Width of the widest single word at the current font. */
+function mf_longest_word_width($pdf, $text) {
+   $max = 0;
+
+   foreach (preg_split('/\s+/', trim($text)) as $word) {
+      if ($word === '') {
+         continue;
+      }
+      $max = max($max, $pdf->GetStringWidth($word));
+   }
+
+   return $max;
 }
 
 /**
@@ -672,7 +703,7 @@ function mf_fit_font($pdf, $family, $style, $text, $width, $startSize, $minSize,
  * FPDF, and the fitted size comes out one line too large.
  */
 function mf_count_lines($pdf, $text, $width) {
-   $width = max(1, $width - 2);
+   $width = mf_effective_width($width);
    $lines = 0;
 
    foreach (explode("\n", $text) as $paragraph) {
@@ -684,6 +715,29 @@ function mf_count_lines($pdf, $text, $width) {
          if ($word === '') {
             continue;
          }
+
+         // A word wider than the column gets broken character by character by MultiCell.
+         // Model that here, otherwise the count is short and the fitted size too large.
+         // filterText() has already reduced the string to single-byte windows-1252, so
+         // str_split() is safe.
+         if ($pdf->GetStringWidth($word) > $width) {
+            if ($current !== '') {
+               $lines++;
+               $current = '';
+            }
+            $chunk = '';
+            foreach (str_split($word) as $char) {
+               if ($chunk !== '' && $pdf->GetStringWidth($chunk . $char) > $width) {
+                  $lines++;
+                  $chunk = $char;
+               } else {
+                  $chunk .= $char;
+               }
+            }
+            $current = $chunk;
+            continue;
+         }
+
          $try = ($current === '') ? $word : $current . ' ' . $word;
          if ($pdf->GetStringWidth($try) > $width && $current !== '') {
             $lines++;
