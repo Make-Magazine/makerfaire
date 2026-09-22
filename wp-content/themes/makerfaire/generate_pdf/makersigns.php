@@ -13,12 +13,12 @@
  * still matches the background art and the whole block moves together.
  *
  * WHAT IS DRAWN (matching the prototype):
- *   - signBackground2025.png, full width, bottom aligned
+ *   - SIGN_BACKGROUND artwork, full width, bottom aligned
  *   - project title, orange, centred, in the white band above the art
  *   - area / subarea, white, left column of the blue panel
  *   - "Learn More" + QR code, bottom left
  *   - project photo, circle-cropped into the photo well at (257, 220) r83
- *   - mareIslandMakey.png branding
+ *   - MFBA26_Patch_Final.png branding patch, bottom aligned to the QR box
  *
  * WHAT IS COMPUTED BUT NOT DRAWN:
  *   Maker/group name, short description, category, exhibit type, booth and maker photo are
@@ -71,6 +71,9 @@ const PAGE_H = 279.4;   // 11in  in mm
  * and mapped onto the page by mf_ax() / mf_ay() / mf_as(). Change ART_W or ART_TOP and the
  * whole composition moves together.
  * ---------------------------------------------------------------------- */
+/** Background artwork, in pdf_layouts/. Must be square and match the well to PHOTO_CY. */
+const SIGN_BACKGROUND = 'signBackground2026-raisedwell.png';
+
 const ART_DESIGN_SIZE = 381;                       // the design space the art was drawn in
 const ART_W           = PAGE_W;                    // art is full page width
 const ART_TOP         = PAGE_H - ART_W;            // bottom aligned
@@ -85,8 +88,9 @@ const TITLE_W        = PAGE_W - 30;
 const TITLE_SIZE     = 60;    // pt
 const TITLE_MAXLINES = 4;   // the band fits 4 lines at 60pt (20 + 4*23.8 = 115mm, clear of 133)
 /* Bottom limit: the top of the photo circle in page space is
- * ART_TOP + (PHOTO_CY - PHOTO_R) * ART_SCALE = 63.5 + 137*0.5667 ≈ 141mm. Stop short of it. */
-const TITLE_MAXY     = 133;
+ * ART_TOP + (PHOTO_CY - PHOTO_R) * ART_SCALE = 63.5 + 112*0.5667 ≈ 127mm. Stop short of it.
+ * 4 lines at 60pt reach 115.2mm, so full-size titles are unaffected by the tighter floor. */
+const TITLE_MAXY     = 119;
 
 /* Set false to render titles at a fixed TITLE_SIZE. Left on because long titles otherwise
  * run down into the photo circle. Shrinking only kicks in when text would actually overflow. */
@@ -138,12 +142,123 @@ const QR_Y        = 305;
 const QR_W        = 65;
 
 const PHOTO_CX    = 257;   // photo well centre
-const PHOTO_CY    = 220;
+const PHOTO_CY    = 195;   // raised 25 units from the artwork's well to close the gap under the title
 const PHOTO_R     = 83;
 
-const MAKEY_X     = 265;
-const MAKEY_Y     = 260;
-const MAKEY_W     = 100;
+/* Branding lockup. The old Makey was 100 wide x 108.3 tall (10,831 sq units); this lockup is
+ * wide and short (aspect 0.392), so 166.3 wide gives it the same area on the page. Its right
+ * edge stays at art x=365 where the Makey's was, and its BOTTOM is aligned to the QR box at
+ * draw time. Drop to 130.3 for a smaller wordmark with more blue around it. */
+const LOGO_RIGHT  = 365;
+const LOGO_W      = 166.3;   // max width
+const LOGO_MAX_H  = 110;     // max height — the patch tucks into the photo well's lower-left
+const LOGO_FILE   = 'MFBA26_Patch_Final.png';
+const LOGO_Y      = 260;   // fallback only, used if the artwork can't be measured
+
+
+/* -------------------------------------------------------------------------
+ * IMAGE SIZE GUARD
+ *
+ * FPDF inflates a PNG to raw scanlines in memory, then makes a second copy of the
+ * colour data and a third of the alpha while splitting the channels — roughly
+ * width * height * 8 bytes at peak. A 77-megapixel file therefore wants ~585MB and
+ * takes the request down with an OOM fatal before anything can be caught.
+ *
+ * getimagesize() reads only the header, so this costs nothing and turns a fatal into
+ * one logged, skipped sign. 12 MP peaks around 96MB, comfortably inside a 512MB limit.
+ * ---------------------------------------------------------------------- */
+const MF_MAX_IMAGE_PIXELS = 12000000;
+
+/** Bumped whenever this file changes, so a run can prove which copy is live. */
+const MF_SIGNS_VERSION = '2026-09-22-guard3';
+
+/**
+ * php.ini's memory_limit in bytes. 0 or -1 means unlimited.
+ */
+function mf_memory_limit_bytes() {
+   $raw = trim((string) ini_get('memory_limit'));
+   if ($raw === '' || $raw === '-1') {
+      return 0;
+   }
+   $unit = strtolower(substr($raw, -1));
+   $val  = (float) $raw;
+   if ($unit === 'g') { $val *= 1024 * 1024 * 1024; }
+   elseif ($unit === 'm') { $val *= 1024 * 1024; }
+   elseif ($unit === 'k') { $val *= 1024; }
+   return (int) $val;
+}
+
+/**
+ * Report the entry and the image being placed when a fatal kills the request.
+ *
+ * An OOM inside FPDF cannot be caught - it is not an Exception - so the whole request dies
+ * with a 500 and nothing in the log says which entry or which image did it. This turns that
+ * into one actionable line.
+ */
+$GLOBALS['mf_oom_reserve'] = str_repeat('x', 262144);   // freed below so the handler can run
+register_shutdown_function(function () {
+   // PHP does not hand memory back before shutdown functions run, so release a reserve
+   // first - otherwise the report about running out of memory runs out of memory.
+   unset($GLOBALS['mf_oom_reserve']);
+
+   $e = error_get_last();
+   if (!$e || !in_array($e['type'], array(E_ERROR, E_CORE_ERROR, E_COMPILE_ERROR, E_USER_ERROR), true)) {
+      return;
+   }
+   error_log(sprintf(
+      'makersigns FATAL [%s] entry=%s last image=%s (peak %.0fMB of a %.0fMB limit) :: %s',
+      MF_SIGNS_VERSION,
+      isset($GLOBALS['mf_current_entry']) ? $GLOBALS['mf_current_entry'] : '?',
+      isset($GLOBALS['mf_last_image']) ? $GLOBALS['mf_last_image'] : '?',
+      memory_get_peak_usage(true) / 1048576,
+      mf_memory_limit_bytes() / 1048576,
+      $e['message']
+   ));
+});
+
+/**
+ * True when $path is missing, unreadable, or too large for FPDF to decode safely.
+ * $why is filled with a human-readable reason for the log.
+ */
+function mf_image_too_big($path, &$why = null) {
+   // Recorded for the shutdown handler: if FPDF dies, this is what it died on.
+   $GLOBALS['mf_last_image'] = $path;
+
+   $size = @getimagesize($path);
+
+   if (!$size || empty($size[0]) || empty($size[1])) {
+      $why = 'unreadable or not an image';
+      return true;
+   }
+
+   $pixels = $size[0] * $size[1];
+   $need   = $pixels * 8;   // FPDF's rough peak: inflated scanlines + colour copy + alpha copy
+
+   if ($pixels > MF_MAX_IMAGE_PIXELS) {
+      $why = sprintf(
+         '%dx%d = %.1f megapixels, over the %.0f MP limit (FPDF would need ~%.0fMB)',
+         $size[0], $size[1], $pixels / 1e6, MF_MAX_IMAGE_PIXELS / 1e6, $need / 1048576
+      );
+      return true;
+   }
+
+   // A fixed megapixel ceiling is not enough on its own: what matters is whether this
+   // particular image fits in what is left of the limit right now. Keep 20% back for the
+   // rest of the page.
+   $limit = mf_memory_limit_bytes();
+   if ($limit > 0) {
+      $free = $limit - memory_get_usage(true);
+      if ($need > $free * 0.8) {
+         $why = sprintf(
+            '%dx%d needs ~%.0fMB but only %.0fMB of the %.0fMB limit is free',
+            $size[0], $size[1], $need / 1048576, $free / 1048576, $limit / 1048576
+         );
+         return true;
+      }
+   }
+
+   return false;
+}
 
 /** Map an art-space X onto the page. */
 function mf_ax($x) { return $x * ART_SCALE; }
@@ -190,13 +305,21 @@ try {
    $pdf->SetFont('Benton Sans', '', 12);
    $pdf->SetAutoPageBreak(false);
 
-   // Background — the square 2025 art, scaled to page width and pinned to the bottom edge.
+   // Background — the square art, scaled to page width and pinned to the bottom edge.
    // The band above it is left as plain white page for the title.
-   $background = get_template_directory() . '/generate_pdf/pdf_layouts/signBackground2025.png';
-   if (file_exists($background)) {
-      $pdf->Image($background, 0, ART_TOP, ART_W, ART_W);
-   } else {
+   //
+   // NOTE: this is signBackground2025.png with the photo well raised 25 art units to match
+   // PHOTO_CY, rebuilt programmatically (flat white above y=625px, flat blue below, the
+   // dotted arcs and red dot composited back on top). If the photo position changes again,
+   // the well has to move with it or a crescent of the well shows from under the photo.
+   // Ideally your designer supplies updated art and this points back at a supplied file.
+   $background = get_template_directory() . '/generate_pdf/pdf_layouts/' . SIGN_BACKGROUND;
+   if (!file_exists($background)) {
       error_log("makersigns: background missing at $background");
+   } elseif (mf_image_too_big($background, $why)) {
+      error_log("makersigns: background not usable — $why: $background");
+   } else {
+      $pdf->Image($background, 0, ART_TOP, ART_W, ART_W);
    }
 
    $pdf->SetMargins(TITLE_X, TITLE_Y, TITLE_X); //left, top, right
@@ -267,6 +390,8 @@ try {
 
 
 function createOutput($entry_id, $pdf) {
+   $GLOBALS['mf_current_entry'] = $entry_id;
+
    // Initialize the variable that the image was resized
    $resizeImage = 1;
    $entry = GFAPI::get_entry($entry_id);
@@ -373,7 +498,7 @@ function createOutput($entry_id, $pdf) {
     * Project Title — page space, in the white band above the artwork
     * auto adjust the font so the text will fit
     ***************************************************************************/
-   $pdf->setTextColor(245, 73, 39);
+   $pdf->setTextColor(237, 28, 36);
    $pdf->SetXY(TITLE_X, TITLE_Y);
 
    $x = TITLE_SIZE; // set the starting font size
@@ -501,7 +626,12 @@ function createOutput($entry_id, $pdf) {
 
    if ($qrLocal) {
       list($qrPath, $qrExt, $qrIsTemp) = $qrLocal;
-      $qrSize = @getimagesize($qrPath);
+      if (mf_image_too_big($qrPath, $whyQr)) {
+         error_log("makersigns: QR image not usable — $whyQr");
+         $qrSize = false;
+      } else {
+         $qrSize = @getimagesize($qrPath);
+      }
       if ($qrSize && !empty($qrSize[0])) {
          $qrH = $qrW * ($qrSize[1] / $qrSize[0]);
       }
@@ -560,22 +690,33 @@ function createOutput($entry_id, $pdf) {
    /***************************************************************************
     * branding
     ***************************************************************************/
-   $makey = get_template_directory() . '/generate_pdf/pdf_layouts/mareIslandMakey.png';
-   if (file_exists($makey)) {
-      $makeyW = mf_as(MAKEY_W);
-      $makeySize = @getimagesize($makey);
+   $logo = get_template_directory() . '/generate_pdf/pdf_layouts/' . LOGO_FILE;
+   if (file_exists($logo) && mf_image_too_big($logo, $whyLogo)) {
+      // Resize the artwork rather than raising memory_limit: the logo prints 94mm wide,
+      // so anything past ~1500px across is wasted bytes in every single PDF.
+      error_log("makersigns: branding logo not usable — $whyLogo: $logo");
+   } elseif (file_exists($logo)) {
+      $logoW = mf_as(LOGO_W);
+      $logoX = mf_ax(LOGO_RIGHT) - $logoW;   // right aligned where the old Makey ended
+      $logoSize = @getimagesize($logo);
 
       // Sit the logo's bottom edge on the QR box's bottom edge. Derived from the artwork's
-      // real aspect ratio rather than a fixed MAKEY_Y, so the two stay flush even if either
-      // image is swapped for one with different proportions.
-      if ($makeySize && !empty($makeySize[0])) {
-         $makeyH = $makeyW * ($makeySize[1] / $makeySize[0]);
-         $makeyY = $qrBottom - $makeyH;
-         $pdf->Image($makey, mf_ax(MAKEY_X), $makeyY, $makeyW, $makeyH);
+      // real aspect ratio rather than a fixed Y, so the two stay flush even if either image
+      // is swapped for one with different proportions.
+      if ($logoSize && !empty($logoSize[0])) {
+         $logoH = $logoW * ($logoSize[1] / $logoSize[0]);
+         if ($logoH > mf_as(LOGO_MAX_H)) {
+            $logoH = mf_as(LOGO_MAX_H);
+            $logoW = $logoH * ($logoSize[0] / $logoSize[1]);
+            $logoX = mf_ax(LOGO_RIGHT) - $logoW;
+         }
+         $pdf->Image($logo, $logoX, $qrBottom - $logoH, $logoW, $logoH);
       } else {
-         error_log("makersigns: could not read $makey — falling back to the fixed MAKEY_Y");
-         $pdf->Image($makey, mf_ax(MAKEY_X), mf_ay(MAKEY_Y), $makeyW);
+         error_log("makersigns: could not read $logo — falling back to the fixed LOGO_Y");
+         $pdf->Image($logo, $logoX, mf_ay(LOGO_Y), $logoW);
       }
+   } else {
+      error_log("makersigns: branding logo missing at $logo");
    }
 
    /***************************************************************************
@@ -767,14 +908,15 @@ function mf_add_circular_image($pdf, $src, $circleX, $circleY, $circleR, $focus 
    }
    list($path, $ext, $isTemp) = $local;
 
-   $size = @getimagesize($path);
-   if (!$size) {
-      error_log("mf_add_circular_image: getimagesize failed for $path");
+   if (mf_image_too_big($path, $why)) {
+      error_log("mf_add_circular_image: $why: $src");
       if ($isTemp) {
          @unlink($path);
       }
       return false;
    }
+
+   $size = @getimagesize($path);
 
    list($img_w, $img_h) = $size;
    if (!$img_w || !$img_h) {
@@ -921,6 +1063,14 @@ function mf_localize_image($src) {
 
    if (!file_exists($tmpfile) || filesize($tmpfile) === 0) {
       error_log("mf_localize_image: temp file missing/empty for $src");
+      return false;
+   }
+
+   // GD and Imagick decode to a full w*h*4 bitmap, so an oversized source would blow up here
+   // - before FPDF is ever reached. Check the converted-from file too, not just the output.
+   if (($ext === 'webp' || $ext === 'heic') && mf_image_too_big($tmpfile, $whyConv)) {
+      error_log("mf_localize_image: $ext source too large to convert - $whyConv: $src");
+      @unlink($tmpfile);
       return false;
    }
 

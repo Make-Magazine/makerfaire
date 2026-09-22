@@ -1,6 +1,21 @@
 /**
  * Faire signs admin JS.
  *
+ * Generation is browser-driven: each poll request generates another chunk of signs
+ * server-side and returns progress. No WP-Cron involved.
+ *
+ * FIXES vs. the original:
+ *  - Every status selector was '#collapse<faire> …', left over from the Bootstrap collapse
+ *    markup. The page renders a jQuery UI accordion whose container is '#tabs<faire>', so
+ *    every .html() call matched an empty set and the UI was silent no matter what happened
+ *    server-side. That was the whole of "nothing loads".
+ *  - .fail() handlers, so an AJAX error is visible instead of swallowed.
+ *  - Polls are chained with setTimeout, not setInterval — a poll now does ~10s of real work,
+ *    and setInterval would stack overlapping requests.
+ *  - Clicking Generate while a run is already in progress RESUMES it instead of restarting.
+ *  - Sends the nonce emitted inline by adminPages/faire_signs.php.
+ */
+ 
 /* global ajaxurl, mfSigns */
  
 (function () {
@@ -155,6 +170,36 @@
 			} );
 	}
  
+	/* ---------------------------------------------------------------------
+	 * Stop / reset
+	 * ------------------------------------------------------------------ */
+ 
+	/**
+	 * Stop halts the run and keeps the counters. Reset also wipes the queue and the stored
+	 * counters — use it when a stale "another tab is running this" or an old first-failure
+	 * message is stuck on screen, since that state lives in an option and survives restarts.
+	 */
+	window.stopPDF = function ( faire, type, reset ) {
+		stopPolling( faire, type );
+		say( faire, type, 'pdfEntList', reset ? 'Resetting&hellip;' : 'Stopping&hellip;' );
+ 
+		post( { action: 'mf_signStop', faire: faire, type: type, reset: reset ? 1 : 0 } )
+			.done( function ( response ) {
+				if ( ! response || ! response.success ) {
+					say( faire, type, 'pdfEntList', errMsg( response, 'Could not stop the run.' ), true );
+					return;
+				}
+				render( faire, type, response.data );
+			} )
+			.fail( function ( xhr ) {
+				say( faire, type, 'pdfEntList', 'Stop failed (HTTP ' + ( xhr.status || 'timeout' ) + ').', true );
+			} );
+	};
+ 
+	window.resetPDF = function ( faire, type ) {
+		window.stopPDF( faire, type, true );
+	};
+ 
 	function render( faire, type, d ) {
 		var failNote = d.fail > 0
 			? ' &mdash; <span style="color:#b32d2e">' + d.fail + ' failed</span>'
@@ -192,13 +237,25 @@
 			return;
 		}
  
+		if ( d.state === 'stopped' ) {
+			say(
+				faire,
+				type,
+				'pdfEntList',
+				'Stopped at <strong>' + ( d.done || 0 ) + ' / ' + ( d.total || 0 ) + '</strong>' +
+					failNote + firstError +
+					'<br><small>Click Generate to start over, or Reset to clear this.</small>'
+			);
+			return;
+		}
+ 
 		if ( d.state === 'error' ) {
 			say( faire, type, 'pdfEntList', d.msg || 'The run stopped with an error.', true );
 			return;
 		}
  
 		if ( d.state === 'idle' ) {
-			say( faire, type, 'pdfEntList', '' );
+			say( faire, type, 'pdfEntList', d.msg || '' );
 		}
 	}
  
@@ -279,3 +336,4 @@
 		}
 	} );
 }());
+ 

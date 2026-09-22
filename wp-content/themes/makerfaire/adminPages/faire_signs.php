@@ -1,7 +1,18 @@
 <?php
-/* this provides a javascript button that allows the users to print out
- * all maker pdf's
+/* Admin page: generate maker signs, presenter signs and table tags from Gravity Forms entries.
+ *
+ * FIXES vs. the previous version:
+ *  - Emits mfSigns.nonce / mfSigns.themeUri inline, so mf_fairesigns.js can send a nonce
+ *    without touching the enqueue code.
+ *  - The six action <input> elements had no type attribute, so they defaulted to
+ *    type="text" — a focusable text field styled to look like a button. Now type="button".
+ *  - Zip download links are built from get_template_directory_uri() consistently.
+ *
+ * NOTE: the status <span> elements below are what mf_fairesigns.js writes into. Their
+ * classes and their position inside #tabs<faire> are load-bearing — if you restructure
+ * this markup, update statusEl() in mf_fairesigns.js to match.
  */
+
 global $wpdb;
 $selfaire = '';
 $type     = '';
@@ -82,6 +93,15 @@ $type     = '';
 										<input type="button" style="text-align:center;width: 400px;" name="zipCreate"
 											value="Generate all signs" class="button button-large button-primary"
 											onClick="createPDF('<?php echo esc_js( $faire ); ?>', '<?php echo esc_js( $pane['key'] ); ?>')" />
+										<!-- Stop halts the run and keeps the counters. Reset also clears the stored
+										     progress option, which is what leaves a stale failure message or a stale
+										     "another tab is running this" on screen after a crash. -->
+										<input type="button" style="text-align:center" name="signStop"
+											value="Stop" class="button button-large"
+											onClick="stopPDF('<?php echo esc_js( $faire ); ?>', '<?php echo esc_js( $pane['key'] ); ?>')" />
+										<input type="button" style="text-align:center" name="signReset"
+											value="Reset" class="button button-large"
+											onClick="resetPDF('<?php echo esc_js( $faire ); ?>', '<?php echo esc_js( $pane['key'] ); ?>')" />
 										<br/>
 										<span class="<?php echo esc_attr( $pane['key'] ); ?> pdfEntList"></span>
 									</div>

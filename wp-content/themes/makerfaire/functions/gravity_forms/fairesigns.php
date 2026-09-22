@@ -1,40 +1,74 @@
 <?php
+/**
+ * Faire sign generation — admin page, AJAX handlers, batch PDF generation.
+ *
+ * GENERATION IS BROWSER-DRIVEN. There is no WP-Cron dependency: clicking "Generate all
+ * signs" builds the entry list synchronously, and each subsequent poll from the admin page
+ * generates another chunk (MF_SIGN_POLL_BUDGET seconds of work) before returning progress.
+ * This behaves identically on MAMP and on WP Engine, and you can watch it run.
+ *
+ * Closing the tab pauses the run. The queue and the offset are persisted, so reopening the
+ * page and clicking the button again resumes from where it stopped rather than starting over.
+ *
+ * A run can still be driven headlessly — `wp cron event run create_mf_signs` or any other
+ * caller of do_action('create_mf_signs', $faire, $type) — which processes the whole queue in
+ * one pass with a long time budget. The browser path and the headless path share one lock,
+ * so they cannot double-generate.
+ *
+ * FIXES vs. the original:
+ *  - AJAX handlers return JSON (they previously returned nothing, so the UI could not report
+ *    success or failure at all).
+ *  - Capability + nonce checks; $wpdb->prepare() on the faire lookups.
+ *  - The self-calling HTTP request now uses a modern UA, a real timeout, a shared-secret
+ *    header for the Cloudflare skip rule, and CHECKS THE RESPONSE. Failures are logged,
+ *    counted and surfaced. The old code sent an IE 6 user agent and discarded the result.
+ *  - lastrun.txt records succeeded/failed counts instead of an unconditional timestamp.
+ *  - createSignZip(): $filepath is assigned on the 'error' key (it previously leaked the
+ *    previous iteration's value); ZipArchive uses CREATE|OVERWRITE and close() is called.
+ *
+ * REQUIRED SETUP — in wp-config.php:
+ *     define( 'MF_SIGN_TOKEN', '<long random string>' );
+ * plus a Cloudflare rule that skips Bot Fight Mode / Managed Rules for
+ *     URI Path starts with "/wp-content/themes/makerfaire/generate_pdf/"
+ *     AND http.request.headers["x-mf-sign-token"][0] eq "<the same string>"
+ */
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
- 
+
 /** Capability required to generate signs. */
 if ( ! defined( 'MF_SIGN_CAP' ) ) {
 	define( 'MF_SIGN_CAP', 'manage_options' );
 }
- 
+
 /** Seconds of generation work performed per poll request. Keep well under max_execution_time. */
 if ( ! defined( 'MF_SIGN_POLL_BUDGET' ) ) {
 	define( 'MF_SIGN_POLL_BUDGET', 10 );
 }
- 
+
 /** Seconds of generation work per headless (cron/CLI) pass. */
 if ( ! defined( 'MF_SIGN_CRON_BUDGET' ) ) {
 	define( 'MF_SIGN_CRON_BUDGET', 300 );
 }
- 
+
 /** Per-request timeout when fetching one PDF from the generator scripts. */
 if ( ! defined( 'MF_SIGN_HTTP_TIMEOUT' ) ) {
 	define( 'MF_SIGN_HTTP_TIMEOUT', 45 );
 }
- 
+
 /* -------------------------------------------------------------------------
  * Admin page
  * ---------------------------------------------------------------------- */
- 
+
 function build_faire_signs() {
 	require_once get_template_directory() . '/adminPages/faire_signs.php';
 }
- 
+
 /* -------------------------------------------------------------------------
  * Helpers
  * ---------------------------------------------------------------------- */
- 
+
 /**
  * Map the JS "type" onto the generator script and the output folder.
  * These have never matched ('signs' -> maker), so keep them together in one place.
@@ -49,24 +83,24 @@ function mf_sign_type_map( $type ) {
 			return array( 'script' => 'tabletag', 'folder' => 'tabletags' );
 	}
 }
- 
+
 function mf_sign_progress_key( $faire, $type ) {
 	return 'mf_sign_progress_' . sanitize_key( $faire ) . '_' . sanitize_key( $type );
 }
- 
+
 function mf_sign_queue_key( $faire, $type ) {
 	return 'mf_sign_queue_' . sanitize_key( $faire ) . '_' . sanitize_key( $type );
 }
- 
+
 function mf_sign_lock_key( $faire, $type ) {
 	return 'mf_sign_lock_' . sanitize_key( $faire ) . '_' . sanitize_key( $type );
 }
- 
+
 function mf_sign_get_progress( $faire, $type ) {
 	$p = get_option( mf_sign_progress_key( $faire, $type ), array() );
 	return is_array( $p ) ? $p : array();
 }
- 
+
 function mf_sign_set_progress( $faire, $type, array $data ) {
 	update_option(
 		mf_sign_progress_key( $faire, $type ),
@@ -74,7 +108,7 @@ function mf_sign_set_progress( $faire, $type, array $data ) {
 		false // never autoload
 	);
 }
- 
+
 /**
  * Prevents the browser poll and a headless run from generating the same signs twice.
  * Self-healing: the transient expires, so a fatal mid-batch cannot wedge the queue forever.
@@ -87,11 +121,31 @@ function mf_sign_acquire_lock( $faire, $type ) {
 	set_transient( $key, time(), 120 );
 	return true;
 }
- 
+
 function mf_sign_release_lock( $faire, $type ) {
 	delete_transient( mf_sign_lock_key( $faire, $type ) );
 }
- 
+
+function mf_sign_stop_key( $faire, $type ) {
+	return 'mf_sign_stop_' . sanitize_key( $faire ) . '_' . sanitize_key( $type );
+}
+
+/**
+ * Raise the stop flag. The batch loop checks it between entries, so a run that is mid-slice
+ * halts at the next entry rather than finishing its whole time budget.
+ */
+function mf_sign_request_stop( $faire, $type ) {
+	set_transient( mf_sign_stop_key( $faire, $type ), time(), 15 * MINUTE_IN_SECONDS );
+}
+
+function mf_sign_stop_requested( $faire, $type ) {
+	return (bool) get_transient( mf_sign_stop_key( $faire, $type ) );
+}
+
+function mf_sign_clear_stop( $faire, $type ) {
+	delete_transient( mf_sign_stop_key( $faire, $type ) );
+}
+
 /**
  * Shared guard for the AJAX handlers. Returns [faire, type] or sends JSON and dies.
  */
@@ -99,7 +153,7 @@ function mf_sign_ajax_guard() {
 	if ( ! current_user_can( MF_SIGN_CAP ) ) {
 		wp_send_json_error( array( 'msg' => 'You do not have permission to generate signs.' ), 403 );
 	}
- 
+
 	// The old JS sends no nonce key at all, so distinguish that from an expired one —
 	// "missing" almost always means a stale cached copy of mf_fairesigns.js.
 	if ( ! isset( $_POST['nonce'] ) ) {
@@ -111,7 +165,7 @@ function mf_sign_ajax_guard() {
 			403
 		);
 	}
- 
+
 	if ( ! check_ajax_referer( 'mf_faire_signs', 'nonce', false ) ) {
 		wp_send_json_error(
 			array(
@@ -121,26 +175,26 @@ function mf_sign_ajax_guard() {
 			403
 		);
 	}
- 
+
 	$faire = isset( $_POST['faire'] ) ? sanitize_text_field( wp_unslash( $_POST['faire'] ) ) : '';
 	$type  = isset( $_POST['type'] ) ? sanitize_text_field( wp_unslash( $_POST['type'] ) ) : '';
- 
+
 	if ( '' === $faire ) {
 		wp_send_json_error( array( 'msg' => 'No faire specified.' ), 400 );
 	}
- 
+
 	return array( $faire, $type );
 }
- 
+
 /* -------------------------------------------------------------------------
  * CSV export
  * ---------------------------------------------------------------------- */
- 
+
 function createCSVfile() {
 	if ( ! current_user_can( MF_SIGN_CAP ) ) {
 		wp_die( 'Insufficient permissions.', 403 );
 	}
- 
+
 	$form_id = ( isset( $_POST['exportForm'] ) && '' !== $_POST['exportForm'] ) ? absint( $_POST['exportForm'] ) : 0;
 	if ( ! $form_id ) {
 		$form_id = ( isset( $_GET['exForm'] ) && '' !== $_GET['exForm'] ) ? absint( $_GET['exForm'] ) : 0;
@@ -148,18 +202,18 @@ function createCSVfile() {
 	if ( ! $form_id ) {
 		wp_die( 'Please select a form.' );
 	}
- 
+
 	$entry_id = ( isset( $_GET['exEntry'] ) && '' !== $_GET['exEntry'] ) ? absint( $_GET['exEntry'] ) : 0;
- 
+
 	$form      = GFAPI::get_form( $form_id );
 	$fieldData = array();
- 
+
 	foreach ( $form['fields'] as $field ) {
 		if ( 'section' !== $field->type && 'html' !== $field->type && 'page' !== $field->type ) {
 			$fieldData[ $field['id'] ] = $field;
 		}
 	}
- 
+
 	$entries = array();
 	if ( ! $entry_id ) {
 		$entries = GFAPI::get_entries(
@@ -171,13 +225,13 @@ function createCSVfile() {
 	} else {
 		$entries[] = GFAPI::get_entry( $entry_id );
 	}
- 
+
 	$output = array( 'Entry ID', 'FormID' );
 	foreach ( $fieldData as $field ) {
 		$output[] = $field['label'];
 	}
 	$list = array( $output );
- 
+
 	foreach ( $entries as $entry ) {
 		$fieldArray = array( $entry['id'], $form_id );
 		foreach ( $fieldData as $field ) {
@@ -193,10 +247,10 @@ function createCSVfile() {
 		}
 		$list[] = $fieldArray;
 	}
- 
+
 	header( 'Content-Type: text/csv; charset=utf-8' );
 	header( 'Content-Disposition: attachment; filename=form-' . $form_id . ( $entry_id ? '-' . $entry_id : '' ) . '.csv' );
- 
+
 	$file = fopen( 'php://output', 'w' );
 	foreach ( $list as $line ) {
 		fputcsv( $file, $line );
@@ -206,30 +260,30 @@ function createCSVfile() {
 }
 add_action( 'wp_ajax_createCSVfile', 'createCSVfile' );
 add_action( 'admin_post_createCSVfile', 'createCSVfile' );
- 
+
 /* -------------------------------------------------------------------------
  * Table tag links (legacy helper)
  * ---------------------------------------------------------------------- */
- 
+
 function genTableTags( $faire ) {
 	global $wpdb;
- 
+
 	$formIds = $wpdb->get_var( $wpdb->prepare( "SELECT form_ids FROM wp_mf_faire WHERE faire = %s", $faire ) );
 	$forms   = explode( ',', str_replace( ' ', '', $formIds ?? '' ) );
- 
+
 	foreach ( $forms as $formId ) {
 		$formId = absint( $formId );
 		if ( ! $formId ) {
 			continue;
 		}
- 
+
 		$form     = GFAPI::get_form( $formId );
 		$formType = isset( $form['form_type'] ) ? $form['form_type'] : '';
- 
+
 		if ( ! in_array( $formType, array( 'Exhibit', 'Sponsor', 'Startup Sponsor' ), true ) ) {
 			continue;
 		}
- 
+
 		$results = $wpdb->get_results(
 			$wpdb->prepare(
 				"SELECT wp_gf_entry.id AS lead_id, wp_gf_entry_meta.meta_value AS lead_status
@@ -241,7 +295,7 @@ function genTableTags( $faire ) {
 				$formId
 			)
 		);
- 
+
 		echo 'Form - ' . esc_html( $formId ) . '(' . count( $results ) . ' entries)';
 		echo '<div class="container"><div class="row">';
 		foreach ( $results as $entry ) {
@@ -255,33 +309,33 @@ function genTableTags( $faire ) {
 	}
 }
 add_action( 'gen_table_tags', 'genTableTags', 10, 1 );
- 
+
 /* -------------------------------------------------------------------------
  * Zip creation
  * ---------------------------------------------------------------------- */
- 
+
 function createSignZip() {
 	global $wpdb;
- 
+
 	list( $faire, $signType ) = mf_sign_ajax_guard();
- 
+
 	if ( '' === $signType ) {
 		$signType = 'signs';
 	}
- 
+
 	$statusFilter = isset( $_POST['selstatus'] ) ? sanitize_text_field( wp_unslash( $_POST['selstatus'] ) ) : '';
 	$type         = isset( $_POST['seltype'] ) ? sanitize_text_field( wp_unslash( $_POST['seltype'] ) ) : '';
 	$filterError  = isset( $_POST['error'] ) ? sanitize_text_field( wp_unslash( $_POST['error'] ) ) : '';
 	$filterFormId = isset( $_POST['filform'] ) ? wp_unslash( $_POST['filform'] ) : '';
- 
+
 	if ( is_array( $filterFormId ) ) {
 		$filterFormId = array_values( array_filter( array_map( 'absint', $filterFormId ) ) );
 	} elseif ( '' !== $filterFormId ) {
 		$filterFormId = absint( $filterFormId );
 	}
- 
+
 	error_log( 'Start zip creation. Group forms by ' . $type . ( 'faire' === $type ? ' ' . $faire : '' ) );
- 
+
 	$appendFormId = '';
 	if ( ! empty( $filterFormId ) ) {
 		foreach ( (array) $filterFormId as $formId ) {
@@ -291,9 +345,9 @@ function createSignZip() {
 	if ( ! empty( $filterError ) ) {
 		$appendFormId = '_' . $filterError;
 	}
- 
+
 	$entries = array();
- 
+
 	$results = $wpdb->get_results(
 		$wpdb->prepare(
 			"SELECT wp_gf_entry.ID AS entry_id, wp_gf_entry.form_id,
@@ -314,7 +368,7 @@ function createSignZip() {
 			$faire
 		)
 	);
- 
+
 	foreach ( $results as $row ) {
 		if ( 'maker' === $signType ) {
 			if ( isset( $row->exhibit_type )
@@ -327,17 +381,17 @@ function createSignZip() {
 				continue;
 			}
 		}
- 
+
 		if ( 'accepted' === $statusFilter && 'Accepted' !== $row->entry_status ) {
 			continue;
 		}
 		if ( 'accAndProp' === $statusFilter && 'Accepted' !== $row->entry_status && 'Proposed' !== $row->entry_status ) {
 			continue;
 		}
- 
+
 		$area    = ( null !== $row->area ) ? $row->area : 'No-Area';
 		$subarea = ( null !== $row->subarea ) ? $row->subarea : 'No-subArea';
- 
+
 		if ( empty( $filterFormId ) ) {
 			setGrouping( $row, $entries, $area, $subarea, $type, $filterError );
 		} else {
@@ -346,24 +400,24 @@ function createSignZip() {
 			}
 		}
 	}
- 
+
 	$base    = get_template_directory() . '/signs/' . $faire . '/';
 	$written = array();
- 
+
 	foreach ( $entries as $typeKey => $entType ) {
 		// FIXED: the error branch used to compute a path and discard it, leaving $filepath
 		// holding the PREVIOUS iteration's value.
 		$filepath = ( 'error' === $typeKey )
 			? $base . 'error/' . $signType . '/'
 			: $base . $signType . '/';
- 
+
 		if ( ! file_exists( $filepath . 'zip' ) ) {
 			wp_mkdir_p( $filepath . 'zip' );
 		}
- 
+
 		$filename = $faire . '-' . $typeKey . $appendFormId . '-faire' . $signType . '.zip';
 		$zipPath  = $filepath . 'zip/' . $filename;
- 
+
 		$zip = new ZipArchive();
 		// FIXED: OVERWRITE was commented out, so re-creating a zip appended to the old one
 		// and stale entries were never removed.
@@ -371,10 +425,10 @@ function createSignZip() {
 			error_log( "createSignZip: cannot open $zipPath" );
 			continue;
 		}
- 
+
 		$added   = 0;
 		$missing = 0;
- 
+
 		foreach ( $entType as $status ) {
 			if ( ! is_array( $status ) ) {
 				continue;
@@ -392,24 +446,24 @@ function createSignZip() {
 				}
 			}
 		}
- 
+
 		// FIXED: close() was commented out — the archive only flushed via the destructor.
 		if ( ! $zip->close() ) {
 			error_log( "createSignZip: failed to write $zipPath" );
 			continue;
 		}
- 
+
 		$written[] = sprintf( '%s (%d files%s)', $filename, $added, $missing ? ", $missing missing" : '' );
 	}
- 
+
 	error_log( 'End Zip creation' );
- 
+
 	if ( empty( $written ) ) {
 		wp_send_json_error(
 			array( 'msg' => 'No zip files were created — no entries matched those filters, or no PDFs exist yet. Generate the signs first.' )
 		);
 	}
- 
+
 	wp_send_json_success(
 		array(
 			'msg'   => sprintf( 'Created %d zip file%s.', count( $written ), 1 === count( $written ) ? '' : 's' ),
@@ -418,7 +472,7 @@ function createSignZip() {
 	);
 }
 add_action( 'wp_ajax_createSignZip', 'createSignZip' );
- 
+
 function setGrouping( $row, array &$entries, $area, $subarea, $type, $filterError ) {
 	if ( 'area' === $type ) {
 		$entries[ str_replace( ' ', '_', $area ?? '' ) ][ $row->entry_status ][] = $row->entry_id;
@@ -431,7 +485,7 @@ function setGrouping( $row, array &$entries, $area, $subarea, $type, $filterErro
 		$entries['error'][ $row->entry_status ][] = $row->entry_id;
 	}
 }
- 
+
 function filterByForm( $form, $row, array &$entries, $area, $subarea, $type, $filterError ) {
 	// Loose-typed compare: $_POST values arrive as strings and absint() makes them ints,
 	// while $wpdb columns are strings. The original === matched nothing once cast.
@@ -439,11 +493,11 @@ function filterByForm( $form, $row, array &$entries, $area, $subarea, $type, $fi
 		setGrouping( $row, $entries, $area, $subarea, $type, $filterError );
 	}
 }
- 
+
 /* -------------------------------------------------------------------------
  * Sign generation — start (AJAX)
  * ---------------------------------------------------------------------- */
- 
+
 /**
  * Builds the entry list synchronously and marks the run as running. Generation itself
  * happens in the poll handler below. Named for the wp_ajax_createEntList action it has
@@ -451,13 +505,14 @@ function filterByForm( $form, $row, array &$entries, $area, $subarea, $type, $fi
  */
 function cronCreateEntList() {
 	list( $faire, $type ) = mf_sign_ajax_guard();
- 
+
 	mf_sign_release_lock( $faire, $type );
+	mf_sign_clear_stop( $faire, $type );
 	delete_option( mf_sign_progress_key( $faire, $type ) );
 	delete_transient( mf_sign_queue_key( $faire, $type ) );
- 
+
 	$entList = mf_sign_build_entry_list( $faire, $type );
- 
+
 	if ( empty( $entList ) ) {
 		mf_sign_set_progress(
 			$faire,
@@ -468,9 +523,9 @@ function cronCreateEntList() {
 			array( 'msg' => 'No entries matched for this faire and sign type — nothing to generate. Check the entry statuses and the form_type values on the faire\'s forms.' )
 		);
 	}
- 
+
 	set_transient( mf_sign_queue_key( $faire, $type ), $entList, 12 * HOUR_IN_SECONDS );
- 
+
 	mf_sign_set_progress(
 		$faire,
 		$type,
@@ -484,9 +539,9 @@ function cronCreateEntList() {
 			'started' => time(),
 		)
 	);
- 
+
 	error_log( sprintf( 'Start mass generate signs for %s - %s (%d signs to generate)', $faire, $type, count( $entList ) ) );
- 
+
 	wp_send_json_success(
 		array(
 			'msg'   => sprintf( 'Found %d entries. Generating&hellip;', count( $entList ) ),
@@ -495,11 +550,11 @@ function cronCreateEntList() {
 	);
 }
 add_action( 'wp_ajax_createEntList', 'cronCreateEntList' );
- 
+
 /* -------------------------------------------------------------------------
  * Sign generation — poll + do work (AJAX)
  * ---------------------------------------------------------------------- */
- 
+
 /**
  * Each poll does a slice of the work, then reports progress. This is what replaces the
  * WP-Cron dependency: no loopback request, no DISABLE_WP_CRON, no self-signed-cert problem
@@ -507,13 +562,13 @@ add_action( 'wp_ajax_createEntList', 'cronCreateEntList' );
  */
 function mf_ajax_sign_status() {
 	list( $faire, $type ) = mf_sign_ajax_guard();
- 
+
 	$progress = mf_sign_get_progress( $faire, $type );
- 
+
 	if ( empty( $progress ) ) {
 		wp_send_json_success( array( 'state' => 'idle' ) );
 	}
- 
+
 	if ( 'running' === ( isset( $progress['state'] ) ? $progress['state'] : '' ) ) {
 		if ( mf_sign_acquire_lock( $faire, $type ) ) {
 			try {
@@ -527,15 +582,60 @@ function mf_ajax_sign_status() {
 			$progress['locked'] = true;
 		}
 	}
- 
+
 	wp_send_json_success( $progress );
 }
 add_action( 'wp_ajax_mf_signStatus', 'mf_ajax_sign_status' );
- 
+
+/**
+ * Stop a run, or reset the panel entirely.
+ *
+ * Two separate pieces of state outlive a run and both need clearing by hand:
+ *   - the LOCK is a transient, so a fatal mid-batch leaves it held for up to 120 seconds and
+ *     every tab reports "another tab is running this" until it expires;
+ *   - the PROGRESS is an OPTION, so the counters and the first-failure message survive
+ *     indefinitely - including across a MySQL or MAMP restart, which is why stopping the
+ *     server does not make the old error go away.
+ *
+ * stop  - halt the run, keep the counters so you can see where it got to.
+ * reset - as above, and wipe the queue and counters so the next run starts clean.
+ */
+function mf_ajax_sign_stop() {
+	list( $faire, $type ) = mf_sign_ajax_guard();
+
+	$reset = ! empty( $_POST['reset'] );
+
+	mf_sign_request_stop( $faire, $type );
+	mf_sign_release_lock( $faire, $type );
+
+	if ( $reset ) {
+		delete_option( mf_sign_progress_key( $faire, $type ) );
+		delete_transient( mf_sign_queue_key( $faire, $type ) );
+		mf_sign_clear_stop( $faire, $type );
+
+		error_log( "Sign run reset for $faire/$type" );
+		wp_send_json_success( array( 'state' => 'idle', 'msg' => 'Reset. Click Generate to start a fresh run.' ) );
+	}
+
+	$progress = mf_sign_get_progress( $faire, $type );
+	mf_sign_set_progress( $faire, $type, array( 'state' => 'stopped' ) );
+
+	error_log( sprintf(
+		'Sign run stopped for %s/%s at %d of %d',
+		$faire,
+		$type,
+		isset( $progress['done'] ) ? (int) $progress['done'] : 0,
+		isset( $progress['total'] ) ? (int) $progress['total'] : 0
+	) );
+
+	wp_send_json_success( mf_sign_get_progress( $faire, $type ) );
+}
+add_action( 'wp_ajax_mf_signStop', 'mf_ajax_sign_stop' );
+
 /* -------------------------------------------------------------------------
  * Sign generation — headless entry point (optional)
  * ---------------------------------------------------------------------- */
- 
+
 /**
  * Kept so a run can be driven without a browser:
  *     wp cron event run create_mf_signs
@@ -547,17 +647,17 @@ function createEntList( $faire, $type ) {
 		error_log( "createEntList: a run for $faire/$type is already in progress; skipping." );
 		return;
 	}
- 
+
 	try {
 		$entList = get_transient( mf_sign_queue_key( $faire, $type ) );
 		$progress = mf_sign_get_progress( $faire, $type );
- 
+
 		// Resume an unfinished queue rather than rebuilding it.
 		$resuming = is_array( $entList )
 			&& ! empty( $entList )
 			&& isset( $progress['state'] )
 			&& 'running' === $progress['state'];
- 
+
 		if ( ! $resuming ) {
 			$entList = mf_sign_build_entry_list( $faire, $type );
 			set_transient( mf_sign_queue_key( $faire, $type ), $entList, 12 * HOUR_IN_SECONDS );
@@ -575,50 +675,50 @@ function createEntList( $faire, $type ) {
 				)
 			);
 		}
- 
+
 		error_log( sprintf( 'Headless sign run for %s - %s (%d in queue)', $faire, $type, count( $entList ) ) );
- 
+
 		if ( empty( $entList ) ) {
 			mf_sign_finish_run( $faire, $type );
 			return;
 		}
- 
+
 		mf_run_sign_batch( $faire, $type, MF_SIGN_CRON_BUDGET );
 	} finally {
 		mf_sign_release_lock( $faire, $type );
 	}
 }
 add_action( 'create_mf_signs', 'createEntList', 10, 2 );
- 
+
 /* -------------------------------------------------------------------------
  * Sign generation — the work
  * ---------------------------------------------------------------------- */
- 
+
 /**
  * Builds the list of entry ids to generate signs for.
  */
 function mf_sign_build_entry_list( $faire, $type ) {
 	global $wpdb;
- 
+
 	$entList = array();
- 
+
 	if ( 'presenter' !== $type ) {
 		$formIds = $wpdb->get_var( $wpdb->prepare( "SELECT form_ids FROM wp_mf_faire WHERE faire = %s", $faire ) );
 		$forms   = explode( ',', str_replace( ' ', '', $formIds ?? '' ) );
- 
+
 		foreach ( $forms as $formId ) {
 			$formId = absint( $formId );
 			if ( ! $formId ) {
 				continue;
 			}
- 
+
 			$form     = GFAPI::get_form( $formId );
 			$formType = isset( $form['form_type'] ) ? $form['form_type'] : '';
- 
+
 			if ( ! in_array( $formType, array( 'Master', 'Exhibit', 'Sponsor', 'Startup Sponsor' ), true ) ) {
 				continue;
 			}
- 
+
 			$results = $wpdb->get_results(
 				$wpdb->prepare(
 					"SELECT wp_gf_entry.id AS lead_id,
@@ -633,7 +733,7 @@ function mf_sign_build_entry_list( $faire, $type ) {
 					$formId
 				)
 			);
- 
+
 			foreach ( $results as $entry ) {
 				if ( isset( $entry->exhibit_type )
 					&& false === stripos( $entry->exhibit_type, 'exhibit' )
@@ -663,17 +763,17 @@ function mf_sign_build_entry_list( $faire, $type ) {
 			$entList[] = (int) $entry->entry_id;
 		}
 	}
- 
+
 	return array_values( array_unique( $entList ) );
 }
- 
+
 /**
  * Generates signs until the time budget is spent or the queue is exhausted.
  * The offset lives in the progress option, so any caller can resume.
  */
 function mf_run_sign_batch( $faire, $type, $budget ) {
 	$entList = get_transient( mf_sign_queue_key( $faire, $type ) );
- 
+
 	if ( ! is_array( $entList ) ) {
 		error_log( "mf_run_sign_batch: queue for $faire/$type expired or missing." );
 		mf_sign_set_progress(
@@ -683,17 +783,28 @@ function mf_run_sign_batch( $faire, $type, $budget ) {
 		);
 		return;
 	}
- 
+
 	$progress = mf_sign_get_progress( $faire, $type );
 	$total    = count( $entList );
 	$offset   = isset( $progress['offset'] ) ? (int) $progress['offset'] : 0;
 	$ok       = isset( $progress['ok'] ) ? (int) $progress['ok'] : 0;
 	$fail     = isset( $progress['fail'] ) ? (int) $progress['fail'] : 0;
 	$start    = microtime( true );
- 
+
 	while ( $offset < $total && ( microtime( true ) - $start ) < $budget ) {
+		// Checked between entries so Stop takes effect within one sign, not one slice.
+		if ( mf_sign_stop_requested( $faire, $type ) ) {
+			mf_sign_set_progress(
+				$faire,
+				$type,
+				array( 'state' => 'stopped', 'total' => $total, 'done' => $offset, 'offset' => $offset, 'ok' => $ok, 'fail' => $fail )
+			);
+			error_log( "mf_run_sign_batch: stop requested for $faire/$type at $offset of $total" );
+			return;
+		}
+
 		$result = mf_generate_one_sign( $entList[ $offset ], $type, $faire );
- 
+
 		if ( $result['ok'] ) {
 			$ok++;
 		} else {
@@ -712,10 +823,10 @@ function mf_run_sign_batch( $faire, $type, $budget ) {
 				mf_sign_set_progress( $faire, $type, array( 'firstError' => $result['error'] ) );
 			}
 		}
- 
+
 		$offset++;
 	}
- 
+
 	mf_sign_set_progress(
 		$faire,
 		$type,
@@ -728,12 +839,12 @@ function mf_run_sign_batch( $faire, $type, $budget ) {
 			'fail'   => $fail,
 		)
 	);
- 
+
 	if ( $offset >= $total ) {
 		mf_sign_finish_run( $faire, $type );
 	}
 }
- 
+
 /**
  * Fetch one PDF from the generator script.
  *
@@ -744,12 +855,12 @@ function mf_run_sign_batch( $faire, $type, $budget ) {
  */
 function mf_generate_one_sign( $entryID, $type, $faire ) {
 	$map = mf_sign_type_map( $type );
- 
+
 	$url = add_query_arg(
 		array( 'eid' => (int) $entryID, 'type' => 'save', 'faire' => $faire ),
 		get_template_directory_uri() . '/generate_pdf/' . $map['script'] . '.php'
 	);
- 
+
 	$args = array(
 		'timeout'     => MF_SIGN_HTTP_TIMEOUT,
 		'redirection' => 0,
@@ -757,27 +868,27 @@ function mf_generate_one_sign( $entryID, $type, $faire ) {
 		'headers'     => array(),
 		'cookies'     => array(),
 	);
- 
+
 	// Shared secret so a Cloudflare skip rule can let this through without opening the
 	// path to the world. Define MF_SIGN_TOKEN in wp-config.php.
 	if ( defined( 'MF_SIGN_TOKEN' ) && MF_SIGN_TOKEN ) {
 		$args['headers']['X-MF-Sign-Token'] = MF_SIGN_TOKEN;
 	}
- 
+
 	// Local dev runs on a self-signed cert.
 	if ( false !== strpos( home_url(), '.local' ) ) {
 		$args['sslverify'] = false;
 	}
- 
+
 	$response = wp_remote_get( $url, $args );
- 
+
 	if ( is_wp_error( $response ) ) {
 		return array( 'ok' => false, 'error' => 'HTTP error: ' . $response->get_error_message() );
 	}
- 
+
 	$code = (int) wp_remote_retrieve_response_code( $response );
 	$body = wp_remote_retrieve_body( $response );
- 
+
 	if ( 200 !== $code ) {
 		$hint = '';
 		if ( 403 === $code ) {
@@ -790,7 +901,7 @@ function mf_generate_one_sign( $entryID, $type, $faire ) {
 			'error' => 'HTTP ' . $code . $hint . ' | body: ' . substr( wp_strip_all_tags( $body ), 0, 200 ),
 		);
 	}
- 
+
 	// A PHP fatal or a challenge page shows up as HTML here.
 	if ( false !== stripos( $body, '<html' ) ) {
 		return array(
@@ -798,12 +909,12 @@ function mf_generate_one_sign( $entryID, $type, $faire ) {
 			'error' => 'Got an HTML page instead of a PDF write: ' . substr( trim( wp_strip_all_tags( $body ) ), 0, 200 ),
 		);
 	}
- 
+
 	// Confirm the file actually landed on disk — a 200 alone proves nothing here.
 	$dir      = get_template_directory() . '/signs/' . $faire . '/' . $map['folder'] . '/';
 	$expected = $dir . (int) $entryID . '.pdf';
 	$errPath  = $dir . 'error/' . (int) $entryID . '.pdf';
- 
+
 	if ( ! file_exists( $expected ) && ! file_exists( $errPath ) ) {
 		return array(
 			'ok'    => false,
@@ -811,10 +922,10 @@ function mf_generate_one_sign( $entryID, $type, $faire ) {
 				. ( '' !== trim( $body ) ? ' | output: ' . substr( trim( $body ), 0, 200 ) : ' | no output' ),
 		);
 	}
- 
+
 	return array( 'ok' => true, 'error' => '' );
 }
- 
+
 /**
  * Write lastrun.txt with counts. The old version wrote a bare timestamp unconditionally, so
  * a run where every sign 403'd still looked like a success.
@@ -822,26 +933,25 @@ function mf_generate_one_sign( $entryID, $type, $faire ) {
 function mf_sign_finish_run( $faire, $type ) {
 	$map      = mf_sign_type_map( $type );
 	$progress = mf_sign_get_progress( $faire, $type );
- 
+
 	$ok    = isset( $progress['ok'] ) ? (int) $progress['ok'] : 0;
 	$fail  = isset( $progress['fail'] ) ? (int) $progress['fail'] : 0;
 	$total = isset( $progress['total'] ) ? (int) $progress['total'] : 0;
- 
+
 	$dir = get_template_directory() . '/signs/' . $faire . '/' . $map['folder'];
 	if ( ! file_exists( $dir ) ) {
 		wp_mkdir_p( $dir );
 	}
- 
+
 	$stamp = wp_date( 'm-d-y  h:i:s A T' );
 	$line  = $fail
 		? sprintf( '%s — %d of %d generated, %d FAILED (see error log)', $stamp, $ok, $total, $fail )
 		: sprintf( '%s — %d of %d generated', $stamp, $ok, $total );
- 
+
 	file_put_contents( $dir . '/lastrun.txt', $line );
- 
+
 	mf_sign_set_progress( $faire, $type, array( 'state' => 'done', 'msg' => $line ) );
 	delete_transient( mf_sign_queue_key( $faire, $type ) );
- 
+
 	error_log( sprintf( 'End mass generate signs for %s - %s. %s', $faire, $type, $line ) );
 }
- 
