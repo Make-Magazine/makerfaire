@@ -84,6 +84,22 @@ function mf_sign_type_map( $type ) {
 	}
 }
 
+/**
+ * Which values of field 303 get a sign.
+ *
+ * This used to be an EXCLUSION list - NOT IN ('Rejected','Cancelled','No Response') - so an
+ * entry got a sign unless it held one of those three exact strings. Everything else passed:
+ * Proposed, blank values, and any status added to the form later. Now it is an INCLUSION
+ * list, matching what the presenter branch already did (entity.status = 'Accepted') and what
+ * the Zoho table-tag query does.
+ *
+ * If a form words its approved state differently, add it here rather than editing the SQL -
+ * this is the only place the rule lives.
+ */
+function mf_sign_approved_statuses() {
+	return apply_filters( 'mf_sign_approved_statuses', array( 'Accepted' ) );
+}
+
 function mf_sign_progress_key( $faire, $type ) {
 	return 'mf_sign_progress_' . sanitize_key( $faire ) . '_' . sanitize_key( $type );
 }
@@ -719,6 +735,9 @@ function mf_sign_build_entry_list( $faire, $type ) {
 				continue;
 			}
 
+			$statuses     = mf_sign_approved_statuses();
+			$statusHolder = implode( ',', array_fill( 0, count( $statuses ), '%s' ) );
+
 			$results = $wpdb->get_results(
 				$wpdb->prepare(
 					"SELECT wp_gf_entry.id AS lead_id,
@@ -728,9 +747,9 @@ function mf_sign_build_entry_list( $faire, $type ) {
 					   FROM wp_gf_entry, wp_gf_entry_meta
 					  WHERE status = 'active' AND meta_key = '303'
 					    AND wp_gf_entry_meta.entry_id = wp_gf_entry.id
-					    AND wp_gf_entry_meta.meta_value NOT IN ('Rejected','Cancelled','No Response')
+					    AND TRIM(wp_gf_entry_meta.meta_value) IN ( $statusHolder )
 					    AND wp_gf_entry.form_id = %d",
-					$formId
+					array_merge( $statuses, array( $formId ) )
 				)
 			);
 
