@@ -504,7 +504,7 @@ class Elementor_mySubscription_Widget extends \Elementor\Widget_Base {
 			<div class="subscriptions-wrapper">
 				<div class="subscription-item-wrapper">
 					<div class="subscription-item disclaimer">
-						<p>Your first volume will arrive within 6-8 weeks in the U.S. If you need additional help or have questions, our customer representatives are available to chat over the phone from 8 am - 4:30 pm Central Time <a href="tel:847-559-7395">(847-559-7395)</a>, or you may also send an email with your Account # included to make@omeda.com – we'll be more than happy to offer assistance!</p>
+						<p>Your first volume will arrive within 6-8 weeks in the U.S. If you need additional help or have questions, our customer representatives are available to chat over the phone from 8 am - 4:30 pm Central Time <a href="tel:17072003714">(707-200-3714)</a>, or you may also send an email with your Account # included to customerservice@make.co &ndash; we'll be more than happy to offer assistance!</p>
 					</div>
 				</div>
 			</div>
