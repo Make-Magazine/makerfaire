@@ -3,8 +3,14 @@
 namespace Elementor\Modules\Mcp;
 
 use Elementor\Core\Base\Module as BaseModule;
-use Elementor\Plugin;
-use Elementor\Core\Experiments\Manager as ExperimentsManager;
+use Elementor\MCP\Composer\Mcp\Registry as Shared_Registry;
+use Elementor\Modules\EditorOne\Classes\Menu_Data_Provider;
+use Elementor\Modules\Mcp\Abilities\Abstract_Ability;
+use Elementor\Modules\Mcp\AdminMenuItems\Editor_One_Mcp_Menu;
+use Elementor\Modules\Mcp\Preview\Public_Preview_Handler;
+use Elementor\Modules\Mcp\Registry\Ability_Registry;
+use Elementor\Modules\Mcp\RestApi\Mcp_Proxy_REST_API;
+use Elementor\Modules\Mcp\Utils\Editor_Sync_State;
 use WP\MCP\Core\McpAdapter;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -12,40 +18,52 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class Module extends BaseModule {
-	const EXPERIMENT_NAME = 'e_wp_abilities_api';
+
+	const ANALYTICS_REGISTRAR_HANDLE = 'elementor-mcp-analytics-registrar';
+
+	private Ability_Registry $registry;
 
 	public function get_name() {
 		return 'mcp';
 	}
 
+	public function enqueue_analytics_registrar(): void {
+		wp_enqueue_script(
+			self::ANALYTICS_REGISTRAR_HANDLE,
+			$this->get_js_assets_url( 'mcp-analytics-registrar' ),
+			[ 'elementor-common', \Elementor\MCP\Composer\Admin\Page::SCRIPT_HANDLE ],
+			ELEMENTOR_VERSION,
+			true
+		);
+	}
+
 	public static function is_active() {
 		return class_exists( McpAdapter::class ) &&
 			function_exists( 'wp_register_ability' ) &&
-			Plugin::instance()->experiments->is_feature_active( self::EXPERIMENT_NAME );
-	}
-
-	public static function get_experimental_data() {
-		return [
-			'name' => self::EXPERIMENT_NAME,
-			'title' => __( 'Elementor MCP WP Abilities API', 'elementor' ),
-			'description' => __( 'Enable Elementor MCP WP Abilities API. Requirements: 1. WordPress 7.0 or higher. 2. Create an application password for your agent user. 3. Add to your MCP config: {url: "https://<your-site-url>/wp-json/elementor/mcp", headers: {Authorization: "Basic <base64(user:application-password)>"}}', 'elementor' ),
-			'hidden' => true,
-			'default' => ExperimentsManager::STATE_INACTIVE,
-		];
+			class_exists( Shared_Registry::class );
 	}
 
 	public function __construct() {
 		parent::__construct();
 
+		$this->registry = self::build_core_registry();
+
+		( new Mcp_Proxy_REST_API( $this->registry ) )->register_hooks();
+		( new Public_Preview_Handler() )->register();
+		( new Editor_Sync_State() )->register_hooks();
+
 		if ( ! $this->is_active() ) {
 			return;
 		}
 
-		McpAdapter::instance();
-
 		add_action( 'wp_abilities_api_categories_init', [ $this, 'register_ability_category' ] );
 		add_action( 'wp_abilities_api_init', [ $this, 'register_abilities' ] );
-		add_action( 'mcp_adapter_init', [ $this, 'register_server' ] );
+		add_action( 'init', [ $this, 'register_shared_registry_slugs' ], 5 );
+		add_action( 'elementor/editor-one/menu/register', [ $this, 'register_editor_one_menu' ], Editor_One_Mcp_Menu::REGISTER_PRIORITY_AFTER_SUBMISSIONS );
+	}
+
+	public function registry(): Ability_Registry {
+		return $this->registry;
 	}
 
 	public function register_ability_category() {
@@ -67,43 +85,83 @@ class Module extends BaseModule {
 			return;
 		}
 
-		( new Abilities\List_Pages_Ability() )->register();
-		( new Abilities\Get_Structure_Ability() )->register();
-		( new Abilities\Update_Settings_Ability() )->register();
-		( new Abilities\Create_Page_Ability() )->register();
-		( new Abilities\Get_Globals_Ability() )->register();
+		foreach ( $this->registry->all() as $ability ) {
+			$ability->register();
+		}
 	}
 
-	public function register_server( $adapter ) {
-		if ( ! $adapter instanceof McpAdapter ) {
-			return;
-		}
+	public function register_shared_registry_slugs(): void {
+		$shared = Shared_Registry::instance();
 
-		$result = $adapter->create_server(
-			'elementor-mcp-server',
-			'elementor',
-			'mcp',
-			'Elementor MCP',
-			'Read and modify Elementor Editor abilities.',
-			'v1.0.0',
-			[ \WP\MCP\Transport\HttpTransport::class ],
-			\WP\MCP\Infrastructure\ErrorHandling\ErrorLogMcpErrorHandler::class,
-			\WP\MCP\Infrastructure\Observability\NullMcpObservabilityHandler::class,
-			[
-				'elementor/list-pages',
-				'elementor/get-page-structure',
-				'elementor/update-page-settings',
-				'elementor/create-page',
-				'elementor/get-globals',
-			],
-			[],
-			[]
+		$shared->register_tools( $this->collect_server_ids( $this->registry->tools() ) );
+		$shared->register_resources( $this->collect_server_ids( $this->registry->resources() ) );
+	}
+
+	public function register_editor_one_menu( Menu_Data_Provider $menu_data_provider ): void {
+		$menu_data_provider->register_menu(
+			new Editor_One_Mcp_Menu(),
+			[ 'preserve_label_casing' => true ]
 		);
+	}
 
-		if ( is_wp_error( $result ) ) {
-			// phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log
-			error_log( sprintf( '[Elementor MCP] Server registration failed: %s', $result->get_error_message() ) );
-			return;
+	public static function build_core_registry(): Ability_Registry {
+		$registry = new Ability_Registry();
+
+		foreach ( self::get_core_abilities( $registry ) as $ability ) {
+			$registry->add( $ability );
 		}
+
+		return $registry;
+	}
+
+	/** @return Abstract_Ability[] */
+	private static function get_core_abilities( Ability_Registry $registry ): array {
+		$abilities = [
+			new Abilities\Get_Structure_Ability(),
+			new Abilities\Update_Settings_Ability(),
+			new Abilities\Create_Page_Ability(),
+			new Abilities\Create_Preview_Link_Ability(),
+			new Abilities\Publish_Document_Ability(),
+			new Abilities\Style_Best_Practices_Ability(),
+			new Abilities\Wordpress_Best_Practices_Ability(),
+			new Abilities\Manage_Variable_Ability(),
+			new Abilities\Manage_Classes_Ability(),
+			new Abilities\Manage_Default_Styles_Ability(),
+			new Abilities\Get_Default_Styles_Ability(),
+			new Abilities\Reorder_Classes_Ability(),
+			new Abilities\Manage_Variable_Guide_Ability(),
+			new Abilities\Get_Widget_Schema_Ability(),
+			new Abilities\List_Widget_Schemas_Ability(),
+			new Abilities\List_Dynamic_Tags_Ability(),
+			new Abilities\Build_Composition_Ability(),
+			new Abilities\Manage_Elements_Ability(),
+			new Abilities\Global_Classes_Resource_Ability(),
+			new Abilities\List_Assets_Ability(),
+			new Abilities\Global_Variables_Resource_Ability(),
+			new Abilities\Interactions_Schema_Resource_Ability(),
+			new Abilities\List_Resources_Ability( $registry ),
+			new Abilities\Read_Resource_Ability( $registry ),
+			new Abilities\List_Components_Ability(),
+			new Abilities\Manage_Component_Ability(),
+			new Abilities\List_Posts_Ability(),
+		];
+
+		return $abilities;
+	}
+
+	/**
+	 * @param Abstract_Ability[] $abilities
+	 * @return string[]
+	 */
+	private function collect_server_ids( array $abilities ): array {
+		$ids = [];
+
+		foreach ( $abilities as $ability ) {
+			if ( $ability->is_exposed_on_server() ) {
+				$ids[] = $ability->get_id();
+			}
+		}
+
+		return $ids;
 	}
 }

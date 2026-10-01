@@ -4,7 +4,7 @@ Tags: acf, fields, custom fields, meta, repeater
 Requires at least: 6.2
 Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 6.8.9
+Stable tag: 6.8.10
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -100,6 +100,17 @@ ACF includes an optional email signup to receive plugin updates and news. No dat
 
 
 == Changelog ==
+
+= 6.8.10 =
+*Release Date 10th September 2026*
+
+* Security - ACF now validates that uploaded PDF files begin with the standard `%PDF-` header before further processing, rejecting files that do not match the expected format
+* Security - The Relationship, Post Object, Image, Gallery, and File fields now enforce WordPress read permissions on referenced posts and attachments when returned in REST API responses
+* Security - ACF now verifies both preview context and the caller's edit capability before substituting revision data when field values are retrieved for a post
+* Security - The `_acf_form` token used by frontend forms now expires and is bound to its issuing render, and `acf_encrypt()` / `acf_decrypt()` gain an optional `$context` argument for domain separation between token uses
+* Security - ACF now consistently runs field validation on frontend form submissions containing field data, ensuring required-field checks and custom `acf/validate_value` filters cannot be circumvented
+* Security - ACF's REST API schema no longer discloses per-object field-group configuration in OPTIONS requests to callers who lack read permission on the target object
+* Security - The User field AJAX endpoint now validates that the request nonce was created for a User field
 
 = 6.8.9 =
 *Release Date 27th August 2026*

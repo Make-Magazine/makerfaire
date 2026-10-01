@@ -3,7 +3,7 @@
   Plugin Name: Embed Plus for YouTube Pro
   Plugin URI: https://www.embedplus.com/dashboard/pro-easy-video-analytics.aspx
   Description: YouTube Embed Plugin. Embed a YouTube channel gallery, playlist gallery, YouTube live stream. Lite embeds with defer JavaScript and facade options
-  Version: 14.2.6
+  Version: 14.2.6.1
   Author: Embed Plus for YouTube Team
   Author URI: https://www.embedplus.com
   Requires at least: 4.5
@@ -22,7 +22,7 @@ class YouTubePrefsPro
 
     public static $folder_name = 'youtube-embed-plus-pro';
     public static $curltimeout = 30;
-    public static $version = '14.2.6';
+    public static $version = '14.2.6.1';
     public static $opt_version = 'version';
     public static $opt_free_migrated = 'free_migrated';
     public static $optembedwidth = null;
@@ -94,6 +94,7 @@ class YouTubePrefsPro
     public static $opt_migrate_embedplusvideo = 'migrate_embedplusvideo';
     public static $spdcprefix = 'ytpref';
     public static $spdcall = 'youtubeprefs_spdcall';
+    public static $opt_spdcall_autoload = 'spdcall_autoload';
     public static $opt_dynload = 'dynload';
     public static $opt_dyntype = 'dyntype';
     public static $opt_gallery_pagesize = 'gallery_pagesize';
@@ -2262,6 +2263,7 @@ class YouTubePrefsPro
         $_spdcexp = 24;
         $_dashpre = 0;
         $_spdcab = 1;
+        $_spdcall_autoload = 0;
         $_dynload = 0;
         $_dyntype = '';
         $_defaultdims = 1;
@@ -2399,6 +2401,7 @@ class YouTubePrefsPro
             $_spdcexp = self::tryget($arroptions, self::$opt_spdcexp, 24);
             $_dashpre = self::tryget($arroptions, self::$opt_dashpre, 0);
             $_spdcab = self::tryget($arroptions, self::$opt_spdcab, 1);
+            $_spdcall_autoload = self::tryget($arroptions, self::$opt_spdcall_autoload, 0);
             $_dynload = self::tryget($arroptions, self::$opt_dynload, 0);
             $_dyntype = self::tryget($arroptions, self::$opt_dyntype, '');
             $_defaultdims = self::tryget($arroptions, self::$opt_defaultdims, $_defaultdims);
@@ -2504,6 +2507,7 @@ class YouTubePrefsPro
             self::$opt_spdcexp => $_spdcexp,
             self::$opt_dashpre => $_dashpre,
             self::$opt_spdcab => $_spdcab,
+            self::$opt_spdcall_autoload => $_spdcall_autoload,
             self::$opt_dynload => $_dynload,
             self::$opt_dyntype => $_dyntype,
             self::$opt_defaultdims => $_defaultdims,
@@ -2557,6 +2561,8 @@ class YouTubePrefsPro
         update_option(self::$opt_alloptions, $all);
         update_option('embed_autourls', 1);
         self::$alloptions = get_option(self::$opt_alloptions);
+
+        self::apply_spdcall_autoload(self::$alloptions[self::$opt_spdcall_autoload]);
 
         try
         {
@@ -3080,7 +3086,7 @@ class YouTubePrefsPro
             set_transient($spdckey, $code, $daysecs);
             $allk = get_option(self::$spdcall, array());
             $allk[] = $spdckey;
-            update_option(self::$spdcall, $allk);
+            update_option(self::$spdcall, $allk, (bool) self::$alloptions[self::$opt_spdcall_autoload]);
 
             //self::debuglog((microtime(true) - $time_start) . "\t" . $spdckey . "\t" . $code . "\r\n");
         }
@@ -3246,11 +3252,21 @@ class YouTubePrefsPro
         return ($a['liveStreamingDetails']['scheduledStartTime'] < $b['liveStreamingDetails']['scheduledStartTime']) ? -1 : 1;
     }
 
+    public static function apply_spdcall_autoload($autoload)
+    {
+        // update_option() bails out before touching the autoload column when the
+        // value it is handed is unchanged, so it cannot flip this flag on its own.
+        if (function_exists('wp_set_option_autoload'))
+        {
+            wp_set_option_autoload(self::$spdcall, (bool) $autoload);
+        }
+    }
+
     public static function save_cache_key($cache_key)
     {
         $allk = get_option(self::$spdcall, array());
         $allk[] = $cache_key;
-        update_option(self::$spdcall, $allk);
+        update_option(self::$spdcall, $allk, (bool) self::$alloptions[self::$opt_spdcall_autoload]);
     }
 
     public static function get_channel_streams($channel_id, $event_type, $use_cache = true)
@@ -3883,7 +3899,7 @@ class YouTubePrefsPro
             set_transient($spdckey, $code, $exp);
             $allk = get_option(self::$spdcall, array());
             $allk[] = $spdckey;
-            update_option(self::$spdcall, $allk);
+            update_option(self::$spdcall, $allk, (bool) self::$alloptions[self::$opt_spdcall_autoload]);
 
             //self::debuglog((microtime(true) - $time_start) . "\t" . $spdckey . "\t" . $code . "\r\n");
         }
@@ -3939,7 +3955,7 @@ class YouTubePrefsPro
                 $success = delete_transient($t);
             }
         }
-        update_option(self::$spdcall, array());
+        update_option(self::$spdcall, array(), (bool) self::$alloptions[self::$opt_spdcall_autoload]);
 
         // hard delete for db transients
         $sql = "delete from " . $wpdb->options . " where option_name like '\_transient\_" . self::$spdcprefix . "%' or option_name like '\_transient\_timeout\_" . self::$spdcprefix . "%'";
@@ -4885,7 +4901,7 @@ class YouTubePrefsPro
         $new_pointer_content = '<h3>' . __('New Update') . '</h3>'; // ooopointer
 
         $new_pointer_content .= '<p>'; // ooopointer
-        $new_pointer_content .= "This version improves compatibility with WordPress 7.0 and PHP 8.4 for both free and Pro plugins.";
+        $new_pointer_content .= "This version improves compatibility with WordPress 7.1 for both free and Pro plugins, and optimizes the caching feature for the Pro plugin.";
         $new_pointer_content .= '</p>';
 
         return array(
@@ -6285,9 +6301,16 @@ class YouTubePrefsPro
                                         <br>
                                         <br>
                                         <label>
-                                            <input name="<?php echo self::$opt_spdcab; ?>" id="<?php echo self::$opt_spdcab; ?>" <?php checked($all[self::$opt_spdcab], 1); ?> type="checkbox" class="checkbox"> 
-                                            <b class="chktitle">Show "Clear YouTube Cache" Admin Bar Button: </b> 
+                                            <input name="<?php echo self::$opt_spdcab; ?>" id="<?php echo self::$opt_spdcab; ?>" <?php checked($all[self::$opt_spdcab], 1); ?> type="checkbox" class="checkbox">
+                                            <b class="chktitle">Show "Clear YouTube Cache" Admin Bar Button: </b>
                                             This will display the "Clear YouTube Cache" button conveniently in the top admin bar. Uncheck this if you wish to hide the button.
+                                        </label>
+                                        <br>
+                                        <br>
+                                        <label>
+                                            <input name="<?php echo self::$opt_spdcall_autoload; ?>" id="<?php echo self::$opt_spdcall_autoload; ?>" <?php checked($all[self::$opt_spdcall_autoload], 1); ?> type="checkbox" class="checkbox">
+                                            <b class="chktitle">Autoload Cache Key Index: </b>
+                                            This index is only read when new videos are cached or when the cache is cleared, so it is kept out of the data WordPress autoloads on every page request. That matters because the index grows as more videos are cached. Leave this unchecked unless you have a specific reason to autoload it.
                                         </label>
 
                                     </div>
@@ -7331,6 +7354,7 @@ class YouTubePrefsPro
         $new_options[self::$opt_ftpostimg] = self::postchecked(self::$opt_ftpostimg) ? 1 : 0;
         $new_options[self::$opt_spdc] = self::postchecked(self::$opt_spdc) ? 1 : 0;
         $new_options[self::$opt_spdcab] = self::postchecked(self::$opt_spdcab) ? 1 : 0;
+        $new_options[self::$opt_spdcall_autoload] = self::postchecked(self::$opt_spdcall_autoload) ? 1 : 0;
         $new_options[self::$opt_dynload] = self::postchecked(self::$opt_dynload) ? 1 : 0;
         $new_options[self::$opt_defaultdims] = self::postchecked(self::$opt_defaultdims) ? 1 : 0;
         $new_options[self::$opt_pause_others] = self::postchecked(self::$opt_pause_others) ? 1 : 0;
@@ -7693,6 +7717,7 @@ class YouTubePrefsPro
         $all = $new_options + $all;
 
         update_option(self::$opt_alloptions, $all);
+        self::apply_spdcall_autoload($all[self::$opt_spdcall_autoload]);
 
         try
         {
@@ -8568,6 +8593,21 @@ class YouTubePrefsPro
         ?>
         <svg style="height: 0 !important; width: 0 !important; display: absolute !important; top: 0 !important; left: 0 !important;"><defs><style>.epytcls-1{fill:red;}.epytcls-2{fill-rule:evenodd;fill:url(#radial-gradient);}.epytcls-3{fill:#31aaff;}.epytcls-4{fill:#fff;}</style><radialGradient id="radial-gradient" cx="193" cy="85.85" r="77.53" gradientUnits="userSpaceOnUse"><stop offset="0.17" stop-color="#fff"/><stop offset="0.68" stop-color="#31aaff"/></radialGradient></defs></svg>
         <?php
+    }
+
+    public static function gb_canvas_svg_styles()
+    {
+        // The block editor canvas is an iframe, so the gradient and class rules that
+        // gb_svg_defs() prints into the admin document are out of scope for the icon
+        // rendered inside it. Restate them for the canvas only.
+        if (!is_admin())
+        {
+            return;
+        }
+
+        wp_register_style('epytgb-canvas-svg-css', false, array(), self::$version);
+        wp_enqueue_style('epytgb-canvas-svg-css');
+        wp_add_inline_style('epytgb-canvas-svg-css', '.editor-styles-wrapper .epytcls-1{fill:red;}.editor-styles-wrapper .epytcls-2{fill-rule:evenodd;fill:#31aaff;}.editor-styles-wrapper .epytcls-3{fill:#31aaff;}.editor-styles-wrapper .epytcls-4{fill:#fff;}');
     }
 
     public static function gb_register_block_types()

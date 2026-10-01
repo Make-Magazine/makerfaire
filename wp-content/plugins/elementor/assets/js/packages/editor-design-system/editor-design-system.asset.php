@@ -12,6 +12,7 @@ return [
 		'elementor-v2-editor-app-bar',
 		'elementor-v2-editor-canvas',
 		'elementor-v2-editor-current-user',
+		'elementor-v2-editor-default-styles',
 		'elementor-v2-editor-documents',
 		'elementor-v2-editor-global-classes',
 		'elementor-v2-editor-notifications',

@@ -17,6 +17,7 @@ use Elementor\Modules\AtomicWidgets\PropTypes\Attributes_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Key_Value_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Link_Prop_Type;
 use Elementor\Modules\AtomicWidgets\PropTypes\Primitives\String_Prop_Type;
+use Elementor\Modules\AtomicWidgets\PropTypes\Prop_Duplication_Behavior;
 use Elementor\Utils;
 use Elementor\Modules\Components\PropTypes\Overridable_Prop_Type;
 use Elementor\Modules\AtomicWidgets\Styles\Atomic_Widget_Styles;
@@ -31,6 +32,16 @@ if ( ! defined( 'ABSPATH' ) ) {
 trait Has_Atomic_Base {
 	use Has_Base_Styles;
 	use Has_Base_Settings;
+
+	public static function html_tag_follows_link(): bool {
+		return true;
+	}
+
+	public static function get_computed_html_tag( array $settings ): string {
+		return Html_Tag_Computer::compute( $settings, 'div', [
+			Html_Tag_Computer::FOLLOW_LINK_OPTION => static::html_tag_follows_link(),
+		] );
+	}
 
 	public function has_widget_inner_wrapper(): bool {
 		return false;
@@ -237,16 +248,41 @@ trait Has_Atomic_Base {
 		$data = parent::get_data_for_save();
 
 		$data['version'] = $this->version;
-		$data['settings'] = $this->parse_atomic_settings( $data['settings'] );
-		$data['styles'] = $this->parse_atomic_styles( $data );
-		$data['editor_settings'] = $this->parse_editor_settings( $data['editor_settings'] );
 
-		if ( isset( $data['interactions'] ) && ! empty( $data['interactions'] ) ) {
-			$data['interactions'] = $this->transform_interactions_for_save( $data['interactions'] );
-		} else {
-			$data['interactions'] = [];
-		}
+		$this->set_data_field_for_save(
+			$data,
+			'settings',
+			$this->parse_atomic_settings( $data['settings'] ?? [] )
+		);
+
+		$this->set_data_field_for_save(
+			$data,
+			'styles',
+			$this->parse_atomic_styles( $data )
+		);
+
+		$this->set_data_field_for_save(
+			$data,
+			'editor_settings',
+			$this->parse_editor_settings( $data['editor_settings'] ?? [] )
+		);
+
+		$this->set_data_field_for_save(
+			$data,
+			'interactions',
+			$this->transform_interactions_for_save( $data['interactions'] ?? [] )
+		);
+
 		return $data;
+	}
+
+	private function set_data_field_for_save( array &$data, string $key, $value ): void {
+		if ( ! empty( $value ) ) {
+			$data[ $key ] = $value;
+			return;
+		}
+
+		unset( $data[ $key ] );
 	}
 
 	private function transform_interactions_for_save( $interactions ) {
@@ -368,7 +404,9 @@ trait Has_Atomic_Base {
 		$schema = static::define_props_schema();
 
 		if ( ! isset( $schema['_cssid'] ) ) {
-			$schema['_cssid'] = String_Prop_Type::make()->meta( Overridable_Prop_Type::ignore() );
+			$schema['_cssid'] = String_Prop_Type::make()
+				->meta( Overridable_Prop_Type::ignore() )
+				->meta( Prop_Duplication_Behavior::clear() );
 		}
 
 		return apply_filters(

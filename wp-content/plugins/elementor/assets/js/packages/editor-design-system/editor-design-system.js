@@ -1,1686 +1,941 @@
-/******/ (function() { // webpackBootstrap
-/******/ 	"use strict";
-/******/ 	var __webpack_modules__ = ({
-
-/***/ "./packages/packages/core/editor-design-system/src/components/design-system-entrypoints.tsx":
-/*!**************************************************************************************************!*\
-  !*** ./packages/packages/core/editor-design-system/src/components/design-system-entrypoints.tsx ***!
-  \**************************************************************************************************/
-/***/ (function(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
-
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   DesignSystemEntrypoints: function() { return /* binding */ DesignSystemEntrypoints; }
-/* harmony export */ });
-/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "react");
-/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _elementor_editor_documents__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @elementor/editor-documents */ "@elementor/editor-documents");
-/* harmony import */ var _elementor_editor_documents__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_elementor_editor_documents__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var _elementor_editor_ui__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @elementor/editor-ui */ "@elementor/editor-ui");
-/* harmony import */ var _elementor_editor_ui__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_elementor_editor_ui__WEBPACK_IMPORTED_MODULE_2__);
-/* harmony import */ var _elementor_editor_v1_adapters__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @elementor/editor-v1-adapters */ "@elementor/editor-v1-adapters");
-/* harmony import */ var _elementor_editor_v1_adapters__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_elementor_editor_v1_adapters__WEBPACK_IMPORTED_MODULE_3__);
-/* harmony import */ var _wordpress_i18n__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @wordpress/i18n */ "@wordpress/i18n");
-/* harmony import */ var _wordpress_i18n__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(_wordpress_i18n__WEBPACK_IMPORTED_MODULE_4__);
-/* harmony import */ var _design_system_panel__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../design-system-panel */ "./packages/packages/core/editor-design-system/src/design-system-panel.tsx");
-/* harmony import */ var _initial_tab__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../initial-tab */ "./packages/packages/core/editor-design-system/src/initial-tab.ts");
-
-
-
-
-
-
-
-
-const V1_ELEMENTS_PANEL_ROUTE = 'panel/elements/categories';
-const EVENT_OPEN_VARIABLES = 'elementor/open-variables-manager';
-const EVENT_OPEN_CLASSES = 'elementor/open-global-classes-manager';
-const EVENT_TOGGLE = 'elementor/toggle-design-system';
-const EVENT_SET_TAB = 'elementor/design-system/set-tab';
-const ACTIVE_PANEL_PARAM = 'active-panel';
-const PANEL_ID = 'design-system';
-const LEGACY_GLOBAL_CLASSES_PANEL = 'global-classes-manager';
-const LEGACY_VARIABLES_PANEL = 'variables-manager';
-function DesignSystemEntrypoints() {
-  const {
-    open,
-    close
-  } = (0,_design_system_panel__WEBPACK_IMPORTED_MODULE_5__.usePanelActions)();
-  const {
-    isOpen
-  } = (0,_design_system_panel__WEBPACK_IMPORTED_MODULE_5__.usePanelStatus)();
-  const document = (0,_elementor_editor_documents__WEBPACK_IMPORTED_MODULE_1__.__useActiveDocument)();
-  const {
-    save: saveDocument
-  } = (0,_elementor_editor_documents__WEBPACK_IMPORTED_MODULE_1__.__useActiveDocumentActions)();
-  const {
-    open: openSaveDialog,
-    close: closeSaveDialog,
-    isOpen: isSaveDialogOpen
-  } = (0,_elementor_editor_ui__WEBPACK_IMPORTED_MODULE_2__.useDialog)();
-  const documentRef = (0,react__WEBPACK_IMPORTED_MODULE_0__.useRef)(document);
-  documentRef.current = document;
-  const pendingOpenRef = (0,react__WEBPACK_IMPORTED_MODULE_0__.useRef)(null);
-  const gatedOpen = (0,react__WEBPACK_IMPORTED_MODULE_0__.useCallback)(onClean => {
-    if (documentRef.current?.isDirty) {
-      pendingOpenRef.current = onClean;
-      openSaveDialog();
-      return;
-    }
-    onClean();
-  }, [openSaveDialog]);
-  const handleSaveAndContinue = (0,react__WEBPACK_IMPORTED_MODULE_0__.useCallback)(async () => {
-    try {
-      await saveDocument();
-      closeSaveDialog();
-      pendingOpenRef.current?.();
-      pendingOpenRef.current = null;
-    } catch {
-      // Keep dialog open;
-    }
-  }, [saveDocument, closeSaveDialog]);
-  const handleStayHere = (0,react__WEBPACK_IMPORTED_MODULE_0__.useCallback)(() => {
-    closeSaveDialog();
-    pendingOpenRef.current = null;
-  }, [closeSaveDialog]);
-  const isOpenRef = (0,react__WEBPACK_IMPORTED_MODULE_0__.useRef)(isOpen);
-  isOpenRef.current = isOpen;
-  (0,react__WEBPACK_IMPORTED_MODULE_0__.useEffect)(() => {
-    const handler = event => {
-      const tab = event.detail?.tab;
-      if (tab !== 'variables' && tab !== 'classes') {
-        return;
-      }
-      if (isOpenRef.current && (0,_initial_tab__WEBPACK_IMPORTED_MODULE_6__.getActiveDesignSystemTab)() === tab) {
-        void close();
-        return;
-      }
-      if (isOpenRef.current) {
-        window.dispatchEvent(new CustomEvent(EVENT_SET_TAB, {
-          detail: {
-            tab
-          }
-        }));
-        return;
-      }
-      gatedOpen(() => {
-        window.dispatchEvent(new CustomEvent(tab === 'variables' ? EVENT_OPEN_VARIABLES : EVENT_OPEN_CLASSES));
-      });
-    };
-    window.addEventListener(EVENT_TOGGLE, handler);
-    return () => {
-      window.removeEventListener(EVENT_TOGGLE, handler);
-    };
-  }, [close, gatedOpen]);
-  const pendingTabRef = (0,react__WEBPACK_IMPORTED_MODULE_0__.useRef)(null);
-  const [readyToOpenFromEvent, setReadyToOpenFromEvent] = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(false);
-  (0,react__WEBPACK_IMPORTED_MODULE_0__.useEffect)(() => {
-    if (readyToOpenFromEvent) {
-      setReadyToOpenFromEvent(false);
-      void open();
-    }
-  }, [readyToOpenFromEvent, open]);
-  (0,react__WEBPACK_IMPORTED_MODULE_0__.useEffect)(() => {
-    return (0,_elementor_editor_v1_adapters__WEBPACK_IMPORTED_MODULE_3__.__privateListenTo)((0,_elementor_editor_v1_adapters__WEBPACK_IMPORTED_MODULE_3__.routeOpenEvent)(V1_ELEMENTS_PANEL_ROUTE), () => {
-      const tab = pendingTabRef.current;
-      if (tab) {
-        pendingTabRef.current = null;
-        (0,_initial_tab__WEBPACK_IMPORTED_MODULE_6__.setPendingDesignSystemTab)(tab);
-        setReadyToOpenFromEvent(true);
-      }
-    });
-  }, []);
-  (0,react__WEBPACK_IMPORTED_MODULE_0__.useEffect)(() => {
-    const bind = (eventName, tab) => {
-      const handler = () => {
-        pendingTabRef.current = tab;
-        (0,_elementor_editor_v1_adapters__WEBPACK_IMPORTED_MODULE_3__.__privateOpenRoute)(V1_ELEMENTS_PANEL_ROUTE);
-      };
-      window.addEventListener(eventName, handler);
-      return () => window.removeEventListener(eventName, handler);
-    };
-    const unlistenVariables = bind(EVENT_OPEN_VARIABLES, 'variables');
-    const unlistenClasses = bind(EVENT_OPEN_CLASSES, 'classes');
-    return () => {
-      unlistenVariables();
-      unlistenClasses();
-    };
-  }, []);
-  const hasOpenedFromUrl = (0,react__WEBPACK_IMPORTED_MODULE_0__.useRef)(false);
-  (0,react__WEBPACK_IMPORTED_MODULE_0__.useEffect)(() => {
-    const urlParams = new URLSearchParams(window.location.search);
-    const activePanel = urlParams.get(ACTIVE_PANEL_PARAM);
-    if (!activePanel) {
-      return;
-    }
-    let targetTab = null;
-    if (activePanel === PANEL_ID) {
-      const tab = urlParams.get('design-system-tab');
-      targetTab = tab === 'classes' ? 'classes' : 'variables';
-    } else if (activePanel === LEGACY_GLOBAL_CLASSES_PANEL) {
-      targetTab = 'classes';
-    } else if (activePanel === LEGACY_VARIABLES_PANEL) {
-      targetTab = 'variables';
-    } else {
-      return;
-    }
-    const cleanup = (0,_elementor_editor_v1_adapters__WEBPACK_IMPORTED_MODULE_3__.__privateListenTo)((0,_elementor_editor_v1_adapters__WEBPACK_IMPORTED_MODULE_3__.routeOpenEvent)(V1_ELEMENTS_PANEL_ROUTE), () => {
-      if (hasOpenedFromUrl.current) {
-        return;
-      }
-      hasOpenedFromUrl.current = true;
-      requestAnimationFrame(() => {
-        if (targetTab) {
-          (0,_initial_tab__WEBPACK_IMPORTED_MODULE_6__.setPendingDesignSystemTab)(targetTab);
-        }
-        gatedOpen(() => void open());
-      });
-    });
-    return cleanup;
-  }, [open, gatedOpen]);
-  return isSaveDialogOpen ? /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(_elementor_editor_ui__WEBPACK_IMPORTED_MODULE_2__.ThemeProvider, null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(_elementor_editor_ui__WEBPACK_IMPORTED_MODULE_2__.SaveChangesDialog, null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(_elementor_editor_ui__WEBPACK_IMPORTED_MODULE_2__.SaveChangesDialog.Title, null, (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_4__.__)('You have unsaved changes', 'elementor')), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(_elementor_editor_ui__WEBPACK_IMPORTED_MODULE_2__.SaveChangesDialog.Content, null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(_elementor_editor_ui__WEBPACK_IMPORTED_MODULE_2__.SaveChangesDialog.ContentText, {
-    sx: {
-      mb: 2
-    }
-  }, (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_4__.__)("To open the Design System, save your page first. You can't continue without saving.", 'elementor'))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(_elementor_editor_ui__WEBPACK_IMPORTED_MODULE_2__.SaveChangesDialog.Actions, {
-    actions: {
-      cancel: {
-        label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_4__.__)('Stay here', 'elementor'),
-        action: handleStayHere
-      },
-      confirm: {
-        label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_4__.__)('Save & Continue', 'elementor'),
-        action: handleSaveAndContinue
-      }
-    }
-  }))) : null;
-}
-
-/***/ }),
-
-/***/ "./packages/packages/core/editor-design-system/src/components/design-system-header-menu.tsx":
-/*!**************************************************************************************************!*\
-  !*** ./packages/packages/core/editor-design-system/src/components/design-system-header-menu.tsx ***!
-  \**************************************************************************************************/
-/***/ (function(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
-
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   DesignSystemHeaderMenu: function() { return /* binding */ DesignSystemHeaderMenu; }
-/* harmony export */ });
-/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "react");
-/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _elementor_editor_current_user__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @elementor/editor-current-user */ "@elementor/editor-current-user");
-/* harmony import */ var _elementor_editor_current_user__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_elementor_editor_current_user__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var _elementor_editor_ui__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @elementor/editor-ui */ "@elementor/editor-ui");
-/* harmony import */ var _elementor_editor_ui__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_elementor_editor_ui__WEBPACK_IMPORTED_MODULE_2__);
-/* harmony import */ var _elementor_icons__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @elementor/icons */ "@elementor/icons");
-/* harmony import */ var _elementor_icons__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_elementor_icons__WEBPACK_IMPORTED_MODULE_3__);
-/* harmony import */ var _elementor_query__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @elementor/query */ "@elementor/query");
-/* harmony import */ var _elementor_query__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(_elementor_query__WEBPACK_IMPORTED_MODULE_4__);
-/* harmony import */ var _elementor_ui__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! @elementor/ui */ "@elementor/ui");
-/* harmony import */ var _elementor_ui__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(_elementor_ui__WEBPACK_IMPORTED_MODULE_5__);
-/* harmony import */ var _wordpress_i18n__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! @wordpress/i18n */ "@wordpress/i18n");
-/* harmony import */ var _wordpress_i18n__WEBPACK_IMPORTED_MODULE_6___default = /*#__PURE__*/__webpack_require__.n(_wordpress_i18n__WEBPACK_IMPORTED_MODULE_6__);
-/* harmony import */ var _export_download__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../export/download */ "./packages/packages/core/editor-design-system/src/export/download.ts");
-/* harmony import */ var _export_export_notifications__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ../export/export-notifications */ "./packages/packages/core/editor-design-system/src/export/export-notifications.ts");
-/* harmony import */ var _export_hooks_use_export_request__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ../export/hooks/use-export-request */ "./packages/packages/core/editor-design-system/src/export/hooks/use-export-request.ts");
-/* harmony import */ var _import_hooks_use_import_request__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ../import/hooks/use-import-request */ "./packages/packages/core/editor-design-system/src/import/hooks/use-import-request.ts");
-/* harmony import */ var _import_import_design_system_dialog__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ../import/import-design-system-dialog */ "./packages/packages/core/editor-design-system/src/import/import-design-system-dialog.tsx");
-/* harmony import */ var _import_tracking__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ../import/tracking */ "./packages/packages/core/editor-design-system/src/import/tracking.ts");
-function _extends() { return _extends = Object.assign ? Object.assign.bind() : function (n) { for (var e = 1; e < arguments.length; e++) { var t = arguments[e]; for (var r in t) ({}).hasOwnProperty.call(t, r) && (n[r] = t[r]); } return n; }, _extends.apply(null, arguments); }
-
-
-
-
-
-
-
-
-
-
-
-
-
-const POPUP_STATE_ID = 'design-system-header-menu';
-const DesignSystemHeaderMenu = () => {
-  const {
-    isAdmin
-  } = (0,_elementor_editor_current_user__WEBPACK_IMPORTED_MODULE_1__.useCurrentUserCapabilities)();
-  const popupState = (0,_elementor_ui__WEBPACK_IMPORTED_MODULE_5__.usePopupState)({
-    variant: 'popover',
-    popupId: POPUP_STATE_ID
-  });
-  const exportMutation = (0,_export_hooks_use_export_request__WEBPACK_IMPORTED_MODULE_9__.useExportRequest)();
-  const isImporting = (0,_elementor_query__WEBPACK_IMPORTED_MODULE_4__.useIsMutating)({
-    mutationKey: [_import_hooks_use_import_request__WEBPACK_IMPORTED_MODULE_10__.IMPORT_DESIGN_SYSTEM_MUTATION_KEY]
-  }) > 0;
-  const isExporting = (0,_elementor_query__WEBPACK_IMPORTED_MODULE_4__.useIsMutating)({
-    mutationKey: [_export_hooks_use_export_request__WEBPACK_IMPORTED_MODULE_9__.EXPORT_DESIGN_SYSTEM_MUTATION_KEY]
-  }) > 0;
-  const isInProgress = isImporting || isExporting;
-  const triggerProps = (0,_elementor_ui__WEBPACK_IMPORTED_MODULE_5__.bindTrigger)(popupState);
-  const handleImport = () => {
-    popupState.close();
-    (0,_import_tracking__WEBPACK_IMPORTED_MODULE_12__.trackDesignSystem)({
-      event: 'importOpened'
-    });
-    (0,_elementor_editor_ui__WEBPACK_IMPORTED_MODULE_2__.openDialog)({
-      component: /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(_import_import_design_system_dialog__WEBPACK_IMPORTED_MODULE_11__.ImportDesignSystemDialog, {
-        onClose: _elementor_editor_ui__WEBPACK_IMPORTED_MODULE_2__.closeDialog
-      })
-    });
-  };
-  const runExport = async () => {
-    (0,_export_export_notifications__WEBPACK_IMPORTED_MODULE_8__.notifyExportInProgress)();
-    try {
-      const {
-        blob,
-        fileName
-      } = await exportMutation.mutateAsync();
-      (0,_export_download__WEBPACK_IMPORTED_MODULE_7__.downloadBlob)(blob, fileName);
-      (0,_export_export_notifications__WEBPACK_IMPORTED_MODULE_8__.notifyExportSuccess)();
-    } catch {
-      (0,_export_export_notifications__WEBPACK_IMPORTED_MODULE_8__.notifyExportFailure)(runExport);
-    }
-  };
-  const handleExport = () => {
-    popupState.close();
-    (0,_import_tracking__WEBPACK_IMPORTED_MODULE_12__.trackDesignSystem)({
-      event: 'export'
-    });
-    void runExport();
-  };
-  const triggerLabel = (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_6__.__)('Design system actions', 'elementor');
-  const currentlyExportingLabel = (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_6__.__)(`Export is in progress. The file will be downloaded when it's complete.`, 'elementor');
-  const currentlyImportingLabel = (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_6__.__)(`Import is in progress. You will receive a notification when it's complete.`, 'elementor');
-  let tooltipLabel = triggerLabel;
-  if (isInProgress) {
-    tooltipLabel = isExporting ? currentlyExportingLabel : currentlyImportingLabel;
-  }
-  return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react__WEBPACK_IMPORTED_MODULE_0__.Fragment, null, isAdmin && /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(_elementor_ui__WEBPACK_IMPORTED_MODULE_5__.Tooltip, {
-    title: tooltipLabel,
-    placement: "top"
-  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement("span", null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(_elementor_ui__WEBPACK_IMPORTED_MODULE_5__.IconButton, _extends({}, triggerProps, {
-    size: "small",
-    "aria-label": triggerLabel,
-    disabled: isInProgress
-  }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(_elementor_icons__WEBPACK_IMPORTED_MODULE_3__.DotsVerticalIcon, {
-    fontSize: "small"
-  })))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(_elementor_ui__WEBPACK_IMPORTED_MODULE_5__.Menu, _extends({}, (0,_elementor_ui__WEBPACK_IMPORTED_MODULE_5__.bindMenu)(popupState), {
-    MenuListProps: {
-      dense: true
-    },
-    PaperProps: {
-      elevation: 6
-    },
-    anchorOrigin: {
-      vertical: 'bottom',
-      horizontal: 'right'
-    },
-    transformOrigin: {
-      vertical: 'top',
-      horizontal: 'right'
-    }
-  }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(_elementor_ui__WEBPACK_IMPORTED_MODULE_5__.MenuItem, {
-    onClick: handleImport,
-    disabled: isImporting
-  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(_elementor_ui__WEBPACK_IMPORTED_MODULE_5__.ListItemIcon, null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(_elementor_icons__WEBPACK_IMPORTED_MODULE_3__.UploadIcon, {
-    fontSize: "tiny"
-  })), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(_elementor_ui__WEBPACK_IMPORTED_MODULE_5__.ListItemText, null, (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_6__.__)('Import', 'elementor'))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(_elementor_ui__WEBPACK_IMPORTED_MODULE_5__.MenuItem, {
-    onClick: handleExport,
-    disabled: isExporting
-  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(_elementor_ui__WEBPACK_IMPORTED_MODULE_5__.ListItemIcon, null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(_elementor_icons__WEBPACK_IMPORTED_MODULE_3__.DownloadIcon, {
-    fontSize: "tiny"
-  })), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(_elementor_ui__WEBPACK_IMPORTED_MODULE_5__.ListItemText, null, (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_6__.__)('Export', 'elementor')))));
-};
-
-/***/ }),
-
-/***/ "./packages/packages/core/editor-design-system/src/components/design-system-panel-content.tsx":
-/*!****************************************************************************************************!*\
-  !*** ./packages/packages/core/editor-design-system/src/components/design-system-panel-content.tsx ***!
-  \****************************************************************************************************/
-/***/ (function(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
-
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   DesignSystemPanelContent: function() { return /* binding */ DesignSystemPanelContent; }
-/* harmony export */ });
-/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "react");
-/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _elementor_editor_global_classes__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @elementor/editor-global-classes */ "@elementor/editor-global-classes");
-/* harmony import */ var _elementor_editor_global_classes__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_elementor_editor_global_classes__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var _elementor_editor_panels__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @elementor/editor-panels */ "@elementor/editor-panels");
-/* harmony import */ var _elementor_editor_panels__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_elementor_editor_panels__WEBPACK_IMPORTED_MODULE_2__);
-/* harmony import */ var _elementor_editor_ui__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @elementor/editor-ui */ "@elementor/editor-ui");
-/* harmony import */ var _elementor_editor_ui__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_elementor_editor_ui__WEBPACK_IMPORTED_MODULE_3__);
-/* harmony import */ var _elementor_editor_variables__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @elementor/editor-variables */ "@elementor/editor-variables");
-/* harmony import */ var _elementor_editor_variables__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(_elementor_editor_variables__WEBPACK_IMPORTED_MODULE_4__);
-/* harmony import */ var _elementor_icons__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! @elementor/icons */ "@elementor/icons");
-/* harmony import */ var _elementor_icons__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(_elementor_icons__WEBPACK_IMPORTED_MODULE_5__);
-/* harmony import */ var _elementor_ui__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! @elementor/ui */ "@elementor/ui");
-/* harmony import */ var _elementor_ui__WEBPACK_IMPORTED_MODULE_6___default = /*#__PURE__*/__webpack_require__.n(_elementor_ui__WEBPACK_IMPORTED_MODULE_6__);
-/* harmony import */ var _wordpress_i18n__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! @wordpress/i18n */ "@wordpress/i18n");
-/* harmony import */ var _wordpress_i18n__WEBPACK_IMPORTED_MODULE_7___default = /*#__PURE__*/__webpack_require__.n(_wordpress_i18n__WEBPACK_IMPORTED_MODULE_7__);
-/* harmony import */ var _initial_tab__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ../initial-tab */ "./packages/packages/core/editor-design-system/src/initial-tab.ts");
-/* harmony import */ var _design_system_header_menu__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./design-system-header-menu */ "./packages/packages/core/editor-design-system/src/components/design-system-header-menu.tsx");
-function _extends() { return _extends = Object.assign ? Object.assign.bind() : function (n) { for (var e = 1; e < arguments.length; e++) { var t = arguments[e]; for (var r in t) ({}).hasOwnProperty.call(t, r) && (n[r] = t[r]); } return n; }, _extends.apply(null, arguments); }
-
-
-
-
-
-
-
-
-
-
-
-const stickyTabRowStyles = {
-  position: 'sticky',
-  zIndex: 1100,
-  opacity: 1,
-  backgroundColor: 'background.default',
-  transition: 'top 300ms ease'
-};
-const EVENT_SET_TAB = 'elementor/design-system/set-tab';
-const trackDesignSystemTabOpened = tab => {
-  switch (tab) {
-    case 'classes':
-      (0,_elementor_editor_global_classes__WEBPACK_IMPORTED_MODULE_1__.trackGlobalClasses)({
-        event: 'classManagerOpened',
-        source: 'system-panel'
-      });
-      break;
-    case 'variables':
-      (0,_elementor_editor_variables__WEBPACK_IMPORTED_MODULE_4__.trackVariablesManagerEvent)({
-        action: 'openManager',
-        source: 'system-panel'
-      });
-      break;
-  }
-};
-function DesignSystemPanelContent({
-  onRequestClose
-}) {
-  const [currentTab, setCurrentTab] = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(() => (0,_initial_tab__WEBPACK_IMPORTED_MODULE_8__.getInitialDesignSystemTab)());
-  const variablesCloseAttemptRef = (0,react__WEBPACK_IMPORTED_MODULE_0__.useRef)(null);
-  const classesCloseAttemptRef = (0,react__WEBPACK_IMPORTED_MODULE_0__.useRef)(null);
-  const isChainingRef = (0,react__WEBPACK_IMPORTED_MODULE_0__.useRef)(false);
-  const {
-    getTabProps,
-    getTabPanelProps,
-    getTabsProps
-  } = (0,_elementor_ui__WEBPACK_IMPORTED_MODULE_6__.useTabs)(currentTab);
-  const chainedThroughClasses = (0,react__WEBPACK_IMPORTED_MODULE_0__.useCallback)(() => {
-    if (!isChainingRef.current && classesCloseAttemptRef.current) {
-      isChainingRef.current = true;
-      classesCloseAttemptRef.current();
-      isChainingRef.current = false;
-      return;
-    }
-    void onRequestClose();
-  }, [onRequestClose]);
-  const chainedThroughVariables = (0,react__WEBPACK_IMPORTED_MODULE_0__.useCallback)(() => {
-    if (!isChainingRef.current && variablesCloseAttemptRef.current) {
-      isChainingRef.current = true;
-      variablesCloseAttemptRef.current();
-      isChainingRef.current = false;
-      return;
-    }
-    void onRequestClose();
-  }, [onRequestClose]);
-  (0,react__WEBPACK_IMPORTED_MODULE_0__.useEffect)(() => {
-    (0,_initial_tab__WEBPACK_IMPORTED_MODULE_8__.notifyDesignSystemTabChange)(currentTab);
-  }, [currentTab]);
-  (0,react__WEBPACK_IMPORTED_MODULE_0__.useEffect)(() => {
-    const handler = event => {
-      const tab = event.detail?.tab;
-      if (!tab) {
-        return;
-      }
-      setCurrentTab(tab);
-      (0,_initial_tab__WEBPACK_IMPORTED_MODULE_8__.persistDesignSystemTab)(tab);
-      (0,_initial_tab__WEBPACK_IMPORTED_MODULE_8__.notifyDesignSystemTabChange)(tab);
-      trackDesignSystemTabOpened(tab);
-    };
-    window.addEventListener(EVENT_SET_TAB, handler);
-    return () => {
-      window.removeEventListener(EVENT_SET_TAB, handler);
-    };
-  }, []);
-  const handleHeaderClose = () => {
-    if (currentTab === 'variables' && variablesCloseAttemptRef.current) {
-      variablesCloseAttemptRef.current();
-      return;
-    }
-    if (currentTab === 'classes' && classesCloseAttemptRef.current) {
-      classesCloseAttemptRef.current();
-      return;
-    }
-    void onRequestClose();
-  };
-  return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(_elementor_editor_ui__WEBPACK_IMPORTED_MODULE_3__.ThemeProvider, null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(_elementor_editor_panels__WEBPACK_IMPORTED_MODULE_2__.Panel, null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(_elementor_editor_panels__WEBPACK_IMPORTED_MODULE_2__.PanelHeader, null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(_elementor_ui__WEBPACK_IMPORTED_MODULE_6__.Stack, {
-    p: 1,
-    pl: 2,
-    width: "100%",
-    direction: "row",
-    alignItems: "center",
-    spacing: 0.5
-  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(_elementor_editor_panels__WEBPACK_IMPORTED_MODULE_2__.PanelHeaderTitle, {
-    sx: {
-      flex: 1,
-      minWidth: 0
-    }
-  }, (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_7__.__)('Design system', 'elementor')), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(_design_system_header_menu__WEBPACK_IMPORTED_MODULE_9__.DesignSystemHeaderMenu, null), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(_elementor_ui__WEBPACK_IMPORTED_MODULE_6__.CloseButton, {
-    "aria-label": (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_7__.__)('Close', 'elementor'),
-    sx: {
-      flexShrink: 0
-    },
-    onClick: () => void handleHeaderClose()
-  }))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(_elementor_editor_panels__WEBPACK_IMPORTED_MODULE_2__.PanelBody, {
-    sx: {
-      display: 'flex',
-      flexDirection: 'column',
-      height: '100%',
-      overflow: 'hidden',
-      minHeight: 0
-    }
-  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(_elementor_ui__WEBPACK_IMPORTED_MODULE_6__.Stack, {
-    direction: "column",
-    sx: {
-      width: '100%',
-      flex: 1,
-      minHeight: 0,
-      overflow: 'hidden'
-    }
-  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(_elementor_ui__WEBPACK_IMPORTED_MODULE_6__.Stack, {
-    sx: {
-      ...stickyTabRowStyles,
-      top: 0,
-      flexShrink: 0
-    }
-  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(_elementor_ui__WEBPACK_IMPORTED_MODULE_6__.Tabs, _extends({
-    variant: "fullWidth",
-    size: "small",
-    sx: {
-      mt: 0.5
-    }
-  }, getTabsProps(), {
-    onChange: (e, newValue) => {
-      getTabsProps().onChange(e, newValue);
-      setCurrentTab(newValue);
-      (0,_initial_tab__WEBPACK_IMPORTED_MODULE_8__.persistDesignSystemTab)(newValue);
-      (0,_initial_tab__WEBPACK_IMPORTED_MODULE_8__.notifyDesignSystemTabChange)(newValue);
-      trackDesignSystemTabOpened(newValue);
-    }
-  }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(_elementor_ui__WEBPACK_IMPORTED_MODULE_6__.Tab, _extends({
-    label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_7__.__)('Variables', 'elementor'),
-    icon: /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(_elementor_icons__WEBPACK_IMPORTED_MODULE_5__.ColorFilterIcon, {
-      fontSize: "small"
-    }),
-    iconPosition: "start"
-  }, getTabProps('variables'))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(_elementor_ui__WEBPACK_IMPORTED_MODULE_6__.Tab, _extends({
-    label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_7__.__)('Classes', 'elementor'),
-    icon: /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(_elementor_icons__WEBPACK_IMPORTED_MODULE_5__.ColorSwatchIcon, {
-      fontSize: "small"
-    }),
-    iconPosition: "start"
-  }, getTabProps('classes')))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(_elementor_ui__WEBPACK_IMPORTED_MODULE_6__.Divider, null)), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(_elementor_ui__WEBPACK_IMPORTED_MODULE_6__.Box, _extends({
-    role: "tabpanel"
-  }, getTabPanelProps('variables'), {
-    sx: {
-      flex: 1,
-      minHeight: 0,
-      display: currentTab === 'variables' ? 'flex' : 'none',
-      flexDirection: 'column',
-      overflow: 'hidden',
-      pt: 1
-    }
-  }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(_elementor_editor_variables__WEBPACK_IMPORTED_MODULE_4__.VariablesManagerPanelEmbedded, {
-    onRequestClose: chainedThroughClasses,
-    onExposeCloseAttempt: fn => {
-      variablesCloseAttemptRef.current = fn;
-    }
-  })), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(_elementor_ui__WEBPACK_IMPORTED_MODULE_6__.Box, _extends({
-    role: "tabpanel"
-  }, getTabPanelProps('classes'), {
-    sx: {
-      flex: 1,
-      minHeight: 0,
-      display: currentTab === 'classes' ? 'flex' : 'none',
-      flexDirection: 'column',
-      overflow: 'hidden',
-      pt: 1
-    }
-  }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(_elementor_editor_global_classes__WEBPACK_IMPORTED_MODULE_1__.ClassManagerPanelEmbedded, {
-    onRequestClose: chainedThroughVariables,
-    onExposeCloseAttempt: fn => {
-      classesCloseAttemptRef.current = fn;
-    },
-    isActive: currentTab === 'classes'
-  }))))));
-}
-
-/***/ }),
-
-/***/ "./packages/packages/core/editor-design-system/src/design-system-panel.tsx":
-/*!*********************************************************************************!*\
-  !*** ./packages/packages/core/editor-design-system/src/design-system-panel.tsx ***!
-  \*********************************************************************************/
-/***/ (function(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
-
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   panel: function() { return /* binding */ panel; },
-/* harmony export */   usePanelActions: function() { return /* binding */ usePanelActions; },
-/* harmony export */   usePanelStatus: function() { return /* binding */ usePanelStatus; }
-/* harmony export */ });
-/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "react");
-/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _elementor_editor_documents__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @elementor/editor-documents */ "@elementor/editor-documents");
-/* harmony import */ var _elementor_editor_documents__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_elementor_editor_documents__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var _elementor_editor_panels__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @elementor/editor-panels */ "@elementor/editor-panels");
-/* harmony import */ var _elementor_editor_panels__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_elementor_editor_panels__WEBPACK_IMPORTED_MODULE_2__);
-/* harmony import */ var _elementor_editor_v1_adapters__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @elementor/editor-v1-adapters */ "@elementor/editor-v1-adapters");
-/* harmony import */ var _elementor_editor_v1_adapters__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_elementor_editor_v1_adapters__WEBPACK_IMPORTED_MODULE_3__);
-/* harmony import */ var _components_design_system_panel_content__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./components/design-system-panel-content */ "./packages/packages/core/editor-design-system/src/components/design-system-panel-content.tsx");
-
-
-
-
-
-const PANEL_ID = 'design-system';
-const {
-  panel,
-  usePanelStatus,
-  usePanelActions
-} = (0,_elementor_editor_panels__WEBPACK_IMPORTED_MODULE_2__.__createPanel)({
-  id: PANEL_ID,
-  component: DesignSystemPanelRoot,
-  allowedEditModes: ['edit', PANEL_ID],
-  onOpen: () => {
-    (0,_elementor_editor_v1_adapters__WEBPACK_IMPORTED_MODULE_3__.changeEditMode)(PANEL_ID);
-  },
-  onClose: async () => {
-    (0,_elementor_editor_v1_adapters__WEBPACK_IMPORTED_MODULE_3__.changeEditMode)('edit');
-    await (0,_elementor_editor_documents__WEBPACK_IMPORTED_MODULE_1__.reloadCurrentDocument)();
-  },
-  isOpenPreviousElement: true
-});
-function DesignSystemPanelRoot() {
-  const {
-    close: closePanel
-  } = usePanelActions();
-  return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(_components_design_system_panel_content__WEBPACK_IMPORTED_MODULE_4__.DesignSystemPanelContent, {
-    onRequestClose: closePanel
-  });
-}
-
-/***/ }),
-
-/***/ "./packages/packages/core/editor-design-system/src/export/download.ts":
-/*!****************************************************************************!*\
-  !*** ./packages/packages/core/editor-design-system/src/export/download.ts ***!
-  \****************************************************************************/
-/***/ (function(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
-
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   downloadBlob: function() { return /* binding */ downloadBlob; }
-/* harmony export */ });
-const downloadBlob = (blob, fileName) => {
-  const url = URL.createObjectURL(blob);
-  const anchor = document.createElement('a');
-  anchor.href = url;
-  anchor.download = fileName;
-  anchor.rel = 'noopener';
-  document.body.appendChild(anchor);
-  anchor.click();
-  document.body.removeChild(anchor);
-  URL.revokeObjectURL(url);
-};
-
-/***/ }),
-
-/***/ "./packages/packages/core/editor-design-system/src/export/export-notifications.ts":
-/*!****************************************************************************************!*\
-  !*** ./packages/packages/core/editor-design-system/src/export/export-notifications.ts ***!
-  \****************************************************************************************/
-/***/ (function(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
-
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   notifyExportFailure: function() { return /* binding */ notifyExportFailure; },
-/* harmony export */   notifyExportInProgress: function() { return /* binding */ notifyExportInProgress; },
-/* harmony export */   notifyExportSuccess: function() { return /* binding */ notifyExportSuccess; }
-/* harmony export */ });
-/* harmony import */ var _elementor_editor_notifications__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @elementor/editor-notifications */ "@elementor/editor-notifications");
-/* harmony import */ var _elementor_editor_notifications__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_elementor_editor_notifications__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _wordpress_i18n__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @wordpress/i18n */ "@wordpress/i18n");
-/* harmony import */ var _wordpress_i18n__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_wordpress_i18n__WEBPACK_IMPORTED_MODULE_1__);
-
-
-const EXPORT_STARTED_NOTIFICATION_ID = 'design-system-export-started';
-const SUCCESS_NOTIFICATION_ID = 'design-system-export-succeeded';
-const FAILURE_NOTIFICATION_ID = 'design-system-export-failed';
-const notifyExportInProgress = () => {
-  (0,_elementor_editor_notifications__WEBPACK_IMPORTED_MODULE_0__.notify)({
-    id: EXPORT_STARTED_NOTIFICATION_ID,
-    type: 'info',
-    message: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_1__.__)('Export in progress. Your file will download when it’s ready.', 'elementor')
-  });
-};
-const notifyExportSuccess = () => {
-  (0,_elementor_editor_notifications__WEBPACK_IMPORTED_MODULE_0__.dismissNotification)(EXPORT_STARTED_NOTIFICATION_ID);
-  (0,_elementor_editor_notifications__WEBPACK_IMPORTED_MODULE_0__.notify)({
-    id: SUCCESS_NOTIFICATION_ID,
-    type: 'success',
-    message: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_1__.__)('Design system exported', 'elementor')
-  });
-};
-const notifyExportFailure = onRetry => {
-  (0,_elementor_editor_notifications__WEBPACK_IMPORTED_MODULE_0__.dismissNotification)(EXPORT_STARTED_NOTIFICATION_ID);
-  (0,_elementor_editor_notifications__WEBPACK_IMPORTED_MODULE_0__.notify)({
-    id: FAILURE_NOTIFICATION_ID,
-    type: 'error',
-    message: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_1__.__)('Your design system export failed', 'elementor'),
-    additionalActionProps: [{
-      size: 'small',
-      variant: 'outlined',
-      color: 'error',
-      children: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_1__.__)('Try again', 'elementor'),
-      onClick: () => {
-        (0,_elementor_editor_notifications__WEBPACK_IMPORTED_MODULE_0__.dismissNotification)(FAILURE_NOTIFICATION_ID);
-        onRetry();
-      }
-    }]
-  });
-};
-
-/***/ }),
-
-/***/ "./packages/packages/core/editor-design-system/src/export/hooks/use-export-request.ts":
-/*!********************************************************************************************!*\
-  !*** ./packages/packages/core/editor-design-system/src/export/hooks/use-export-request.ts ***!
-  \********************************************************************************************/
-/***/ (function(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
-
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   DEFAULT_EXPORT_FILE_NAME: function() { return /* binding */ DEFAULT_EXPORT_FILE_NAME; },
-/* harmony export */   DesignSystemExportError: function() { return /* binding */ DesignSystemExportError; },
-/* harmony export */   EXPORT_DESIGN_SYSTEM_MUTATION_KEY: function() { return /* binding */ EXPORT_DESIGN_SYSTEM_MUTATION_KEY; },
-/* harmony export */   useExportRequest: function() { return /* binding */ useExportRequest; }
-/* harmony export */ });
-/* harmony import */ var _elementor_http_client__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @elementor/http-client */ "@elementor/http-client");
-/* harmony import */ var _elementor_http_client__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_elementor_http_client__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _elementor_query__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @elementor/query */ "@elementor/query");
-/* harmony import */ var _elementor_query__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_elementor_query__WEBPACK_IMPORTED_MODULE_1__);
-
-
-const EXPORT_BASE_PATH = 'elementor/v1/import-export-customization';
-const EXPORT_DESIGN_SYSTEM_MUTATION_KEY = 'design-system-export';
-const DEFAULT_EXPORT_FILE_NAME = 'design-system-export.zip';
-
-// 2 minutes
-const EXPORT_REQUEST_TIMEOUT_MS = 120_000;
-const EXPORT_REQUEST_BODY = {
-  include: ['settings'],
-  kitInfo: {
-    title: 'design-system',
-    description: '',
-    source: 'local'
-  },
-  customization: {
-    settings: {
-      theme: false,
-      classes: true,
-      variables: true
-    }
-  }
-};
-class DesignSystemExportError extends Error {
-  constructor(cause) {
-    super('Design system export failed');
-    this.name = 'DesignSystemExportError';
-    this.cause = cause;
-  }
-}
-const useExportRequest = () => {
-  return (0,_elementor_query__WEBPACK_IMPORTED_MODULE_1__.useMutation)({
-    mutationKey: [EXPORT_DESIGN_SYSTEM_MUTATION_KEY],
-    mutationFn: async () => {
-      try {
-        const {
-          data
-        } = await (0,_elementor_http_client__WEBPACK_IMPORTED_MODULE_0__.httpService)().post(`${EXPORT_BASE_PATH}/export`, EXPORT_REQUEST_BODY, {
-          timeout: EXPORT_REQUEST_TIMEOUT_MS
-        });
-        return {
-          fileName: DEFAULT_EXPORT_FILE_NAME,
-          blob: base64ToZipBlob(data.data.file)
-        };
-      } catch (error) {
-        throw new DesignSystemExportError(error);
-      }
-    }
-  });
-};
-const base64ToZipBlob = base64 => {
-  const binary = atob(base64);
-  const bytes = new Uint8Array(binary.length);
-  for (let i = 0; i < binary.length; i++) {
-    bytes[i] = binary.charCodeAt(i);
-  }
-  return new Blob([bytes], {
-    type: 'application/zip'
-  });
-};
-
-/***/ }),
-
-/***/ "./packages/packages/core/editor-design-system/src/import/components/conflict-options.tsx":
-/*!************************************************************************************************!*\
-  !*** ./packages/packages/core/editor-design-system/src/import/components/conflict-options.tsx ***!
-  \************************************************************************************************/
-/***/ (function(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
-
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   ConflictOptions: function() { return /* binding */ ConflictOptions; }
-/* harmony export */ });
-/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "react");
-/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _elementor_ui__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @elementor/ui */ "@elementor/ui");
-/* harmony import */ var _elementor_ui__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_elementor_ui__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var _wordpress_i18n__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @wordpress/i18n */ "@wordpress/i18n");
-/* harmony import */ var _wordpress_i18n__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_wordpress_i18n__WEBPACK_IMPORTED_MODULE_2__);
-
-
-
-const getOptions = () => [{
-  value: 'replace',
-  title: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_2__.__)('Replace existing values', 'elementor'),
-  description: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_2__.__)('Imported design system values will overwrite existing variables and classes.', 'elementor')
-}, {
-  value: 'keep',
-  title: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_2__.__)('Keep existing values', 'elementor'),
-  description: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_2__.__)('Existing variables and classes will not change.', 'elementor')
-}];
-const ConflictOptions = ({
-  value,
-  onChange
-}) => {
-  const options = getOptions();
-  return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(_elementor_ui__WEBPACK_IMPORTED_MODULE_1__.Stack, {
-    spacing: 1
-  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(_elementor_ui__WEBPACK_IMPORTED_MODULE_1__.Typography, {
-    variant: "body1"
-  }, (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_2__.__)('How to handle conflicts with existing variables or classes?', 'elementor')), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(_elementor_ui__WEBPACK_IMPORTED_MODULE_1__.RadioGroup, {
-    value: value ?? '',
-    onChange: (_, next) => onChange(next)
-  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(_elementor_ui__WEBPACK_IMPORTED_MODULE_1__.Stack, {
-    spacing: 1
-  }, options.map(option => /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(_elementor_ui__WEBPACK_IMPORTED_MODULE_1__.Card, {
-    key: option.value,
-    variant: "outlined"
-  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(_elementor_ui__WEBPACK_IMPORTED_MODULE_1__.CardActionArea, {
-    onClick: () => onChange(option.value)
-  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(_elementor_ui__WEBPACK_IMPORTED_MODULE_1__.Stack, {
-    direction: "row",
-    alignItems: "center",
-    spacing: 2,
-    padding: 2
-  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(_elementor_ui__WEBPACK_IMPORTED_MODULE_1__.Radio, {
-    value: option.value,
-    checked: value === option.value,
-    inputProps: {
-      'aria-label': option.title
-    }
-  }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(_elementor_ui__WEBPACK_IMPORTED_MODULE_1__.Stack, {
-    direction: "column",
-    spacing: 0.5
-  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(_elementor_ui__WEBPACK_IMPORTED_MODULE_1__.Typography, {
-    variant: "subtitle2"
-  }, option.title), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(_elementor_ui__WEBPACK_IMPORTED_MODULE_1__.Typography, {
-    variant: "caption",
-    color: "text.secondary"
-  }, option.description)))))))));
-};
-
-/***/ }),
-
-/***/ "./packages/packages/core/editor-design-system/src/import/hooks/use-dialog-state.ts":
-/*!******************************************************************************************!*\
-  !*** ./packages/packages/core/editor-design-system/src/import/hooks/use-dialog-state.ts ***!
-  \******************************************************************************************/
-/***/ (function(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
-
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   useDialogState: function() { return /* binding */ useDialogState; }
-/* harmony export */ });
-/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "react");
-/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
-
-const initialState = {
-  file: null,
-  conflictStrategy: null
-};
-const useDialogState = () => {
-  const [state, setState] = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(initialState);
-  const setFile = file => setState(prev => ({
-    ...prev,
-    file
-  }));
-  const setConflictStrategy = conflictStrategy => setState(prev => ({
-    ...prev,
-    conflictStrategy
-  }));
-  return {
-    ...state,
-    setFile,
-    setConflictStrategy
-  };
-};
-
-/***/ }),
-
-/***/ "./packages/packages/core/editor-design-system/src/import/hooks/use-import-request.ts":
-/*!********************************************************************************************!*\
-  !*** ./packages/packages/core/editor-design-system/src/import/hooks/use-import-request.ts ***!
-  \********************************************************************************************/
-/***/ (function(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
-
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   DesignSystemUploadValidationError: function() { return /* binding */ DesignSystemUploadValidationError; },
-/* harmony export */   IMPORT_DESIGN_SYSTEM_MUTATION_KEY: function() { return /* binding */ IMPORT_DESIGN_SYSTEM_MUTATION_KEY; },
-/* harmony export */   useImportRequest: function() { return /* binding */ useImportRequest; }
-/* harmony export */ });
-/* harmony import */ var _elementor_editor_canvas__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @elementor/editor-canvas */ "@elementor/editor-canvas");
-/* harmony import */ var _elementor_editor_canvas__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_elementor_editor_canvas__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _elementor_editor_v1_adapters__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @elementor/editor-v1-adapters */ "@elementor/editor-v1-adapters");
-/* harmony import */ var _elementor_editor_v1_adapters__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_elementor_editor_v1_adapters__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var _elementor_http_client__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @elementor/http-client */ "@elementor/http-client");
-/* harmony import */ var _elementor_http_client__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_elementor_http_client__WEBPACK_IMPORTED_MODULE_2__);
-/* harmony import */ var _elementor_query__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @elementor/query */ "@elementor/query");
-/* harmony import */ var _elementor_query__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_elementor_query__WEBPACK_IMPORTED_MODULE_3__);
-
-
-
-
-const IMPORT_BASE_PATH = 'elementor/v1/import-export-customization';
-const IMPORT_REQUEST_TIMEOUT_MS = 120_000;
-const GLOBAL_CLASSES_RUNNER = 'global-classes';
-const GLOBAL_VARIABLES_RUNNER = 'global-variables';
-const SUPPORTED_RUNNERS = [GLOBAL_CLASSES_RUNNER, GLOBAL_VARIABLES_RUNNER];
-const IMPORT_DESIGN_SYSTEM_MUTATION_KEY = 'design-system-import';
-const useImportRequest = () => {
-  return (0,_elementor_query__WEBPACK_IMPORTED_MODULE_3__.useMutation)({
-    mutationKey: [IMPORT_DESIGN_SYSTEM_MUTATION_KEY],
-    mutationFn: async ({
-      file,
-      conflictStrategy
-    }) => {
-      await (0,_elementor_editor_v1_adapters__WEBPACK_IMPORTED_MODULE_1__.__privateRunCommand)('document/save/auto', {
-        force: true
-      });
-      const session = await uploadKit(file);
-      const runners = await startImport(session, conflictStrategy);
-      await runRunners(session, runners);
-      window.dispatchEvent(new CustomEvent(_elementor_editor_canvas__WEBPACK_IMPORTED_MODULE_0__.GLOBAL_STYLES_IMPORTED_EVENT));
-    }
-  });
-};
-class DesignSystemUploadValidationError extends Error {
-  constructor(cause) {
-    super('Design system upload validation failed');
-    this.name = 'DesignSystemUploadValidationError';
-    this.cause = cause;
-  }
-}
-const uploadKit = async file => {
-  const formData = new FormData();
-  formData.append('e_import_file', file);
-  try {
-    const {
-      data
-    } = await (0,_elementor_http_client__WEBPACK_IMPORTED_MODULE_2__.httpService)().post(`${IMPORT_BASE_PATH}/upload`, formData, {
-      headers: {
-        'Content-Type': 'multipart/form-data'
-      },
-      timeout: IMPORT_REQUEST_TIMEOUT_MS
-    });
-    return data.data.session;
-  } catch (error) {
-    throw new DesignSystemUploadValidationError(error);
-  }
-};
-const startImport = async (session, conflictStrategy) => {
-  const customization = {
-    'design-system': {
-      conflict_resolution: conflictStrategy === 'keep' ? 'skip' : 'replace'
-    }
-  };
-  const {
-    data
-  } = await (0,_elementor_http_client__WEBPACK_IMPORTED_MODULE_2__.httpService)().post(`${IMPORT_BASE_PATH}/import`, {
-    session,
-    include: ['design-system'],
-    customization
-  }, {
-    timeout: IMPORT_REQUEST_TIMEOUT_MS
-  });
-  return (data.data.runners ?? []).filter(runner => SUPPORTED_RUNNERS.includes(runner));
-};
-const runRunners = async (session, runners) => {
-  for (const runner of runners) {
-    await (0,_elementor_http_client__WEBPACK_IMPORTED_MODULE_2__.httpService)().post(`${IMPORT_BASE_PATH}/import-runner`, {
-      session,
-      runner
-    }, {
-      timeout: IMPORT_REQUEST_TIMEOUT_MS
-    });
-  }
-};
-
-/***/ }),
-
-/***/ "./packages/packages/core/editor-design-system/src/import/import-design-system-dialog.tsx":
-/*!************************************************************************************************!*\
-  !*** ./packages/packages/core/editor-design-system/src/import/import-design-system-dialog.tsx ***!
-  \************************************************************************************************/
-/***/ (function(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
-
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   ImportDesignSystemDialog: function() { return /* binding */ ImportDesignSystemDialog; }
-/* harmony export */ });
-/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "react");
-/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _elementor_editor_ui__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @elementor/editor-ui */ "@elementor/editor-ui");
-/* harmony import */ var _elementor_editor_ui__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_elementor_editor_ui__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var _elementor_icons__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @elementor/icons */ "@elementor/icons");
-/* harmony import */ var _elementor_icons__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_elementor_icons__WEBPACK_IMPORTED_MODULE_2__);
-/* harmony import */ var _elementor_ui__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @elementor/ui */ "@elementor/ui");
-/* harmony import */ var _elementor_ui__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_elementor_ui__WEBPACK_IMPORTED_MODULE_3__);
-/* harmony import */ var _wordpress_i18n__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @wordpress/i18n */ "@wordpress/i18n");
-/* harmony import */ var _wordpress_i18n__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(_wordpress_i18n__WEBPACK_IMPORTED_MODULE_4__);
-/* harmony import */ var _components_conflict_options__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./components/conflict-options */ "./packages/packages/core/editor-design-system/src/import/components/conflict-options.tsx");
-/* harmony import */ var _hooks_use_dialog_state__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./hooks/use-dialog-state */ "./packages/packages/core/editor-design-system/src/import/hooks/use-dialog-state.ts");
-/* harmony import */ var _hooks_use_import_request__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./hooks/use-import-request */ "./packages/packages/core/editor-design-system/src/import/hooks/use-import-request.ts");
-/* harmony import */ var _import_notifications__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./import-notifications */ "./packages/packages/core/editor-design-system/src/import/import-notifications.tsx");
-/* harmony import */ var _tracking__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./tracking */ "./packages/packages/core/editor-design-system/src/import/tracking.ts");
-
-
-
-
-
-
-
-
-
-
-const ALLOWED_FILE_TYPES = ['application/zip'];
-const FILE_INPUT_ACCEPT = 'application/zip,.zip';
-// TODO: Replace with the actual server-enforced limit once finalized.
-const MAX_FILE_SIZE_MB = 3;
-const LEARN_MORE_URL = 'https://go.elementor.com/wp-dash-import-export-design-system/';
-const reopenSelf = () => {
-  (0,_tracking__WEBPACK_IMPORTED_MODULE_9__.trackDesignSystem)({
-    event: 'importOpened'
-  });
-  (0,_elementor_editor_ui__WEBPACK_IMPORTED_MODULE_1__.openDialog)({
-    component: /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(ImportDesignSystemDialog, {
-      onClose: _elementor_editor_ui__WEBPACK_IMPORTED_MODULE_1__.closeDialog
-    })
-  });
-};
-const ImportDesignSystemDialog = ({
-  onClose
-}) => {
-  const {
-    file,
-    conflictStrategy,
-    setFile,
-    setConflictStrategy
-  } = (0,_hooks_use_dialog_state__WEBPACK_IMPORTED_MODULE_6__.useDialogState)();
-  const importMutation = (0,_hooks_use_import_request__WEBPACK_IMPORTED_MODULE_7__.useImportRequest)();
-  const isImportEnabled = Boolean(file && conflictStrategy);
-  const handleFileSelected = selected => {
-    setFile(selected);
-    (0,_tracking__WEBPACK_IMPORTED_MODULE_9__.trackDesignSystem)({
-      event: 'fileSelected',
-      file_type: _tracking__WEBPACK_IMPORTED_MODULE_9__.FILE_TYPE_DESIGN_SYSTEM
-    });
-  };
-  const handleConflictChange = choice => {
-    setConflictStrategy(choice);
-    (0,_tracking__WEBPACK_IMPORTED_MODULE_9__.trackDesignSystem)({
-      event: 'conflictChoice',
-      choice
-    });
-  };
-  const handleImport = async () => {
-    if (!file || !conflictStrategy) {
-      return;
-    }
-    (0,_tracking__WEBPACK_IMPORTED_MODULE_9__.trackDesignSystem)({
-      event: 'confirmed',
-      conflict_choice: conflictStrategy
-    });
-    (0,_import_notifications__WEBPACK_IMPORTED_MODULE_8__.notifyImportInProgress)();
-    onClose();
-    try {
-      await importMutation.mutateAsync({
-        file,
-        conflictStrategy
-      });
-      (0,_tracking__WEBPACK_IMPORTED_MODULE_9__.trackDesignSystem)({
-        event: 'imported'
-      });
-      (0,_import_notifications__WEBPACK_IMPORTED_MODULE_8__.notifyImportSuccess)();
-    } catch (error) {
-      if (error instanceof _hooks_use_import_request__WEBPACK_IMPORTED_MODULE_7__.DesignSystemUploadValidationError) {
-        (0,_tracking__WEBPACK_IMPORTED_MODULE_9__.trackDesignSystem)({
-          event: 'validationFailed',
-          file_type: _tracking__WEBPACK_IMPORTED_MODULE_9__.FILE_TYPE_DESIGN_SYSTEM
-        });
-      } else {
-        (0,_tracking__WEBPACK_IMPORTED_MODULE_9__.trackDesignSystem)({
-          event: 'importFailed'
-        });
-      }
-      (0,_import_notifications__WEBPACK_IMPORTED_MODULE_8__.notifyImportFailure)(reopenSelf);
-    }
-  };
-  return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(react__WEBPACK_IMPORTED_MODULE_0__.Fragment, null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(_elementor_ui__WEBPACK_IMPORTED_MODULE_3__.DialogHeader, {
-    logo: false
-  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(_elementor_ui__WEBPACK_IMPORTED_MODULE_3__.DialogTitle, null, (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_4__.__)('Import Design System', 'elementor'))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(_elementor_ui__WEBPACK_IMPORTED_MODULE_3__.DialogContent, null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(_elementor_ui__WEBPACK_IMPORTED_MODULE_3__.Stack, {
-    spacing: 3
-  }, file ? /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(_elementor_editor_ui__WEBPACK_IMPORTED_MODULE_1__.FileUploadRow, {
-    file: file,
-    onRemove: () => setFile(null)
-  }) : /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(_elementor_editor_ui__WEBPACK_IMPORTED_MODULE_1__.FileUploadDropzone, {
-    onFileSelected: handleFileSelected,
-    allowedFileTypes: ALLOWED_FILE_TYPES,
-    accept: FILE_INPUT_ACCEPT,
-    regionLabel: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_4__.__)('Design system file dropzone', 'elementor'),
-    helperText: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_4__.sprintf)(
-    // translators: %d is the maximum file size in megabytes.
-    (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_4__.__)('zip (max. %dMB)', 'elementor'), MAX_FILE_SIZE_MB)
-  }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(_components_conflict_options__WEBPACK_IMPORTED_MODULE_5__.ConflictOptions, {
-    value: conflictStrategy,
-    onChange: handleConflictChange
-  }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(_elementor_ui__WEBPACK_IMPORTED_MODULE_3__.Stack, {
-    direction: "row",
-    spacing: 0.5,
-    alignItems: "center",
-    justifyContent: "flex-start"
-  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(_elementor_icons__WEBPACK_IMPORTED_MODULE_2__.HelpIcon, {
-    sx: {
-      fontSize: 16,
-      color: 'text.tertiary'
-    }
-  }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(_elementor_ui__WEBPACK_IMPORTED_MODULE_3__.Link, {
-    href: LEARN_MORE_URL,
-    target: "_blank",
-    rel: "noopener noreferrer",
-    underline: "always",
-    variant: "caption",
-    color: "text.tertiary"
-  }, (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_4__.__)('Learn how design system imports work', 'elementor'))))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(_elementor_ui__WEBPACK_IMPORTED_MODULE_3__.DialogActions, null, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(_elementor_ui__WEBPACK_IMPORTED_MODULE_3__.Button, {
-    size: "medium",
-    color: "secondary",
-    onClick: onClose
-  }, (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_4__.__)('Cancel', 'elementor')), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0__.createElement(_elementor_ui__WEBPACK_IMPORTED_MODULE_3__.Button, {
-    size: "medium",
-    variant: "contained",
-    color: "primary",
-    disabled: !isImportEnabled,
-    onClick: handleImport
-  }, (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_4__.__)('Import', 'elementor'))));
-};
-
-/***/ }),
-
-/***/ "./packages/packages/core/editor-design-system/src/import/import-notifications.tsx":
-/*!*****************************************************************************************!*\
-  !*** ./packages/packages/core/editor-design-system/src/import/import-notifications.tsx ***!
-  \*****************************************************************************************/
-/***/ (function(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
-
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   notifyImportFailure: function() { return /* binding */ notifyImportFailure; },
-/* harmony export */   notifyImportInProgress: function() { return /* binding */ notifyImportInProgress; },
-/* harmony export */   notifyImportSuccess: function() { return /* binding */ notifyImportSuccess; }
-/* harmony export */ });
-/* harmony import */ var _elementor_editor_notifications__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @elementor/editor-notifications */ "@elementor/editor-notifications");
-/* harmony import */ var _elementor_editor_notifications__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_elementor_editor_notifications__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _elementor_query__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @elementor/query */ "@elementor/query");
-/* harmony import */ var _elementor_query__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_elementor_query__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var _wordpress_i18n__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @wordpress/i18n */ "@wordpress/i18n");
-/* harmony import */ var _wordpress_i18n__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_wordpress_i18n__WEBPACK_IMPORTED_MODULE_2__);
-/* harmony import */ var _hooks_use_import_request__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./hooks/use-import-request */ "./packages/packages/core/editor-design-system/src/import/hooks/use-import-request.ts");
-
-
-
-
-const IMPORT_STARTED_NOTIFICATION_ID = 'design-system-import-started';
-const SUCCESS_NOTIFICATION_ID = 'design-system-import-succeeded';
-const FAILURE_NOTIFICATION_ID = 'design-system-import-failed';
-const notifyImportInProgress = () => {
-  (0,_elementor_editor_notifications__WEBPACK_IMPORTED_MODULE_0__.notify)({
-    id: IMPORT_STARTED_NOTIFICATION_ID,
-    type: 'info',
-    message: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_2__.__)('Import in Progress. You will be notified when the import is complete.', 'elementor')
-  });
-};
-const notifyImportSuccess = () => {
-  (0,_elementor_editor_notifications__WEBPACK_IMPORTED_MODULE_0__.dismissNotification)(IMPORT_STARTED_NOTIFICATION_ID);
-  (0,_elementor_editor_notifications__WEBPACK_IMPORTED_MODULE_0__.notify)({
-    id: SUCCESS_NOTIFICATION_ID,
-    type: 'success',
-    message: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_2__.__)('Design system imported', 'elementor')
-  });
-};
-const notifyImportFailure = onRetry => {
-  (0,_elementor_editor_notifications__WEBPACK_IMPORTED_MODULE_0__.dismissNotification)(IMPORT_STARTED_NOTIFICATION_ID);
-  (0,_elementor_editor_notifications__WEBPACK_IMPORTED_MODULE_0__.notify)({
-    id: FAILURE_NOTIFICATION_ID,
-    type: 'error',
-    message: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_2__.__)('Your design system import failed', 'elementor'),
-    additionalActionProps: [{
-      size: 'small',
-      variant: 'outlined',
-      color: 'error',
-      children: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_2__.__)('Try again', 'elementor'),
-      onClick: () => {
-        (0,_elementor_editor_notifications__WEBPACK_IMPORTED_MODULE_0__.dismissNotification)(FAILURE_NOTIFICATION_ID);
-        const isImporting = (0,_elementor_query__WEBPACK_IMPORTED_MODULE_1__.getQueryClient)().isMutating({
-          mutationKey: [_hooks_use_import_request__WEBPACK_IMPORTED_MODULE_3__.IMPORT_DESIGN_SYSTEM_MUTATION_KEY]
-        }) > 0;
-        if (isImporting) {
-          return;
-        }
-        onRetry();
-      }
-    }]
-  });
-};
-
-/***/ }),
-
-/***/ "./packages/packages/core/editor-design-system/src/import/tracking.ts":
-/*!****************************************************************************!*\
-  !*** ./packages/packages/core/editor-design-system/src/import/tracking.ts ***!
-  \****************************************************************************/
-/***/ (function(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
-
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   FILE_TYPE_DESIGN_SYSTEM: function() { return /* binding */ FILE_TYPE_DESIGN_SYSTEM; },
-/* harmony export */   trackDesignSystem: function() { return /* binding */ trackDesignSystem; }
-/* harmony export */ });
-/* harmony import */ var _elementor_events__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @elementor/events */ "@elementor/events");
-/* harmony import */ var _elementor_events__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_elementor_events__WEBPACK_IMPORTED_MODULE_0__);
-
-const FILE_TYPE_DESIGN_SYSTEM = 'design_system';
-const trackDesignSystem = payload => {
-  const {
-    dispatchEvent,
-    config
-  } = (0,_elementor_events__WEBPACK_IMPORTED_MODULE_0__.getMixpanel)();
-  const name = config?.names?.design_system?.[payload.event];
-  if (!name) {
-    return;
-  }
-  const {
-    event,
-    ...eventData
-  } = payload;
-  try {
-    dispatchEvent?.(name, {
-      event,
-      ...eventData
-    });
-  } catch {
-    // Silently ignore tracking errors so they don't break the user flow.
-  }
-};
-
-/***/ }),
-
-/***/ "./packages/packages/core/editor-design-system/src/init.ts":
-/*!*****************************************************************!*\
-  !*** ./packages/packages/core/editor-design-system/src/init.ts ***!
-  \*****************************************************************/
-/***/ (function(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
-
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   init: function() { return /* binding */ init; }
-/* harmony export */ });
-/* harmony import */ var _elementor_editor__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @elementor/editor */ "@elementor/editor");
-/* harmony import */ var _elementor_editor__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_elementor_editor__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _elementor_editor_app_bar__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @elementor/editor-app-bar */ "@elementor/editor-app-bar");
-/* harmony import */ var _elementor_editor_app_bar__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_elementor_editor_app_bar__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var _elementor_editor_panels__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @elementor/editor-panels */ "@elementor/editor-panels");
-/* harmony import */ var _elementor_editor_panels__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_elementor_editor_panels__WEBPACK_IMPORTED_MODULE_2__);
-/* harmony import */ var _components_design_system_entrypoints__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./components/design-system-entrypoints */ "./packages/packages/core/editor-design-system/src/components/design-system-entrypoints.tsx");
-/* harmony import */ var _design_system_panel__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./design-system-panel */ "./packages/packages/core/editor-design-system/src/design-system-panel.tsx");
-/* harmony import */ var _use_open_design_system_toolbar__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./use-open-design-system-toolbar */ "./packages/packages/core/editor-design-system/src/use-open-design-system-toolbar.ts");
-
-
-
-
-
-
-function init() {
-  (0,_elementor_editor_panels__WEBPACK_IMPORTED_MODULE_2__.__registerPanel)(_design_system_panel__WEBPACK_IMPORTED_MODULE_4__.panel);
-  (0,_elementor_editor__WEBPACK_IMPORTED_MODULE_0__.injectIntoLogic)({
-    id: 'design-system-entrypoints',
-    component: _components_design_system_entrypoints__WEBPACK_IMPORTED_MODULE_3__.DesignSystemEntrypoints
-  });
-  _elementor_editor_app_bar__WEBPACK_IMPORTED_MODULE_1__.toolsMenu.registerToggleAction({
-    id: 'open-design-system-toolbar',
-    priority: 21,
-    useProps: _use_open_design_system_toolbar__WEBPACK_IMPORTED_MODULE_5__.useOpenDesignSystemToolbar
-  });
-}
-
-/***/ }),
-
-/***/ "./packages/packages/core/editor-design-system/src/initial-tab.ts":
-/*!************************************************************************!*\
-  !*** ./packages/packages/core/editor-design-system/src/initial-tab.ts ***!
-  \************************************************************************/
-/***/ (function(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
-
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   getActiveDesignSystemTab: function() { return /* binding */ getActiveDesignSystemTab; },
-/* harmony export */   getInitialDesignSystemTab: function() { return /* binding */ getInitialDesignSystemTab; },
-/* harmony export */   notifyDesignSystemTabChange: function() { return /* binding */ notifyDesignSystemTabChange; },
-/* harmony export */   persistDesignSystemTab: function() { return /* binding */ persistDesignSystemTab; },
-/* harmony export */   setPendingDesignSystemTab: function() { return /* binding */ setPendingDesignSystemTab; }
-/* harmony export */ });
-const STORAGE_KEY = 'elementor_editor_design_system_active_tab';
-function readStoredTab() {
-  if (typeof window === 'undefined') {
-    return 'variables';
-  }
-  try {
-    const raw = window.localStorage.getItem(STORAGE_KEY);
-    if (raw === 'classes' || raw === 'variables') {
-      return raw;
-    }
-  } catch {
-    // Storage may be unavailable (private mode, quota, etc.).
-  }
-  return 'variables';
-}
-let pendingTabForOpen = null;
-let activeTabInMemory = readStoredTab();
-function setPendingDesignSystemTab(tab) {
-  pendingTabForOpen = tab;
-}
-function getInitialDesignSystemTab() {
-  if (pendingTabForOpen) {
-    const t = pendingTabForOpen;
-    pendingTabForOpen = null;
-    activeTabInMemory = t;
-    persistDesignSystemTab(t);
-    return t;
-  }
-  const t = readStoredTab();
-  activeTabInMemory = t;
-  return t;
-}
-function notifyDesignSystemTabChange(tab) {
-  activeTabInMemory = tab;
-}
-function getActiveDesignSystemTab() {
-  return activeTabInMemory;
-}
-function persistDesignSystemTab(tab) {
-  if (typeof window === 'undefined') {
-    return;
-  }
-  try {
-    window.localStorage.setItem(STORAGE_KEY, tab);
-  } catch {
-    // Ignore persistence failures.
-  }
-}
-
-/***/ }),
-
-/***/ "./packages/packages/core/editor-design-system/src/use-open-design-system-toolbar.ts":
-/*!*******************************************************************************************!*\
-  !*** ./packages/packages/core/editor-design-system/src/use-open-design-system-toolbar.ts ***!
-  \*******************************************************************************************/
-/***/ (function(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
-
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   useOpenDesignSystemToolbar: function() { return /* binding */ useOpenDesignSystemToolbar; }
-/* harmony export */ });
-/* harmony import */ var _elementor_icons__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @elementor/icons */ "@elementor/icons");
-/* harmony import */ var _elementor_icons__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_elementor_icons__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _wordpress_i18n__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @wordpress/i18n */ "@wordpress/i18n");
-/* harmony import */ var _wordpress_i18n__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_wordpress_i18n__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var _design_system_panel__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./design-system-panel */ "./packages/packages/core/editor-design-system/src/design-system-panel.tsx");
-/* harmony import */ var _import_tracking__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./import/tracking */ "./packages/packages/core/editor-design-system/src/import/tracking.ts");
-/* harmony import */ var _initial_tab__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./initial-tab */ "./packages/packages/core/editor-design-system/src/initial-tab.ts");
-
-
-const EVENT_TOGGLE = 'elementor/toggle-design-system';
-
-
-
-function useOpenDesignSystemToolbar() {
-  const {
-    isOpen
-  } = (0,_design_system_panel__WEBPACK_IMPORTED_MODULE_2__.usePanelStatus)();
-  return {
-    title: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_1__.__)('Design System', 'elementor'),
-    icon: _elementor_icons__WEBPACK_IMPORTED_MODULE_0__.DropletHalfFilledIcon,
-    onClick: () => {
-      if (!isOpen) {
-        (0,_import_tracking__WEBPACK_IMPORTED_MODULE_3__.trackDesignSystem)({
-          event: 'opened'
-        });
-      }
-      const tab = (0,_initial_tab__WEBPACK_IMPORTED_MODULE_4__.getActiveDesignSystemTab)() ?? 'variables';
-      window.dispatchEvent(new CustomEvent(EVENT_TOGGLE, {
-        detail: {
-          tab
-        }
-      }));
-    },
-    selected: isOpen
-  };
-}
-
-/***/ }),
-
-/***/ "@elementor/editor":
-/*!*****************************************!*\
-  !*** external ["elementorV2","editor"] ***!
-  \*****************************************/
-/***/ (function(module) {
-
-module.exports = window["elementorV2"]["editor"];
-
-/***/ }),
-
-/***/ "@elementor/editor-app-bar":
-/*!***********************************************!*\
-  !*** external ["elementorV2","editorAppBar"] ***!
-  \***********************************************/
-/***/ (function(module) {
-
-module.exports = window["elementorV2"]["editorAppBar"];
-
-/***/ }),
-
-/***/ "@elementor/editor-canvas":
-/*!***********************************************!*\
-  !*** external ["elementorV2","editorCanvas"] ***!
-  \***********************************************/
-/***/ (function(module) {
-
-module.exports = window["elementorV2"]["editorCanvas"];
-
-/***/ }),
-
-/***/ "@elementor/editor-current-user":
-/*!****************************************************!*\
-  !*** external ["elementorV2","editorCurrentUser"] ***!
-  \****************************************************/
-/***/ (function(module) {
-
-module.exports = window["elementorV2"]["editorCurrentUser"];
-
-/***/ }),
-
-/***/ "@elementor/editor-documents":
-/*!**************************************************!*\
-  !*** external ["elementorV2","editorDocuments"] ***!
-  \**************************************************/
-/***/ (function(module) {
-
-module.exports = window["elementorV2"]["editorDocuments"];
-
-/***/ }),
-
-/***/ "@elementor/editor-global-classes":
-/*!******************************************************!*\
-  !*** external ["elementorV2","editorGlobalClasses"] ***!
-  \******************************************************/
-/***/ (function(module) {
-
-module.exports = window["elementorV2"]["editorGlobalClasses"];
-
-/***/ }),
-
-/***/ "@elementor/editor-notifications":
-/*!******************************************************!*\
-  !*** external ["elementorV2","editorNotifications"] ***!
-  \******************************************************/
-/***/ (function(module) {
-
-module.exports = window["elementorV2"]["editorNotifications"];
-
-/***/ }),
-
-/***/ "@elementor/editor-panels":
-/*!***********************************************!*\
-  !*** external ["elementorV2","editorPanels"] ***!
-  \***********************************************/
-/***/ (function(module) {
-
-module.exports = window["elementorV2"]["editorPanels"];
-
-/***/ }),
-
-/***/ "@elementor/editor-ui":
-/*!*******************************************!*\
-  !*** external ["elementorV2","editorUi"] ***!
-  \*******************************************/
-/***/ (function(module) {
-
-module.exports = window["elementorV2"]["editorUi"];
-
-/***/ }),
-
-/***/ "@elementor/editor-v1-adapters":
-/*!***************************************************!*\
-  !*** external ["elementorV2","editorV1Adapters"] ***!
-  \***************************************************/
-/***/ (function(module) {
-
-module.exports = window["elementorV2"]["editorV1Adapters"];
-
-/***/ }),
-
-/***/ "@elementor/editor-variables":
-/*!**************************************************!*\
-  !*** external ["elementorV2","editorVariables"] ***!
-  \**************************************************/
-/***/ (function(module) {
-
-module.exports = window["elementorV2"]["editorVariables"];
-
-/***/ }),
-
-/***/ "@elementor/events":
-/*!*****************************************!*\
-  !*** external ["elementorV2","events"] ***!
-  \*****************************************/
-/***/ (function(module) {
-
-module.exports = window["elementorV2"]["events"];
-
-/***/ }),
-
-/***/ "@elementor/http-client":
-/*!*********************************************!*\
-  !*** external ["elementorV2","httpClient"] ***!
-  \*********************************************/
-/***/ (function(module) {
-
-module.exports = window["elementorV2"]["httpClient"];
-
-/***/ }),
-
-/***/ "@elementor/icons":
-/*!****************************************!*\
-  !*** external ["elementorV2","icons"] ***!
-  \****************************************/
-/***/ (function(module) {
-
-module.exports = window["elementorV2"]["icons"];
-
-/***/ }),
-
-/***/ "@elementor/query":
-/*!****************************************!*\
-  !*** external ["elementorV2","query"] ***!
-  \****************************************/
-/***/ (function(module) {
-
-module.exports = window["elementorV2"]["query"];
-
-/***/ }),
-
-/***/ "@elementor/ui":
-/*!*************************************!*\
-  !*** external ["elementorV2","ui"] ***!
-  \*************************************/
-/***/ (function(module) {
-
-module.exports = window["elementorV2"]["ui"];
-
-/***/ }),
-
-/***/ "@wordpress/i18n":
-/*!******************************!*\
-  !*** external ["wp","i18n"] ***!
-  \******************************/
-/***/ (function(module) {
-
-module.exports = window["wp"]["i18n"];
-
-/***/ }),
-
-/***/ "react":
-/*!**************************!*\
-  !*** external ["React"] ***!
-  \**************************/
-/***/ (function(module) {
-
-module.exports = window["React"];
-
-/***/ })
-
-/******/ 	});
-/************************************************************************/
-/******/ 	// The module cache
-/******/ 	var __webpack_module_cache__ = {};
-/******/ 	
-/******/ 	// The require function
-/******/ 	function __webpack_require__(moduleId) {
-/******/ 		// Check if module is in cache
-/******/ 		var cachedModule = __webpack_module_cache__[moduleId];
-/******/ 		if (cachedModule !== undefined) {
-/******/ 			return cachedModule.exports;
-/******/ 		}
-/******/ 		// Create a new module (and put it into the cache)
-/******/ 		var module = __webpack_module_cache__[moduleId] = {
-/******/ 			// no module.id needed
-/******/ 			// no module.loaded needed
-/******/ 			exports: {}
-/******/ 		};
-/******/ 	
-/******/ 		// Execute the module function
-/******/ 		__webpack_modules__[moduleId](module, module.exports, __webpack_require__);
-/******/ 	
-/******/ 		// Return the exports of the module
-/******/ 		return module.exports;
-/******/ 	}
-/******/ 	
-/************************************************************************/
-/******/ 	/* webpack/runtime/compat get default export */
-/******/ 	!function() {
-/******/ 		// getDefaultExport function for compatibility with non-harmony modules
-/******/ 		__webpack_require__.n = function(module) {
-/******/ 			var getter = module && module.__esModule ?
-/******/ 				function() { return module['default']; } :
-/******/ 				function() { return module; };
-/******/ 			__webpack_require__.d(getter, { a: getter });
-/******/ 			return getter;
-/******/ 		};
-/******/ 	}();
-/******/ 	
-/******/ 	/* webpack/runtime/define property getters */
-/******/ 	!function() {
-/******/ 		// define getter functions for harmony exports
-/******/ 		__webpack_require__.d = function(exports, definition) {
-/******/ 			for(var key in definition) {
-/******/ 				if(__webpack_require__.o(definition, key) && !__webpack_require__.o(exports, key)) {
-/******/ 					Object.defineProperty(exports, key, { enumerable: true, get: definition[key] });
-/******/ 				}
-/******/ 			}
-/******/ 		};
-/******/ 	}();
-/******/ 	
-/******/ 	/* webpack/runtime/hasOwnProperty shorthand */
-/******/ 	!function() {
-/******/ 		__webpack_require__.o = function(obj, prop) { return Object.prototype.hasOwnProperty.call(obj, prop); }
-/******/ 	}();
-/******/ 	
-/******/ 	/* webpack/runtime/make namespace object */
-/******/ 	!function() {
-/******/ 		// define __esModule on exports
-/******/ 		__webpack_require__.r = function(exports) {
-/******/ 			if(typeof Symbol !== 'undefined' && Symbol.toStringTag) {
-/******/ 				Object.defineProperty(exports, Symbol.toStringTag, { value: 'Module' });
-/******/ 			}
-/******/ 			Object.defineProperty(exports, '__esModule', { value: true });
-/******/ 		};
-/******/ 	}();
-/******/ 	
-/************************************************************************/
-var __webpack_exports__ = {};
-// This entry needs to be wrapped in an IIFE because it needs to be isolated against other modules in the chunk.
-!function() {
-/*!******************************************************************!*\
-  !*** ./packages/packages/core/editor-design-system/src/index.ts ***!
-  \******************************************************************/
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   getInitialDesignSystemTab: function() { return /* reexport safe */ _initial_tab__WEBPACK_IMPORTED_MODULE_1__.getInitialDesignSystemTab; },
-/* harmony export */   init: function() { return /* reexport safe */ _init__WEBPACK_IMPORTED_MODULE_0__.init; },
-/* harmony export */   panel: function() { return /* reexport safe */ _design_system_panel__WEBPACK_IMPORTED_MODULE_2__.panel; },
-/* harmony export */   persistDesignSystemTab: function() { return /* reexport safe */ _initial_tab__WEBPACK_IMPORTED_MODULE_1__.persistDesignSystemTab; },
-/* harmony export */   usePanelActions: function() { return /* reexport safe */ _design_system_panel__WEBPACK_IMPORTED_MODULE_2__.usePanelActions; },
-/* harmony export */   usePanelStatus: function() { return /* reexport safe */ _design_system_panel__WEBPACK_IMPORTED_MODULE_2__.usePanelStatus; }
-/* harmony export */ });
-/* harmony import */ var _init__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./init */ "./packages/packages/core/editor-design-system/src/init.ts");
-/* harmony import */ var _initial_tab__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./initial-tab */ "./packages/packages/core/editor-design-system/src/initial-tab.ts");
-/* harmony import */ var _design_system_panel__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./design-system-panel */ "./packages/packages/core/editor-design-system/src/design-system-panel.tsx");
-
-
-
-}();
-(window.elementorV2 = window.elementorV2 || {}).editorDesignSystem = __webpack_exports__;
-/******/ })()
-;
+(function(_elementor_editor, _elementor_editor_app_bar, _elementor_editor_panels, react, _elementor_editor_documents, _elementor_editor_ui, _elementor_editor_v1_adapters, _wordpress_i18n, _elementor_editor_default_styles, _elementor_editor_global_classes, _elementor_editor_variables, _elementor_icons, _elementor_ui, _elementor_editor_current_user, _elementor_query, _elementor_editor_notifications, _elementor_http_client, _elementor_editor_canvas, _elementor_events) {
+
+//#region \0rolldown/runtime.js
+	var __create = Object.create;
+	var __defProp = Object.defineProperty;
+	var __name = (target, value) => __defProp(target, "name", {
+		value,
+		configurable: true
+	});
+	var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
+	var __getOwnPropNames = Object.getOwnPropertyNames;
+	var __getProtoOf = Object.getPrototypeOf;
+	var __hasOwnProp = Object.prototype.hasOwnProperty;
+	var __exportAll = (all, no_symbols) => {
+		let target = {};
+		for (var name in all) {
+			__defProp(target, name, {
+				get: all[name],
+				enumerable: true
+			});
+		}
+		if (!no_symbols) {
+			__defProp(target, Symbol.toStringTag, { value: "Module" });
+		}
+		return target;
+	};
+	var __copyProps = (to, from, except, desc) => {
+		if (from && typeof from === "object" || typeof from === "function") {
+			for (var keys = __getOwnPropNames(from), i = 0, n = keys.length, key; i < n; i++) {
+				key = keys[i];
+				if (!__hasOwnProp.call(to, key) && key !== except) {
+					__defProp(to, key, {
+						get: ((k) => from[k]).bind(null, key),
+						enumerable: !(desc = __getOwnPropDesc(from, key)) || desc.enumerable
+					});
+				}
+			}
+		}
+		return to;
+	};
+	var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__getProtoOf(mod)) : {}, __copyProps(isNodeMode || !mod || !mod.__esModule ? __defProp(target, "default", {
+		value: mod,
+		enumerable: true
+	}) : target, mod));
+
+//#endregion
+react = __toESM(react);
+
+//#region packages/packages/core/editor-design-system/src/initial-tab.ts
+	var STORAGE_KEY = "elementor_editor_design_system_active_tab";
+	function readStoredTab() {
+		if (typeof window === "undefined") return "defaults";
+		try {
+			const raw = window.localStorage.getItem(STORAGE_KEY);
+			if (raw === "defaults" || raw === "classes" || raw === "variables") return raw;
+		} catch {}
+		return "defaults";
+	}
+	var pendingTabForOpen = null;
+	var activeTabInMemory = readStoredTab();
+	function normalizeDesignSystemTab(tab) {
+		return tab;
+	}
+	function setPendingDesignSystemTab(tab) {
+		pendingTabForOpen = tab;
+	}
+	function getInitialDesignSystemTab() {
+		if (pendingTabForOpen) {
+			const t2 = pendingTabForOpen;
+			pendingTabForOpen = null;
+			activeTabInMemory = t2;
+			persistDesignSystemTab(t2);
+			return t2;
+		}
+		const t = readStoredTab();
+		activeTabInMemory = t;
+		return t;
+	}
+	function notifyDesignSystemTabChange(tab) {
+		activeTabInMemory = tab;
+	}
+	function getActiveDesignSystemTab() {
+		return activeTabInMemory;
+	}
+	function persistDesignSystemTab(tab) {
+		if (typeof window === "undefined") return;
+		try {
+			window.localStorage.setItem(STORAGE_KEY, tab);
+		} catch {}
+	}
+
+//#endregion
+//#region packages/packages/core/editor-design-system/src/export/download.ts
+	var downloadBlob = (blob, fileName) => {
+		const url = URL.createObjectURL(blob);
+		const anchor = document.createElement("a");
+		anchor.href = url;
+		anchor.download = fileName;
+		anchor.rel = "noopener";
+		document.body.appendChild(anchor);
+		anchor.click();
+		document.body.removeChild(anchor);
+		URL.revokeObjectURL(url);
+	};
+
+//#endregion
+//#region packages/packages/core/editor-design-system/src/export/export-notifications.ts
+	var EXPORT_STARTED_NOTIFICATION_ID = "design-system-export-started";
+	var SUCCESS_NOTIFICATION_ID$1 = "design-system-export-succeeded";
+	var FAILURE_NOTIFICATION_ID$1 = "design-system-export-failed";
+	var notifyExportInProgress = () => {
+		(0, _elementor_editor_notifications.notify)({
+			id: EXPORT_STARTED_NOTIFICATION_ID,
+			type: "info",
+			message: (0, _wordpress_i18n.__)("Export in progress. Your file will download when it’s ready.", "elementor")
+		});
+	};
+	var notifyExportSuccess = () => {
+		(0, _elementor_editor_notifications.dismissNotification)(EXPORT_STARTED_NOTIFICATION_ID);
+		(0, _elementor_editor_notifications.notify)({
+			id: SUCCESS_NOTIFICATION_ID$1,
+			type: "success",
+			message: (0, _wordpress_i18n.__)("Design system exported", "elementor")
+		});
+	};
+	var notifyExportFailure = (onRetry) => {
+		(0, _elementor_editor_notifications.dismissNotification)(EXPORT_STARTED_NOTIFICATION_ID);
+		(0, _elementor_editor_notifications.notify)({
+			id: FAILURE_NOTIFICATION_ID$1,
+			type: "error",
+			message: (0, _wordpress_i18n.__)("Your design system export failed", "elementor"),
+			additionalActionProps: [{
+				size: "small",
+				variant: "outlined",
+				color: "error",
+				children: (0, _wordpress_i18n.__)("Try again", "elementor"),
+				onClick: () => {
+					(0, _elementor_editor_notifications.dismissNotification)(FAILURE_NOTIFICATION_ID$1);
+					onRetry();
+				}
+			}]
+		});
+	};
+
+//#endregion
+//#region packages/packages/core/editor-design-system/src/export/hooks/use-export-request.ts
+	var EXPORT_BASE_PATH = "elementor/v1/import-export-customization";
+	var EXPORT_DESIGN_SYSTEM_MUTATION_KEY = "design-system-export";
+	var DEFAULT_EXPORT_FILE_NAME = "design-system-export.zip";
+	var EXPORT_REQUEST_TIMEOUT_MS = 12e4;
+	var EXPORT_REQUEST_BODY = {
+		include: ["settings"],
+		kitInfo: {
+			title: "design-system",
+			description: "",
+			source: "local"
+		},
+		customization: { settings: {
+			theme: false,
+			classes: true,
+			variables: true
+		} }
+	};
+	var DesignSystemExportError = class extends Error {
+		constructor(cause) {
+			super("Design system export failed");
+			this.name = "DesignSystemExportError";
+			this.cause = cause;
+		}
+	};
+	var useExportRequest = () => {
+		return (0, _elementor_query.useMutation)({
+			mutationKey: [EXPORT_DESIGN_SYSTEM_MUTATION_KEY],
+			mutationFn: async () => {
+				try {
+					const { data } = await (0, _elementor_http_client.httpService)().post(`${EXPORT_BASE_PATH}/export`, EXPORT_REQUEST_BODY, { timeout: EXPORT_REQUEST_TIMEOUT_MS });
+					return {
+						fileName: DEFAULT_EXPORT_FILE_NAME,
+						blob: base64ToZipBlob(data.data.file)
+					};
+				} catch (error) {
+					throw new DesignSystemExportError(error);
+				}
+			}
+		});
+	};
+	var base64ToZipBlob = (base64) => {
+		const binary = atob(base64);
+		const bytes = new Uint8Array(binary.length);
+		for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
+		return new Blob([bytes], { type: "application/zip" });
+	};
+
+//#endregion
+//#region packages/packages/core/editor-design-system/src/import/hooks/use-import-request.ts
+	var IMPORT_BASE_PATH = "elementor/v1/import-export-customization";
+	var IMPORT_REQUEST_TIMEOUT_MS = 12e4;
+	var SUPPORTED_RUNNERS = ["global-classes", "global-variables"];
+	var IMPORT_DESIGN_SYSTEM_MUTATION_KEY = "design-system-import";
+	var useImportRequest = () => {
+		return (0, _elementor_query.useMutation)({
+			mutationKey: [IMPORT_DESIGN_SYSTEM_MUTATION_KEY],
+			mutationFn: async ({ file, conflictStrategy }) => {
+				await (0, _elementor_editor_v1_adapters.__privateRunCommand)("document/save/auto", { force: true });
+				const session = await uploadKit(file);
+				const runners = await startImport(session, conflictStrategy);
+				await runRunners(session, runners);
+				window.dispatchEvent(new CustomEvent(_elementor_editor_canvas.GLOBAL_STYLES_IMPORTED_EVENT));
+			}
+		});
+	};
+	var DesignSystemUploadValidationError = class extends Error {
+		constructor(cause) {
+			super("Design system upload validation failed");
+			this.name = "DesignSystemUploadValidationError";
+			this.cause = cause;
+		}
+	};
+	var uploadKit = async (file) => {
+		const formData = new FormData();
+		formData.append("e_import_file", file);
+		try {
+			const { data } = await (0, _elementor_http_client.httpService)().post(`${IMPORT_BASE_PATH}/upload`, formData, {
+				headers: { "Content-Type": "multipart/form-data" },
+				timeout: IMPORT_REQUEST_TIMEOUT_MS
+			});
+			return data.data.session;
+		} catch (error) {
+			throw new DesignSystemUploadValidationError(error);
+		}
+	};
+	var startImport = async (session, conflictStrategy) => {
+		const customization = { "design-system": { conflict_resolution: conflictStrategy === "keep" ? "skip" : "replace" } };
+		const { data } = await (0, _elementor_http_client.httpService)().post(`${IMPORT_BASE_PATH}/import`, {
+			session,
+			include: ["design-system"],
+			customization
+		}, { timeout: IMPORT_REQUEST_TIMEOUT_MS });
+		return (data.data.runners ?? []).filter((runner) => SUPPORTED_RUNNERS.includes(runner));
+	};
+	var runRunners = async (session, runners) => {
+		for (const runner of runners) await (0, _elementor_http_client.httpService)().post(`${IMPORT_BASE_PATH}/import-runner`, {
+			session,
+			runner
+		}, { timeout: IMPORT_REQUEST_TIMEOUT_MS });
+	};
+
+//#endregion
+//#region packages/packages/core/editor-design-system/src/import/components/conflict-options.tsx
+	var getOptions = () => [{
+		value: "replace",
+		title: (0, _wordpress_i18n.__)("Replace existing values", "elementor"),
+		description: (0, _wordpress_i18n.__)("Imported design system values will overwrite existing variables and classes.", "elementor")
+	}, {
+		value: "keep",
+		title: (0, _wordpress_i18n.__)("Keep existing values", "elementor"),
+		description: (0, _wordpress_i18n.__)("Existing variables and classes will not change.", "elementor")
+	}];
+	var ConflictOptions = ({ value, onChange }) => {
+		const options = getOptions();
+		return /* @__PURE__ */ react.createElement(_elementor_ui.Stack, { spacing: 1 }, /* @__PURE__ */ react.createElement(_elementor_ui.Typography, { variant: "body1" }, (0, _wordpress_i18n.__)("How to handle conflicts with existing variables or classes?", "elementor")), /* @__PURE__ */ react.createElement(_elementor_ui.RadioGroup, {
+			value: value ?? "",
+			onChange: (_, next) => onChange(next)
+		}, /* @__PURE__ */ react.createElement(_elementor_ui.Stack, { spacing: 1 }, options.map((option) => /* @__PURE__ */ react.createElement(_elementor_ui.Card, {
+			key: option.value,
+			variant: "outlined"
+		}, /* @__PURE__ */ react.createElement(_elementor_ui.CardActionArea, { onClick: () => onChange(option.value) }, /* @__PURE__ */ react.createElement(_elementor_ui.Stack, {
+			direction: "row",
+			alignItems: "center",
+			spacing: 2,
+			padding: 2
+		}, /* @__PURE__ */ react.createElement(_elementor_ui.Radio, {
+			value: option.value,
+			checked: value === option.value,
+			inputProps: { "aria-label": option.title }
+		}), /* @__PURE__ */ react.createElement(_elementor_ui.Stack, {
+			direction: "column",
+			spacing: .5
+		}, /* @__PURE__ */ react.createElement(_elementor_ui.Typography, { variant: "subtitle2" }, option.title), /* @__PURE__ */ react.createElement(_elementor_ui.Typography, {
+			variant: "caption",
+			color: "text.secondary"
+		}, option.description)))))))));
+	};
+
+//#endregion
+//#region packages/packages/core/editor-design-system/src/import/hooks/use-dialog-state.ts
+	var initialState = {
+		file: null,
+		conflictStrategy: null
+	};
+	var useDialogState = () => {
+		const [state, setState] = (0, react.useState)(initialState);
+		const setFile = (file) => setState((prev) => ({
+			...prev,
+			file
+		}));
+		const setConflictStrategy = (conflictStrategy) => setState((prev) => ({
+			...prev,
+			conflictStrategy
+		}));
+		return {
+			...state,
+			setFile,
+			setConflictStrategy
+		};
+	};
+
+//#endregion
+//#region packages/packages/core/editor-design-system/src/import/import-notifications.tsx
+	var IMPORT_STARTED_NOTIFICATION_ID = "design-system-import-started";
+	var SUCCESS_NOTIFICATION_ID = "design-system-import-succeeded";
+	var FAILURE_NOTIFICATION_ID = "design-system-import-failed";
+	var notifyImportInProgress = () => {
+		(0, _elementor_editor_notifications.notify)({
+			id: IMPORT_STARTED_NOTIFICATION_ID,
+			type: "info",
+			message: (0, _wordpress_i18n.__)("Import in Progress. You will be notified when the import is complete.", "elementor")
+		});
+	};
+	var notifyImportSuccess = () => {
+		(0, _elementor_editor_notifications.dismissNotification)(IMPORT_STARTED_NOTIFICATION_ID);
+		(0, _elementor_editor_notifications.notify)({
+			id: SUCCESS_NOTIFICATION_ID,
+			type: "success",
+			message: (0, _wordpress_i18n.__)("Design system imported", "elementor")
+		});
+	};
+	var notifyImportFailure = (onRetry) => {
+		(0, _elementor_editor_notifications.dismissNotification)(IMPORT_STARTED_NOTIFICATION_ID);
+		(0, _elementor_editor_notifications.notify)({
+			id: FAILURE_NOTIFICATION_ID,
+			type: "error",
+			message: (0, _wordpress_i18n.__)("Your design system import failed", "elementor"),
+			additionalActionProps: [{
+				size: "small",
+				variant: "outlined",
+				color: "error",
+				children: (0, _wordpress_i18n.__)("Try again", "elementor"),
+				onClick: () => {
+					(0, _elementor_editor_notifications.dismissNotification)(FAILURE_NOTIFICATION_ID);
+					if ((0, _elementor_query.getQueryClient)().isMutating({ mutationKey: ["design-system-import"] }) > 0) return;
+					onRetry();
+				}
+			}]
+		});
+	};
+
+//#endregion
+//#region packages/packages/core/editor-design-system/src/import/tracking.ts
+	var FILE_TYPE_DESIGN_SYSTEM = "design_system";
+	var trackDesignSystem = (payload) => {
+		const { dispatchEvent, config } = (0, _elementor_events.getMixpanel)();
+		const name = config?.names?.design_system?.[payload.event];
+		if (!name) return;
+		const { event, ...eventData } = payload;
+		try {
+			dispatchEvent?.(name, {
+				event,
+				...eventData
+			});
+		} catch {}
+	};
+
+//#endregion
+//#region packages/packages/core/editor-design-system/src/import/import-design-system-dialog.tsx
+	var ALLOWED_FILE_TYPES = ["application/zip"];
+	var FILE_INPUT_ACCEPT = "application/zip,.zip";
+	var MAX_FILE_SIZE_MB = 3;
+	var LEARN_MORE_URL = "https://go.elementor.com/wp-dash-import-export-design-system/";
+	var reopenSelf = () => {
+		trackDesignSystem({ event: "importOpened" });
+		(0, _elementor_editor_ui.openDialog)({ component: /* @__PURE__ */ react.createElement(ImportDesignSystemDialog, { onClose: _elementor_editor_ui.closeDialog }) });
+	};
+	var ImportDesignSystemDialog = ({ onClose }) => {
+		const { file, conflictStrategy, setFile, setConflictStrategy } = useDialogState();
+		const importMutation = useImportRequest();
+		const isImportEnabled = Boolean(file && conflictStrategy);
+		const handleFileSelected = (selected) => {
+			setFile(selected);
+			trackDesignSystem({
+				event: "fileSelected",
+				file_type: FILE_TYPE_DESIGN_SYSTEM
+			});
+		};
+		const handleConflictChange = (choice) => {
+			setConflictStrategy(choice);
+			trackDesignSystem({
+				event: "conflictChoice",
+				choice
+			});
+		};
+		const handleImport = async () => {
+			if (!file || !conflictStrategy) return;
+			trackDesignSystem({
+				event: "confirmed",
+				conflict_choice: conflictStrategy
+			});
+			notifyImportInProgress();
+			onClose();
+			try {
+				await importMutation.mutateAsync({
+					file,
+					conflictStrategy
+				});
+				trackDesignSystem({ event: "imported" });
+				notifyImportSuccess();
+			} catch (error) {
+				if (error instanceof DesignSystemUploadValidationError) trackDesignSystem({
+					event: "validationFailed",
+					file_type: FILE_TYPE_DESIGN_SYSTEM
+				});
+				else trackDesignSystem({ event: "importFailed" });
+				notifyImportFailure(reopenSelf);
+			}
+		};
+		return /* @__PURE__ */ react.createElement(react.Fragment, null, /* @__PURE__ */ react.createElement(_elementor_ui.DialogHeader, { logo: false }, /* @__PURE__ */ react.createElement(_elementor_ui.DialogTitle, null, (0, _wordpress_i18n.__)("Import Design System", "elementor"))), /* @__PURE__ */ react.createElement(_elementor_ui.DialogContent, null, /* @__PURE__ */ react.createElement(_elementor_ui.Stack, { spacing: 3 }, file ? /* @__PURE__ */ react.createElement(_elementor_editor_ui.FileUploadRow, {
+			file,
+			onRemove: () => setFile(null)
+		}) : /* @__PURE__ */ react.createElement(_elementor_editor_ui.FileUploadDropzone, {
+			onFileSelected: handleFileSelected,
+			allowedFileTypes: ALLOWED_FILE_TYPES,
+			accept: FILE_INPUT_ACCEPT,
+			regionLabel: (0, _wordpress_i18n.__)("Design system file dropzone", "elementor"),
+			helperText: (0, _wordpress_i18n.sprintf)((0, _wordpress_i18n.__)("zip (max. %dMB)", "elementor"), MAX_FILE_SIZE_MB)
+		}), /* @__PURE__ */ react.createElement(ConflictOptions, {
+			value: conflictStrategy,
+			onChange: handleConflictChange
+		}), /* @__PURE__ */ react.createElement(_elementor_ui.Stack, {
+			direction: "row",
+			spacing: .5,
+			alignItems: "center",
+			justifyContent: "flex-start"
+		}, /* @__PURE__ */ react.createElement(_elementor_icons.HelpIcon, { sx: {
+			fontSize: 16,
+			color: "text.tertiary"
+		} }), /* @__PURE__ */ react.createElement(_elementor_ui.Link, {
+			href: LEARN_MORE_URL,
+			target: "_blank",
+			rel: "noopener noreferrer",
+			underline: "always",
+			variant: "caption",
+			color: "text.tertiary"
+		}, (0, _wordpress_i18n.__)("Learn how design system imports work", "elementor"))))), /* @__PURE__ */ react.createElement(_elementor_ui.DialogActions, null, /* @__PURE__ */ react.createElement(_elementor_ui.Button, {
+			size: "medium",
+			color: "secondary",
+			onClick: onClose
+		}, (0, _wordpress_i18n.__)("Cancel", "elementor")), /* @__PURE__ */ react.createElement(_elementor_ui.Button, {
+			size: "medium",
+			variant: "contained",
+			color: "primary",
+			disabled: !isImportEnabled,
+			onClick: handleImport
+		}, (0, _wordpress_i18n.__)("Import", "elementor"))));
+	};
+
+//#endregion
+//#region packages/packages/core/editor-design-system/src/components/design-system-header-menu.tsx
+	var POPUP_STATE_ID = "design-system-header-menu";
+	var DesignSystemHeaderMenu = () => {
+		const { isAdmin } = (0, _elementor_editor_current_user.useCurrentUserCapabilities)();
+		const popupState = (0, _elementor_ui.usePopupState)({
+			variant: "popover",
+			popupId: POPUP_STATE_ID
+		});
+		const exportMutation = useExportRequest();
+		const isImporting = (0, _elementor_query.useIsMutating)({ mutationKey: [IMPORT_DESIGN_SYSTEM_MUTATION_KEY] }) > 0;
+		const isExporting = (0, _elementor_query.useIsMutating)({ mutationKey: [EXPORT_DESIGN_SYSTEM_MUTATION_KEY] }) > 0;
+		const isInProgress = isImporting || isExporting;
+		const triggerProps = (0, _elementor_ui.bindTrigger)(popupState);
+		const handleImport = () => {
+			popupState.close();
+			trackDesignSystem({ event: "importOpened" });
+			(0, _elementor_editor_ui.openDialog)({ component: /* @__PURE__ */ react.createElement(ImportDesignSystemDialog, { onClose: _elementor_editor_ui.closeDialog }) });
+		};
+		const runExport = async () => {
+			notifyExportInProgress();
+			try {
+				const { blob, fileName } = await exportMutation.mutateAsync();
+				downloadBlob(blob, fileName);
+				notifyExportSuccess();
+			} catch {
+				notifyExportFailure(runExport);
+			}
+		};
+		const handleExport = () => {
+			popupState.close();
+			trackDesignSystem({ event: "export" });
+			runExport();
+		};
+		const triggerLabel = (0, _wordpress_i18n.__)("Design system actions", "elementor");
+		const currentlyExportingLabel = (0, _wordpress_i18n.__)(`Export is in progress. The file will be downloaded when it's complete.`, "elementor");
+		const currentlyImportingLabel = (0, _wordpress_i18n.__)(`Import is in progress. You will receive a notification when it's complete.`, "elementor");
+		let tooltipLabel = triggerLabel;
+		if (isInProgress) tooltipLabel = isExporting ? currentlyExportingLabel : currentlyImportingLabel;
+		return /* @__PURE__ */ react.createElement(react.Fragment, null, isAdmin && /* @__PURE__ */ react.createElement(_elementor_ui.Tooltip, {
+			title: tooltipLabel,
+			placement: "top"
+		}, /* @__PURE__ */ react.createElement("span", null, /* @__PURE__ */ react.createElement(_elementor_ui.IconButton, {
+			...triggerProps,
+			size: "small",
+			"aria-label": triggerLabel,
+			disabled: isInProgress
+		}, /* @__PURE__ */ react.createElement(_elementor_icons.DotsVerticalIcon, { fontSize: "small" })))), /* @__PURE__ */ react.createElement(_elementor_ui.Menu, {
+			...(0, _elementor_ui.bindMenu)(popupState),
+			MenuListProps: { dense: true },
+			PaperProps: { elevation: 6 },
+			anchorOrigin: {
+				vertical: "bottom",
+				horizontal: "right"
+			},
+			transformOrigin: {
+				vertical: "top",
+				horizontal: "right"
+			}
+		}, /* @__PURE__ */ react.createElement(_elementor_ui.MenuItem, {
+			onClick: handleImport,
+			disabled: isImporting
+		}, /* @__PURE__ */ react.createElement(_elementor_ui.ListItemIcon, null, /* @__PURE__ */ react.createElement(_elementor_icons.DownloadIcon, { fontSize: "tiny" })), /* @__PURE__ */ react.createElement(_elementor_ui.ListItemText, null, (0, _wordpress_i18n.__)("Import", "elementor"))), /* @__PURE__ */ react.createElement(_elementor_ui.MenuItem, {
+			onClick: handleExport,
+			disabled: isExporting
+		}, /* @__PURE__ */ react.createElement(_elementor_ui.ListItemIcon, null, /* @__PURE__ */ react.createElement(_elementor_icons.UploadIcon, { fontSize: "tiny" })), /* @__PURE__ */ react.createElement(_elementor_ui.ListItemText, null, (0, _wordpress_i18n.__)("Export", "elementor")))));
+	};
+
+//#endregion
+//#region packages/packages/core/editor-design-system/src/components/design-system-panel-content.tsx
+	var stickyTabRowStyles = {
+		position: "sticky",
+		zIndex: 1100,
+		opacity: 1,
+		backgroundColor: "background.default",
+		transition: "top 300ms ease"
+	};
+	var EVENT_SET_TAB$1 = "elementor/design-system/set-tab";
+	var trackDesignSystemTabOpened = (tab) => {
+		switch (tab) {
+			case "classes":
+				(0, _elementor_editor_global_classes.trackGlobalClasses)({
+					event: "classManagerOpened",
+					source: "system-panel"
+				});
+				break;
+			case "variables":
+				(0, _elementor_editor_variables.trackVariablesManagerEvent)({
+					action: "openManager",
+					source: "system-panel"
+				});
+				break;
+		}
+	};
+	function DesignSystemPanelContent({ onRequestClose }) {
+		const [currentTab, setCurrentTab] = (0, react.useState)(() => getInitialDesignSystemTab());
+		const defaultsCloseAttemptRef = (0, react.useRef)(null);
+		const variablesCloseAttemptRef = (0, react.useRef)(null);
+		const classesCloseAttemptRef = (0, react.useRef)(null);
+		const isChainingRef = (0, react.useRef)(false);
+		const { getTabProps, getTabPanelProps, getTabsProps } = (0, _elementor_ui.useTabs)(currentTab);
+		const chainedThroughClasses = (0, react.useCallback)(() => {
+			if (!isChainingRef.current && classesCloseAttemptRef.current) {
+				isChainingRef.current = true;
+				classesCloseAttemptRef.current();
+				isChainingRef.current = false;
+				return;
+			}
+			onRequestClose();
+		}, [onRequestClose]);
+		const chainedThroughVariables = (0, react.useCallback)(() => {
+			if (!isChainingRef.current && variablesCloseAttemptRef.current) {
+				isChainingRef.current = true;
+				variablesCloseAttemptRef.current();
+				isChainingRef.current = false;
+				return;
+			}
+			onRequestClose();
+		}, [onRequestClose]);
+		const chainedThroughDefaults = (0, react.useCallback)(() => {
+			if (!isChainingRef.current && defaultsCloseAttemptRef.current) {
+				isChainingRef.current = true;
+				defaultsCloseAttemptRef.current();
+				isChainingRef.current = false;
+				return;
+			}
+			onRequestClose();
+		}, [onRequestClose]);
+		(0, react.useEffect)(() => {
+			notifyDesignSystemTabChange(currentTab);
+		}, [currentTab]);
+		(0, react.useEffect)(() => {
+			const handler = (event) => {
+				const tab = event.detail?.tab;
+				if (!tab) return;
+				const normalizedTab = normalizeDesignSystemTab(tab);
+				setCurrentTab(normalizedTab);
+				persistDesignSystemTab(normalizedTab);
+				notifyDesignSystemTabChange(normalizedTab);
+				trackDesignSystemTabOpened(normalizedTab);
+			};
+			window.addEventListener(EVENT_SET_TAB$1, handler);
+			return () => {
+				window.removeEventListener(EVENT_SET_TAB$1, handler);
+			};
+		}, []);
+		const handleHeaderClose = () => {
+			if (currentTab === "defaults" && defaultsCloseAttemptRef.current) {
+				defaultsCloseAttemptRef.current();
+				return;
+			}
+			if (currentTab === "variables" && variablesCloseAttemptRef.current) {
+				variablesCloseAttemptRef.current();
+				return;
+			}
+			if (currentTab === "classes" && classesCloseAttemptRef.current) {
+				classesCloseAttemptRef.current();
+				return;
+			}
+			onRequestClose();
+		};
+		return /* @__PURE__ */ react.createElement(_elementor_editor_ui.ThemeProvider, null, /* @__PURE__ */ react.createElement(_elementor_editor_panels.Panel, null, /* @__PURE__ */ react.createElement(_elementor_editor_panels.PanelHeader, null, /* @__PURE__ */ react.createElement(_elementor_ui.Stack, {
+			p: 1,
+			pl: 2,
+			width: "100%",
+			direction: "row",
+			alignItems: "center",
+			spacing: .5
+		}, /* @__PURE__ */ react.createElement(_elementor_editor_panels.PanelHeaderTitle, { sx: {
+			flex: 1,
+			minWidth: 0
+		} }, (0, _wordpress_i18n.__)("Design system", "elementor")), /* @__PURE__ */ react.createElement(DesignSystemHeaderMenu, null), /* @__PURE__ */ react.createElement(_elementor_ui.CloseButton, {
+			"aria-label": (0, _wordpress_i18n.__)("Close", "elementor"),
+			sx: { flexShrink: 0 },
+			onClick: () => void handleHeaderClose()
+		}))), /* @__PURE__ */ react.createElement(_elementor_editor_panels.PanelBody, { sx: {
+			display: "flex",
+			flexDirection: "column",
+			height: "100%",
+			overflow: "hidden",
+			minHeight: 0
+		} }, /* @__PURE__ */ react.createElement(_elementor_ui.Stack, {
+			direction: "column",
+			sx: {
+				width: "100%",
+				flex: 1,
+				minHeight: 0,
+				overflow: "hidden"
+			}
+		}, /* @__PURE__ */ react.createElement(_elementor_ui.Stack, { sx: {
+			...stickyTabRowStyles,
+			top: 0,
+			flexShrink: 0
+		} }, /* @__PURE__ */ react.createElement(_elementor_ui.Tabs, {
+			variant: "fullWidth",
+			size: "small",
+			sx: { mt: .5 },
+			...getTabsProps(),
+			onChange: (e, newValue) => {
+				getTabsProps().onChange(e, newValue);
+				setCurrentTab(newValue);
+				persistDesignSystemTab(newValue);
+				notifyDesignSystemTabChange(newValue);
+				trackDesignSystemTabOpened(newValue);
+			}
+		}, /* @__PURE__ */ react.createElement(_elementor_ui.Tab, {
+			label: (0, _wordpress_i18n.__)("Defaults", "elementor"),
+			icon: /* @__PURE__ */ react.createElement(_elementor_icons.TextIcon, { fontSize: "small" }),
+			iconPosition: "start",
+			...getTabProps("defaults")
+		}), /* @__PURE__ */ react.createElement(_elementor_ui.Tab, {
+			label: (0, _wordpress_i18n.__)("Variables", "elementor"),
+			icon: /* @__PURE__ */ react.createElement(_elementor_icons.ColorFilterIcon, { fontSize: "small" }),
+			iconPosition: "start",
+			...getTabProps("variables")
+		}), /* @__PURE__ */ react.createElement(_elementor_ui.Tab, {
+			label: (0, _wordpress_i18n.__)("Classes", "elementor"),
+			icon: /* @__PURE__ */ react.createElement(_elementor_icons.ColorSwatchIcon, { fontSize: "small" }),
+			iconPosition: "start",
+			...getTabProps("classes")
+		})), /* @__PURE__ */ react.createElement(_elementor_ui.Divider, null)), /* @__PURE__ */ react.createElement(_elementor_ui.Box, {
+			role: "tabpanel",
+			...getTabPanelProps("defaults"),
+			sx: {
+				flex: 1,
+				minHeight: 0,
+				display: currentTab === "defaults" ? "flex" : "none",
+				flexDirection: "column",
+				overflow: "hidden",
+				pt: 1
+			}
+		}, /* @__PURE__ */ react.createElement(_elementor_editor_default_styles.DefaultStylesTabEmbedded, {
+			onRequestClose: chainedThroughVariables,
+			onExposeCloseAttempt: (fn) => {
+				defaultsCloseAttemptRef.current = fn;
+			}
+		})), /* @__PURE__ */ react.createElement(_elementor_ui.Box, {
+			role: "tabpanel",
+			...getTabPanelProps("variables"),
+			sx: {
+				flex: 1,
+				minHeight: 0,
+				display: currentTab === "variables" ? "flex" : "none",
+				flexDirection: "column",
+				overflow: "hidden",
+				pt: 1
+			}
+		}, /* @__PURE__ */ react.createElement(_elementor_editor_variables.VariablesManagerPanelEmbedded, {
+			onRequestClose: chainedThroughClasses,
+			onExposeCloseAttempt: (fn) => {
+				variablesCloseAttemptRef.current = fn;
+			}
+		})), /* @__PURE__ */ react.createElement(_elementor_ui.Box, {
+			role: "tabpanel",
+			...getTabPanelProps("classes"),
+			sx: {
+				flex: 1,
+				minHeight: 0,
+				display: currentTab === "classes" ? "flex" : "none",
+				flexDirection: "column",
+				overflow: "hidden",
+				pt: 1
+			}
+		}, /* @__PURE__ */ react.createElement(_elementor_editor_global_classes.ClassManagerPanelEmbedded, {
+			onRequestClose: chainedThroughDefaults,
+			onExposeCloseAttempt: (fn) => {
+				classesCloseAttemptRef.current = fn;
+			},
+			isActive: currentTab === "classes"
+		}))))));
+	}
+
+//#endregion
+//#region packages/packages/core/editor-design-system/src/design-system-panel.tsx
+	var PANEL_ID$1 = "design-system";
+	var { panel, usePanelStatus, usePanelActions } = (0, _elementor_editor_panels.createPanel)({
+		id: PANEL_ID$1,
+		component: DesignSystemPanelRoot,
+		allowedEditModes: ["edit", PANEL_ID$1],
+		onOpen: () => {
+			(0, _elementor_editor_v1_adapters.changeEditMode)(PANEL_ID$1);
+		},
+		onClose: async () => {
+			(0, _elementor_editor_v1_adapters.changeEditMode)("edit");
+			await (0, _elementor_editor_documents.reloadCurrentDocument)();
+		},
+		isOpenPreviousElement: true
+	});
+	function DesignSystemPanelRoot() {
+		const { close: closePanel } = usePanelActions();
+		return /* @__PURE__ */ react.createElement(DesignSystemPanelContent, { onRequestClose: closePanel });
+	}
+
+//#endregion
+//#region packages/packages/core/editor-design-system/src/components/design-system-entrypoints.tsx
+	var V1_ELEMENTS_PANEL_ROUTE = "panel/elements/categories";
+	var EVENT_OPEN_DEFAULTS = "elementor/open-default-styles";
+	var EVENT_OPEN_VARIABLES = "elementor/open-variables-manager";
+	var EVENT_OPEN_CLASSES = "elementor/open-global-classes-manager";
+	var EVENT_TOGGLE$1 = "elementor/toggle-design-system";
+	var EVENT_SET_TAB = "elementor/design-system/set-tab";
+	var ACTIVE_PANEL_PARAM = "active-panel";
+	var PANEL_ID = "design-system";
+	var LEGACY_DEFAULT_STYLES_PANEL = "default-styles";
+	var LEGACY_GLOBAL_CLASSES_PANEL = "global-classes-manager";
+	var LEGACY_VARIABLES_PANEL = "variables-manager";
+	var OPEN_EVENT_BY_TAB = {
+		defaults: EVENT_OPEN_DEFAULTS,
+		variables: EVENT_OPEN_VARIABLES,
+		classes: EVENT_OPEN_CLASSES
+	};
+	function DesignSystemEntrypoints() {
+		const { open, close } = usePanelActions();
+		const { isOpen } = usePanelStatus();
+		const document = (0, _elementor_editor_documents.__useActiveDocument)();
+		const { save: saveDocument } = (0, _elementor_editor_documents.__useActiveDocumentActions)();
+		const { open: openSaveDialog, close: closeSaveDialog, isOpen: isSaveDialogOpen } = (0, _elementor_editor_ui.useDialog)();
+		const documentRef = (0, react.useRef)(document);
+		documentRef.current = document;
+		const pendingOpenRef = (0, react.useRef)(null);
+		const gatedOpen = (0, react.useCallback)((onClean) => {
+			if (documentRef.current?.isDirty) {
+				pendingOpenRef.current = onClean;
+				openSaveDialog();
+				return;
+			}
+			onClean();
+		}, [openSaveDialog]);
+		const handleSaveAndContinue = (0, react.useCallback)(async () => {
+			try {
+				await saveDocument();
+				closeSaveDialog();
+				pendingOpenRef.current?.();
+				pendingOpenRef.current = null;
+			} catch {}
+		}, [saveDocument, closeSaveDialog]);
+		const handleStayHere = (0, react.useCallback)(() => {
+			closeSaveDialog();
+			pendingOpenRef.current = null;
+		}, [closeSaveDialog]);
+		const isOpenRef = (0, react.useRef)(isOpen);
+		isOpenRef.current = isOpen;
+		(0, react.useEffect)(() => {
+			const handler = (event) => {
+				const tab = event.detail?.tab;
+				if (tab !== "defaults" && tab !== "variables" && tab !== "classes") return;
+				if (isOpenRef.current && getActiveDesignSystemTab() === tab) {
+					close();
+					return;
+				}
+				if (isOpenRef.current) {
+					window.dispatchEvent(new CustomEvent(EVENT_SET_TAB, { detail: { tab } }));
+					return;
+				}
+				gatedOpen(() => {
+					window.dispatchEvent(new CustomEvent(OPEN_EVENT_BY_TAB[tab]));
+				});
+			};
+			window.addEventListener(EVENT_TOGGLE$1, handler);
+			return () => {
+				window.removeEventListener(EVENT_TOGGLE$1, handler);
+			};
+		}, [close, gatedOpen]);
+		const pendingTabRef = (0, react.useRef)(null);
+		const [readyToOpenFromEvent, setReadyToOpenFromEvent] = (0, react.useState)(false);
+		(0, react.useEffect)(() => {
+			if (readyToOpenFromEvent) {
+				setReadyToOpenFromEvent(false);
+				open();
+			}
+		}, [readyToOpenFromEvent, open]);
+		(0, react.useEffect)(() => {
+			return (0, _elementor_editor_v1_adapters.__privateListenTo)((0, _elementor_editor_v1_adapters.routeOpenEvent)(V1_ELEMENTS_PANEL_ROUTE), () => {
+				const tab = pendingTabRef.current;
+				if (tab) {
+					pendingTabRef.current = null;
+					setPendingDesignSystemTab(tab);
+					setReadyToOpenFromEvent(true);
+				}
+			});
+		}, []);
+		(0, react.useEffect)(() => {
+			const bind = (eventName, tab) => {
+				const handler = () => {
+					pendingTabRef.current = tab;
+					(0, _elementor_editor_v1_adapters.__privateOpenRoute)(V1_ELEMENTS_PANEL_ROUTE);
+				};
+				window.addEventListener(eventName, handler);
+				return () => window.removeEventListener(eventName, handler);
+			};
+			const unlistenDefaults = bind(EVENT_OPEN_DEFAULTS, "defaults");
+			const unlistenVariables = bind(EVENT_OPEN_VARIABLES, "variables");
+			const unlistenClasses = bind(EVENT_OPEN_CLASSES, "classes");
+			return () => {
+				unlistenDefaults();
+				unlistenVariables();
+				unlistenClasses();
+			};
+		}, []);
+		const hasOpenedFromUrl = (0, react.useRef)(false);
+		(0, react.useEffect)(() => {
+			const urlParams = new URLSearchParams(window.location.search);
+			const activePanel = urlParams.get(ACTIVE_PANEL_PARAM);
+			if (!activePanel) return;
+			let targetTab = null;
+			if (activePanel === PANEL_ID) {
+				const tab = urlParams.get("design-system-tab");
+				if (tab === "classes") targetTab = "classes";
+				else if (tab === "variables") targetTab = "variables";
+				else targetTab = "defaults";
+			} else if (activePanel === LEGACY_DEFAULT_STYLES_PANEL) targetTab = "defaults";
+			else if (activePanel === LEGACY_GLOBAL_CLASSES_PANEL) targetTab = "classes";
+			else if (activePanel === LEGACY_VARIABLES_PANEL) targetTab = "variables";
+			else return;
+			return (0, _elementor_editor_v1_adapters.__privateListenTo)((0, _elementor_editor_v1_adapters.routeOpenEvent)(V1_ELEMENTS_PANEL_ROUTE), () => {
+				if (hasOpenedFromUrl.current) return;
+				hasOpenedFromUrl.current = true;
+				requestAnimationFrame(() => {
+					if (targetTab) setPendingDesignSystemTab(targetTab);
+					gatedOpen(() => void open());
+				});
+			});
+		}, [open, gatedOpen]);
+		return isSaveDialogOpen ? /* @__PURE__ */ react.createElement(_elementor_editor_ui.ThemeProvider, null, /* @__PURE__ */ react.createElement(_elementor_editor_ui.SaveChangesDialog, null, /* @__PURE__ */ react.createElement(_elementor_editor_ui.SaveChangesDialog.Title, null, (0, _wordpress_i18n.__)("You have unsaved changes", "elementor")), /* @__PURE__ */ react.createElement(_elementor_editor_ui.SaveChangesDialog.Content, null, /* @__PURE__ */ react.createElement(_elementor_editor_ui.SaveChangesDialog.ContentText, { sx: { mb: 2 } }, (0, _wordpress_i18n.__)("To open the Design System, save your page first. You can't continue without saving.", "elementor"))), /* @__PURE__ */ react.createElement(_elementor_editor_ui.SaveChangesDialog.Actions, { actions: {
+			cancel: {
+				label: (0, _wordpress_i18n.__)("Stay here", "elementor"),
+				action: handleStayHere
+			},
+			confirm: {
+				label: (0, _wordpress_i18n.__)("Save & Continue", "elementor"),
+				action: handleSaveAndContinue
+			}
+		} }))) : null;
+	}
+
+//#endregion
+//#region packages/packages/core/editor-design-system/src/use-open-design-system-toolbar.ts
+	var EVENT_TOGGLE = "elementor/toggle-design-system";
+	function useOpenDesignSystemToolbar() {
+		const { isOpen } = usePanelStatus();
+		return {
+			title: (0, _wordpress_i18n.__)("Design System", "elementor"),
+			icon: _elementor_icons.DropletHalfFilledIcon,
+			onClick: () => {
+				if (!isOpen) trackDesignSystem({ event: "opened" });
+				const tab = getActiveDesignSystemTab();
+				window.dispatchEvent(new CustomEvent(EVENT_TOGGLE, { detail: { tab } }));
+			},
+			selected: isOpen
+		};
+	}
+
+//#endregion
+//#region packages/packages/core/editor-design-system/src/init.ts
+	function init() {
+		(0, _elementor_editor_panels.registerPanel)(panel);
+		(0, _elementor_editor.injectIntoLogic)({
+			id: "design-system-entrypoints",
+			component: DesignSystemEntrypoints
+		});
+		_elementor_editor_app_bar.toolsMenu.registerToggleAction({
+			id: "open-design-system-toolbar",
+			priority: 4,
+			useProps: useOpenDesignSystemToolbar
+		});
+	}
+
+//#endregion
+//#region packages/packages/core/editor-design-system/src/index.ts
+	var src_exports = /* @__PURE__ */ __exportAll({
+		getInitialDesignSystemTab: () => getInitialDesignSystemTab,
+		init: () => init,
+		panel: () => panel,
+		persistDesignSystemTab: () => persistDesignSystemTab,
+		usePanelActions: () => usePanelActions,
+		usePanelStatus: () => usePanelStatus
+	});
+
+//#endregion
+//#region \0elementor-package-library-entry
+	(window.elementorV2 = window.elementorV2 || {}).editorDesignSystem = src_exports;
+
+//#endregion
+})(elementorV2.editor, elementorV2.editorAppBar, elementorV2.editorPanels, React, elementorV2.editorDocuments, elementorV2.editorUi, elementorV2.editorV1Adapters, wp.i18n, elementorV2.editorDefaultStyles, elementorV2.editorGlobalClasses, elementorV2.editorVariables, elementorV2.icons, elementorV2.ui, elementorV2.editorCurrentUser, elementorV2.query, elementorV2.editorNotifications, elementorV2.httpClient, elementorV2.editorCanvas, elementorV2.events);
 window.elementorV2.editorDesignSystem?.init?.();
 //# sourceMappingURL=editor-design-system.js.map

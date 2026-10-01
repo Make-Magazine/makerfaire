@@ -77,7 +77,7 @@ class HomeUrl {
 	 * @return string
 	 */
 	public function get_current(): string {
-		if ( defined( 'ICL_SITEPRESS_VERSION' ) ) {
+		if ( defined( 'ICL_SITEPRESS_VERSION' ) || defined( 'TRP_PLUGIN_VERSION' ) ) {
 			return get_site_url();
 		}
 		return home_url();

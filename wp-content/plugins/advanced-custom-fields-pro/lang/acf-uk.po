@@ -12,7 +12,7 @@
 # This file is distributed under the same license as Advanced Custom Fields.
 msgid ""
 msgstr ""
-"PO-Revision-Date: 2026-08-27T18:24:28+00:00\n"
+"PO-Revision-Date: 2026-09-10T15:48:23+00:00\n"
 "Report-Msgid-Bugs-To: http://support.advancedcustomfields.com\n"
 "Language: uk\n"
 "MIME-Version: 1.0\n"
@@ -23,12 +23,12 @@ msgstr ""
 
 #: src/Site_Health/Site_Health.php:623
 msgid "Field Groups by Post Type"
-msgstr ""
+msgstr "Групи полів за типом публікації"
 
 #: includes/api/api-helpers.php:3306
 #: includes/fields/class-acf-field-image.php:457
 msgid "File must be a valid image."
-msgstr ""
+msgstr "Файл повинен бути коректним зображенням."
 
 #: includes/admin/views/email-opt-in-banner.php:103
 msgid "Dismiss email opt-in banner"
@@ -858,14 +858,16 @@ msgid ""
 "The requested ACF field type does not support output in bindings or the ACF "
 "Shortcode."
 msgstr ""
+"Запитаний тип поля ACF не підтримує вивід у прив'язках або короткому коді "
+"ACF."
 
 #: includes/api/api-template.php:1063
 msgid "[The ACF shortcode cannot display fields from non-public posts]"
-msgstr ""
+msgstr "[Короткий код ACF не може відображати поля з неприватних записів]"
 
 #: includes/api/api-template.php:1020
 msgid "[The ACF shortcode is disabled on this site]"
-msgstr ""
+msgstr "[Короткий код ACF на цьому сайті вимкнено]"
 
 #: includes/fields/class-acf-field-icon_picker.php:492
 msgid "Businessman Icon"
@@ -901,7 +903,7 @@ msgstr "Іконка Написати блог"
 
 #: includes/fields/class-acf-field-icon_picker.php:755
 msgid "Widgets Menus Icon"
-msgstr ""
+msgstr "Іконка Віжети Меню"
 
 #: includes/fields/class-acf-field-icon_picker.php:754
 msgid "View Site Icon"
@@ -933,7 +935,7 @@ msgstr "Іконка оновлення (alt)"
 
 #: includes/fields/class-acf-field-icon_picker.php:740
 msgid "Universal Access (alt) Icon"
-msgstr ""
+msgstr "Іконка Універсальний доступ (alt)"
 
 #: includes/fields/class-acf-field-icon_picker.php:737
 msgid "Twitter (alt) Icon"
@@ -2511,19 +2513,20 @@ msgstr ""
 
 #: includes/admin/views/escaped-html-notice.php:34
 msgid "Dismiss permanently"
-msgstr ""
+msgstr "Закрити назавжди"
 
 #: includes/admin/views/acf-field-group/field.php:232
 msgid "Instructions for content editors. Shown when submitting data."
 msgstr ""
+"Інструкції для редакторів контенту. Відображаються під час надсилання даних."
 
 #: includes/admin/post-types/admin-field-group.php:143
 msgid "Has no term selected"
-msgstr ""
+msgstr "Не вибрано жодного таксономії"
 
 #: includes/admin/post-types/admin-field-group.php:142
 msgid "Has any term selected"
-msgstr ""
+msgstr "Чи вибрано якась таксономія?"
 
 #: includes/admin/post-types/admin-field-group.php:141
 msgid "Terms do not contain"
@@ -7111,7 +7114,7 @@ msgstr "Завантаження результатів&hellip;"
 #: includes/fields/class-acf-field-select.php:101
 msgctxt "Select2 JS selection_too_long_n"
 msgid "You can only select %d items"
-msgstr ""
+msgstr "Можна вибрати лише %d елементів"
 
 #: includes/fields/class-acf-field-select.php:99
 msgctxt "Select2 JS selection_too_long_1"
@@ -7762,7 +7765,7 @@ msgstr "Масив зображення"
 #: includes/fields/class-acf-field-link.php:156
 #: includes/fields/class-acf-field-radio.php:218
 msgid "Specify the returned value on front end"
-msgstr ""
+msgstr "Вкажіть значення, яке повертається, у інтерфейсі користувача"
 
 #: includes/fields/class-acf-field-button-group.php:184
 #: includes/fields/class-acf-field-checkbox.php:370

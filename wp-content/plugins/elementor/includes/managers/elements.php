@@ -402,12 +402,6 @@ class Elements_Manager {
 				self::CATEGORY_ATOMIC_ELEMENTS,
 			] );
 		}
-
-		$this->categories['wordpress'] = [
-			'title' => esc_html__( 'WordPress', 'elementor' ),
-			'icon' => 'eicon-wordpress',
-			'active' => false,
-		];
 	}
 
 	public function enqueue_elements_styles() {

@@ -243,8 +243,8 @@ class Admin extends App {
 			<input id="elementor-switch-mode-input" type="hidden" name="_elementor_post_mode" value="<?php echo esc_attr( $document->is_built_with_elementor() ); ?>" />
 			<button id="elementor-switch-mode-button" type="button" class="button button-primary button-hero">
 				<span class="elementor-switch-mode-on">
-					<i class="eicon-arrow-<?php echo ( is_rtl() ) ? 'right' : 'left'; ?>" aria-hidden="true"></i>
-					<?php echo esc_html__( 'Back to WordPress Editor', 'elementor' ); ?>
+					<i class="eicon-wordpress" aria-hidden="true"></i>
+					<?php echo esc_html__( 'Edit with WordPress', 'elementor' ); ?>
 				</span>
 				<span class="elementor-switch-mode-off">
 					<i class="eicon-elementor-square" aria-hidden="true"></i>
@@ -428,6 +428,11 @@ class Admin extends App {
 	 */
 	public function admin_footer_text( $footer_text ) {
 		$current_screen = get_current_screen();
+
+		if ( $current_screen && str_ends_with( $current_screen->id, 'elementor-mcp' ) ) {
+			return $footer_text;
+		}
+
 		$is_elementor_screen = ( $current_screen && false !== strpos( $current_screen->id, 'elementor' ) );
 
 		if ( $is_elementor_screen ) {
@@ -1182,7 +1187,6 @@ class Admin extends App {
 
 	public function register_ajax_hints( $ajax_manager ) {
 		$ajax_manager->register_ajax_action( 'elementor_image_optimization_campaign', [ $this, 'ajax_set_image_optimization_campaign' ] );
-		$ajax_manager->register_ajax_action( 'elementor_core_site_mailer_campaign', [ $this, 'ajax_site_mailer_campaign' ] );
 		$ajax_manager->register_ajax_action( 'elementor_core_ally_campaign', [ $this, 'ajax_ally_campaign' ] );
 	}
 
@@ -1212,19 +1216,5 @@ class Admin extends App {
 		];
 
 		set_transient( 'elementor_image_optimization_campaign', $campaign_data, 30 * DAY_IN_SECONDS );
-	}
-
-	public function ajax_site_mailer_campaign( $request ) {
-		if ( ! current_user_can( 'install_plugins' ) ) {
-			return;
-		}
-
-		$campaign_data = [
-			'campaign' => sanitize_key( $request['campaign'] ?? '' ),
-			'source' => sanitize_key( $request['source'] ?? '' ),
-			'medium' => sanitize_key( $request['medium'] ?? '' ),
-		];
-
-		set_transient( 'elementor_site_mailer_campaign', $campaign_data, 30 * DAY_IN_SECONDS );
 	}
 }

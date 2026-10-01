@@ -2040,6 +2040,7 @@ fieldset:disabled a.e-button {
   padding: 5px;
   box-shadow: none;
   width: 92%;
+  flex-basis: 100%;
 }
 #elementor-deactivate-feedback-modal .dialog-buttons-wrapper {
   display: flex;
@@ -2084,6 +2085,7 @@ fieldset:disabled a.e-button {
   align-items: center;
   line-height: 2;
   overflow: hidden;
+  flex-wrap: wrap;
 }
 
 #elementor-hidden-area {

@@ -20,7 +20,6 @@ return [
 		'elementor-v2-editor-styles',
 		'elementor-v2-editor-styles-repository',
 		'elementor-v2-editor-v1-adapters',
-		'elementor-v2-events',
 		'elementor-v2-http-client',
 		'elementor-v2-schema',
 		'elementor-v2-twing',

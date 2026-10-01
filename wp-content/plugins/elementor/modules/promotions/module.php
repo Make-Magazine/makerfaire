@@ -38,7 +38,11 @@ class Module extends Base_Module {
 	const ADMIN_MENU_PROMOTIONS_PRIORITY = 120;
 
 	public static function is_active() {
-		return ! Utils::has_pro() || ! Utils::is_license_active();
+		if ( Utils::has_pro() ) {
+			return true;
+		}
+
+		return ! Utils::is_license_active();
 	}
 
 	public function get_name() {
@@ -86,8 +90,12 @@ class Module extends Base_Module {
 			new Black_Friday();
 		}
 
-		if ( Conversion_Banner::should_display_banner() ) {
-			new Conversion_Banner();
+		if ( ! Utils::has_pro() ) {
+			Conversion_Banner::register_cache_invalidation_hooks();
+
+			if ( Conversion_Banner::should_display_banner() ) {
+				new Conversion_Banner();
+			}
 		}
 
 		add_filter( 'elementor/editor/localize_settings', [ $this, 'add_editing_panel_sticky_promotion' ] );
@@ -211,10 +219,6 @@ class Module extends Base_Module {
 	}
 
 	public function add_editing_panel_sticky_promotion( array $settings ): array {
-		if ( ! Plugin::$instance->experiments->is_feature_active( 'e_panel_promotions' ) ) {
-			return $settings;
-		}
-
 		$settings['editingPanelStickyPromotion'] = Filtered_Promotions_Manager::get_editor_panel_sticky_promotion();
 
 		return $settings;
@@ -262,7 +266,17 @@ class Module extends Base_Module {
 		];
 	}
 
+	private function should_register_core_atomic_panel_promotions(): bool {
+		// Pro with an active license registers real atomic widgets (or its own panel
+		// promotion layer). Core stubs caused duplicate panel entries after ED-25600.
+		return ! Utils::has_pro() || ! Utils::is_license_active();
+	}
+
 	private function register_atomic_promotions(): void {
+		if ( ! $this->should_register_core_atomic_panel_promotions() ) {
+			return;
+		}
+
 		add_action( 'elementor/init', function() {
 			if ( ! $this->is_atomic_widgets_active() ) {
 				return;
