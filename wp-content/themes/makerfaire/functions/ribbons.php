@@ -1,4 +1,17 @@
 <?php
+if (!function_exists('mf_ribbon_photo_url')) {
+    // returns the first usable photo URL from the candidates, decoding Gravity Forms multi-image JSON
+    function mf_ribbon_photo_url(...$candidates) {
+        foreach ($candidates as $photo) {
+            if (empty($photo)) continue;
+            $decoded = json_decode((string) $photo, true);
+            if (is_array($decoded)) $photo = reset($decoded);
+            if (is_string($photo) && trim($photo) !== '') return trim($photo);
+        }
+        return '';
+    }
+}
+
 function getRibbons($year){
   global $wpdb;
   /* return json layout
@@ -18,17 +31,18 @@ function getRibbons($year){
   $faireID = ''; // blank for now, until we can pull in this info
 
   $sql = "SELECT entry_id, location, year, "
-              . "wp_mf_ribbons.project_name as ribbon_proj_name, "
-              . "wp_mf_ribbons.project_photo as ribbon_proj_photo, post_id, maker_name, "
-              . "wp_mf_entity.presentation_title as project_name, "
-              . "wp_mf_entity.project_photo, "
-              . "SUM(case when ribbonType = 0 then numRibbons else 0 end) as blue_ribbon_cnt, "
-              . "SUM(case when ribbonType = 1 then numRibbons else 0 end) as red_ribbon_cnt   "
-        . "FROM `wp_mf_ribbons` "
-        . "left outer join wp_mf_entity on lead_id=entry_id "
-        . "where year= ".($year!=''? $year:date("Y"))
-        . " group by entry_id "
-        . " ORDER BY entry_id";
+     . "wp_mf_ribbons.project_name as ribbon_proj_name, "
+     . "wp_mf_ribbons.project_photo as ribbon_proj_photo, post_id, maker_name, "
+     . "wp_mf_entity.presentation_title as project_name, "
+     . "wp_mf_entity.project_photo, "
+     . "(SELECT meta_value FROM wp_gf_entry_meta WHERE meta_key = '878' AND wp_gf_entry_meta.entry_id = wp_mf_ribbons.entry_id LIMIT 1) as proj_photo_gallery, "
+     . "SUM(case when ribbonType = 0 then numRibbons else 0 end) as blue_ribbon_cnt, "
+     . "SUM(case when ribbonType = 1 then numRibbons else 0 end) as red_ribbon_cnt "
+     . "FROM `wp_mf_ribbons` "
+     . "left outer join wp_mf_entity on lead_id=entry_id "
+     . "where year = " . (int) ($year != '' ? $year : date("Y"))
+     . " group by entry_id "
+     . " ORDER BY entry_id";
 
     foreach($wpdb->get_results($sql,ARRAY_A) as $ribbon){
       //entry information
@@ -46,7 +60,7 @@ function getRibbons($year){
         $link           = "/maker/entry/". $entry_id;
         //overwrites
         $project_name   = ($ribbon['ribbon_proj_name']  != '' && !is_null($ribbon['ribbon_proj_name'])  ? $ribbon['ribbon_proj_name']  : $ribbon['project_name']);
-        $project_photo  = ($ribbon['ribbon_proj_photo'] != '' && !is_null($ribbon['ribbon_proj_photo']) ? $ribbon['ribbon_proj_photo'] : $ribbon['project_photo']);
+        $project_photo = mf_ribbon_photo_url($ribbon['ribbon_proj_photo'], $ribbon['project_photo'], $ribbon['proj_photo_gallery']);
         $maker_name     = ($ribbon['maker_name']        != '' && !is_null($ribbon['maker_name'])        ? $ribbon['maker_name']        : getMakerList($entry_id, $faireID));
       }else{
         $link           = "/mfarchives/". $post_id;
@@ -118,7 +132,8 @@ function getRibbons($year){
           }
         }
       }
-      $project_photo  = legacy_get_fit_remote_image_url($project_photo,285,270,0);
+      $resized = legacy_get_fit_remote_image_url($project_photo, 285, 270, 0);
+      if (!empty($resized)) $project_photo = $resized;
 
       //do not add to ribbon array if $project_name and $project_photo are blank
       if($project_name==''){

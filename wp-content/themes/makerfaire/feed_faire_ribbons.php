@@ -48,7 +48,7 @@ echo '<?xml version="1.0" encoding="'.get_option('blog_charset').'"?'.'>';
         <sy:updateFrequency><?php echo apply_filters( 'rss_update_frequency', '1' ); ?></sy:updateFrequency>
         <?php do_action('rss2_head'); ?>
         <?php foreach($entries as $entry){ 
-                $project_photo = (isset($entry['ribbon_proj_photo']) ? $entry['ribbon_proj_photo'] : $entry['entry_photo']);
+                $project_photo = mf_ribbon_photo_url($entry['ribbon_proj_photo'], $entry['entry_photo']);
                 //for BA24, the single photo was changed to a multi image which messed things up a bit
                 $photo = json_decode($project_photo);
                 if (is_array($photo)) {
