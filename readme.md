@@ -2,13 +2,13 @@
 https://makerfaire.com/
 
 Built with:
-- Bootstrap (`^3.3.4`)
-- LESS
-- ...
+- Bootstrap
+- SCSS
+- VUE and AngularJS single page apps
 
 Relevant: https://docs.google.com/document/d/1thSVdCn4Li_l7pVD6hFJvTrQuv-f29HDQMhX_D0vLO8
 
-##### How to compile LESS, Bootstrap, JS for production:
+##### How to compile SCSS, Bootstrap, JS for production:
 Setup:
 - First download Node if you don't have it installed https://nodejs.org/en/download/
 - Next install the grunt command line interface if you don't have it `npm install -g grunt-cli`
